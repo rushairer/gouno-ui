@@ -1,0 +1,3 @@
+import { useEffect, useRef } from "react";
+import QRCodeLib from "qrcode";
+export function QRCode({ value, size = 160, color = "#000000", background = "#ffffff", errorLevel = "M", ariaLabel = "QR code" }: { value: string; size?: number; color?: string; background?: string; errorLevel?: "L"|"M"|"Q"|"H"; ariaLabel?: string }) { const canvas = useRef<HTMLCanvasElement>(null); useEffect(() => { if (canvas.current) void QRCodeLib.toCanvas(canvas.current, value, { width: size, color: { dark: color, light: background }, errorCorrectionLevel: errorLevel }); }, [value,size,color,background,errorLevel]); return <canvas ref={canvas} width={size} height={size} role="img" aria-label={ariaLabel} />; }
