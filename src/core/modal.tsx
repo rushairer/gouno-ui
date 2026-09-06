@@ -1,16 +1,18 @@
-import { useEffect, useLayoutEffect, useRef, type ReactNode, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type ReactNode, type CSSProperties } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../components/primitives/dialog";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "../components/primitives/sheet";
 import { cn } from "../lib/utils";
 const closeText = () => typeof document !== "undefined" && document.documentElement.lang.startsWith("en") ? "Close" : "关闭";
 export interface ModalProps {
   open?: boolean;
+  defaultOpen?: boolean;
   isOpen?: boolean;
   title?: ReactNode;
   description?: ReactNode;
   children: ReactNode;
   footer?: ReactNode;
-  onClose: () => void;
+  onClose?: () => void;
+  onOpenChange?: (open: boolean) => void;
+  afterOpenChange?: (open: boolean) => void;
   size?: "sm" | "md" | "lg" | "xl";
   maxWidth?: string;
   className?: string;
@@ -19,15 +21,19 @@ export interface ModalProps {
   showCloseButton?: boolean;
   ariaLabel?: string;
   contentStyle?: CSSProperties;
+  loading?: boolean;
 }
 export function Modal({
   open,
+  defaultOpen = false,
   isOpen,
   title,
   description,
   children,
   footer,
   onClose,
+  onOpenChange,
+  afterOpenChange,
   size = "md",
   maxWidth,
   className,
@@ -36,9 +42,17 @@ export function Modal({
   showCloseButton = true,
   ariaLabel,
   contentStyle,
+  loading = false,
 }: ModalProps) {
+  const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const previousFocus = useRef<HTMLElement | null>(null);
-  const visible = open ?? isOpen ?? false;
+  const controlled = open !== undefined || isOpen !== undefined;
+  const visible = open ?? isOpen ?? internalOpen;
+  const changeOpen = (next: boolean) => {
+    if (!controlled) setInternalOpen(next);
+    onOpenChange?.(next);
+    if (!next) onClose?.();
+  };
   useEffect(() => {
     if (visible)
       previousFocus.current =
@@ -49,32 +63,11 @@ export function Modal({
       if (previousFocus.current?.isConnected) previousFocus.current.focus();
     };
   }, [visible]);
-  useLayoutEffect(() => {
-    if (visible) {
-      const control = document.querySelector<HTMLElement>(
-        "[data-state='open'] [autofocus], [data-state='open'] [autoFocus]",
-      );
-      control?.focus();
-    }
-  }, [visible]);
-  useEffect(() => {
-    if (!visible || !closeOnEsc) return;
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKeyDown);
-    window.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [visible, closeOnEsc, onClose]);
+  useEffect(() => { afterOpenChange?.(visible); }, [afterOpenChange, visible]);
   return (
     <Dialog
       open={visible}
-      onOpenChange={(next) => {
-        if (!next) onClose();
-      }}
+      onOpenChange={changeOpen}
     >
       <DialogContent
         className={cn(
@@ -109,7 +102,7 @@ export function Modal({
             <DialogDescription>{description}</DialogDescription>
           ) : null}
         </DialogHeader>
-        <div className="min-w-0 py-2">{children}</div>
+        <div className="min-w-0 py-2" aria-busy={loading || undefined}>{loading ? <div role="status" className="py-8 text-center text-sm text-muted-foreground">加载中…</div> : children}</div>
         {footer ? (
           <div className="flex flex-wrap justify-end gap-3 border-t pt-4">
             {footer}

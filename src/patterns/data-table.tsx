@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { Fragment, useMemo, useState, type ReactNode } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, type TableDensity } from "../components/primitives/table";
 import { TableSkeleton } from "./feedback";
 import { cn } from "../lib/utils";
@@ -13,9 +13,11 @@ export interface DataTableColumn<T> {
   sorter?: ((left: T, right: T) => number) | boolean;
   width?: number | string;
   align?: "left" | "center" | "right";
+  ellipsis?: boolean;
 }
 export interface DataTablePagination {
   page?: number;
+  defaultPage?: number;
   pageSize?: number;
   total?: number;
   onChange?: (page: number, pageSize: number) => void;
@@ -40,6 +42,14 @@ export interface DataTableProps<T = Record<string, unknown>> {
   onSortChange?: (sort: DataTableSortState | undefined) => void;
   filter?: (record: T) => boolean;
   pagination?: DataTablePagination | false;
+  bordered?: boolean;
+  stickyHeader?: boolean;
+  rowDisabled?: (record: T) => boolean;
+  expandedRowKeys?: string[];
+  defaultExpandedRowKeys?: string[];
+  onExpandedRowsChange?: (keys: string[]) => void;
+  expandedRowRender?: (record: T, index: number) => ReactNode;
+  locale?: { emptyText?: ReactNode; totalText?: (total: number) => ReactNode; previousText?: ReactNode; nextText?: ReactNode };
 }
 
 function recordKey<T>(record: T, index: number, rowKey?: keyof T | ((record: T, index: number) => string)) {
@@ -52,12 +62,16 @@ export function DataTable<T = Record<string, unknown>>({
   empty, emptyState, className, density = "default", selectable, selectedRowKeys,
   onSelectionChange, defaultSort, sort: controlledSort, onSortChange, filter,
   pagination = false,
+  bordered = true, stickyHeader = false, rowDisabled, expandedRowKeys, defaultExpandedRowKeys = [], onExpandedRowsChange, expandedRowRender, locale,
 }: DataTableProps<T>) {
   const [internalSort, setInternalSort] = useState<DataTableSortState | undefined>(defaultSort);
   const [internalSelected, setInternalSelected] = useState<string[]>([]);
-  const [page, setPage] = useState(pagination && pagination.page ? pagination.page : 1);
+  const [internalPage, setInternalPage] = useState(pagination && pagination.defaultPage ? pagination.defaultPage : 1);
+  const [internalExpanded, setInternalExpanded] = useState(defaultExpandedRowKeys);
   const sort = controlledSort ?? internalSort;
   const selected = selectedRowKeys ?? internalSelected;
+  const expanded = expandedRowKeys ?? internalExpanded;
+  const page = pagination && pagination.page !== undefined ? pagination.page : internalPage;
   const generated = Boolean(columns);
   const filtered = useMemo(() => filter ? dataSource.filter(filter) : dataSource, [dataSource, filter]);
   const sorted = useMemo(() => {
@@ -85,14 +99,15 @@ export function DataTable<T = Record<string, unknown>>({
     onSortChange?.(next);
   };
   if (loading) return <TableSkeleton rows={loadingRows} columns={loadingCols} label="Loading table data" />;
-  if (empty || (generated && visible.length === 0)) return <>{emptyState ?? <div className="p-8 text-center text-sm text-muted-foreground">暂无数据</div>}</>;
+  if (empty || (generated && visible.length === 0)) return <>{emptyState ?? locale?.emptyText ?? <div className="p-8 text-center text-sm text-muted-foreground">暂无数据</div>}</>;
   if (!generated) return <Table density={density} className={cn("rounded-lg border", className)}>{children}</Table>;
-  const allVisibleKeys = visible.map((row, index) => recordKey(row, (page - 1) * pageSize + index, rowKey));
+  const allVisibleKeys = visible.map((row, index) => ({ row, key: recordKey(row, (page - 1) * pageSize + index, rowKey) })).filter(({ row }) => !rowDisabled?.(row)).map(({ key }) => key);
   const allSelected = allVisibleKeys.length > 0 && allVisibleKeys.every((key) => selected.includes(key));
   return (
-    <div className={cn("space-y-3", className)}>
-      <Table density={density}>
+    <div data-slot="data-table" className={cn("w-full space-y-3", className)}>
+      <Table density={density} bordered={bordered} stickyHeader={stickyHeader}>
         <TableHeader><TableRow>
+          {expandedRowRender ? <TableHead className="w-12"><span className="sr-only">展开行</span></TableHead> : null}
           {selectable ? <TableHead><input type="checkbox" aria-label="全选当前页" checked={allSelected} onChange={(event) => updateSelection(event.target.checked ? [...new Set([...selected, ...allVisibleKeys])] : selected.filter((key) => !allVisibleKeys.includes(key)))} /></TableHead> : null}
           {columns?.map((column) => {
             const active = sort?.key === column.key;
@@ -103,13 +118,20 @@ export function DataTable<T = Record<string, unknown>>({
         </TableRow></TableHeader>
         <TableBody>{visible.map((record, index) => {
           const key = recordKey(record, (page - 1) * pageSize + index, rowKey);
-          return <TableRow key={key} data-state={selected.includes(key) ? "selected" : undefined}>
-            {selectable ? <TableCell><input type="checkbox" aria-label={`选择第 ${index + 1} 行`} checked={selected.includes(key)} onChange={(event) => updateSelection(event.target.checked ? [...selected, key] : selected.filter((candidate) => candidate !== key))} /></TableCell> : null}
-            {columns?.map((column) => { const value = column.dataIndex ? record[column.dataIndex] : undefined; return <TableCell key={column.key} style={{ textAlign: column.align }}>{column.render ? column.render(value, record, index) : String(value ?? "")}</TableCell>; })}
-          </TableRow>;
+          const disabled = rowDisabled?.(record) ?? false;
+          const isExpanded = expanded.includes(key);
+          const toggleExpanded = () => { const next = isExpanded ? expanded.filter((candidate) => candidate !== key) : [...expanded, key]; if (expandedRowKeys === undefined) setInternalExpanded(next); onExpandedRowsChange?.(next); };
+          return <Fragment key={key}>
+            <TableRow data-state={selected.includes(key) ? "selected" : undefined} aria-disabled={disabled || undefined}>
+              {expandedRowRender ? <TableCell><button type="button" className="flex size-8 items-center justify-center rounded hover:bg-muted" aria-label={isExpanded ? "收起行" : "展开行"} aria-expanded={isExpanded} onClick={toggleExpanded}>{isExpanded ? "−" : "+"}</button></TableCell> : null}
+              {selectable ? <TableCell><input type="checkbox" aria-label={`选择第 ${index + 1} 行`} checked={selected.includes(key)} disabled={disabled} onChange={(event) => updateSelection(event.target.checked ? [...selected, key] : selected.filter((candidate) => candidate !== key))} /></TableCell> : null}
+              {columns?.map((column) => { const value = column.dataIndex ? record[column.dataIndex] : undefined; return <TableCell key={column.key} title={column.ellipsis ? String(value ?? "") : undefined} className={column.ellipsis ? "max-w-0 truncate" : undefined} style={{ textAlign: column.align }}>{column.render ? column.render(value, record, index) : String(value ?? "")}</TableCell>; })}
+            </TableRow>
+            {isExpanded && expandedRowRender ? <TableRow key={`${key}-expanded`}><TableCell colSpan={(columns?.length ?? 0) + (selectable ? 1 : 0) + 1} className="bg-muted/30 whitespace-normal">{expandedRowRender(record, index)}</TableCell></TableRow> : null}
+          </Fragment>;
         })}</TableBody>
       </Table>
-      {pagination ? <div className="flex items-center justify-between text-sm text-muted-foreground"><span>{total} 条记录</span><div className="flex items-center gap-2"><button type="button" className="rounded border px-2 py-1 disabled:opacity-50" disabled={page <= 1} onClick={() => { const next = page - 1; setPage(next); pagination.onChange?.(next, pageSize); }}>上一页</button><span>{page} / {totalPages}</span><button type="button" className="rounded border px-2 py-1 disabled:opacity-50" disabled={page >= totalPages} onClick={() => { const next = page + 1; setPage(next); pagination.onChange?.(next, pageSize); }}>下一页</button></div></div> : null}
+      {pagination ? <nav aria-label="表格分页" className="flex items-center justify-between text-sm text-muted-foreground"><span>{locale?.totalText?.(total) ?? `${total} 条记录`}</span><div className="flex items-center gap-2"><button type="button" className="rounded border px-2 py-1 disabled:opacity-50" disabled={page <= 1} onClick={() => { const next = page - 1; if (pagination.page === undefined) setInternalPage(next); pagination.onChange?.(next, pageSize); }}>{locale?.previousText ?? "上一页"}</button><span aria-live="polite">{page} / {totalPages}</span><button type="button" className="rounded border px-2 py-1 disabled:opacity-50" disabled={page >= totalPages} onClick={() => { const next = page + 1; if (pagination.page === undefined) setInternalPage(next); pagination.onChange?.(next, pageSize); }}>{locale?.nextText ?? "下一页"}</button></div></nav> : null}
     </div>
   );
 }

@@ -182,7 +182,7 @@ function App() {
   const workspaceControl = (
       <Select
         aria-label="产品空间"
-        size="compact"
+        size="small"
         value={workspace}
         onChange={(e) => switchWorkspace(e.target.value as Workspace)}
       >
@@ -195,7 +195,7 @@ function App() {
   const viewportControl = (
     <Select
       aria-label="预览宽度"
-      size="compact"
+      size="small"
       value={previewWidth}
       onChange={(event) =>
         setPreviewWidth(event.target.value as PreviewWidth)

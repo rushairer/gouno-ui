@@ -1,4 +1,4 @@
-import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "../components/primitives/sheet";
 import { cn } from "../lib/utils";
 import type { ModalProps } from "./modal";
@@ -14,12 +14,15 @@ export interface DrawerProps extends Omit<ModalProps, "maxWidth" | "size"> {
 
 export function Drawer({
   open,
+  defaultOpen = false,
   isOpen,
   title,
   description,
   children,
   footer,
   onClose,
+  onOpenChange,
+  afterOpenChange,
   className,
   closeOnEsc = true,
   closeOnBackdrop = true,
@@ -29,21 +32,26 @@ export function Drawer({
   placement = "right",
   width,
   height,
+  loading = false,
 }: DrawerProps) {
+  const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const previousFocus = useRef<HTMLElement | null>(null);
-  const visible = open ?? isOpen ?? false;
+  const controlled = open !== undefined || isOpen !== undefined;
+  const visible = open ?? isOpen ?? internalOpen;
+  const changeOpen = (next: boolean) => { if (!controlled) setInternalOpen(next); onOpenChange?.(next); if (!next) onClose?.(); };
   useEffect(() => {
     if (visible) previousFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     return () => {
       if (previousFocus.current?.isConnected) previousFocus.current.focus();
     };
   }, [visible]);
+  useEffect(() => { afterOpenChange?.(visible); }, [afterOpenChange, visible]);
   const dimensionStyle: CSSProperties = placement === "left" || placement === "right"
     ? { maxWidth: width }
     : { maxHeight: height };
 
   return (
-    <Sheet open={visible} onOpenChange={(next) => { if (!next) onClose(); }}>
+    <Sheet open={visible} onOpenChange={changeOpen}>
       <SheetContent
         side={placement}
         showCloseButton={showCloseButton}
@@ -66,7 +74,7 @@ export function Drawer({
           <SheetTitle>{title || ariaLabel || closeText()}</SheetTitle>
           {description ? <SheetDescription>{description}</SheetDescription> : null}
         </SheetHeader>
-        <div className="min-h-0 flex-1 overflow-auto p-5">{children}</div>
+        <div className="min-h-0 flex-1 overflow-auto p-5" aria-busy={loading || undefined}>{loading ? <div role="status" className="py-8 text-center text-sm text-muted-foreground">加载中…</div> : children}</div>
         {footer ? <div className="flex flex-wrap justify-end gap-3 border-t p-5">{footer}</div> : null}
       </SheetContent>
     </Sheet>

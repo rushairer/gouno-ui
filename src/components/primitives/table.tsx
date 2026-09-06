@@ -7,18 +7,24 @@ export type TableDensity = "default" | "compact" | "touch";
 
 function Table({
   density = "default",
+  bordered = false,
+  fixed = false,
+  stickyHeader = false,
+  containerClassName,
   className,
   ...props
-}: React.ComponentProps<"table"> & { density?: TableDensity }) {
+}: React.ComponentProps<"table"> & { density?: TableDensity; bordered?: boolean; fixed?: boolean; stickyHeader?: boolean; containerClassName?: string }) {
   return (
     <div
       data-slot="table-container"
       data-density={density}
-      className="relative w-full overflow-x-auto"
+      data-bordered={bordered || undefined}
+      data-sticky-header={stickyHeader || undefined}
+      className={cn("relative w-full overflow-x-auto", bordered && "rounded-lg border", containerClassName)}
     >
       <table
         data-slot="table"
-        className={cn("w-full caption-bottom text-sm", className)}
+        className={cn("w-full caption-bottom text-sm", fixed && "table-fixed", bordered && "[&_td]:border-r [&_th]:border-r [&_tr>*:last-child]:border-r-0", stickyHeader && "[&_thead]:sticky [&_thead]:top-0 [&_thead]:z-10 [&_thead]:bg-background", className)}
         {...props}
       />
     </div>

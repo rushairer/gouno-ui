@@ -6,7 +6,7 @@
 @source "./";
 
 @layer components {
-  .code-block__pre {
+.code-block__pre {
     margin: 0;
     tab-size: 2;
   }
@@ -55,4 +55,25 @@
   .syntax-punctuation {
     color: var(--muted-foreground);
   }
+}
+
+.demo-block__content {
+  width: min(100%, 44rem);
+  min-width: 0;
+  margin-inline: auto;
+}
+
+.demo-block__content > [data-slot="table-container"],
+.demo-block__content > [data-slot="data-table"],
+.demo-block__content > .w-full,
+.demo-block__content > form,
+.demo-block__content > [data-slot="input-group"],
+.demo-block__content > [data-slot="date-picker"],
+.demo-block__content > [data-slot="input-number"] {
+  width: 100%;
+}
+
+.demo-block__content > [data-slot="input-number"],
+.demo-block__content > [data-slot="date-picker"] {
+  max-width: 28rem;
 }

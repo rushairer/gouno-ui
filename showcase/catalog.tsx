@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Activity, FileText, LayoutDashboard, Lock, Settings, Shield, Users } from "lucide-react";
+import { componentProgress } from "./component-progress";
 
 export type ShowcaseBrand = "blog" | "blog-admin" | "gosso-admin";
 export type ShowcasePage = {
@@ -16,7 +17,7 @@ const item = (id: string, name: string, nameZh: string, progress: number, icon: 
   name,
   nameZh,
   label: `${name} ${nameZh}`,
-  progress,
+  progress: componentProgress(id, progress),
   icon,
 });
 
