@@ -4,7 +4,7 @@ The shared React component library for the Gouno product family. The package own
 
 **Live Showcase:** [rushairer.github.io/gouno-ui](https://rushairer.github.io/gouno-ui/)
 
-The Showcase is published automatically to GitHub Pages from the `main` branch by [`.github/workflows/showcase-pages.yml`](.github/workflows/showcase-pages.yml). It contains the Core component catalog, interactive states, source examples, and static Blog, Blog Admin, and Gosso Admin scenarios.
+The Showcase is built and published automatically by [`.github/workflows/showcase-pages.yml`](.github/workflows/showcase-pages.yml). The workflow writes the static site to the `gh-pages` branch; enable GitHub Pages for this repository with **Settings → Pages → Deploy from a branch → `gh-pages` / `/ (root)`** once, then every `main` push updates the live site. It contains the Core component catalog, interactive states, source examples, and static Blog, Blog Admin, and Gosso Admin scenarios.
 
 Source is organized by layer: `src/core` contains pure components, `src/patterns` contains compound interactions, `src/gouno` contains product-family templates, and `src/components/primitives` contains the internal Radix/shadcn behavior layer. The root entry point exposes only the formal Core, Patterns and Gouno layers.
 
