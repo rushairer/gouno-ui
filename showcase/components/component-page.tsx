@@ -20,10 +20,16 @@ export interface ComponentDocument {
   demos?: ComponentDemo[];
   api?: ApiRow[];
   notes?: ReactNode;
+  apiSections?: { title: string; description?: string; rows: ApiRow[] }[];
 }
 
 const commonApi: ApiRow[] = [
-  { name: "disabled", description: "禁用交互", type: "boolean", defaultValue: "false" },
+  {
+    name: "disabled",
+    description: "禁用交互",
+    type: "boolean",
+    defaultValue: "false",
+  },
   { name: "className", description: "追加样式类", type: "string" },
 ];
 
@@ -35,7 +41,11 @@ function DemoSection({ demo }: { demo: ComponentDemo }) {
         <Heading level={3}>{demo.title}</Heading>
         {demo.description ? <Text tone="muted">{demo.description}</Text> : null}
       </div>
-      <div className="mb-4 flex gap-1 border-b" role="tablist" aria-label={`${demo.title} 示例视图`}>
+      <div
+        className="mb-4 flex gap-1 border-b"
+        role="tablist"
+        aria-label={`${demo.title} 示例视图`}
+      >
         {(["preview", "code"] as const).map((value) => (
           <button
             key={value}
@@ -49,7 +59,11 @@ function DemoSection({ demo }: { demo: ComponentDemo }) {
           </button>
         ))}
       </div>
-      {tab === "preview" ? <DemoBlock>{demo.render()}</DemoBlock> : <CodeBlock code={demo.code} />}
+      {tab === "preview" ? (
+        <DemoBlock>{demo.render()}</DemoBlock>
+      ) : (
+        <CodeBlock code={demo.code} />
+      )}
     </Panel>
   );
 }
@@ -62,15 +76,31 @@ export function ComponentPage({ document }: { document: ComponentDocument }) {
   return (
     <div className="space-y-6">
       <PageHeader title={document.title} description={document.description} />
-      {demos.map((demo, index) => <DemoSection key={`${demo.title}-${index}`} demo={demo} />)}
+      {demos.map((demo, index) => (
+        <DemoSection key={`${demo.title}-${index}`} demo={demo} />
+      ))}
       <Panel>
         <Heading level={3}>状态与用法</Heading>
-        <Text tone="muted">Core 组件统一使用 semantic tokens，并提供键盘焦点、禁用态和表单关联。交互状态既可受控，也可在简单场景下使用默认值。</Text>
+        <Text tone="muted">
+          Core 组件统一使用 semantic
+          tokens，并提供键盘焦点、禁用态和表单关联。交互状态既可受控，也可在简单场景下使用默认值。
+        </Text>
         {document.notes}
       </Panel>
       <Panel>
-        <Heading level={3} className="mb-4">API</Heading>
+        <Heading level={3} className="mb-4">
+          API
+        </Heading>
         <ApiTable rows={document.api ?? commonApi} />
+        {document.apiSections?.map((section) => (
+          <section key={section.title} className="mt-6 space-y-3">
+            <Heading level={3}>{section.title}</Heading>
+            {section.description && (
+              <Text tone="muted">{section.description}</Text>
+            )}
+            <ApiTable rows={section.rows} />
+          </section>
+        ))}
       </Panel>
     </div>
   );

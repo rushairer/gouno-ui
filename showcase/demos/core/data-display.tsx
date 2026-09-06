@@ -1,3 +1,13 @@
+import TableGrouped from "./table/grouped";
+import TableGroupedCode from "./table/grouped.tsx?raw";
+import { tableApiSections } from "./table/api-sections";
+import { dataTableApiSections } from "./data-table/api-sections";
+import DataTableStates from "./data-table/states";
+import DataTableStatesCode from "./data-table/states.tsx?raw";
+import DataTableServer from "./data-table/server";
+import DataTableServerCode from "./data-table/server.tsx?raw";
+import DataTableActions from "./data-table/actions";
+import DataTableActionsCode from "./data-table/actions.tsx?raw";
 import Example1 from "./table/table-0";
 import Example1Source from "./table/table-0.tsx?raw";
 import Example2 from "./table/table-1";
@@ -106,6 +116,7 @@ export const dataDisplayDocuments: Record<string, ComponentDocument> = {
     ),
   },
   table: {
+    apiSections: tableApiSections,
     title: "Table 表格",
     description: "统一表头、行、单元格和响应式容器样式。",
     code: Example1Source.replaceAll(
@@ -130,6 +141,14 @@ export const dataDisplayDocuments: Record<string, ComponentDocument> = {
           "@gouno/ui/core",
         ).replaceAll("../../../../src", "@gouno/ui"),
         render: () => <Example3 />,
+      },
+      {
+        title: "分组表头、合并单元格与汇总",
+        code: TableGroupedCode.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ).replaceAll("../../../../src/patterns", "@gouno/ui/patterns"),
+        render: () => <TableGrouped />,
       },
     ],
     api: [
@@ -163,29 +182,10 @@ export const dataDisplayDocuments: Record<string, ComponentDocument> = {
         type: "string",
       },
       { name: "className", description: "表格类名", type: "string" },
-      {
-        name: "TableHeader",
-        description: "表头组合组件",
-        type: "React.Component",
-      },
-      {
-        name: "TableBody",
-        description: "表体组合组件",
-        type: "React.Component",
-      },
-      {
-        name: "TableFooter",
-        description: "表尾组合组件",
-        type: "React.Component",
-      },
-      {
-        name: "TableCaption",
-        description: "表格说明组合组件",
-        type: "React.Component",
-      },
     ],
   },
   "data-table": {
+    apiSections: dataTableApiSections,
     title: "DataTable 数据表格",
     description:
       "面向业务列表的排序、筛选、分页、行选择、展开行、禁用行和状态原语。",
@@ -201,11 +201,35 @@ export const dataDisplayDocuments: Record<string, ComponentDocument> = {
         type: "ReactNode",
       },
       { name: "columns", description: "列定义", type: "DataTableColumn<T>[]" },
-      { name: "dataSource", description: "行数据", type: "T[]" },
-      { name: "rowKey", description: "稳定行键", type: "keyof T | function" },
-      { name: "loading", description: "加载状态", type: "boolean" },
-      { name: "loadingRows", description: "加载骨架行数", type: "number" },
-      { name: "loadingCols", description: "加载骨架列数", type: "number" },
+      {
+        name: "dataSource",
+        description: "行数据",
+        type: "T[]",
+        defaultValue: "[]",
+      },
+      {
+        name: "rowKey",
+        description: "稳定行键",
+        type: "keyof T | ((record: T, index: number) => string)",
+      },
+      {
+        name: "loading",
+        description: "加载状态",
+        type: "boolean",
+        defaultValue: "false",
+      },
+      {
+        name: "loadingRows",
+        description: "加载骨架行数",
+        type: "number",
+        defaultValue: "4",
+      },
+      {
+        name: "loadingCols",
+        description: "加载骨架列数",
+        type: "number",
+        defaultValue: "4",
+      },
       { name: "empty", description: "强制空状态", type: "boolean" },
       { name: "emptyState", description: "空状态覆盖内容", type: "ReactNode" },
       { name: "error", description: "错误状态内容", type: "ReactNode" },
@@ -215,13 +239,18 @@ export const dataDisplayDocuments: Record<string, ComponentDocument> = {
         description: "表格滚动容器类名",
         type: "string",
       },
-      { name: "density", description: "表格密度", type: "TableDensity" },
+      {
+        name: "density",
+        description: "表格密度",
+        type: "TableDensity",
+        defaultValue: '"default"',
+      },
       { name: "selectable", description: "启用行选择", type: "boolean" },
       { name: "selectedRowKeys", description: "受控选中键", type: "string[]" },
       {
         name: "onSelectionChange",
         description: "选中变化回调",
-        type: "function",
+        type: "(keys: string[], rows: T[]) => void",
       },
       {
         name: "defaultSort",
@@ -233,7 +262,11 @@ export const dataDisplayDocuments: Record<string, ComponentDocument> = {
         description: "受控排序状态",
         type: "DataTableSortState | null",
       },
-      { name: "onSortChange", description: "排序变化回调", type: "function" },
+      {
+        name: "onSortChange",
+        description: "排序变化回调",
+        type: "(sort: DataTableSortState | undefined) => void",
+      },
       {
         name: "filter",
         description: "行过滤函数",
@@ -243,9 +276,20 @@ export const dataDisplayDocuments: Record<string, ComponentDocument> = {
         name: "pagination",
         description: "客户端或服务端分页配置",
         type: "DataTablePagination | false",
+        defaultValue: "false",
       },
-      { name: "bordered", description: "显示表格边框", type: "boolean" },
-      { name: "stickyHeader", description: "固定表头", type: "boolean" },
+      {
+        name: "bordered",
+        description: "显示表格边框",
+        type: "boolean",
+        defaultValue: "true",
+      },
+      {
+        name: "stickyHeader",
+        description: "固定表头",
+        type: "boolean",
+        defaultValue: "false",
+      },
       {
         name: "rowDisabled",
         description: "禁用指定行",
@@ -256,16 +300,17 @@ export const dataDisplayDocuments: Record<string, ComponentDocument> = {
         name: "defaultExpandedRowKeys",
         description: "非受控初始展开键",
         type: "string[]",
+        defaultValue: "[]",
       },
       {
         name: "onExpandedRowsChange",
         description: "展开变化回调",
-        type: "function",
+        type: "(keys: string[]) => void",
       },
       {
         name: "expandedRowRender",
         description: "展开行内容",
-        type: "(record, index) => ReactNode",
+        type: "(record: T, index: number) => ReactNode",
       },
       {
         name: "summary",
@@ -275,24 +320,50 @@ export const dataDisplayDocuments: Record<string, ComponentDocument> = {
       {
         name: "onRow",
         description: "行原生属性回调",
-        type: "(record, index) => HTMLAttributes<HTMLTableRowElement>",
+        type: "(record: T, index: number) => HTMLAttributes<HTMLTableRowElement>",
       },
       {
         name: "rowClassName",
         description: "行类名回调",
-        type: "(record, index) => string",
+        type: "(record: T, index: number) => string",
       },
       { name: "toolbar", description: "表格工具栏", type: "ReactNode" },
       {
         name: "batchActions",
         description: "批量操作渲染回调",
-        type: "(keys, clearSelection) => ReactNode",
+        type: "(keys: string[], clearSelection: () => void) => ReactNode",
       },
       { name: "caption", description: "表格说明", type: "ReactNode" },
       {
         name: "locale",
         description: "空状态和分页文案",
-        type: "DataTableLocale",
+        type: "DataTableProps<T>['locale']",
+      },
+    ],
+    demos: [
+      {
+        title: "加载、空与错误状态",
+        code: DataTableStatesCode.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ).replaceAll("../../../../src/patterns", "@gouno/ui/patterns"),
+        render: () => <DataTableStates />,
+      },
+      {
+        title: "服务端分页与受控排序",
+        code: DataTableServerCode.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ).replaceAll("../../../../src/patterns", "@gouno/ui/patterns"),
+        render: () => <DataTableServer />,
+      },
+      {
+        title: "列显示、批量操作与摘要",
+        code: DataTableActionsCode.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ).replaceAll("../../../../src/patterns", "@gouno/ui/patterns"),
+        render: () => <DataTableActions />,
       },
     ],
   },

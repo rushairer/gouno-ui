@@ -1,3 +1,11 @@
+import DatePickerStates from "./date-picker/states";
+import DatePickerStatesCode from "./date-picker/states.tsx?raw";
+import InputNumberStates from "./input-number/states";
+import InputNumberStatesCode from "./input-number/states.tsx?raw";
+import FormLayouts from "./form/layouts";
+import FormLayoutsCode from "./form/layouts.tsx?raw";
+import UploadStates from "./upload/states";
+import UploadStatesCode from "./upload/states.tsx?raw";
 import Example1 from "./input/input-0";
 import Example1Source from "./input/input-0.tsx?raw";
 import Example2 from "./input/input-1";
@@ -196,12 +204,12 @@ const api = {
     {
       name: "onFinish",
       description: "校验成功回调",
-      type: "(formData, values) => void",
+      type: "(formData: FormData, values: Record<string, FormDataEntryValue>) => void",
     },
     {
       name: "onFinishFailed",
       description: "校验失败回调",
-      type: "(event) => void",
+      type: "(event: FormEvent<HTMLFormElement>) => void",
     },
     {
       name: "validateMessages",
@@ -215,6 +223,19 @@ const api = {
     { name: "className", description: "附加类名", type: "string" },
   ],
   "input-number": [
+    {
+      name: "size",
+      description: "控件尺寸",
+      type: '"small" | "middle" | "large"',
+      defaultValue: '"middle"',
+    },
+    { name: "status", description: "校验状态", type: '"error" | "warning"' },
+    {
+      name: "onChange",
+      description: "数值变化回调，清空时为 null",
+      type: "(value: number | null) => void",
+    },
+
     { name: "value", description: "受控数值", type: "number | null" },
     {
       name: "defaultValue",
@@ -228,12 +249,20 @@ const api = {
     {
       name: "formatter",
       description: "显示格式化函数",
-      type: "(value) => string",
+      type: "(value: number | null) => string",
     },
-    { name: "parser", description: "输入解析函数", type: "(value) => number" },
+    {
+      name: "parser",
+      description: "输入解析函数",
+      type: "(displayValue: string) => number | null",
+    },
     { name: "controls", description: "显示步进按钮", type: "boolean" },
     { name: "keyboard", description: "启用方向键步进", type: "boolean" },
-    { name: "onStep", description: "步进回调", type: "(value, info) => void" },
+    {
+      name: "onStep",
+      description: "步进回调",
+      type: '(value: number, info: { offset: number; type: "up" | "down" }) => void',
+    },
   ],
   "date-picker": [
     { name: "value", description: "受控日期值", type: "string" },
@@ -249,18 +278,38 @@ const api = {
     { name: "allowClear", description: "显示清除按钮", type: "boolean" },
     { name: "disabled", description: "禁用选择", type: "boolean" },
     { name: "readOnly", description: "只读日期", type: "boolean" },
-    { name: "onChange", description: "日期变化回调", type: "(value) => void" },
+    {
+      name: "onChange",
+      description: "日期变化回调",
+      type: "(value: string, date: Date | null) => void",
+    },
     { name: "ref", description: "输入元素引用", type: "Ref<HTMLInputElement>" },
   ],
   upload: [
+    {
+      name: "children",
+      description: "文件选择区域文案与内容",
+      type: "ReactNode",
+    },
+    {
+      name: "showFileList",
+      description: "显示当前文件列表",
+      type: "boolean",
+      defaultValue: "true",
+    },
+
     { name: "files", description: "受控文件列表", type: "File[]" },
     { name: "defaultFiles", description: "非受控初始文件列表", type: "File[]" },
     {
       name: "onFiles",
       description: "文件列表变化回调",
-      type: "(files) => void",
+      type: "(files: File[]) => void",
     },
-    { name: "onRemove", description: "移除文件回调", type: "(file) => void" },
+    {
+      name: "onRemove",
+      description: "移除文件回调",
+      type: "(file: File) => void",
+    },
     { name: "accept", description: "允许的文件类型", type: "string" },
     { name: "multiple", description: "允许多选文件", type: "boolean" },
     { name: "maxCount", description: "最大文件数", type: "number" },
@@ -268,11 +317,24 @@ const api = {
     {
       name: "beforeSelect",
       description: "选择前校验",
-      type: "(files) => boolean",
+      type: "(file: File, files: File[]) => boolean",
     },
-    { name: "onReject", description: "拒绝文件回调", type: "(reason) => void" },
+    {
+      name: "onReject",
+      description: "拒绝文件回调",
+      type: '(file: File, reason: "type" | "size" | "beforeSelect" | "maxCount") => void',
+    },
     { name: "drag", description: "启用拖放区域", type: "boolean" },
-    { name: "disabled", description: "禁用上传", type: "boolean" },
+    {
+      name: "disabled",
+      description: "禁用选择、拖入和删除文件",
+      type: "boolean",
+    },
+    {
+      name: "readOnly",
+      description: "只读：禁止选择、拖入和删除文件",
+      type: "boolean",
+    },
     { name: "error", description: "错误提示", type: "ReactNode" },
   ],
 };
@@ -379,6 +441,14 @@ export const dataEntryDocuments: Record<string, ComponentDocument> = {
         ).replaceAll("../../../../src", "@gouno/ui"),
         render: () => <Example11 />,
       },
+      {
+        title: "尺寸、状态与边界",
+        code: InputNumberStatesCode.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ),
+        render: () => <InputNumberStates />,
+      },
     ],
     api: api["input-number"],
   },
@@ -398,6 +468,14 @@ export const dataEntryDocuments: Record<string, ComponentDocument> = {
           "@gouno/ui/core",
         ).replaceAll("../../../../src", "@gouno/ui"),
         render: () => <Example13 />,
+      },
+      {
+        title: "尺寸、状态、只读与边界",
+        code: DatePickerStatesCode.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ),
+        render: () => <DatePickerStates />,
       },
     ],
     api: api["date-picker"],
@@ -419,6 +497,14 @@ export const dataEntryDocuments: Record<string, ComponentDocument> = {
         ).replaceAll("../../../../src", "@gouno/ui"),
         render: () => <Example15 />,
       },
+      {
+        title: "布局、校验与提交状态",
+        code: FormLayoutsCode.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ).replaceAll("../../../../src/patterns", "@gouno/ui/patterns"),
+        render: () => <FormLayouts />,
+      },
     ],
     api: api.form,
   },
@@ -438,6 +524,14 @@ export const dataEntryDocuments: Record<string, ComponentDocument> = {
           "@gouno/ui/core",
         ).replaceAll("../../../../src", "@gouno/ui"),
         render: () => <Example17 />,
+      },
+      {
+        title: "受控文件与限制状态",
+        code: UploadStatesCode.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ).replaceAll("../../../../src/patterns", "@gouno/ui/patterns"),
+        render: () => <UploadStates />,
       },
     ],
     api: api.upload,

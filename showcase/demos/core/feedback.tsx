@@ -1,3 +1,14 @@
+import { modalApiSections, overlayStyleApi } from "./modal/api-sections";
+import ModalActions from "./modal/actions";
+import ModalActionsCode from "./modal/actions.tsx?raw";
+import ModalRetention from "./modal/retention";
+import ModalRetentionCode from "./modal/retention.tsx?raw";
+import ModalUncontrolled from "./modal/uncontrolled";
+import ModalUncontrolledCode from "./modal/uncontrolled.tsx?raw";
+import DrawerRetention from "./drawer/retention";
+import DrawerRetentionCode from "./drawer/retention.tsx?raw";
+import DrawerUncontrolled from "./drawer/uncontrolled";
+import DrawerUncontrolledCode from "./drawer/uncontrolled.tsx?raw";
 import Example1 from "./modal/modal-0";
 import Example1Source from "./modal/modal-0.tsx?raw";
 import Example2 from "./modal/modal-1";
@@ -193,12 +204,12 @@ const modalApi = [
   {
     name: "onOpenChange",
     description: "打开状态变化回调",
-    type: "(open) => void",
+    type: "(open: boolean) => void",
   },
   {
     name: "afterOpenChange",
-    description: "状态变化后的回调",
-    type: "(open) => void",
+    description: "挂载及打开状态提交后回调；不是 CSS 动画结束事件",
+    type: "(open: boolean) => void",
   },
 ];
 
@@ -308,6 +319,7 @@ export const feedbackDocuments: Record<string, ComponentDocument> = {
     ),
   },
   modal: {
+    apiSections: modalApiSections,
     title: "Modal 对话框",
     description: "焦点锁定、Escape 关闭、焦点回收、受控/非受控状态和加载状态。",
     code: Example1Source.replaceAll(
@@ -332,10 +344,35 @@ export const feedbackDocuments: Record<string, ComponentDocument> = {
         ).replaceAll("../../../../src", "@gouno/ui"),
         render: () => <Example3 />,
       },
+      {
+        title: "默认确认操作",
+        code: ModalActionsCode.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ).replaceAll("../../../../src/patterns", "@gouno/ui/patterns"),
+        render: () => <ModalActions />,
+      },
+      {
+        title: "内容保留与样式",
+        code: ModalRetentionCode.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ).replaceAll("../../../../src/patterns", "@gouno/ui/patterns"),
+        render: () => <ModalRetention />,
+      },
+      {
+        title: "非受控模式",
+        code: ModalUncontrolledCode.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ).replaceAll("../../../../src/patterns", "@gouno/ui/patterns"),
+        render: () => <ModalUncontrolled />,
+      },
     ],
     api: modalApi,
   },
   drawer: {
+    apiSections: overlayStyleApi,
     title: "Drawer 抽屉",
     description:
       "从四个方向承载辅助任务，支持默认 378px 尺寸、遮罩关闭、受控/非受控状态、加载状态和焦点回收。",
@@ -361,6 +398,22 @@ export const feedbackDocuments: Record<string, ComponentDocument> = {
           "@gouno/ui/core",
         ).replaceAll("../../../../src", "@gouno/ui"),
         render: () => <Example6 />,
+      },
+      {
+        title: "内容保留与区域插槽",
+        code: DrawerRetentionCode.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ).replaceAll("../../../../src/patterns", "@gouno/ui/patterns"),
+        render: () => <DrawerRetention />,
+      },
+      {
+        title: "非受控模式",
+        code: DrawerUncontrolledCode.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ).replaceAll("../../../../src/patterns", "@gouno/ui/patterns"),
+        render: () => <DrawerUncontrolled />,
       },
     ],
     api: drawerApi,

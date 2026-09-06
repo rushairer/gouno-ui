@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import {
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import {
   Sheet,
   SheetContent,
@@ -83,9 +89,12 @@ export function Drawer({
       if (previousFocus.current?.isConnected) previousFocus.current.focus();
     };
   }, [visible]);
+  const notifyOpenChange = useEffectEvent((next: boolean) =>
+    afterOpenChange?.(next),
+  );
   useEffect(() => {
-    afterOpenChange?.(visible);
-  }, [afterOpenChange, visible]);
+    notifyOpenChange(visible);
+  }, [visible]);
   const dimensionStyle: CSSProperties =
     placement === "left" || placement === "right" ? { width } : { height };
 
