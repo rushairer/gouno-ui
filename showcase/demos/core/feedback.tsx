@@ -12,6 +12,32 @@ function MessageDemo(){const api=useMessage();return <Space><Button onClick={()=
 function NotificationDemo(){const api=useNotification();return <Button onClick={()=>api.open({title:"构建完成",description:"Showcase 已成功生成。"})}>打开通知</Button>}
 function TourDemo(){const [open,setOpen]=useState(false);return <><Button onClick={()=>setOpen(true)}>开始引导</Button><Tour open={open} onClose={()=>setOpen(false)} steps={[{title:"欢迎",description:"这是第一步。"},{title:"组件目录",description:"从左侧选择组件。"}]}/></>}
 
+const modalApi = [
+  { name: "open / isOpen", description: "受控显示状态；isOpen 为兼容别名", type: "boolean" },
+  { name: "defaultOpen", description: "非受控初始打开状态", type: "boolean", defaultValue: "false" },
+  { name: "title / description", description: "标题和辅助描述", type: "ReactNode" },
+  { name: "children", description: "对话框主体内容", type: "ReactNode" },
+  { name: "footer", description: "底部操作区域", type: "ReactNode" },
+  { name: "size", description: "预设宽度", type: '"sm" | "md" | "lg" | "xl"', defaultValue: '"md"' },
+  { name: "maxWidth", description: "覆盖预设最大宽度", type: "string" },
+  { name: "closeOnEsc", description: "是否允许 Escape 关闭", type: "boolean", defaultValue: "true" },
+  { name: "closeOnBackdrop", description: "是否允许点击遮罩关闭", type: "boolean", defaultValue: "false" },
+  { name: "showCloseButton", description: "是否显示右上角关闭按钮", type: "boolean", defaultValue: "true" },
+  { name: "loading", description: "主体加载状态", type: "boolean", defaultValue: "false" },
+  { name: "ariaLabel", description: "没有可见标题时的可访问名称", type: "string" },
+  { name: "contentStyle / className", description: "内容样式和附加类名", type: "CSSProperties / string" },
+  { name: "onClose", description: "关闭回调", type: "() => void" },
+  { name: "onOpenChange", description: "打开状态变化回调", type: "(open) => void" },
+  { name: "afterOpenChange", description: "状态变化后的回调", type: "(open) => void" },
+];
+
+const drawerApi = [
+  ...modalApi.filter((row) => !["size", "maxWidth"].includes(row.name)),
+  { name: "placement", description: "抽屉方向", type: '"top" | "right" | "bottom" | "left"', defaultValue: '"right"' },
+  { name: "width", description: "左右抽屉宽度", type: "number | string" },
+  { name: "height", description: "上下抽屉高度", type: "number | string" },
+];
+
 export const feedbackDocuments: Record<string, ComponentDocument> = {
   empty: { title: "Empty 空状态", description: "无数据时的说明和操作入口。", code: '<Empty title="暂无数据" description="创建第一条记录" />', render: () => <Empty title="暂无数据" description="创建第一条记录后会显示在这里。" action={<Button variant="primary">新建</Button>} /> },
   result: { title: "Result 结果", description: "操作结果和下一步入口。", code: '<Result status="success" title="操作成功" />', render: () => <Result status="success" title="操作成功" subTitle="数据已经保存" extra={<Button>返回列表</Button>} /> },
@@ -19,8 +45,8 @@ export const feedbackDocuments: Record<string, ComponentDocument> = {
   alert: { title: "Alert 警告提示", description: "页面内持续可见的重要信息。", code: '<Alert>这是一条提示</Alert>', render: () => <Alert>这是一条需要关注的信息。</Alert> },
   progress: { title: "Progress 进度条", description: "展示任务完成进度。", code: '<Progress value={60} />', render: () => <Space direction="vertical"><Progress value={60} /><Progress value={100} /></Space> },
   skeleton: { title: "Skeleton 骨架屏", description: "内容加载前的结构占位。", code: '<Skeleton className="h-8 w-full" />', render: () => <Space direction="vertical"><Skeleton className="h-8 w-48" /><Skeleton className="h-24 w-full" /></Space> },
-  modal: { title: "Modal 对话框", description: "焦点锁定、Escape 关闭和焦点回收。", code: '<Modal open={open} title="标题" onClose={close}>内容</Modal>', render: () => <ModalDemo />, demos: [{ title: "四种尺寸", code: '<Modal size="sm" />\n<Modal size="md" />\n<Modal size="lg" />\n<Modal size="xl" />', render: () => <ModalSizeDemo /> }] },
-  drawer: { title: "Drawer 抽屉", description: "从四个方向承载辅助任务，支持尺寸、遮罩关闭和焦点回收。", code: '<Drawer open={open} title="筛选" onClose={close}>...</Drawer>', render: () => <DrawerDemo />, demos: [{ title: "弹出方向", description: "支持 top、right、bottom、left。", code: '<Drawer placement="left" width={420} />\n<Drawer placement="bottom" height={320} />', render: () => <DrawerPlacementDemo /> }], api: [{ name: "open", description: "显示状态", type: "boolean" }, { name: "placement", description: "弹出方向", type: '"top" | "right" | "bottom" | "left"', defaultValue: '"right"' }, { name: "width", description: "左右抽屉宽度", type: "number | string" }, { name: "height", description: "上下抽屉高度", type: "number | string" }, { name: "closeOnEsc", description: "Escape 是否关闭", type: "boolean", defaultValue: "true" }, { name: "closeOnBackdrop", description: "点击遮罩是否关闭", type: "boolean", defaultValue: "true" }] },
+  modal: { title: "Modal 对话框", description: "焦点锁定、Escape 关闭、焦点回收、受控/非受控状态和加载状态。", code: '<Modal open={open} title="标题" onClose={close}>内容</Modal>', render: () => <ModalDemo />, demos: [{ title: "四种尺寸", code: '<Modal size="sm" />\n<Modal size="md" />\n<Modal size="lg" />\n<Modal size="xl" />', render: () => <ModalSizeDemo /> }], api: modalApi },
+  drawer: { title: "Drawer 抽屉", description: "从四个方向承载辅助任务，支持尺寸、遮罩关闭、受控/非受控状态、加载状态和焦点回收。", code: '<Drawer open={open} title="筛选" onClose={close}>内容</Drawer>', render: () => <DrawerDemo />, demos: [{ title: "弹出方向", description: "支持 top、right、bottom、left。", code: '<Drawer placement="left" width={420} />\n<Drawer placement="bottom" height={320} />', render: () => <DrawerPlacementDemo /> }], api: drawerApi },
   popover: { title: "Popover 气泡卡片", description: "由触发器打开的轻量内容面板。", code: '<Popover><PopoverTrigger>打开</PopoverTrigger><PopoverContent>内容</PopoverContent></Popover>', render: () => <Popover><PopoverTrigger asChild><Button>打开 Popover</Button></PopoverTrigger><PopoverContent>可放置说明和操作。</PopoverContent></Popover> },
   tooltip: { title: "Tooltip 文字提示", description: "悬停或聚焦时解释控件。", code: '<Tooltip><TooltipTrigger>...</TooltipTrigger><TooltipContent>说明</TooltipContent></Tooltip>', render: () => <TooltipProvider><Tooltip><TooltipTrigger asChild><Button>聚焦或悬停</Button></TooltipTrigger><TooltipContent>补充说明</TooltipContent></Tooltip></TooltipProvider> },
   popconfirm: { title:"Popconfirm 气泡确认", description:"在危险或不可逆操作前请求确认。", code:'<Popconfirm title="确认删除？"><Button>删除</Button></Popconfirm>', render:()=> <Popconfirm title="确认删除？" description="删除后无法恢复。" danger><Button variant="danger">删除</Button></Popconfirm> },
