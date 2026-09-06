@@ -3,4 +3,4 @@ export * from "./admin-shell";
 export * from "./layout";
 export * from "./templates";
 export { ThemeProvider, useTheme } from "../theme/provider";
-export { ThemeToggle } from "../components/navigation/navigation";
+export { ThemeToggle } from "../patterns/navigation-patterns";

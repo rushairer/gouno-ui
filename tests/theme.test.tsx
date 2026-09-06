@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { ThemeProvider, useTheme } from "../src/theme/provider";
-import { DataTable } from "../src/components/data-display/table";
+import { DataTable } from "../src/patterns/data-table";
 
 function Probe() {
   const { brand, resolvedMode } = useTheme();

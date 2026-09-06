@@ -28,7 +28,7 @@ import {
 } from "../components/primitives/empty";
 import { Skeleton as PrimitiveSkeleton } from "../components/primitives/skeleton";
 import { Button } from "../core";
-import { AdminPage, PageHeader } from "../components/layout/layout";
+import { AdminPage, PageHeader } from "../gouno/layout";
 import { useTheme } from "../theme/provider";
 import { cn } from "../lib/utils";
 export type FeedbackType = "error" | "success" | "warning" | "info";

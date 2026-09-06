@@ -5,7 +5,7 @@ import {
   EditorWorkspaceTemplate,
   ListPageTemplate,
   ResponsiveList,
-} from "../src/components/templates/product-templates";
+} from "../src/gouno/templates";
 
 describe("Gouno Pro page templates", () => {
   it("renders dashboard chrome and state controls", () => {
