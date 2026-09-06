@@ -14,7 +14,10 @@ export interface SpaceProps extends HTMLAttributes<HTMLDivElement> {
 }
 export function Space({ direction = "horizontal", size = "md", align, wrap = false, block = false, split, children, className, ...props }: SpaceProps) {
   const gap = typeof size === "number" ? `[gap:${size}px]` : ({ xs: "gap-1", sm: "gap-2", md: "gap-3", lg: "gap-4", xl: "gap-6" } as const)[size];
-  const resolvedAlign = align ?? (direction === "vertical" ? "start" : undefined);
+  // Ant Design leaves align unset by default. Native flexbox then stretches
+  // vertical children across the available cross-axis; content-width stacks
+  // opt into `align="start"` explicitly.
+  const resolvedAlign = align;
   const items = Array.isArray(children) ? children : [children];
   const content = split ? items.flatMap((child, index) => index === 0 ? [child] : [split, child]) : children;
   return <div {...props} data-slot="space" data-direction={direction} data-block={block || undefined} className={cn(
