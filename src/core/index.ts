@@ -10,6 +10,7 @@ export { Alert } from "../components/primitives/alert";
 export { Skeleton } from "../components/feedback/feedback";
 export { Statistic, Timeline } from "../components/data-display/statistic";
 export { Container, Stack } from "../components/layout/primitives";
+export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption } from "../components/primitives/table";
 export * from "./button";
 export * from "./icon-button";
 export * from "./badge";

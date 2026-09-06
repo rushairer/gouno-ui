@@ -31,14 +31,6 @@ export function DataTable({
       />
     );
   if (empty && emptyState) return <>{emptyState}</>;
-  return (
-    <div
-      data-slot="table-container"
-      data-density={density}
-      className={cn("min-w-0 rounded-lg border", className)}
-    >
-      <Table density={density}>{children}</Table>
-    </div>
-  );
+  return <Table density={density} className={cn("rounded-lg border", className)}>{children}</Table>;
 }
 export * from "../primitives/table";
