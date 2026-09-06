@@ -1,4 +1,6 @@
-export * from "./legacy";
+export * from "./core";
+export * from "./patterns";
+export * from "./gouno";
 export * from "./theme/provider";
 export * from "./lib/utils";
 // Compatibility exports for consumers that imported low-level primitives directly.

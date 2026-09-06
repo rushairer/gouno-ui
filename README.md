@@ -2,14 +2,14 @@
 
 The shared React component library for the Gouno product family. The package owns reusable foundations, forms, navigation, feedback, overlays, data display, layout, templates, themes and a static showcase for Blog, Blog Admin and Gosso Admin.
 
-Source is organized under `src/components` by public domain. `src/components/primitives` contains the internal Radix/shadcn behavior layer. Existing Gouno component names remain available from the root entry point for migration compatibility.
+Source is organized by layer: `src/core` contains pure components, `src/patterns` contains compound interactions, `src/gouno` contains product-family templates, and `src/components/primitives` contains the internal Radix/shadcn behavior layer. Existing Gouno component names remain available from the root entry point for migration compatibility.
 
 Public layers:
 
 - `@gouno/ui/core` — pure, product-agnostic components.
 - `@gouno/ui/patterns` — reusable multi-component interaction patterns.
 - `@gouno/ui/gouno` — Gouno product-family shells and page templates.
-- `@gouno/ui/legacy` — temporary compatibility surface for the old API.
+- `@gouno/ui/legacy` — compatibility alias to the current root API; legacy implementations are no longer kept as a separate source layer.
 
 Core deliberately excludes product concepts such as `AdminShell`, `Panel`, `StatusBadge`, `RiskBadge`, route adapters and page templates.
 

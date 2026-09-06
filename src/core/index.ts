@@ -1,7 +1,7 @@
 /** Pure, product-agnostic component API. */
-export { Button, type ButtonProps, type ButtonVariant, type ButtonSize } from "./button";
+export { Button, ButtonLink, IconButtonLink, ChoiceButton, NavigationProvider, type ButtonProps, type ButtonVariant, type ButtonSize, type ButtonLinkProps, type LinkAdapterProps } from "./button";
 export { IconButton, type IconButtonProps } from "./icon-button";
-export { Badge, Tag, type BadgeTone } from "./badge";
+export { Badge, Tag, StatusBadge, StatusIndicator, RiskBadge, type BadgeTone } from "./badge";
 export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./card";
 export { Spinner, Progress, AspectRatio, Kbd, Typography } from "./visual";
 export { Input, Textarea, Select, Checkbox, Radio, Switch, Field, type InputProps, type SelectProps } from "./form-controls";
@@ -19,5 +19,4 @@ export * from "./separator";
 export * from "./avatar";
 export * from "./feedback";
 export * from "./input";
-export * from "./overlay";
 export * from "./layout";

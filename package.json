@@ -31,8 +31,8 @@
       "import": "./dist/gouno/index.js"
     },
     "./legacy": {
-      "types": "./dist/legacy/index.d.ts",
-      "import": "./dist/legacy/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./theme": {
       "types": "./dist/theme.d.ts",

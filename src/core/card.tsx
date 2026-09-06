@@ -1,8 +1,9 @@
-import type { HTMLAttributes } from "react";
+import type { ElementType, HTMLAttributes, ReactNode } from "react";
 import { cn } from "../lib/utils";
-export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) { return <div {...props} className={cn("rounded-lg border bg-card text-card-foreground shadow-sm", className)} />; }
-export function CardHeader({ className, ...props }: HTMLAttributes<HTMLDivElement>) { return <div {...props} className={cn("flex flex-col space-y-1.5 p-6", className)} />; }
-export function CardTitle({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) { return <h3 {...props} className={cn("text-lg font-semibold leading-none tracking-tight", className)} />; }
-export function CardDescription({ className, ...props }: HTMLAttributes<HTMLParagraphElement>) { return <p {...props} className={cn("text-sm text-muted-foreground", className)} />; }
-export function CardContent({ className, ...props }: HTMLAttributes<HTMLDivElement>) { return <div {...props} className={cn("p-6 pt-0", className)} />; }
-export function CardFooter({ className, ...props }: HTMLAttributes<HTMLDivElement>) { return <div {...props} className={cn("flex items-center p-6 pt-0", className)} />; }
+export interface CardProps extends HTMLAttributes<HTMLElement> { as?: ElementType; variant?: "default" | "subtle" | "elevated"; padding?: "none" | "sm" | "base" | "lg"; interactive?: boolean; }
+export function Card({ as: Component = "div", variant = "default", padding = "base", interactive, className, ...props }: CardProps) { return <Component {...props} tabIndex={interactive ? (props.tabIndex ?? 0) : props.tabIndex} data-slot="card" className={cn("ui-card min-w-0 rounded-lg border bg-card text-card-foreground", padding === "sm" ? "p-4" : padding === "lg" ? "p-8" : padding === "none" ? "p-0" : "p-6", variant === "subtle" && "bg-muted", variant === "elevated" && "shadow-lg", interactive && "cursor-pointer hover:border-primary", className)} />; }
+export function CardHeader({ title, description, action, children, className, ...props }: HTMLAttributes<HTMLElement> & { title?: ReactNode; description?: ReactNode; action?: ReactNode; children?: ReactNode }) { return <header {...props} data-slot="card-header" className={cn("flex items-start justify-between gap-4", className)}>{children || <><div>{title ? <CardTitle>{title}</CardTitle> : null}{description ? <CardDescription>{description}</CardDescription> : null}</div>{action}</>}</header>; }
+export const CardTitle = ({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) => <h3 {...props} data-slot="card-title" className={cn("text-base font-semibold", className)} />;
+export const CardDescription = ({ className, ...props }: HTMLAttributes<HTMLParagraphElement>) => <p {...props} className={cn("mt-1 text-sm text-muted-foreground", className)} />;
+export const CardContent = ({ className, ...props }: HTMLAttributes<HTMLDivElement> & { flush?: boolean }) => <div {...props} data-slot="card-content" className={cn("min-w-0", className)} />;
+export const CardFooter = ({ className, ...props }: HTMLAttributes<HTMLElement>) => <footer {...props} data-slot="card-footer" className={cn("flex flex-wrap items-center gap-3", className)} />;
