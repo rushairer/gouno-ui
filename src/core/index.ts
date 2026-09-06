@@ -22,7 +22,7 @@ export * from "./avatar";
 export * from "./feedback";
 
 export { Heading, Text } from "./typography";
-export { Divider, Space, Flex, Grid } from "./layout";
+export { Divider, Space, Flex, Grid, type SpaceProps, type SpaceAlign } from "./layout";
 export { InputNumber } from "./input-number";
 export { DatePicker, DateRangePicker, TimePicker, ColorPicker } from "./date-time";
 export { Upload, type UploadProps } from "./upload";

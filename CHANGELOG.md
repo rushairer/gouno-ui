@@ -37,6 +37,7 @@ All notable changes to this project are documented here.
 
 ### Fixed
 
+- Prevented vertical Space from stretching inline Badge and CheckableTag children to the full container width; `align="stretch"` remains available for intentional full-width layouts.
 - Kept code syntax colors synchronized with the active light, dark, system, and brand theme tokens instead of using a fixed editor theme.
 - Centered single-icon buttons by removing empty label spans and applying the shared icon wrapper geometry.
 - Made every Button Showcase demo interactive and aligned each displayed source block with its rendered example.

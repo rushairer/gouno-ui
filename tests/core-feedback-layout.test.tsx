@@ -1,10 +1,19 @@
 import { describe, expect, it } from "vitest";
 import * as React from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { Drawer, InputOTP, Layout, LayoutContent, LayoutHeader, MessageProvider, Modal, Popconfirm, Splitter, useMessage } from "../src/core";
+import { Badge, CheckableTag, Drawer, InputOTP, Layout, LayoutContent, LayoutHeader, MessageProvider, Modal, Popconfirm, Space, Splitter, useMessage } from "../src/core";
 
 describe("Core layout and feedback", () => {
   it("renders layout regions and splitter semantics",()=>{render(<><Layout><LayoutHeader>Header</LayoutHeader><LayoutContent>Content</LayoutContent></Layout><Splitter first="A" second="B"/></>);expect(screen.getByText("Header")).toBeTruthy();expect(screen.getByRole("separator")).toBeTruthy();});
+  it("keeps inline components at content width in vertical Space by default", () => {
+    const { container } = render(<Space direction="vertical"><Badge count={5}>Inbox</Badge><CheckableTag defaultChecked>TypeScript</CheckableTag></Space>);
+    expect(container.firstElementChild?.className).toContain("items-start");
+    expect(container.firstElementChild?.className).not.toContain("items-stretch");
+  });
+  it("allows vertical Space children to stretch explicitly", () => {
+    const { container } = render(<Space direction="vertical" align="stretch"><button>Full width</button></Space>);
+    expect(container.firstElementChild?.className).toContain("items-stretch");
+  });
   it("supports OTP digit entry",()=>{render(<InputOTP length={4}/>);const first=screen.getByLabelText("Digit 1");fireEvent.change(first,{target:{value:"1"}});expect((first as HTMLInputElement).value).toBe("1");});
   it("opens a confirmation dialog",()=>{render(<Popconfirm title="Delete item?"><button>Delete</button></Popconfirm>);fireEvent.click(screen.getByRole("button",{name:"Delete"}));expect(screen.getByRole("alertdialog")).toBeTruthy();});
   it("provides transient message API",()=>{function Probe(){const api=useMessage();return <button onClick={()=>api.success("Saved")}>Show</button>}render(<MessageProvider><Probe/></MessageProvider>);fireEvent.click(screen.getByRole("button",{name:"Show"}));expect(screen.getByText("Saved")).toBeTruthy();});
