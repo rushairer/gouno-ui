@@ -3,7 +3,7 @@ export { Button, type ButtonProps, type ButtonVariant, type ButtonSize } from ".
 export { IconButton, type IconButtonProps } from "./icon-button";
 export { Badge, Tag, type BadgeTone } from "./badge";
 export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./card";
-export { Spinner, Progress, AspectRatio, Kbd, Typography } from "../components/foundations/primitives";
+export { Spinner, Progress, AspectRatio, Kbd, Typography } from "./visual";
 export { Input, Textarea, Select, Checkbox, Radio, Switch, Field, type InputProps, type SelectProps } from "../components/forms/controls";
 export { Tabs, TabList, Tab, TabPanel } from "../components/navigation/navigation";
 export { Modal, Drawer } from "../components/overlays/overlays";

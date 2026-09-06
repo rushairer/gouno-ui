@@ -29,7 +29,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
 } from "../primitives/alert-dialog";
-import { Button } from "../foundations/actions";
+import { Button } from "../../core";
 import { cn } from "../../lib/utils";
 const closeText = () =>
   typeof document !== "undefined" &&

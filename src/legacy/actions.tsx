@@ -8,8 +8,8 @@ import {
   type Ref,
 } from "react";
 import { LoaderCircle } from "lucide-react";
-import { Button as PrimitiveButton } from "../primitives/button";
-import { cn } from "../../lib/utils";
+import { Button as PrimitiveButton } from "../components/primitives/button";
+import { cn } from "../lib/utils";
 export type ButtonVariant =
   | "primary"
   | "secondary"

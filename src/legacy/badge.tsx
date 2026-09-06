@@ -1,6 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
-import { Badge as PrimitiveBadge } from "../primitives/badge";
-import { cn } from "../../lib/utils";
+import { Badge as PrimitiveBadge } from "../components/primitives/badge";
+import { cn } from "../lib/utils";
 export type BadgeTone =
   "neutral" | "brand" | "success" | "warning" | "danger" | "info";
 const colors: Record<BadgeTone, string> = {

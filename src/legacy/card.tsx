@@ -1,5 +1,5 @@
 import { type HTMLAttributes, type ReactNode, type ElementType } from "react";
-import { cn } from "../../lib/utils";
+import { cn } from "../lib/utils";
 export function Card({
   as: Component = "section",
   variant = "default",

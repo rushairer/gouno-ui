@@ -1,7 +1,7 @@
 import { type ReactNode, type ElementType, type HTMLAttributes } from "react";
 import { X } from "lucide-react";
 import { cn } from "../../lib/utils";
-import { IconButton } from "../foundations/actions";
+import { IconButton } from "../../core";
 import type { TableDensity } from "../primitives/table";
 export function Panel({
   as: Component = "section",

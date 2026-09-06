@@ -14,7 +14,7 @@ import {
   Moon,
   Monitor,
 } from "lucide-react";
-import { Button, IconButton } from "../foundations/actions";
+import { Button, IconButton } from "../../core";
 import {
   DropdownMenu,
   DropdownMenuTrigger,

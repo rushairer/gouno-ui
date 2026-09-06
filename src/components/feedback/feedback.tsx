@@ -27,7 +27,7 @@ import {
   EmptyContent,
 } from "../primitives/empty";
 import { Skeleton as PrimitiveSkeleton } from "../primitives/skeleton";
-import { Button } from "../foundations/actions";
+import { Button } from "../../core";
 import { AdminPage, PageHeader } from "../layout/layout";
 import { useTheme } from "../../theme/provider";
 import { cn } from "../../lib/utils";
