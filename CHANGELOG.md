@@ -33,6 +33,9 @@ All notable changes to this project are documented here.
 
 ### Fixed
 
+- Centered single-icon buttons by removing empty label spans and applying the shared icon wrapper geometry.
+- Made every Button Showcase demo interactive and aligned each displayed source block with its rendered example.
+- Updated the external ButtonLink example to the Gouno UI GitHub repository.
 - Keep the active Showcase navigation item visible after hash navigation and style selection from `aria-current="page"`.
 
 ### Removed

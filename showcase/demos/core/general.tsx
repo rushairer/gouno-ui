@@ -1,19 +1,99 @@
+import { useState } from "react";
 import { ArrowRight, Download, LoaderCircle, Plus } from "lucide-react";
 import { Avatar, AvatarFallback, Badge, Button, ButtonLink, Heading, Icon, IconButton, Kbd, Space, Text } from "../../../src/core";
 import type { ComponentDocument } from "../../components/component-page";
+
+function ButtonTypesDemo() { const [action, setAction] = useState("尚未操作"); return <Space direction="vertical"><Space wrap><Button variant="primary" onClick={() => setAction("主要按钮")}>主要按钮</Button><Button variant="secondary" onClick={() => setAction("次要按钮")}>次要按钮</Button><Button variant="dashed" onClick={() => setAction("虚线按钮")}>虚线按钮</Button><Button variant="text" onClick={() => setAction("文本按钮")}>文本按钮</Button><Button variant="link" onClick={() => setAction("链接样式按钮")}>链接样式按钮</Button></Space><Text tone="muted" aria-live="polite">最近操作：{action}</Text></Space>; }
+function DangerDemo() { const [action, setAction] = useState("尚未操作"); return <Space direction="vertical"><Space wrap><Button variant="danger" onClick={() => setAction("删除")}>删除</Button><Button variant="danger" disabled onClick={() => setAction("不应触发")}>危险禁用</Button><Button variant="ghost" onClick={() => setAction("取消")}>取消</Button></Space><Text tone="muted" aria-live="polite">最近操作：{action}</Text></Space>; }
+function SizeDemo() { const [action, setAction] = useState("尚未操作"); return <Space direction="vertical"><Space wrap className="items-center"><Button size="small" onClick={() => setAction("Small")}>Small</Button><Button size="middle" onClick={() => setAction("Middle")}>Middle</Button><Button size="large" onClick={() => setAction("Large")}>Large</Button></Space><Text tone="muted" aria-live="polite">最近操作：{action}</Text></Space>; }
+function IconDemo() { const [action, setAction] = useState("尚未操作"); return <Space direction="vertical"><Space wrap><Button variant="primary" icon={<Plus />} onClick={() => setAction("新建")}>新建</Button><Button icon={<ArrowRight />} iconPosition="right" onClick={() => setAction("下一步")}>下一步</Button><IconButton label="下载" icon={<Download />} onClick={() => setAction("下载")} /></Space><Text tone="muted" aria-live="polite">最近操作：{action}</Text></Space>; }
+function LoadingDemo() { const [loading, setLoading] = useState(false); return <Space wrap><Button variant="primary" loading={loading} loadingText="保存中" onClick={() => setLoading(true)}>保存</Button><Button onClick={() => setLoading((value) => !value)}>{loading ? "停止加载" : "模拟加载"}</Button><Button disabled onClick={() => setLoading(true)}>禁用</Button></Space>; }
+function ShapeDemo() { const [action, setAction] = useState("尚未操作"); return <Space direction="vertical" className="w-full"><Space wrap><Button shape="round" onClick={() => setAction("圆角按钮")}>圆角按钮</Button><IconButton shape="circle" label="新建" icon={<Plus />} onClick={() => setAction("单图标新建")} /></Space><Button variant="primary" block onClick={() => setAction("块级主要按钮")}>块级主要按钮</Button><Text tone="muted" aria-live="polite">最近操作：{action}</Text></Space>; }
+function LinkDemo() { const [action, setAction] = useState("尚未操作"); return <Space direction="vertical"><Space wrap><Button variant="link" onClick={() => setAction("打开帮助")}>操作型链接</Button><ButtonLink href="https://github.com/rushairer/gouno-ui" target="_blank" rel="noreferrer" onClick={() => setAction("访问 Gouno UI")}>访问 Gouno UI</ButtonLink><ButtonLink to="#core-typography" variant="primary" icon={<ArrowRight />} iconPosition="right" onClick={() => setAction("查看排版")}>查看排版</ButtonLink><ButtonLink to="#" disabled onClick={() => setAction("不应触发")}>禁用链接</ButtonLink></Space><Text tone="muted" aria-live="polite">最近操作：{action}</Text></Space>; }
+
 export const generalDocuments: Record<string, ComponentDocument> = {
   button: {
     title: "Button 按钮",
     description: "触发操作或导航。支持类型、尺寸、图标、加载、形状、块级布局和真实链接语义。",
-    code: '<Button variant="primary">主要按钮</Button>\n<Button variant="secondary">次要按钮</Button>',
-    render: () => <Space wrap><Button variant="primary">主要按钮</Button><Button variant="secondary">次要按钮</Button><Button variant="dashed">虚线按钮</Button><Button variant="text">文本按钮</Button><Button variant="link">链接样式按钮</Button></Space>,
+    code: `function ButtonTypesDemo() {
+  const [action, setAction] = useState("尚未操作");
+  return <Space direction="vertical">
+    <Space wrap>
+      <Button variant="primary" onClick={() => setAction("主要按钮")}>主要按钮</Button>
+      <Button variant="secondary" onClick={() => setAction("次要按钮")}>次要按钮</Button>
+      <Button variant="dashed" onClick={() => setAction("虚线按钮")}>虚线按钮</Button>
+      <Button variant="text" onClick={() => setAction("文本按钮")}>文本按钮</Button>
+      <Button variant="link" onClick={() => setAction("链接样式按钮")}>链接样式按钮</Button>
+    </Space>
+    <Text tone="muted" aria-live="polite">最近操作：{action}</Text>
+  </Space>;
+}`,
+    render: () => <ButtonTypesDemo />,
     demos: [
-      { title: "危险与幽灵按钮", description: "危险操作使用 danger；低层级工具操作可使用 ghost。", code: '<Button variant="danger">删除</Button>\n<Button variant="ghost">取消</Button>', render: () => <Space wrap><Button variant="danger">删除</Button><Button variant="danger" disabled>危险禁用</Button><Button variant="ghost">幽灵按钮</Button></Space> },
-      { title: "三种尺寸", code: '<Button size="small">Small</Button>\n<Button size="middle">Middle</Button>\n<Button size="large">Large</Button>', render: () => <Space wrap className="items-center"><Button size="small">Small</Button><Button size="middle">Middle</Button><Button size="large">Large</Button></Space> },
-      { title: "图标与位置", description: "图标作为装饰时自动隐藏于辅助技术；纯图标按钮必须提供 label。", code: '<Button icon={<Plus />}>新建</Button>\n<Button icon={<ArrowRight />} iconPosition="right">下一步</Button>\n<IconButton label="下载" icon={<Download />} />', render: () => <Space wrap><Button variant="primary" icon={<Plus />}>新建</Button><Button icon={<ArrowRight />} iconPosition="right">下一步</Button><IconButton label="下载" icon={<Download />} /></Space> },
-      { title: "加载与禁用", code: '<Button loading loadingText="保存中">保存</Button>\n<Button disabled>禁用</Button>', render: () => <Space wrap><Button variant="primary" loading loadingText="保存中">保存</Button><Button loading>加载中</Button><Button disabled>禁用</Button></Space> },
-      { title: "形状与块级按钮", code: '<Button shape="round">圆角按钮</Button>\n<Button shape="circle" icon={<Plus />} aria-label="新建" />\n<Button block>块级按钮</Button>', render: () => <Space direction="vertical" className="w-full"><Space wrap><Button shape="round">圆角按钮</Button><IconButton shape="circle" label="新建" icon={<Plus />} /></Space><Button variant="primary" block>块级主要按钮</Button></Space> },
-      { title: "Link 模式", description: "Button variant=link 仍是操作按钮；页面导航应使用 ButtonLink，它会渲染真实链接并支持路由适配。", code: '<Button variant="link" onClick={openHelp}>操作型链接</Button>\n<ButtonLink href="https://gouno.com" target="_blank">访问 Gouno</ButtonLink>\n<ButtonLink to="/docs" variant="primary">查看文档</ButtonLink>', render: () => <Space wrap><Button variant="link">操作型链接</Button><ButtonLink href="https://gouno.com" target="_blank" rel="noreferrer">访问 Gouno</ButtonLink><ButtonLink to="#core-typography" variant="primary" icon={<ArrowRight />} iconPosition="right">查看排版</ButtonLink><ButtonLink to="#" disabled>禁用链接</ButtonLink></Space> },
+      { title: "危险与幽灵按钮", description: "危险操作使用 danger；低层级工具操作可使用 ghost。", code: `function DangerDemo() {
+  const [action, setAction] = useState("尚未操作");
+  return <Space direction="vertical">
+    <Space wrap>
+      <Button variant="danger" onClick={() => setAction("删除")}>删除</Button>
+      <Button variant="danger" disabled onClick={() => setAction("不应触发")}>危险禁用</Button>
+      <Button variant="ghost" onClick={() => setAction("取消")}>取消</Button>
+    </Space>
+    <Text tone="muted" aria-live="polite">最近操作：{action}</Text>
+  </Space>;
+}`, render: () => <DangerDemo /> },
+      { title: "三种尺寸", code: `function SizeDemo() {
+  const [action, setAction] = useState("尚未操作");
+  return <Space direction="vertical">
+    <Space wrap className="items-center">
+      <Button size="small" onClick={() => setAction("Small")}>Small</Button>
+      <Button size="middle" onClick={() => setAction("Middle")}>Middle</Button>
+      <Button size="large" onClick={() => setAction("Large")}>Large</Button>
+    </Space>
+    <Text tone="muted" aria-live="polite">最近操作：{action}</Text>
+  </Space>;
+}`, render: () => <SizeDemo /> },
+      { title: "图标与位置", description: "图标作为装饰时自动隐藏于辅助技术；纯图标按钮必须提供 label。", code: `function IconDemo() {
+  const [action, setAction] = useState("尚未操作");
+  return <Space direction="vertical">
+    <Space wrap>
+      <Button variant="primary" icon={<Plus />} onClick={() => setAction("新建")}>新建</Button>
+      <Button icon={<ArrowRight />} iconPosition="right" onClick={() => setAction("下一步")}>下一步</Button>
+      <IconButton label="下载" icon={<Download />} onClick={() => setAction("下载")} />
+    </Space>
+    <Text tone="muted" aria-live="polite">最近操作：{action}</Text>
+  </Space>;
+}`, render: () => <IconDemo /> },
+      { title: "加载与禁用", code: `function LoadingDemo() {
+  const [loading, setLoading] = useState(false);
+  return <Space wrap>
+    <Button variant="primary" loading={loading} loadingText="保存中" onClick={() => setLoading(true)}>保存</Button>
+    <Button onClick={() => setLoading(value => !value)}>{loading ? "停止加载" : "模拟加载"}</Button>
+    <Button disabled onClick={() => setLoading(true)}>禁用</Button>
+  </Space>;
+}`, render: () => <LoadingDemo /> },
+      { title: "形状与块级按钮", code: `function ShapeDemo() {
+  const [action, setAction] = useState("尚未操作");
+  return <Space direction="vertical" className="w-full">
+    <Space wrap>
+      <Button shape="round" onClick={() => setAction("圆角按钮")}>圆角按钮</Button>
+      <IconButton shape="circle" label="新建" icon={<Plus />} onClick={() => setAction("单图标新建")} />
+    </Space>
+    <Button variant="primary" block onClick={() => setAction("块级主要按钮")}>块级主要按钮</Button>
+    <Text tone="muted" aria-live="polite">最近操作：{action}</Text>
+  </Space>;
+}`, render: () => <ShapeDemo /> },
+      { title: "Link 模式", description: "Button variant=link 仍是操作按钮；页面导航应使用 ButtonLink，它会渲染真实链接并支持路由适配。", code: `function LinkDemo() {
+  const [action, setAction] = useState("尚未操作");
+  return <Space direction="vertical">
+    <Space wrap>
+      <Button variant="link" onClick={() => setAction("打开帮助")}>操作型链接</Button>
+      <ButtonLink href="https://github.com/rushairer/gouno-ui" target="_blank" rel="noreferrer" onClick={() => setAction("访问 Gouno UI")}>访问 Gouno UI</ButtonLink>
+      <ButtonLink to="#core-typography" variant="primary" icon={<ArrowRight />} iconPosition="right" onClick={() => setAction("查看排版")}>查看排版</ButtonLink>
+      <ButtonLink to="#" disabled onClick={() => setAction("不应触发")}>禁用链接</ButtonLink>
+    </Space>
+    <Text tone="muted" aria-live="polite">最近操作：{action}</Text>
+  </Space>;
+}`, render: () => <LinkDemo /> },
     ],
     api: [
       { name: "variant", description: "视觉类型", type: '"primary" | "secondary" | "dashed" | "danger" | "ghost" | "text" | "link"', defaultValue: '"secondary"' },
@@ -27,6 +107,7 @@ export const generalDocuments: Record<string, ComponentDocument> = {
       { name: "disabled", description: "禁用操作", type: "boolean", defaultValue: "false" },
       { name: "type", description: "原生按钮类型", type: '"button" | "submit" | "reset"', defaultValue: '"button"' },
       { name: "href / to", description: "ButtonLink 的外部链接或路由目标", type: "string" },
+      { name: "onClick", description: "点击回调；禁用或加载时不会触发", type: "MouseEventHandler" },
     ],
   },
   icon: { title:"Icon 图标", description:"统一图标尺寸、旋转、加载动画和无障碍标签。", code:'<Icon icon={<LoaderCircle />} spin label="Loading" />', render:()=> <Space><Icon icon={<LoaderCircle/>}/><Icon icon={<LoaderCircle/>} spin label="Loading"/><Icon icon={<LoaderCircle/>} rotate={45}/></Space> },
