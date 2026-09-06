@@ -115,4 +115,4 @@ export function NavigationGroup({
   );
 }
 export const navigationItemClass =
-  "flex min-h-10 items-center gap-3 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground [&_svg]:size-4 [&.active]:bg-accent [&.active]:font-medium [&.active]:text-accent-foreground";
+  "flex min-h-10 items-center gap-3 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground [&_svg]:size-4 [&.active]:bg-accent [&.active]:font-medium [&.active]:text-accent-foreground aria-[current=page]:bg-accent aria-[current=page]:font-semibold aria-[current=page]:text-accent-foreground aria-[current=page]:shadow-sm";

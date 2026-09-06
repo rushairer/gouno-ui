@@ -1,4 +1,4 @@
-import { StrictMode, useEffect, useMemo, useState } from "react";
+import { StrictMode, Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   ArrowUpRight,
@@ -58,7 +58,7 @@ import {
   StatePanel,
   type DemoState as ScenarioState,
 } from "./scenarios";
-import { CoreComponentPage } from "./demos/core-components";
+const CoreComponentPage = lazy(() => import("./demos/core-components").then(module => ({ default: module.CoreComponentPage })));
 import "./showcase.css";
 
 type DemoState = ScenarioState;
@@ -783,6 +783,12 @@ function App() {
     if (!embedded) window.scrollTo({ top: 0 });
   }, [embedded, previewWidth]);
   useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      document.querySelector<HTMLElement>('[data-showcase-nav-item][aria-current="page"]')?.scrollIntoView({ block: "nearest", inline: "nearest" });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [page]);
+  useEffect(() => {
     if (embedded && window.parent !== window)
       window.parent.postMessage(
         { type: "gouno-showcase:navigate", page },
@@ -812,7 +818,7 @@ function App() {
   }, [embedded]);
   const render = () => {
     if (page.startsWith("core-") && page !== "core-overview")
-      return <CoreComponentPage component={page.slice(5)} />;
+      return <Suspense fallback={<div className="p-8 text-sm text-muted-foreground">Loading component documentation…</div>}><CoreComponentPage component={page.slice(5)} /></Suspense>;
     switch (page) {
       case "blog-home":
         return <DashboardDemo />;
@@ -909,6 +915,7 @@ function App() {
             <a
               key={item.id}
               href={`#${item.id}`}
+              data-showcase-nav-item
               aria-current={page === item.id ? "page" : undefined}
               className={`${navigationItemClass} ${page === item.id ? "active" : ""}`}
               onClick={(e) => {
