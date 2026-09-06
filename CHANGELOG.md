@@ -1,37 +1,37 @@
 # Changelog
 
-## 0.1.0
-
-- Initial standalone `@gouno/ui` package and component showcase.
-
-## Unreleased
-
-### Fixed
-- Kept the active Showcase navigation item visible after hash navigation and strengthened its `aria-current` selection styling.
-
-### Changed
-- Extracted reusable ComponentPage, DemoBlock, CodeBlock, and ApiTable infrastructure and lazy-loaded Core documentation to reduce the initial Showcase bundle.
-
-### Removed
-- Removed the obsolete Gouno UI overview, placeholder category pages, combined overlay page, and superseded demo files after replacing them with component documentation.
-
-### Added
-- Added the Core Icon API, formal Form alias, and standalone DateRangePicker documentation to complete the Ant Design category map.
-- Added Splitter, Layout regions, InputOTP, Popconfirm, Message, Notification, and Tour with isolated Core implementations and Showcase pages.
-- Added Cascader, TreeSelect, Transfer, Mentions, Tree, Menu, QRCode, Watermark, Affix, and BackTop with individual Showcase documentation.
-- Added Slider, Rate, Segmented, AutoComplete, Collapse, Popover, Tooltip, and DropdownMenu to the Core component surface.
-- Added individual Showcase documentation pages with live demos and code for existing Core forms, navigation, data display, feedback, and overlays.
-- Rebuilt the Gouno UI Showcase as hash-addressable component documentation with one Core component per navigation entry, interactive Preview/Code panels, usage notes, and responsive iframe previews.
-- Expanded the pure Core layer with Ant Design-inspired typography, layout, data entry, navigation, data display, feedback, and calendar primitives.
-- Added Core Showcase examples for controlled input, upload, pagination, steps, empty/result states, descriptions, lists, calendar, and image fallback.
-- Added Core component tests for controlled state, boundaries, ARIA semantics, and keyboard-friendly native controls.
-- Added repository `AGENTS.md` documenting the Core, Patterns, Gouno, primitives, and Showcase architecture.
-
-
-- Added shared Spinner, Progress, AspectRatio, Kbd, Typography, Stack, Container, Statistic and Timeline primitives.
+All notable changes to this project are documented here.
 
 ## [Unreleased]
 
-## [0.1.0] - 2026-09-05
 ### Added
-- Shared semantic themes, local fonts, accessible shadcn/Radix components and composable administration template.
+
+- Added the Core Icon API, Form alias, DateRangePicker, Splitter, Layout regions, InputOTP, Popconfirm, Message, Notification, Tour, Cascader, TreeSelect, Transfer, Mentions, Tree, Menu, QRCode, Watermark, Affix, BackTop, Slider, Rate, Segmented, AutoComplete, Collapse, Popover, Tooltip, and DropdownMenu.
+- Added hash-addressable Showcase documentation for each Core component with live Preview, source Code, usage guidance, and API tables.
+- Added multi-example documentation support and detailed Form, Select, Upload, and Table state examples.
+- Added controlled and uncontrolled Upload file lists, count and size limits, removal callbacks, errors, and accessible error relationships.
+- Added a dedicated Showcase TypeScript project so `npm run typecheck` validates the component documentation and product scenarios.
+- Added Core tests for state, boundaries, ARIA semantics, keyboard behavior, and Upload list management.
+- Added `AGENTS.md` with the Core, Patterns, Gouno, primitives, and Showcase architecture rules.
+
+### Changed
+
+- Split Core Showcase documents into General, Layout, Data Entry, Navigation, Data Display, Feedback, and Other registries.
+- Split Blog, Blog Admin, and Gosso Admin scenarios into focused product demo modules.
+- Reduced `showcase/main.tsx` to application shell, routing, navigation, theme, and viewport responsibilities.
+- Lazy-load Core documentation to reduce the initial Showcase bundle.
+- Exported `TableDensity` from the public Patterns API.
+
+### Fixed
+
+- Keep the active Showcase navigation item visible after hash navigation and style selection from `aria-current="page"`.
+
+### Removed
+
+- Removed obsolete overview, placeholder category, combined overlay, and superseded demo pages.
+
+## [0.1.0] - 2026-09-05
+
+### Added
+
+- Initial standalone `@gouno/ui` package with semantic themes, local fonts, accessible Radix-based primitives, Core components, reusable Patterns, Gouno product templates, and a static Showcase.
