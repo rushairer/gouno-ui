@@ -30,49 +30,13 @@
       "types": "./dist/gouno/index.d.ts",
       "import": "./dist/gouno/index.js"
     },
-    "./legacy": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
     "./theme": {
-      "types": "./dist/theme.d.ts",
-      "import": "./dist/theme.js"
+      "types": "./dist/theme/provider.d.ts",
+      "import": "./dist/theme/provider.js"
     },
     "./tokens.css": "./dist/tokens.css",
     "./base.css": "./dist/base.css",
     "./bootstrap.js": "./dist/bootstrap.js",
-    "./foundations": {
-      "types": "./dist/foundations/index.d.ts",
-      "import": "./dist/foundations/index.js"
-    },
-    "./forms": {
-      "types": "./dist/forms/index.d.ts",
-      "import": "./dist/forms/index.js"
-    },
-    "./navigation": {
-      "types": "./dist/navigation/index.d.ts",
-      "import": "./dist/navigation/index.js"
-    },
-    "./feedback": {
-      "types": "./dist/feedback/index.d.ts",
-      "import": "./dist/feedback/index.js"
-    },
-    "./data-display": {
-      "types": "./dist/data-display/index.d.ts",
-      "import": "./dist/data-display/index.js"
-    },
-    "./layout": {
-      "types": "./dist/layout/index.d.ts",
-      "import": "./dist/layout/index.js"
-    },
-    "./overlays": {
-      "types": "./dist/overlays/index.d.ts",
-      "import": "./dist/overlays/index.js"
-    },
-    "./templates": {
-      "types": "./dist/templates/index.d.ts",
-      "import": "./dist/templates/index.js"
-    },
     "./fonts/*": "./dist/fonts/*",
     "./patterns/*": {
       "types": "./dist/patterns/*.d.ts",

@@ -18,5 +18,3 @@ export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableC
 export * from "./separator";
 export * from "./avatar";
 export * from "./feedback";
-export * from "./input";
-export * from "./layout";
