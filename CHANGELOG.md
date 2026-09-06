@@ -8,6 +8,7 @@ All notable changes to this project are documented here.
 
 - Added a reusable DataTable data-source mode with column definitions, sorting, filtering, pagination, row selection, loading, empty, and density states, plus a dedicated Showcase page.
 - Added a first-class Form wrapper with vertical/horizontal layouts, native FormData submission, disabled/loading fieldsets, and `onFinish` support.
+- Added Overlay behavior coverage for Modal and Drawer Escape handling, focus restoration, placement metadata, and responsive direction semantics.
 - Added the Core Icon API, Form alias, DateRangePicker, Splitter, Layout regions, InputOTP, Popconfirm, Message, Notification, Tour, Cascader, TreeSelect, Transfer, Mentions, Tree, Menu, QRCode, Watermark, Affix, BackTop, Slider, Rate, Segmented, AutoComplete, Collapse, Popover, Tooltip, and DropdownMenu.
 - Added hash-addressable Showcase documentation for each Core component with live Preview, source Code, usage guidance, and API tables.
 - Added multi-example documentation support and detailed Form, Select, Upload, and Table state examples.
