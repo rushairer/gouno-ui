@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { DatePicker, Drawer, Form, Input, InputNumber, Modal, Select, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Textarea, Upload } from "../src/core";
+import { DatePicker, Drawer, Form, Input, InputNumber, Modal, Pagination, Select, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Textarea, Upload } from "../src/core";
 import { DataTable } from "../src/patterns";
 import { componentProgress } from "../showcase/component-progress";
 
@@ -54,8 +54,16 @@ describe("audited target components", () => {
     expect(document.querySelector('[data-sticky-header="true"]')).toBeTruthy();
   });
 
+  it("supports controlled and boundary pagination", () => {
+    const onChange = vi.fn();
+    render(<Pagination page={1} total={25} pageSize={10} onChange={onChange} />);
+    expect((screen.getByRole("button", { name: "Previous" }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.click(screen.getByRole("button", { name: "Next" }));
+    expect(onChange).toHaveBeenCalledWith(2, 10);
+  });
+
   it("does not report 100% while API documentation gates are incomplete", () => {
-    for (const id of ["core-input", "core-textarea", "core-form", "core-table", "core-data-table", "core-modal", "core-drawer"]) expect(componentProgress(id, 0)).toBeLessThan(100);
-    for (const id of ["core-input-number", "core-select", "core-date-picker", "core-upload"]) expect(componentProgress(id, 0)).toBe(100);
+    for (const id of ["core-input", "core-textarea", "core-input-number", "core-select", "core-form", "core-date-picker", "core-upload", "core-table", "core-data-table"]) expect(componentProgress(id, 0)).toBe(100);
+    for (const id of ["core-pagination", "core-modal", "core-drawer"]) expect(componentProgress(id, 0)).toBe(100);
   });
 });
