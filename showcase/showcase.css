@@ -73,11 +73,6 @@
   width: 100%;
 }
 
-.demo-block__content > [data-slot="input-number"],
-.demo-block__content > [data-slot="date-picker"] {
-  max-width: 28rem;
-}
-
 /* A vertical Space in a showcase is a demo stack. Keep its track readable so
    width-bearing controls align to the same preview column. */
 .demo-block__content [data-slot="space"][data-direction="vertical"] {
