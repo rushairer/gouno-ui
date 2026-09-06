@@ -6,6 +6,12 @@
 
 ## Unreleased
 
+### Fixed
+- Kept the active Showcase navigation item visible after hash navigation and strengthened its `aria-current` selection styling.
+
+### Changed
+- Extracted reusable ComponentPage, DemoBlock, CodeBlock, and ApiTable infrastructure and lazy-loaded Core documentation to reduce the initial Showcase bundle.
+
 ### Removed
 - Removed the obsolete Gouno UI overview, placeholder category pages, combined overlay page, and superseded demo files after replacing them with component documentation.
 
