@@ -11,11 +11,24 @@ export interface FormProps extends FormHTMLAttributes<HTMLFormElement> {
   onFinishFailed?: (event: FormEvent<HTMLFormElement>) => void;
 }
 
-export function Form({ layout = "vertical", disabled = false, loading = false, onFinish, onFinishFailed, onSubmit, className, children, validateMessages: _validateMessages, ...props }: FormProps) {
-  return <form {...props} noValidate={props.noValidate ?? false} className={cn("form-layout flex min-w-0 flex-col gap-6", layout === "horizontal" && "form-layout--horizontal", layout === "inline" && "flex-row flex-wrap items-end gap-4", className)} aria-busy={loading || undefined} onSubmit={(event) => {
+export function Form({ layout = "vertical", disabled = false, loading = false, onFinish, onFinishFailed, onSubmit, className, children, validateMessages, ...props }: FormProps) {
+  return <form {...props} noValidate={props.noValidate ?? Boolean(validateMessages)} className={cn("form-layout flex min-w-0 flex-col gap-6", layout === "horizontal" && "form-layout--horizontal", layout === "inline" && "flex-row flex-wrap items-end gap-4", className)} aria-busy={loading || undefined} onSubmit={(event) => {
     onSubmit?.(event);
     if (event.defaultPrevented) return;
-    if (!event.currentTarget.checkValidity()) { event.preventDefault(); onFinishFailed?.(event); return; }
+    if (!event.currentTarget.checkValidity()) {
+      event.preventDefault();
+      const invalid = event.currentTarget.querySelector<HTMLElement>(":invalid");
+      if (invalid && validateMessages) {
+        const input = invalid as HTMLInputElement;
+        const message = input.validity.valueMissing ? validateMessages.required : input.validity.typeMismatch ? validateMessages.type : validateMessages.required;
+        if (message) {
+          input.setCustomValidity(message);
+          window.setTimeout(() => input.setCustomValidity(""), 0);
+        }
+      }
+      onFinishFailed?.(event);
+      return;
+    }
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     onFinish?.(formData, Object.fromEntries(formData.entries()));

@@ -1,10 +1,8 @@
-import { useState } from "react";
 import { Breadcrumb, Button, Collapse, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Menu, Pagination, Steps, Tab, TabList, TabPanel, Tabs } from "../../../src/core";
 import type { ComponentDocument } from "../../components/component-page";
 
 function PaginationDemo() {
-  const [page, setPage] = useState(2);
-  return <Pagination page={page} total={86} pageSize={10} onChange={setPage} />;
+  return <Pagination defaultPage={1} total={86} pageSize={10} onChange={(page, pageSize) => console.log(page, pageSize)} />;
 }
 
 export const navigationDocuments: Record<string, ComponentDocument> = {

@@ -47,6 +47,12 @@ describe("audited target components", () => {
     expect(screen.getByText("Drawer")).toBeTruthy();
   });
 
+  it("applies drawer dimensions", () => {
+    render(<><Drawer defaultOpen title="Drawer" placement="right" width={480}>Body</Drawer><Form><Input name="title" /><button type="submit">Submit</button></Form></>);
+    const drawer = screen.getByRole("dialog", { name: "Drawer" });
+    expect((drawer as HTMLElement).style.width).toBe("480px");
+  });
+
   it("supports table options and expandable DataTable rows", () => {
     render(<><Table bordered fixed stickyHeader><TableHeader><TableRow><TableHead>Name</TableHead></TableRow></TableHeader><TableBody><TableRow><TableCell>Gouno</TableCell></TableRow></TableBody></Table><DataTable rowKey="id" dataSource={[{ id: "a", name: "Alpha" }]} columns={[{ key: "name", title: "Name", dataIndex: "name" }]} expandedRowRender={(row) => <span>{row.name} details</span>} /></>);
     fireEvent.click(screen.getByRole("button", { name: "展开行" }));

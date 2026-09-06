@@ -47,8 +47,8 @@ export function Drawer({
   }, [visible]);
   useEffect(() => { afterOpenChange?.(visible); }, [afterOpenChange, visible]);
   const dimensionStyle: CSSProperties = placement === "left" || placement === "right"
-    ? { maxWidth: width }
-    : { maxHeight: height };
+    ? { width }
+    : { height };
 
   return (
     <Sheet open={visible} onOpenChange={changeOpen}>
