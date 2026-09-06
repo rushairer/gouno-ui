@@ -119,6 +119,31 @@
 }
 
 @layer components {
+  .form-layout--horizontal .field {
+    display: grid;
+    grid-template-columns: minmax(8rem, 12rem) minmax(0, 1fr);
+    align-items: start;
+    column-gap: 16px;
+  }
+  .form-layout--horizontal .field > [data-slot="field-label"] {
+    padding-top: 8px;
+    text-align: end;
+  }
+  .form-layout--horizontal .field > [data-slot="field-description"],
+  .form-layout--horizontal .field > [data-slot="field-error"] {
+    grid-column: 2;
+  }
+  @media (max-width: 767px) {
+    .form-layout--horizontal .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-layout--horizontal .field > [data-slot="field-label"] {
+      padding-top: 0;
+      text-align: start;
+    }
+  }
   [data-slot="table-container"][data-density="compact"]
     [data-slot="table-head"] {
     height: 36px;

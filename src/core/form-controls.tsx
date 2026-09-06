@@ -307,6 +307,44 @@ export function FormLayout({
     />
   );
 }
+
+export interface FormProps extends FormHTMLAttributes<HTMLFormElement> {
+  layout?: "vertical" | "horizontal";
+  disabled?: boolean;
+  loading?: boolean;
+  onFinish?: (formData: FormData) => void;
+}
+
+export function Form({
+  layout = "vertical",
+  disabled = false,
+  loading = false,
+  onFinish,
+  onSubmit,
+  className,
+  children,
+  ...props
+}: FormProps) {
+  return (
+    <form
+      {...props}
+      className={cn(
+        "form-layout flex min-w-0 flex-col gap-6",
+        layout === "horizontal" && "form-layout--horizontal",
+        className,
+      )}
+      aria-busy={loading || undefined}
+      onSubmit={(event) => {
+        onSubmit?.(event);
+        if (!event.defaultPrevented) onFinish?.(new FormData(event.currentTarget));
+      }}
+    >
+      <fieldset disabled={disabled || loading} className="contents">
+        {children}
+      </fieldset>
+    </form>
+  );
+}
 export function FormGrid({
   columns = 2,
   className,

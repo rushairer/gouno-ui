@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { AutoComplete, Collapse, Rate, Segmented, Slider, Upload } from "../src/core";
+import { AutoComplete, Collapse, Form, Input, Rate, Segmented, Slider, Upload } from "../src/core";
 
 describe("Core data entry controls", () => {
   it("changes segmented selection", () => { render(<Segmented options={["Day", "Week"]} defaultValue="Day" />); fireEvent.click(screen.getByRole("radio", { name: "Week" })); expect(screen.getByRole("radio", { name: "Week" }).getAttribute("aria-checked")).toBe("true"); });
@@ -18,5 +18,15 @@ describe("Core data entry controls", () => {
     expect(onFiles).toHaveBeenLastCalledWith([small]);
     fireEvent.click(screen.getByRole("button", { name: "移除 small.txt" }));
     expect(onFiles).toHaveBeenLastCalledWith([]);
+  });
+  it("serializes Form values onFinish and supports disabled loading state", () => {
+    const onFinish = vi.fn();
+    const { rerender } = render(<Form onFinish={onFinish}><Input name="title" defaultValue="Gouno" /><button type="submit">Submit</button></Form>);
+    fireEvent.submit(document.querySelector("form")!);
+    expect(onFinish).toHaveBeenCalledTimes(1);
+    expect(onFinish.mock.calls[0][0].get("title")).toBe("Gouno");
+    rerender(<Form disabled loading onFinish={onFinish}><Input name="title" defaultValue="Gouno" /><button type="submit">Submit</button></Form>);
+    expect(document.querySelector("fieldset")?.hasAttribute("disabled")).toBe(true);
+    expect(document.querySelector("form")?.getAttribute("aria-busy")).toBe("true");
   });
 });

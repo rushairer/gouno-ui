@@ -5,7 +5,7 @@ export { Icon } from "./icon";
 export { Badge, Tag, StatusBadge, StatusIndicator, RiskBadge, type BadgeTone } from "./badge";
 export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./card";
 export { Spinner, Progress, AspectRatio, Kbd, Typography } from "./visual";
-export { Input, Textarea, Select, Checkbox, Radio, Switch, Field, FormField, CheckboxField, CheckboxGroup, FormLayout, FormLayout as Form, FormGrid, FormActions, OverlayForm, type InputProps, type SelectProps } from "./form-controls";
+export { Input, Textarea, Select, Checkbox, Radio, Switch, Field, FormField, CheckboxField, CheckboxGroup, FormLayout, Form, FormGrid, FormActions, OverlayForm, type InputProps, type SelectProps, type FormProps } from "./form-controls";
 export { Tabs, TabList, Tab, TabPanel } from "./tabs";
 export { Modal } from "./modal";
 export type { ModalProps } from "./modal";
