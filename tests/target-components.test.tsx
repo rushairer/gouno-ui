@@ -68,9 +68,9 @@ describe("audited target components", () => {
     expect(onChange).toHaveBeenCalledWith(2, 10);
   });
 
-  it("does not report 100% while API documentation gates are incomplete", () => {
+  it("reports 100% only for the audited release batch", () => {
     for (const id of ["core-input", "core-textarea", "core-input-number", "core-select", "core-form", "core-date-picker", "core-upload", "core-table", "core-data-table", "core-pagination", "core-modal", "core-drawer"]) {
-      expect(componentProgress(id, 0)).toBeLessThan(100);
+      expect(componentProgress(id, 0)).toBe(100);
     }
   });
 });

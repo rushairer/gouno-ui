@@ -29,6 +29,18 @@ const modalApi = [
   { name: "closeOnBackdrop", description: "是否允许点击遮罩关闭", type: "boolean", defaultValue: "false" },
   { name: "showCloseButton", description: "是否显示右上角关闭按钮", type: "boolean", defaultValue: "true" },
   { name: "loading", description: "主体加载状态", type: "boolean", defaultValue: "false" },
+  { name: "centered", description: "是否垂直居中", type: "boolean", defaultValue: "true" },
+  { name: "mask", description: "是否显示遮罩", type: "boolean", defaultValue: "true" },
+  { name: "zIndex", description: "弹层层级", type: "number", defaultValue: "50" },
+  { name: "destroyOnClose", description: "关闭后销毁内容", type: "boolean", defaultValue: "true" },
+  { name: "onOk", description: "确认操作回调", type: "() => void | Promise<void>" },
+  { name: "onCancel", description: "取消操作回调", type: "() => void" },
+  { name: "okText", description: "确认按钮文案", type: "ReactNode", defaultValue: '"确定"' },
+  { name: "cancelText", description: "取消按钮文案", type: "ReactNode", defaultValue: '"取消"' },
+  { name: "confirmLoading", description: "确认按钮加载状态", type: "boolean", defaultValue: "false" },
+  { name: "okButtonProps", description: "确认按钮属性", type: "ButtonProps" },
+  { name: "cancelButtonProps", description: "取消按钮属性", type: "ButtonProps" },
+  { name: "styles", description: "header/body/footer/mask 样式分区", type: "ModalStyles" },
   { name: "ariaLabel", description: "没有可见标题时的可访问名称", type: "string" },
   { name: "contentStyle", description: "内容内联样式", type: "CSSProperties" },
   { name: "className", description: "附加类名", type: "string" },
@@ -42,6 +54,7 @@ const drawerApi = [
   { name: "placement", description: "抽屉方向", type: '"top" | "right" | "bottom" | "left"', defaultValue: '"right"' },
   { name: "width", description: "左右抽屉宽度", type: "number | string" },
   { name: "height", description: "上下抽屉高度", type: "number | string" },
+  { name: "extra", description: "标题栏右侧附加内容", type: "ReactNode" },
 ];
 
 export const feedbackDocuments: Record<string, ComponentDocument> = {

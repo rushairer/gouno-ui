@@ -48,14 +48,20 @@ function SheetContent({
   children,
   side = "right",
   showCloseButton = true,
+  mask = true,
+  zIndex,
+  maskStyle,
   ...props
 }: React.ComponentProps<typeof SheetPrimitive.Content> & {
   side?: "top" | "right" | "bottom" | "left";
   showCloseButton?: boolean;
+  mask?: boolean;
+  zIndex?: number;
+  maskStyle?: React.CSSProperties;
 }) {
   return (
     <SheetPortal>
-      <SheetOverlay />
+      {mask && <SheetOverlay style={{ zIndex, ...maskStyle }} />}
       <SheetPrimitive.Content
         data-slot="sheet-content"
         data-side={side}

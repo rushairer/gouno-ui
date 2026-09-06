@@ -49,13 +49,19 @@ function DialogContent({
   className,
   children,
   showCloseButton = true,
+  mask = true,
+  zIndex,
+  maskStyle,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean;
+  mask?: boolean;
+  zIndex?: number;
+  maskStyle?: React.CSSProperties;
 }) {
   return (
     <DialogPortal data-slot="dialog-portal">
-      <DialogOverlay />
+      {mask && <DialogOverlay style={{ zIndex, ...maskStyle }} />}
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(

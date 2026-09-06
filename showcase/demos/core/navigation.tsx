@@ -1,13 +1,10 @@
+import { paginationDocument } from "./pagination";
 import { Breadcrumb, Button, Collapse, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Menu, Pagination, Steps, Tab, TabList, TabPanel, Tabs } from "../../../src/core";
 import type { ComponentDocument } from "../../components/component-page";
 
-function PaginationDemo() {
-  return <Pagination defaultPage={1} total={86} pageSize={10} onChange={(page, pageSize) => console.log(page, pageSize)} />;
-}
-
 export const navigationDocuments: Record<string, ComponentDocument> = {
   breadcrumb: { title: "Breadcrumb 面包屑", description: "表达当前页面在信息架构中的位置。", code: '<Breadcrumb items={[{ label: "首页", href: "/" }, { label: "组件" }]} />', render: () => <Breadcrumb items={[{ label: "首页", href: "#" }, { label: "Core" }, { label: "Breadcrumb" }]} /> },
-  pagination: { title: "Pagination 分页", description: "支持受控和非受控页码、页大小、边界禁用、整体禁用和可访问导航。", code: '<Pagination defaultPage={1} total={86} pageSize={10} onChange={(page, pageSize) => console.log(page, pageSize)} />', render: () => <PaginationDemo />, demos: [{ title: "边界与禁用", code: '<Space direction="vertical"><Pagination page={1} total={10} pageSize={10} /><Pagination page={2} total={20} pageSize={10} disabled /></Space>', render: () => <div className="flex flex-col gap-3"><Pagination page={1} total={10} pageSize={10} /><Pagination page={2} total={20} pageSize={10} disabled /></div> }], api: [{ name: "page", description: "受控当前页码", type: "number" }, { name: "defaultPage", description: "非受控初始页码", type: "number", defaultValue: "1" }, { name: "total", description: "数据总数，用于计算页数", type: "number" }, { name: "pageSize", description: "每页数据条数", type: "number", defaultValue: "10" }, { name: "onChange", description: "页码变化回调，返回页码和页大小", type: "(page, pageSize) => void" }, { name: "disabled", description: "禁用上一页、下一页和所有交互", type: "boolean" }, { name: "ariaLabel", description: "分页导航可访问名称", type: "string" }] },
+  pagination: paginationDocument,
   steps: { title: "Steps 步骤条", description: "展示流程进度和当前步骤。", code: '<Steps current={1} items={[{ title: "填写" }, { title: "确认" }]} />', render: () => <Steps current={1} items={[{ title: "填写信息", description: "基本资料" }, { title: "确认订单" }, { title: "完成" }]} /> },
   anchor: { title: "Anchor 锚点", description: "页面内章节导航。", code: '<Anchor items={[{ key: "api", title: "API" }]} />', render: () => <div className="text-sm text-muted-foreground">Anchor API 已提供，可用于文档右侧章节导航。</div> },
   tabs: { title: "Tabs 标签页", description: "支持受控切换和方向键导航。", code: '<Tabs defaultValue="a"><TabList><Tab value="a">账户</Tab><Tab value="b">安全</Tab></TabList><TabPanel value="a">账户设置</TabPanel><TabPanel value="b">安全设置</TabPanel></Tabs>', render: () => <Tabs defaultValue="a"><TabList><Tab value="a">账户</Tab><Tab value="b">安全</Tab></TabList><TabPanel value="a">账户设置</TabPanel><TabPanel value="b">安全设置</TabPanel></Tabs> },
