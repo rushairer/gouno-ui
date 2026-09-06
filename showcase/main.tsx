@@ -60,6 +60,7 @@ import {
 } from "./scenarios";
 import { OverlayDemo } from "./overlays";
 import { CoreOverview } from "./demos/core-overview";
+import { PatternsOverview } from "./demos/patterns-overview";
 import "./showcase.css";
 
 type DemoState = ScenarioState;
@@ -947,7 +948,7 @@ function App() {
       case "navigation": return <CategoryOverview title="Navigation 导航组件" description="Tabs、分页、菜单与命令式导航。" />;
       case "data": return <CategoryOverview title="Data Display 数据展示" description="表格、统计、时间线与列表。" />;
       case "layout": return <CategoryOverview title="Layout & Templates 布局与模板" description="容器、面板、工作区与管理模板。" />;
-      case "advanced": return <CategoryOverview title="Advanced Patterns 高级交互" description="数据表格、批量操作、命令面板与响应式交互模式。" />;
+      case "advanced": return <PatternsOverview />;
       case "blog-home":
         return <DashboardDemo />;
       case "blog-account":
