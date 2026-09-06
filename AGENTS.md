@@ -33,3 +33,8 @@
 
 - This package has no authentication, API access, connector behavior, or application session state.
 - Do not modify `/Users/aben/Git/gouno-blog/packages/ui` from this repository.
+
+## Demo source verification
+- Each Code panel must import the exact rendered demo module with `?raw`. One file per demo, including only its necessary imports and helpers; never show a page's entire example collection for one preview.
+- Format demo modules as readable multiline TSX. Do not fix compressed examples by inserting arbitrary line breaks into displayed strings.
+- Keep missing API, example and test evidence as explicit incomplete audit entries. Do not restore 100% by deleting gaps, changing test expectations, or applying arbitrary score deductions.

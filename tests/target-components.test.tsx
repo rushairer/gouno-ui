@@ -3,6 +3,10 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { DatePicker, Drawer, Form, Input, InputNumber, Modal, Pagination, Select, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Textarea, Upload } from "../src/core";
 import { DataTable } from "../src/patterns";
 import { componentProgress } from "../showcase/component-progress";
+import { dataEntryDocuments } from "../showcase/demos/core/data-entry";
+import { dataDisplayDocuments } from "../showcase/demos/core/data-display";
+import { feedbackDocuments } from "../showcase/demos/core/feedback";
+import { paginationDocument } from "../showcase/demos/core/pagination";
 
 describe("audited target components", () => {
   it("supports clearable input and textarea count", () => {
@@ -53,6 +57,12 @@ describe("audited target components", () => {
     expect((drawer as HTMLElement).style.width).toBe("480px");
   });
 
+  it("uses a bounded Ant-style default drawer size", () => {
+    render(<Drawer defaultOpen title="Default drawer">Body</Drawer>);
+    const drawer = screen.getByRole("dialog", { name: "Default drawer" });
+    expect((drawer as HTMLElement).style.width).toBe("378px");
+  });
+
   it("supports table options and expandable DataTable rows", () => {
     render(<><Table bordered fixed stickyHeader><TableHeader><TableRow><TableHead>Name</TableHead></TableRow></TableHeader><TableBody><TableRow><TableCell>Gouno</TableCell></TableRow></TableBody></Table><DataTable rowKey="id" dataSource={[{ id: "a", name: "Alpha" }]} columns={[{ key: "name", title: "Name", dataIndex: "name" }]} expandedRowRender={(row) => <span>{row.name} details</span>} /></>);
     fireEvent.click(screen.getByRole("button", { name: "展开行" }));
@@ -68,9 +78,38 @@ describe("audited target components", () => {
     expect(onChange).toHaveBeenCalledWith(2, 10);
   });
 
-  it("reports 100% only for the audited release batch", () => {
-    for (const id of ["core-input", "core-textarea", "core-input-number", "core-select", "core-form", "core-date-picker", "core-upload", "core-table", "core-data-table", "core-pagination", "core-modal", "core-drawer"]) {
-      expect(componentProgress(id, 0)).toBe(100);
+  it("does not report 100% for components with compressed or mismatched source", () => {
+    for (const id of ["core-input", "core-textarea", "core-input-number", "core-select", "core-form", "core-table", "core-data-table", "core-modal", "core-drawer"]) {
+      expect(componentProgress(id, 0)).toBeLessThan(100);
+    }
+    expect(componentProgress("core-pagination", 0)).toBeLessThan(100);
+  });
+
+  it("keeps audited API rows atomic and demo source readable", () => {
+    const documents = [
+      dataEntryDocuments.input,
+      dataEntryDocuments.textarea,
+      dataEntryDocuments.select,
+      dataEntryDocuments.form,
+      dataEntryDocuments["input-number"],
+      dataEntryDocuments["date-picker"],
+      dataEntryDocuments.upload,
+      dataDisplayDocuments.table,
+      dataDisplayDocuments["data-table"],
+      feedbackDocuments.modal,
+      feedbackDocuments.drawer,
+      paginationDocument,
+    ];
+    for (const document of documents) {
+      for (const row of document.api ?? []) expect(row.name).not.toMatch(/\s\/\s/);
+      const examples = [document, ...(document.demos ?? [])];
+      expect(new Set(examples.map(demo => demo.code)).size).toBe(examples.length);
+      for (const demo of examples) {
+        expect(demo.code).not.toContain("...");
+        expect(demo.code.split("\n").length).toBeGreaterThan(1);
+        expect(demo.code).not.toMatch(/\.\.\/.*src/);
+        expect(Math.max(...demo.code.split("\n").map(line => line.length))).toBeLessThan(200);
+      }
     }
   });
 });
