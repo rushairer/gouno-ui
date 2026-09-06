@@ -1,1 +1,1 @@
-export { Container, Stack } from "../components/layout/primitives";
+export { Container, Stack } from "./layout-primitives";
