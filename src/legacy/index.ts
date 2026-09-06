@@ -3,7 +3,7 @@ export * from "./actions";
 export * from "./badge";
 export * from "./card";
 export * from "./primitives";
-export * from "../components/forms/controls";
+export * from "../core/form-controls";
 export * from "../components/navigation/navigation";
 export * from "../components/feedback/feedback";
 export * from "../components/overlays/overlays";
