@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- Added theme-aware TSX syntax highlighting and an accessible copy action to every Showcase source-code block.
 - Added a reusable DataTable data-source mode with column definitions, sorting, filtering, pagination, row selection, loading, empty, and density states, plus a dedicated Showcase page.
 - Added a first-class Form wrapper with vertical/horizontal layouts, native FormData submission, disabled/loading fieldsets, and `onFinish` support.
 - Added Overlay behavior coverage for Modal and Drawer Escape handling, focus restoration, placement metadata, and responsive direction semantics.
@@ -33,6 +34,7 @@ All notable changes to this project are documented here.
 
 ### Fixed
 
+- Kept code syntax colors synchronized with the active light, dark, system, and brand theme tokens instead of using a fixed editor theme.
 - Centered single-icon buttons by removing empty label spans and applying the shared icon wrapper geometry.
 - Made every Button Showcase demo interactive and aligned each displayed source block with its rendered example.
 - Updated the external ButtonLink example to the Gouno UI GitHub repository.

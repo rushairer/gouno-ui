@@ -4,3 +4,55 @@
 
 @source "../src";
 @source "./";
+
+@layer components {
+  .code-block__pre {
+    margin: 0;
+    tab-size: 2;
+  }
+  .code-line {
+    display: inline;
+    min-height: 1.5rem;
+  }
+  .syntax-comment,
+  .syntax-prolog,
+  .syntax-doctype,
+  .syntax-cdata {
+    color: var(--code-comment);
+    font-style: italic;
+  }
+  .syntax-keyword,
+  .syntax-control,
+  .syntax-module,
+  .syntax-boolean {
+    color: var(--code-keyword);
+  }
+  .syntax-string,
+  .syntax-attr-value,
+  .syntax-template-string {
+    color: var(--code-string);
+  }
+  .syntax-number,
+  .syntax-constant,
+  .syntax-symbol {
+    color: var(--code-number);
+  }
+  .syntax-tag,
+  .syntax-class-name,
+  .syntax-builtin {
+    color: var(--primary);
+  }
+  .syntax-attr-name,
+  .syntax-property,
+  .syntax-parameter {
+    color: var(--info);
+  }
+  .syntax-function,
+  .syntax-function-variable {
+    color: var(--warning);
+  }
+  .syntax-operator,
+  .syntax-punctuation {
+    color: var(--muted-foreground);
+  }
+}
