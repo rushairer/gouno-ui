@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- Added bilingual names and visible completion-percentage badges to every Core component and product-scenario entry in the Showcase navigation.
 - Added separate Ant Design-style Badge and Tag APIs: Badge now covers counts, dots, overflow, zero visibility, statuses, colors, sizes, offsets, and dynamic values; Tag covers semantic and custom colors, icons, borders, closing, disabled behavior, and controlled or uncontrolled CheckableTag selection.
 - Added dedicated Badge and Tag Showcase pages with interaction-complete examples, matching source code, and full API tables.
 - Added theme-aware TSX syntax highlighting and an accessible copy action to every Showcase source-code block.
@@ -24,6 +25,7 @@ All notable changes to this project are documented here.
 
 ### Changed
 
+- Widened the desktop and mobile Showcase navigation surfaces and reserved flexible label space so progress badges never cover long component names.
 - Replaced status-pill uses of Badge in Showcase product scenarios and data examples with the semantically correct Tag component.
 - Expanded Showcase Data Display examples to cover DataTable behavior and selection state.
 - Expanded Showcase Form examples to cover validation, horizontal responsive layout, read-only, disabled, and loading states.

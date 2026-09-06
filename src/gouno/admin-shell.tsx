@@ -39,7 +39,7 @@ export function AdminShell({
         跳至主要内容
       </a>
       <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 lg:px-6">
-        <div className="flex min-w-0 items-center gap-3 lg:w-[216px]">
+        <div className="flex min-w-0 items-center gap-3 lg:w-[264px]">
           <IconButton
             ref={navigationTrigger}
             className="lg:hidden"
@@ -59,7 +59,7 @@ export function AdminShell({
           {account}
         </div>
       </header>
-      <div className="grid min-h-[calc(100dvh-64px)] lg:grid-cols-[240px_minmax(0,1fr)]">
+      <div className="grid min-h-[calc(100dvh-64px)] lg:grid-cols-[288px_minmax(0,1fr)]">
         <aside className="sticky top-16 hidden h-[calc(100dvh-64px)] flex-col border-r bg-sidebar px-3 py-5 lg:flex">
           <nav
             aria-label={navigationLabel}
@@ -78,7 +78,7 @@ export function AdminShell({
         </main>
       </div>
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="left" className="flex w-[280px] flex-col bg-sidebar" aria-describedby={undefined}
+        <SheetContent side="left" className="flex w-[320px] max-w-[calc(100vw-1rem)] flex-col bg-sidebar" aria-describedby={undefined}
           onCloseAutoFocus={(event) => {
             event.preventDefault();
             navigationTrigger.current?.focus();
@@ -115,4 +115,4 @@ export function NavigationGroup({
   );
 }
 export const navigationItemClass =
-  "flex min-h-10 items-center gap-3 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground [&_svg]:size-4 [&.active]:bg-accent [&.active]:font-medium [&.active]:text-accent-foreground aria-[current=page]:bg-accent aria-[current=page]:font-semibold aria-[current=page]:text-accent-foreground aria-[current=page]:shadow-sm";
+  "flex min-h-10 min-w-0 items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground [&>svg]:size-4 [&>svg]:shrink-0 [&.active]:bg-accent [&.active]:font-medium [&.active]:text-accent-foreground aria-[current=page]:bg-accent aria-[current=page]:font-semibold aria-[current=page]:text-accent-foreground aria-[current=page]:shadow-sm";

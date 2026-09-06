@@ -2,7 +2,7 @@ import { StrictMode, useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Menu } from "lucide-react";
 import {
-  ActionGroup, AdminPage, AdminShell, NavigationGroup, Select, ThemeProvider,
+  ActionGroup, AdminPage, AdminShell, Badge, NavigationGroup, Select, ThemeProvider,
   ThemeToggle, ToastProvider, navigationItemClass,
 } from "../src";
 import { showcaseCatalog as nav } from "./catalog";
@@ -242,6 +242,7 @@ function App() {
               href={`#${item.id}`}
               data-showcase-nav-item
               aria-current={page === item.id ? "page" : undefined}
+              aria-label={`${item.label}，完善度 ${item.progress}%`}
               className={`${navigationItemClass} ${page === item.id ? "active" : ""}`}
               onClick={(e) => {
                 e.preventDefault();
@@ -251,7 +252,13 @@ function App() {
               }}
             >
               {item.icon}
-              {item.label}
+              <span className="min-w-0 flex-1 leading-5">{item.label}</span>
+              <Badge
+                count={`${item.progress}%`}
+                size="small"
+                title={`${item.label} 完善度 ${item.progress}%`}
+                className="shrink-0 [&_sup]:bg-primary [&_sup]:text-primary-foreground"
+              />
             </a>
           ))}
         </NavigationGroup>
