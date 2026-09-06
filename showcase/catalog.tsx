@@ -25,6 +25,7 @@ export const showcaseCatalog: { group: string; items: ShowcasePage[] }[] = [
   { group: "Navigation", items: [{ id: "navigation", label: "导航组件", icon: <LayoutDashboard /> }] },
   { group: "Data Display", items: [{ id: "data", label: "数据展示", icon: <FileText /> }] },
   { group: "Layout & Templates", items: [{ id: "layout", label: "布局与模板", icon: <LayoutDashboard /> }] },
+  { group: "Advanced Patterns", items: [{ id: "advanced", label: "高级交互", icon: <Activity /> }] },
   {
     group: "Blog 公共",
     items: [
