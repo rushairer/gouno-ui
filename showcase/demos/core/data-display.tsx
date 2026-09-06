@@ -1,5 +1,20 @@
+import { useState } from "react";
 import { Badge, Calendar, Carousel, Descriptions, Empty, Grid, Image, List, Skeleton, Space, Statistic, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Text, Timeline, Tree } from "../../../src/core";
+import { DataTable } from "../../../src";
 import type { ComponentDocument } from "../../components/component-page";
+
+function DataTableDemo() {
+  const [query, setQuery] = useState("");
+  const [selected, setSelected] = useState<string[]>([]);
+  const rows = [
+    { id: "ui", name: "Gouno UI", status: "Stable", score: 98 },
+    { id: "blog", name: "Blog", status: "Preview", score: 86 },
+    { id: "admin", name: "Admin", status: "Stable", score: 94 },
+    { id: "gosso", name: "Gosso", status: "Draft", score: 72 },
+  ];
+  return <Space direction="vertical" className="w-full"><input className="h-9 rounded-md border bg-input px-3 text-sm" aria-label="筛选名称" placeholder="筛选名称" value={query} onChange={(event) => setQuery(event.target.value)} /><DataTable rowKey="id" dataSource={rows} filter={(row) => row.name.toLowerCase().includes(query.toLowerCase())} columns={[{ key: "name", title: "名称", dataIndex: "name", sorter: true }, { key: "status", title: "状态", dataIndex: "status" }, { key: "score", title: "评分", dataIndex: "score", sorter: (a, b) => a.score - b.score }]} selectable selectedRowKeys={selected} onSelectionChange={(keys) => setSelected(keys)} pagination={{ pageSize: 3 }} /></Space>;
+}
+
 export const dataDisplayDocuments: Record<string, ComponentDocument> = {
   list: { title: "List 列表", description: "基础分隔列表和自定义条目。", code: '<List data={items} renderItem={item => <Text>{item}</Text>} />', render: () => <List data={["Button", "Input", "Table"]} renderItem={item => <Text>{item}</Text>} /> },
   descriptions: { title: "Descriptions 描述列表", description: "展示对象属性和详情信息。", code: '<Descriptions columns={2} items={items} />', render: () => <Descriptions columns={2} bordered items={[{ label: "版本", children: "0.2.0" }, { label: "状态", children: <Badge tone="success">Stable</Badge> }]} /> },
@@ -7,6 +22,7 @@ export const dataDisplayDocuments: Record<string, ComponentDocument> = {
   image: { title: "Image 图片", description: "图片加载失败时提供可访问 fallback。", code: '<Image src="/cover.png" fallback={<Empty />} />', render: () => <Image src="/missing.png" alt="示例图片" fallback={<div className="rounded border p-10 text-center text-sm text-muted-foreground">Fallback</div>} /> },
   carousel: { title: "Carousel 轮播", description: "受控视觉轮播和键盘可达的操作按钮。", code: '<Carousel items={[<Card>One</Card>, <Card>Two</Card>]} />', render: () => <Carousel items={[<div key="1" className="p-12 text-center">Slide One</div>, <div key="2" className="p-12 text-center">Slide Two</div>]} /> },
   table: { title: "Table 表格", description: "统一表头、行、单元格和响应式容器样式。", code: '<Table><TableHeader>...</TableHeader><TableBody>...</TableBody></Table>', render: () => <Table><TableHeader><TableRow><TableHead>名称</TableHead><TableHead>状态</TableHead></TableRow></TableHeader><TableBody><TableRow><TableCell>Gouno UI</TableCell><TableCell><Badge tone="success">正常</Badge></TableCell></TableRow></TableBody></Table>, demos: [{ title: "密度", description: "默认、紧凑和触控密度使用同一组表格结构。", code: '<Table density="compact">...</Table>\n<Table density="touch">...</Table>', render: () => <Space direction="vertical"><Table density="compact"><TableHeader><TableRow><TableHead>紧凑表格</TableHead><TableHead>状态</TableHead></TableRow></TableHeader><TableBody><TableRow><TableCell>构建任务</TableCell><TableCell>完成</TableCell></TableRow></TableBody></Table><Table density="touch"><TableHeader><TableRow><TableHead>触控表格</TableHead><TableHead>状态</TableHead></TableRow></TableHeader><TableBody><TableRow><TableCell>发布任务</TableCell><TableCell>等待</TableCell></TableRow></TableBody></Table></Space> }, { title: "加载与空状态", code: '<Skeleton className="h-24" />\n<Empty title="暂无数据" />', render: () => <Grid columns={2}><Skeleton className="h-32 w-full" /><Empty title="暂无数据" description="调整筛选条件后重试。" /></Grid> }] },
+  "data-table": { title: "DataTable 数据表格", description: "面向业务列表的排序、筛选、分页、行选择和状态原语。", code: '<DataTable rowKey="id" dataSource={rows} columns={columns} selectable pagination={{ pageSize: 3 }} />', render: () => <DataTableDemo />, api: [{ name: "columns", description: "列定义和排序器", type: "DataTableColumn<T>[]" }, { name: "dataSource", description: "行数据", type: "T[]" }, { name: "selectable", description: "启用行选择", type: "boolean" }, { name: "filter", description: "行过滤函数", type: "(record: T) => boolean" }, { name: "pagination", description: "分页配置", type: "DataTablePagination | false" }, { name: "onSelectionChange", description: "选中行变化回调", type: "(keys, rows) => void" }] },
   statistic: { title: "Statistic 统计数值", description: "突出展示指标及单位。", code: '<Statistic title="访问量" value="12,480" />', render: () => <Grid columns={2}><Statistic title="访问量" value="12,480" /><Statistic title="增长" value="18.6" suffix="%" /></Grid> },
   timeline: { title: "Timeline 时间轴", description: "按顺序展示事件。", code: '<Timeline items={[{ title: "创建" }]} />', render: () => <Timeline items={[{ title:"创建项目", description:"09:00" },{ title:"完成构建", description:"09:12" }]} /> },
   tree: { title: "Tree 树", description: "层级展开、选择和复选。", code: '<Tree data={nodes} defaultExpandedKeys={["root"]} />', render: () => <Tree defaultExpandedKeys={["root"]} data={[{ key:"root", title:"组件", children:[{key:"core",title:"Core"},{key:"patterns",title:"Patterns"}]}]} /> }

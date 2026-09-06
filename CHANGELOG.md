@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- Added a reusable DataTable data-source mode with column definitions, sorting, filtering, pagination, row selection, loading, empty, and density states, plus a dedicated Showcase page.
 - Added the Core Icon API, Form alias, DateRangePicker, Splitter, Layout regions, InputOTP, Popconfirm, Message, Notification, Tour, Cascader, TreeSelect, Transfer, Mentions, Tree, Menu, QRCode, Watermark, Affix, BackTop, Slider, Rate, Segmented, AutoComplete, Collapse, Popover, Tooltip, and DropdownMenu.
 - Added hash-addressable Showcase documentation for each Core component with live Preview, source Code, usage guidance, and API tables.
 - Added multi-example documentation support and detailed Form, Select, Upload, and Table state examples.
@@ -16,6 +17,7 @@ All notable changes to this project are documented here.
 
 ### Changed
 
+- Expanded Showcase Data Display examples to cover DataTable behavior and selection state.
 - Split Core Showcase documents into General, Layout, Data Entry, Navigation, Data Display, Feedback, and Other registries.
 - Split Blog, Blog Admin, and Gosso Admin scenarios into focused product demo modules.
 - Reduced `showcase/main.tsx` to application shell, routing, navigation, theme, and viewport responsibilities.
