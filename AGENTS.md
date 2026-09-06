@@ -23,7 +23,7 @@
 - Add focused jsdom/Vitest coverage for state transitions, keyboard behavior, accessibility attributes, and data interactions.
 - Every Core addition needs a Showcase example covering default, variants/sizes, disabled/loading/error or empty states, and at least one interactive state.
 - Every Showcase Demo and its displayed source code must describe the same rendered implementation. Keep component props, children, layout wrappers, state, event handlers, labels, URLs, disabled/loading behavior, and interaction feedback synchronized; do not use abbreviated or illustrative code that differs from the Preview.
-- Every Showcase catalog entry must provide an English name, a Chinese name, and an evidence-based completion percentage. Update the percentage in the same change when public API, documented states, interaction coverage, accessibility, or tests materially change.
+- Every Showcase catalog entry must provide an English name, a Chinese name, and an API-plus-examples completion estimate. Show incomplete values explicitly as estimates, hide 100% badges, and only assign 100 after reviewing the component's public API and example checklist. Update the estimate in the same change when public API, documented states, interaction coverage, accessibility, or tests materially change.
 - Prefer defining each Demo as a focused component and display code that can reproduce that Demo without hidden behavior. When a Demo changes, update its displayed source in the same change and verify both Preview and Code views.
 - Run `npm run typecheck`, `npm test -- --run`, `npm run build`, and `npm run showcase:build` at the end of each coherent phase.
 

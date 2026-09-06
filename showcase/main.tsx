@@ -242,7 +242,7 @@ function App() {
               href={`#${item.id}`}
               data-showcase-nav-item
               aria-current={page === item.id ? "page" : undefined}
-              aria-label={`${item.label}，完善度 ${item.progress}%`}
+              aria-label={item.progress < 100 ? `${item.label}，API 与示例阶段性完成度约 ${item.progress}%` : item.label}
               className={`${navigationItemClass} ${page === item.id ? "active" : ""}`}
               onClick={(e) => {
                 e.preventDefault();
@@ -253,12 +253,14 @@ function App() {
             >
               {item.icon}
               <span className="min-w-0 flex-1 leading-5">{item.label}</span>
-              <Badge
-                count={`${item.progress}%`}
-                size="small"
-                title={`${item.label} 完善度 ${item.progress}%`}
-                className="shrink-0 [&_sup]:bg-primary [&_sup]:text-primary-foreground"
-              />
+              {item.progress < 100 ? (
+                <Badge
+                  count={`~${item.progress}%`}
+                  size="small"
+                  title={`${item.label} API 与示例阶段性完成度约 ${item.progress}%`}
+                  className="shrink-0"
+                />
+              ) : null}
             </a>
           ))}
         </NavigationGroup>
