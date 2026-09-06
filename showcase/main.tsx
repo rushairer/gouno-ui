@@ -60,6 +60,7 @@ import {
 } from "./scenarios";
 import { OverlayDemo } from "./overlays";
 import { CoreOverview } from "./demos/core-overview";
+import { CoreComponentPage } from "./demos/core-components";
 import { PatternsOverview } from "./demos/patterns-overview";
 import "./showcase.css";
 
@@ -937,11 +938,28 @@ function App() {
     return () => window.removeEventListener("message", onMessage);
   }, [embedded]);
   const render = () => {
+    if (page.startsWith("core-") && page !== "core-overview")
+      return <CoreComponentPage component={page.slice(5)} />;
     switch (page) {
       case "foundations":
         return <Foundations />;
       case "overlays":
         return <OverlayDemo />;
+      case "core-button": return <CoreComponentPage component="button" />;
+      case "core-typography": return <CoreComponentPage component="typography" />;
+      case "core-layout": return <CoreComponentPage component="layout" />;
+      case "core-input-number": return <CoreComponentPage component="input-number" />;
+      case "core-date-time": return <CoreComponentPage component="date-time" />;
+      case "core-upload": return <CoreComponentPage component="upload" />;
+      case "core-breadcrumb": return <CoreComponentPage component="breadcrumb" />;
+      case "core-pagination": return <CoreComponentPage component="pagination" />;
+      case "core-steps": return <CoreComponentPage component="steps" />;
+      case "core-states": return <CoreComponentPage component="states" />;
+      case "core-data": return <CoreComponentPage component="data" />;
+      case "core-calendar": return <CoreComponentPage component="calendar" />;
+      case "core-image": return <CoreComponentPage component="image" />;
+      case "core-carousel": return <CoreComponentPage component="carousel" />;
+      case "core-misc": return <CoreComponentPage component="misc" />;
       case "components":
         return <ComponentsOverview />;
       case "forms": return <CategoryOverview title="Forms 表单组件" description="输入、选择、校验与字段布局。" />;
