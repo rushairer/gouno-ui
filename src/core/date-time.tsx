@@ -1,0 +1,5 @@
+import type { InputHTMLAttributes } from "react";
+export function DatePicker(props: Omit<InputHTMLAttributes<HTMLInputElement>, "type">) { return <input {...props} type="date" />; }
+export function DateRangePicker({ start, end, onChange, ...props }: { start?: string; end?: string; onChange?: (range: { start?: string; end?: string }) => void } & Omit<InputHTMLAttributes<HTMLInputElement>, "type"|"value"|"onChange">) { return <div className="flex items-center gap-2"><input {...props} type="date" value={start ?? ""} aria-label="Start date" onChange={(e) => onChange?.({ start: e.target.value, end })} /><span aria-hidden="true">–</span><input {...props} type="date" value={end ?? ""} aria-label="End date" onChange={(e) => onChange?.({ start, end: e.target.value })} /></div>; }
+export function TimePicker(props: Omit<InputHTMLAttributes<HTMLInputElement>, "type">) { return <input {...props} type="time" />; }
+export function ColorPicker(props: Omit<InputHTMLAttributes<HTMLInputElement>, "type">) { return <input {...props} type="color" />; }

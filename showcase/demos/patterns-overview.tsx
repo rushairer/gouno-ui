@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
-import { DataTable, FilterBar, BulkActionBar, Pagination, Feedback } from "../../src/patterns";
-import { Badge, Button, Container, Input, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../src/core";
+import { DataTable, FilterBar, BulkActionBar, Feedback } from "../../src/patterns";
+import { Badge, Button, Container, Input, TableBody, TableCell, TableHead, TableHeader, TableRow, Pagination } from "../../src/core";
 import { PageHeader, Panel, PanelHeader } from "../../src/gouno";
 
 const rows = [

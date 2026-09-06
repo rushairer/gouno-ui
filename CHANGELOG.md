@@ -6,6 +6,13 @@
 
 ## Unreleased
 
+### Added
+- Expanded the pure Core layer with Ant Design-inspired typography, layout, data entry, navigation, data display, feedback, and calendar primitives.
+- Added Core Showcase examples for controlled input, upload, pagination, steps, empty/result states, descriptions, lists, calendar, and image fallback.
+- Added Core component tests for controlled state, boundaries, ARIA semantics, and keyboard-friendly native controls.
+- Added repository `AGENTS.md` documenting the Core, Patterns, Gouno, primitives, and Showcase architecture.
+
+
 - Added shared Spinner, Progress, AspectRatio, Kbd, Typography, Stack, Container, Statistic and Timeline primitives.
 
 ## [Unreleased]

@@ -12,6 +12,10 @@ Public layers:
 
 Core deliberately excludes product concepts such as `AdminShell`, `Panel`, `StatusBadge`, `RiskBadge`, route adapters and page templates.
 
+Core follows an Ant Design-inspired coverage map while keeping shadcn-style composition: general controls, layout primitives, data entry controls, navigation, data display, feedback, overlays, and theme provider APIs live in `src/core`. Each new component is exported from `@gouno/ui/core` and the package root; product shells remain in `@gouno/ui/gouno`, while compound interactions remain in `@gouno/ui/patterns`.
+
+Current Core additions include `Heading`, `Text`, `Divider`, `Space`, `Flex`, `Grid`, `InputNumber`, `DatePicker`, `DateRangePicker`, `TimePicker`, `ColorPicker`, `Upload`, `Breadcrumb`, `Pagination`, `Steps`, `Empty`, `Result`, `List`, `Descriptions`, `Image`, and `Calendar`. These components use native form controls where appropriate, preserve controlled/uncontrolled behavior, and expose semantic roles and labels for keyboard and assistive technology support.
+
 The library also exports lightweight composition primitives including `Spinner`, `Progress`, `AspectRatio`, `Typography`, `Stack`, `Container`, `Statistic`, and `Timeline`. They use semantic tokens and remain framework-agnostic.
 
 The single source of Gouno's React UI, semantic design tokens and administration template. No authentication, API or application state is imported here.

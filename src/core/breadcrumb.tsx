@@ -1,0 +1,3 @@
+import type { ReactNode } from "react";
+export interface BreadcrumbItem { label: ReactNode; href?: string; }
+export function Breadcrumb({ items, separator = "/" }: { items: BreadcrumbItem[]; separator?: ReactNode }) { return <nav aria-label="Breadcrumb"><ol className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">{items.map((item, i) => <li key={i} className="flex items-center gap-2">{i > 0 && <span aria-hidden="true">{separator}</span>}{item.href && i < items.length - 1 ? <a href={item.href} className="hover:text-foreground hover:underline">{item.label}</a> : <span aria-current={i === items.length - 1 ? "page" : undefined}>{item.label}</span>}</li>)}</ol></nav>; }
