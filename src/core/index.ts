@@ -6,7 +6,10 @@ export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 export { Spinner, Progress, AspectRatio, Kbd, Typography } from "./visual";
 export { Input, Textarea, Select, Checkbox, Radio, Switch, Field, type InputProps, type SelectProps } from "./form-controls";
 export { Tabs, TabList, Tab, TabPanel } from "./tabs";
-export { Modal, Drawer } from "../components/overlays/overlays";
+export { Modal } from "./modal";
+export type { ModalProps } from "./modal";
+export { Drawer } from "./drawer";
+export type { DrawerProps } from "./drawer";
 export { Alert } from "../components/primitives/alert";
 export { Skeleton } from "../components/feedback/feedback";
 export { Statistic, Timeline } from "./statistic";

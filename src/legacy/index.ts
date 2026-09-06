@@ -6,7 +6,7 @@ export * from "./primitives";
 export * from "../core/form-controls";
 export * from "../patterns/navigation-patterns";
 export * from "../patterns/feedback";
-export * from "../components/overlays/overlays";
+export * from "../core/overlays";
 export * from "../components/data-display/table";
 export * from "../components/layout/layout";
 export * from "../components/layout/admin-shell";

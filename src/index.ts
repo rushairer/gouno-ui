@@ -10,3 +10,6 @@ export * from "./components/primitives/separator";
 export * from "./components/primitives/avatar";
 export * from "./components/layout/primitives";
 export { cn as classes } from "./lib/utils";
+// Layered public APIs
+export { ConfirmDialog, useConfirm } from "./patterns/confirm-dialog";
+export type { ConfirmDialogProps, ConfirmOptions } from "./patterns/confirm-dialog";
