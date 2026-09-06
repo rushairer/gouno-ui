@@ -6,6 +6,8 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- Added separate Ant Design-style Badge and Tag APIs: Badge now covers counts, dots, overflow, zero visibility, statuses, colors, sizes, offsets, and dynamic values; Tag covers semantic and custom colors, icons, borders, closing, disabled behavior, and controlled or uncontrolled CheckableTag selection.
+- Added dedicated Badge and Tag Showcase pages with interaction-complete examples, matching source code, and full API tables.
 - Added theme-aware TSX syntax highlighting and an accessible copy action to every Showcase source-code block.
 - Added a reusable DataTable data-source mode with column definitions, sorting, filtering, pagination, row selection, loading, empty, and density states, plus a dedicated Showcase page.
 - Added a first-class Form wrapper with vertical/horizontal layouts, native FormData submission, disabled/loading fieldsets, and `onFinish` support.
@@ -22,6 +24,7 @@ All notable changes to this project are documented here.
 
 ### Changed
 
+- Replaced status-pill uses of Badge in Showcase product scenarios and data examples with the semantically correct Tag component.
 - Expanded Showcase Data Display examples to cover DataTable behavior and selection state.
 - Expanded Showcase Form examples to cover validation, horizontal responsive layout, read-only, disabled, and loading states.
 - Expanded data-entry tests for AutoComplete keyboard selection and TreeSelect controlled behavior.

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ArrowRight, Download, LoaderCircle, Plus } from "lucide-react";
-import { Avatar, AvatarFallback, Badge, Button, ButtonLink, Heading, Icon, IconButton, Kbd, Space, Text } from "../../../src/core";
+import { Avatar, AvatarFallback, Button, ButtonLink, Heading, Icon, IconButton, Kbd, Space, Text } from "../../../src/core";
 import type { ComponentDocument } from "../../components/component-page";
 
 function ButtonTypesDemo() { const [action, setAction] = useState("尚未操作"); return <Space direction="vertical"><Space wrap><Button variant="primary" onClick={() => setAction("主要按钮")}>主要按钮</Button><Button variant="secondary" onClick={() => setAction("次要按钮")}>次要按钮</Button><Button variant="dashed" onClick={() => setAction("虚线按钮")}>虚线按钮</Button><Button variant="text" onClick={() => setAction("文本按钮")}>文本按钮</Button><Button variant="link" onClick={() => setAction("链接样式按钮")}>链接样式按钮</Button></Space><Text tone="muted" aria-live="polite">最近操作：{action}</Text></Space>; }
@@ -113,6 +113,5 @@ export const generalDocuments: Record<string, ComponentDocument> = {
   icon: { title:"Icon 图标", description:"统一图标尺寸、旋转、加载动画和无障碍标签。", code:'<Icon icon={<LoaderCircle />} spin label="Loading" />', render:()=> <Space><Icon icon={<LoaderCircle/>}/><Icon icon={<LoaderCircle/>} spin label="Loading"/><Icon icon={<LoaderCircle/>} rotate={45}/></Space> },
   typography: { title: "Typography 排版", description: "统一标题、正文、辅助文字和语义色。", code: '<Heading level={2}>页面标题</Heading>\n<Text tone="muted">辅助说明</Text>', render: () => <Space direction="vertical"><Heading level={1}>一级标题</Heading><Heading level={2}>二级标题</Heading><Text size="lg">正文内容</Text><Text tone="muted">辅助说明</Text><Text tone="danger">错误提示</Text></Space> },
   kbd: { title: "Kbd 键盘按键", description: "表达键盘快捷键。", code: '<Kbd>⌘</Kbd><Kbd>K</Kbd>', render: () => <Space><Kbd>⌘</Kbd><Kbd>K</Kbd></Space> },
-  badge: { title: "Badge / Tag 标签", description: "状态和分类的紧凑视觉标记。", code: '<Badge tone="success">已发布</Badge>', render: () => <Space wrap><Badge>默认</Badge><Badge tone="brand">品牌</Badge><Badge tone="success">成功</Badge><Badge tone="warning">警告</Badge><Badge tone="danger">危险</Badge></Space> },
   avatar: { title: "Avatar 头像", description: "图片头像和文字回退。", code: '<Avatar><AvatarFallback>GU</AvatarFallback></Avatar>', render: () => <Avatar><AvatarFallback>GU</AvatarFallback></Avatar> }
 };

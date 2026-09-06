@@ -1,8 +1,41 @@
-import type { HTMLAttributes, ReactNode } from "react";
+import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
 import { cn } from "../lib/utils";
-export type BadgeTone = "neutral" | "brand" | "success" | "warning" | "danger" | "info";
-export function Badge({ tone = "neutral", className, ...props }: HTMLAttributes<HTMLSpanElement> & { tone?: BadgeTone }) { return <span {...props} className={cn("inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium", tone === "success" && "bg-success-subtle text-success border-success/30", tone === "warning" && "bg-warning-subtle text-warning border-warning/30", tone === "danger" && "bg-danger-subtle text-destructive border-destructive/30", tone === "info" && "bg-info-subtle text-info border-info/30", tone === "brand" && "bg-accent text-accent-foreground border-primary/30", tone === "neutral" && "bg-muted text-muted-foreground border-border", className)} />; }
-export const Tag = Badge;
-export function StatusIndicator({ status, label, className }: { status: string; label: ReactNode; className?: string }) { const tone: BadgeTone = /^(success|published|completed|active|approved|delivered)$/.test(status) ? "success" : /^(danger|failed|rejected|error)$/.test(status) ? "danger" : /^(warning|pending|draft|running|waiting_for_user|awaiting_approval)$/.test(status) ? "warning" : "neutral"; return <Badge tone={tone} className={cn(`status-pill--${status}`, className)}>{label}</Badge>; }
-export function RiskBadge({ level, label, className }: { level: string; label: ReactNode; className?: string }) { return <Badge className={className} tone={["high", "critical"].includes(level) ? "danger" : ["medium", "moderate"].includes(level) ? "warning" : "neutral"}>{label}</Badge>; }
-export function StatusBadge({ status = "draft", children, label, tone, compact, className }: { status?: string; children?: ReactNode; label?: ReactNode; tone?: BadgeTone; compact?: boolean; className?: string }) { const text = children || label || ({ published: "已发布", draft: "草稿", scheduled: "定时发布", hidden: "已隐藏" } as Record<string, string>)[status] || status; return <Badge tone={tone || (status === "published" ? "success" : status === "failed" ? "danger" : status === "pending" ? "warning" : "neutral")} className={cn(`status-badge status-badge--${status} status-pill`, compact && "compact", className)}>{text}</Badge>; }
+
+export type BadgeStatus = "success" | "processing" | "default" | "error" | "warning";
+export type BadgeSize = "default" | "small";
+export interface BadgeProps extends Omit<HTMLAttributes<HTMLSpanElement>, "color"> {
+  count?: ReactNode;
+  dot?: boolean;
+  showZero?: boolean;
+  overflowCount?: number;
+  status?: BadgeStatus;
+  text?: ReactNode;
+  color?: string;
+  size?: BadgeSize;
+  offset?: [number, number];
+  children?: ReactNode;
+}
+
+const statusColor: Record<BadgeStatus, string> = {
+  success: "bg-success",
+  processing: "bg-primary",
+  default: "bg-muted-foreground",
+  error: "bg-destructive",
+  warning: "bg-warning",
+};
+
+export function Badge({ count, dot = false, showZero = false, overflowCount = 99, status, text, color, size = "default", offset, children, className, style, title, ...props }: BadgeProps) {
+  if ((status || color) && children === undefined && count === undefined && !dot) {
+    return <span {...props} className={cn("inline-flex items-center gap-2 text-sm", className)} style={style}>
+      <span aria-hidden="true" className={cn("size-2 rounded-full", status && statusColor[status], status === "processing" && "animate-pulse")} style={color ? { backgroundColor: color } : undefined} />
+      {text !== undefined ? <span>{text}</span> : null}
+    </span>;
+  }
+  const numericCount = typeof count === "number" ? count : undefined;
+  const hidden = !dot && (count === undefined || (numericCount === 0 && !showZero));
+  const display = dot ? null : numericCount !== undefined && numericCount > overflowCount ? `${overflowCount}+` : count;
+  const indicatorStyle: CSSProperties = { backgroundColor: color, marginTop: offset?.[1], marginInlineStart: offset?.[0] };
+  const indicator = hidden ? null : <sup role="status" aria-label={title ?? (dot ? "notification" : String(display))} title={title ?? (display === null ? undefined : String(display))} className={cn("z-10 inline-flex items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-sm ring-2 ring-background", dot ? "size-2 p-0" : size === "small" ? "min-w-4 px-1 text-[10px] leading-4" : "min-w-5 px-1.5 text-xs leading-5", children && "absolute right-0 top-0 translate-x-1/2 -translate-y-1/2")} style={indicatorStyle}>{display}</sup>;
+  if (children !== undefined) return <span {...props} className={cn("relative inline-flex", className)} style={style}>{children}{indicator}</span>;
+  return <span {...props} className={cn("inline-flex", className)} style={style}>{indicator}</span>;
+}

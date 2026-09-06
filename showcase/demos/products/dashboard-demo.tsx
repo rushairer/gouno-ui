@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ArrowUpRight, BarChart3, CheckCircle2, Clock3, FileText, Plus, Settings, Shield } from "lucide-react";
 import {
-  ActionGroup, Badge, Button, Card, CardContent, CardHeader, DashboardTemplate,
+  ActionGroup, Button, Card, CardContent, CardHeader, DashboardTemplate, Tag,
   Panel, PanelHeader,
 } from "../../../src";
 import { showcaseRecords as records } from "../../fixtures";
@@ -181,9 +181,9 @@ export function DashboardDemo({ gosso = false }: { gosso?: boolean }) {
                       {type} · {date}
                     </div>
                   </div>
-                  <Badge tone={status === "已发布" ? "success" : status === "草稿" ? "neutral" : "warning"}>
+                  <Tag tone={status === "已发布" ? "success" : status === "草稿" ? "neutral" : "warning"}>
                     {status}
-                  </Badge>
+                  </Tag>
                 </div>
               ))}
             </div>
@@ -193,4 +193,3 @@ export function DashboardDemo({ gosso = false }: { gosso?: boolean }) {
     </DashboardTemplate>
   );
 }
-

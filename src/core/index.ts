@@ -2,7 +2,8 @@
 export { Button, ButtonLink, IconButtonLink, ChoiceButton, NavigationProvider, type ButtonProps, type ButtonVariant, type ButtonSize, type ButtonShape, type ButtonIconPosition, type ButtonLinkProps, type LinkAdapterProps } from "./button";
 export { IconButton, type IconButtonProps } from "./icon-button";
 export { Icon } from "./icon";
-export { Badge, Tag, StatusBadge, StatusIndicator, RiskBadge, type BadgeTone } from "./badge";
+export { Badge, type BadgeProps, type BadgeStatus, type BadgeSize } from "./badge";
+export { Tag, CheckableTag, StatusBadge, StatusIndicator, RiskBadge, type TagProps, type CheckableTagProps, type TagTone } from "./tag";
 export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./card";
 export { Spinner, Progress, AspectRatio, Kbd, Typography } from "./visual";
 export { Input, Textarea, Select, Checkbox, Radio, Switch, Field, FormField, CheckboxField, CheckboxGroup, FormLayout, Form, FormGrid, FormActions, OverlayForm, type InputProps, type SelectProps, type FormProps } from "./form-controls";
