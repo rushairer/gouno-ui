@@ -34,3 +34,5 @@ export { List } from "./list";
 export { Descriptions } from "./descriptions";
 export { Image } from "./image";
 export { Calendar } from "./calendar";
+export { ConfigProvider, useConfig, App, FloatButton, Anchor, Spin } from "./misc";
+export { Carousel } from "./carousel";
