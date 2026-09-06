@@ -1,5 +1,5 @@
 /** Pure, product-agnostic component API. */
-export { Button, ButtonLink, IconButtonLink, ChoiceButton, NavigationProvider, type ButtonProps, type ButtonVariant, type ButtonSize, type ButtonLinkProps, type LinkAdapterProps } from "./button";
+export { Button, ButtonLink, IconButtonLink, ChoiceButton, NavigationProvider, type ButtonProps, type ButtonVariant, type ButtonSize, type ButtonShape, type ButtonIconPosition, type ButtonLinkProps, type LinkAdapterProps } from "./button";
 export { IconButton, type IconButtonProps } from "./icon-button";
 export { Icon } from "./icon";
 export { Badge, Tag, StatusBadge, StatusIndicator, RiskBadge, type BadgeTone } from "./badge";
