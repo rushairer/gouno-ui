@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 import { Table, type TableDensity } from "../components/primitives/table";
-import { TableSkeleton } from "../components/feedback/feedback";
+import { TableSkeleton } from "./feedback";
 import { cn } from "../lib/utils";
 export interface DataTableProps {
   children?: ReactNode;
