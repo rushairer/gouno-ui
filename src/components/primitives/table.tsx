@@ -42,6 +42,12 @@ function Table({
               ? "[&_th]:px-4 [&_th]:py-4 [&_td]:px-4 [&_td]:py-4"
               : "[&_th]:px-4 [&_th]:py-3 [&_td]:px-4 [&_td]:py-3",
           "[&_tfoot_th]:align-middle [&_tfoot_td]:align-middle",
+          density === "compact"
+            ? "[&_tfoot_th]:h-10 [&_tfoot_td]:h-10"
+            : density === "touch"
+              ? "[&_tfoot_th]:h-14 [&_tfoot_td]:h-14"
+              : "[&_tfoot_th]:h-12 [&_tfoot_td]:h-12",
+          "[&_tfoot_tr]:border-t-2 [&_tfoot_tr]:border-border/80",
           fixed && "table-fixed",
           bordered &&
             "[&_td]:border-r [&_th]:border-r [&_tr>*:last-child]:border-r-0",
@@ -81,7 +87,7 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
     <tfoot
       data-slot="table-footer"
       className={cn(
-        "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
+        "bg-muted/50 font-medium [&>tr]:last:border-b-0",
         className,
       )}
       {...props}
@@ -135,7 +141,10 @@ function TableCaption({
   return (
     <caption
       data-slot="table-caption"
-      className={cn("mt-4 text-sm text-muted-foreground", className)}
+      className={cn(
+        "border-t border-border/60 pt-3 text-sm text-muted-foreground",
+        className,
+      )}
       {...props}
     />
   );

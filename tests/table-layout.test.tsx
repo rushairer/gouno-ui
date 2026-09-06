@@ -36,6 +36,8 @@ describe("Table layout contract", () => {
     const table = screen.getByRole("table");
     expect(table.className).toContain("[&_tfoot_td]:align-middle");
     expect(table.className).toContain("[&_td]:py-4");
+    expect(table.className).toContain("[&_tfoot_tr]:border-t-2");
+    expect(table.className).toContain("[&_tfoot_td]:h-14");
   });
 
   it("does not add vertical cell borders when bordered is false", () => {
