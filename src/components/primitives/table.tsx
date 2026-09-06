@@ -20,11 +20,11 @@ function Table({
       data-density={density}
       data-bordered={bordered || undefined}
       data-sticky-header={stickyHeader || undefined}
-      className={cn("relative w-full overflow-x-auto", bordered && "rounded-lg border", containerClassName)}
+      className={cn("relative w-full overflow-x-auto rounded-lg", bordered ? "border border-border/80 bg-card shadow-sm" : "bg-card/40", containerClassName)}
     >
       <table
         data-slot="table"
-        className={cn("w-full caption-bottom text-sm", fixed && "table-fixed", bordered && "[&_td]:border-r [&_th]:border-r [&_tr>*:last-child]:border-r-0", stickyHeader && "[&_thead]:sticky [&_thead]:top-0 [&_thead]:z-10 [&_thead]:bg-background", className)}
+        className={cn("w-full caption-bottom text-sm text-foreground", fixed && "table-fixed", bordered && "[&_td]:border-r [&_th]:border-r [&_tr>*:last-child]:border-r-0", stickyHeader && "[&_thead]:sticky [&_thead]:top-0 [&_thead]:z-10 [&_thead]:bg-background", "[&_thead_th]:h-11 [&_thead_th]:bg-muted/60 [&_thead_th]:px-4 [&_thead_th]:text-xs [&_thead_th]:uppercase [&_thead_th]:tracking-wide", "[&_tbody_td]:px-4 [&_tbody_td]:py-3", "[&_tbody_tr:nth-child(even)]:bg-muted/20", className)}
         {...props}
       />
     </div>
@@ -35,7 +35,7 @@ function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
   return (
     <thead
       data-slot="table-header"
-      className={cn("[&_tr]:border-b", className)}
+      className={cn("[&_tr]:border-b [&_tr]:border-border/70", className)}
       {...props}
     />
   );
@@ -69,7 +69,7 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
     <tr
       data-slot="table-row"
       className={cn(
-        "border-b transition-colors hover:bg-muted/50 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
+        "border-b border-border/60 transition-colors hover:bg-accent/60 has-aria-expanded:bg-accent/40 data-[state=selected]:bg-primary/10 data-[state=selected]:shadow-[inset_3px_0_0_hsl(var(--primary))]",
         className,
       )}
       {...props}

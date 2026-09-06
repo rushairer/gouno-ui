@@ -2,6 +2,20 @@ export type AuditArea = "api" | "states" | "interaction" | "accessibility" | "ex
 export type AuditItem = { area: AuditArea; requirement: string; complete: boolean };
 
 const done = (area: AuditArea, ...requirements: string[]): AuditItem[] => requirements.map((requirement) => ({ area, requirement, complete: true }));
+const pendingByComponent: Record<string, string> = {
+  "core-input": "Ant Design addon/showCount parity",
+  "core-textarea": "autosize and count formatter parity",
+  "core-input-number": "keyboard/controls and precision parity",
+  "core-select": "options/search/allowClear parity",
+  "core-form": "field rules and values-change parity",
+  "core-date-picker": "presets and panel mode parity",
+  "core-upload": "request/progress/item renderer parity",
+  "core-table": "column groups/summary/row events parity",
+  "core-data-table": "column visibility/page-size/server actions parity",
+  "core-pagination": "page buttons/jumper/showTotal/page-size parity",
+  "core-modal": "centered/mask/zIndex/destroyOnClose/action parity",
+  "core-drawer": "mask/zIndex/destroyOnClose/extra/styles parity",
+};
 
 export const componentAudits = {
   "core-input": [
@@ -48,5 +62,9 @@ export const componentAudits = {
 export function componentProgress(id: string, fallback: number) {
   const audit = componentAudits[id as keyof typeof componentAudits];
   if (!audit?.length) return fallback;
-  return Math.round((audit.filter((item) => item.complete).length / audit.length) * 100);
+  const pendingRequirement = pendingByComponent[id];
+  const effectiveAudit = pendingRequirement && audit.every((item) => item.complete)
+    ? [...audit, { area: "api" as const, requirement: pendingRequirement, complete: false }]
+    : audit;
+  return Math.round((effectiveAudit.filter((item) => item.complete).length / effectiveAudit.length) * 100);
 }

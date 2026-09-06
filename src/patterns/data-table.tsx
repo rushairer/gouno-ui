@@ -99,7 +99,7 @@ export function DataTable<T = Record<string, unknown>>({
     onSortChange?.(next);
   };
   if (loading) return <TableSkeleton rows={loadingRows} columns={loadingCols} label="Loading table data" />;
-  if (empty || (generated && visible.length === 0)) return <>{emptyState ?? locale?.emptyText ?? <div className="p-8 text-center text-sm text-muted-foreground">暂无数据</div>}</>;
+  if (empty || (generated && visible.length === 0)) return <div data-slot="data-table-empty" className={cn("w-full rounded-lg border border-dashed border-border/80 bg-card px-6 py-12 text-center text-sm text-muted-foreground", className)}>{emptyState ?? locale?.emptyText ?? "暂无数据"}</div>;
   if (!generated) return <Table density={density} className={cn("rounded-lg border", className)}>{children}</Table>;
   const allVisibleKeys = visible.map((row, index) => ({ row, key: recordKey(row, (page - 1) * pageSize + index, rowKey) })).filter(({ row }) => !rowDisabled?.(row)).map(({ key }) => key);
   const allSelected = allVisibleKeys.length > 0 && allVisibleKeys.every((key) => selected.includes(key));
@@ -131,7 +131,7 @@ export function DataTable<T = Record<string, unknown>>({
           </Fragment>;
         })}</TableBody>
       </Table>
-      {pagination ? <nav aria-label="表格分页" className="flex items-center justify-between text-sm text-muted-foreground"><span>{locale?.totalText?.(total) ?? `${total} 条记录`}</span><div className="flex items-center gap-2"><button type="button" className="rounded border px-2 py-1 disabled:opacity-50" disabled={page <= 1} onClick={() => { const next = page - 1; if (pagination.page === undefined) setInternalPage(next); pagination.onChange?.(next, pageSize); }}>{locale?.previousText ?? "上一页"}</button><span aria-live="polite">{page} / {totalPages}</span><button type="button" className="rounded border px-2 py-1 disabled:opacity-50" disabled={page >= totalPages} onClick={() => { const next = page + 1; if (pagination.page === undefined) setInternalPage(next); pagination.onChange?.(next, pageSize); }}>{locale?.nextText ?? "下一页"}</button></div></nav> : null}
+      {pagination ? <nav aria-label="表格分页" className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border/70 bg-muted/20 px-3 py-2 text-sm text-muted-foreground"><span>{locale?.totalText?.(total) ?? `${total} 条记录`}</span><div className="flex items-center gap-2"><button type="button" className="min-h-8 rounded-md border border-border bg-background px-3 py-1.5 font-medium transition-colors hover:bg-accent disabled:cursor-not-allowed disabled:opacity-50" disabled={page <= 1} onClick={() => { const next = page - 1; if (pagination.page === undefined) setInternalPage(next); pagination.onChange?.(next, pageSize); }}>{locale?.previousText ?? "上一页"}</button><span aria-live="polite" className="min-w-16 text-center tabular-nums">{page} / {totalPages}</span><button type="button" className="min-h-8 rounded-md border border-border bg-background px-3 py-1.5 font-medium transition-colors hover:bg-accent disabled:cursor-not-allowed disabled:opacity-50" disabled={page >= totalPages} onClick={() => { const next = page + 1; if (pagination.page === undefined) setInternalPage(next); pagination.onChange?.(next, pageSize); }}>{locale?.nextText ?? "下一页"}</button></div></nav> : null}
     </div>
   );
 }

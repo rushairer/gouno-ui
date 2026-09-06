@@ -16,9 +16,11 @@ function NotificationDemo(){const api=useNotification();return <Button onClick={
 function TourDemo(){const [open,setOpen]=useState(false);return <><Button onClick={()=>setOpen(true)}>开始引导</Button><Tour open={open} onClose={()=>setOpen(false)} steps={[{title:"欢迎",description:"这是第一步。"},{title:"组件目录",description:"从左侧选择组件。"}]}/></>}
 
 const modalApi = [
-  { name: "open / isOpen", description: "受控显示状态；isOpen 为兼容别名", type: "boolean" },
+  { name: "open", description: "受控显示状态", type: "boolean" },
+  { name: "isOpen", description: "受控显示状态的兼容别名", type: "boolean" },
   { name: "defaultOpen", description: "非受控初始打开状态", type: "boolean", defaultValue: "false" },
-  { name: "title / description", description: "标题和辅助描述", type: "ReactNode" },
+  { name: "title", description: "标题", type: "ReactNode" },
+  { name: "description", description: "辅助描述", type: "ReactNode" },
   { name: "children", description: "对话框主体内容", type: "ReactNode" },
   { name: "footer", description: "底部操作区域", type: "ReactNode" },
   { name: "size", description: "预设宽度", type: '"sm" | "md" | "lg" | "xl"', defaultValue: '"md"' },
@@ -28,7 +30,8 @@ const modalApi = [
   { name: "showCloseButton", description: "是否显示右上角关闭按钮", type: "boolean", defaultValue: "true" },
   { name: "loading", description: "主体加载状态", type: "boolean", defaultValue: "false" },
   { name: "ariaLabel", description: "没有可见标题时的可访问名称", type: "string" },
-  { name: "contentStyle / className", description: "内容样式和附加类名", type: "CSSProperties / string" },
+  { name: "contentStyle", description: "内容内联样式", type: "CSSProperties" },
+  { name: "className", description: "附加类名", type: "string" },
   { name: "onClose", description: "关闭回调", type: "() => void" },
   { name: "onOpenChange", description: "打开状态变化回调", type: "(open) => void" },
   { name: "afterOpenChange", description: "状态变化后的回调", type: "(open) => void" },
@@ -51,7 +54,7 @@ export const feedbackDocuments: Record<string, ComponentDocument> = {
   modal: { title: "Modal 对话框", description: "焦点锁定、Escape 关闭、焦点回收、受控/非受控状态和加载状态。", code: 'function ModalDemo() { const [open, setOpen] = useState(false); return <><Button onClick={() => setOpen(true)}>打开 Modal</Button><Modal open={open} title="编辑资料" onClose={() => setOpen(false)}>内容</Modal></>; }', render: () => <ModalDemo />, demos: [{ title: "四种尺寸", code: '<Space wrap>{(["sm", "md", "lg", "xl"] as const).map((value) => <Button key={value} onClick={() => setSize(value)}>{value}</Button>)}</Space>\n<Modal size={size ?? "md"} open={size !== null} />', render: () => <ModalSizeDemo /> }, { title: "状态与生命周期", code: 'function ModalStateDemo() { const [open, setOpen] = useState(false); const [loading, setLoading] = useState(false); return <Space wrap><Button onClick={() => setOpen(true)}>打开生命周期示例</Button><Button onClick={() => { setOpen(true); setLoading(true); window.setTimeout(() => setLoading(false), 600); }}>加载状态</Button><Modal open={open} title="生命周期" description="onOpenChange、afterOpenChange 和 loading。" loading={loading} onOpenChange={setOpen} afterOpenChange={() => undefined} onClose={() => setOpen(false)} closeOnEsc={false} closeOnBackdrop footer={<Button onClick={() => setOpen(false)}>关闭</Button>}>内容</Modal></Space>; }', render: () => <ModalStateDemo /> }], api: modalApi },
   drawer: { title: "Drawer 抽屉", description: "从四个方向承载辅助任务，支持尺寸、遮罩关闭、受控/非受控状态、加载状态和焦点回收。", code: 'function DrawerDemo() { const [open, setOpen] = useState(false); return <><Button onClick={() => setOpen(true)}>打开 Drawer</Button><Drawer open={open} title="筛选条件" onClose={() => setOpen(false)}>内容</Drawer></>; }', render: () => <DrawerDemo />, demos: [{ title: "弹出方向", description: "支持 top、right、bottom、left。", code: '<Drawer placement="left" width={420} />\n<Drawer placement="bottom" height={320} />', render: () => <DrawerPlacementDemo /> }, { title: "状态与生命周期", code: 'function DrawerStateDemo() { const [open, setOpen] = useState(false); return <Space wrap><Button onClick={() => setOpen(true)}>打开生命周期示例</Button><Drawer open={open} title="生命周期" description="支持受控状态、加载状态和回调。" loading={open} onOpenChange={setOpen} afterOpenChange={() => undefined} onClose={() => setOpen(false)} footer={<Button onClick={() => setOpen(false)}>关闭</Button>}>内容</Drawer></Space>; }', render: () => <DrawerStateDemo /> }], api: drawerApi },
   popover: { title: "Popover 气泡卡片", description: "由触发器打开的轻量内容面板。", code: '<Popover><PopoverTrigger>打开</PopoverTrigger><PopoverContent>内容</PopoverContent></Popover>', render: () => <Popover><PopoverTrigger asChild><Button>打开 Popover</Button></PopoverTrigger><PopoverContent>可放置说明和操作。</PopoverContent></Popover> },
-  tooltip: { title: "Tooltip 文字提示", description: "悬停或聚焦时解释控件。", code: '<Tooltip><TooltipTrigger>...</TooltipTrigger><TooltipContent>说明</TooltipContent></Tooltip>', render: () => <TooltipProvider><Tooltip><TooltipTrigger asChild><Button>聚焦或悬停</Button></TooltipTrigger><TooltipContent>补充说明</TooltipContent></Tooltip></TooltipProvider> },
+  tooltip: { title: "Tooltip 文字提示", description: "悬停或聚焦时解释控件。", code: '<TooltipProvider><Tooltip><TooltipTrigger asChild><Button>聚焦或悬停</Button></TooltipTrigger><TooltipContent>补充说明</TooltipContent></Tooltip></TooltipProvider>', render: () => <TooltipProvider><Tooltip><TooltipTrigger asChild><Button>聚焦或悬停</Button></TooltipTrigger><TooltipContent>补充说明</TooltipContent></Tooltip></TooltipProvider> },
   popconfirm: { title:"Popconfirm 气泡确认", description:"在危险或不可逆操作前请求确认。", code:'<Popconfirm title="确认删除？"><Button>删除</Button></Popconfirm>', render:()=> <Popconfirm title="确认删除？" description="删除后无法恢复。" danger><Button variant="danger">删除</Button></Popconfirm> },
   message: { title:"Message 全局提示", description:"短暂反馈操作结果。", code:'const message = useMessage(); message.success("保存成功")', render:()=> <MessageProvider><MessageDemo/></MessageProvider> },
   notification: { title:"Notification 通知提醒", description:"展示标题和补充描述的全局通知。", code:'notification.open({ title: "构建完成" })', render:()=> <NotificationProvider><NotificationDemo/></NotificationProvider> },

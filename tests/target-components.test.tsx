@@ -69,7 +69,8 @@ describe("audited target components", () => {
   });
 
   it("does not report 100% while API documentation gates are incomplete", () => {
-    for (const id of ["core-input", "core-textarea", "core-input-number", "core-select", "core-form", "core-date-picker", "core-upload", "core-table", "core-data-table"]) expect(componentProgress(id, 0)).toBe(100);
-    for (const id of ["core-pagination", "core-modal", "core-drawer"]) expect(componentProgress(id, 0)).toBe(100);
+    for (const id of ["core-input", "core-textarea", "core-input-number", "core-select", "core-form", "core-date-picker", "core-upload", "core-table", "core-data-table", "core-pagination", "core-modal", "core-drawer"]) {
+      expect(componentProgress(id, 0)).toBeLessThan(100);
+    }
   });
 });
