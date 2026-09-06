@@ -77,4 +77,20 @@ export const tableApiSections: ComponentDocument["apiSections"] = [
       { name: "children", type: "ReactNode", description: "单元格内容" },
     ],
   },
+  {
+    title: "视觉行为",
+    rows: [
+      {
+        name: "bordered=false",
+        type: "boolean",
+        defaultValue: "false",
+        description: "不显示列之间的垂直分隔线，仅保留行分隔线；参见无列垂直分隔线 Demo",
+      },
+      {
+        name: "TableFooter",
+        type: "Component",
+        description: "Footer 单元格使用与 density 对应的内边距并垂直居中",
+      },
+    ],
+  },
 ];

@@ -1,5 +1,7 @@
 import TableGrouped from "./table/grouped";
 import TableGroupedCode from "./table/grouped.tsx?raw";
+import TableUnbordered from "./table/unbordered";
+import TableUnborderedCode from "./table/unbordered.tsx?raw";
 import { tableApiSections } from "./table/api-sections";
 import { dataTableApiSections } from "./data-table/api-sections";
 import DataTableStates from "./data-table/states";
@@ -149,6 +151,16 @@ export const dataDisplayDocuments: Record<string, ComponentDocument> = {
           "@gouno/ui/core",
         ).replaceAll("../../../../src/patterns", "@gouno/ui/patterns"),
         render: () => <TableGrouped />,
+      },
+      {
+        title: "无列垂直分隔线",
+        description:
+          "默认 bordered=false，仅保留行分隔线；适合阅读型数据列表。",
+        code: TableUnborderedCode.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ),
+        render: () => <TableUnbordered />,
       },
     ],
     api: [

@@ -13,18 +13,43 @@ function Table({
   containerClassName,
   className,
   ...props
-}: React.ComponentProps<"table"> & { density?: TableDensity; bordered?: boolean; fixed?: boolean; stickyHeader?: boolean; containerClassName?: string }) {
+}: React.ComponentProps<"table"> & {
+  density?: TableDensity;
+  bordered?: boolean;
+  fixed?: boolean;
+  stickyHeader?: boolean;
+  containerClassName?: string;
+}) {
   return (
     <div
       data-slot="table-container"
       data-density={density}
       data-bordered={bordered || undefined}
       data-sticky-header={stickyHeader || undefined}
-      className={cn("relative w-full overflow-x-auto rounded-lg", bordered ? "border border-border/80 bg-card shadow-sm" : "bg-card/40", containerClassName)}
+      className={cn(
+        "relative w-full overflow-x-auto rounded-lg",
+        bordered ? "border border-border/80 bg-card shadow-sm" : "bg-card/40",
+        containerClassName,
+      )}
     >
       <table
         data-slot="table"
-        className={cn("w-full caption-bottom text-sm text-foreground", fixed && "table-fixed", bordered && "[&_td]:border-r [&_th]:border-r [&_tr>*:last-child]:border-r-0", stickyHeader && "[&_thead]:sticky [&_thead]:top-0 [&_thead]:z-10 [&_thead]:bg-background", "[&_thead_th]:bg-muted/60", className)}
+        className={cn(
+          "w-full caption-bottom text-sm text-foreground",
+          density === "compact"
+            ? "[&_th]:px-3 [&_th]:py-2 [&_td]:px-3 [&_td]:py-2"
+            : density === "touch"
+              ? "[&_th]:px-4 [&_th]:py-4 [&_td]:px-4 [&_td]:py-4"
+              : "[&_th]:px-4 [&_th]:py-3 [&_td]:px-4 [&_td]:py-3",
+          "[&_tfoot_th]:align-middle [&_tfoot_td]:align-middle",
+          fixed && "table-fixed",
+          bordered &&
+            "[&_td]:border-r [&_th]:border-r [&_tr>*:last-child]:border-r-0",
+          stickyHeader &&
+            "[&_thead]:sticky [&_thead]:top-0 [&_thead]:z-10 [&_thead]:bg-background",
+          "[&_thead_th]:bg-muted/60",
+          className,
+        )}
         {...props}
       />
     </div>

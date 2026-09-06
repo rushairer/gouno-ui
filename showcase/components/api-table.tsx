@@ -1,2 +1,42 @@
-export interface ApiRow{name:string;description:string;type:string;defaultValue?:string}
-export function ApiTable({rows}:{rows:ApiRow[]}){return <div className="overflow-x-auto rounded-md border"><table className="w-full text-left text-sm"><thead className="bg-muted/60"><tr><th className="px-3 py-2">Property</th><th className="px-3 py-2">Description</th><th className="px-3 py-2">Type</th><th className="px-3 py-2">Default</th></tr></thead><tbody>{rows.map(row=><tr key={row.name} className="border-t"><td className="px-3 py-2 font-mono text-primary">{row.name}</td><td className="px-3 py-2">{row.description}</td><td className="px-3 py-2 font-mono text-xs">{row.type}</td><td className="px-3 py-2 font-mono text-xs">{row.defaultValue??"—"}</td></tr>)}</tbody></table></div>}
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../../src/core";
+
+export interface ApiRow {
+  name: string;
+  description: string;
+  type: string;
+  defaultValue?: string;
+}
+
+export function ApiTable({ rows }: { rows: ApiRow[] }) {
+  return (
+    <Table density="compact" bordered>
+      <TableHeader>
+        <TableRow>
+          <TableHead scope="col">Property</TableHead>
+          <TableHead scope="col">Description</TableHead>
+          <TableHead scope="col">Type</TableHead>
+          <TableHead scope="col">Default</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {rows.map((row) => (
+          <TableRow key={row.name}>
+            <TableCell className="font-mono text-primary">{row.name}</TableCell>
+            <TableCell>{row.description}</TableCell>
+            <TableCell className="font-mono text-xs">{row.type}</TableCell>
+            <TableCell className="font-mono text-xs">
+              {row.defaultValue ?? "—"}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
