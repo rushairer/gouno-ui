@@ -1,0 +1,7 @@
+node_modules/
+dist/
+showcase/dist/
+*.tgz
+.vite/
+coverage/
+*.log
