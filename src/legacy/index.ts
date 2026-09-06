@@ -4,7 +4,7 @@ export * from "./badge";
 export * from "./card";
 export * from "./primitives";
 export * from "../core/form-controls";
-export * from "../components/navigation/navigation";
+export * from "../patterns/navigation-patterns";
 export * from "../components/feedback/feedback";
 export * from "../components/overlays/overlays";
 export * from "../components/data-display/table";

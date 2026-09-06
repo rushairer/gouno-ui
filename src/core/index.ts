@@ -5,7 +5,7 @@ export { Badge, Tag, type BadgeTone } from "./badge";
 export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./card";
 export { Spinner, Progress, AspectRatio, Kbd, Typography } from "./visual";
 export { Input, Textarea, Select, Checkbox, Radio, Switch, Field, type InputProps, type SelectProps } from "./form-controls";
-export { Tabs, TabList, Tab, TabPanel } from "../components/navigation/navigation";
+export { Tabs, TabList, Tab, TabPanel } from "./tabs";
 export { Modal, Drawer } from "../components/overlays/overlays";
 export { Alert } from "../components/primitives/alert";
 export { Skeleton } from "../components/feedback/feedback";
