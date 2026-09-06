@@ -1,4 +1,4 @@
-import { StrictMode, useEffect, useMemo, useState } from "react";
+import { StrictMode, useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Menu } from "lucide-react";
 import {
@@ -53,6 +53,10 @@ function App() {
       : workspaceForPage(window.location.hash.slice(1));
   });
   const [previewWidth, setPreviewWidth] = useState<PreviewWidth>("full");
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [iframeSrc, setIframeSrc] = useState(() =>
+    `${window.location.pathname}?embedded=1&workspace=${workspace}&brand=${brand}&preview=${previewWidth}#${page}`,
+  );
   const current = useMemo(
     () => nav.flatMap((g) => g.items).find((item) => item.id === page),
     [page],
@@ -135,6 +139,19 @@ function App() {
         { type: "gouno-showcase:navigate", page },
         window.location.origin,
       );
+  }, [embedded, page]);
+  useEffect(() => {
+    if (embedded) return;
+    setIframeSrc(
+      `${window.location.pathname}?embedded=1&workspace=${workspace}&brand=${brand}&preview=${previewWidth}#${page}`,
+    );
+  }, [embedded, workspace, brand, previewWidth]);
+  useEffect(() => {
+    if (embedded) return;
+    iframeRef.current?.contentWindow?.postMessage(
+      { type: "gouno-showcase:navigate", page },
+      window.location.origin,
+    );
   }, [embedded, page]);
   useEffect(() => {
     if (embedded) return;
@@ -259,9 +276,10 @@ function App() {
               }
             >
               <iframe
-                key={`${page}-${workspace}-${brand}-${previewWidth}`}
+                ref={iframeRef}
+                key={`${workspace}-${brand}-${previewWidth}`}
                 title={`${current?.label ?? "页面"} ${previewWidth} 视口预览`}
-                src={`${window.location.pathname}?embedded=1&workspace=${workspace}&brand=${brand}&preview=${previewWidth}#${page}`}
+                src={iframeSrc}
                 className={
                   previewWidth === "full"
                     ? "block h-full w-full border-0 bg-background"
