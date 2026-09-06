@@ -10,6 +10,7 @@
 - Removed the obsolete Gouno UI overview, placeholder category pages, combined overlay page, and superseded demo files after replacing them with component documentation.
 
 ### Added
+- Added the Core Icon API, formal Form alias, and standalone DateRangePicker documentation to complete the Ant Design category map.
 - Added Splitter, Layout regions, InputOTP, Popconfirm, Message, Notification, and Tour with isolated Core implementations and Showcase pages.
 - Added Cascader, TreeSelect, Transfer, Mentions, Tree, Menu, QRCode, Watermark, Affix, and BackTop with individual Showcase documentation.
 - Added Slider, Rate, Segmented, AutoComplete, Collapse, Popover, Tooltip, and DropdownMenu to the Core component surface.

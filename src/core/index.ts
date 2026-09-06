@@ -1,10 +1,11 @@
 /** Pure, product-agnostic component API. */
 export { Button, ButtonLink, IconButtonLink, ChoiceButton, NavigationProvider, type ButtonProps, type ButtonVariant, type ButtonSize, type ButtonLinkProps, type LinkAdapterProps } from "./button";
 export { IconButton, type IconButtonProps } from "./icon-button";
+export { Icon } from "./icon";
 export { Badge, Tag, StatusBadge, StatusIndicator, RiskBadge, type BadgeTone } from "./badge";
 export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./card";
 export { Spinner, Progress, AspectRatio, Kbd, Typography } from "./visual";
-export { Input, Textarea, Select, Checkbox, Radio, Switch, Field, FormField, CheckboxField, CheckboxGroup, FormLayout, FormGrid, FormActions, OverlayForm, type InputProps, type SelectProps } from "./form-controls";
+export { Input, Textarea, Select, Checkbox, Radio, Switch, Field, FormField, CheckboxField, CheckboxGroup, FormLayout, FormLayout as Form, FormGrid, FormActions, OverlayForm, type InputProps, type SelectProps } from "./form-controls";
 export { Tabs, TabList, Tab, TabPanel } from "./tabs";
 export { Modal } from "./modal";
 export type { ModalProps } from "./modal";
