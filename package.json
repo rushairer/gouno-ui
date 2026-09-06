@@ -14,11 +14,26 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./core": { "types": "./dist/core/index.d.ts", "import": "./dist/core/index.js" },
-    "./core/*": { "types": "./dist/core/*.d.ts", "import": "./dist/core/*.js" },
-    "./patterns": { "types": "./dist/patterns/index.d.ts", "import": "./dist/patterns/index.js" },
-    "./gouno": { "types": "./dist/gouno/index.d.ts", "import": "./dist/gouno/index.js" },
-    "./legacy": { "types": "./dist/legacy/index.d.ts", "import": "./dist/legacy/index.js" },
+    "./core": {
+      "types": "./dist/core/index.d.ts",
+      "import": "./dist/core/index.js"
+    },
+    "./core/*": {
+      "types": "./dist/core/*.d.ts",
+      "import": "./dist/core/*.js"
+    },
+    "./patterns": {
+      "types": "./dist/patterns/index.d.ts",
+      "import": "./dist/patterns/index.js"
+    },
+    "./gouno": {
+      "types": "./dist/gouno/index.d.ts",
+      "import": "./dist/gouno/index.js"
+    },
+    "./legacy": {
+      "types": "./dist/legacy/index.d.ts",
+      "import": "./dist/legacy/index.js"
+    },
     "./theme": {
       "types": "./dist/theme.d.ts",
       "import": "./dist/theme.js"
@@ -26,15 +41,47 @@
     "./tokens.css": "./dist/tokens.css",
     "./base.css": "./dist/base.css",
     "./bootstrap.js": "./dist/bootstrap.js",
-    "./foundations": { "types": "./dist/components/foundations/index.d.ts", "import": "./dist/components/foundations/index.js" },
-    "./forms": { "types": "./dist/components/forms/index.d.ts", "import": "./dist/components/forms/index.js" },
-    "./navigation": { "types": "./dist/components/navigation/index.d.ts", "import": "./dist/components/navigation/index.js" },
-    "./feedback": { "types": "./dist/components/feedback/index.d.ts", "import": "./dist/components/feedback/index.js" },
-    "./data-display": { "types": "./dist/components/data-display/index.d.ts", "import": "./dist/components/data-display/index.js" },
-    "./layout": { "types": "./dist/components/layout/index.d.ts", "import": "./dist/components/layout/index.js" },
-    "./overlays": { "types": "./dist/components/overlays/index.d.ts", "import": "./dist/components/overlays/index.js" },
-    "./templates": { "types": "./dist/components/templates/index.d.ts", "import": "./dist/components/templates/index.js" },
-    "./fonts/*": "./dist/fonts/*"
+    "./foundations": {
+      "types": "./dist/components/foundations/index.d.ts",
+      "import": "./dist/components/foundations/index.js"
+    },
+    "./forms": {
+      "types": "./dist/components/forms/index.d.ts",
+      "import": "./dist/components/forms/index.js"
+    },
+    "./navigation": {
+      "types": "./dist/components/navigation/index.d.ts",
+      "import": "./dist/components/navigation/index.js"
+    },
+    "./feedback": {
+      "types": "./dist/components/feedback/index.d.ts",
+      "import": "./dist/components/feedback/index.js"
+    },
+    "./data-display": {
+      "types": "./dist/components/data-display/index.d.ts",
+      "import": "./dist/components/data-display/index.js"
+    },
+    "./layout": {
+      "types": "./dist/components/layout/index.d.ts",
+      "import": "./dist/components/layout/index.js"
+    },
+    "./overlays": {
+      "types": "./dist/components/overlays/index.d.ts",
+      "import": "./dist/components/overlays/index.js"
+    },
+    "./templates": {
+      "types": "./dist/components/templates/index.d.ts",
+      "import": "./dist/components/templates/index.js"
+    },
+    "./fonts/*": "./dist/fonts/*",
+    "./patterns/*": {
+      "types": "./dist/patterns/*.d.ts",
+      "import": "./dist/patterns/*.js"
+    },
+    "./gouno/*": {
+      "types": "./dist/gouno/*.d.ts",
+      "import": "./dist/gouno/*.js"
+    }
   },
   "sideEffects": [
     "**/*.css"
