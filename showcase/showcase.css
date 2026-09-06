@@ -77,3 +77,9 @@
 .demo-block__content > [data-slot="date-picker"] {
   max-width: 28rem;
 }
+
+/* A vertical Space in a showcase is a demo stack. Keep its track readable while
+   retaining Space's Ant-style `align="start"` child sizing semantics. */
+.demo-block__content [data-slot="space"][data-direction="vertical"] {
+  width: 100%;
+}

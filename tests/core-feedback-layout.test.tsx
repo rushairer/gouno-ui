@@ -14,6 +14,16 @@ describe("Core layout and feedback", () => {
     const { container } = render(<Space direction="vertical" align="stretch"><button>Full width</button></Space>);
     expect(container.firstElementChild?.className).toContain("items-stretch");
   });
+  it("supports block containers and split content without changing default start alignment", () => {
+    const { container } = render(<Space direction="vertical" block split={<span>|</span>}><button>A</button><button>B</button></Space>);
+    const root = container.firstElementChild!;
+    expect(root.getAttribute("data-slot")).toBe("space");
+    expect(root.getAttribute("data-block")).toBe("true");
+    expect(root.className).toContain("w-full");
+    expect(root.querySelectorAll("button")).toHaveLength(2);
+    expect(root.textContent).toContain("|");
+    expect(root.className).toContain("items-start");
+  });
   it("supports OTP digit entry",()=>{render(<InputOTP length={4}/>);const first=screen.getByLabelText("Digit 1");fireEvent.change(first,{target:{value:"1"}});expect((first as HTMLInputElement).value).toBe("1");});
   it("opens a confirmation dialog",()=>{render(<Popconfirm title="Delete item?"><button>Delete</button></Popconfirm>);fireEvent.click(screen.getByRole("button",{name:"Delete"}));expect(screen.getByRole("alertdialog")).toBeTruthy();});
   it("provides transient message API",()=>{function Probe(){const api=useMessage();return <button onClick={()=>api.success("Saved")}>Show</button>}render(<MessageProvider><Probe/></MessageProvider>);fireEvent.click(screen.getByRole("button",{name:"Show"}));expect(screen.getByText("Saved")).toBeTruthy();});
