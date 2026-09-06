@@ -58,10 +58,7 @@ import {
   StatePanel,
   type DemoState as ScenarioState,
 } from "./scenarios";
-import { OverlayDemo } from "./overlays";
-import { CoreOverview } from "./demos/core-overview";
 import { CoreComponentPage } from "./demos/core-components";
-import { PatternsOverview } from "./demos/patterns-overview";
 import "./showcase.css";
 
 type DemoState = ScenarioState;
@@ -69,135 +66,11 @@ type Brand = "blog" | "blog-admin" | "gosso-admin";
 type Workspace = "gouno-ui" | Brand;
 type PreviewWidth = "full" | "desktop" | "tablet" | "mobile";
 
-function ComponentsOverview() { return <CoreOverview />; }
-function CategoryOverview({ title, description }: { title: string; description: string }) { return <Container className="space-y-6"><PageHeader title={title} description={description} /><Panel><PanelHeader title="组件分类已整理" description="从左侧进入具体产品模板，或使用组件库分类入口查看对应 API 与状态示例。" /><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{["默认态","禁用态","加载态","错误态","空态","键盘与无障碍"].map(x=><div key={x} className="rounded-md border p-4 text-sm">{x}</div>)}</div></Panel></Container>; }
-
 function workspaceForPage(page: string): Workspace {
   if (page.startsWith("blog-")) return "blog";
   if (page.startsWith("admin-")) return "blog-admin";
   if (page.startsWith("gosso-")) return "gosso-admin";
   return "gouno-ui";
-}
-
-function Foundations() {
-  const [density, setDensity] = useState<TableDensity>("default");
-  const [saved, setSaved] = useState(false);
-  return (
-    <>
-      <PageHeader
-        title="共享设计系统"
-        description="页面级 Demo 用于统一 Blog、Blog Admin 与 Gosso Admin 的布局、间距、状态和主题。"
-        actions={
-          <ActionGroup>
-            <Button variant="primary" icon={<Plus />}>
-              新增示例
-            </Button>
-          </ActionGroup>
-        }
-      />
-      <div className="grid gap-6 xl:grid-cols-2">
-        <Panel>
-          <PanelHeader
-            title="基础控件"
-            description="颜色、按钮、状态和反馈的统一语义。"
-          />
-          <div className="flex flex-wrap items-center gap-3">
-            <Button variant="primary">主要操作</Button>
-            <Button variant="secondary">次要操作</Button>
-            <Button variant="danger">危险操作</Button>
-            <Badge tone="success">已完成</Badge>
-            <Badge tone="warning">待处理</Badge>
-            <Badge tone="info">信息</Badge>
-          </div>
-        </Panel>
-        <Panel>
-          <PanelHeader title="状态提示与 Box 间距" description="基础提示统一图标、文字、操作对齐和项目间距。" />
-          <div className="flex flex-col gap-3">
-            <Feedback type="success">操作已完成。</Feedback>
-            <Feedback type="error"><span>需要修正后才能继续。</span><Button size="sm">重新载入</Button></Feedback>
-          </div>
-        </Panel>
-        <Panel>
-          <PanelHeader
-            title="表单与反馈"
-            description="标签、描述、错误和保存反馈保持一致。"
-          />
-          <Field label="站点名称" hint="用于后台导航和登录预览。">
-            <Input defaultValue="Gouno Blog" />
-          </Field>
-          <div className="mt-4">
-            {saved ? (
-              <Feedback type="success">设置已保存。</Feedback>
-            ) : (
-              <Button onClick={() => setSaved(true)}>保存设置</Button>
-            )}
-          </div>
-        </Panel>
-        <Panel className="xl:col-span-2">
-          <PanelHeader
-            title="表格密度"
-            description="直接比较 Cell 内间距、行高和操作列行为。"
-            actions={
-              <Select
-                aria-label="表格密度"
-                value={density}
-                onChange={(e) => setDensity(e.target.value as TableDensity)}
-              >
-                <option value="default">默认</option>
-                <option value="compact">紧凑</option>
-                <option value="touch">触控</option>
-              </Select>
-            }
-          />
-          <DataTable density={density}>
-            <TableHeader>
-              <TableRow>
-                <TableHead>模块</TableHead>
-                <TableHead>状态</TableHead>
-                <TableHead>说明</TableHead>
-                <TableHead className="text-right">操作</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {records.map(([name, status, type, date]) => (
-                <TableRow key={name}>
-                  <TableCell>
-                    <div className="font-medium">{name}</div>
-                    <div className="text-xs text-muted-foreground">{type}</div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      tone={
-                        status === "已发布"
-                          ? "success"
-                          : status === "草稿"
-                            ? "neutral"
-                            : "warning"
-                      }
-                    >
-                      {status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="max-w-[320px] truncate">
-                    最后更新于 {date}
-                    ，这是用于验证长文本截断和表格内滚动的示例。
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex justify-end gap-2">
-                      <Button size="sm">查看</Button>
-                      <Button size="sm" variant="ghost">
-                        更多
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </DataTable>
-        </Panel>
-      </div>
-    </>
-  );
 }
 
 function ListDemo({ kind = "posts" }: { kind?: "posts" | "users" | "clients" | "audit" }) {
@@ -816,7 +689,7 @@ function App() {
       .flatMap((group) => group.items)
       .some((item) => item.id === candidate)
       ? candidate
-      : "foundations";
+      : "core-button";
   });
   const [brand, setBrand] = useState<Brand>(() => {
     const candidate = params.get("brand");
@@ -879,7 +752,7 @@ function App() {
     if (!belongsToWorkspace) {
       const defaultPage =
         nextWorkspace === "gouno-ui"
-          ? "foundations"
+          ? "core-button"
           : nextWorkspace === "blog"
           ? "blog-home"
           : nextWorkspace === "blog-admin"
@@ -941,32 +814,6 @@ function App() {
     if (page.startsWith("core-") && page !== "core-overview")
       return <CoreComponentPage component={page.slice(5)} />;
     switch (page) {
-      case "foundations":
-        return <Foundations />;
-      case "overlays":
-        return <OverlayDemo />;
-      case "core-button": return <CoreComponentPage component="button" />;
-      case "core-typography": return <CoreComponentPage component="typography" />;
-      case "core-layout": return <CoreComponentPage component="layout" />;
-      case "core-input-number": return <CoreComponentPage component="input-number" />;
-      case "core-date-time": return <CoreComponentPage component="date-time" />;
-      case "core-upload": return <CoreComponentPage component="upload" />;
-      case "core-breadcrumb": return <CoreComponentPage component="breadcrumb" />;
-      case "core-pagination": return <CoreComponentPage component="pagination" />;
-      case "core-steps": return <CoreComponentPage component="steps" />;
-      case "core-states": return <CoreComponentPage component="states" />;
-      case "core-data": return <CoreComponentPage component="data" />;
-      case "core-calendar": return <CoreComponentPage component="calendar" />;
-      case "core-image": return <CoreComponentPage component="image" />;
-      case "core-carousel": return <CoreComponentPage component="carousel" />;
-      case "core-misc": return <CoreComponentPage component="misc" />;
-      case "components":
-        return <ComponentsOverview />;
-      case "forms": return <CategoryOverview title="Forms 表单组件" description="输入、选择、校验与字段布局。" />;
-      case "navigation": return <CategoryOverview title="Navigation 导航组件" description="Tabs、分页、菜单与命令式导航。" />;
-      case "data": return <CategoryOverview title="Data Display 数据展示" description="表格、统计、时间线与列表。" />;
-      case "layout": return <CategoryOverview title="Layout & Templates 布局与模板" description="容器、面板、工作区与管理模板。" />;
-      case "advanced": return <PatternsOverview />;
       case "blog-home":
         return <DashboardDemo />;
       case "blog-account":
@@ -1140,7 +987,7 @@ function App() {
             ) : (
               <button
                 className="font-semibold text-primary"
-                onClick={() => setPage("foundations")}
+                onClick={() => setPage("core-button")}
               >
                 Gouno UI Demo
               </button>

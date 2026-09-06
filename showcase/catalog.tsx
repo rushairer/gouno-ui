@@ -1,54 +1,18 @@
 import type { ReactNode } from "react";
-import {
-  Activity,
-  FileText,
-  LayoutDashboard,
-  Lock,
-  Settings,
-  Shield,
-  Users,
-} from "lucide-react";
+import { Activity, FileText, LayoutDashboard, Lock, Settings, Shield, Users } from "lucide-react";
 
 export type ShowcaseBrand = "blog" | "blog-admin" | "gosso-admin";
 export type ShowcasePage = { id: string; label: string; icon: ReactNode };
+const item = (id: string, label: string): ShowcasePage => ({ id, label, icon: <LayoutDashboard /> });
 
 export const showcaseCatalog: { group: string; items: ShowcasePage[] }[] = [
-  {
-    group: "Foundations",
-    items: [
-      { id: "foundations", label: "Core 总览", icon: <LayoutDashboard /> },
-      { id: "core-button", label: "Button 按钮", icon: <LayoutDashboard /> },
-      { id: "core-typography", label: "Typography 排版", icon: <LayoutDashboard /> },
-      { id: "core-space", label: "Space 间距", icon: <LayoutDashboard /> },
-      { id: "core-flex", label: "Flex 弹性布局", icon: <LayoutDashboard /> },
-      { id: "core-grid", label: "Grid 网格", icon: <LayoutDashboard /> },
-      { id: "core-input-number", label: "InputNumber", icon: <LayoutDashboard /> },
-      { id: "core-date-picker", label: "DatePicker", icon: <LayoutDashboard /> },
-      { id: "core-time-picker", label: "TimePicker", icon: <LayoutDashboard /> },
-      { id: "core-color-picker", label: "ColorPicker", icon: <LayoutDashboard /> },
-      { id: "core-upload", label: "Upload 上传", icon: <LayoutDashboard /> },
-      { id: "core-breadcrumb", label: "Breadcrumb", icon: <LayoutDashboard /> },
-      { id: "core-pagination", label: "Pagination", icon: <LayoutDashboard /> },
-      { id: "core-steps", label: "Steps", icon: <LayoutDashboard /> },
-      { id: "core-empty", label: "Empty 空状态", icon: <LayoutDashboard /> },
-      { id: "core-result", label: "Result 结果", icon: <LayoutDashboard /> },
-      { id: "core-spin", label: "Spin 加载", icon: <LayoutDashboard /> },
-      { id: "core-list", label: "List 列表", icon: <LayoutDashboard /> },
-      { id: "core-descriptions", label: "Descriptions", icon: <LayoutDashboard /> },
-      { id: "core-calendar", label: "Calendar", icon: <LayoutDashboard /> },
-      { id: "core-image", label: "Image 图片", icon: <LayoutDashboard /> },
-      { id: "core-carousel", label: "Carousel", icon: <LayoutDashboard /> },
-      { id: "core-anchor", label: "Anchor 锚点", icon: <LayoutDashboard /> },
-      { id: "core-float-button", label: "FloatButton", icon: <LayoutDashboard /> },
-      { id: "core-kbd", label: "Kbd 按键", icon: <LayoutDashboard /> },
-    ],
-  },
-  { group: "Feedback & Overlays", items: [{ id: "overlays", label: "状态与弹层", icon: <Activity /> }] },
-  { group: "Forms", items: [{ id: "forms", label: "表单控件", icon: <FileText /> }] },
-  { group: "Navigation", items: [{ id: "navigation", label: "导航组件", icon: <LayoutDashboard /> }] },
-  { group: "Data Display", items: [{ id: "data", label: "数据展示", icon: <FileText /> }] },
-  { group: "Layout & Templates", items: [{ id: "layout", label: "布局与模板", icon: <LayoutDashboard /> }] },
-  { group: "Advanced Patterns", items: [{ id: "advanced", label: "高级交互", icon: <Activity /> }] },
+  { group: "General", items: [item("core-button", "Button 按钮"), item("core-typography", "Typography 排版"), item("core-kbd", "Kbd 按键")] },
+  { group: "Layout", items: [item("core-space", "Space 间距"), item("core-flex", "Flex 弹性布局"), item("core-grid", "Grid 网格")] },
+  { group: "Data Entry", items: [item("core-input-number", "InputNumber"), item("core-date-picker", "DatePicker"), item("core-time-picker", "TimePicker"), item("core-color-picker", "ColorPicker"), item("core-upload", "Upload 上传")] },
+  { group: "Navigation", items: [item("core-breadcrumb", "Breadcrumb"), item("core-pagination", "Pagination"), item("core-steps", "Steps"), item("core-anchor", "Anchor 锚点")] },
+  { group: "Data Display", items: [item("core-list", "List 列表"), item("core-descriptions", "Descriptions"), item("core-calendar", "Calendar"), item("core-image", "Image 图片"), item("core-carousel", "Carousel")] },
+  { group: "Feedback", items: [item("core-empty", "Empty 空状态"), item("core-result", "Result 结果"), item("core-spin", "Spin 加载")] },
+  { group: "Other", items: [item("core-float-button", "FloatButton")] },
   {
     group: "Blog 公共",
     items: [

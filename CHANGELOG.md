@@ -6,6 +6,9 @@
 
 ## Unreleased
 
+### Removed
+- Removed the obsolete Gouno UI overview, placeholder category pages, combined overlay page, and superseded demo files after replacing them with component documentation.
+
 ### Added
 - Rebuilt the Gouno UI Showcase as hash-addressable component documentation with one Core component per navigation entry, interactive Preview/Code panels, usage notes, and responsive iframe previews.
 - Expanded the pure Core layer with Ant Design-inspired typography, layout, data entry, navigation, data display, feedback, and calendar primitives.
