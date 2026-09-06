@@ -10,6 +10,8 @@
 - Removed the obsolete Gouno UI overview, placeholder category pages, combined overlay page, and superseded demo files after replacing them with component documentation.
 
 ### Added
+- Added Slider, Rate, Segmented, AutoComplete, Collapse, Popover, Tooltip, and DropdownMenu to the Core component surface.
+- Added individual Showcase documentation pages with live demos and code for existing Core forms, navigation, data display, feedback, and overlays.
 - Rebuilt the Gouno UI Showcase as hash-addressable component documentation with one Core component per navigation entry, interactive Preview/Code panels, usage notes, and responsive iframe previews.
 - Expanded the pure Core layer with Ant Design-inspired typography, layout, data entry, navigation, data display, feedback, and calendar primitives.
 - Added Core Showcase examples for controlled input, upload, pagination, steps, empty/result states, descriptions, lists, calendar, and image fallback.

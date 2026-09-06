@@ -6,12 +6,12 @@ export type ShowcasePage = { id: string; label: string; icon: ReactNode };
 const item = (id: string, label: string): ShowcasePage => ({ id, label, icon: <LayoutDashboard /> });
 
 export const showcaseCatalog: { group: string; items: ShowcasePage[] }[] = [
-  { group: "General", items: [item("core-button", "Button 按钮"), item("core-typography", "Typography 排版"), item("core-kbd", "Kbd 按键")] },
-  { group: "Layout", items: [item("core-space", "Space 间距"), item("core-flex", "Flex 弹性布局"), item("core-grid", "Grid 网格")] },
-  { group: "Data Entry", items: [item("core-input-number", "InputNumber"), item("core-date-picker", "DatePicker"), item("core-time-picker", "TimePicker"), item("core-color-picker", "ColorPicker"), item("core-upload", "Upload 上传")] },
-  { group: "Navigation", items: [item("core-breadcrumb", "Breadcrumb"), item("core-pagination", "Pagination"), item("core-steps", "Steps"), item("core-anchor", "Anchor 锚点")] },
-  { group: "Data Display", items: [item("core-list", "List 列表"), item("core-descriptions", "Descriptions"), item("core-calendar", "Calendar"), item("core-image", "Image 图片"), item("core-carousel", "Carousel")] },
-  { group: "Feedback", items: [item("core-empty", "Empty 空状态"), item("core-result", "Result 结果"), item("core-spin", "Spin 加载")] },
+  { group: "General", items: [item("core-button", "Button 按钮"), item("core-typography", "Typography 排版"), item("core-kbd", "Kbd 按键"), item("core-badge", "Badge 标签"), item("core-avatar", "Avatar 头像")] },
+  { group: "Layout", items: [item("core-space", "Space 间距"), item("core-flex", "Flex 弹性布局"), item("core-grid", "Grid 网格"), item("core-separator", "Separator 分隔线"), item("core-card", "Card 卡片")] },
+  { group: "Data Entry", items: [item("core-input-number", "InputNumber"), item("core-date-picker", "DatePicker"), item("core-time-picker", "TimePicker"), item("core-color-picker", "ColorPicker"), item("core-upload", "Upload 上传"), item("core-input", "Input 输入框"), item("core-textarea", "Textarea 多行输入"), item("core-select", "Select 选择器"), item("core-checkbox", "Checkbox 多选框"), item("core-radio", "Radio 单选框"), item("core-switch", "Switch 开关"), item("core-slider", "Slider 滑动输入"), item("core-rate", "Rate 评分"), item("core-autocomplete", "AutoComplete"), item("core-segmented", "Segmented")] },
+  { group: "Navigation", items: [item("core-breadcrumb", "Breadcrumb"), item("core-pagination", "Pagination"), item("core-steps", "Steps"), item("core-anchor", "Anchor 锚点"), item("core-tabs", "Tabs 标签页"), item("core-collapse", "Collapse 折叠面板"), item("core-dropdown", "Dropdown 下拉菜单")] },
+  { group: "Data Display", items: [item("core-list", "List 列表"), item("core-descriptions", "Descriptions"), item("core-calendar", "Calendar"), item("core-image", "Image 图片"), item("core-carousel", "Carousel"), item("core-table", "Table 表格"), item("core-statistic", "Statistic 统计数值"), item("core-timeline", "Timeline 时间轴")] },
+  { group: "Feedback", items: [item("core-empty", "Empty 空状态"), item("core-result", "Result 结果"), item("core-spin", "Spin 加载"), item("core-alert", "Alert 警告提示"), item("core-progress", "Progress 进度条"), item("core-skeleton", "Skeleton 骨架屏"), item("core-modal", "Modal 对话框"), item("core-drawer", "Drawer 抽屉"), item("core-popover", "Popover 气泡卡片"), item("core-tooltip", "Tooltip 文字提示")] },
   { group: "Other", items: [item("core-float-button", "FloatButton")] },
   {
     group: "Blog 公共",
