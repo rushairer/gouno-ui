@@ -59,6 +59,7 @@ import {
   type DemoState as ScenarioState,
 } from "./scenarios";
 import { OverlayDemo } from "./overlays";
+import { CoreOverview } from "./demos/core-overview";
 import "./showcase.css";
 
 type DemoState = ScenarioState;
@@ -66,9 +67,7 @@ type Brand = "blog" | "blog-admin" | "gosso-admin";
 type Workspace = "gouno-ui" | Brand;
 type PreviewWidth = "full" | "desktop" | "tablet" | "mobile";
 
-function ComponentsOverview() {
-  return <Container className="space-y-6"><PageHeader title="Gouno UI 组件总览" description="常用基础、反馈、布局与数据展示组件。" /><div className="grid gap-6 md:grid-cols-2"><Panel><PanelHeader title="基础与状态" /><Stack gap={3}><Typography as="h3" className="font-semibold">Typography / Kbd / Spinner</Typography><div className="flex items-center gap-3"><Spinner /><Kbd>⌘ K</Kbd><Badge tone="info">Info</Badge></div><Progress value={68} /></Stack></Panel><Panel><PanelHeader title="数据展示" /><div className="grid grid-cols-2 gap-4"><Statistic title="已发布" value="126" /><Statistic title="转化率" value="8.4" suffix="%" /></div></Panel><Panel><PanelHeader title="布局与比例" /><AspectRatio ratio={16/5} className="rounded-md bg-muted"><div className="flex h-full items-center justify-center text-sm text-muted-foreground">AspectRatio</div></AspectRatio></Panel><Panel><PanelHeader title="时间线" /><Timeline items={[{title:"设计完成",description:"刚刚"},{title:"审核通过",description:"今天"}]} /></Panel></div></Container>;
-}
+function ComponentsOverview() { return <CoreOverview />; }
 function CategoryOverview({ title, description }: { title: string; description: string }) { return <Container className="space-y-6"><PageHeader title={title} description={description} /><Panel><PanelHeader title="组件分类已整理" description="从左侧进入具体产品模板，或使用组件库分类入口查看对应 API 与状态示例。" /><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{["默认态","禁用态","加载态","错误态","空态","键盘与无障碍"].map(x=><div key={x} className="rounded-md border p-4 text-sm">{x}</div>)}</div></Panel></Container>; }
 
 function workspaceForPage(page: string): Workspace {
