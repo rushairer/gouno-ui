@@ -125,8 +125,13 @@ function App() {
     return () => window.removeEventListener("hashchange", onHashChange);
   }, []);
   useEffect(() => {
-    if (!embedded) window.scrollTo({ top: 0 });
-  }, [embedded, previewWidth]);
+    if (embedded) {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      document.scrollingElement?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    } else {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    }
+  }, [embedded, page, previewWidth]);
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
       document.querySelector<HTMLElement>('[data-showcase-nav-item][aria-current="page"]')?.scrollIntoView({ block: "nearest", inline: "nearest" });
