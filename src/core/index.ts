@@ -1,7 +1,8 @@
 /** Pure, product-agnostic component API. */
-export { Button, IconButton, type ButtonProps, type IconButtonProps } from "../components/foundations/actions";
-export { Badge, Tag, type BadgeTone } from "../components/foundations/badge";
-export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../components/foundations/card";
+export { Button, type ButtonProps, type ButtonVariant, type ButtonSize } from "./button";
+export { IconButton, type IconButtonProps } from "./icon-button";
+export { Badge, Tag, type BadgeTone } from "./badge";
+export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./card";
 export { Spinner, Progress, AspectRatio, Kbd, Typography } from "../components/foundations/primitives";
 export { Input, Textarea, Select, Checkbox, Radio, Switch, Field, type InputProps, type SelectProps } from "../components/forms/controls";
 export { Tabs, TabList, Tab, TabPanel } from "../components/navigation/navigation";
@@ -11,10 +12,8 @@ export { Skeleton } from "../components/feedback/feedback";
 export { Statistic, Timeline } from "../components/data-display/statistic";
 export { Container, Stack } from "../components/layout/primitives";
 export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption } from "../components/primitives/table";
-export * from "./button";
-export * from "./icon-button";
-export * from "./badge";
-export * from "./card";
+export * from "./separator";
+export * from "./avatar";
 export * from "./feedback";
 export * from "./input";
 export * from "./overlay";

@@ -11,6 +11,8 @@ Public layers:
 - `@gouno/ui/gouno` — Gouno product-family shells and page templates.
 - `@gouno/ui/legacy` — temporary compatibility surface for the old API.
 
+Core deliberately excludes product concepts such as `AdminShell`, `Panel`, `StatusBadge`, `RiskBadge`, route adapters and page templates.
+
 The library also exports lightweight composition primitives including `Spinner`, `Progress`, `AspectRatio`, `Typography`, `Stack`, `Container`, `Statistic`, and `Timeline`. They use semantic tokens and remain framework-agnostic.
 
 The single source of Gouno's React UI, semantic design tokens and administration template. No authentication, API or application state is imported here.
