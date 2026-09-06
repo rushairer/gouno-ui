@@ -4,6 +4,13 @@ The shared React component library for the Gouno product family. The package own
 
 Source is organized under `src/components` by public domain. `src/components/primitives` contains the internal Radix/shadcn behavior layer. Existing Gouno component names remain available from the root entry point for migration compatibility.
 
+Public layers:
+
+- `@gouno/ui/core` — pure, product-agnostic components.
+- `@gouno/ui/patterns` — reusable multi-component interaction patterns.
+- `@gouno/ui/gouno` — Gouno product-family shells and page templates.
+- `@gouno/ui/legacy` — temporary compatibility surface for the old API.
+
 The library also exports lightweight composition primitives including `Spinner`, `Progress`, `AspectRatio`, `Typography`, `Stack`, `Container`, `Statistic`, and `Timeline`. They use semantic tokens and remain framework-agnostic.
 
 The single source of Gouno's React UI, semantic design tokens and administration template. No authentication, API or application state is imported here.
