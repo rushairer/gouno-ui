@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { PageHeader } from "../src/gouno";
 import { GossoSystemManagementDemo } from "../showcase/demos/products/gosso-system-management";
@@ -35,9 +35,10 @@ describe("Gosso Admin System Management migration fixture", () => {
   it("keeps OAuth client editing as page-local Core composition", () => {
     render(<GossoSystemManagementDemo />);
     fireEvent.click(screen.getByRole("button", { name: "注册客户端" }));
-    expect(screen.getByRole("dialog", { name: "注册 OAuth2 客户端" })).toBeTruthy();
-    expect(screen.getByText("Grant Types")).toBeTruthy();
-    expect(screen.getByText("Scopes")).toBeTruthy();
+    const dialog = screen.getByRole("dialog", { name: "注册 OAuth2 客户端" });
+    expect(dialog).toBeTruthy();
+    expect(within(dialog).getByText("Grant Types")).toBeTruthy();
+    expect(within(dialog).getByText("Scopes")).toBeTruthy();
   });
 });
 
