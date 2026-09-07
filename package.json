@@ -4,40 +4,19 @@
   "type": "module",
   "description": "Gouno product family UI, themes and administration template",
   "license": "MIT",
-  "files": [
-    "dist",
-    "README.md",
-    "CHANGELOG.md"
-  ],
+  "files": ["dist", "README.md", "CHANGELOG.md"],
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
-    "./core": {
-      "types": "./dist/core/index.d.ts",
-      "import": "./dist/core/index.js"
-    },
-    "./patterns": {
-      "types": "./dist/patterns/index.d.ts",
-      "import": "./dist/patterns/index.js"
-    },
-    "./gouno": {
-      "types": "./dist/gouno/index.d.ts",
-      "import": "./dist/gouno/index.js"
-    },
-    "./theme": {
-      "types": "./dist/theme/provider.d.ts",
-      "import": "./dist/theme/provider.js"
-    },
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./core": { "types": "./dist/core/index.d.ts", "import": "./dist/core/index.js" },
+    "./patterns": { "types": "./dist/patterns/index.d.ts", "import": "./dist/patterns/index.js" },
+    "./gouno": { "types": "./dist/gouno/index.d.ts", "import": "./dist/gouno/index.js" },
+    "./theme": { "types": "./dist/theme/index.d.ts", "import": "./dist/theme/index.js" },
     "./tokens.css": "./dist/tokens.css",
     "./base.css": "./dist/base.css",
     "./bootstrap.js": "./dist/bootstrap.js",
     "./fonts/*": "./dist/fonts/*"
   },
-  "sideEffects": [
-    "**/*.css"
-  ],
+  "sideEffects": ["**/*.css"],
   "scripts": {
     "build": "node scripts/clean-dist.mjs && tsc -p tsconfig.build.json && node scripts/assets.mjs",
     "typecheck": "tsc -p tsconfig.build.json --noEmit && tsc -p showcase/tsconfig.json",
@@ -47,10 +26,7 @@
     "pack": "npm pack",
     "test": "vitest run --environment jsdom"
   },
-  "peerDependencies": {
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
-  },
+  "peerDependencies": { "react": "^19.2.0", "react-dom": "^19.2.0" },
   "dependencies": {
     "@fontsource-variable/inter": "latest",
     "@fontsource/jetbrains-mono": "latest",

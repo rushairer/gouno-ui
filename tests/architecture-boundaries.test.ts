@@ -33,15 +33,6 @@ describe("public layer architecture", () => {
     expect(contents("patterns")).not.toMatch(/from\s+["']\.\.\/gouno\//);
   });
 
-  it("keeps product policy out of reusable navigation patterns", () => {
-    const navigation = readFileSync(
-      resolve(sourceRoot, "patterns/navigation-patterns.tsx"),
-      "utf8",
-    );
-    expect(navigation).not.toContain("gouno-blog:theme");
-    expect(navigation).not.toContain('includes("后台")');
-  });
-
   it("keeps business status tags in the Gouno layer", async () => {
     const core = await import("../src/core/index");
     const gouno = await import("../src/gouno/index");
@@ -64,10 +55,29 @@ describe("public layer architecture", () => {
   });
 
   it("does not create a second canonical Core import path through Patterns", () => {
-    const patternsIndex = readFileSync(
-      resolve(sourceRoot, "patterns/index.ts"),
-      "utf8",
-    );
+    const patternsIndex = readFileSync(resolve(sourceRoot, "patterns/index.ts"), "utf8");
     expect(patternsIndex).not.toMatch(/from\s+["']\.\.\/core\//);
+  });
+
+  it("does not reimplement Core-owned Tabs or Pagination inside Patterns", () => {
+    const patterns = contents("patterns");
+    expect(patterns).not.toMatch(/export\s+(?:const|function)\s+(Tabs|TabList|TabPanel|Pagination)\b/);
+    expect(patterns).not.toContain("SubnavTabs");
+  });
+
+  it("keeps product action policy out of reusable Patterns", () => {
+    const patterns = contents("patterns");
+    expect(patterns).not.toContain("onAIAssist");
+    expect(patterns).not.toContain("aiLabel");
+    expect(patterns).not.toContain("交给 AI");
+  });
+
+  it("keeps theme controls owned by the theme entry point", async () => {
+    const gouno = await import("../src/gouno/index");
+    const theme = await import("../src/theme/index");
+    expect("ThemeProvider" in gouno).toBe(false);
+    expect("ThemeToggle" in gouno).toBe(false);
+    expect(typeof theme.ThemeProvider).toBe("function");
+    expect(typeof theme.ThemeToggle).toBe("function");
   });
 });
