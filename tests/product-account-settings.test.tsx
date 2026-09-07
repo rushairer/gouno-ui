@@ -32,19 +32,19 @@ describe("Gosso Admin Account Settings migration fixture", () => {
     render(<GossoAccountSettingsDemo />);
     selectTab("修改密码");
 
-    fireEvent.change(screen.getByLabelText("当前密码"), {
+    fireEvent.change(screen.getByLabelText(/^当前密码/), {
       target: { value: "current-password" },
     });
-    fireEvent.change(screen.getByLabelText("新密码"), {
+    fireEvent.change(screen.getByLabelText(/^新密码/), {
       target: { value: "abcdefghijkl" },
     });
-    fireEvent.change(screen.getByLabelText("确认新密码"), {
+    fireEvent.change(screen.getByLabelText(/^确认新密码/), {
       target: { value: "abcdefghijklX" },
     });
     fireEvent.click(screen.getByRole("button", { name: "修改密码" }));
     expect(screen.getByText("两次输入的新密码不一致。")).toBeTruthy();
 
-    fireEvent.change(screen.getByLabelText("确认新密码"), {
+    fireEvent.change(screen.getByLabelText(/^确认新密码/), {
       target: { value: "abcdefghijkl" },
     });
     fireEvent.click(screen.getByRole("button", { name: "修改密码" }));
