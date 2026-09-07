@@ -1,5 +1,5 @@
 /** Reusable multi-component interaction patterns. */
-export { DataTable, type DataTableProps } from "./data-table";
+export { DataTable } from "./data-table";
 export { Feedback, type FeedbackProps, type FeedbackType } from "./feedback";
 export {
   EmptyState,
@@ -24,6 +24,7 @@ export { SectionNav, type SectionNavProps, type SectionNavItem } from "./section
 export { ConfirmDialog, useConfirm } from "./confirm-dialog";
 
 export type {
+  DataTableProps,
   DataTableColumn,
   DataTablePagination,
   DataTableSortState,

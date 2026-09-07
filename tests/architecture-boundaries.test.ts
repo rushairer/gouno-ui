@@ -56,6 +56,13 @@ describe("public layer architecture", () => {
     expect(patternsIndex).not.toContain("TableDensity");
   });
 
+  it("does not re-export Core or primitive APIs from Pattern implementation modules", () => {
+    const patterns = contents("patterns");
+    expect(patterns).not.toMatch(
+      /export\s+(?:type\s+)?\*\s+from\s+["']\.\.\/(?:core|components\/primitives)\//,
+    );
+  });
+
   it("does not reimplement Core-owned Tabs or Pagination inside Patterns", () => {
     const patterns = contents("patterns");
     expect(patterns).not.toMatch(/export\s+(?:const|function)\s+(Tabs|TabList|TabPanel|Pagination)\b/);
@@ -97,6 +104,14 @@ describe("public layer architecture", () => {
     expect(feedback).not.toContain("ToastProvider");
     expect(asyncState).not.toContain("ToastProvider");
     expect(toast).not.toContain("EmptyState");
+  });
+
+  it("keeps DataTable model internals private to the Pattern implementation", async () => {
+    const dataTableSource = readFileSync(resolve(sourceRoot, "patterns/data-table.tsx"), "utf8");
+    expect(dataTableSource).not.toMatch(/export\s+(?:type\s+)?\*/);
+    const patterns = await import("../src/patterns/index");
+    expect("useDataTableModel" in patterns).toBe(false);
+    expect("DataTableRecord" in patterns).toBe(false);
   });
 
   it("keeps Gouno layout families split and free of synonym aliases", async () => {

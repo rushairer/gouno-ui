@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useState } from "react";
+import { Fragment } from "react";
 import {
   Table,
   TableBody,
@@ -9,11 +9,11 @@ import {
   TableHeader,
   TableRow,
 } from "../components/primitives/table";
-import { Pagination } from "../core/pagination";
 import { Skeleton } from "../components/primitives/skeleton";
+import { Pagination } from "../core/pagination";
 import { cn } from "../lib/utils";
-import type { DataTableProps, DataTableSortState } from "./data-table.types";
-export type * from "./data-table.types";
+import { useDataTableModel } from "./data-table-model";
+import type { DataTableProps } from "./data-table.types";
 
 export function DataTable<T = Record<string, unknown>>({
   children,
@@ -53,131 +53,64 @@ export function DataTable<T = Record<string, unknown>>({
   captionSide = "top",
   containerClassName,
 }: DataTableProps<T>) {
-  const [internalSort, setInternalSort] = useState<
-    DataTableSortState | undefined
-  >(defaultSort);
-  const [internalSelected, setInternalSelected] = useState<string[]>([]);
-  const [internalPage, setInternalPage] = useState(
-    pagination ? (pagination.defaultPage ?? 1) : 1,
-  );
-  const [internalSize, setInternalSize] = useState(
-    pagination ? (pagination.defaultPageSize ?? 10) : 10,
-  );
-  const [internalExpanded, setInternalExpanded] = useState(
+  const unavailable = loading || Boolean(error) || Boolean(empty);
+  const model = useDataTableModel({
+    columns,
+    dataSource,
+    rowKey,
+    filter,
+    pagination,
+    selectedRowKeys,
+    onSelectionChange,
+    defaultSort,
+    controlledSort,
+    onSortChange,
+    rowDisabled,
+    expandedRowKeys,
     defaultExpandedRowKeys,
-  );
-  const sort = controlledSort !== undefined ? controlledSort : internalSort;
-  const selected = selectedRowKeys ?? internalSelected;
-  const expanded = expandedRowKeys ?? internalExpanded;
-  const server = pagination && pagination.mode === "server";
-  const displayColumns = columns?.filter((column) => !column.hidden) ?? [];
-  // Assign fallback keys before filtering/sorting, never using the current page index.
-  const records = useMemo(
-    () =>
-      dataSource.map((record, index) => ({
-        record,
-        index,
-        key: String(
-          typeof rowKey === "function"
-            ? rowKey(record, index)
-            : rowKey !== undefined
-              ? record[rowKey]
-              : index,
-        ),
-      })),
-    [dataSource, rowKey],
-  );
-  const sorted = useMemo(() => {
-    const filtered = filter
-      ? records.filter(({ record }) => filter(record))
-      : records;
-    if (!sort || server) return filtered;
-    const column = columns?.find((candidate) => candidate.key === sort.key);
-    if (!column?.sorter) return filtered;
-    const compare =
-      typeof column.sorter === "function"
-        ? column.sorter
-        : (a: T, b: T) => {
-            const left =
-              column.dataIndex !== undefined ? a[column.dataIndex] : "";
-            const right =
-              column.dataIndex !== undefined ? b[column.dataIndex] : "";
-            return typeof left === "number" && typeof right === "number"
-              ? left - right
-              : String(left).localeCompare(String(right));
-          };
-    return [...filtered].sort((a, b) =>
-      sort.direction === "ascend"
-        ? compare(a.record, b.record)
-        : compare(b.record, a.record),
-    );
-  }, [records, filter, sort, columns, server]);
-  const requestedSize = pagination
-    ? (pagination.pageSize ?? internalSize)
-    : sorted.length || 1;
-  const pageSize =
-    Number.isFinite(requestedSize) && requestedSize > 0
-      ? Math.floor(requestedSize) || 1
-      : 10;
-  const total = Math.max(
-    0,
-    server && pagination.total !== undefined ? pagination.total : sorted.length,
-  );
-  const requestedPage = pagination ? (pagination.page ?? internalPage) : 1;
-  const page = Math.min(
-    Math.max(1, Math.ceil(total / pageSize)),
-    Math.max(1, Number.isFinite(requestedPage) ? Math.floor(requestedPage) : 1),
-  );
-  const visible =
-    pagination && !server
-      ? sorted.slice((page - 1) * pageSize, page * pageSize)
-      : sorted;
-  const columnCount = Math.max(
-    1,
-    displayColumns.length +
-      Number(Boolean(selectable)) +
-      Number(Boolean(expandedRowRender)),
-  );
-  const unavailable = loading || Boolean(error) || empty;
-  const keysOnPage = unavailable
-    ? []
-    : visible
-        .filter(({ record }) => !rowDisabled?.(record))
-        .map(({ key }) => key);
-  const allSelected =
-    keysOnPage.length > 0 && keysOnPage.every((key) => selected.includes(key));
-  const mixed =
-    !allSelected && keysOnPage.some((key) => selected.includes(key));
-  const updateSelection = (keys: string[]) => {
-    const unique = [...new Set(keys)];
-    if (selectedRowKeys === undefined) setInternalSelected(unique);
-    onSelectionChange?.(
-      unique,
-      records
-        .filter(({ key }) => unique.includes(key))
-        .map(({ record }) => record),
-    );
-  };
-  const updateSort = (key: string) => {
-    const next =
-      sort?.key === key
-        ? sort.direction === "ascend"
-          ? { key, direction: "descend" as const }
-          : undefined
-        : { key, direction: "ascend" as const };
-    if (controlledSort === undefined) setInternalSort(next);
-    onSortChange?.(next);
-  };
+    onExpandedRowsChange,
+    selectable,
+    hasExpandedRows: Boolean(expandedRowRender),
+    unavailable,
+  });
 
-  if (!columns)
+  if (!columns) {
     return (
       <div data-slot="data-table" className={cn("w-full min-w-0", className)}>
-        <Table density={density} bordered={bordered} stickyHeader={stickyHeader} containerClassName={containerClassName}>
-          {caption !== undefined && <TableCaption captionSide={captionSide}>{caption}</TableCaption>}
+        <Table
+          density={density}
+          bordered={bordered}
+          stickyHeader={stickyHeader}
+          containerClassName={containerClassName}
+        >
+          {caption !== undefined ? (
+            <TableCaption captionSide={captionSide}>{caption}</TableCaption>
+          ) : null}
           {children}
         </Table>
       </div>
     );
+  }
+
+  const {
+    sort,
+    selected,
+    expanded,
+    displayColumns,
+    visible,
+    page,
+    pageSize,
+    total,
+    columnCount,
+    keysOnPage,
+    allSelected,
+    mixed,
+    updateSelection,
+    updateSort,
+    updateExpanded,
+    updatePage,
+  } = model;
+
   return (
     <div
       data-slot="data-table"
@@ -185,25 +118,26 @@ export function DataTable<T = Record<string, unknown>>({
       aria-busy={loading || undefined}
     >
       {toolbar}
-      {selected.length > 0 &&
-        batchActions?.(selected, () => updateSelection([]))}
+      {selected.length > 0
+        ? batchActions?.(selected, () => updateSelection([]))
+        : null}
       <Table
         density={density}
         bordered={bordered}
         stickyHeader={stickyHeader}
         containerClassName={containerClassName}
       >
-        {caption !== undefined && (
+        {caption !== undefined ? (
           <TableCaption captionSide={captionSide}>{caption}</TableCaption>
-        )}
+        ) : null}
         <TableHeader>
           <TableRow>
-            {expandedRowRender && (
+            {expandedRowRender ? (
               <TableHead scope="col" className="w-12">
                 <span className="sr-only">展开行</span>
               </TableHead>
-            )}
-            {selectable && (
+            ) : null}
+            {selectable ? (
               <TableHead scope="col" className="w-12">
                 <input
                   type="checkbox"
@@ -224,7 +158,7 @@ export function DataTable<T = Record<string, unknown>>({
                   }
                 />
               </TableHead>
-            )}
+            ) : null}
             {displayColumns.map((column) => {
               const active = sort?.key === column.key;
               return (
@@ -325,7 +259,7 @@ export function DataTable<T = Record<string, unknown>>({
                     data-state={selected.includes(key) ? "selected" : undefined}
                     aria-disabled={disabled || undefined}
                   >
-                    {expandedRowRender && (
+                    {expandedRowRender ? (
                       <TableCell>
                         <button
                           type="button"
@@ -333,22 +267,13 @@ export function DataTable<T = Record<string, unknown>>({
                           className="flex size-8 items-center justify-center rounded border hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring"
                           aria-label={isExpanded ? "收起行" : "展开行"}
                           aria-expanded={isExpanded}
-                          onClick={() => {
-                            const next = isExpanded
-                              ? expanded.filter(
-                                  (candidate) => candidate !== key,
-                                )
-                              : [...expanded, key];
-                            if (expandedRowKeys === undefined)
-                              setInternalExpanded(next);
-                            onExpandedRowsChange?.(next);
-                          }}
+                          onClick={() => updateExpanded(key)}
                         >
                           {isExpanded ? "−" : "+"}
                         </button>
                       </TableCell>
-                    )}
-                    {selectable && (
+                    ) : null}
+                    {selectable ? (
                       <TableCell>
                         <input
                           type="checkbox"
@@ -367,7 +292,7 @@ export function DataTable<T = Record<string, unknown>>({
                           }
                         />
                       </TableCell>
-                    )}
+                    ) : null}
                     {displayColumns.map((column) => {
                       const value =
                         column.dataIndex !== undefined
@@ -391,7 +316,7 @@ export function DataTable<T = Record<string, unknown>>({
                       );
                     })}
                   </TableRow>
-                  {isExpanded && expandedRowRender && (
+                  {isExpanded && expandedRowRender ? (
                     <TableRow>
                       <TableCell
                         colSpan={columnCount}
@@ -400,19 +325,19 @@ export function DataTable<T = Record<string, unknown>>({
                         {expandedRowRender(record, index)}
                       </TableCell>
                     </TableRow>
-                  )}
+                  ) : null}
                 </Fragment>
               );
             })
           )}
         </TableBody>
-        {!unavailable && summary && (
+        {!unavailable && summary ? (
           <TableFooter>
             {summary(visible.map(({ record }) => record))}
           </TableFooter>
-        )}
+        ) : null}
       </Table>
-      {pagination && (
+      {pagination ? (
         <Pagination
           {...pagination}
           ariaLabel={pagination.ariaLabel ?? "表格分页"}
@@ -427,14 +352,9 @@ export function DataTable<T = Record<string, unknown>>({
             ((count) => locale?.totalText?.(count) ?? `${count} 条记录`)
           }
           itemRender={pagination.itemRender}
-          onChange={(next, nextSize) => {
-            if (pagination.page === undefined) setInternalPage(next);
-            if (pagination.pageSize === undefined) setInternalSize(nextSize);
-            pagination.onChange?.(next, nextSize);
-          }}
+          onChange={updatePage}
         />
-      )}
+      ) : null}
     </div>
   );
 }
-export * from "../components/primitives/table";
