@@ -47,7 +47,7 @@ export default function Example1() {
           <TableCell colSpan={2}>3 项</TableCell>
         </TableRow>
       </TableFooter>
-      <TableCaption>组件状态与负责人</TableCaption>
+      <TableCaption side="bottom">组件状态与负责人</TableCaption>
     </Table>
   );
 }
