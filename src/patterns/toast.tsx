@@ -135,7 +135,9 @@ export function Toast({ toast: message, onDismiss }: ToastProps) {
       onDismiss,
       onAutoClose: onDismiss,
     });
-    return () => toast.dismiss(id);
+    return () => {
+      toast.dismiss(id);
+    };
   }, [message.message, message.type, message.tone, onDismiss]);
 
   return null;
