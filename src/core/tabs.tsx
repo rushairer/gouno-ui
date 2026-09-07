@@ -26,7 +26,7 @@ type LegacyTabItem<T extends string> = {
 type TabsRootProps = ComponentProps<typeof Primitive.Tabs>;
 
 export interface TabsProps<T extends string = string>
-  extends Omit<TabsRootProps, "onValueChange" | "orientation"> {
+  extends Omit<TabsRootProps, "onChange" | "onValueChange" | "orientation"> {
   activeKey?: T;
   defaultActiveKey?: T;
   items?: readonly (TabItem<T> | LegacyTabItem<T>)[];
