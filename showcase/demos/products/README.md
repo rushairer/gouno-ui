@@ -1,7 +1,17 @@
 # Product Page Migration Fixtures
 
-Files in this directory may include legacy Showcase product demos and product-driven migration fixtures.
+This directory contains only product pages actually migrated under `docs/product-driven-development.md`.
 
-For product-driven migrations, follow `docs/product-driven-development.md` rather than copying existing demo abstractions. New migrated pages should begin with Core plus the minimum shell supplied by `showcase/main.tsx`, keep uncertain composition local, and record durable abstraction decisions in `docs/abstraction-register.md`.
+Rules:
 
-`gosso-overview.tsx` is the first fixture created under this process and is the reference for Core-first page reconstruction without speculative Pattern/Gouno extraction.
+- Do not keep simulated/placeholder business pages here as if they were migration results.
+- Begin each real page with Core + Theme + the minimum admitted Gouno structure supplied by Showcase.
+- Keep uncertain composition page-local until evidence justifies a public abstraction.
+- Preserve real product route intent in static fixtures, but do not invent Showcase destinations for pages that have not been migrated yet.
+- Record durable abstraction/API decisions in `docs/abstraction-register.md`.
+
+Current migrated fixture:
+
+- `gosso-overview.tsx` — Gosso Admin `/` Overview, including administrator and regular-user states.
+
+Blog Admin and Blog intentionally have no product fixture files until their real migration stages begin.

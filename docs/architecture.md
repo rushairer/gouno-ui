@@ -1,10 +1,10 @@
 # Gouno UI Architecture Contract
 
-This document defines the architectural boundaries enforced by the source and test suite. Public API naming remains governed by `docs/api-specification.md`. Public abstraction admission and product-driven evolution are governed by `docs/product-driven-development.md`, with durable decisions recorded in `docs/abstraction-register.md`.
+This document defines architectural boundaries enforced by source and tests. Public API design is governed by `docs/api-specification.md`; abstraction admission by `docs/product-driven-development.md`; durable evidence by `docs/abstraction-register.md`.
 
-## Dependency direction
+## Canonical dependency direction
 
-The formal layers form one directed acyclic graph:
+The formal public layers form one directed acyclic graph:
 
 ```text
 components/primitives + lib
@@ -18,82 +18,113 @@ components/primitives + lib
         gouno
 ```
 
-A layer may depend on itself or a lower layer. It must never import or re-export a higher layer.
+A formal layer may depend on itself or a lower layer. It must never import or re-export a higher layer.
 
-- `core` owns product-agnostic controls, layout, data entry, navigation, display and overlay APIs.
-- `theme` owns theme state and theme controls. Theme controls may compose Core components.
-- `patterns` owns reusable multi-component interactions. Patterns may compose Core and Theme, but contain no Gouno product policy.
-- `gouno` owns product-family shells, status semantics and page templates.
+- `core` owns product-agnostic controls, layout primitives, data entry, navigation, display, feedback and overlay APIs.
+- `theme` owns theme state, persistence and theme controls; it may compose Core.
+- `patterns` owns only admitted reusable multi-component interactions; it may compose Core/Theme and is allowed to be empty while evidence is insufficient.
+- `gouno` owns only admitted Gouno product-family structure/policy. Its current canonical surface is `AppShell`, `PageContainer`, `NavigationGroup` and `navigationItemClass`.
 - `components/primitives` and `lib` are implementation foundations, not package subpaths.
 
 The dependency graph is verified from real TypeScript import/export declarations by `tests/dependency-graph.test.ts`.
 
+## Legacy is outside the DAG
+
+`src/legacy` is deliberately **not** another architectural layer. It is a non-compiled, non-published source museum for pre-validation abstractions.
+
+Legacy has these hard properties:
+
+- excluded from `tsconfig.json` and `tsconfig.build.json`;
+- no package export path;
+- no Showcase navigation;
+- no imports from Core, Theme, Patterns, Gouno or Showcase into Legacy;
+- no normal feature maintenance;
+- used only as prior-art evidence when real product work raises an abstraction question.
+
+An idea leaves Legacy only by being re-admitted through `docs/product-driven-development.md` and implemented cleanly in a canonical layer. Legacy file existence is never public API evidence.
+
+`tests/legacy-boundaries.test.ts` enforces the quarantine.
+
 ## Public ownership
 
-Every public symbol has exactly one canonical formal owner: Core, Theme, Patterns or Gouno. This includes type-only exports.
+Every canonical public symbol has exactly one owner: Core, Theme, Patterns or Gouno. This includes type-only exports.
 
-The four formal entry points use explicit symbol manifests. Directory wildcard package exports and layer-level `export *` manifests are prohibited.
+Formal entry points use explicit symbol manifests. Directory wildcard package exports and layer-level `export *` manifests are prohibited.
 
-`@gouno/ui` remains an external compatibility umbrella because existing Gouno product applications still import from it. It must equal the exact union of all four formal entry points plus `cn`; it must not invent a fifth ownership layer. `tests/public-api-ownership.test.ts` verifies both uniqueness and root-union equivalence with the TypeScript type checker.
+`@gouno/ui` remains an external compatibility umbrella for consumers. It equals the exact union of all formal entry points plus `cn`; it does not invent a fifth ownership layer. `tests/public-api-ownership.test.ts` verifies uniqueness and root-union equivalence with the TypeScript checker.
 
-Repository implementation code and the Showcase do not consume the root umbrella. Internal modules use concrete implementation imports, while Showcase runtime modules import from the owning formal layer. `tests/showcase-boundaries.test.ts` recursively parses Showcase imports and rejects any dependency that resolves to the root umbrella.
+Repository implementation code and Showcase do not consume the root umbrella. Internal modules import concrete implementation modules, while Showcase imports from canonical formal layers.
 
-Every PascalCase runtime component exported by a formal layer must also export a same-owner `ComponentNameProps` type. `tests/public-component-props.test.ts` discovers components directly from the TypeScript symbol table and has no component allowlist. Complex components keep explicit handwritten public props; thin wrappers and compound primitives may use type-only runtime-derived aliases when that preserves the exact implementation contract.
+Every PascalCase runtime component exported by a formal layer must also export a same-owner `ComponentNameProps` type. `tests/public-component-props.test.ts` discovers components directly from TypeScript symbols without an allowlist.
 
 ## Product-driven admission before ownership
 
-Layer ownership does not prove that an abstraction deserves to exist. Before creating a new public Pattern/Gouno component or materially extending Core, apply `docs/product-driven-development.md` first.
+Layer ownership does not prove that an abstraction deserves to exist. Apply `docs/product-driven-development.md` before creating a Pattern/Gouno component or materially extending Core.
 
-The current product-validation model is deliberately asymmetric:
+Current validation model:
 
 - Gosso Admin is the primary page-by-page implementation line.
-- Blog Admin and relevant Blog pages are mandatory cross-product prior-art and validation corpora.
-- Product pages are rebuilt Core-first with the minimum accepted Gouno shell and local composition before shared extraction.
-- Existing Pattern/Gouno exports outside the minimum product scaffolding are prior art rather than automatic precedent.
+- Blog Admin and relevant Blog pages are mandatory cross-product prior-art/validation corpora.
+- Product pages are rebuilt Core-first with Theme, the minimum admitted Gouno structure and product-local composition.
+- The minimum admitted structure is `AppShell`, `PageContainer`, `NavigationGroup` and `navigationItemClass`.
+- Pre-validation Pattern/Gouno implementations are quarantined in `src/legacy`; they are historical evidence only.
 - The third semantically equivalent occurrence triggers review, not automatic extraction.
-- Cross-product comparison is based on user intent, state, interaction, accessibility and responsive semantics rather than legacy component names or DOM similarity.
+- Cross-product comparison uses user intent, state, interaction, accessibility and responsive semantics rather than legacy names or DOM similarity.
 
-Once an abstraction is admitted, this architecture document determines its canonical owner and legal dependency direction; `docs/api-specification.md` then governs the public API contract.
+Once admitted, this document determines canonical ownership and legal dependencies; `docs/api-specification.md` governs the API contract.
+
+## Neutral application structure naming
+
+The canonical shell names intentionally avoid `Admin`:
+
+- `AppShell` describes application-level chrome: header, navigation, responsive navigation surface, main region and focus-return behavior. It does not imply one product type or own routing/authentication/business state.
+- `PageContainer` describes only the page content track: width constraint and vertical rhythm. It does not imply admin pages or bundle speculative title/filter/action semantics.
+- `NavigationGroup` and `navigationItemClass` remain neutral because their semantics already match their responsibility.
+
+Product-specific words belong in product-local routes/content until repeated evidence proves a Gouno-family policy.
 
 ## Internal composition
 
-Implementation modules import concrete modules rather than the package root or formal layer barrels. This keeps dependency edges visible and reduces accidental cycles and barrel-driven bundle coupling.
+Implementation modules import concrete modules rather than the package root or formal layer barrels. This keeps dependency edges visible and avoids cycles/barrel-driven coupling.
 
-Large compound components may split state, derivation and render helpers into internal modules without exposing those helpers publicly. `DataTable` follows this model: `DataTable` is the public Pattern while its model hook remains private.
+Large admitted compound components may split model/render helpers into private modules without publishing those helpers.
 
-Global configuration surfaces are not speculative placeholders. A public context/config provider is allowed only when formal components actually consume it with documented precedence and behavior tests. The former inert `ConfigProvider/useConfig` API was removed for this reason.
+Global configuration surfaces are not speculative placeholders. A public provider is allowed only when canonical components actually consume it with documented precedence and behavior tests.
 
 ## File ownership
 
-One implementation file should own one component family or one tightly related internal concern. Catch-all public implementation modules such as `misc.tsx`, `visual.tsx` and `navigation-patterns.tsx` are prohibited.
+One implementation file owns one public component family or tightly related internal concern. Catch-all public implementation modules are prohibited.
 
-Barrel files may aggregate exports, but they do not contain component implementations.
+Barrel files aggregate exports but do not contain unrelated implementations.
 
-Type-only contract manifests are allowed when they derive exact props from implementation symbols and add no runtime dependency edge. `src/core/public-props.ts` is the current contract manifest. `tests/type-contract-manifest.test.ts` requires every import in that file to be type-only, every declaration to be an exported type alias, and the module to expose zero runtime values.
+`src/core/public-props.ts` remains a type-only contract manifest. Tests require type-only imports/exported aliases and zero runtime values.
 
-## Showcase as an integration consumer
+## Showcase as integration consumer and validation laboratory
 
-Showcase is not an architectural exception. Its runtime source uses Core, Theme, Patterns and Gouno through the same canonical layer boundaries recommended to new consumers. It may use repository-relative paths during local development, but those paths must resolve to the owning layer rather than `src/index.ts`.
+Showcase is not an architecture exception. Runtime source consumes canonical formal layers only.
 
-Preview/Code source transformation may display package-form import paths as text; only actual TypeScript module dependencies participate in the boundary rule.
+Its information architecture keeps two dimensions separate:
 
-Component-catalog completion percentages are documentation-audit evidence, not architecture scores. A component remains below 100% until its own API table, examples, source equivalence, accessibility and focused tests satisfy `AGENTS.md`, even when the package architecture itself is fully conformant.
+1. **Product workspace** — `Gouno UI`, `Gosso Admin`, `Blog Admin`, `Blog`.
+2. **Design-system ownership** inside `Gouno UI` — `Core`, `Theme`, `Patterns`, `Gouno`.
 
-During product migration, Showcase is also the product-validation laboratory: real product pages are reconstructed there with static fixtures so that Core/API gaps and candidate shared abstractions can be evaluated against the same canonical public layers.
+Core retains usage-oriented categories such as General, Layout, Data Entry, Navigation, Data Display and Feedback. Other layers use categories appropriate to their semantics rather than being forced into Core/Ant Design categories.
+
+Only admitted canonical APIs appear in the Gouno UI workspace. Legacy is hidden entirely. Product workspaces contain only pages genuinely migrated under the product-driven process; empty workspaces show an empty state instead of simulated pages.
+
+Component completion percentages are documentation-audit evidence, not architecture scores.
 
 ## Delivery contract
 
-The main-branch verification workflow uses Node.js 24 and pins every external GitHub Action to an immutable commit SHA. Before Pages publication it must run, in order as one verification gate:
+The main-branch verification workflow uses Node.js 24 and pins external GitHub Actions to immutable commit SHAs. Before Pages publication it runs:
 
 - `npm run typecheck`
 - `npm test -- --run`
 - `npm run build`
 - `npm run showcase:build`
 
-`tests/workflow-hardening.test.ts` prevents action pinning, the Node baseline and the verification gate from silently drifting.
-
 ## Change rule
 
-Any architectural change that introduces a new public owner, layer edge, alias, package subpath, public component, global configuration surface, cross-layer re-export, Showcase root-umbrella import, runtime value in a type-contract manifest, or delivery-workflow dependency must update the relevant invariant tests in the same change. Tests describe invariants; they are not compatibility exceptions.
+Any change introducing a public owner, layer edge, package path, public component, global provider, cross-layer re-export, Legacy dependency, Showcase root import or delivery dependency must update the relevant invariant tests in the same change.
 
-Any product-driven change that admits, rejects, merges, moves, removes, or materially changes a public abstraction must also keep `docs/abstraction-register.md` current so later sessions can reconstruct the evidence without relying on chat history.
+Any product-driven decision that admits, rejects, merges, moves, removes or materially changes an abstraction must update `docs/abstraction-register.md` so future sessions can reconstruct the decision without chat history.

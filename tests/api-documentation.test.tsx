@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import ts from "typescript";
 import { dataEntryDocuments } from "../showcase/demos/core/data-entry";
-import { dataDisplayDocuments } from "../showcase/demos/core/data-display";
 import { feedbackDocuments } from "../showcase/demos/core/feedback";
 import { paginationDocument } from "../showcase/demos/core/pagination";
 import { tagDocuments } from "../showcase/demos/core/tag";
@@ -19,32 +18,7 @@ const parsed = ts.parseJsonConfigFileContent(
 );
 const program = ts.createProgram(parsed.fileNames, parsed.options);
 const checker = program.getTypeChecker();
-const sections = dataDisplayDocuments["data-table"].apiSections!;
 const cases = [
-  [
-    "src/patterns/data-table.types.ts",
-    "DataTableColumn",
-    {
-      api: sections.find((section) => section.title === "DataTableColumn<T>")!
-        .rows,
-    },
-  ],
-  [
-    "src/patterns/data-table.types.ts",
-    "DataTablePagination",
-    {
-      api: sections.find((section) => section.title === "DataTablePagination")!
-        .rows,
-    },
-  ],
-  [
-    "src/patterns/data-table.types.ts",
-    "DataTableSortState",
-    {
-      api: sections.find((section) => section.title === "DataTableSortState")!
-        .rows,
-    },
-  ],
   ["src/core/input.tsx", "InputProps", dataEntryDocuments.input],
   ["src/core/textarea.tsx", "TextareaProps", dataEntryDocuments.textarea],
   ["src/core/select.tsx", "SelectProps", dataEntryDocuments.select],
@@ -63,11 +37,6 @@ const cases = [
   ["src/core/modal.tsx", "ModalProps", feedbackDocuments.modal],
   ["src/core/drawer.tsx", "DrawerProps", feedbackDocuments.drawer],
   ["src/core/pagination.tsx", "PaginationProps", paginationDocument],
-  [
-    "src/patterns/data-table.types.ts",
-    "DataTableProps",
-    dataDisplayDocuments["data-table"],
-  ],
 ] as const;
 
 describe("public API documentation", () => {
@@ -93,7 +62,7 @@ describe("public API documentation", () => {
       }
       expect(names.length).toBe(new Set(names).size);
       expect(
-        props.map((prop) => prop.name).filter((name) => !names.includes(name)),
+        props.map((prop) => prop.name).filter((propName) => !names.includes(propName)),
       ).toEqual([]);
     });
   }

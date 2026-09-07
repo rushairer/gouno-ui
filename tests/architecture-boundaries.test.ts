@@ -6,6 +6,8 @@ const sourceRoot = resolve(process.cwd(), "src");
 
 function sourceFiles(directory: string): string[] {
   const result: string[] = [];
+  const root = resolve(sourceRoot, directory);
+  if (!existsSync(root)) return result;
   const visit = (path: string) => {
     for (const entry of readdirSync(path)) {
       const child = resolve(path, entry);
@@ -13,77 +15,81 @@ function sourceFiles(directory: string): string[] {
       else if (/\.(tsx?|jsx?)$/.test(entry)) result.push(child);
     }
   };
-  visit(resolve(sourceRoot, directory));
+  visit(root);
   return result;
 }
 
 function contents(directory: string): string {
-  return sourceFiles(directory).map((file) => readFileSync(file, "utf8")).join("\n");
+  return sourceFiles(directory)
+    .map((file) => readFileSync(file, "utf8"))
+    .join("\n");
 }
 
 describe("public layer architecture", () => {
-  it("keeps core free of patterns and product-layer imports", () => {
-    expect(contents("core")).not.toMatch(/from\s+["']\.\.\/patterns\//);
-    expect(contents("core")).not.toMatch(/from\s+["']\.\.\/gouno\//);
+  it("keeps Core free of higher-layer and Legacy imports", () => {
+    const core = contents("core");
+    expect(core).not.toMatch(/from\s+["']\.\.\/(?:theme|patterns|gouno|legacy)\//);
   });
 
-  it("keeps reusable patterns free of product-layer imports", () => {
-    expect(contents("patterns")).not.toMatch(/from\s+["']\.\.\/gouno\//);
+  it("keeps Theme free of Pattern, Gouno and Legacy imports", () => {
+    const theme = contents("theme");
+    expect(theme).not.toMatch(/from\s+["']\.\.\/(?:patterns|gouno|legacy)\//);
   });
 
-  it("keeps business status tags in the Gouno layer", async () => {
-    const core = await import("../src/core/index");
+  it("keeps canonical Patterns free of Gouno and Legacy imports", () => {
+    const patterns = contents("patterns");
+    expect(patterns).not.toMatch(/from\s+["']\.\.\/(?:gouno|legacy)\//);
+  });
+
+  it("keeps the Pattern public surface intentionally empty until admission", async () => {
+    const patterns = await import("../src/patterns/index");
+    expect(Object.keys(patterns).sort()).toEqual([]);
+  });
+
+  it("publishes only the admitted Gouno application-structure surface", async () => {
     const gouno = await import("../src/gouno/index");
-    expect("StatusBadge" in core).toBe(false);
-    expect("StatusIndicator" in core).toBe(false);
-    expect("RiskBadge" in core).toBe(false);
-    expect(typeof gouno.StatusBadge).toBe("function");
-    expect(typeof gouno.StatusIndicator).toBe("function");
-    expect(typeof gouno.RiskBadge).toBe("function");
+    expect(Object.keys(gouno).sort()).toEqual(
+      ["AppShell", "NavigationGroup", "PageContainer", "navigationItemClass"].sort(),
+    );
+    for (const legacyName of [
+      "AdminShell",
+      "AdminPage",
+      "PageHeader",
+      "Panel",
+      "DashboardTemplate",
+      "StatusBadge",
+      "ActionGroup",
+      "FilterBar",
+    ]) {
+      expect(legacyName in gouno).toBe(false);
+    }
   });
 
-  it("publishes curated layer entry points instead of source-directory wildcards", () => {
-    const packageJson = JSON.parse(readFileSync(resolve(process.cwd(), "package.json"), "utf8")) as { exports: Record<string, unknown> };
+  it("publishes curated layer entry points without Legacy or source wildcards", () => {
+    const packageJson = JSON.parse(
+      readFileSync(resolve(process.cwd(), "package.json"), "utf8"),
+    ) as { exports: Record<string, unknown> };
     const exportKeys = Object.keys(packageJson.exports);
+    expect(exportKeys).not.toContain("./legacy");
+    expect(exportKeys).not.toContain("./legacy/*");
     expect(exportKeys).not.toContain("./core/*");
     expect(exportKeys).not.toContain("./patterns/*");
     expect(exportKeys).not.toContain("./gouno/*");
   });
 
   it("uses explicit symbol manifests in every formal layer entry", () => {
-    for (const entry of ["core/index.ts", "patterns/index.ts", "gouno/index.ts", "theme/index.ts"]) {
+    for (const entry of [
+      "core/index.ts",
+      "patterns/index.ts",
+      "gouno/index.ts",
+      "theme/index.ts",
+    ]) {
       const source = readFileSync(resolve(sourceRoot, entry), "utf8");
       expect(source).not.toMatch(/export\s+\*/);
     }
   });
 
-  it("does not create a second canonical Core import path through Patterns", () => {
-    const patternsIndex = readFileSync(resolve(sourceRoot, "patterns/index.ts"), "utf8");
-    expect(patternsIndex).not.toMatch(/from\s+["']\.\.\/core\//);
-    expect(patternsIndex).not.toContain("TableDensity");
-  });
-
-  it("does not re-export Core or primitive APIs from Pattern implementation modules", () => {
-    const patterns = contents("patterns");
-    expect(patterns).not.toMatch(
-      /export\s+(?:type\s+)?\*\s+from\s+["']\.\.\/(?:core|components\/primitives)\//,
-    );
-  });
-
-  it("does not reimplement Core-owned Tabs or Pagination inside Patterns", () => {
-    const patterns = contents("patterns");
-    expect(patterns).not.toMatch(/export\s+(?:const|function)\s+(Tabs|TabList|TabPanel|Pagination)\b/);
-    expect(patterns).not.toContain("SubnavTabs");
-  });
-
-  it("keeps product action policy out of reusable Patterns", () => {
-    const patterns = contents("patterns");
-    expect(patterns).not.toContain("onAIAssist");
-    expect(patterns).not.toContain("aiLabel");
-    expect(patterns).not.toContain("交给 AI");
-  });
-
-  it("keeps theme controls owned by the theme entry point", async () => {
+  it("keeps Theme controls owned by the Theme entry point", async () => {
     const gouno = await import("../src/gouno/index");
     const theme = await import("../src/theme/index");
     expect("ThemeProvider" in gouno).toBe(false);
@@ -110,31 +116,9 @@ describe("public layer architecture", () => {
     }
   });
 
-  it("keeps feedback, async state and toast as separate pattern owners", () => {
-    const feedback = readFileSync(resolve(sourceRoot, "patterns/feedback.tsx"), "utf8");
-    const asyncState = readFileSync(resolve(sourceRoot, "patterns/async-state.tsx"), "utf8");
-    const toast = readFileSync(resolve(sourceRoot, "patterns/toast.tsx"), "utf8");
-    expect(feedback).not.toContain("AsyncState");
-    expect(feedback).not.toContain("ToastProvider");
-    expect(asyncState).not.toContain("ToastProvider");
-    expect(toast).not.toContain("EmptyState");
-  });
-
-  it("keeps DataTable model internals private to the Pattern implementation", async () => {
-    const dataTableSource = readFileSync(resolve(sourceRoot, "patterns/data-table.tsx"), "utf8");
-    expect(dataTableSource).not.toMatch(/export\s+(?:type\s+)?\*/);
-    const patterns = await import("../src/patterns/index");
-    expect("useDataTableModel" in patterns).toBe(false);
-    expect("DataTableRecord" in patterns).toBe(false);
-  });
-
-  it("keeps Gouno layout families split and free of synonym aliases", async () => {
-    const layoutSource = readFileSync(resolve(sourceRoot, "gouno/layout.tsx"), "utf8");
-    expect(layoutSource).not.toMatch(/function\s+/);
-    const gouno = await import("../src/gouno/index");
-    expect("WorkspacePanel" in gouno).toBe(false);
-    expect("AdminPageHeader" in gouno).toBe(false);
-    expect(typeof gouno.Panel).toBe("function");
-    expect(typeof gouno.PageHeader).toBe("function");
+  it("keeps Legacy explicitly quarantined outside canonical ownership", () => {
+    expect(existsSync(resolve(sourceRoot, "legacy/README.md"))).toBe(true);
+    expect(existsSync(resolve(sourceRoot, "legacy/patterns"))).toBe(true);
+    expect(existsSync(resolve(sourceRoot, "legacy/gouno"))).toBe(true);
   });
 });

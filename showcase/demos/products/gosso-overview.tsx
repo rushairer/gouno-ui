@@ -39,7 +39,7 @@ const roleOptions = [
 
 const adminQuickLinks: readonly QuickLink[] = [
   {
-    href: "#gosso-clients",
+    href: "/system-management/clients",
     icon: <Key className="size-5" />,
     tone: "primary",
     title: "客户端注册",
@@ -47,14 +47,14 @@ const adminQuickLinks: readonly QuickLink[] = [
       "注册和配置 OAuth2 客户端凭据、授权重定向 URI、范围及授权流程模式。",
   },
   {
-    href: "#gosso-users",
+    href: "/system-management/users",
     icon: <UserCheck className="size-5" />,
     tone: "neutral",
     title: "用户管理",
     description: "审计活跃账户、更新账户状态、分配权限范围角色。",
   },
   {
-    href: "#gosso-status",
+    href: "/system-management/system",
     icon: <Settings className="size-5" />,
     tone: "primary",
     title: "系统状态与审计",
@@ -64,14 +64,14 @@ const adminQuickLinks: readonly QuickLink[] = [
 
 const userQuickLinks: readonly QuickLink[] = [
   {
-    href: "#gosso-account",
+    href: "/account-settings/profile",
     icon: <User className="size-5" />,
     tone: "primary",
     title: "个人资料与密码",
     description: "查看并维护个人账户基础信息、电子邮箱及登录密码凭据。",
   },
   {
-    href: "#gosso-account",
+    href: "/account-settings/mfa",
     icon: <Shield className="size-5" />,
     tone: "neutral",
     title: "安全认证 (MFA 与通行密钥)",
@@ -79,7 +79,7 @@ const userQuickLinks: readonly QuickLink[] = [
       "绑定双因素认证 (TOTP) 或注册 FIDO2 通行密钥以强化账户安全。",
   },
   {
-    href: "#gosso-account",
+    href: "/account-settings/sessions",
     icon: <Laptop className="size-5" />,
     tone: "primary",
     title: "活跃登录会话",
@@ -92,6 +92,9 @@ function QuickLinkCard({ link }: { link: QuickLink }) {
   return (
     <a
       href={link.href}
+      title={`真实产品目标：${link.href}；该目标页面尚未迁入 Showcase`}
+      aria-label={`${link.title}，目标页面尚未迁入 Showcase`}
+      onClick={(event) => event.preventDefault()}
       className="group flex min-h-32 w-full items-center gap-4 rounded-lg border bg-card p-5 text-left text-card-foreground shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
       <span
@@ -123,6 +126,7 @@ export function GossoOverviewDemo() {
   const isAdmin = role === "admin";
   const quickLinks = isAdmin ? adminQuickLinks : userQuickLinks;
   const userName = isAdmin ? "admin" : "demo-user";
+  const primaryTarget = isAdmin ? "/system-management" : "/account-settings/profile";
 
   return (
     <div className="flex flex-col gap-6 lg:gap-8">
@@ -178,7 +182,9 @@ export function GossoOverviewDemo() {
           </Text>
 
           <ButtonLink
-            href={isAdmin ? "#gosso-system" : "#gosso-account"}
+            href={primaryTarget}
+            title={`真实产品目标：${primaryTarget}；该目标页面尚未迁入 Showcase`}
+            onClick={(event) => event.preventDefault()}
             variant="solid"
             color="primary"
             icon={<ArrowRight className="size-4" />}
@@ -212,7 +218,10 @@ export function GossoOverviewDemo() {
         </Card>
       ) : null}
 
-      <section aria-labelledby="gosso-overview-quick-navigation" className="flex flex-col gap-5">
+      <section
+        aria-labelledby="gosso-overview-quick-navigation"
+        className="flex flex-col gap-5"
+      >
         <Heading
           id="gosso-overview-quick-navigation"
           level={2}

@@ -1,58 +1,96 @@
 # Migration guide
 
-The package exposes three formal component layers plus a dedicated Theme entry point:
+The package has four formal public owners:
 
-- `@gouno/ui/core` — pure controls and visual primitives.
-- `@gouno/ui/patterns` — reusable compound interactions.
-- `@gouno/ui/gouno` — Gouno product shells and templates.
-- `@gouno/ui/theme` — theme context and theme controls.
+- `@gouno/ui/core` — product-agnostic controls and visual primitives.
+- `@gouno/ui/theme` — theme/brand state and controls.
+- `@gouno/ui/patterns` — admitted compound interactions; currently intentionally empty.
+- `@gouno/ui/gouno` — admitted Gouno product-family structure.
+
+`src/legacy` is not public API and has no import path.
 
 ## Root compatibility umbrella
 
-The package root `@gouno/ui` remains available because current Gouno product applications still have real imports from it. It is a compatibility umbrella, not a fifth public owner.
+The package root `@gouno/ui` remains available because existing Gouno products still consume it. It is a compatibility umbrella, not a fifth owner.
 
-Existing consumers do not need to migrate root imports immediately. New code should prefer the owning formal layer so dependencies remain explicit and bundle boundaries stay visible. The Gouno UI implementation and Showcase themselves are not allowed to depend on the root umbrella.
+New code should prefer canonical formal entry points. Gouno UI implementation and Showcase must not depend on the root umbrella.
 
-## Curated subpaths
+## Product-validation reset
 
-Source-directory wildcard exports (`@gouno/ui/core/*`, `@gouno/ui/patterns/*`, `@gouno/ui/gouno/*`) are no longer public API. Migrate physical-file imports to the owning layer:
+The repository has moved from speculative Pattern/Gouno catalog design to product-driven validation.
+
+Pre-validation Pattern/Gouno implementations have been removed from canonical public entries and preserved only as source snapshots under `src/legacy`. This includes historical concepts such as DataTable, Toast orchestration, Feedback/AsyncState, ConfirmDialog, BulkActionBar, SectionNav, Panel/PageHeader families, product status tags and page templates.
+
+These are **not** compatibility imports:
+
+```ts
+// No longer canonical/public
+import { DataTable, ToastProvider } from "@gouno/ui/patterns";
+import { Panel, PageHeader, DashboardTemplate } from "@gouno/ui/gouno";
+```
+
+When a real product page needs similar behavior, rebuild Core-first and run the admission process in `docs/product-driven-development.md`. Do not import from `src/legacy`.
+
+Existing products using an older vendored `@gouno/ui` archive can continue on that immutable archive until the relevant pages are migrated. The standalone repository does not preserve speculative aliases solely to imitate those old archives.
+
+## Application structure rename
+
+The previously admitted shell/container names have been made product-neutral:
 
 ```ts
 // Before
-import { DataTable } from "@gouno/ui/patterns/data-table";
-import { AdminShell } from "@gouno/ui/gouno/admin-shell";
+import { AdminShell, AdminPage } from "@gouno/ui/gouno";
 
-// After
-import { DataTable } from "@gouno/ui/patterns";
-import { AdminShell } from "@gouno/ui/gouno";
+// Now
+import { AppShell, PageContainer } from "@gouno/ui/gouno";
 ```
 
-## Canonical owners
+Rationale:
 
-`FormLayout`, `FormGrid`, `FormActions`, `Tabs`, `Pagination`, and `TableDensity` are Core-owned APIs. Import them from `@gouno/ui/core` in new code, not Patterns.
+- `AppShell` is the application-chrome contract: header, desktop navigation, mobile navigation surface, main region and focus-return behavior. It does not own routing, authentication, permissions or business state.
+- `PageContainer` is only a content-width and vertical-rhythm container. The old `AdminPage` name implied administration even though the implementation did not contain admin semantics.
+- `NavigationGroup` and `navigationItemClass` keep their existing names because they are already domain-neutral.
 
-`ThemeProvider`, `useTheme`, and `ThemeToggle` are Theme-owned APIs. Import them from `@gouno/ui/theme` in new code, not Gouno.
+Do not introduce `Admin*` aliases unless administration itself becomes a proven semantic contract with independent behavior.
 
-Patterns no longer carries duplicate Tabs/Pagination implementations or the `SubnavTabs` alias.
+## Curated subpaths
+
+Physical source files are not public subpaths. Use the owning formal layer:
+
+```ts
+import { Button, Table, Pagination } from "@gouno/ui/core";
+import { ThemeProvider, ThemeToggle } from "@gouno/ui/theme";
+import { AppShell, PageContainer } from "@gouno/ui/gouno";
+```
+
+Do not use source wildcard paths such as `@gouno/ui/core/*`, `@gouno/ui/patterns/*`, `@gouno/ui/gouno/*`, or any Legacy path.
+
+## Canonical owners retained
+
+`FormLayout`, `FormGrid`, `FormActions`, `Tabs`, `Pagination`, `Table` and `TableDensity` are Core-owned APIs.
+
+`ThemeProvider`, `useTheme`, `ThemeToggle`, theme modes and brand types are Theme-owned APIs.
+
+The current Pattern entry exists as a formal owner boundary but exports nothing until a real interaction passes admission.
 
 ## Removed inert ConfigProvider
 
-`ConfigProvider`, `useConfig`, and `UIConfig` have been removed from the public API. The former context stored `componentSize` and `direction`, but no public component consumed those values, so wrapping an application in it did not change component behavior.
+`ConfigProvider`, `useConfig` and `UIConfig` remain removed. The former context stored settings that canonical components did not consume.
 
-Use explicit component props for control configuration and `ThemeProvider` only for theme/brand/density behavior. A future global configuration API must be introduced only together with audited component consumption, precedence rules, documentation and behavior tests.
+Use explicit component props for control configuration and `ThemeProvider` for theme/brand behavior. A future global configuration API must be introduced together with real component consumption, precedence rules, documentation and tests.
 
-## BulkActionBar
+## Showcase migration meaning
 
-`BulkActionBar` is product-agnostic. Product-specific actions such as AI assistance are caller-provided children instead of dedicated `onAIAssist`/`aiLabel` props.
+Product workspace navigation now represents real migration only:
 
-```tsx
-<BulkActionBar selectionLabel="已选择 3 项" onCancel={clearSelection}>
-  <Button onClick={runAIAssist}>交给 AI</Button>
-</BulkActionBar>
-```
+- Gosso Admin currently contains only the migrated Overview page.
+- Blog Admin and Blog remain empty until real pages are moved.
+- Old simulated pages are intentionally removed rather than kept as placeholders.
 
-## Gouno layout aliases
+The Gouno UI workspace documents only canonical APIs. Legacy is not shown.
 
-Use `Panel` instead of the removed `WorkspacePanel` alias, and `PageHeader` instead of `AdminPageHeader`.
+## Compatibility assessment
 
-Gouno layout families remain available through `@gouno/ui/gouno`; the source-level `layout.tsx` file is now an export-only barrel and is not a separate public subpath.
+This reset removes/renames public exports and therefore has breaking compatibility impact for consumers that update to this repository's next package artifact. Treat a future published package accordingly under SemVer or provide an explicit migration release note.
+
+The current workflow is deliberately page-by-page: consumer products should not mechanically replace removed Pattern/Gouno APIs with new wrappers. Let each real page prove which abstractions should return.

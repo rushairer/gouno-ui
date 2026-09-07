@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { componentProgress } from "../showcase/component-progress";
 
 describe("audited batch completion", () => {
-  it("reports complete only for the reviewed component batch", () => {
+  it("reports complete only for the reviewed Core component batch", () => {
     for (const id of [
       "core-input",
       "core-textarea",
@@ -12,7 +12,6 @@ describe("audited batch completion", () => {
       "core-date-picker",
       "core-upload",
       "core-table",
-      "core-data-table",
       "core-pagination",
       "core-modal",
       "core-drawer",

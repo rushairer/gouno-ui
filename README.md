@@ -1,18 +1,19 @@
 # @gouno/ui
 
-Shared React UI library for the Gouno product family, including reusable Core components, compound Patterns, Gouno product shells/templates, semantic themes, and a static Showcase.
+Shared React UI system for the Gouno product family: a broad product-agnostic Core, a dedicated Theme layer, product-driven Pattern/Gouno abstractions, and a static Showcase used as both component documentation and real-page validation laboratory.
 
 **Live Showcase:** https://rushairer.github.io/gouno-ui/
 
 ## Architecture
 
-The source has four formal public owners plus internal primitive/utility foundations:
+There are four formal public owners:
 
-- `src/components/primitives` / `src/lib` — internal behavior primitives and utilities; not public product domains.
-- `src/core` — pure, product-agnostic controls, layout, data entry, display, feedback and overlay APIs.
-- `src/theme` — theme state, persistence contract and theme controls.
-- `src/patterns` — reusable multi-component interactions such as DataTable, async feedback, Toast and confirmation flows.
-- `src/gouno` — Gouno product-family shells, page layout families, templates and business-status presentation.
+- `src/core` — pure, product-agnostic controls, layout, data entry, display, navigation, feedback and overlays.
+- `src/theme` — brand/theme state, persistence contract and theme controls.
+- `src/patterns` — admitted reusable compound interactions. This layer is intentionally allowed to be empty while real product evidence is insufficient.
+- `src/gouno` — admitted Gouno product-family structure/policy. The current canonical surface is `AppShell`, `PageContainer`, `NavigationGroup` and `navigationItemClass`.
+
+Internal primitives/utilities live under `src/components/primitives` and `src/lib`.
 
 Dependency direction is one-way:
 
@@ -20,71 +21,115 @@ Dependency direction is one-way:
 components/primitives + lib → Core → Theme → Patterns → Gouno
 ```
 
-A layer may depend on itself or anything to its left, never anything to its right. Product policy, authentication, API clients, routes and application session state do not belong in Core or Patterns. The executable contract is documented in [`docs/architecture.md`](docs/architecture.md) and enforced from real TypeScript imports/exports.
+A formal layer may depend on itself or anything to its left, never anything to its right.
 
-Each public symbol, including type-only exports, has one canonical owner. Higher layers may compose lower layers, but they do not reimplement or re-export them merely to create a second import path.
+### Legacy quarantine
+
+`src/legacy` is a non-canonical source museum for pre-validation Pattern/Gouno implementations. It is **not** a fifth layer, package subpath or compatibility API. It is excluded from builds, hidden from Showcase, and forbidden as a dependency of canonical layers or Showcase.
+
+Legacy exists only so product-driven reviews can inspect prior art without mistaking it for an approved design-system contract.
+
+See [`docs/architecture.md`](docs/architecture.md), [`docs/product-driven-development.md`](docs/product-driven-development.md) and [`src/legacy/README.md`](src/legacy/README.md).
 
 ## Public entry points
 
-New code should prefer the owning formal layer:
+New code should import from the canonical owner:
 
 ```ts
 import { Button, Pagination, Table } from "@gouno/ui/core";
-import { DataTable, ConfirmDialog } from "@gouno/ui/patterns";
-import { AdminShell, Panel, PageHeader } from "@gouno/ui/gouno";
 import { ThemeProvider, ThemeToggle, useTheme } from "@gouno/ui/theme";
+import { AppShell, PageContainer } from "@gouno/ui/gouno";
 ```
 
-The root entry remains available for existing consumers:
+`@gouno/ui/patterns` remains a formal entry point but currently exports no admitted Pattern. Real product evidence must establish a Pattern before anything is added there.
+
+The root entry remains an external compatibility umbrella for existing consumers:
 
 ```ts
-import { Button, DataTable, AdminShell, ThemeProvider } from "@gouno/ui";
+import { Button, ThemeProvider, AppShell } from "@gouno/ui";
 ```
 
-The four formal layer entries use explicit symbol manifests. The package intentionally does **not** expose source-directory wildcard subpaths such as `@gouno/ui/core/*`, `@gouno/ui/patterns/*`, or `@gouno/ui/gouno/*`.
+The root is not a fifth owner. Automated TypeScript-symbol tests require it to equal the exact union of Core, Theme, Patterns and Gouno plus `cn`. Repository implementation code and Showcase must not depend on the root umbrella.
 
-The root `@gouno/ui` entry is intentionally retained as an external compatibility umbrella because current Gouno product applications still consume it. It is not a fifth owner: automated TypeScript-symbol tests require the root surface to equal the exact union of Core, Theme, Patterns and Gouno plus `cn`. Library implementation code and the Showcase are forbidden from depending on the umbrella; the Showcase imports every runtime API from its canonical formal layer.
+Source-directory wildcard imports such as `@gouno/ui/core/*`, `@gouno/ui/patterns/*`, `@gouno/ui/gouno/*` and any Legacy path are not public API.
 
-Core deliberately excludes product concepts such as `AdminShell`, `StatusBadge`, `RiskBadge`, page templates and product action policy. Patterns likewise does not duplicate Core components such as Tabs or Pagination. Theme APIs have a dedicated owner instead of being forwarded through Gouno.
+## Product-driven component evolution
+
+The repository is in a real-product validation phase.
+
+- Gosso Admin is the primary page-by-page migration line.
+- Blog Admin and relevant Blog pages are cross-product evidence corpora rather than parallel migration streams by default.
+- Pages are rebuilt with Core + Theme + the minimum admitted Gouno structure + local JSX/Tailwind first.
+- Small repetition is preferred over premature abstraction.
+- The third semantically equivalent occurrence triggers abstraction review; it does not automatically create a component.
+- Before admitting a Pattern/Gouno component or materially extending Core, review canonical prior art, Legacy and matching product cases.
+- Durable decisions are recorded in [`docs/abstraction-register.md`](docs/abstraction-register.md).
+
+The binding public API naming/state/composition rules remain [`docs/api-specification.md`](docs/api-specification.md).
+
+## Neutral application structure
+
+The canonical Gouno shell avoids unnecessary product-domain naming:
+
+```tsx
+import { AppShell, PageContainer } from "@gouno/ui/gouno";
+
+<AppShell brand="GOSSO" navigation={renderNavigation}>
+  <PageContainer>
+    <RouteContent />
+  </PageContainer>
+</AppShell>
+```
+
+- `AppShell` describes application chrome and responsive navigation, not “admin” behavior.
+- `PageContainer` describes only the page content width/rhythm track, not a page template.
+- Routing, authentication, permissions, API clients and business state stay in the consuming product.
+
+## Showcase information architecture
+
+Showcase keeps product spaces and design-system ownership as separate dimensions.
+
+Product spaces:
+
+- **Gouno UI** — canonical design-system documentation.
+- **Gosso Admin** — only pages actually migrated under the current process.
+- **Blog Admin** — empty until real migration begins.
+- **Blog** — empty until real migration begins.
+
+Inside **Gouno UI**, navigation is organized first by canonical owner:
+
+- **Core** — keeps familiar usage categories such as General, Layout, Data Entry, Navigation, Data Display and Feedback.
+- **Theme** — theme/brand APIs.
+- **Patterns** — only admitted compound interactions; currently empty.
+- **Gouno** — admitted product-family structure/policy.
+
+Legacy never appears in Showcase. Old simulated business pages are not retained as fake migration progress.
 
 ## Component organization
 
-One public component or tightly coupled component family belongs in one focused implementation module. Barrel files are export-only. Catch-all implementation modules such as `misc`, `visual`, or mixed `date-time` files are intentionally avoided.
-
-Examples:
-
-- Spinner, Progress, AspectRatio and Kbd each have focused Core modules.
-- Typography, Heading and Text share the typography domain.
-- DateRangePicker, TimePicker and ColorPicker have separate owners.
-- Gouno `layout.tsx` is a pure barrel over focused Panel, Page, DefinitionList and ListStack families.
-- DataTable remains one public Pattern contract while sorting/filtering/pagination/selection/expansion state lives in a private model module.
-- Feedback, AsyncState and Toast have separate Pattern owners.
-- ToastProvider, `useToast` and the declarative Toast bridge share one Sonner-backed orchestration path instead of parallel notification state machines.
-- `src/core/public-props.ts` is a type-only contract manifest for thin wrappers. Tests require it to contain no runtime imports or runtime exports.
-
-Every PascalCase runtime component exported from Core, Theme, Patterns or Gouno must also export a same-owner `ComponentNameProps` type. The test discovers components from the TypeScript symbol table and uses no component allowlist.
-
-Global configuration APIs are not published speculatively. A provider/config surface is public only when formal components actually consume it with documented precedence and behavior tests; the former inert `ConfigProvider/useConfig` surface was removed.
+- One public component or tightly coupled family per focused implementation module.
+- Formal layer barrels are explicit symbol manifests.
+- Catch-all public implementation modules are avoided.
+- Every PascalCase runtime component exported by Core, Theme, Patterns or Gouno exports a same-owner `ComponentNameProps` type.
+- `src/core/public-props.ts` is a type-only contract manifest and contains no runtime exports.
+- Global providers/config surfaces are published only when canonical components actually consume them with documented behavior.
 
 ## API governance
 
-Before changing a public component, read:
+Before changing public components or product-driven abstractions, read:
 
-- `AGENTS.md`
-- `docs/architecture.md` — executable ownership/dependency contract
-- `docs/api-specification.md` — binding target API contract
-- `docs/api-conformance.md` — current conformance register
-- `docs/migration.md` — compatibility and ownership migrations
+1. `AGENTS.md`
+2. `docs/architecture.md`
+3. `docs/api-specification.md`
+4. `docs/product-driven-development.md`
+5. `docs/abstraction-register.md`
+6. `docs/api-conformance.md` when changing an existing public contract
 
-Public API changes must synchronize exported types, component API documentation, Showcase examples, interaction/accessibility behavior and focused tests. Existing APIs or closed conformance records are not naming precedents when they conflict with the specification.
-
-Architecture conformance and Showcase completion are separate claims. The structural invariants above are fully automated, while catalog components remain below 100% until their own API table, examples, source equivalence, accessibility and focused-test evidence have actually been reviewed.
+Public API changes synchronize exported types, API documentation, Showcase evidence, interaction/accessibility behavior and focused tests. Existing implementations and Legacy APIs are not naming precedents when they conflict with the specification.
 
 ## Theme and CSS
 
-Import Tailwind once in the consuming app, then import `@gouno/ui/tokens.css` and `@gouno/ui/base.css`; register `node_modules/@gouno/ui/dist` with Tailwind `@source` when required by the consumer build.
-
-Wrap the application in `ThemeProvider`, including error/auth boundaries, and provide an origin-local `storageKey` plus brand. The package supports light/dark/system theme modes and Blog, Blog Admin and Gosso Admin brands.
+Import Tailwind once in the consuming app, then import `@gouno/ui/tokens.css` and `@gouno/ui/base.css`; register `node_modules/@gouno/ui/dist` with Tailwind `@source` when required.
 
 ```tsx
 import { ThemeProvider, ThemeToggle } from "@gouno/ui/theme";
@@ -93,6 +138,8 @@ import { ThemeProvider, ThemeToggle } from "@gouno/ui/theme";
   <App />
 </ThemeProvider>
 ```
+
+The package supports light/dark/system modes and Blog, Blog Admin and Gosso Admin brands.
 
 ## Build and verification
 
@@ -104,12 +151,10 @@ npm run build
 npm run showcase:build
 ```
 
-The main-branch GitHub Actions workflow runs the same gate on Node.js 24 before publishing the Showcase to `gh-pages`. Every external GitHub Action used by that workflow is pinned to an immutable commit SHA, and tests prevent the Node baseline, action pinning, or verification gate from silently regressing.
+The main-branch GitHub Actions workflow runs the same gate on Node.js 24 before publishing Showcase to `gh-pages`. Tests cover ownership, dependency DAG, named public Props, Legacy quarantine, type-only manifests, Showcase canonical imports and workflow hardening in addition to component behavior.
 
-The verification suite includes architecture ownership, dependency DAG, named public Props, type-only contract-manifest, Showcase canonical-import and delivery-workflow invariants in addition to component behavior tests.
-
-Run `npm run showcase:dev` for local component documentation and product scenarios. Showcase fixtures are static: they do not authenticate, read cookies, call APIs, or mutate application state.
+Run `npm run showcase:dev` for local documentation and product scenarios. Showcase fixtures are static: they do not authenticate, read cookies, call APIs or mutate real application state.
 
 ## Consumer distribution
 
-React and React DOM are peer dependencies. Generated consumer archives are immutable distribution artifacts rather than editable component forks. Consumers should migrate through the formal package APIs and follow `docs/migration.md` when ownership changes.
+React and React DOM are peer dependencies. Generated consumer archives are immutable distribution artifacts rather than editable component forks. Existing products using older vendored archives can migrate page-by-page to the current canonical API; see [`docs/migration.md`](docs/migration.md).

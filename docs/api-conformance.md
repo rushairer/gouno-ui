@@ -1,66 +1,71 @@
 # Gouno UI API 合规清单
 
-核查与整改日期：2026-09-07。目标依据：[公共 API 规范](api-specification.md)。本清单记录规范发布后发现的差异、完成的源码迁移和架构治理；它不是对所有组件 Showcase 完成度的全库认证。
+核查基线：2026-09-08。目标依据：[公共 API 规范](api-specification.md)。
 
-登记项不是例外许可。历史接口已移除，不保留同义别名；后续如需兼容迁移，必须按规范的变更与迁移流程单独评审。
+本清单只描述**当前 canonical 公共面**的合规状态。2026-09-07 之前关闭的 DataTable、Toast、Panel、PageHeader、模板等记录仍可从 Git 历史追溯，但这些实现现已进入 `src/legacy`，不再属于当前公共 API，也不构成重新引入时的命名/结构先例。
 
-## 已验证关闭的差异
+Legacy 的历史实现不参加 canonical API 合规认证；任何重新进入 Core/Patterns/Gouno 的能力必须重新经过 [产品驱动抽象准入](product-driven-development.md)。
 
-| ID / 规则 | 已完成的整改 | 主要实现位置 | 验证 |
-| --- | --- | --- | --- |
-| API-017 / TYPE-01、STATE-03、DOC-01 | Card、Heading、Text、Spinner、Progress、AspectRatio、Kbd、Typography 补充具名 Props；Card 子组件建立独立 API 表；CardHeader 保留 `0`/空字符串；Progress 对非法边界归一化并保持有效 ARIA 数值；相关 Preview/Code 同源。 | [Card](../src/core/card.tsx)、[Typography](../src/core/typography.tsx)、[Spinner](../src/core/spinner.tsx)、[Progress](../src/core/progress.tsx)、[AspectRatio](../src/core/aspect-ratio.tsx)、[Kbd](../src/core/kbd.tsx) | typecheck、Core 回归测试、Showcase build |
-| API-018 / STATE-02、DOC-02 | Select 增加 `allowClear`/`onClear`；清除操作保持受控契约并补充清除状态、反馈 Demo。 | [Select](../src/core/select.tsx)、[Select demos](../showcase/demos/core/data-entry.tsx) | typecheck、tests、build |
-| API-019 / STATE-02、COMP-03、A11Y-01 | Select 支持 `multiple/tags`、搜索、Tag、`maxTagCount`、键盘与可访问 Listbox；隐藏原生 select 保留表单序列化与 ref。 | [Select](../src/core/select.tsx)、[Select tests](../tests/core-entry-controls.test.tsx) | typecheck、行为测试 |
-| API-001 / NAME-01、COMP-01 | `TableCaption` 与 `DataTable` 统一 `captionSide`，移除旧位置别名。 | [Table](../src/components/primitives/table.tsx)、[DataTable](../src/patterns/data-table.tsx) | TypeScript、Table/DataTable tests |
-| API-002 / NAME-02、COMP-03 | Popover/Tooltip 将 Radix `side/align` 收敛为公开 `placement/offset`。 | [Popover](../src/components/primitives/popover.tsx)、[Tooltip](../src/components/primitives/tooltip.tsx) | typecheck、build |
-| API-003 / NAME-02 | `Space.direction` 改为 `orientation`。 | [Space](../src/core/layout.tsx) | typecheck、Showcase build |
-| API-004 / NAME-02 | Flex 使用 CSS `direction`，Stack 补齐反向值，Splitter 使用 `orientation`。 | [Flex](../src/core/layout.tsx)、[Stack](../src/core/layout-primitives.tsx)、[Splitter](../src/core/splitter.tsx) | typecheck、layout tests |
-| API-005 / NAME-03 | Space/Flex/Stack 数值 gap 统一为 CSS px，具名 gap 使用共享 token。 | [Layout](../src/core/layout.tsx)、[Stack](../src/core/layout-primitives.tsx) | layout tests、Showcase build |
-| API-006 / NAME-03 | Button 常规尺寸统一 `small/middle/large`；图标按钮由 IconButton/shape 表达。 | [Button](../src/core/button.tsx) | Button tests、typecheck |
-| API-007 / NAME-03 | Button 的 `variant` 与 `color` 分离；Tag 从 `tone` 收敛到 `color`。 | [Button](../src/core/button.tsx)、[Tag](../src/core/tag.tsx) | Button/Tag tests、typecheck |
-| API-008 / COMP-01 | Button 图标位置统一为 `iconPlacement="start | end"`。 | [Button](../src/core/button.tsx) | tests、typecheck |
-| API-009 / STATE-01 | Modal/Drawer 统一 `open/defaultOpen/onOpenChange`。 | [Modal](../src/core/modal.tsx)、[Drawer](../src/core/drawer.tsx) | tests、typecheck |
-| API-010 / STATE-02 | AutoComplete/Tabs 复合值回调统一类型化 `onChange(value)`；Tabs 显式排除冲突事件属性。 | [AutoComplete](../src/core/autocomplete.tsx)、[Tabs](../src/core/tabs.tsx) | control tests、typecheck |
-| API-011 / DOC-01 | Table 家族每个公开 JSX 组件拥有独立 API 表。 | [Table API sections](../showcase/demos/core/table/api-sections.ts) | Showcase build、人工审阅 |
-| API-012 / TYPE-01、COMP-03 | Table 家族从 Core 正式入口导出具名 Props。 | [Table](../src/components/primitives/table.tsx)、[Core exports](../src/core/index.ts) | TypeScript public entry check |
-| API-013 / TYPE-01 | `DataTableProps.columns/dataSource` 接受 readonly 数组。 | [DataTable types](../src/patterns/data-table.types.ts) | DataTable tests、typecheck |
-| API-014 / STYLE-01 | DataTable 两模式拥有稳定 `data-table` 根节点，className owner 固定。 | [DataTable](../src/patterns/data-table.tsx) | tests、Showcase build |
-| API-015 / COMP-03、STATE-03 | DataTable 两模式都支持 caption，并保留合法 falsy ReactNode。 | [DataTable](../src/patterns/data-table.tsx) | tests、typecheck |
-| API-016 / DOM-01、A11Y-01 | Modal/Drawer 使用原生 `aria-label` 并作用到 dialog 节点。 | [Modal](../src/core/modal.tsx)、[Drawer](../src/core/drawer.tsx) | tests、Showcase build |
-| API-020 / GOV-02、COMP-03、TYPE-01 | 建立 `Core → Theme → Patterns → Gouno` 正向依赖层级；业务状态标签和页面抽象归 Gouno；低层不得依赖高层。 | [Core](../src/core/index.ts)、[Theme](../src/theme/index.ts)、[Patterns](../src/patterns/index.ts)、[Gouno](../src/gouno/index.ts) | architecture/dependency tests、typecheck、tests、build |
-| API-021 / GOV-02、COMP-03、TYPE-01、DOC-01 | 完成公共面纯化：移除 `core/*/patterns/*/gouno/*` 源目录通配 subpath；Patterns 不再二次导出 Core Form 或重复实现 Tabs/Pagination；Theme 独立为唯一 owner；BulkActionBar 去产品 AI 语义；Core 拆除 `misc/visual/date-time` 聚合实现；Gouno layout 改为纯 barrel 并拆分 Panel/Page/DefinitionList/ListStack 家族；移除 `WorkspacePanel`/`AdminPageHeader` 同义 alias；`TableDensity` 仅由 Core owner。 | [package exports](../package.json)、[Core](../src/core/index.ts)、[Patterns](../src/patterns/index.ts)、[Theme](../src/theme/index.ts)、[Gouno layout](../src/gouno/layout.tsx)、[Architecture tests](../tests/architecture-boundaries.test.ts) | staged main commits、GitHub Actions typecheck/tests/package build/Showcase build |
-| API-022 / GOV-02、TYPE-01、COMP-03、DOC-01 | 进一步硬化架构纯度：Feedback/AsyncState/Toast 分离 owner；DataTable 状态与派生逻辑下沉 private model 且不再 re-export Table primitives；四个正式 layer 入口全部改成显式 symbol manifest；TypeScript checker 验证 type-only symbol 唯一 owner 与 root 精确并集；真实 import/export DAG 自动校验；Gouno 模板补齐具名 Props；ToastProvider/useToast/Toast 统一到单一 Sonner backend。 | [Architecture contract](architecture.md)、[Feedback](../src/patterns/feedback.tsx)、[AsyncState](../src/patterns/async-state.tsx)、[Toast](../src/patterns/toast.tsx)、[DataTable model](../src/patterns/data-table-model.ts)、[Public ownership tests](../tests/public-api-ownership.test.ts)、[Dependency graph tests](../tests/dependency-graph.test.ts) | focused Toast tests、architecture tests、typecheck、tests、package build、Showcase build、main GitHub Actions |
-| API-023 / TYPE-01、GOV-02 | 将具名 Props 约束提升为全库正式契约：Core、Theme、Patterns、Gouno 的每个 PascalCase runtime public component 都必须从所属正式入口导出同名 `ComponentNameProps`；测试直接读取 TypeScript symbol table，不使用组件白名单。复杂组件继续导出手写精确类型，简单 wrapper/compound primitive 使用 type-only runtime-derived alias，避免契约漂移；type-contract manifest 被额外验证为零 runtime export。 | [Core public Props](../src/core/public-props.ts)、[Core exports](../src/core/index.ts)、[Patterns exports](../src/patterns/index.ts)、[Theme provider](../src/theme/provider.tsx)、[Props contract test](../tests/public-component-props.test.ts)、[Type manifest test](../tests/type-contract-manifest.test.ts) | zero-whitelist TypeScript checker test、type-only manifest test、typecheck、tests、package build、Showcase build |
-| API-024 / GOV-02、COMP-01 | 移除无行为效果的 `ConfigProvider/useConfig/UIConfig`。该上下文仅保存 `componentSize/direction`，但没有任何正式组件消费；项目内外消费者检索也未发现真实调用。未来若重新引入全局配置，必须和实际组件消费、优先级、文档、示例及行为测试一并设计。 | [Core exports](../src/core/index.ts)、[Architecture tests](../tests/architecture-boundaries.test.ts)、[Migration guide](migration.md) | consumer code search、architecture tests、typecheck、tests、build |
-| API-025 / GOV-02、DOC-02 | Showcase 自身改为 canonical layer consumer：运行时代码不再从 `src/index.ts` / `@gouno/ui` 根 umbrella 取组件，Core/Theme/Patterns/Gouno 均从正式 owner 入口消费。递归 AST 测试检查整个 Showcase 的静态、动态 import/export，禁止重新引入根 umbrella 依赖。 | [Showcase shell](../showcase/main.tsx)、[Scenarios](../showcase/scenarios.tsx)、[Showcase boundary test](../tests/showcase-boundaries.test.ts) | AST import scan、typecheck、tests、Showcase build、Pages publish |
-| API-026 / GOV-02 | 交付验证基线升级为 Node.js 24；`checkout`、`setup-node`、Pages 发布 action 均固定到已核验版本对应的 immutable commit SHA；自动测试要求 action pinning、Node 24 和四条完整验证命令始终位于发布前。 | [Pages workflow](../.github/workflows/showcase-pages.yml)、[Workflow hardening test](../tests/workflow-hardening.test.ts) | Node 24 GitHub Actions、typecheck、tests、package build、Showcase build、Pages publish |
+## 当前公共所有权
 
-## 公共 API 兼容说明
+| Owner | 当前状态 | 说明 |
+| --- | --- | --- |
+| Core | active | 产品无关基础组件；继续按真实产品压力测试 API。 |
+| Theme | active | ThemeProvider、ThemeToggle、useTheme 及主题/品牌类型。 |
+| Patterns | empty by design | 当前没有经过真实产品重新认证的公共 Pattern。空层是合法状态，不是缺陷。 |
+| Gouno | active/minimal | 仅 `AppShell`、`PageContainer`、`NavigationGroup`、`navigationItemClass`。 |
+| Legacy | non-public | 不编译、不发布、不展示、canonical/Showcase 禁止依赖。 |
 
-- `StatusBadge`、`StatusIndicator`、`RiskBadge` 只属于 `@gouno/ui/gouno`。
-- `FilterBar`、`AdminPageState` 只属于 `@gouno/ui/gouno`。
-- `FormLayout`、`FormGrid`、`FormActions` 只属于 `@gouno/ui/core`，Patterns 不再转出。
-- `Tabs`、`Pagination` 只属于 `@gouno/ui/core`；Patterns 的历史重复实现和 `SubnavTabs` alias 已移除。
-- `ThemeProvider`、`useTheme`、`ThemeToggle` 的正式 owner 是 `@gouno/ui/theme`；根入口继续提供兼容聚合导入，`@gouno/ui/gouno` 不再转出 Theme API。
-- `TableDensity` 的正式 owner 是 Core Table API；DataTable 继续使用该类型，但 Patterns 不再建立第二个导出位置。
-- `BulkActionBar` 只处理 selection/action composition；AI 等产品动作通过 `children` 组合。
-- 物理文件不再自动成为 public subpath。新代码应使用 `core/patterns/gouno/theme` 正式入口。
-- `WorkspacePanel`、`AdminPageHeader` 同义 alias 已移除，分别使用 `Panel`、`PageHeader`。
-- `DataTable` 仍是唯一公开表格 Pattern；`useDataTableModel`/`DataTableRecord` 为 private implementation，不从正式入口导出。
-- `ConfigProvider`、`useConfig`、`UIConfig` 已移除；此前设置不会改变任何正式组件行为，因此不提供替代兼容 alias。
-- 根 `@gouno/ui` **不删除**：对 `gouno-blog`、`gosso-admin` 等实际产品仓库的代码检索确认它仍有真实消费者。它被明确限定为外部 compatibility umbrella，而非第五个 owner；仓库实现与 Showcase 均不得依赖该入口。
+## 当前已验证架构/API 治理项
 
-这些变化包含公开导出归属调整和破坏式兼容影响。发布时必须按 SemVer 评估主版本或提供明确迁移公告；本轮不自动修改版本号、不发布包。迁移路径见 [Migration guide](migration.md)。
+| ID / 规则 | 当前约束 | 主要实现/验证 |
+| --- | --- | --- |
+| API-001 / GOV-02 | 正式所有权保持 `Core → Theme → Patterns → Gouno` 单向依赖；Legacy 在 DAG 之外。 | `docs/architecture.md`、dependency/architecture tests |
+| API-002 / GOV-02 | 每个 canonical public symbol 只有一个 owner；根入口只等于四层精确并集 + `cn`。 | `tests/public-api-ownership.test.ts` |
+| API-003 / TYPE-01 | 每个 PascalCase runtime public component 必须从 owner 入口导出同名 `ComponentNameProps`。 | `tests/public-component-props.test.ts` |
+| API-004 / TYPE-01 | `src/core/public-props.ts` 保持 type-only contract manifest，不能产生 runtime export。 | `tests/type-contract-manifest.test.ts` |
+| API-005 / GOV-02 | 正式入口均使用显式 symbol manifest，不使用 layer-level `export *`。 | architecture tests |
+| API-006 / GOV-02 | 不公开 `core/*`、`patterns/*`、`gouno/*`、`legacy/*` 源目录 wildcard subpath。 | `package.json`、architecture/legacy tests |
+| API-007 / GOV-02 | Legacy 从 `tsconfig.json` / `tsconfig.build.json` 排除；canonical 与 Showcase 禁止 import Legacy。 | `tests/legacy-boundaries.test.ts` |
+| API-008 / GOV-02 | Showcase 运行时只消费 canonical layer；不消费根 umbrella，也不消费 Legacy。 | `tests/showcase-boundaries.test.ts`、legacy tests |
+| API-009 / GOV-02 | `ConfigProvider/useConfig/UIConfig` 等无行为效果的 speculative 全局配置仍不公开。 | architecture tests |
+| API-010 / DOC-01 | Gouno UI Showcase 明确按 Core/Theme/Patterns/Gouno owner 展示；Core 内保留用途分类；只展示 canonical API。 | `showcase/catalog.tsx`、`showcase/main.tsx` |
+| API-011 / DOC-01 | 产品空间只展示真实迁移页面；旧模拟产品页面不作为迁移结果保留。 | Showcase catalog/router |
+| API-012 / GOV-02、NAME-01 | 共享应用结构采用中性 canonical 名称 `AppShell` / `PageContainer`；不保留 `AdminShell` / `AdminPage` 同义 alias。 | `src/gouno/app-shell.tsx`、`src/gouno/page-container.tsx` |
+| API-013 / GOV-02 | Pattern 允许为空；不得为了填充目录恢复历史 DataTable/Toast/Feedback 等实现。 | `src/patterns/index.ts`、product-driven contract |
+| API-014 / STATE/TYPE/DOC | Input、Textarea、Select、InputNumber、DatePicker、Upload、Form、Table、Pagination、Modal、Drawer 等已审 Core API 保持现有 focused tests / Showcase 文档约束。 | Core tests、Showcase Core documents |
+| API-015 / DELIVERY | Node.js 24 下必须在 Pages 发布前通过 typecheck、tests、package build、Showcase build；Actions 固定 immutable SHA。 | workflow hardening tests |
 
-## 已知边界
+## 当前破坏式迁移说明
 
-DataTable 是同一领域的复合 Pattern。公开契约保持单一；sorting/filtering/pagination/selection/expansion 的模型状态与派生已移动到 private model。后续如拆 render helpers，仍不得扩大 public API。
+产品驱动归零阶段明确移除了尚未重新认证的公共 Pattern/Gouno surface。典型历史 API 包括但不限于：
 
-根 `@gouno/ui` 保留作为外部兼容 umbrella，但不拥有独立 symbol。正式 owner 仍只有 Core/Theme/Patterns/Gouno，根入口必须持续通过精确并集测试；新代码优先使用正式 owner 入口。
+- Patterns: `DataTable`, `Feedback`, `AsyncState`, `Toast`, `ToastProvider`, `useToast`, `BulkActionBar`, `SectionNav`, `ConfirmDialog`。
+- Gouno: `AdminShell`, `AdminPage`, `Panel`, `PageHeader`, `ActionGroup`, `FilterBar`, `TableContainer`, `ButtonGroup`, `DefinitionList`, `ListStack`, `DashboardTemplate`, `ListPageTemplate`, `EditorWorkspaceTemplate`, `StatusBadge`, `RiskBadge` 等。
 
-**架构合规不等于所有 Showcase 条目完成 100%。** Catalog 中低于 100% 的组件仍表示其组件级 API 表、状态/交互示例、Preview/Code 同源、可访问性或 focused tests 尚未全部完成审查。不得通过调高进度数字来消除此边界。
+其中只有应用结构被重新确认并以更精确的名称进入 canonical：
 
-## 本轮验证基线
+```text
+AdminShell → AppShell
+AdminPage  → PageContainer
+```
+
+这不是兼容 alias。未来发布 package artifact 时必须按 SemVer/迁移公告评估 breaking impact。当前使用旧 vendored archive 的产品可以在各自页面迁移前继续固定旧 artifact。
+
+迁移说明见 [Migration guide](migration.md)。
+
+## Core 继续验证的原则
+
+当前 Core 覆盖面足以进入产品压力测试，但不意味着每个 API 已最终冻结。后续真实产品需求可以：
+
+- 证明现有 Core API 足够，保持页面局部组合；
+- 证明某个 Core 缺少真正 product-agnostic 能力，从而扩展 canonical API；
+- 发现 API 命名/状态模型不理想并按规范执行显式迁移；
+- 证明某个现有 Core 组件本身不值得保留。
+
+所有调整仍以 `docs/api-specification.md` 为约束，不允许从 Gosso/Blog Legacy API 倒推同义命名。
+
+## 当前验证基线
 
 - Node.js 24
 - `npm run typecheck`
@@ -68,21 +73,14 @@ DataTable 是同一领域的复合 Pattern。公开契约保持单一；sorting/
 - `npm run build`
 - `npm run showcase:build`
 - GitHub Actions `Publish Showcase to GitHub Pages`
-- 外部 GitHub Actions 使用 immutable commit SHA
+- 外部 GitHub Actions immutable commit SHA
 
-## 仍需遵守的边界
+## 不得回退的边界
 
-- Radix 等内部实现可使用 `side`、`align`、`onValueChange`，但不得绕过公开适配层。
-- `Text.tone` 等独立语义不能被用来恢复 Tag 的 `tone`。
-- `density="default | compact | touch"`、弹窗宽度、二维码像素尺寸具有独立语义，不机械套用 control size。
-- 每个 public symbol 必须只有一个 canonical owner；barrel 只能负责导出，不能承载无关实现；不得重新引入源目录 wildcard exports 或同义 alias。
-- 每个正式 public JSX runtime component 必须有同 owner 的 `ComponentNameProps` 导出；此规则没有组件白名单。
-- `src/core/public-props.ts` 必须保持纯 type-only contract manifest，不得产生 runtime export 或 runtime dependency。
-- 正式层依赖只能沿 `Core → Theme → Patterns → Gouno` 正向组合；实现模块禁止反向依赖、禁止绕回根 umbrella、禁止内部依赖正式 layer barrel。
-- Showcase 必须从 canonical owner layer 消费运行时 API，不得依赖根 umbrella。
-- 不得发布未被任何正式组件消费的“预留式”全局配置上下文；全局配置必须有明确行为、优先级和回归测试。
-- 主分支交付验证保持 Node 24、immutable action pinning 和完整验证 gate；升级 action 时重新核验 release/tag 对应 commit，并在同一变更中更新 pin。
-
-## 后续登记与关闭
-
-新增发现使用新的 `API-` 编号，不覆盖历史记录。关闭一项至少同步更新实现、公开类型、组件自身 API 表/示例和适用测试；规范例外必须记录规则号、组件、原因、影响、替代方案、维护 owner 与退出条件。
+- 不把 Legacy 当 compatibility layer。
+- 不为了减少 JSX 重复而提前创建 Pattern/Gouno。
+- 不把 Legacy 重新放进 Showcase。
+- 不把产品空间中的模拟页面当真实迁移进度。
+- 不创建 `src/candidates` 或公开 incubator；候选留在产品局部代码 + `abstraction-register.md`。
+- 不因为 Ant Design / shadcn/ui 存在某组件就自动扩充 Core。
+- 不使用旧产品 prop/component 名称作为规范例外。
