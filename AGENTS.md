@@ -11,11 +11,9 @@ Before changing public components, product pages, ownership or API contracts, re
 5. `docs/abstraction-register.md`;
 6. `docs/api-conformance.md` when an existing public contract changes.
 
-Repository contracts are the durable source of truth. Do not reconstruct architecture decisions from chat history or legacy product component names.
+Repository contracts are the durable source of truth. Do not reconstruct decisions from chat history or legacy component names.
 
 ## Formal public layers
-
-The formal public layers form one directed acyclic graph. A layer may depend on itself or a lower layer, never on a higher layer:
 
 ```text
 src/components/primitives + src/lib
@@ -29,98 +27,94 @@ src/components/primitives + src/lib
              src/gouno
 ```
 
-- `src/core` contains pure, product-agnostic components. It may depend on internal primitives, utilities and semantic tokens, but never on Theme, Patterns, Gouno, Legacy, routes, business state, authentication, API clients or product templates.
-- `src/theme` owns theme state, persistence contracts and theme controls. Theme may compose Core, but never depends on Patterns, Gouno or Legacy.
-- `src/patterns` contains only **admitted** reusable compound interactions. It may compose Core and Theme, but never imports Gouno product policy or Legacy. It is valid for this layer to be empty while product evidence is insufficient.
-- `src/gouno` contains only **admitted** Gouno product-family structure and policy. The current canonical surface is `AppShell`, `PageContainer`, `NavigationGroup` and `navigationItemClass`.
-- `src/components/primitives` and `src/lib` are internal implementation foundations, not public product domains.
-- `showcase` is a real integration consumer of canonical public layers and static fixtures. It must never import Legacy or the root compatibility umbrella at runtime.
+A layer may depend on itself or a lower layer, never a higher layer.
 
-The executable contract is documented in `docs/architecture.md` and enforced by architecture, dependency-graph, public-ownership, public-component-props, legacy-boundary, type-contract-manifest and Showcase-boundary tests.
+- `src/core`: pure product-agnostic components; no product/auth/API/route policy.
+- `src/theme`: theme state, persistence and controls; may compose Core.
+- `src/patterns`: only admitted reusable compound interactions; may be empty.
+- `src/gouno`: admitted Gouno product-family structure/policy. Current runtime surface: `AppShell`, `PageContainer`, `PageHeader`, `NavigationGroup`, `navigationItemClass`.
+- `src/components/primitives` and `src/lib`: internal foundations, not product domains.
+- `showcase`: canonical integration consumer + static-fixture validation laboratory; never imports Legacy or the root umbrella at runtime.
 
 ## Legacy quarantine
 
-`src/legacy` is a non-canonical prior-art museum, not a fifth layer and not a compatibility API.
+`src/legacy` is prior-art source, not a fifth layer or compatibility API.
 
-- It is excluded from TypeScript build output and package publication.
-- It has no package export path and no Showcase navigation.
-- Core, Theme, Patterns, Gouno and Showcase must never import it.
-- Do not maintain, refactor, fix or extend Legacy during normal product work.
-- Historical relative imports inside quarantined snapshots may reflect their former source locations because the snapshots are intentionally non-executable.
-- Consult Legacy only when a real product page exposes a candidate abstraction and prior art is useful.
-- Re-create an admitted abstraction cleanly in its canonical layer only after it passes `docs/product-driven-development.md`, conforms to `docs/api-specification.md`, has Showcase/tests, and is recorded in `docs/abstraction-register.md`.
-- Do not create `src/candidates` or any public incubator. Candidate abstractions remain product-local code plus decision evidence until admitted.
+- excluded from builds/publication;
+- no package export and no Showcase navigation;
+- canonical layers and Showcase never import it;
+- do not maintain/refactor/extend it during normal work;
+- consult it only after a real product need creates an abstraction question;
+- re-create admitted ideas cleanly in the canonical layer after evidence review;
+- do not create `src/candidates`; candidates stay product-local plus decision evidence.
 
-## Public ownership
+## Public ownership and source organization
 
-- Every canonical public symbol, including type-only exports, has exactly one owner: Core, Theme, Patterns or Gouno.
-- Every PascalCase runtime component in a formal public layer must export a same-owner `ComponentNameProps` type.
-- Complex components keep explicit handwritten Props when semantics or generics matter. Thin wrappers and compound primitives may expose type-only runtime-derived Props aliases only when they exactly track implementation.
-- `src/core/public-props.ts` is a type-contract manifest only. It contains type-only imports/exported type aliases and zero runtime values.
-- Formal layer entry points use explicit symbol manifests; `export *` manifests are not allowed there.
-- The package root is the only external compatibility umbrella. It equals the exact union of the four formal entries plus `cn`; it is not a fifth owner.
-- New library and Showcase code imports the canonical owning layer. Implementation modules import concrete modules, not formal barrels or the package root.
-- Higher layers may compose lower layers but must not reimplement or re-export them merely to create a second import path.
-- Do not expose source-directory wildcard package subpaths.
-
-## Source organization
-
-- One public component or tightly coupled component family per implementation file.
-- Domain barrels contain exports only.
-- Large compound components may split state/derivation/render helpers into private modules without expanding public API.
-- Do not create catch-all implementation files such as `misc.tsx`, `visual.tsx` or mixed product utility surfaces.
-- Prefer one state/orchestration backend per admitted public concept.
-- Do not publish speculative global contexts/providers. A provider is public only when formal components consume it with documented precedence and behavior tests.
-- Use semantic design tokens and `cn`; do not add product-specific styling or business semantics to Core.
-- Public components support controlled/uncontrolled state where meaningful, disabled/readOnly/loading/error states, keyboard operation, focus management and ARIA relationships appropriate to the component.
+- Every canonical public symbol, including types, has exactly one owner.
+- Every PascalCase public runtime component exports `ComponentNameProps` from the same owner.
+- Formal entries use explicit manifests; no layer-level `export *`.
+- The package root is an external compatibility umbrella equal to Core + Theme + Patterns + Gouno + `cn`; new library/Showcase code imports canonical owners instead.
+- One public component or tightly coupled family per focused file; no catch-all public implementation modules.
+- Internal implementation imports concrete modules, not package root/formal barrels.
+- Public providers exist only when canonical components consume them with documented precedence/tests.
+- Use semantic tokens and `cn`; product-specific styling/business semantics do not enter Core.
 
 ## Product-driven evolution
 
 Gouno UI is in product-validation mode.
 
-- **Primary migration line:** Gosso Admin, one real page at a time.
-- **Cross-product evidence corpora:** Gouno Blog Admin and relevant Gouno Blog pages.
-- **Execution model:** single-line implementation, multi-product validation.
-- Rebuild pages with Core, Theme, the minimum admitted Gouno structure (`AppShell`, `PageContainer`, `NavigationGroup`, `navigationItemClass`) and product-local JSX/Tailwind first.
-- Existing Legacy implementations are prior art, never automatic precedent.
-- First semantic occurrence stays local. Second similarity is noted. The third semantically equivalent occurrence triggers abstraction review; it does not automatically authorize extraction.
-- Compare user intent, state, interaction lifecycle, accessibility, responsive behavior and content/action policy instead of legacy component/file names or DOM similarity.
-- Before a new public Pattern/Gouno abstraction or material Core capability, search Gouno UI, Gosso Admin, Blog Admin and relevant Blog pages for prior art.
-- If evidence is insufficient, keep the code product-local.
-- Record durable accept/reject/merge/move/remove/API decisions in `docs/abstraction-register.md`.
-- Product demand may refine Core APIs, but `docs/api-specification.md` remains binding; legacy product APIs are not naming precedents.
+- **Primary line:** Gosso Admin, one real page/page-family at a time.
+- **Cross-product corpora:** Blog Admin and relevant Blog pages.
+- Start pages with Core + Theme + admitted Gouno structure + product-local JSX/Tailwind.
+- Initial shell baseline: `AppShell`, `PageContainer`, `NavigationGroup`, `navigationItemClass`.
+- `PageHeader` is additionally admitted from cross-product page evidence (PD-011).
+- Existing Legacy implementations are evidence, never automatic precedent.
+- First semantic occurrence stays local; second similarity is noted; third semantically equivalent occurrence triggers review, not automatic extraction.
+- Compare intent, state, lifecycle, accessibility, responsive behavior and content/action policy—not old names or DOM similarity.
+- Before any Pattern/Gouno addition or material Core extension, search canonical Gouno UI, Legacy, Gosso Admin, Blog Admin and relevant Blog pages.
+- If evidence is insufficient, keep code product-local.
+- Record durable accept/reject/defer/merge/move/remove/API decisions in `docs/abstraction-register.md`.
+
+## Showcase evidence rule
+
+Showcase has two roles:
+
+1. dogfood already-admitted canonical APIs;
+2. own documentation/development tooling such as code preview, API tables, demo framing and viewport simulation.
+
+Showcase-only repetition does **not** count as sufficient public-abstraction evidence. Evidence order:
+
+1. independent cross-product real pages;
+2. repeated semantically equivalent pages in one real product;
+3. Showcase/tests/tooling as supporting evidence only.
+
+Example: Showcase `CodeBlock` stays private. If a real Blog article page later independently requires the same read-only code/highlight/copy behavior, run the normal admission review; if accepted, create Core `CodeBlock` and migrate Showcase to it.
 
 ## Showcase information architecture
 
-Showcase separates **product spaces** from **design-system ownership**:
-
-- Product spaces are `Gouno UI`, `Gosso Admin`, `Blog Admin` and `Blog`.
-- Inside the `Gouno UI` space, the first navigation dimension is ownership: `Core`, `Theme`, `Patterns`, `Gouno`.
-- Core keeps usage-oriented categories such as General, Layout, Data Entry, Navigation, Data Display and Feedback.
-- Theme, Patterns and Gouno use categories meaningful to their own semantics; they are not forced into Core/Ant Design categories.
-- Only canonical admitted APIs appear in Gouno UI Showcase. Legacy never appears.
-- Product spaces display only pages actually migrated under the product-driven process. Do not retain simulated placeholder pages that look like completed migration.
-- An empty product space shows an empty state; it does not invent pages.
-- Patterns may visibly show no admitted components until real product evidence creates one.
+- Workspaces: `Gouno UI`, `Gosso Admin`, `Blog Admin`, `Blog`.
+- Gouno UI is grouped by owner: `Core`, `Theme`, `Patterns`, `Gouno`.
+- Core keeps usage categories; other owners use semantic categories appropriate to them.
+- Only canonical APIs appear in Gouno UI.
+- Product workspaces show only genuinely migrated pages; no simulated placeholders.
+- Patterns may visibly remain empty.
 
 ## API and quality
 
-- `docs/api-specification.md` is the binding target API contract; existing APIs are not naming precedents.
-- Consult `docs/api-conformance.md` for known canonical implementation gaps. Legacy is outside canonical conformance.
-- Determine each prop's meaning and owning component before implementation. Synchronize exported types, API tables, matching demos and behavior verification.
-- Do not introduce undocumented aliases or semantic duplicate write paths.
-- API migrations require explicit compatibility assessment and migration instructions.
-- Prefer composition and explicit slots over hidden business behavior or generic future-proof configuration bags.
-- Preserve browser-native form serialization where it improves interoperability.
-- Add focused jsdom/Vitest coverage for state transitions, keyboard behavior, accessibility, data interactions and architectural ownership.
-- Every Core addition needs Showcase evidence covering defaults, meaningful variants/states and interaction.
-- Every Showcase Preview and displayed Code sample must describe the same rendered implementation.
-- Component completion percentages are audit evidence, not architecture scores or manually asserted progress.
-- A component may show `100%` only after its complete canonical API, examples/source equivalence, accessibility/keyboard contract and focused tests are reviewed.
+- `docs/api-specification.md` is binding; legacy product APIs are not naming precedents.
+- Do not introduce undocumented aliases or duplicate semantic write paths.
+- API migrations require compatibility assessment and migration instructions.
+- Synchronize exported types, Showcase API/docs/examples, accessibility behavior and focused tests.
+- Prefer composition/explicit slots over speculative configuration bags.
+- Preserve controlled/uncontrolled semantics where meaningful and native interoperability where useful.
+- A Showcase Preview and displayed Code sample must represent the same implementation.
+- Completion percentages are audit evidence, not architecture scores.
+
+Current Tabs canonical high-level API follows PD-010: `activeKey`, `defaultActiveKey`, `items[].key`, `onChange`; pre-reset value-style names are temporary migration compatibility only.
 
 ## Delivery
 
-Run at the end of each coherent phase:
+At each coherent phase run/require:
 
 ```bash
 npm run typecheck
@@ -129,10 +123,8 @@ npm run build
 npm run showcase:build
 ```
 
-The main verification workflow uses Node.js 24 and must run the same gate before Pages publication. External GitHub Actions stay pinned to immutable commit SHAs.
+Main CI uses Node.js 24 and must pass the same gate before Pages publication. External Actions remain pinned to immutable SHAs.
 
 ## Scope boundaries
 
-- This package contains no authentication, API access, connector behavior or application session state.
-- Product fixtures in Showcase are static and never call real services.
-- Do not modify `/Users/aben/Git/gouno-blog/packages/ui` from this repository.
+This package contains no authentication, API access, connector behavior or application session state. Showcase fixtures are static and never call real services. Do not modify the old vendored UI package from this repository.

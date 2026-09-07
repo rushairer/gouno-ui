@@ -20,9 +20,7 @@ function sourceFiles(directory: string): string[] {
 }
 
 function contents(directory: string): string {
-  return sourceFiles(directory)
-    .map((file) => readFileSync(file, "utf8"))
-    .join("\n");
+  return sourceFiles(directory).map((file) => readFileSync(file, "utf8")).join("\n");
 }
 
 describe("public layer architecture", () => {
@@ -46,15 +44,14 @@ describe("public layer architecture", () => {
     expect(Object.keys(patterns).sort()).toEqual([]);
   });
 
-  it("publishes only the admitted Gouno application-structure surface", async () => {
+  it("publishes only admitted Gouno product-family structure", async () => {
     const gouno = await import("../src/gouno/index");
     expect(Object.keys(gouno).sort()).toEqual(
-      ["AppShell", "NavigationGroup", "PageContainer", "navigationItemClass"].sort(),
+      ["AppShell", "NavigationGroup", "PageContainer", "PageHeader", "navigationItemClass"].sort(),
     );
     for (const legacyName of [
       "AdminShell",
       "AdminPage",
-      "PageHeader",
       "Panel",
       "DashboardTemplate",
       "StatusBadge",
@@ -66,9 +63,7 @@ describe("public layer architecture", () => {
   });
 
   it("publishes curated layer entry points without Legacy or source wildcards", () => {
-    const packageJson = JSON.parse(
-      readFileSync(resolve(process.cwd(), "package.json"), "utf8"),
-    ) as { exports: Record<string, unknown> };
+    const packageJson = JSON.parse(readFileSync(resolve(process.cwd(), "package.json"), "utf8")) as { exports: Record<string, unknown> };
     const exportKeys = Object.keys(packageJson.exports);
     expect(exportKeys).not.toContain("./legacy");
     expect(exportKeys).not.toContain("./legacy/*");
@@ -78,12 +73,7 @@ describe("public layer architecture", () => {
   });
 
   it("uses explicit symbol manifests in every formal layer entry", () => {
-    for (const entry of [
-      "core/index.ts",
-      "patterns/index.ts",
-      "gouno/index.ts",
-      "theme/index.ts",
-    ]) {
+    for (const entry of ["core/index.ts", "patterns/index.ts", "gouno/index.ts", "theme/index.ts"]) {
       const source = readFileSync(resolve(sourceRoot, entry), "utf8");
       expect(source).not.toMatch(/export\s+\*/);
     }
@@ -106,12 +96,7 @@ describe("public layer architecture", () => {
   });
 
   it("does not recreate public catch-all implementation modules", () => {
-    for (const relativePath of [
-      "core/misc.tsx",
-      "core/visual.tsx",
-      "core/date-time.tsx",
-      "patterns/navigation-patterns.tsx",
-    ]) {
+    for (const relativePath of ["core/misc.tsx", "core/visual.tsx", "core/date-time.tsx", "patterns/navigation-patterns.tsx"]) {
       expect(existsSync(resolve(sourceRoot, relativePath))).toBe(false);
     }
   });

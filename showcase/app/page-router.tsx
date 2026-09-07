@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { Card, Heading, Text } from "../../src/core";
 import type { ShowcaseWorkspace } from "../catalog";
 import { GounoComponentDemo } from "../demos/gouno-components";
+import { GounoPageHeaderDemo } from "../demos/gouno-page-header";
 import { GossoOverviewDemo } from "../demos/products/gosso-overview";
 import { ThemeSystemDemo } from "../demos/theme-system";
 
@@ -12,6 +13,12 @@ const CoreComponentPage = lazy(() =>
 const GossoAccountSettingsDemo = lazy(() =>
   import("../demos/products/gosso-account-settings").then((module) => ({
     default: module.GossoAccountSettingsDemo,
+  })),
+);
+
+const GossoSystemManagementDemo = lazy(() =>
+  import("../demos/products/gosso-system-management").then((module) => ({
+    default: module.GossoSystemManagementDemo,
   })),
 );
 
@@ -38,13 +45,7 @@ function EmptyWorkspace({ workspace }: { workspace: ShowcaseWorkspace }) {
   );
 }
 
-export function ShowcasePage({
-  page,
-  workspace,
-}: {
-  page: string;
-  workspace: ShowcaseWorkspace;
-}) {
+export function ShowcasePage({ page, workspace }: { page: string; workspace: ShowcaseWorkspace }) {
   if (!page) return <EmptyWorkspace workspace={workspace} />;
 
   if (page.startsWith("core-")) {
@@ -62,14 +63,14 @@ export function ShowcasePage({
       return <GounoComponentDemo component="app-shell" />;
     case "gouno-page-container":
       return <GounoComponentDemo component="page-container" />;
+    case "gouno-page-header":
+      return <GounoPageHeaderDemo />;
     case "gosso-overview":
       return <GossoOverviewDemo />;
     case "gosso-account-settings":
-      return (
-        <Suspense fallback={loading}>
-          <GossoAccountSettingsDemo />
-        </Suspense>
-      );
+      return <Suspense fallback={loading}><GossoAccountSettingsDemo /></Suspense>;
+    case "gosso-system-management":
+      return <Suspense fallback={loading}><GossoSystemManagementDemo /></Suspense>;
     default:
       return <EmptyWorkspace workspace={workspace} />;
   }

@@ -2,131 +2,89 @@
 
 Status: living decision log for product-driven Gouno UI evolution.
 
-This register is evidence, not a second API specification. Read `docs/product-driven-development.md` for admission, `docs/architecture.md` for ownership, and `docs/api-specification.md` for public API rules.
-
-## How to use this register
-
-Add or update an entry whenever a migrated product page or architecture review causes one of these outcomes:
-
-- a Core API is materially extended or corrected;
-- a new Pattern or Gouno abstraction is admitted;
-- an abstraction is revalidated, merged, moved, simplified, quarantined or removed;
-- repeated code is deliberately kept product-local because evidence is insufficient or semantics differ;
-- later product evidence overturns an earlier decision.
-
-Do not record every local JSX block. Record decisions that future agents might otherwise rediscover or contradict.
-
-Each entry should contain:
-
-- **Decision**: short stable name.
-- **Status**: `candidate`, `accepted`, `rejected`, `superseded`, or `revisit`.
-- **Owner**: `Core`, `Theme`, `Pattern`, `Gouno`, `Product-local`, or repository process.
-- **Evidence**: concrete product pages/scenarios, not hypothetical examples.
-- **Cross-product review**: what was checked in Gosso Admin, Blog Admin, Blog, canonical Gouno UI and Legacy.
-- **Reasoning**: semantic/state/interaction rationale; avoid relying on legacy names.
-- **API impact**: added/changed/removed public API, or `none`.
-- **Follow-up**: what later pages should validate or challenge.
+This register records why abstractions were accepted, rejected, deferred or changed. It is evidence, not a second API specification. Read `docs/product-driven-development.md` for admission, `docs/architecture.md` for ownership, and `docs/api-specification.md` for public API rules.
 
 ## Baseline decisions
 
-### PD-001 — Product-driven evolution process
-
+### PD-001 — Product-driven evolution
 - **Status:** accepted
 - **Owner:** repository process
-- **Evidence:** architecture review before the Gosso Admin page-by-page migration phase.
-- **Cross-product review:** canonical Gouno UI, Gosso Admin, Blog Admin and Blog are designated evidence sources; Gosso Admin is the first active migration line.
-- **Reasoning:** public abstractions must be discovered from real product semantics/interactions rather than predicted from catalog completeness or copied from legacy component boundaries.
-- **API impact:** none.
-- **Follow-up:** product-driven public API changes follow `docs/product-driven-development.md` and record durable decisions here.
+- **Decision:** real product semantics/interactions create design-system demand; catalog completeness and legacy file boundaries do not.
 
-### PD-002 — Migration execution model
-
+### PD-002 — Single implementation line, multi-product validation
 - **Status:** accepted
 - **Owner:** repository process
-- **Evidence:** need to avoid both single-product overfitting and multi-product context fragmentation.
-- **Cross-product review:** Gosso Admin is the primary implementation line; Blog Admin and relevant Blog pages are prior-art/validation corpora until their own active stage.
-- **Reasoning:** one active page stream preserves focus, while mandatory cross-product review prevents separate legacy products from producing duplicate public abstractions under different names.
-- **API impact:** none.
-- **Follow-up:** after representative Gosso Admin coverage, start Blog Admin as the next active validation stage and challenge earlier abstractions rather than preserving them automatically.
+- **Decision:** migrate Gosso Admin one real page at a time. Use Blog Admin and relevant Blog pages as mandatory prior-art/validation corpora before admitting shared abstractions.
 
 ### PD-003 — Core maturity posture
-
 - **Status:** accepted
 - **Owner:** Core governance
-- **Evidence:** Core already spans the main product-agnostic controls, data entry, display, navigation, feedback, layout and overlay domains.
-- **Cross-product review:** current product work indicates that real usage is more valuable than additional catalog parity.
-- **Reasoning:** Core breadth is sufficient to begin product pressure-testing, but individual APIs remain open to evidence-driven correction. Component count is not a completion metric.
-- **API impact:** future Core additions/extensions require real product evidence and API-spec compliance.
-- **Follow-up:** do not add Core components solely because another UI library exposes them.
+- **Decision:** Core breadth is sufficient for product pressure-testing, but individual APIs remain open to evidence-driven correction. Do not add Core components merely for library parity.
 
-### PD-004 — Minimum pre-admitted product structure
-
-- **Status:** accepted for the start of product validation
+### PD-004 — Initial product-structure baseline
+- **Status:** accepted
 - **Owner:** Gouno
-- **Evidence:** Showcase product spaces and real admin products require a shared application chrome and page content track before page-specific migration begins.
-- **Cross-product review:** the same shell/container responsibilities are useful to the Gouno UI Showcase, Gosso Admin and Blog Admin without requiring administration semantics in the component names.
-- **Reasoning:** `AppShell`, `PageContainer`, `NavigationGroup` and `navigationItemClass` are the minimum admitted Gouno structure. `AppShell` owns application chrome/responsive navigation/focus return; `PageContainer` owns only content width and vertical rhythm. Other historical Pattern/Gouno abstractions are not automatic precedent.
-- **API impact:** canonical names are `AppShell` and `PageContainer`; the former `AdminShell`/`AdminPage` naming is superseded by PD-007.
-- **Follow-up:** real Gosso Admin and Blog Admin pages may still simplify or revise these contracts if evidence shows they are wrong.
+- **Decision:** the validation phase started with `AppShell`, `PageContainer`, `NavigationGroup`, `navigationItemClass` as the minimum pre-admitted structure.
 
-### PD-005 — Existing Pattern/Gouno implementations are not automatic precedent
-
+### PD-005 — Legacy is evidence, never precedent
 - **Status:** accepted
 - **Owner:** Pattern/Gouno governance
-- **Evidence:** prior speculative abstraction can create duplicate or overly thin public components even when layer ownership is technically correct.
-- **Cross-product review:** historical Pattern/Gouno implementations remain available under `src/legacy` for prior-art review when relevant product pages are migrated.
-- **Reasoning:** architecture purity answers where an admitted abstraction belongs, not whether it deserves to exist. Historical implementations therefore count as evidence, not proof.
-- **API impact:** pre-validation Pattern/Gouno APIs outside the minimum structure are removed from canonical public entries and quarantined under `src/legacy`; no Legacy package path is published.
-- **Follow-up:** record each consequential re-admission, rejection, merge or replacement decision as product pages create real demand.
+- **Decision:** pre-validation Pattern/Gouno implementations are quarantined under `src/legacy`, not compiled/published/shown/imported. Re-admission requires current product evidence and a clean implementation.
 
 ## Migration evidence
 
-### PD-006 — Gosso Admin Overview remains Core-first and page-local
-
+### PD-006 — Gosso Admin Overview stays Core-first
 - **Status:** accepted
 - **Owner:** Product-local
-- **Evidence:** Gosso Admin `/` (`gosso-admin-frontend/src/pages/Home.tsx`) at source commit `f9466f3c103cd7a40e24ec90556a359331e2adc8`, including administrator and regular-user render paths.
-- **Cross-product review:** no new public abstraction or material Core capability was proposed, so no public-admission review was triggered. Historical dashboard/template abstractions were deliberately not used as implementation precedent. Blog Admin and Blog remain comparison corpora for any later attempt to generalize the page hero, quick navigation or role notice.
-- **Reasoning:** the page can be reconstructed with existing Core `Card`, `Button`, `ButtonLink`, `Heading`, `Text`, `Tag`, `Segmented`, semantic native links and local Tailwind composition. The legacy `QuickCard` helper is useful within one page, but three data instances on one page are not evidence of a public Pattern/Gouno component. Administrator/user differences are represented as Showcase fixture state rather than application session logic.
-- **API impact:** none. No Pattern/Gouno component was added and no Core API was expanded.
-- **Follow-up:** when later Gosso Admin or Blog Admin pages expose semantically similar action-card navigation, compare intent, state, responsive behavior and accessibility. The third semantically equivalent page occurrence triggers review rather than automatic extraction.
+- **Evidence:** Gosso Admin `/`, administrator and regular-user paths.
+- **Decision:** the page is expressible with Core plus local composition. Three QuickCard data instances on one page do not justify a public component.
+- **API impact:** none.
 
-### PD-007 — Canonical/Legacy separation and neutral application-structure naming
-
+### PD-007 — Canonical/Legacy separation and neutral shell naming
 - **Status:** accepted
 - **Owner:** repository process / Gouno
-- **Evidence:** after the first real Gosso Admin page migration, the source tree and Showcase still mixed pre-validation Pattern/Gouno APIs and simulated business pages with canonical work. `AdminShell` and `AdminPage` also encoded an administration context that was not necessary to their actual structural responsibilities.
-- **Cross-product review:** the shell/content-track responsibilities are useful across the Gouno UI Showcase, Gosso Admin and Blog Admin; Blog remains a distinct public product corpus. Historical `DataTable`, Toast, Feedback, templates, Panel/PageHeader and status components remain inspectable as prior art but are not required by the first real migrated page.
-- **Reasoning:** physical source organization should communicate confidence. Canonical directories must mean “admitted and usable”; historical speculative abstractions belong in a non-public quarantine. `AppShell` is the established neutral term for application chrome, while `PageContainer` precisely describes the old `AdminPage` component's actual width/rhythm responsibility without implying business domain. Product workspace navigation must represent actual migration, not old demo inventions.
-- **API impact:** rename `AdminShell` → `AppShell` and `AdminPage` → `PageContainer`; keep `NavigationGroup`/`navigationItemClass`; remove unverified Pattern/Gouno exports from canonical entries; move their source snapshots to `src/legacy`; remove simulated product pages from Showcase; remove `DataTable` from the Core Showcase because it was never Core-owned; expose Theme and canonical Gouno sections explicitly in the Gouno UI workspace.
-- **Follow-up:** the canonical Pattern layer intentionally remains empty until real pages justify a Pattern. Gosso Admin continues one real page at a time. Any Legacy idea must pass the same admission checklist as a new abstraction before reappearing publicly.
+- **Evidence:** first real product migration exposed confusion between historical exports and admitted APIs.
+- **Decision:** quarantine unverified Pattern/Gouno APIs; clear simulated product pages; rename `AdminShell → AppShell` and `AdminPage → PageContainer` because the responsibilities are not admin-specific.
+- **API impact:** canonical shell/container names changed; Legacy has no public path.
 
-### PD-008 — Gosso Admin Account Settings stays Core-first across five security workflows
-
+### PD-008 — Account Settings stays Core-first across five workflows
 - **Status:** accepted
 - **Owner:** Product-local
-- **Evidence:** Gosso Admin `/account-settings/:tab` (`AccountSettings.tsx`, `ProfilePanel.tsx`, `PasswordPanel.tsx`, `MFAPanel.tsx`, `PasskeysPanel.tsx`, `SessionsPanel.tsx`) at source commit `f9466f3c103cd7a40e24ec90556a359331e2adc8`. The migrated Showcase page covers Profile, Password, MFA, Passkeys and Sessions as one route-backed page family with static fixtures.
-- **Cross-product review:** this page did not require a new public Pattern/Gouno abstraction or material Core expansion. Historical `Panel`, `PanelHeader`, `PlainSection`, `DefinitionList`, `Feedback`, `ListStack`, `AsyncState`, `DataTable`, `StatusBadge`, Toast and confirmation helpers were reviewed as Legacy prior art because the source page used those concepts. Canonical Core already provides the necessary product-agnostic behavior through `Card`, `Tabs`, `FormField`, `Input`, `Button`, `IconButton`, `Tag`, `Alert`, `Modal`, `QRCode`, `Empty` and `Table`; therefore Blog Admin/Blog admission review was not triggered.
-- **Reasoning:** the five tabs share one product route family but contain materially different workflows: profile editing, password mutation, TOTP enrollment/status, WebAuthn credential management and session revocation. Reintroducing historical wrapper names would mainly compress markup rather than establish a stable cross-product semantic contract. The Sessions tab deliberately uses Core `Table` because the real page exposes a small read/action table with no demonstrated sorting/filtering/pagination model; this is not evidence for re-admitting the historical `DataTable` Pattern. Confirmation behavior is represented by a page-local Modal composition until repeated product evidence proves a reusable lifecycle contract.
-- **API impact:** none. No canonical public API was added, restored, renamed or expanded. The Pattern layer remains intentionally empty.
-- **Follow-up:** migrate System Management next. Its clients/users/audit/system tabs are expected to provide stronger evidence around data-table orchestration, status presentation, destructive confirmation and repeated surface structure. If those semantics recur across later Gosso Admin and Blog Admin pages, perform the Rule-of-Three abstraction review instead of restoring Legacy by name.
+- **Evidence:** Gosso Admin `/account-settings/:tab`: Profile, Password, MFA, Passkeys, Sessions.
+- **Cross-product/Legacy review:** historical Panel/DefinitionList/Feedback/ListStack/AsyncState/DataTable/StatusBadge/Toast/confirm helpers reviewed.
+- **Decision:** Core `Card`, `Tabs`, form controls, `Modal`, `QRCode`, `Empty`, `Table` and local composition are sufficient. Sessions does not prove DataTable. Confirmation remains local.
+- **API impact:** none.
 
-### PD-009 — Showcase is supporting evidence, not a public-abstraction demand source
-
+### PD-009 — Showcase is supporting evidence, not a demand source
 - **Status:** accepted
 - **Owner:** repository process
-- **Evidence:** architecture review of Showcase-local `CodeBlock`, API table, demo framing, viewport simulation and its use of canonical `AppShell`/`PageContainer`.
-- **Cross-product review:** Showcase consumes canonical Gouno UI; real Gosso Admin, Blog Admin and Blog remain the demand/evidence sources for public capabilities. Blog is expected to introduce article code rendering later, but that future need is not counted before a real page exists.
-- **Reasoning:** Showcase has two roles. It should dogfood already-admitted canonical APIs, but documentation/tooling-only reuse must not manufacture public Core/Pattern/Gouno components. Evidence strength is cross-product real pages first, repeated same-product real pages second, Showcase/tests/tooling only as supporting evidence. A Showcase-local utility can be promoted only after independent real-product semantics trigger the normal prior-art review.
-- **API impact:** none. `showcase/components/code-block.tsx` remains private; `AppShell`/`PageContainer` remain canonical consumers inside Showcase.
-- **Follow-up:** when Blog article rendering requires syntax highlighting/copyable code, compare that real requirement with Showcase `CodeBlock`. If the semantic contract matches and passes admission, implement a clean canonical Core `CodeBlock` and migrate Showcase to consume it.
+- **Evidence:** Showcase `CodeBlock`, API tables, demo framing, viewport simulation and canonical shell usage.
+- **Decision:** Showcase should dogfood admitted APIs but tooling-only repetition cannot create a public abstraction. Evidence strength: cross-product real pages > repeated same-product real pages > Showcase/tests/tooling.
+- **API impact:** none. Showcase `CodeBlock` remains private.
+- **Follow-up:** when Blog article rendering independently needs read-only highlighted/copyable code, compare it with Showcase `CodeBlock`; if semantics match and admission passes, create canonical Core `CodeBlock` and migrate Showcase to it.
 
-### PD-010 — Tabs adopts Ant-style high-level semantics with Radix composition
-
+### PD-010 — Tabs uses Ant-style high-level semantics with Radix composition
 - **Status:** accepted
 - **Owner:** Core
-- **Evidence:** Account Settings uses route-like tabs and System Management immediately introduces another five-section route family. The previous active state used Radix-style `value/defaultValue` naming while the repository API specification explicitly prefers mature high-level conventions when industry practice diverges.
-- **Cross-product review:** Ant Design Tabs high-level API (`activeKey`, `defaultActiveKey`, `items`, `onChange`, `type`, `tabPosition`, `size`, `centered`) was used as the semantic reference; Radix/shadcn composition remains the accessibility/primitive basis. No product-specific tab semantics were introduced.
-- **Reasoning:** the public high-level API should read like a stable design-system contract rather than leak the primitive implementation. The default visual treatment becomes a clean line/ink-bar style instead of per-tab square borders. Composition through `TabList`, `Tab`, and `TabPanel` remains available for cases the item API does not express cleanly.
-- **API impact:** canonical high-level names are `activeKey`, `defaultActiveKey`, `items[].key`, and `onChange`; add `type`, `size`, `tabPosition`, `centered`, and `tabBarExtraContent`. Pre-reset `value/defaultValue/items[].value` remain temporary compatibility input only and are not the canonical documented write path; remove after migrated consumers are converted.
-- **Follow-up:** convert Gosso Admin migrations to canonical names as they are touched, validate line/card/vertical/controlled behavior in Showcase/tests, and remove compatibility aliases before the next stable package release.
+- **Evidence:** Account Settings and System Management are independent route-backed tab families; previous public state names leaked Radix-style primitives.
+- **Reference review:** mature Ant Design high-level API plus Radix/shadcn accessibility/composition.
+- **Decision:** canonical high-level API is `activeKey`, `defaultActiveKey`, `items[].key`, `onChange`, plus `type`, `size`, `tabPosition`, `centered`, `tabBarExtraContent`. Default visual style is clean line/ink-bar; `card` is explicit. Radix remains the behavior/a11y basis.
+- **API impact:** temporary pre-reset `value/defaultValue/items[].value` compatibility is accepted only during migration and is not canonical documentation; remove before the next stable package release.
+
+### PD-011 — PageHeader is re-admitted as Gouno product-family structure
+- **Status:** accepted
+- **Owner:** Gouno
+- **Evidence:** Gosso Admin System Management Clients/Users/Audit/Site/System sections all require a page title + description + page-level actions; Blog Admin Posts and Users independently use the same page-level semantic contract.
+- **Cross-product/Legacy review:** Blog Admin `Posts.tsx` and `Users.tsx`; Legacy `gouno/page.tsx` historical PageHeader.
+- **Reasoning:** this is repeated product-family page presentation policy, not merely duplicated markup. It is smaller and more stable than the historical page utility bundle. `PageHeader` owns only title, optional description and one canonical `actions` slot.
+- **API impact:** add `PageHeader`/`PageHeaderProps` to `@gouno/ui/gouno`. Do **not** restore historical `action`/`actions` synonyms, `ActionGroup`, `FilterBar`, `TableContainer` or other page helpers.
+- **Follow-up:** Blog Admin migration must challenge the title/description/actions contract before any further PageHeader capability is added.
+
+### PD-012 — System Management triggers DataTable review but not re-admission
+- **Status:** accepted / defer extraction
+- **Owner:** Product-local with Pattern candidate under review
+- **Evidence:** Gosso Admin `/system-management/:tab` Clients, Users and Audit all use tabular resource management; Users/Audit add pagination/filtering. Blog Admin Posts and Users independently show table/list, filtering, selection, responsive and action needs.
+- **Cross-product/Legacy review:** Gosso Clients/Users/Audit, Blog Admin Posts/Users, Legacy `patterns/data-table.tsx`.
+- **Reasoning:** there is now enough evidence to review a shared resource-table interaction, but not enough semantic convergence to freeze one API. Legacy DataTable is a broad feature bag combining loading/error/empty, columns, selection, sorting, filtering, pagination, expansion, toolbar and batch actions. Re-admitting it now would force unrelated product requirements into one contract.
+- **API impact:** none. Pattern layer remains empty. System Management uses Core `Table`/`Pagination` plus product-local filters/actions/state.
+- **Follow-up:** later Gosso and Blog Admin list pages should reveal the smallest stable interaction contract. Only then design a new Pattern from evidence rather than moving Legacy back.

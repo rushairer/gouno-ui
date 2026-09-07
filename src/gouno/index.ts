@@ -7,3 +7,4 @@ export {
   type NavigationGroupProps,
 } from "./app-shell";
 export { PageContainer, type PageContainerProps } from "./page-container";
+export { PageHeader, type PageHeaderProps } from "./page-header";
