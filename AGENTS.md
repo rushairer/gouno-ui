@@ -21,17 +21,19 @@ src/components/primitives + src/lib
 - `src/patterns` contains reusable compound interactions such as DataTable, async feedback, Toast orchestration and confirmation flows. It may compose Core and Theme, but never imports Gouno product policy.
 - `src/gouno` contains Gouno product-family shells, layouts, status semantics and templates. Product concepts such as AdminShell and PageHeader belong here.
 - `src/components/primitives` contains internal Radix/shadcn behavior primitives. It is not a public product domain and must not become a dumping ground for composite components.
-- `showcase` composes public APIs and static fixtures. It does not implement component behavior or call services.
+- `showcase` is a real integration consumer of the formal public layers. It composes public APIs and static fixtures, does not implement component behavior or call services, and must not import runtime APIs through the root compatibility umbrella.
 
-The executable architecture contract is documented in [docs/architecture.md](docs/architecture.md) and enforced by architecture, dependency-graph, public-ownership and public-component-props tests.
+The executable architecture contract is documented in [docs/architecture.md](docs/architecture.md) and enforced by architecture, dependency-graph, public-ownership, public-component-props, type-contract-manifest and Showcase-boundary tests.
 
 ## Public ownership
 
 - Every public symbol, including type-only exports, has exactly one canonical owner: Core, Theme, Patterns, or Gouno.
 - Every PascalCase runtime component in a formal public layer must export a same-owner `ComponentNameProps` type. There is no component allowlist for this rule.
 - Complex components keep explicit handwritten Props when semantics or generics matter. Thin wrappers and compound primitives may expose type-only runtime-derived Props aliases when those aliases exactly track implementation and add no runtime dependency.
+- `src/core/public-props.ts` is a type-contract manifest only. It must contain type-only imports/exported type aliases and expose zero runtime values.
 - The four formal layer entry points must use explicit symbol manifests; `export *` manifests are not allowed there.
-- The package root is the only compatibility umbrella. It must equal the exact union of the four formal entries plus `cn` and must not become a fifth ownership layer.
+- The package root is the only external compatibility umbrella. It must equal the exact union of the four formal entries plus `cn` and must not become a fifth ownership layer.
+- Existing product consumers may keep using the root umbrella during migration, but new library/Showcase code must use the canonical owning layer.
 - Do not expose source-directory wildcard package subpaths such as `core/*`, `patterns/*`, or `gouno/*`.
 - Implementation modules import concrete modules, not the package root or formal layer barrels.
 - Higher layers may compose lower-layer components but must not reimplement or re-export them merely to create a second import path.
@@ -64,7 +66,15 @@ The executable architecture contract is documented in [docs/architecture.md](doc
 - Prefer defining each Demo as a focused component and display code that can reproduce that Demo without hidden behavior. When a Demo changes, update its displayed source in the same change and verify both Preview and Code views.
 - Demo width is part of the documented contract. `DemoBlock` owns one shared preview content track; demos must not add arbitrary component-specific `max-width`, `w-*`, or width overrides to make one state look different from another. If a component needs a constrained reading width, declare that width once for the whole demo and use the same wrapper in both Preview and displayed source. Components that are expected to align in a form or table demo must use the same width track across basic, variant, controlled, loading, and error examples.
 - A catalog percentage is an audit result, never a progress claim supplied by hand. A component may show `100%` only when its exported public API has been checked against the implementation, every public prop/state is represented in the API table, the required demos and displayed source are complete and equivalent, accessibility/keyboard behavior is covered, and focused tests pass. Any missing, uncertain, or stale API documentation keeps the result below 100% until corrected.
+- Architecture conformance and catalog completion are separate claims. Do not infer a component's `100%` status from package-level architecture tests.
 - Run `npm run typecheck`, `npm test -- --run`, `npm run build`, and `npm run showcase:build` at the end of each coherent phase.
+
+## Delivery
+
+- The main verification workflow uses Node.js 24.
+- Every external GitHub Action in the workflow must be pinned to an immutable 40-character commit SHA; keep the reviewed release version as an inline comment.
+- `npm run typecheck`, `npm test -- --run`, `npm run build`, and `npm run showcase:build` must all complete before Pages publication.
+- When upgrading a GitHub Action, resolve the reviewed release/tag to its commit and update the pin deliberately; never switch back to a floating major tag.
 
 ## Scope boundaries
 

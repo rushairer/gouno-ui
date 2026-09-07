@@ -7,7 +7,11 @@ The package exposes three formal component layers plus a dedicated Theme entry p
 - `@gouno/ui/gouno` — Gouno product shells and templates.
 - `@gouno/ui/theme` — theme context and theme controls.
 
-The package root remains a convenience aggregate entry.
+## Root compatibility umbrella
+
+The package root `@gouno/ui` remains available because current Gouno product applications still have real imports from it. It is a compatibility umbrella, not a fifth public owner.
+
+Existing consumers do not need to migrate root imports immediately. New code should prefer the owning formal layer so dependencies remain explicit and bundle boundaries stay visible. The Gouno UI implementation and Showcase themselves are not allowed to depend on the root umbrella.
 
 ## Curated subpaths
 
@@ -25,9 +29,9 @@ import { AdminShell } from "@gouno/ui/gouno";
 
 ## Canonical owners
 
-`FormLayout`, `FormGrid`, `FormActions`, `Tabs`, `Pagination`, and `TableDensity` are Core-owned APIs. Import them from `@gouno/ui/core` (or the package root), not Patterns.
+`FormLayout`, `FormGrid`, `FormActions`, `Tabs`, `Pagination`, and `TableDensity` are Core-owned APIs. Import them from `@gouno/ui/core` in new code, not Patterns.
 
-`ThemeProvider`, `useTheme`, and `ThemeToggle` are Theme-owned APIs. Import them from `@gouno/ui/theme` (or the package root), not Gouno.
+`ThemeProvider`, `useTheme`, and `ThemeToggle` are Theme-owned APIs. Import them from `@gouno/ui/theme` in new code, not Gouno.
 
 Patterns no longer carries duplicate Tabs/Pagination implementations or the `SubnavTabs` alias.
 

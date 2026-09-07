@@ -7,6 +7,9 @@ All notable changes to this project are documented here.
 ### Added
 
 - Added a zero-whitelist TypeScript contract test requiring every formal public JSX component in Core, Theme, Patterns, and Gouno to export an exact named `ComponentNameProps` type.
+- Added a type-contract manifest regression test that keeps `src/core/public-props.ts` type-only and guarantees it exports zero runtime values.
+- Added an AST-level Showcase boundary test that rejects runtime imports from the package/root source umbrella and requires canonical layer consumption.
+- Added delivery-workflow hardening tests for immutable GitHub Action pins, the Node.js 24 verification baseline, and the complete pre-publish validation gate.
 - Added bilingual names and red, explicitly estimated API-plus-examples completion badges to incomplete Core component and product-scenario entries in the Showcase navigation; completed entries omit the badge.
 - Added separate Ant Design-style Badge and Tag APIs: Badge now covers counts, dots, overflow, zero visibility, statuses, colors, sizes, offsets, and dynamic values; Tag covers semantic and custom colors, icons, borders, closing, disabled behavior, and controlled or uncontrolled CheckableTag selection.
 - Added dedicated Badge and Tag Showcase pages with interaction-complete examples, matching source code, and full API tables.
@@ -24,7 +27,9 @@ All notable changes to this project are documented here.
 
 - Completed named Props coverage for all currently exported public JSX components; thin wrappers use type-only runtime-derived aliases so the formal contract cannot drift from implementation.
 - Curated package exports to the formal root, Core, Patterns, Gouno, and Theme entry points instead of exposing source directories through wildcard subpaths.
-- Converted all four formal layer entry points to explicit symbol manifests; the root remains the sole compatibility umbrella and is verified as the exact layer union plus `cn`.
+- Converted all four formal layer entry points to explicit symbol manifests; the root remains the sole external compatibility umbrella and is verified as the exact layer union plus `cn`.
+- Migrated Showcase runtime imports to Core, Theme, Patterns and Gouno canonical owners instead of using `src/index.ts`; the Showcase now acts as a real integration consumer of the formal boundaries.
+- Upgraded the main verification/publish workflow to Node.js 24 and pinned `actions/checkout`, `actions/setup-node`, and `peaceiris/actions-gh-pages` to immutable commit SHAs corresponding to reviewed releases.
 - Enforced single component ownership: Core owns Tabs/Pagination/Form layout/TableDensity, Theme owns ThemeProvider/useTheme/ThemeToggle, and Patterns no longer reimplements or re-exports those APIs.
 - Split Pattern feedback responsibilities into focused Feedback, AsyncState and Toast modules.
 - Kept DataTable as one public Pattern while moving sorting/filtering/pagination/selection/expansion state and derivation to a private model module; DataTable no longer re-exports Core Table primitives or its internal types.
@@ -33,7 +38,7 @@ All notable changes to this project are documented here.
 - Made `BulkActionBar` product-agnostic; product actions such as AI assistance are caller-composed children rather than dedicated Pattern props.
 - Split unrelated Core implementation catch-alls: Spinner, Progress, AspectRatio, Kbd, App, FloatButton, Anchor, Spin, DateRangePicker, TimePicker, ColorPicker, Statistic, and Timeline now have focused modules; generic Typography is grouped with the typography family.
 - Converted Gouno `layout.tsx` into a pure export barrel and split Panel, Page, DefinitionList, and ListStack families into focused modules.
-- Clarified the Core, Theme, Patterns and Gouno ownership boundaries while preserving the package root as a convenience aggregate entry.
+- Clarified the Core, Theme, Patterns and Gouno ownership boundaries while preserving the package root for active external consumers.
 - Standardized `TableCaption` and `DataTable` on `captionSide`; removed the former `captionPosition`, `position`, and `TableCaptionPosition` aliases.
 - Widened the desktop and mobile Showcase navigation surfaces and reserved flexible label space so progress badges never cover long component names.
 - Replaced status-pill uses of Badge in Showcase product scenarios and data examples with the semantically correct Tag component.

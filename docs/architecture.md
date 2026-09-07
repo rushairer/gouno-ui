@@ -34,7 +34,9 @@ Every public symbol has exactly one canonical formal owner: Core, Theme, Pattern
 
 The four formal entry points use explicit symbol manifests. Directory wildcard package exports and layer-level `export *` manifests are prohibited.
 
-`@gouno/ui` remains a compatibility umbrella. It must equal the exact union of all four formal entry points plus `cn`; it must not invent a fifth ownership layer. `tests/public-api-ownership.test.ts` verifies both uniqueness and root-union equivalence with the TypeScript type checker.
+`@gouno/ui` remains an external compatibility umbrella because existing Gouno product applications still import from it. It must equal the exact union of all four formal entry points plus `cn`; it must not invent a fifth ownership layer. `tests/public-api-ownership.test.ts` verifies both uniqueness and root-union equivalence with the TypeScript type checker.
+
+Repository implementation code and the Showcase do not consume the root umbrella. Internal modules use concrete implementation imports, while Showcase runtime modules import from the owning formal layer. `tests/showcase-boundaries.test.ts` recursively parses Showcase imports and rejects any dependency that resolves to the root umbrella.
 
 Every PascalCase runtime component exported by a formal layer must also export a same-owner `ComponentNameProps` type. `tests/public-component-props.test.ts` discovers components directly from the TypeScript symbol table and has no component allowlist. Complex components keep explicit handwritten public props; thin wrappers and compound primitives may use type-only runtime-derived aliases when that preserves the exact implementation contract.
 
@@ -52,8 +54,27 @@ One implementation file should own one component family or one tightly related i
 
 Barrel files may aggregate exports, but they do not contain component implementations.
 
-Type-only contract manifests are allowed when they derive exact props from implementation symbols and add no runtime dependency edge. They are not implementation barrels and must stay covered by the public Props contract test.
+Type-only contract manifests are allowed when they derive exact props from implementation symbols and add no runtime dependency edge. `src/core/public-props.ts` is the current contract manifest. `tests/type-contract-manifest.test.ts` requires every import in that file to be type-only, every declaration to be an exported type alias, and the module to expose zero runtime values.
+
+## Showcase as an integration consumer
+
+Showcase is not an architectural exception. Its runtime source uses Core, Theme, Patterns and Gouno through the same canonical layer boundaries recommended to new consumers. It may use repository-relative paths during local development, but those paths must resolve to the owning layer rather than `src/index.ts`.
+
+Preview/Code source transformation may display package-form import paths as text; only actual TypeScript module dependencies participate in the boundary rule.
+
+Component-catalog completion percentages are documentation-audit evidence, not architecture scores. A component remains below 100% until its own API table, examples, source equivalence, accessibility and focused tests satisfy `AGENTS.md`, even when the package architecture itself is fully conformant.
+
+## Delivery contract
+
+The main-branch verification workflow uses Node.js 24 and pins every external GitHub Action to an immutable commit SHA. Before Pages publication it must run, in order as one verification gate:
+
+- `npm run typecheck`
+- `npm test -- --run`
+- `npm run build`
+- `npm run showcase:build`
+
+`tests/workflow-hardening.test.ts` prevents action pinning, the Node baseline and the verification gate from silently drifting.
 
 ## Change rule
 
-Any architectural change that introduces a new public owner, layer edge, alias, package subpath, public component, global configuration surface or cross-layer re-export must update the relevant architecture tests in the same change. Tests describe invariants; they are not compatibility exceptions.
+Any architectural change that introduces a new public owner, layer edge, alias, package subpath, public component, global configuration surface, cross-layer re-export, Showcase root-umbrella import, runtime value in a type-contract manifest, or delivery-workflow dependency must update the relevant invariant tests in the same change. Tests describe invariants; they are not compatibility exceptions.
