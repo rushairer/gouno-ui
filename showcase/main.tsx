@@ -108,7 +108,7 @@ function App() {
           ? "blog-home"
           : nextWorkspace === "blog-admin"
             ? "admin-dashboard"
-            : "gosso-system";
+            : "gosso-overview";
       window.location.hash = defaultPage;
       setPage(defaultPage);
     }
