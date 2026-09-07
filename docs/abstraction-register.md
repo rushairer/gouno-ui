@@ -88,3 +88,20 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Reasoning:** there is now enough evidence to review a shared resource-table interaction, but not enough semantic convergence to freeze one API. Legacy DataTable is a broad feature bag combining loading/error/empty, columns, selection, sorting, filtering, pagination, expansion, toolbar and batch actions. Re-admitting it now would force unrelated product requirements into one contract.
 - **API impact:** none. Pattern layer remains empty. System Management uses Core `Table`/`Pagination` plus product-local filters/actions/state.
 - **Follow-up:** later Gosso and Blog Admin list pages should reveal the smallest stable interaction contract. Only then design a new Pattern from evidence rather than moving Legacy back.
+
+### PD-013 — Gosso authentication surfaces remain product-local and standalone
+- **Status:** accepted / reject public extraction
+- **Owner:** Product-local / Showcase tooling
+- **Evidence:** Gosso Admin `/login`, `/forgot-password`, `/reset-password`, `/callback` share a centered identity surface but are intentionally outside the real application's `AdminLayout`; Login itself contains password, MFA, passkey and Sudo/step-up states.
+- **Cross-product review:** Blog and Blog Admin consume GOSSO identity rather than owning an equivalent local authentication surface. Repetition therefore exists inside one identity product, not across product-family presentation policy.
+- **Reasoning:** four same-product occurrences are sufficient to trigger the Rule-of-Three review, but they prove only a Gosso-local identity surface. A product-local `AuthSurface` helper is appropriate for the Showcase fixture; creating public `AuthShell`, `LoginCard` or an authentication Pattern would leak one product's identity policy into the shared design system. Showcase must also preserve the real route distinction: these pages render standalone instead of being artificially wrapped in `AppShell`.
+- **API impact:** none. Add only Showcase-local `presentation="standalone"` catalog metadata; it is documentation tooling, not Gouno UI public API.
+- **Follow-up:** reconsider only if another independently owned real product surface proves the same authentication shell semantics. GOSSO-specific authentication state and security policy should otherwise remain in Gosso.
+
+### PD-014 — Gosso Admin reaches route-level Showcase coverage
+- **Status:** accepted milestone
+- **Owner:** repository process
+- **Evidence:** migrated route families now cover Overview, Account Settings, System Management, Login, Forgot Password, Reset Password, OAuth callback and Not Found, including nested Account/System tab states as static fixtures.
+- **Reasoning:** Showcase now represents every user-facing Gosso Admin route family without copying API/auth/session implementation. This is a migration milestone, not proof that every local block deserves a design-system abstraction.
+- **API impact:** none beyond separately admitted decisions PD-010/PD-011.
+- **Follow-up:** use the completed Gosso Admin corpus as primary evidence while moving to Blog Admin. Blog Admin should challenge PageHeader, DataTable-related candidates and other assumptions instead of mechanically copying Gosso structure.

@@ -9,18 +9,17 @@ import { ThemeSystemDemo } from "../demos/theme-system";
 const CoreComponentPage = lazy(() =>
   import("../demos/core-components").then((module) => ({ default: module.CoreComponentPage })),
 );
-
 const GossoAccountSettingsDemo = lazy(() =>
-  import("../demos/products/gosso-account-settings").then((module) => ({
-    default: module.GossoAccountSettingsDemo,
-  })),
+  import("../demos/products/gosso-account-settings").then((module) => ({ default: module.GossoAccountSettingsDemo })),
 );
-
 const GossoSystemManagementDemo = lazy(() =>
-  import("../demos/products/gosso-system-management").then((module) => ({
-    default: module.GossoSystemManagementDemo,
-  })),
+  import("../demos/products/gosso-system-management").then((module) => ({ default: module.GossoSystemManagementDemo })),
 );
+const GossoLoginDemo = lazy(() => import("../demos/products/gosso-auth/login").then((module) => ({ default: module.GossoLoginDemo })));
+const GossoForgotPasswordDemo = lazy(() => import("../demos/products/gosso-auth/forgot-password").then((module) => ({ default: module.GossoForgotPasswordDemo })));
+const GossoResetPasswordDemo = lazy(() => import("../demos/products/gosso-auth/reset-password").then((module) => ({ default: module.GossoResetPasswordDemo })));
+const GossoCallbackDemo = lazy(() => import("../demos/products/gosso-auth/callback").then((module) => ({ default: module.GossoCallbackDemo })));
+const GossoNotFoundDemo = lazy(() => import("../demos/products/gosso-auth/not-found").then((module) => ({ default: module.GossoNotFoundDemo })));
 
 const loading = <div className="p-8 text-sm text-muted-foreground">Loading component documentation…</div>;
 
@@ -49,11 +48,7 @@ export function ShowcasePage({ page, workspace }: { page: string; workspace: Sho
   if (!page) return <EmptyWorkspace workspace={workspace} />;
 
   if (page.startsWith("core-")) {
-    return (
-      <Suspense fallback={loading}>
-        <CoreComponentPage component={page.slice(5)} />
-      </Suspense>
-    );
+    return <Suspense fallback={loading}><CoreComponentPage component={page.slice(5)} /></Suspense>;
   }
 
   switch (page) {
@@ -71,6 +66,16 @@ export function ShowcasePage({ page, workspace }: { page: string; workspace: Sho
       return <Suspense fallback={loading}><GossoAccountSettingsDemo /></Suspense>;
     case "gosso-system-management":
       return <Suspense fallback={loading}><GossoSystemManagementDemo /></Suspense>;
+    case "gosso-login":
+      return <Suspense fallback={loading}><GossoLoginDemo /></Suspense>;
+    case "gosso-forgot-password":
+      return <Suspense fallback={loading}><GossoForgotPasswordDemo /></Suspense>;
+    case "gosso-reset-password":
+      return <Suspense fallback={loading}><GossoResetPasswordDemo /></Suspense>;
+    case "gosso-callback":
+      return <Suspense fallback={loading}><GossoCallbackDemo /></Suspense>;
+    case "gosso-not-found":
+      return <Suspense fallback={loading}><GossoNotFoundDemo /></Suspense>;
     default:
       return <EmptyWorkspace workspace={workspace} />;
   }

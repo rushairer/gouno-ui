@@ -42,6 +42,8 @@ import {
   ListFilter,
   ListTree,
   LoaderCircle,
+  LogIn,
+  Mail,
   Menu,
   MessageCircleQuestion,
   MessageSquare,
@@ -56,6 +58,7 @@ import {
   Pin,
   Pipette,
   QrCode,
+  RefreshCw,
   Route,
   Rows3,
   ScanLine,
@@ -82,17 +85,40 @@ import { componentProgress } from "./component-progress";
 
 export type ShowcaseWorkspace = "gouno-ui" | "blog" | "blog-admin" | "gosso-admin";
 export type ShowcaseLayer = "core" | "theme" | "patterns" | "gouno";
+export type ShowcasePresentation = "app-shell" | "standalone";
 
-export type ShowcasePage = { id: string; name: string; nameZh: string; label: string; progress: number; icon: ReactNode };
-export type ShowcaseGroup = { workspace: ShowcaseWorkspace; layer?: ShowcaseLayer; group: string; items: ShowcasePage[] };
+export type ShowcasePage = {
+  id: string;
+  name: string;
+  nameZh: string;
+  label: string;
+  progress: number;
+  icon: ReactNode;
+  presentation?: ShowcasePresentation;
+};
 
-const item = (id: string, name: string, nameZh: string, progress: number, icon: ReactNode): ShowcasePage => ({
+export type ShowcaseGroup = {
+  workspace: ShowcaseWorkspace;
+  layer?: ShowcaseLayer;
+  group: string;
+  items: ShowcasePage[];
+};
+
+const item = (
+  id: string,
+  name: string,
+  nameZh: string,
+  progress: number,
+  icon: ReactNode,
+  presentation: ShowcasePresentation = "app-shell",
+): ShowcasePage => ({
   id,
   name,
   nameZh,
   label: `${name} ${nameZh}`,
   progress: componentProgress(id, progress),
   icon,
+  presentation,
 });
 
 export const showcaseCatalog: ShowcaseGroup[] = [
@@ -193,9 +219,16 @@ export const showcaseCatalog: ShowcaseGroup[] = [
   ]},
   { workspace: "blog", group: "Migrated Pages 已迁移页面", items: [] },
   { workspace: "blog-admin", group: "Migrated Pages 已迁移页面", items: [] },
-  { workspace: "gosso-admin", group: "Migrated Pages 已迁移页面", items: [
+  { workspace: "gosso-admin", group: "Application Pages 应用页", items: [
     item("gosso-overview", "Overview", "概览", 100, <Home />),
     item("gosso-account-settings", "Account Settings", "账户设置", 100, <UserCog />),
     item("gosso-system-management", "System Management", "系统管理", 100, <ShieldCheck />),
+    item("gosso-not-found", "Not Found", "未找到", 100, <CircleHelp />),
+  ]},
+  { workspace: "gosso-admin", group: "Authentication Pages 认证页", items: [
+    item("gosso-login", "Login", "登录", 100, <LogIn />, "standalone"),
+    item("gosso-forgot-password", "Forgot Password", "忘记密码", 100, <Mail />, "standalone"),
+    item("gosso-reset-password", "Reset Password", "重置密码", 100, <KeyRound />, "standalone"),
+    item("gosso-callback", "Auth Callback", "授权回调", 100, <RefreshCw />, "standalone"),
   ]},
 ];

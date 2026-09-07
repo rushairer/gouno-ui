@@ -1,0 +1,25 @@
+import { ArrowLeft, Home, HelpCircle } from "lucide-react";
+import { Button, Card, Text } from "../../../../src/core";
+import { PageHeader } from "../../../../src/gouno";
+
+export function GossoNotFoundDemo() {
+  return (
+    <div className="flex min-h-[520px] items-center justify-center py-8">
+      <Card padding="lg" className="w-full max-w-lg text-center">
+        <div className="mx-auto mb-5 flex size-14 items-center justify-center rounded-full bg-muted text-muted-foreground">
+          <HelpCircle aria-hidden="true" className="size-7" />
+        </div>
+        <PageHeader
+          title="页面不存在"
+          description="请求的 GOSSO 管理页面不存在、已移动，或当前账户没有对应入口。"
+          className="items-center text-center md:flex-col md:items-center"
+        />
+        <Text size="sm" tone="muted" className="mt-3 font-mono">/unknown-route</Text>
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
+          <Button variant="solid" color="primary" icon={<Home />} onClick={() => { window.location.hash = "gosso-overview"; }}>返回概览</Button>
+          <Button icon={<ArrowLeft />} onClick={() => window.history.back()}>返回上一页</Button>
+        </div>
+      </Card>
+    </div>
+  );
+}
