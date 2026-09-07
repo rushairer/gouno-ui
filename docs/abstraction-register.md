@@ -81,6 +81,12 @@ Each entry should contain:
 
 ## Migration evidence
 
-No Gosso Admin page migration decision has been recorded under this process yet.
+### PD-006 — Gosso Admin Overview remains Core-first and page-local
 
-Add the first page-level entry before or together with the first product-driven public abstraction/API change.
+- **Status:** accepted
+- **Owner:** Product-local
+- **Evidence:** Gosso Admin `/` (`gosso-admin-frontend/src/pages/Home.tsx`) at source commit `f9466f3c103cd7a40e24ec90556a359331e2adc8`, including both administrator and regular-user render paths.
+- **Cross-product review:** no new public abstraction or material Core capability was proposed, so a mandatory cross-product admission review was not triggered. Existing Gouno UI dashboard/template abstractions were deliberately not used as implementation precedent. Blog Admin and Blog remain comparison corpora for any later attempt to generalize the page's hero, quick navigation, or role notice.
+- **Reasoning:** the page can be reconstructed with existing Core `Card`, `Button`, `ButtonLink`, `Heading`, `Text`, `Tag` and `Segmented` plus semantic native links and local Tailwind composition. The legacy `QuickCard` helper is useful within the page but one page with three data instances is not evidence of a public Pattern or Gouno component. Administrator/user differences are represented as Showcase fixture state rather than application session logic.
+- **API impact:** none. No Pattern/Gouno component was added, no existing public abstraction was adopted solely because it already existed, and no Core API was expanded.
+- **Follow-up:** when later Gosso Admin or Blog Admin pages expose semantically similar action-card navigation, compare user intent, state, responsive behavior and accessibility before deciding whether any shared abstraction is warranted. The third semantically equivalent page occurrence triggers review rather than automatic extraction.
