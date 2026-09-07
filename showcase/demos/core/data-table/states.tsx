@@ -8,7 +8,7 @@ export default function TableStates() {
     "default",
   );
   return (
-    <Space direction="vertical" align="stretch">
+    <Space orientation="vertical" align="stretch">
       <Space wrap>
         {["ready", "loading", "empty", "error"].map((value) => (
           <Button
@@ -31,6 +31,7 @@ export default function TableStates() {
       </Space>
       <DataTable
         caption="状态切换保留表头与表格容器"
+        captionSide="bottom"
         columns={[
           { key: "name", title: "项目", dataIndex: "name" },
           { key: "owner", title: "负责人", dataIndex: "owner" },

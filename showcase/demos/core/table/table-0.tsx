@@ -24,14 +24,14 @@ export default function Example1() {
         <TableRow data-state="selected">
           <TableCell>Gouno UI</TableCell>
           <TableCell>
-            <Tag tone="success">正常</Tag>
+            <Tag color="success">正常</Tag>
           </TableCell>
           <TableCell>Design</TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Blog</TableCell>
           <TableCell>
-            <Tag tone="info">预览</Tag>
+            <Tag color="info">预览</Tag>
           </TableCell>
           <TableCell>Product</TableCell>
         </TableRow>
@@ -47,7 +47,7 @@ export default function Example1() {
           <TableCell colSpan={2}>3 项</TableCell>
         </TableRow>
       </TableFooter>
-      <TableCaption captionPosition="bottom">组件状态与负责人</TableCaption>
+      <TableCaption captionSide="bottom">组件状态与负责人</TableCaption>
     </Table>
   );
 }

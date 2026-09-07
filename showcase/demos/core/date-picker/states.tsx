@@ -8,7 +8,7 @@ export default function DatePickerStatesDemo() {
   const readOnly = state === "readonly";
   const disabled = state === "disabled";
   return (
-    <Space direction="vertical" align="stretch">
+    <Space orientation="vertical" align="stretch">
       <Select
         aria-label="日期状态"
         value={state}

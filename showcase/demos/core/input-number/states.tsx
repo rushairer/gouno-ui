@@ -6,7 +6,7 @@ export default function InputNumberStatesDemo() {
   const [state, setState] = useState("ready");
   const [value, setValue] = useState<number | null>(12.5);
   return (
-    <Space direction="vertical" align="stretch">
+    <Space orientation="vertical" align="stretch">
       <Select
         aria-label="数字输入状态"
         value={state}

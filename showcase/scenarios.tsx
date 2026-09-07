@@ -35,7 +35,7 @@ export function StatePanel({
   if (state === "success")
     return <Feedback type="success" className="state-feedback">操作已完成。</Feedback>;
   if (state === "conflict")
-    return <Feedback type="error" className="state-feedback"><span>内容已被其他会话更新，当前编辑器已锁定。请重新载入后再提交。</span><Button size="sm" onClick={onRetry}>重新载入</Button></Feedback>;
+    return <Feedback type="error" className="state-feedback"><span>内容已被其他会话更新，当前编辑器已锁定。请重新载入后再提交。</span><Button size="small" onClick={onRetry}>重新载入</Button></Feedback>;
   return null;
 }
 export function StateControls({
@@ -63,8 +63,8 @@ export function StateControls({
       {(Object.keys(labels) as DemoState[]).map((value) => (
         <Button
           key={value}
-          size="sm"
-          variant={state === value ? "primary" : "ghost"}
+          size="small"
+          variant={state === value ? "solid" : "ghost"} color={state === value ? "primary" : "default"}
           aria-pressed={state === value}
           onClick={() => setState(value)}
         >

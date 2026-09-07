@@ -30,7 +30,7 @@ describe("Core Badge", () => {
 
 describe("Core Tag", () => {
   it("renders tones, custom colors, icons and borderless styling", () => {
-    const { container } = render(<><Tag tone="success">Stable</Tag><Tag color="#1677ff">Blue</Tag><Tag icon={<span data-testid="icon" />} bordered={false}>Icon</Tag></>);
+    const { container } = render(<><Tag color="success">Stable</Tag><Tag color="#1677ff">Blue</Tag><Tag icon={<span data-testid="icon" />} bordered={false}>Icon</Tag></>);
     expect(screen.getByText("Stable").parentElement?.className).toContain("bg-success-subtle");
     expect((screen.getByText("Blue").parentElement as HTMLElement).style.backgroundColor).toBe("rgb(22, 119, 255)");
     expect(screen.getByTestId("icon")).toBeTruthy();

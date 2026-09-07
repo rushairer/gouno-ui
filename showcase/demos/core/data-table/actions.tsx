@@ -15,7 +15,7 @@ export default function TableActions() {
   const [expanded, setExpanded] = useState<string[]>(["a"]);
   const [message, setMessage] = useState("双击一行查看事件回调。");
   return (
-    <Space direction="vertical" align="stretch">
+    <Space orientation="vertical" align="stretch">
       <DataTable
         rowKey="id"
         dataSource={[

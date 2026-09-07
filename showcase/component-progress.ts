@@ -308,7 +308,7 @@ const previousAudits = {
       "title/description/footer",
       "loading",
       "close policy callbacks",
-      "ariaLabel, contentStyle and native dialog semantics",
+      "aria-label, contentStyle and native dialog semantics",
     ),
     ...done(
       "interaction",
@@ -343,7 +343,7 @@ const previousAudits = {
       "title/description/footer",
       "loading",
       "close policy callbacks",
-      "ariaLabel, contentStyle and native sheet semantics",
+      "aria-label, contentStyle and native sheet semantics",
     ),
     ...done(
       "interaction",

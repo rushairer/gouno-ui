@@ -38,7 +38,7 @@ export function ConfirmDialog({ open, title, description, message, confirmLabel,
       </AlertDialogHeader>
       <AlertDialogFooter>
         <Button autoFocus onClick={close} disabled={pending}>{cancelLabel || "Cancel"}</Button>
-        <Button variant={danger || confirmVariant === "danger" ? "danger" : "primary"} onClick={() => void onConfirm()} loading={pending}>{confirmLabel || "Confirm"}</Button>
+        <Button variant="solid" color={danger || confirmVariant === "danger" ? "error" : "primary"} onClick={() => void onConfirm()} loading={pending}>{confirmLabel || "Confirm"}</Button>
       </AlertDialogFooter>
     </AlertDialogContent>
   </AlertDialog>;

@@ -14,7 +14,7 @@ function FormValidationDemo() {
       <Field label="联系邮箱" required>
         <Input name="email" type="email" />
       </Field>
-      <Button type="submit" variant="primary">
+      <Button type="submit" variant="solid" color="primary">
         校验并提交
       </Button>
       <Text tone="muted" aria-live="polite">

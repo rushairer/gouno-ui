@@ -30,7 +30,7 @@ export function AccountDemo({ login = false }: { login?: boolean }) {
               这是静态 Demo，不会发送网络请求或读取认证信息。
             </Feedback>
             <ActionGroup>
-              <Button variant="primary" onClick={() => setSubmitted(true)}>
+              <Button variant="solid" color="primary" onClick={() => setSubmitted(true)}>
                 {login ? "登录" : "保存设置"}
               </Button>
               <Button variant="ghost">取消</Button>

@@ -18,7 +18,7 @@ function ModalSizeDemo() {
         description="不同尺寸使用一致的语义结构。"
         onClose={() => setSize(null)}
         footer={
-          <Button variant="primary" onClick={() => setSize(null)}>
+          <Button variant="solid" color="primary" onClick={() => setSize(null)}>
             完成
           </Button>
         }

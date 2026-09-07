@@ -1,104 +1,32 @@
 import type { ComponentDocument } from "../../../components/component-page";
 
+type ApiRow = NonNullable<ComponentDocument["apiSections"]>[number]["rows"][number];
+
+const native = (element: string, refType: string, description: string): ApiRow[] => [
+  { name: "children", type: "ReactNode", description },
+  { name: "className", type: "string", description: `透传至 ${element}` },
+  { name: "style", type: "CSSProperties", description: `${element} 的内联样式` },
+  { name: "ref", type: `Ref<${refType}>`, description: `原生 ${element}` },
+];
+
 export const tableApiSections: ComponentDocument["apiSections"] = [
   {
-    title: "组合组件",
-    description:
-      "每个组件透传对应 HTML 元素的属性、事件及 React 19 ref。排序、分页和选择请组合 DataTable。",
+    title: "Table API",
+    description: "语义主体为 table；滚动容器通过 containerClassName 定制。",
     rows: [
-      {
-        name: "TableHeader",
-        type: 'ComponentProps<"thead">',
-        description: "表头分组",
-      },
-      {
-        name: "TableBody",
-        type: 'ComponentProps<"tbody">',
-        description: "表体分组",
-      },
-      {
-        name: "TableFooter",
-        type: 'ComponentProps<"tfoot">',
-        description: "汇总分组",
-      },
-      {
-        name: "TableRow",
-        type: 'ComponentProps<"tr">',
-        description:
-          "表格行，可传 onClick、onDoubleClick 和 data-state=selected",
-      },
-      {
-        name: "TableHead",
-        type: 'ComponentProps<"th">',
-        description: "列标题或行标题单元格",
-      },
-      {
-        name: "TableCell",
-        type: 'ComponentProps<"td">',
-        description: "数据单元格",
-      },
-      {
-        name: "TableCaption",
-        type: 'ComponentProps<"caption">',
-        description: "可访问表格说明",
-      },
+      ...native("Table", "HTMLTableElement", "caption 与表格分组"),
+      { name: "density", type: '"default" | "compact" | "touch"', defaultValue: '"default"', description: "数据密度" },
+      { name: "bordered", type: "boolean", defaultValue: "false", description: "显示外框和列分隔线" },
+      { name: "fixed", type: "boolean", defaultValue: "false", description: "使用固定表格布局" },
+      { name: "stickyHeader", type: "boolean", defaultValue: "false", description: "固定表头" },
+      { name: "containerClassName", type: "string", description: "滚动容器类名" },
     ],
   },
-  {
-    title: "单元格常用原生属性",
-    rows: [
-      {
-        name: "colSpan",
-        type: "number",
-        defaultValue: "1",
-        description: "TableHead / TableCell 横向合并列数",
-      },
-      {
-        name: "rowSpan",
-        type: "number",
-        defaultValue: "1",
-        description: "TableHead / TableCell 纵向合并行数",
-      },
-      {
-        name: "scope",
-        type: '"col" | "row" | "colgroup" | "rowgroup"',
-        description: "TableHead 标题关联范围",
-      },
-      {
-        name: "headers",
-        type: "string",
-        description: "关联标题单元格 id 列表",
-      },
-      {
-        name: "className",
-        type: "string",
-        description: "使用公共样式约定扩展单元格",
-      },
-      { name: "children", type: "ReactNode", description: "单元格内容" },
-      {
-        name: "captionPosition",
-        type: '"top" | "bottom"',
-        defaultValue: '"top"',
-        description:
-          "Caption 位置；默认遵循 HTML 语义放在表头上方，底部说明请显式使用 captionPosition=bottom",
-      },
-    ],
-  },
-  {
-    title: "视觉行为",
-    rows: [
-      {
-        name: "bordered=false",
-        type: "boolean",
-        defaultValue: "false",
-        description:
-          "不显示列之间的垂直分隔线，仅保留行分隔线；参见无列垂直分隔线 Demo",
-      },
-      {
-        name: "TableFooter",
-        type: "Component",
-        description: "Footer 单元格使用与 density 对应的内边距并垂直居中",
-      },
-    ],
-  },
+  { title: "TableHeader API", rows: native("THEAD", "HTMLTableSectionElement", "表头 TableRow") },
+  { title: "TableBody API", rows: native("TBODY", "HTMLTableSectionElement", "数据 TableRow") },
+  { title: "TableFooter API", rows: native("TFOOT", "HTMLTableSectionElement", "汇总 TableRow") },
+  { title: "TableRow API", rows: [...native("TR", "HTMLTableRowElement", "TableHead 或 TableCell"), { name: "onClick", type: "MouseEventHandler<HTMLTableRowElement>", description: "原生行点击" }] },
+  { title: "TableHead API", rows: [...native("TH", "HTMLTableCellElement", "标题内容"), { name: "colSpan", type: "number", defaultValue: "浏览器 1", description: "跨列" }, { name: "rowSpan", type: "number", defaultValue: "浏览器 1", description: "跨行" }, { name: "scope", type: '"col" | "row" | "colgroup" | "rowgroup"', description: "标题关联范围" }, { name: "headers", type: "string", description: "关联标题 id" }] },
+  { title: "TableCell API", rows: [...native("TD", "HTMLTableCellElement", "数据内容"), { name: "colSpan", type: "number", defaultValue: "浏览器 1", description: "跨列" }, { name: "rowSpan", type: "number", defaultValue: "浏览器 1", description: "跨行" }, { name: "headers", type: "string", description: "关联标题 id" }] },
+  { title: "TableCaption API", description: "captionSide 映射 CSS caption-side；它不属于单元格属性。", rows: [...native("TableCaption", "HTMLTableCaptionElement", "可访问表格说明"), { name: "captionSide", type: '"top" | "bottom"', defaultValue: '"top"', description: "表格说明所在侧" }] },
 ];

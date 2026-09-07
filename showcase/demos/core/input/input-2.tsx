@@ -4,7 +4,7 @@ import { Input, Space, Text } from "../../../../src/core";
 function ControlledInputDemo() {
   const [value, setValue] = useState("Gouno UI");
   return (
-    <Space direction="vertical">
+    <Space orientation="vertical">
       <Input
         value={value}
         allowClear

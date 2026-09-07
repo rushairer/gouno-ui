@@ -51,7 +51,7 @@ function SizeAndOffsetBadgeDemo() {
 
 function DynamicBadgeDemo() {
   const [count, setCount] = useState(5);
-  return <Space direction="vertical">
+  return <Space orientation="vertical">
     <Badge count={count} showZero><Avatar><AvatarFallback>GU</AvatarFallback></Avatar></Badge>
     <Space>
       <IconButton label="减少计数" icon={<Minus />} onClick={() => setCount((value) => Math.max(0, value - 1))} />
@@ -133,7 +133,7 @@ export const badgeDocuments: Record<string, ComponentDocument> = {
         description: "计数由业务状态控制，更新后通过 aria-live 同步反馈。",
         code: `function DynamicBadgeDemo() {
   const [count, setCount] = useState(5);
-  return <Space direction="vertical">
+  return <Space orientation="vertical">
     <Badge count={count} showZero><Avatar><AvatarFallback>GU</AvatarFallback></Avatar></Badge>
     <Space>
       <IconButton label="减少计数" icon={<Minus />} onClick={() => setCount((value) => Math.max(0, value - 1))} />

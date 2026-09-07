@@ -2,6 +2,28 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Popover as PopoverPrimitive } from "radix-ui";
 
+export type OverlayPlacement =
+  | "top"
+  | "top-start"
+  | "top-end"
+  | "right"
+  | "right-start"
+  | "right-end"
+  | "bottom"
+  | "bottom-start"
+  | "bottom-end"
+  | "left"
+  | "left-start"
+  | "left-end";
+
+const placementParts = (placement: OverlayPlacement): { side: "top" | "right" | "bottom" | "left"; align: "start" | "center" | "end" } => {
+  const [side, edge] = placement.split("-") as [
+    "top" | "right" | "bottom" | "left",
+    "start" | "end" | undefined,
+  ];
+  return { side, align: edge ?? "center" };
+};
+
 function Popover({
   ...props
 }: React.ComponentProps<typeof PopoverPrimitive.Root>) {
@@ -14,18 +36,32 @@ function PopoverTrigger({
   return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />;
 }
 
+export interface PopoverContentProps
+  extends Omit<
+    React.ComponentProps<typeof PopoverPrimitive.Content>,
+    "side" | "align" | "sideOffset" | "alignOffset"
+  > {
+  placement?: OverlayPlacement;
+  offset?: number;
+  alignOffset?: number;
+}
+
 function PopoverContent({
   className,
-  align = "center",
-  sideOffset = 4,
+  placement = "bottom",
+  offset = 4,
+  alignOffset,
   ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Content>) {
+}: PopoverContentProps) {
+  const { side, align } = placementParts(placement);
   return (
     <PopoverPrimitive.Portal>
       <PopoverPrimitive.Content
         data-slot="popover-content"
+        side={side}
         align={align}
-        sideOffset={sideOffset}
+        sideOffset={offset}
+        alignOffset={alignOffset}
         className={cn(
           "z-50 w-72 origin-(--radix-popover-content-transform-origin) rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-hidden data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
           className,

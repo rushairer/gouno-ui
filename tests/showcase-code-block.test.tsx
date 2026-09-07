@@ -6,7 +6,7 @@ describe("Showcase CodeBlock", () => {
   it("highlights TSX and copies the exact displayed source", async () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
-    const code = '<Button variant="primary" onClick={save}>保存</Button>';
+    const code = '<Button variant="solid" color="primary" onClick={save}>保存</Button>';
     const { container } = render(<CodeBlock code={code} />);
     expect(container.querySelector(".syntax-tag")).toBeTruthy();
     expect(container.querySelector(".syntax-attr-name")).toBeTruthy();

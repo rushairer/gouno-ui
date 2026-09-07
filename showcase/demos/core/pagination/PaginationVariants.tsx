@@ -1,7 +1,7 @@
 import { Pagination, Space } from "../../../../src/core";
 export function PaginationVariants() {
   return (
-    <Space direction="vertical">
+    <Space orientation="vertical">
       <Pagination
         ariaLabel="紧凑分页"
         total={500}

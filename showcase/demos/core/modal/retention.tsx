@@ -5,7 +5,7 @@ export default function ModalRetention() {
   const [open, setOpen] = useState(false);
   const [destroy, setDestroy] = useState(false);
   return (
-    <Space direction="vertical">
+    <Space orientation="vertical">
       <Space wrap>
         <Button
           onClick={() => {
@@ -26,7 +26,7 @@ export default function ModalRetention() {
       </Space>
       <Modal
         open={open}
-        ariaLabel="内容保留示例"
+        aria-label="内容保留示例"
         onOpenChange={setOpen}
         destroyOnClose={destroy}
         mask={false}

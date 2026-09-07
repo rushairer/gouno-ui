@@ -4,7 +4,7 @@ import { InputNumber, Space, Text } from "../../../../src/core";
 function ControlledInputNumberDemo() {
   const [value, setValue] = useState<number | null>(1280);
   return (
-    <Space direction="vertical">
+    <Space orientation="vertical">
       <InputNumber
         value={value}
         min={0}

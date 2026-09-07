@@ -10,7 +10,7 @@ import {
 
 export default function Example2() {
   return (
-    <Space direction="vertical" className="w-full">
+    <Space orientation="vertical" className="w-full">
       <Table density="compact" bordered>
         <TableHeader>
           <TableRow>

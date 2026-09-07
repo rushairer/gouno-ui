@@ -27,7 +27,7 @@ export function ListDemo({ kind = "posts" }: { kind?: "posts" | "users" | "clien
       title={copy[0]}
       description={copy[1]}
       action={
-        <Button variant="primary" icon={<Plus />}>
+        <Button variant="solid" color="primary" icon={<Plus />}>
           {copy[3]}
         </Button>
       }
@@ -61,7 +61,7 @@ export function ListDemo({ kind = "posts" }: { kind?: "posts" | "users" | "clien
             />
           </Field>
           <ActionGroup className="w-full md:w-auto">
-            <Button className="flex-1 md:flex-none" variant="secondary">筛选</Button>
+            <Button className="flex-1 md:flex-none" variant="outline">筛选</Button>
             <Button className="flex-1 md:flex-none" variant="ghost">导出</Button>
           </ActionGroup>
         </FilterBar>
@@ -69,8 +69,8 @@ export function ListDemo({ kind = "posts" }: { kind?: "posts" | "users" | "clien
           <Feedback type="info">
             已选择 {selected.length} 项。
             <Button
-              size="sm"
-              variant="danger"
+              size="small"
+              variant="solid" color="error"
               className="ml-3"
               onClick={() => setState("success")}
             >
@@ -125,7 +125,7 @@ export function ListDemo({ kind = "posts" }: { kind?: "posts" | "users" | "clien
                         <TableCell className="font-medium">{row[0]}</TableCell>
                         <TableCell>
                           <Tag
-                            tone={row[1] === "已发布" ? "success" : "warning"}
+                            color={row[1] === "已发布" ? "success" : "warning"}
                           >
                             {row[1]}
                           </Tag>
@@ -133,8 +133,8 @@ export function ListDemo({ kind = "posts" }: { kind?: "posts" | "users" | "clien
                         <TableCell>{row[3]}</TableCell>
                         <TableCell>
                           <div className="flex justify-end gap-2">
-                            <Button size="sm">编辑</Button>
-                            <Button size="sm" variant="ghost">
+                            <Button size="small">编辑</Button>
+                            <Button size="small" variant="ghost">
                               更多
                             </Button>
                           </div>
@@ -157,14 +157,14 @@ export function ListDemo({ kind = "posts" }: { kind?: "posts" | "users" | "clien
                               </div>
                             </div>
                             <Tag
-                              tone={row[1] === "已发布" ? "success" : "warning"}
+                              color={row[1] === "已发布" ? "success" : "warning"}
                             >
                               {row[1]}
                             </Tag>
                           </div>
                           <div className="mt-3 flex gap-2">
-                            <Button size="sm">编辑</Button>
-                            <Button size="sm" variant="ghost">
+                            <Button size="small">编辑</Button>
+                            <Button size="small" variant="ghost">
                               更多
                             </Button>
                           </div>
@@ -179,14 +179,14 @@ export function ListDemo({ kind = "posts" }: { kind?: "posts" | "users" | "clien
                   显示 {visible.length} / {records.length} 条
                 </span>
                 <ActionGroup>
-                  <Button size="sm" variant="ghost" icon={<ChevronLeft />}>
+                  <Button size="small" variant="ghost" icon={<ChevronLeft />}>
                     上一页
                   </Button>
                   <Button
-                    size="sm"
+                    size="small"
                     variant="ghost"
                     icon={<ChevronRight />}
-                    iconPosition="right"
+                    iconPlacement="end"
                   >
                     下一页
                   </Button>
@@ -206,8 +206,8 @@ export function GossoUsersDemo() {
   const [dialog, setDialog] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const visible = gossoUsers.filter(u => `${u.display_name} ${u.username}`.includes(query));
-  return <ListPageTemplate title="用户管理" description="管理用户、角色、MFA 和账户状态。" action={<Button variant="primary" icon={<Plus />}>添加用户</Button>} stateControls={<StateControls state={state} setState={setState} />}>
-    {state !== "ready" ? <Panel><StatePanel state={state} onRetry={() => setState("ready")} /></Panel> : <Panel><PanelHeader title="用户" description={`${visible.length} 个账户`} /><FilterBar><Field label="搜索" hideLabel className="w-full min-w-0 md:max-w-[34rem] md:flex-1"><Input prefix={<Search />} value={query} onChange={e => setQuery(e.target.value)} placeholder="搜索用户名或邮箱" /></Field><ActionGroup className="w-full md:w-auto"><Button className="flex-1 md:flex-none" variant="secondary">筛选</Button>{selected.length > 0 ? <Button className="flex-1 md:flex-none" variant="danger" onClick={() => setDialog(`批量删除 ${selected.length} 个用户`)}>批量操作</Button> : null}</ActionGroup></FilterBar><DataTable><TableHeader><TableRow><TableHead><input type="checkbox" aria-label="全选" onChange={e => setSelected(e.target.checked ? visible.map(u => u.id) : [])} /></TableHead><TableHead>用户</TableHead><TableHead>状态</TableHead><TableHead>角色</TableHead><TableHead>操作</TableHead></TableRow></TableHeader><TableBody>{visible.map(user => <TableRow key={user.id}><TableCell><input type="checkbox" aria-label={`选择 ${user.username}`} checked={selected.includes(user.id)} onChange={e => setSelected(s => e.target.checked ? [...s,user.id] : s.filter(id => id !== user.id))} /></TableCell><TableCell><div className="font-medium">{user.display_name}</div><div className="text-xs text-muted-foreground">{user.username} · {user.id} · {user.created_at}</div></TableCell><TableCell><Tag tone={user.status === "active" ? "success" : "danger"}>{user.status === "active" ? "活跃" : "已停用"}</Tag></TableCell><TableCell><div className="flex flex-wrap gap-1">{user.roles?.map(r => <Tag key={r.id} tone="neutral" title={r.description}>{r.name}</Tag>)}</div></TableCell><TableCell><ActionGroup className="flex-wrap"><Button size="sm" variant="secondary" onClick={() => setDialog(`角色管理：${user.display_name}`)}>角色</Button><Button size="sm" variant="secondary" onClick={() => setDialog(`Consent：${user.display_name}`)}>Consent</Button><Button size="sm" variant="secondary" disabled={user.id === "acct_01"} onClick={() => setDialog(`修改密码：${user.display_name}`)}>密码</Button><Button size="sm" variant="secondary" disabled={user.id === "acct_01"} onClick={() => setDialog(`${user.status === "active" ? "停用" : "启用"}：${user.display_name}`)}>{user.status === "active" ? "停用" : "启用"}</Button><Button size="sm" variant="secondary" disabled={user.id === "acct_01"} onClick={() => setDialog(`解锁账户：${user.display_name}`)}>解锁</Button><Button size="sm" variant="secondary" disabled={user.id === "acct_01"} onClick={() => setDialog(`重置 MFA：${user.display_name}`)}>重置 MFA</Button><Button size="sm" variant="danger" disabled={user.id === "acct_01"} onClick={() => setDialog(`删除用户：${user.display_name}`)}>删除</Button></ActionGroup></TableCell></TableRow>)}</TableBody></DataTable></Panel>}
-    <Modal open={Boolean(dialog)} onClose={() => setDialog(null)} title={dialog ?? "用户操作"}><div className="space-y-4">{dialog?.startsWith("角色") ? <><p>已分配角色</p><label className="flex gap-2"><input type="checkbox" defaultChecked /> admin</label><label className="flex gap-2"><input type="checkbox" /> editor</label></> : dialog?.startsWith("Consent") ? <><p>已授权客户端</p><div className="rounded border p-3 text-sm">Blog BFF · openid profile email</div><Button size="sm" variant="secondary">撤销 Consent</Button></> : dialog?.startsWith("修改密码") ? <><Field label="新密码"><Input type="password" placeholder="输入新密码" /></Field><Field label="确认密码"><Input type="password" placeholder="再次输入密码" /></Field></> : <p className="text-sm text-muted-foreground">此操作需要确认。Showcase 仅模拟 Gosso Admin 的本地状态变化，不调用 API。</p>}<div className="flex justify-end gap-2"><Button variant="secondary" onClick={() => setDialog(null)}>取消</Button><Button variant="primary" onClick={() => { setDialog(null); setState("success"); }}>确认</Button></div></div></Modal>
+  return <ListPageTemplate title="用户管理" description="管理用户、角色、MFA 和账户状态。" action={<Button variant="solid" color="primary" icon={<Plus />}>添加用户</Button>} stateControls={<StateControls state={state} setState={setState} />}>
+    {state !== "ready" ? <Panel><StatePanel state={state} onRetry={() => setState("ready")} /></Panel> : <Panel><PanelHeader title="用户" description={`${visible.length} 个账户`} /><FilterBar><Field label="搜索" hideLabel className="w-full min-w-0 md:max-w-[34rem] md:flex-1"><Input prefix={<Search />} value={query} onChange={e => setQuery(e.target.value)} placeholder="搜索用户名或邮箱" /></Field><ActionGroup className="w-full md:w-auto"><Button className="flex-1 md:flex-none" variant="outline">筛选</Button>{selected.length > 0 ? <Button className="flex-1 md:flex-none" variant="solid" color="error" onClick={() => setDialog(`批量删除 ${selected.length} 个用户`)}>批量操作</Button> : null}</ActionGroup></FilterBar><DataTable><TableHeader><TableRow><TableHead><input type="checkbox" aria-label="全选" onChange={e => setSelected(e.target.checked ? visible.map(u => u.id) : [])} /></TableHead><TableHead>用户</TableHead><TableHead>状态</TableHead><TableHead>角色</TableHead><TableHead>操作</TableHead></TableRow></TableHeader><TableBody>{visible.map(user => <TableRow key={user.id}><TableCell><input type="checkbox" aria-label={`选择 ${user.username}`} checked={selected.includes(user.id)} onChange={e => setSelected(s => e.target.checked ? [...s,user.id] : s.filter(id => id !== user.id))} /></TableCell><TableCell><div className="font-medium">{user.display_name}</div><div className="text-xs text-muted-foreground">{user.username} · {user.id} · {user.created_at}</div></TableCell><TableCell><Tag color={user.status === "active" ? "success" : "error"}>{user.status === "active" ? "活跃" : "已停用"}</Tag></TableCell><TableCell><div className="flex flex-wrap gap-1">{user.roles?.map(r => <Tag key={r.id} color="default" title={r.description}>{r.name}</Tag>)}</div></TableCell><TableCell><ActionGroup className="flex-wrap"><Button size="small" variant="outline" onClick={() => setDialog(`角色管理：${user.display_name}`)}>角色</Button><Button size="small" variant="outline" onClick={() => setDialog(`Consent：${user.display_name}`)}>Consent</Button><Button size="small" variant="outline" disabled={user.id === "acct_01"} onClick={() => setDialog(`修改密码：${user.display_name}`)}>密码</Button><Button size="small" variant="outline" disabled={user.id === "acct_01"} onClick={() => setDialog(`${user.status === "active" ? "停用" : "启用"}：${user.display_name}`)}>{user.status === "active" ? "停用" : "启用"}</Button><Button size="small" variant="outline" disabled={user.id === "acct_01"} onClick={() => setDialog(`解锁账户：${user.display_name}`)}>解锁</Button><Button size="small" variant="outline" disabled={user.id === "acct_01"} onClick={() => setDialog(`重置 MFA：${user.display_name}`)}>重置 MFA</Button><Button size="small" variant="solid" color="error" disabled={user.id === "acct_01"} onClick={() => setDialog(`删除用户：${user.display_name}`)}>删除</Button></ActionGroup></TableCell></TableRow>)}</TableBody></DataTable></Panel>}
+    <Modal open={Boolean(dialog)} onClose={() => setDialog(null)} title={dialog ?? "用户操作"}><div className="space-y-4">{dialog?.startsWith("角色") ? <><p>已分配角色</p><label className="flex gap-2"><input type="checkbox" defaultChecked /> admin</label><label className="flex gap-2"><input type="checkbox" /> editor</label></> : dialog?.startsWith("Consent") ? <><p>已授权客户端</p><div className="rounded border p-3 text-sm">Blog BFF · openid profile email</div><Button size="small" variant="outline">撤销 Consent</Button></> : dialog?.startsWith("修改密码") ? <><Field label="新密码"><Input type="password" placeholder="输入新密码" /></Field><Field label="确认密码"><Input type="password" placeholder="再次输入密码" /></Field></> : <p className="text-sm text-muted-foreground">此操作需要确认。Showcase 仅模拟 Gosso Admin 的本地状态变化，不调用 API。</p>}<div className="flex justify-end gap-2"><Button variant="outline" onClick={() => setDialog(null)}>取消</Button><Button variant="solid" color="primary" onClick={() => { setDialog(null); setState("success"); }}>确认</Button></div></div></Modal>
   </ListPageTemplate>;
 }

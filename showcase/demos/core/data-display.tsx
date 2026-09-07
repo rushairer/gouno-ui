@@ -62,14 +62,14 @@ export const dataDisplayDocuments: Record<string, ComponentDocument> = {
   descriptions: {
     title: "Descriptions 描述列表",
     description: "展示对象属性和详情信息。",
-    code: '<Descriptions columns={2} bordered items={[{ label: "版本", children: "0.2.0" }, { label: "状态", children: <Tag tone="success">Stable</Tag> }]} />',
+    code: '<Descriptions columns={2} bordered items={[{ label: "版本", children: "0.2.0" }, { label: "状态", children: <Tag color="success">Stable</Tag> }]} />',
     render: () => (
       <Descriptions
         columns={2}
         bordered
         items={[
           { label: "版本", children: "0.2.0" },
-          { label: "状态", children: <Tag tone="success">Stable</Tag> },
+          { label: "状态", children: <Tag color="success">Stable</Tag> },
         ]}
       />
     ),
@@ -212,11 +212,11 @@ export const dataDisplayDocuments: Record<string, ComponentDocument> = {
         description: "直接组合 Table 子元素",
         type: "ReactNode",
       },
-      { name: "columns", description: "列定义", type: "DataTableColumn<T>[]" },
+      { name: "columns", description: "列定义", type: "readonly DataTableColumn<T>[]" },
       {
         name: "dataSource",
         description: "行数据",
-        type: "T[]",
+        type: "readonly T[]",
         defaultValue: "[]",
       },
       {
@@ -346,6 +346,12 @@ export const dataDisplayDocuments: Record<string, ComponentDocument> = {
         type: "(keys: string[], clearSelection: () => void) => ReactNode",
       },
       { name: "caption", description: "表格说明", type: "ReactNode" },
+      {
+        name: "captionSide",
+        description: "表格说明的位置",
+        type: '"top" | "bottom"',
+        defaultValue: '"top"',
+      },
       {
         name: "locale",
         description: "空状态和分页文案",

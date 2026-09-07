@@ -18,6 +18,11 @@
 
 ## API and quality
 
+- Before designing, implementing, modifying, or reviewing public components, read [Public API Specification](docs/api-specification.md) and the applicable semantic entries. It is the binding target API contract; existing APIs are not naming precedents.
+- Consult [API Conformance Register](docs/api-conformance.md) for known implementation gaps. New APIs must conform; existing gaps do not authorize an unrelated migration or removal of compatibility APIs.
+- Determine each prop's meaning and owning component before implementation. Synchronize exported types, a separate API table for every public JSX component, matching demos, and appropriate behavior verification. Check re-exported third-party props as part of the public surface.
+- Do not introduce undocumented aliases or exceptions. Changes to the specification must state evidence and impact; exceptions must identify the affected components, reason, and exit conditions in the conformance register.
+- API migrations require a separate compatibility assessment and migration instructions. Publishing the specification does not mean existing components have migrated or authorize deleting old interfaces.
 - Prefer composition and explicit slots over hidden business behavior.
 - Keep browser-native form serialization where it improves interoperability.
 - Add focused jsdom/Vitest coverage for state transitions, keyboard behavior, accessibility attributes, and data interactions.

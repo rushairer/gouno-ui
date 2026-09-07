@@ -19,8 +19,8 @@ export function DashboardDemo({ gosso = false }: { gosso?: boolean }) {
       }
       actions={
         <ActionGroup>
-          <Button variant="secondary">查看站点</Button>
-          <Button variant="primary" icon={<Plus />}>
+          <Button variant="outline">查看站点</Button>
+          <Button variant="solid" color="primary" icon={<Plus />}>
             新建文章
           </Button>
         </ActionGroup>
@@ -85,7 +85,7 @@ export function DashboardDemo({ gosso = false }: { gosso?: boolean }) {
                 title={gosso ? "系统健康度" : "内容表现"}
                 description={gosso ? "服务、数据库和队列的实时状态。" : "过去 7 天的阅读趋势。"}
                 actions={
-                  <Button size="sm" variant="ghost">
+                  <Button size="small" variant="ghost">
                   {gosso ? "查看详情" : "查看分析"}
                   </Button>
                 }
@@ -157,7 +157,7 @@ export function DashboardDemo({ gosso = false }: { gosso?: boolean }) {
               title="最近活动"
               description="按时间倒序排列的内容和系统事件。"
               action={
-                <Button size="sm" variant="ghost">
+                <Button size="small" variant="ghost">
                   查看全部
                 </Button>
               }
@@ -181,7 +181,7 @@ export function DashboardDemo({ gosso = false }: { gosso?: boolean }) {
                       {type} · {date}
                     </div>
                   </div>
-                  <Tag tone={status === "已发布" ? "success" : status === "草稿" ? "neutral" : "warning"}>
+                  <Tag color={status === "已发布" ? "success" : status === "草稿" ? "default" : "warning"}>
                     {status}
                   </Tag>
                 </div>

@@ -4,7 +4,7 @@ import { Button, Modal, Space, Text } from "../../../../src/core";
 export default function UncontrolledModal() {
   const [mounted, setMounted] = useState(false);
   return (
-    <Space direction="vertical">
+    <Space orientation="vertical">
       <Button onClick={() => setMounted(true)}>非受控对话框</Button>
       {mounted && (
         <Modal

@@ -6,11 +6,11 @@ import type { ComponentDocument } from "../../components/component-page";
 function BasicTagDemo() {
   return <Space wrap>
     <Tag>Default</Tag>
-    <Tag tone="brand">Brand</Tag>
-    <Tag tone="success">Success</Tag>
-    <Tag tone="warning">Warning</Tag>
-    <Tag tone="danger">Danger</Tag>
-    <Tag tone="info">Info</Tag>
+    <Tag color="primary">Brand</Tag>
+    <Tag color="success">Success</Tag>
+    <Tag color="warning">Warning</Tag>
+    <Tag color="error">Danger</Tag>
+    <Tag color="info">Info</Tag>
   </Space>;
 }
 
@@ -25,16 +25,16 @@ function ColorTagDemo() {
 
 function IconTagDemo() {
   return <Space wrap>
-    <Tag icon={<Check />} tone="success">Verified</Tag>
-    <Tag icon={<Plus />} tone="brand">New</Tag>
-    <Tag tone="warning" bordered={false}>Borderless</Tag>
+    <Tag icon={<Check />} color="success">Verified</Tag>
+    <Tag icon={<Plus />} color="primary">New</Tag>
+    <Tag color="warning" bordered={false}>Borderless</Tag>
   </Space>;
 }
 
 function ClosableTagDemo() {
   const [visible, setVisible] = useState(true);
   const [action, setAction] = useState("尚未关闭");
-  return <Space direction="vertical">
+  return <Space orientation="vertical">
     <Space wrap>
       {visible ? <Tag closable onClose={() => { setVisible(false); setAction("已关闭 Release 标签"); }}>Release</Tag> : <Button size="small" onClick={() => { setVisible(true); setAction("已恢复 Release 标签"); }}>恢复标签</Button>}
       <Tag closable closeIcon={<span aria-hidden="true">×</span>} onClose={() => setAction("点击了自定义关闭按钮")}>Custom close icon</Tag>
@@ -47,7 +47,7 @@ function ClosableTagDemo() {
 const topicOptions = ["Movies", "Books", "Music"];
 function CheckableTagDemo() {
   const [selected, setSelected] = useState(["Movies"]);
-  return <Space direction="vertical">
+  return <Space orientation="vertical">
     <Space wrap>
       {topicOptions.map((topic) => <CheckableTag key={topic} checked={selected.includes(topic)} onChange={(checked) => setSelected((current) => checked ? [...current, topic] : current.filter((item) => item !== topic))}>{topic}</CheckableTag>)}
       <CheckableTag disabled defaultChecked>Disabled</CheckableTag>
@@ -58,7 +58,7 @@ function CheckableTagDemo() {
 
 function UncontrolledTagDemo() {
   const [action, setAction] = useState("点击标签切换状态");
-  return <Space direction="vertical">
+  return <Space orientation="vertical">
     <CheckableTag defaultChecked onChange={(checked) => setAction(checked ? "已选中 TypeScript" : "已取消 TypeScript")}>TypeScript</CheckableTag>
     <Text tone="muted" aria-live="polite">{action}</Text>
   </Space>;
@@ -71,11 +71,11 @@ export const tagDocuments: Record<string, ComponentDocument> = {
     code: `function BasicTagDemo() {
   return <Space wrap>
     <Tag>Default</Tag>
-    <Tag tone="brand">Brand</Tag>
-    <Tag tone="success">Success</Tag>
-    <Tag tone="warning">Warning</Tag>
-    <Tag tone="danger">Danger</Tag>
-    <Tag tone="info">Info</Tag>
+    <Tag color="primary">Brand</Tag>
+    <Tag color="success">Success</Tag>
+    <Tag color="warning">Warning</Tag>
+    <Tag color="error">Danger</Tag>
+    <Tag color="info">Info</Tag>
   </Space>;
 }`,
     render: () => <BasicTagDemo />,
@@ -96,9 +96,9 @@ export const tagDocuments: Record<string, ComponentDocument> = {
         title: "图标与无边框",
         code: `function IconTagDemo() {
   return <Space wrap>
-    <Tag icon={<Check />} tone="success">Verified</Tag>
-    <Tag icon={<Plus />} tone="brand">New</Tag>
-    <Tag tone="warning" bordered={false}>Borderless</Tag>
+    <Tag icon={<Check />} color="success">Verified</Tag>
+    <Tag icon={<Plus />} color="primary">New</Tag>
+    <Tag color="warning" bordered={false}>Borderless</Tag>
   </Space>;
 }`,
         render: () => <IconTagDemo />,
@@ -109,7 +109,7 @@ export const tagDocuments: Record<string, ComponentDocument> = {
         code: `function ClosableTagDemo() {
   const [visible, setVisible] = useState(true);
   const [action, setAction] = useState("尚未关闭");
-  return <Space direction="vertical">
+  return <Space orientation="vertical">
     <Space wrap>
       {visible ? <Tag closable onClose={() => { setVisible(false); setAction("已关闭 Release 标签"); }}>Release</Tag> : <Button size="small" onClick={() => { setVisible(true); setAction("已恢复 Release 标签"); }}>恢复标签</Button>}
       <Tag closable closeIcon={<span aria-hidden="true">×</span>} onClose={() => setAction("点击了自定义关闭按钮")}>Custom close icon</Tag>
@@ -126,7 +126,7 @@ export const tagDocuments: Record<string, ComponentDocument> = {
         code: `const topicOptions = ["Movies", "Books", "Music"];
 function CheckableTagDemo() {
   const [selected, setSelected] = useState(["Movies"]);
-  return <Space direction="vertical">
+  return <Space orientation="vertical">
     <Space wrap>
       {topicOptions.map((topic) => <CheckableTag key={topic} checked={selected.includes(topic)} onChange={(checked) => setSelected((current) => checked ? [...current, topic] : current.filter((item) => item !== topic))}>{topic}</CheckableTag>)}
       <CheckableTag disabled defaultChecked>Disabled</CheckableTag>
@@ -140,7 +140,7 @@ function CheckableTagDemo() {
         title: "非受控可选标签",
         code: `function UncontrolledTagDemo() {
   const [action, setAction] = useState("点击标签切换状态");
-  return <Space direction="vertical">
+  return <Space orientation="vertical">
     <CheckableTag defaultChecked onChange={(checked) => setAction(checked ? "已选中 TypeScript" : "已取消 TypeScript")}>TypeScript</CheckableTag>
     <Text tone="muted" aria-live="polite">{action}</Text>
   </Space>;
@@ -149,8 +149,7 @@ function CheckableTagDemo() {
       },
     ],
     api: [
-      { name: "tone", description: "语义色", type: '"neutral" | "brand" | "success" | "warning" | "danger" | "info"', defaultValue: '"neutral"' },
-      { name: "color", description: "自定义背景色", type: "string" },
+      { name: "color", description: "语义色或自定义 CSS 背景色", type: 'TagColor | string', defaultValue: '"default"' },
       { name: "icon", description: "标签前置图标", type: "ReactNode" },
       { name: "bordered", description: "是否显示边框", type: "boolean", defaultValue: "true" },
       { name: "closable", description: "是否显示关闭按钮", type: "boolean", defaultValue: "false" },

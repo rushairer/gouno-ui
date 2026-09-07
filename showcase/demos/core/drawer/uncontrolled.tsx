@@ -4,7 +4,7 @@ import { Button, Drawer, Space, Text } from "../../../../src/core";
 export default function UncontrolledDrawer() {
   const [mounted, setMounted] = useState(false);
   return (
-    <Space direction="vertical">
+    <Space orientation="vertical">
       <Button onClick={() => setMounted(true)}>非受控抽屉</Button>
       {mounted && (
         <Drawer

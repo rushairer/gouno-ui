@@ -35,18 +35,18 @@ export function Tabs<T extends string = string>({
   ariaLabel,
   tabClassName,
   children,
-  onValueChange,
+  onChange,
   ...props
-}: Omit<ComponentProps<typeof Primitive.Tabs>, "onValueChange"> & {
+}: Omit<ComponentProps<typeof Primitive.Tabs>, "onValueChange" | "onChange"> & {
   items?: readonly TabItem<T>[];
   ariaLabel?: string;
   tabClassName?: string;
-  onValueChange?: (value: T) => void;
+  onChange?: (value: T) => void;
 }) {
   return (
     <Primitive.Tabs
       {...props}
-      onValueChange={(value) => onValueChange?.(value as T)}
+      onValueChange={(value) => onChange?.(value as T)}
     >
       {items ? (
         <Primitive.TabsList
@@ -60,7 +60,7 @@ export function Tabs<T extends string = string>({
             <Primitive.TabsTrigger
               key={item.value}
               value={item.value}
-              onClick={() => onValueChange?.(item.value)}
+              onClick={() => onChange?.(item.value)}
               onKeyDown={(event: KeyboardEvent<HTMLButtonElement>) => {
                 if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") {
                   return;
@@ -71,7 +71,7 @@ export function Tabs<T extends string = string>({
                     ? (index + 1) % items.length
                     : (index - 1 + items.length) % items.length;
                 const next = items[nextIndex];
-                onValueChange?.(next.value);
+                onChange?.(next.value);
                 event.currentTarget.parentElement
                   ?.querySelectorAll<HTMLElement>('button[role="tab"]')
                   [nextIndex]?.focus();
@@ -277,8 +277,9 @@ export function Pagination({
               <span aria-hidden="true">…</span>
             ) : null}
             <Button
-              size="sm"
-              variant={n === page ? "primary" : "ghost"}
+              size="small"
+              variant={n === page ? "solid" : "ghost"}
+              color={n === page ? "primary" : "default"}
               aria-current={n === page ? "page" : undefined}
               onClick={() => onChange(n)}
             >
@@ -326,7 +327,7 @@ export function BulkActionBar({
       {onAIAssist ? (
         <Button
           className="bulk-action-bar__ai"
-          size="sm"
+          size="small"
           icon={<Sparkles />}
           onClick={onAIAssist}
         >
@@ -334,7 +335,7 @@ export function BulkActionBar({
         </Button>
       ) : null}
       {children}
-      <Button variant="ghost" size="sm" onClick={onCancel}>
+      <Button variant="ghost" size="small" onClick={onCancel}>
         {cancelLabel}
       </Button>
     </div>

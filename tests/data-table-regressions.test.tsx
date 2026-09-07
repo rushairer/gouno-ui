@@ -14,6 +14,20 @@ const columns = [
 ];
 
 describe("DataTable state contracts", () => {
+  it("forwards the caption position and renders a separator from the table body", () => {
+    render(
+      <DataTable
+        caption="Table caption"
+        captionSide="bottom"
+        columns={columns}
+        dataSource={rows}
+      />,
+    );
+    const caption = screen.getByText("Table caption");
+    expect(caption.getAttribute("data-caption-side")).toBe("bottom");
+    expect(caption.className).toContain("inset_0_1px");
+  });
+
   it("preserves keys across sorting and numeric sort is numeric", () => {
     const select = vi.fn();
     render(

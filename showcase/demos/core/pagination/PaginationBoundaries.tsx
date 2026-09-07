@@ -1,7 +1,7 @@
 import { Pagination, Space, Text } from "../../../../src/core";
 export function PaginationBoundaries() {
   return (
-    <Space direction="vertical">
+    <Space orientation="vertical">
       <Pagination
         ariaLabel="禁用分页"
         total={200}

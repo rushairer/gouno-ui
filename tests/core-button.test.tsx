@@ -28,7 +28,7 @@ describe("Core Button", () => {
   });
 
   it("uses a router adapter through NavigationProvider", () => {
-    render(<NavigationProvider link={RouterLink}><ButtonLink to="/docs" variant="primary">Docs</ButtonLink></NavigationProvider>);
+    render(<NavigationProvider link={RouterLink}><ButtonLink to="/docs" variant="solid" color="primary">Docs</ButtonLink></NavigationProvider>);
     expect(screen.getByRole("link", { name: "Docs" }).getAttribute("data-route")).toBe("/docs");
   });
 

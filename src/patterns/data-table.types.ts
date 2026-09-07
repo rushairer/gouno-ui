@@ -1,6 +1,9 @@
 import type { ReactNode, HTMLAttributes } from "react";
 import type { PaginationProps } from "../core/pagination";
-import type { TableDensity } from "../components/primitives/table";
+import type {
+  CaptionSide,
+  TableDensity,
+} from "../components/primitives/table";
 
 export type DataTableSortDirection = "ascend" | "descend";
 export interface DataTableSortState { key: string; direction: DataTableSortDirection }
@@ -21,8 +24,8 @@ export interface DataTablePagination extends Omit<PaginationProps, "total"> {
 }
 export interface DataTableProps<T = Record<string, unknown>> {
   children?: ReactNode;
-  columns?: DataTableColumn<T>[];
-  dataSource?: T[];
+  columns?: readonly DataTableColumn<T>[];
+  dataSource?: readonly T[];
   rowKey?: keyof T | ((record: T, index: number) => string);
   loading?: boolean;
   loadingRows?: number;
@@ -53,7 +56,7 @@ export interface DataTableProps<T = Record<string, unknown>> {
   batchActions?: (keys: string[], clearSelection: () => void) => ReactNode;
   error?: ReactNode;
   caption?: ReactNode;
+  captionSide?: CaptionSide;
   containerClassName?: string;
   locale?: { emptyText?: ReactNode; totalText?: (total: number) => ReactNode; previousText?: ReactNode; nextText?: ReactNode };
 }
-

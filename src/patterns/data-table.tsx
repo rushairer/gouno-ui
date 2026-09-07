@@ -50,6 +50,7 @@ export function DataTable<T = Record<string, unknown>>({
   batchActions,
   error,
   caption,
+  captionSide = "top",
   containerClassName,
 }: DataTableProps<T>) {
   const [internalSort, setInternalSort] = useState<
@@ -170,15 +171,12 @@ export function DataTable<T = Record<string, unknown>>({
 
   if (!columns)
     return (
-      <Table
-        density={density}
-        bordered={bordered}
-        stickyHeader={stickyHeader}
-        className={className}
-        containerClassName={containerClassName}
-      >
-        {children}
-      </Table>
+      <div data-slot="data-table" className={cn("w-full min-w-0", className)}>
+        <Table density={density} bordered={bordered} stickyHeader={stickyHeader} containerClassName={containerClassName}>
+          {caption !== undefined && <TableCaption captionSide={captionSide}>{caption}</TableCaption>}
+          {children}
+        </Table>
+      </div>
     );
   return (
     <div
@@ -195,7 +193,9 @@ export function DataTable<T = Record<string, unknown>>({
         stickyHeader={stickyHeader}
         containerClassName={containerClassName}
       >
-        {caption && <TableCaption>{caption}</TableCaption>}
+        {caption !== undefined && (
+          <TableCaption captionSide={captionSide}>{caption}</TableCaption>
+        )}
         <TableHeader>
           <TableRow>
             {expandedRowRender && (

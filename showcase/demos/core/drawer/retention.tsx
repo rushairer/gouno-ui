@@ -5,11 +5,11 @@ export default function DrawerRetention() {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("尚未打开");
   return (
-    <Space direction="vertical">
+    <Space orientation="vertical">
       <Button onClick={() => setOpen(true)}>保留草稿与自定义区域</Button>
       <Drawer
         open={open}
-        ariaLabel="自定义抽屉"
+        aria-label="自定义抽屉"
         onOpenChange={setOpen}
         destroyOnClose={false}
         mask={false}

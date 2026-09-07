@@ -20,7 +20,7 @@ export default function FormLayoutsDemo() {
     "填写邮箱后提交，空值或格式错误会定位到字段。",
   );
   return (
-    <Space direction="vertical" align="stretch">
+    <Space orientation="vertical" align="stretch">
       <Select
         aria-label="表单布局"
         value={layout}

@@ -77,7 +77,8 @@ export function Pagination({
     <Button
       key={`${type}-${target}`}
       size={size === "small" ? "small" : "middle"}
-      variant={type === "page" && target === current ? "primary" : "secondary"}
+      variant={type === "page" && target === current ? "solid" : "outline"}
+      color={type === "page" && target === current ? "primary" : "default"}
       disabled={disabled || unavailable}
       aria-label={type === "page" ? `Page ${target}` : type === "prev" ? String(prevText) : String(nextText)}
       aria-current={type === "page" && target === current ? "page" : undefined}

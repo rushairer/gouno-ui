@@ -2,7 +2,7 @@ import { Select, Space } from "../../../../src/core";
 
 export default function Example8() {
   return (
-    <Space direction="vertical">
+    <Space orientation="vertical">
       <Select size="small" placeholder="请选择">
         <option value="a">Small</option>
       </Select>

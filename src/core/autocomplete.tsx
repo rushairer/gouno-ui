@@ -5,18 +5,18 @@ export interface AutoCompleteProps extends Omit<InputHTMLAttributes<HTMLInputEle
   options: readonly string[];
   value?: string;
   defaultValue?: string;
-  onValueChange?: (value: string) => void;
+  onChange?: (value: string) => void;
   emptyText?: string;
 }
 
-export function AutoComplete({ options, value, defaultValue = "", onValueChange, emptyText = "No options", className, ...props }: AutoCompleteProps) {
+export function AutoComplete({ options, value, defaultValue = "", onChange, emptyText = "No options", className, ...props }: AutoCompleteProps) {
   const [inner, setInner] = useState(defaultValue);
   const [open, setOpen] = useState(false);
   const [highlighted, setHighlighted] = useState(0);
   const id = useId();
   const current = value ?? inner;
   const matches = options.filter((option) => option.toLowerCase().includes(current.toLowerCase()));
-  const update = (next: string) => { if (value === undefined) setInner(next); onValueChange?.(next); };
+  const update = (next: string) => { if (value === undefined) setInner(next); onChange?.(next); };
   const choose = (option: string) => { update(option); setOpen(false); setHighlighted(0); };
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "ArrowDown") { event.preventDefault(); setOpen(true); setHighlighted((index) => Math.min(index + 1, Math.max(matches.length - 1, 0))); }

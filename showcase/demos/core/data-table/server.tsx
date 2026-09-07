@@ -21,7 +21,7 @@ export default function ServerPagination() {
     : records;
   const response = sorted.slice((page - 1) * pageSize, page * pageSize);
   return (
-    <Space direction="vertical" align="stretch">
+    <Space orientation="vertical" align="stretch">
       <DataTable
         rowKey="id"
         columns={[

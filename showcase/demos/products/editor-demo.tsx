@@ -18,10 +18,10 @@ export function EditorDemo() {
         description="命令栏、编辑画布、Inspector、预览和保存状态。"
         actions={
           <ActionGroup>
-            <Button variant="secondary" onClick={() => setPreview(!preview)}>
+            <Button variant="outline" onClick={() => setPreview(!preview)}>
               切换预览
             </Button>
-            <Button variant="primary" onClick={() => setSaveState("saved")}>
+            <Button variant="solid" color="primary" onClick={() => setSaveState("saved")}>
               保存草稿
             </Button>
           </ActionGroup>
@@ -149,20 +149,20 @@ export function EditorDemo() {
             </Feedback>
             <ActionGroup>
               <Button
-                size="sm"
+                size="small"
                 variant="ghost"
                 onClick={() => setSaveState("dirty")}
               >
                 标记未保存
               </Button>
               <Button
-                size="sm"
-                variant="danger"
+                size="small"
+                variant="solid" color="error"
                 onClick={() => setSaveState("failed")}
               >
                 模拟保存失败
               </Button>
-              <Button size="sm" variant="secondary" onClick={() => setSaveState("conflict")}>
+              <Button size="small" variant="outline" onClick={() => setSaveState("conflict")}>
                 模拟版本冲突
               </Button>
             </ActionGroup>

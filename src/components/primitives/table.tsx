@@ -4,6 +4,23 @@ import * as React from "react";
 import { cn } from "../../lib/utils";
 
 export type TableDensity = "default" | "compact" | "touch";
+export type CaptionSide = "top" | "bottom";
+export interface TableProps extends React.ComponentProps<"table"> {
+  density?: TableDensity;
+  bordered?: boolean;
+  fixed?: boolean;
+  stickyHeader?: boolean;
+  containerClassName?: string;
+}
+export type TableHeaderProps = React.ComponentProps<"thead">;
+export type TableBodyProps = React.ComponentProps<"tbody">;
+export type TableFooterProps = React.ComponentProps<"tfoot">;
+export type TableRowProps = React.ComponentProps<"tr">;
+export type TableHeadProps = React.ComponentProps<"th">;
+export type TableCellProps = React.ComponentProps<"td">;
+export interface TableCaptionProps extends React.ComponentProps<"caption"> {
+  captionSide?: CaptionSide;
+}
 
 function Table({
   density = "default",
@@ -13,13 +30,7 @@ function Table({
   containerClassName,
   className,
   ...props
-}: React.ComponentProps<"table"> & {
-  density?: TableDensity;
-  bordered?: boolean;
-  fixed?: boolean;
-  stickyHeader?: boolean;
-  containerClassName?: string;
-}) {
+}: TableProps) {
   return (
     <div
       data-slot="table-container"
@@ -62,7 +73,7 @@ function Table({
   );
 }
 
-function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
+function TableHeader({ className, ...props }: TableHeaderProps) {
   return (
     <thead
       data-slot="table-header"
@@ -72,7 +83,7 @@ function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
   );
 }
 
-function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
+function TableBody({ className, ...props }: TableBodyProps) {
   return (
     <tbody
       data-slot="table-body"
@@ -82,7 +93,7 @@ function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
   );
 }
 
-function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
+function TableFooter({ className, ...props }: TableFooterProps) {
   return (
     <tfoot
       data-slot="table-footer"
@@ -95,7 +106,7 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
   );
 }
 
-function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
+function TableRow({ className, ...props }: TableRowProps) {
   return (
     <tr
       data-slot="table-row"
@@ -108,7 +119,7 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
   );
 }
 
-function TableHead({ className, ...props }: React.ComponentProps<"th">) {
+function TableHead({ className, ...props }: TableHeadProps) {
   return (
     <th
       data-slot="table-head"
@@ -121,7 +132,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   );
 }
 
-function TableCell({ className, ...props }: React.ComponentProps<"td">) {
+function TableCell({ className, ...props }: TableCellProps) {
   return (
     <td
       data-slot="table-cell"
@@ -136,19 +147,19 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
 
 function TableCaption({
   className,
-  captionPosition = "top",
+  captionSide = "top",
   ...props
-}: React.ComponentProps<"caption"> & { captionPosition?: "top" | "bottom" }) {
+}: TableCaptionProps) {
   return (
     <caption
       data-slot="table-caption"
-      data-caption-position={captionPosition}
+      data-caption-side={captionSide}
       className={cn(
         "px-4 py-3 text-center text-sm leading-6 text-muted-foreground",
-        captionPosition === "bottom" &&
-          "caption-side-bottom border-t border-border/60",
-        captionPosition === "top" &&
-          "caption-side-top border-b border-border/60",
+        captionSide === "bottom" &&
+          "caption-side-bottom shadow-[inset_0_1px_0_color-mix(in_srgb,var(--border)_60%,transparent)]",
+        captionSide === "top" &&
+          "caption-side-top shadow-[inset_0_-1px_0_color-mix(in_srgb,var(--border)_60%,transparent)]",
         className,
       )}
       {...props}

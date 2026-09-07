@@ -3,7 +3,7 @@ import { Input, Space } from "../../../../src/core";
 
 export default function Example2() {
   return (
-    <Space direction="vertical">
+    <Space orientation="vertical">
       <Input size="small" prefix={<Search />} placeholder="Small" />
       <Input size="middle" suffix=".com" placeholder="Middle" />
       <Input size="large" placeholder="Large" />

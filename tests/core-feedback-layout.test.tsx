@@ -6,16 +6,16 @@ import { Badge, CheckableTag, Drawer, InputOTP, Layout, LayoutContent, LayoutHea
 describe("Core layout and feedback", () => {
   it("renders layout regions and splitter semantics",()=>{render(<><Layout><LayoutHeader>Header</LayoutHeader><LayoutContent>Content</LayoutContent></Layout><Splitter first="A" second="B"/></>);expect(screen.getByText("Header")).toBeTruthy();expect(screen.getByRole("separator")).toBeTruthy();});
   it("stretches vertical children by default like Ant Design", () => {
-    const { container } = render(<Space direction="vertical"><Badge count={5}>Inbox</Badge><CheckableTag defaultChecked>TypeScript</CheckableTag></Space>);
+    const { container } = render(<Space orientation="vertical"><Badge count={5}>Inbox</Badge><CheckableTag defaultChecked>TypeScript</CheckableTag></Space>);
     expect(container.firstElementChild?.className).not.toContain("items-start");
     expect(container.firstElementChild?.className).not.toContain("items-end");
   });
   it("allows vertical Space children to stretch explicitly", () => {
-    const { container } = render(<Space direction="vertical" align="stretch"><button>Full width</button></Space>);
+    const { container } = render(<Space orientation="vertical" align="stretch"><button>Full width</button></Space>);
     expect(container.firstElementChild?.className).toContain("items-stretch");
   });
   it("supports block containers and split content", () => {
-    const { container } = render(<Space direction="vertical" block split={<span>|</span>}><button>A</button><button>B</button></Space>);
+    const { container } = render(<Space orientation="vertical" block split={<span>|</span>}><button>A</button><button>B</button></Space>);
     const root = container.firstElementChild!;
     expect(root.getAttribute("data-slot")).toBe("space");
     expect(root.getAttribute("data-block")).toBe("true");

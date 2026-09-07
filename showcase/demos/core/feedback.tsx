@@ -92,7 +92,6 @@ function TourDemo() {
 
 const modalApi = [
   { name: "open", description: "受控显示状态", type: "boolean" },
-  { name: "isOpen", description: "受控显示状态的兼容别名", type: "boolean" },
   {
     name: "defaultOpen",
     description: "非受控初始打开状态",
@@ -194,7 +193,7 @@ const modalApi = [
     type: "{ header?: CSSProperties; body?: CSSProperties; footer?: CSSProperties; mask?: CSSProperties }",
   },
   {
-    name: "ariaLabel",
+    name: "aria-label",
     description: "没有可见标题时的可访问名称",
     type: "string",
   },
@@ -263,7 +262,7 @@ export const feedbackDocuments: Record<string, ComponentDocument> = {
       <Empty
         title="暂无数据"
         description="创建第一条记录后会显示在这里。"
-        action={<Button variant="primary">新建</Button>}
+        action={<Button variant="solid" color="primary">新建</Button>}
       />
     ),
   },
@@ -301,7 +300,7 @@ export const feedbackDocuments: Record<string, ComponentDocument> = {
     description: "展示任务完成进度。",
     code: "<Progress value={60} />",
     render: () => (
-      <Space direction="vertical">
+      <Space orientation="vertical">
         <Progress value={60} />
         <Progress value={100} />
       </Space>
@@ -312,7 +311,7 @@ export const feedbackDocuments: Record<string, ComponentDocument> = {
     description: "内容加载前的结构占位。",
     code: '<Skeleton className="h-8 w-full" />',
     render: () => (
-      <Space direction="vertical">
+      <Space orientation="vertical">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-24 w-full" />
       </Space>
@@ -452,7 +451,7 @@ export const feedbackDocuments: Record<string, ComponentDocument> = {
     code: '<Popconfirm title="确认删除？"><Button>删除</Button></Popconfirm>',
     render: () => (
       <Popconfirm title="确认删除？" description="删除后无法恢复。" danger>
-        <Button variant="danger">删除</Button>
+        <Button variant="solid" color="error">删除</Button>
       </Popconfirm>
     ),
   },

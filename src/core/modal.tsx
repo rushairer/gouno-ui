@@ -24,7 +24,6 @@ const closeText = () =>
 export interface ModalProps {
   open?: boolean;
   defaultOpen?: boolean;
-  isOpen?: boolean;
   title?: ReactNode;
   description?: ReactNode;
   children: ReactNode;
@@ -38,7 +37,7 @@ export interface ModalProps {
   closeOnEsc?: boolean;
   closeOnBackdrop?: boolean;
   showCloseButton?: boolean;
-  ariaLabel?: string;
+  "aria-label"?: string;
   contentStyle?: CSSProperties;
   loading?: boolean;
   centered?: boolean;
@@ -62,7 +61,6 @@ export interface ModalProps {
 export function Modal({
   open,
   defaultOpen = false,
-  isOpen,
   title,
   description,
   children,
@@ -76,7 +74,7 @@ export function Modal({
   closeOnEsc = true,
   closeOnBackdrop = false,
   showCloseButton = true,
-  ariaLabel,
+  "aria-label": ariaLabel,
   contentStyle,
   loading = false,
   centered = true,
@@ -94,8 +92,8 @@ export function Modal({
 }: ModalProps) {
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const previousFocus = useRef<HTMLElement | null>(null);
-  const controlled = open !== undefined || isOpen !== undefined;
-  const visible = open ?? isOpen ?? internalOpen;
+  const controlled = open !== undefined;
+  const visible = open ?? internalOpen;
   const retained = useOverlayBody(children, visible, destroyOnClose);
   const changeOpen = (next: boolean) => {
     if (!controlled) setInternalOpen(next);
@@ -198,7 +196,7 @@ export function Modal({
                     {cancelText}
                   </Button>
                   <Button
-                    variant="primary"
+                    variant="solid" color="primary"
                     {...okButtonProps}
                     loading={confirmLoading || okButtonProps?.loading}
                     onClick={(event) => {

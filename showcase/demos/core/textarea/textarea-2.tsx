@@ -2,7 +2,7 @@ import { Space, Textarea } from "../../../../src/core";
 
 export default function Example6() {
   return (
-    <Space direction="vertical">
+    <Space orientation="vertical">
       <Textarea size="small" placeholder="Small" />
       <Textarea size="large" placeholder="Large" />
       <Textarea status="warning" defaultValue="需要确认" />

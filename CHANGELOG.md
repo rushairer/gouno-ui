@@ -25,6 +25,7 @@ All notable changes to this project are documented here.
 
 ### Changed
 
+- Renamed the low-level `TableCaption` position prop from `captionPosition` to `position`; `DataTable` exposes the contextual `captionPosition` prop instead.
 - Widened the desktop and mobile Showcase navigation surfaces and reserved flexible label space so progress badges never cover long component names.
 - Replaced status-pill uses of Badge in Showcase product scenarios and data examples with the semantically correct Tag component.
 - Expanded Showcase Data Display examples to cover DataTable behavior and selection state.
@@ -39,6 +40,7 @@ All notable changes to this project are documented here.
 
 ### Fixed
 
+- Restored a visible separator between `DataTable` captions and table content in both top and bottom positions.
 - Prevented vertical Space from stretching inline Badge and CheckableTag children to the full container width; `align="stretch"` remains available for intentional full-width layouts.
 - Kept code syntax colors synchronized with the active light, dark, system, and brand theme tokens instead of using a fixed editor theme.
 - Centered single-icon buttons by removing empty label spans and applying the shared icon wrapper geometry.

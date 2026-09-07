@@ -45,7 +45,6 @@ export interface DrawerProps extends Omit<
 export function Drawer({
   open,
   defaultOpen = false,
-  isOpen,
   title,
   description,
   children,
@@ -57,7 +56,7 @@ export function Drawer({
   closeOnEsc = true,
   closeOnBackdrop = true,
   showCloseButton = true,
-  ariaLabel,
+  "aria-label": ariaLabel,
   contentStyle,
   placement = "right",
   width = 378,
@@ -71,8 +70,8 @@ export function Drawer({
 }: DrawerProps) {
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const previousFocus = useRef<HTMLElement | null>(null);
-  const controlled = open !== undefined || isOpen !== undefined;
-  const visible = open ?? isOpen ?? internalOpen;
+  const controlled = open !== undefined;
+  const visible = open ?? internalOpen;
   const retained = useOverlayBody(children, visible, destroyOnClose);
   const changeOpen = (next: boolean) => {
     if (!controlled) setInternalOpen(next);

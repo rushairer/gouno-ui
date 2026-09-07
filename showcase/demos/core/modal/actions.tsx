@@ -6,7 +6,7 @@ export default function ModalActions() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("尚未保存");
   return (
-    <Space direction="vertical">
+    <Space orientation="vertical">
       <Button onClick={() => setOpen(true)}>默认确认操作</Button>
       <Modal
         open={open}
@@ -17,7 +17,7 @@ export default function ModalActions() {
         confirmLoading={saving}
         okText="保存"
         cancelText="暂不保存"
-        okButtonProps={{ variant: "primary" }}
+        okButtonProps={{ variant: "solid", color: "primary" }}
         cancelButtonProps={{ variant: "text" }}
         closeOnEsc={!saving}
         closeOnBackdrop={false}

@@ -7,7 +7,7 @@ export function ControlledPagination() {
     "选择页码、调整每页数量，或输入页码后按 Enter。",
   );
   return (
-    <Space direction="vertical">
+    <Space orientation="vertical">
       <Pagination
         total={286}
         page={page}

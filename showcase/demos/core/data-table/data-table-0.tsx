@@ -12,7 +12,7 @@ function DataTableDemo() {
     { id: "docs", name: "Docs", status: "Stable", score: 91 },
   ];
   return (
-    <Space direction="vertical" className="w-full" size="lg">
+    <Space orientation="vertical" className="w-full" gap="lg">
       <div className="flex w-full flex-wrap items-center justify-between gap-3 rounded-lg border bg-muted/20 p-3">
         <div>
           <Text>产品目录</Text>
@@ -48,7 +48,7 @@ function DataTableDemo() {
             dataIndex: "status",
             render: (value) => (
               <Tag
-                tone={
+                color={
                   value === "Stable"
                     ? "success"
                     : value === "Draft"

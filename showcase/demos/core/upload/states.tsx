@@ -11,7 +11,7 @@ export default function UploadStatesDemo() {
     "最多选择两个文本文件，每个文件最多 1 KB。",
   );
   return (
-    <Space direction="vertical" align="stretch">
+    <Space orientation="vertical" align="stretch">
       <Select
         aria-label="上传状态"
         value={state}
