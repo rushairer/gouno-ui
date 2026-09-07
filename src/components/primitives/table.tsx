@@ -136,17 +136,19 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
 
 function TableCaption({
   className,
-  side = "top",
+  captionPosition = "top",
   ...props
-}: React.ComponentProps<"caption"> & { side?: "top" | "bottom" }) {
+}: React.ComponentProps<"caption"> & { captionPosition?: "top" | "bottom" }) {
   return (
     <caption
       data-slot="table-caption"
-      data-side={side}
+      data-caption-position={captionPosition}
       className={cn(
         "px-4 py-3 text-center text-sm leading-6 text-muted-foreground",
-        side === "bottom" && "caption-side-bottom border-t border-border/60",
-        side === "top" && "caption-side-top border-b border-border/60",
+        captionPosition === "bottom" &&
+          "caption-side-bottom border-t border-border/60",
+        captionPosition === "top" &&
+          "caption-side-top border-b border-border/60",
         className,
       )}
       {...props}

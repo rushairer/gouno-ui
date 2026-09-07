@@ -12,7 +12,7 @@ import {
 export default function GroupedTableDemo() {
   return (
     <Table bordered>
-      <TableCaption side="bottom">
+      <TableCaption captionPosition="bottom">
         季度汇总：使用原生表头分组和合并单元格
       </TableCaption>
       <TableHeader>

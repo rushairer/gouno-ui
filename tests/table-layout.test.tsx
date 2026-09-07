@@ -58,7 +58,7 @@ describe("Table layout contract", () => {
   it("centers caption text with symmetric vertical padding", () => {
     render(
       <Table>
-        <TableCaption side="bottom">Table caption</TableCaption>
+        <TableCaption captionPosition="bottom">Table caption</TableCaption>
         <TableBody>
           <TableRow>
             <TableCell>Cell</TableCell>
@@ -71,7 +71,7 @@ describe("Table layout contract", () => {
     expect(caption.className).toContain("text-center");
     expect(caption.className).toContain("leading-6");
     expect(caption.className).not.toContain("pt-3");
-    expect(caption.getAttribute("data-side")).toBe("bottom");
+    expect(caption.getAttribute("data-caption-position")).toBe("bottom");
   });
 
   it("uses the semantic top position by default", () => {
@@ -86,7 +86,7 @@ describe("Table layout contract", () => {
       </Table>,
     );
     const caption = screen.getByText("Top caption");
-    expect(caption.getAttribute("data-side")).toBe("top");
+    expect(caption.getAttribute("data-caption-position")).toBe("top");
     expect(caption.className).toContain("border-b");
   });
 });

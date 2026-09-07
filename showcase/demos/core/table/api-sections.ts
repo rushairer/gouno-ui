@@ -76,11 +76,11 @@ export const tableApiSections: ComponentDocument["apiSections"] = [
       },
       { name: "children", type: "ReactNode", description: "单元格内容" },
       {
-        name: "side",
+        name: "captionPosition",
         type: '"top" | "bottom"',
         defaultValue: '"top"',
         description:
-          "Caption 位置；默认遵循 HTML 语义放在表头上方，底部说明请显式使用 side=bottom",
+          "Caption 位置；默认遵循 HTML 语义放在表头上方，底部说明请显式使用 captionPosition=bottom",
       },
     ],
   },
