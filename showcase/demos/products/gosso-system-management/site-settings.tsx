@@ -40,28 +40,16 @@ export function SiteSettingsPanel() {
   return (
     <div className="flex flex-col gap-5">
       <PageHeader title="站点设置" description="维护 GOSSO 登录入口的产品名称、品牌资源和登录页文案，并在保存前预览结果。" />
-      {saved ? <Alert>站点设置已保存（Showcase 模拟）。</Alert> : null}
+      {saved ? <Alert type="success" showIcon title="站点设置已保存（Showcase 模拟）。" /> : null}
 
       <form onSubmit={save} className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
         <Card padding="lg" className="flex flex-col gap-5">
-          <FormField label="产品名称" required>
-            <Input value={settings.productName} onChange={(event) => update("productName", event.target.value)} maxLength={120} />
-          </FormField>
-          <FormField label="Logo URL">
-            <Input value={settings.logoUrl} onChange={(event) => update("logoUrl", event.target.value)} placeholder="https://…/logo.svg" />
-          </FormField>
-          <FormField label="Favicon URL">
-            <Input value={settings.faviconUrl} onChange={(event) => update("faviconUrl", event.target.value)} placeholder="https://…/favicon.svg" />
-          </FormField>
-          <FormField label="登录标题">
-            <Input value={settings.loginTitle} onChange={(event) => update("loginTitle", event.target.value)} maxLength={160} />
-          </FormField>
-          <FormField label="登录说明">
-            <Textarea value={settings.loginDescription} onChange={(event) => update("loginDescription", event.target.value)} rows={3} maxLength={500} showCount />
-          </FormField>
-          <FormField label="登录背景 URL / Base64" hint="真实产品支持常见网络图片 URL 和 Base64 图片源，保存前仍由服务端执行长度/类型校验。">
-            <Textarea value={settings.loginBackground} onChange={(event) => update("loginBackground", event.target.value)} rows={5} spellCheck={false} />
-          </FormField>
+          <FormField label="产品名称" required><Input value={settings.productName} onChange={(event) => update("productName", event.target.value)} maxLength={120} /></FormField>
+          <FormField label="Logo URL"><Input value={settings.logoUrl} onChange={(event) => update("logoUrl", event.target.value)} placeholder="https://…/logo.svg" /></FormField>
+          <FormField label="Favicon URL"><Input value={settings.faviconUrl} onChange={(event) => update("faviconUrl", event.target.value)} placeholder="https://…/favicon.svg" /></FormField>
+          <FormField label="登录标题"><Input value={settings.loginTitle} onChange={(event) => update("loginTitle", event.target.value)} maxLength={160} /></FormField>
+          <FormField label="登录说明"><Textarea value={settings.loginDescription} onChange={(event) => update("loginDescription", event.target.value)} rows={3} maxLength={500} showCount /></FormField>
+          <FormField label="登录背景 URL / Base64" hint="真实产品支持常见网络图片 URL 和 Base64 图片源，保存前仍由服务端执行长度/类型校验。"><Textarea value={settings.loginBackground} onChange={(event) => update("loginBackground", event.target.value)} rows={5} spellCheck={false} /></FormField>
           <div className="sticky bottom-0 -mx-6 -mb-6 flex items-center justify-between gap-3 border-t bg-card/95 px-6 py-4 backdrop-blur">
             <Text size="sm" tone="muted">{dirty ? "有未保存修改" : "所有修改已保存"}</Text>
             <Button type="submit" variant="solid" color="primary" icon={<Save />} disabled={!dirty}>保存设置</Button>
@@ -80,11 +68,7 @@ export function SiteSettingsPanel() {
                 </div>
                 <div className="text-xl font-semibold">{settings.loginTitle || settings.productName || "登录"}</div>
                 <Text size="sm" tone="muted" className="mt-2 leading-relaxed">{settings.loginDescription || "安全登录并继续。"}</Text>
-                <div className="mt-6 grid gap-3">
-                  <div className="h-9 rounded-md border bg-muted/30" />
-                  <div className="h-9 rounded-md border bg-muted/30" />
-                  <div className="h-9 rounded-md bg-primary" />
-                </div>
+                <div className="mt-6 grid gap-3"><div className="h-9 rounded-md border bg-muted/30" /><div className="h-9 rounded-md border bg-muted/30" /><div className="h-9 rounded-md bg-primary" /></div>
               </div>
             </div>
           </Card>

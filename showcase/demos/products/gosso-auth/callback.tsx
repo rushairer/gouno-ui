@@ -28,7 +28,7 @@ export function GossoCallbackDemo() {
           </div>
         ) : (
           <div className="flex flex-col gap-4">
-            <Alert variant="destructive">CALLBACK_PARAMS_MISSING · 缺少或无效的授权回调参数。</Alert>
+            <Alert type="error" showIcon title="CALLBACK_PARAMS_MISSING" description="缺少或无效的授权回调参数。" />
             <Button variant="solid" color="primary" className="w-full" onClick={() => setState("loading")}>返回首页并重试</Button>
           </div>
         )}

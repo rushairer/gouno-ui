@@ -29,7 +29,7 @@ export function GossoResetPasswordDemo() {
 
   return (
     <AuthSurface route="/reset-password#token=fixture" title="重置密码" description="设置一个新的高强度密码以恢复账户访问。">
-      {message ? <Alert variant={success ? "default" : "destructive"} className="mb-5">{message}</Alert> : null}
+      {message ? <Alert type={success ? "success" : "error"} showIcon title={message} className="mb-5" /> : null}
       {!success ? (
         <form onSubmit={submit} className="flex flex-col gap-4">
           <FormField label="新密码" hint="至少 12 个字符" required>

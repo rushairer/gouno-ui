@@ -105,3 +105,20 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Reasoning:** Showcase now represents every user-facing Gosso Admin route family without copying API/auth/session implementation. This is a migration milestone, not proof that every local block deserves a design-system abstraction.
 - **API impact:** none beyond separately admitted decisions PD-010/PD-011.
 - **Follow-up:** use the completed Gosso Admin corpus as primary evidence while moving to Blog Admin. Blog Admin should challenge PageHeader, DataTable-related candidates and other assumptions instead of mechanically copying Gosso structure.
+
+### PD-015 — Alert replaces primitive leakage with a canonical feedback contract
+- **Status:** accepted
+- **Owner:** Core
+- **Evidence:** Gosso Login, Callback, password reset, account settings and system management all use persistent in-flow feedback. The shadcn primitive grid assumed dedicated child slots, while product pages commonly supplied direct text, producing a zero-width text column and visibly broken vertical wrapping in standalone pages.
+- **Reference review:** HTML/ARIA alert semantics, current Ant Design Alert high-level API and semantic DOM customization; deprecated Ant aliases were explicitly excluded under NAME-01/COMP-02.
+- **Reasoning:** the defect is not a product styling problem; Core exposed an implementation primitive instead of a stable design-system contract. Semantic severity must be `type`, while `variant` remains a pure visual dimension. Close lifecycle belongs under one `closable` configuration surface. `children` remains standard React composition for additional custom body content and is not treated as a title alias.
+- **API impact:** canonical Alert adds `title`, `description`, `type`, `showIcon`, `icon`, `action`, `closable`, `banner`, `variant=outlined|filled`, semantic `classNames/styles`, and `Alert.ErrorBoundary`. Remove public `variant=default|destructive` semantics and do not introduce deprecated `message/onClose/afterClose/closeIcon/closeText` aliases.
+- **Follow-up:** Blog Admin should validate real notification/error density and whether the chosen outlined/filled visual treatment remains appropriate across products without expanding semantic type names.
+
+### PD-016 — Account Settings adopts the shared PageHeader page grammar
+- **Status:** accepted
+- **Owner:** Gouno validation / Product-local
+- **Evidence:** Account Settings originally put each tab title/description inside its only large Card, while System Management used the re-admitted `PageHeader` outside content surfaces. Both are route-backed Gosso Admin settings/management pages under the same `AppShell` content track.
+- **Reasoning:** this was visual drift created by migration order, not two intentionally different product concepts. The stable page grammar is `fixture context → route Tabs → PageHeader → content surfaces`. Cards group content; they do not own the route-level page title. This also revalidates PD-011 on a second major Gosso page family.
+- **API impact:** none beyond existing `PageHeader`; Account Settings switches its Tabs call site to canonical `activeKey/items[].key` while touched.
+- **Follow-up:** Blog Admin migration should challenge the same grammar. If a real page intentionally needs a contained card title, keep that as card-local content rather than extending PageHeader.

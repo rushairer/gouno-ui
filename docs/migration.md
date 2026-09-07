@@ -62,6 +62,43 @@ Pre-reset `value/defaultValue/items[].value` input is temporarily accepted only 
 
 For custom composition, use `Tabs` with `TabList`, `Tab`, `TabPanel`; do not create another active-state write path.
 
+## Alert high-level API alignment
+
+Alert no longer exposes the underlying shadcn primitive contract as public API. Semantic status and visual form are separate:
+
+```tsx
+<Alert
+  type="warning"
+  showIcon
+  title="High privilege scope"
+  description="Only assign admin to trusted clients."
+/>
+```
+
+Migrate old primitive-style call sites:
+
+```text
+variant="destructive" → type="error"
+variant="default"     → type="info" (or the actual success/warning semantic)
+```
+
+`variant` now means only `outlined | filled`. The canonical high-level surface follows current Ant Design semantics: `title`, `description`, `type`, `showIcon`, `icon`, `action`, `closable`, `banner`, `variant`, `classNames`, `styles`, plus `Alert.ErrorBoundary`.
+
+The current Ant Design aliases that are already deprecated there are deliberately not introduced here: `message`, top-level `onClose`, `afterClose`, `closeIcon`, and `closeText`. Put close lifecycle/configuration under `closable` instead:
+
+```tsx
+<Alert
+  title="Closable"
+  closable={{
+    "aria-label": "Dismiss alert",
+    onClose: () => console.log("closing"),
+    afterClose: () => console.log("closed"),
+  }}
+/>
+```
+
+`children` remains a standard React composition slot for additional custom body content after `title/description`; it is not a second title write path.
+
 ## DataTable status
 
 System Management plus Blog Admin list-page prior art is enough to trigger DataTable review, but not enough to re-admit the historical feature-bag API. Current migrations use Core `Table`/`Pagination` plus product-local filter/action/state composition. See PD-012.
@@ -69,7 +106,7 @@ System Management plus Blog Admin list-page prior art is enough to trigger DataT
 ## Curated subpaths
 
 ```ts
-import { Button, Table, Pagination, Tabs } from "@gouno/ui/core";
+import { Alert, Button, Table, Pagination, Tabs } from "@gouno/ui/core";
 import { ThemeProvider, ThemeToggle } from "@gouno/ui/theme";
 import { AppShell, PageContainer, PageHeader } from "@gouno/ui/gouno";
 ```
@@ -80,6 +117,8 @@ Do not use source wildcard or Legacy paths.
 
 Product workspace navigation represents real migration only. Gouno UI workspace documents canonical APIs only. Showcase-local documentation utilities are not public-abstraction evidence by themselves; see PD-009.
 
+Standalone product fixtures may add Showcase-only navigation chrome around the real page surface. That navigation is tooling and must not be promoted into `AppShell` or authentication product API merely because it is useful inside the documentation environment.
+
 ## Compatibility assessment
 
-The product-validation reset and canonical renames are breaking changes for consumers that update to the next package artifact. Treat publication accordingly under SemVer/release notes. Existing products fixed to older immutable vendored archives can migrate page-by-page rather than mechanically replacing old wrappers with new ones.
+The product-validation reset and canonical renames are breaking changes for consumers that update to the next package artifact. Alert's primitive-to-high-level API correction is also breaking for consumers that used `variant="destructive|default"` as semantic colors. Treat publication accordingly under SemVer/release notes. Existing products fixed to older immutable vendored archives can migrate page-by-page rather than mechanically replacing old wrappers with new ones.

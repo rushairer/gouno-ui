@@ -7,5 +7,6 @@ import { dataEntryDocuments } from "./data-entry";
 import { navigationDocuments } from "./navigation";
 import { dataDisplayDocuments } from "./data-display";
 import { feedbackDocuments } from "./feedback";
+import { alertDocuments } from "./alert";
 import { otherDocuments } from "./other";
-export const coreDocuments: Record<string, ComponentDocument> = { ...generalDocuments, ...badgeDocuments, ...tagDocuments, ...layoutDocuments, ...dataEntryDocuments, ...navigationDocuments, ...dataDisplayDocuments, ...feedbackDocuments, ...otherDocuments };
+export const coreDocuments: Record<string, ComponentDocument> = { ...generalDocuments, ...badgeDocuments, ...tagDocuments, ...layoutDocuments, ...dataEntryDocuments, ...navigationDocuments, ...dataDisplayDocuments, ...feedbackDocuments, ...alertDocuments, ...otherDocuments };

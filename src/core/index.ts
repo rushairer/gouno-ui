@@ -20,7 +20,8 @@ export type { ControlSize } from "./control-types";
 export { Tabs, TabList, Tab, TabPanel, type TabsProps, type TabItem, type TabsType, type TabsPosition } from "./tabs";
 export { Modal, type ModalProps } from "./modal";
 export { Drawer, type DrawerProps, type DrawerPlacement } from "./drawer";
-export { Alert, Skeleton } from "./feedback";
+export { Alert, type AlertProps, type AlertType, type AlertVariant, type AlertClosableConfig, type AlertSemantic, type AlertClassNames, type AlertStyles, type AlertErrorBoundaryProps } from "./alert";
+export { Skeleton } from "./feedback";
 export { Statistic, type StatisticProps } from "./statistic";
 export { Timeline, type TimelineProps, type TimelineItem } from "./timeline";
 export { Container, Stack, type StackProps } from "./layout-primitives";
@@ -75,7 +76,6 @@ export { Tour, type TourStep } from "./tour";
 
 export type {
   AffixProps,
-  AlertProps,
   BackTopProps,
   BreadcrumbProps,
   CalendarProps,

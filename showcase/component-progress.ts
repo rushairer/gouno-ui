@@ -14,6 +14,7 @@ const completedComponents = new Set([
   "core-table",
   "core-pagination",
   "core-tabs",
+  "core-alert",
   "core-modal",
   "core-drawer",
   "core-card",

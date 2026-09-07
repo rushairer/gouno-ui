@@ -22,7 +22,7 @@ import type {
 } from "./selection-controls";
 import type { FormActions, FormGrid, FormLayout, OverlayForm } from "./form";
 import type { Tab, TabList, TabPanel } from "./tabs";
-import type { Alert, Skeleton } from "./feedback";
+import type { Skeleton } from "./feedback";
 import type { Container } from "./layout-primitives";
 import type { Divider, Grid } from "./layout";
 import type { Breadcrumb } from "./breadcrumb";
@@ -105,7 +105,6 @@ export type OverlayFormProps = ComponentProps<typeof OverlayForm>;
 export type TabListProps = ComponentProps<typeof TabList>;
 export type TabProps = ComponentProps<typeof Tab>;
 export type TabPanelProps = ComponentProps<typeof TabPanel>;
-export type AlertProps = ComponentProps<typeof Alert>;
 export type SkeletonProps = ComponentProps<typeof Skeleton>;
 export type ContainerProps = ComponentProps<typeof Container>;
 export type DividerProps = ComponentProps<typeof Divider>;

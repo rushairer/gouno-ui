@@ -47,7 +47,7 @@ export function GossoLoginDemo() {
         title={scenario === "sudo" ? "验证敏感操作" : "统一身份中心"}
         description={scenario === "sudo" ? "对当前管理员进行强认证，再继续高风险管理操作。" : "安全登录并继续访问受保护的 Gouno 产品。"}
       >
-        {message ? <Alert className="mb-5">{message}</Alert> : null}
+        {message ? <Alert type="info" showIcon title={message} className="mb-5" /> : null}
 
         {scenario === "password" ? (
           <form onSubmit={submitPassword} className="flex flex-col gap-4">
@@ -69,7 +69,7 @@ export function GossoLoginDemo() {
                 <div className="flex items-center gap-2 font-medium"><Shield aria-hidden="true" className="size-4 text-primary" />Administrator</div>
                 <Text size="sm" tone="muted" className="mt-2">当前会话已登录；请输入身份验证器动态码或使用通行密钥完成 step-up。</Text>
               </div>
-            ) : <Alert>当前账号已通过密码验证，需要完成多因素认证。</Alert>}
+            ) : <Alert type="info" showIcon title="需要多因素认证" description="当前账号已通过密码验证，请完成第二因素。" />}
             <FormField label="动态验证码" required>
               <Input inputMode="numeric" maxLength={8} value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))} className="text-center text-xl font-semibold tracking-[0.28em]" />
             </FormField>

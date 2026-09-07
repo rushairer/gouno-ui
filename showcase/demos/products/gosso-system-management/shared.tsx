@@ -5,9 +5,7 @@ export function FixtureBanner({ route }: { route: string }) {
   return (
     <div className="flex flex-col gap-3 rounded-lg border bg-muted/30 p-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0">
-        <Text as="div" size="sm" className="font-medium">
-          真实产品路由
-        </Text>
+        <Text as="div" size="sm" className="font-medium">真实产品路由</Text>
         <Text size="xs" tone="muted" className="mt-0.5">
           <code className="font-mono">{route}</code> · Showcase 使用本地 fixture 表达真实交互状态。
         </Text>
@@ -18,7 +16,7 @@ export function FixtureBanner({ route }: { route: string }) {
 }
 
 export function StatusNotice({ children }: { children: ReactNode }) {
-  return <Alert>{children}</Alert>;
+  return <Alert type="success" showIcon title={children} />;
 }
 
 export function ConfirmAction({
@@ -43,32 +41,18 @@ export function ConfirmAction({
   const [open, setOpen] = useState(false);
   return (
     <>
-      <Button
-        size="small"
-        variant={color === "error" ? "solid" : "outline"}
-        color={color}
-        icon={icon}
-        disabled={disabled}
-        onClick={() => setOpen(true)}
-      >
-        {label}
-      </Button>
+      <Button size="small" variant={color === "error" ? "solid" : "outline"} color={color} icon={icon} disabled={disabled} onClick={() => setOpen(true)}>{label}</Button>
       <Modal
         open={open}
         title={title}
         description={description}
         onOpenChange={setOpen}
-        onOk={() => {
-          onConfirm();
-          setOpen(false);
-        }}
+        onOk={() => { onConfirm(); setOpen(false); }}
         okText={confirmText}
         cancelText="取消"
         okButtonProps={{ variant: "solid", color }}
       >
-        <Text size="sm" tone="muted">
-          Showcase 只更新当前 fixture，不会调用真实 GOSSO 管理 API。
-        </Text>
+        <Text size="sm" tone="muted">Showcase 只更新当前 fixture，不会调用真实 GOSSO 管理 API。</Text>
       </Modal>
     </>
   );

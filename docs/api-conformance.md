@@ -34,6 +34,7 @@
 | API-014 | Tabs canonical 高层 API 使用 `activeKey/defaultActiveKey/items[].key/onChange`，默认 line 视觉；Radix 保持行为/a11y。 | Tabs docs/tests / PD-010 |
 | API-015 | Showcase-local tooling 重复仅算辅助证据，不能单独创建公共抽象。 | architecture / PD-009 |
 | API-016 | Node.js 24 下 Pages 发布前必须通过 typecheck、tests、package build、Showcase build。 | workflow hardening |
+| API-017 | Alert 使用 `title/description/type/showIcon/icon/action/closable/banner/variant/classNames/styles` canonical API；语义 type 与视觉 variant 分离，并提供 `Alert.ErrorBoundary`。 | Alert docs/focused tests / PD-015 |
 
 ## 当前破坏式迁移说明
 
@@ -49,7 +50,7 @@ AdminPage  → PageContainer
 
 这不是兼容 alias。未来发布 package artifact 时应按 SemVer/迁移公告评估 breaking impact。当前使用旧 vendored archive 的产品可以在页面迁移前继续固定旧 artifact。
 
-Tabs 迁移同样采用单一 canonical 命名：
+Tabs 迁移采用单一 canonical 命名：
 
 ```text
 value         → activeKey
@@ -59,6 +60,16 @@ onValueChange → onChange
 ```
 
 旧值仅作为迁移期临时兼容输入，不是第二套文档 API，并应在下一个稳定 package release 前删除。
+
+Alert 不再暴露 shadcn primitive 的颜色化 `variant="default|destructive"`。迁移为：
+
+```text
+variant="destructive" → type="error"
+variant="default"     → type="info"（或按真实语义选择 success/warning）
+纯文本 children        → title（主要提示）或 description（补充说明）
+```
+
+Alert 的 canonical `variant` 只表示 `outlined|filled` 视觉形态。当前 Ant Design 已弃用的 `message`、顶层 `onClose/afterClose/closeIcon/closeText` 不作为兼容别名进入 Gouno API；关闭生命周期统一放入 `closable` 对象。
 
 ## Core 继续验证原则
 
