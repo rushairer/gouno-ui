@@ -6,6 +6,7 @@ export type TextSize = "xs" | "sm" | "md" | "lg";
 export type TextTone = "default" | "muted" | "danger" | "success";
 export interface HeadingProps extends HTMLAttributes<HTMLHeadingElement> { level?: HeadingLevel; children?: ReactNode; }
 export interface TextProps extends HTMLAttributes<HTMLElement> { as?: ElementType; size?: TextSize; tone?: TextTone; children?: ReactNode; }
+export interface TypographyProps extends HTMLAttributes<HTMLElement> { as?: ElementType; }
 
 export function Heading({ level = 2, children, className, ...props }: HeadingProps) {
   const Tag = `h${level}` as ElementType;
@@ -14,4 +15,8 @@ export function Heading({ level = 2, children, className, ...props }: HeadingPro
 
 export function Text({ as: Component = "p", size = "md", tone = "default", children, className, ...props }: TextProps) {
   return <Component {...props} data-slot="text" className={cn(size === "xs" ? "text-xs" : size === "sm" ? "text-sm" : size === "lg" ? "text-lg" : "text-base", tone === "muted" && "text-muted-foreground", tone === "danger" && "text-destructive", tone === "success" && "text-success", className)}>{children}</Component>;
+}
+
+export function Typography({ as: Component = "p", className, ...props }: TypographyProps) {
+  return <Component {...props} data-slot="typography" className={cn("text-sm text-foreground", className)} />;
 }

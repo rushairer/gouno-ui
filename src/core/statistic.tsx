@@ -1,4 +1,19 @@
-import * as React from "react";
+import type { ReactNode } from "react";
 import { cn } from "../lib/utils";
-export function Statistic({ title, value, prefix, suffix, className }: { title: React.ReactNode; value: React.ReactNode; prefix?: React.ReactNode; suffix?: React.ReactNode; className?: string }) { return <div className={cn("space-y-1", className)}><div className="text-sm text-muted-foreground">{title}</div><div className="text-2xl font-semibold">{prefix}{value}{suffix}</div></div>; }
-export function Timeline({ items, className }: { items: { title: React.ReactNode; description?: React.ReactNode }[]; className?: string }) { return <ol className={cn("space-y-4 border-l pl-4", className)}>{items.map((x,i)=><li key={i} className="relative"><span className="absolute -left-[21px] top-1 size-2 rounded-full bg-primary"/><div className="font-medium">{x.title}</div>{x.description&&<div className="text-sm text-muted-foreground">{x.description}</div>}</li>)}</ol>; }
+
+export interface StatisticProps {
+  title: ReactNode;
+  value: ReactNode;
+  prefix?: ReactNode;
+  suffix?: ReactNode;
+  className?: string;
+}
+
+export function Statistic({ title, value, prefix, suffix, className }: StatisticProps) {
+  return (
+    <div className={cn("space-y-1", className)}>
+      <div className="text-sm text-muted-foreground">{title}</div>
+      <div className="text-2xl font-semibold">{prefix}{value}{suffix}</div>
+    </div>
+  );
+}
