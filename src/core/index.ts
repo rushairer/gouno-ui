@@ -52,13 +52,13 @@ export { Carousel } from "./carousel";
 export { Slider } from "./slider";
 export { Rate } from "./rate";
 export { Segmented } from "./segmented";
-export { AutoComplete } from "./autocomplete";
+export { AutoComplete, type AutoCompleteProps } from "./autocomplete";
 export { Collapse } from "./collapse";
 export { Popover, PopoverTrigger, PopoverContent, PopoverAnchor, type OverlayPlacement, type PopoverContentProps } from "../components/primitives/popover";
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider, type TooltipContentProps } from "../components/primitives/tooltip";
 export { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel } from "../components/primitives/dropdown-menu";
 export { Cascader, type CascaderOption } from "./cascader";
-export { TreeSelect, type TreeSelectNode } from "./tree-select";
+export { TreeSelect, type TreeSelectProps, type TreeSelectNode } from "./tree-select";
 export { Transfer, type TransferItem } from "./transfer";
 export { Mentions } from "./mentions";
 export { Tree, type TreeNode } from "./tree";
@@ -73,3 +73,77 @@ export { Popconfirm } from "./popconfirm";
 export { MessageProvider, useMessage } from "./message";
 export { NotificationProvider, useNotification } from "./notification";
 export { Tour, type TourStep } from "./tour";
+
+export type {
+  AffixProps,
+  AlertProps,
+  BackTopProps,
+  BreadcrumbProps,
+  CalendarProps,
+  CascaderProps,
+  CheckboxFieldProps,
+  CheckboxGroupProps,
+  CheckboxProps,
+  ChoiceButtonProps,
+  CollapseProps,
+  ContainerProps,
+  DescriptionsProps,
+  DividerProps,
+  DropdownMenuContentProps,
+  DropdownMenuItemProps,
+  DropdownMenuLabelProps,
+  DropdownMenuProps,
+  DropdownMenuSeparatorProps,
+  DropdownMenuTriggerProps,
+  EmptyProps,
+  FieldGroupProps,
+  FieldLabelProps,
+  FieldLegendProps,
+  FieldSetProps,
+  FormActionsProps,
+  FormFieldProps,
+  FormGridProps,
+  FormLayoutProps,
+  GridProps,
+  IconButtonLinkProps,
+  IconProps,
+  ImageProps,
+  InputOTPProps,
+  LayoutContentProps,
+  LayoutFooterProps,
+  LayoutHeaderProps,
+  LayoutProps,
+  LayoutSiderProps,
+  ListProps,
+  MentionsProps,
+  MenuProps,
+  MessageProviderProps,
+  NavigationProviderProps,
+  NotificationProviderProps,
+  OverlayFormProps,
+  PopconfirmProps,
+  PopoverAnchorProps,
+  PopoverProps,
+  PopoverTriggerProps,
+  QRCodeProps,
+  RadioProps,
+  RateProps,
+  ResultProps,
+  SearchFieldProps,
+  SegmentedProps,
+  SkeletonProps,
+  SliderProps,
+  StepsProps,
+  SwitchProps,
+  TabListProps,
+  TabPanelProps,
+  TabProps,
+  TooltipProps,
+  TooltipProviderProps,
+  TooltipTriggerProps,
+  TourProps,
+  TransferProps,
+  TreeProps,
+  WatermarkProps,
+  CarouselProps,
+} from "./public-props";

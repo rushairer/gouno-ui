@@ -42,7 +42,9 @@ export function EmptyState({
   );
 }
 
-export function ErrorState(props: EmptyStateProps) {
+export type ErrorStateProps = EmptyStateProps;
+
+export function ErrorState(props: ErrorStateProps) {
   return (
     <div role="alert">
       <EmptyState

@@ -7,6 +7,7 @@ export {
   LoadingState,
   AsyncState,
   type EmptyStateProps,
+  type ErrorStateProps,
   type LoadingStateProps,
   type AsyncStateProps,
 } from "./async-state";
@@ -21,7 +22,12 @@ export {
 } from "./toast";
 export { BulkActionBar, type BulkActionBarProps } from "./bulk-action-bar";
 export { SectionNav, type SectionNavProps, type SectionNavItem } from "./section-nav";
-export { ConfirmDialog, useConfirm } from "./confirm-dialog";
+export {
+  ConfirmDialog,
+  useConfirm,
+  type ConfirmDialogProps,
+  type ConfirmOptions,
+} from "./confirm-dialog";
 
 export type {
   DataTableProps,

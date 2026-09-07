@@ -4,6 +4,7 @@ export {
   resolveMode,
   readMode,
   brandNames,
+  type ThemeProviderProps,
   type ThemeMode,
   type Brand,
   type Density,

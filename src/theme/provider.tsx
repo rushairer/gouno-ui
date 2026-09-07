@@ -43,17 +43,20 @@ const ThemeContext = createContext<ThemeContextValue>({
   setMode: () => {},
 });
 export const useTheme = () => useContext(ThemeContext);
+
+export interface ThemeProviderProps {
+  children: ReactNode;
+  brand: Brand;
+  storageKey: string;
+  density?: Density;
+}
+
 export function ThemeProvider({
   children,
   brand,
   storageKey,
   density = "comfortable",
-}: {
-  children: ReactNode;
-  brand: Brand;
-  storageKey: string;
-  density?: Density;
-}) {
+}: ThemeProviderProps) {
   const [mode, updateMode] = useState<ThemeMode>(() => readMode(storageKey));
   const [systemDark, setSystemDark] = useState(
     () =>
