@@ -1,7 +1,16 @@
 import type { ReactNode } from "react";
+import type { TableDensity } from "../components/primitives/table";
 import { cn } from "../lib/utils";
 import { PageHeader, Panel } from "./layout";
-import type { TableDensity } from "../components/primitives/table";
+
+export interface DashboardTemplateProps {
+  title: ReactNode;
+  description?: ReactNode;
+  actions?: ReactNode;
+  stateControls?: ReactNode;
+  children: ReactNode;
+  className?: string;
+}
 
 export function DashboardTemplate({
   title,
@@ -10,14 +19,7 @@ export function DashboardTemplate({
   stateControls,
   children,
   className,
-}: {
-  title: ReactNode;
-  description?: ReactNode;
-  actions?: ReactNode;
-  stateControls?: ReactNode;
-  children: ReactNode;
-  className?: string;
-}) {
+}: DashboardTemplateProps) {
   return (
     <div className={cn("flex min-w-0 flex-col gap-6", className)}>
       <PageHeader title={title} description={description} actions={actions} />
@@ -27,19 +29,21 @@ export function DashboardTemplate({
   );
 }
 
+export interface ListPageTemplateProps {
+  title: ReactNode;
+  description?: ReactNode;
+  action?: ReactNode;
+  stateControls?: ReactNode;
+  children: ReactNode;
+}
+
 export function ListPageTemplate({
   title,
   description,
   action,
   stateControls,
   children,
-}: {
-  title: ReactNode;
-  description?: ReactNode;
-  action?: ReactNode;
-  stateControls?: ReactNode;
-  children: ReactNode;
-}) {
+}: ListPageTemplateProps) {
   return (
     <div className="flex min-w-0 flex-col gap-6">
       <PageHeader title={title} description={description} action={action} />
@@ -49,17 +53,19 @@ export function ListPageTemplate({
   );
 }
 
+export interface EditorWorkspaceTemplateProps {
+  outline?: ReactNode;
+  canvas: ReactNode;
+  inspector: ReactNode;
+  className?: string;
+}
+
 export function EditorWorkspaceTemplate({
   outline,
   canvas,
   inspector,
   className,
-}: {
-  outline?: ReactNode;
-  canvas: ReactNode;
-  inspector: ReactNode;
-  className?: string;
-}) {
+}: EditorWorkspaceTemplateProps) {
   return (
     <div
       data-slot="editor-workspace"
@@ -73,21 +79,27 @@ export function EditorWorkspaceTemplate({
           <Panel className="h-full">{outline}</Panel>
         </aside>
       ) : null}
-      <section data-slot="editor-canvas" className="min-w-0">{canvas}</section>
-      <aside data-slot="editor-inspector" className="min-w-0">{inspector}</aside>
+      <section data-slot="editor-canvas" className="min-w-0">
+        {canvas}
+      </section>
+      <aside data-slot="editor-inspector" className="min-w-0">
+        {inspector}
+      </aside>
     </div>
   );
+}
+
+export interface ResponsiveListProps {
+  table: ReactNode;
+  mobile: ReactNode;
+  density?: TableDensity;
 }
 
 export function ResponsiveList({
   table,
   mobile,
   density = "default",
-}: {
-  table: ReactNode;
-  mobile: ReactNode;
-  density?: TableDensity;
-}) {
+}: ResponsiveListProps) {
   return (
     <div data-slot="responsive-list" data-density={density} className="min-w-0">
       <div className="hidden md:block">{table}</div>

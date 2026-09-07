@@ -4,12 +4,13 @@ import ts from "typescript";
 import { describe, expect, it } from "vitest";
 
 const root = process.cwd();
-const entries = {
+const layerEntries = {
   core: resolve(root, "src/core/index.ts"),
   patterns: resolve(root, "src/patterns/index.ts"),
   gouno: resolve(root, "src/gouno/index.ts"),
   theme: resolve(root, "src/theme/index.ts"),
 } as const;
+const rootEntry = resolve(root, "src/index.ts");
 
 function createChecker() {
   const configPath = resolve(root, "tsconfig.build.json");
@@ -50,7 +51,7 @@ describe("formal public API ownership", () => {
     const { program, checker } = createChecker();
     const owners = new Map<string, string[]>();
 
-    for (const [layer, filename] of Object.entries(entries)) {
+    for (const [layer, filename] of Object.entries(layerEntries)) {
       for (const name of exportedNames(program, checker, filename)) {
         const current = owners.get(name) ?? [];
         current.push(layer);
@@ -64,5 +65,15 @@ describe("formal public API ownership", () => {
       .sort();
 
     expect(duplicates).toEqual([]);
+  });
+
+  it("keeps the root compatibility entry exactly equal to all formal layers plus cn", () => {
+    const { program, checker } = createChecker();
+    const expected = new Set<string>(["cn"]);
+    for (const filename of Object.values(layerEntries)) {
+      for (const name of exportedNames(program, checker, filename)) expected.add(name);
+    }
+
+    expect(exportedNames(program, checker, rootEntry)).toEqual([...expected].sort());
   });
 });

@@ -50,6 +50,13 @@ describe("public layer architecture", () => {
     expect(exportKeys).not.toContain("./gouno/*");
   });
 
+  it("uses explicit symbol manifests in every formal layer entry", () => {
+    for (const entry of ["core/index.ts", "patterns/index.ts", "gouno/index.ts", "theme/index.ts"]) {
+      const source = readFileSync(resolve(sourceRoot, entry), "utf8");
+      expect(source).not.toMatch(/export\s+\*/);
+    }
+  });
+
   it("does not create a second canonical Core import path through Patterns", () => {
     const patternsIndex = readFileSync(resolve(sourceRoot, "patterns/index.ts"), "utf8");
     expect(patternsIndex).not.toMatch(/from\s+["']\.\.\/core\//);

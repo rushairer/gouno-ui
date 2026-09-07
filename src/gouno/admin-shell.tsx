@@ -7,6 +7,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "../components/primitives/sheet";
+
 export interface AdminShellProps {
   brand: ReactNode;
   navigation: (close: () => void) => ReactNode;
@@ -17,6 +18,7 @@ export interface AdminShellProps {
   children: ReactNode;
   navigationLabel?: string;
 }
+
 /** Router and permissions are supplied by each application; this template owns only presentation. */
 export function AdminShell({
   brand,
@@ -78,11 +80,15 @@ export function AdminShell({
         </main>
       </div>
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="left" className="flex w-[320px] max-w-[calc(100vw-1rem)] flex-col bg-sidebar" aria-describedby={undefined}
+        <SheetContent
+          side="left"
+          className="flex w-[320px] max-w-[calc(100vw-1rem)] flex-col bg-sidebar"
+          aria-describedby={undefined}
           onCloseAutoFocus={(event) => {
             event.preventDefault();
             navigationTrigger.current?.focus();
-          }}>
+          }}
+        >
           <SheetHeader>
             <SheetTitle>{brand}</SheetTitle>
           </SheetHeader>
@@ -98,13 +104,13 @@ export function AdminShell({
     </div>
   );
 }
-export function NavigationGroup({
-  label,
-  children,
-}: {
+
+export interface NavigationGroupProps {
   label: string;
   children: ReactNode;
-}) {
+}
+
+export function NavigationGroup({ label, children }: NavigationGroupProps) {
   return (
     <section className="mb-6 flex flex-col gap-1">
       <h2 className="px-3 pb-2 text-xs font-medium text-muted-foreground">
@@ -114,5 +120,6 @@ export function NavigationGroup({
     </section>
   );
 }
+
 export const navigationItemClass =
   "flex min-h-10 min-w-0 items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground [&>svg]:size-4 [&>svg]:shrink-0 [&.active]:bg-accent [&.active]:font-medium [&.active]:text-accent-foreground aria-[current=page]:bg-accent aria-[current=page]:font-semibold aria-[current=page]:text-accent-foreground aria-[current=page]:shadow-sm";
