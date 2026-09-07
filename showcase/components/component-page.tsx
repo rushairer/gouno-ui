@@ -1,6 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { Heading, Text } from "../../src/core";
-import { PageHeader, Panel } from "../../src/gouno";
+import { Card, Heading, Text } from "../../src/core";
 import { ApiTable, type ApiRow } from "./api-table";
 import { CodeBlock } from "./code-block";
 import { DemoBlock } from "./demo-block";
@@ -36,7 +35,7 @@ const commonApi: ApiRow[] = [
 function DemoSection({ demo }: { demo: ComponentDemo }) {
   const [tab, setTab] = useState<"preview" | "code">("preview");
   return (
-    <Panel>
+    <Card>
       <div className="mb-4">
         <Heading level={3}>{demo.title}</Heading>
         {demo.description ? <Text tone="muted">{demo.description}</Text> : null}
@@ -64,7 +63,7 @@ function DemoSection({ demo }: { demo: ComponentDemo }) {
       ) : (
         <CodeBlock code={demo.code} />
       )}
-    </Panel>
+    </Card>
   );
 }
 
@@ -75,19 +74,26 @@ export function ComponentPage({ document }: { document: ComponentDocument }) {
   ];
   return (
     <div className="space-y-6">
-      <PageHeader title={document.title} description={document.description} />
+      <header className="space-y-2">
+        <div className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+          Core · @gouno/ui/core
+        </div>
+        <Heading level={1}>{document.title}</Heading>
+        <Text tone="muted" className="max-w-3xl leading-relaxed">
+          {document.description}
+        </Text>
+      </header>
       {demos.map((demo, index) => (
         <DemoSection key={`${demo.title}-${index}`} demo={demo} />
       ))}
-      <Panel>
+      <Card>
         <Heading level={3}>状态与用法</Heading>
         <Text tone="muted">
-          Core 组件统一使用 semantic
-          tokens，并提供键盘焦点、禁用态和表单关联。交互状态既可受控，也可在简单场景下使用默认值。
+          Core 组件统一使用 semantic tokens，并提供键盘焦点、禁用态和表单关联。交互状态既可受控，也可在简单场景下使用默认值。
         </Text>
         {document.notes}
-      </Panel>
-      <Panel>
+      </Card>
+      <Card>
         <Heading level={3} className="mb-4">
           API
         </Heading>
@@ -95,13 +101,11 @@ export function ComponentPage({ document }: { document: ComponentDocument }) {
         {document.apiSections?.map((section) => (
           <section key={section.title} className="mt-6 space-y-3">
             <Heading level={3}>{section.title}</Heading>
-            {section.description && (
-              <Text tone="muted">{section.description}</Text>
-            )}
+            {section.description ? <Text tone="muted">{section.description}</Text> : null}
             <ApiTable rows={section.rows} />
           </section>
         ))}
-      </Panel>
+      </Card>
     </div>
   );
 }
