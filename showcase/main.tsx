@@ -15,6 +15,7 @@ import {
   type ShowcaseWorkspace,
 } from "./catalog";
 import { ShowcasePage } from "./app/page-router";
+import { StandaloneNavigation } from "./components/standalone-navigation";
 import "./showcase.css";
 
 type Brand = "blog" | "blog-admin" | "gosso-admin";
@@ -104,6 +105,15 @@ function App() {
     setPage(nextPage);
     if (nextPage) window.location.hash = nextPage;
     else window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+  };
+
+  const navigateToPage = (nextPage: string) => {
+    if (!isKnownPage(nextPage)) return;
+    const nextWorkspace = workspaceForPage(nextPage);
+    setPage(nextPage);
+    setWorkspace(nextWorkspace);
+    if (nextWorkspace !== "gouno-ui") setBrand(nextWorkspace);
+    window.location.hash = nextPage;
   };
 
   useEffect(() => {
@@ -283,7 +293,14 @@ function App() {
           </main>
         </div>
       ) : current?.presentation === "standalone" ? (
-        <ShowcasePage page={page} workspace={workspace} />
+        <div className="relative min-h-dvh">
+          <StandaloneNavigation
+            workspace={workspace}
+            currentPage={page}
+            onNavigate={navigateToPage}
+          />
+          <ShowcasePage page={page} workspace={workspace} />
+        </div>
       ) : (
         <AppShell brand={<span className="font-semibold text-primary">{workspaceLabel}</span>} toolbar={shellControls} navigation={navigation}>
           <PageContainer>
