@@ -1,23 +1,17 @@
 # Migration guide
 
-The package exposes three formal component layers plus a dedicated theme entry point:
+The package exposes three formal component layers plus a dedicated Theme entry point:
 
-```ts
-import { Button, Input, Modal, DataTable } from "@gouno/ui";
-```
+- `@gouno/ui/core` — pure controls and visual primitives.
+- `@gouno/ui/patterns` — reusable compound interactions.
+- `@gouno/ui/gouno` — Gouno product shells and templates.
+- `@gouno/ui/theme` — theme context and theme controls.
 
-The `components/primitives` directory is an internal Radix/shadcn behavior layer. Consumers should choose an explicit public owner:
-
-- `@gouno/ui/core` for pure controls and visual primitives.
-- `@gouno/ui/patterns` for reusable compound interactions.
-- `@gouno/ui/gouno` for Gouno product shells and templates.
-- `@gouno/ui/theme` for theme context and theme controls.
+The package root remains a convenience aggregate entry.
 
 ## Curated subpaths
 
-The former source-directory wildcard exports (`@gouno/ui/core/*`, `@gouno/ui/patterns/*`, and `@gouno/ui/gouno/*`) are no longer public API. They exposed physical files as accidental package contracts and allowed internal aliases or duplicate ownership to bypass the formal layer entry points.
-
-Migrate wildcard imports to the owning layer:
+Source-directory wildcard exports (`@gouno/ui/core/*`, `@gouno/ui/patterns/*`, `@gouno/ui/gouno/*`) are no longer public API. Migrate physical-file imports to the owning layer:
 
 ```ts
 // Before
@@ -29,12 +23,26 @@ import { DataTable } from "@gouno/ui/patterns";
 import { AdminShell } from "@gouno/ui/gouno";
 ```
 
-`FormLayout`, `FormGrid`, and `FormActions` are Core-owned APIs. Import them from `@gouno/ui/core` (or the package root), not from `@gouno/ui/patterns`.
+## Canonical owners
 
-## Ownership cleanup
+`FormLayout`, `FormGrid`, `FormActions`, `Tabs`, `Pagination`, and `TableDensity` are Core-owned APIs. Import them from `@gouno/ui/core` (or the package root), not Patterns.
 
-Patterns no longer carries duplicate implementations or aliases for Core `Tabs` and `Pagination`. Import those from `@gouno/ui/core`.
+`ThemeProvider`, `useTheme`, and `ThemeToggle` are Theme-owned APIs. Import them from `@gouno/ui/theme` (or the package root), not Gouno.
 
-Theme APIs have one formal owner. `ThemeProvider`, `useTheme`, and `ThemeToggle` are exported from `@gouno/ui/theme` (and the package root), not from `@gouno/ui/gouno`.
+Patterns no longer carries duplicate Tabs/Pagination implementations or the `SubnavTabs` alias.
 
-`BulkActionBar` is now product-agnostic. Product-specific actions such as AI assistance belong in caller-provided `children` instead of dedicated `onAIAssist`/`aiLabel` props.
+## BulkActionBar
+
+`BulkActionBar` is product-agnostic. Product-specific actions such as AI assistance are caller-provided children instead of dedicated `onAIAssist`/`aiLabel` props.
+
+```tsx
+<BulkActionBar selectionLabel="已选择 3 项" onCancel={clearSelection}>
+  <Button onClick={runAIAssist}>交给 AI</Button>
+</BulkActionBar>
+```
+
+## Gouno layout aliases
+
+Use `Panel` instead of the removed `WorkspacePanel` alias, and `PageHeader` instead of `AdminPageHeader`.
+
+Gouno layout families remain available through `@gouno/ui/gouno`; the source-level `layout.tsx` file is now an export-only barrel and is not a separate public subpath.

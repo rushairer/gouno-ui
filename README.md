@@ -1,43 +1,88 @@
 # @gouno/ui
 
-The shared React component library for the Gouno product family. The package owns reusable foundations, forms, navigation, feedback, overlays, data display, layout, templates, themes and a static showcase for Blog, Blog Admin and Gosso Admin.
+Shared React UI library for the Gouno product family, including reusable Core components, compound Patterns, Gouno product shells/templates, semantic themes, and a static Showcase.
 
-**Live Showcase:** [rushairer.github.io/gouno-ui](https://rushairer.github.io/gouno-ui/)
+**Live Showcase:** https://rushairer.github.io/gouno-ui/
 
-The Showcase is built and published automatically by [`.github/workflows/showcase-pages.yml`](.github/workflows/showcase-pages.yml). The workflow writes the static site to the `gh-pages` branch; enable GitHub Pages for this repository with **Settings → Pages → Deploy from a branch → `gh-pages` / `/ (root)`** once, then every `main` push updates the live site. It contains the Core component catalog, interactive states, source examples, and static Blog, Blog Admin, and Gosso Admin scenarios.
+## Architecture
 
-Source is organized by layer: `src/core` contains pure components, `src/patterns` contains compound interactions, `src/gouno` contains product-family templates, and `src/components/primitives` contains the internal Radix/shadcn behavior layer. The root entry point exposes only the formal Core, Patterns and Gouno layers.
+The source has four formal public owners plus one internal primitive layer:
 
-Public layers:
+- `src/components/primitives` — internal Radix/shadcn behavior primitives. Not a public product domain.
+- `src/core` — pure, product-agnostic controls, layout, data entry, display, feedback and overlay APIs.
+- `src/patterns` — reusable multi-component interactions such as DataTable, async feedback and confirmation flows.
+- `src/gouno` — Gouno product-family shells, page layout families, templates and business-status presentation.
+- `src/theme` — theme context, persistence contract and theme controls.
 
-- `@gouno/ui/core` — pure, product-agnostic components.
-- `@gouno/ui/patterns` — reusable multi-component interaction patterns.
-- `@gouno/ui/gouno` — Gouno product-family shells and page templates.
+Dependency direction is one-way: Core never depends on Patterns or Gouno; Patterns never depends on Gouno. Product policy, authentication, API clients, routes and application session state do not belong in Core or Patterns.
 
-Core deliberately excludes product concepts such as `AdminShell`, `Panel`, `StatusBadge`, `RiskBadge`, route adapters and page templates.
+Each public symbol has one canonical owner. Lower-level components may be composed by higher layers, but they are not reimplemented or re-exported from another formal layer simply to provide a second import path.
 
-Core follows an Ant Design-inspired coverage map while keeping shadcn-style composition: general controls, layout primitives, data entry controls, navigation, data display, feedback, overlays, and theme provider APIs live in `src/core`. Each new component is exported from `@gouno/ui/core` and the package root; product shells remain in `@gouno/ui/gouno`, while compound interactions remain in `@gouno/ui/patterns`.
+## Public entry points
 
-The Core catalog now covers general, layout, data entry, navigation, data display, feedback, overlays, and utility components. Current additions include `Heading`, `Text`, `Divider`, `Space`, `Flex`, `Grid`, `InputNumber`, `DatePicker`, `DateRangePicker`, `TimePicker`, `ColorPicker`, `Upload`, `Breadcrumb`, `Pagination`, `Steps`, `Empty`, `Result`, `List`, `Descriptions`, `Image`, and `Calendar`. These components use native form controls where appropriate, preserve controlled/uncontrolled behavior, and expose semantic roles and labels for keyboard and assistive technology support.
+```ts
+import { Button, DataTable, AdminShell, ThemeProvider } from "@gouno/ui";
+import { Button, Pagination, Table } from "@gouno/ui/core";
+import { DataTable, ConfirmDialog } from "@gouno/ui/patterns";
+import { AdminShell, Panel, PageHeader } from "@gouno/ui/gouno";
+import { ThemeProvider, ThemeToggle, useTheme } from "@gouno/ui/theme";
+```
 
-The library also exports lightweight composition primitives including `Spinner`, `Progress`, `AspectRatio`, `Typography`, `Stack`, `Container`, `Statistic`, and `Timeline`. They use semantic tokens and remain framework-agnostic.
+The package intentionally does **not** expose source-directory wildcard subpaths such as `@gouno/ui/core/*`, `@gouno/ui/patterns/*`, or `@gouno/ui/gouno/*`. Physical source files are implementation details; public contracts are curated by the formal entry points.
 
-The single source of Gouno's React UI, semantic design tokens and administration template. No authentication, API or application state is imported here.
+Core deliberately excludes product concepts such as `AdminShell`, `StatusBadge`, `RiskBadge`, page templates and product action policy. Patterns likewise does not duplicate Core components such as Tabs or Pagination. Theme APIs have a dedicated owner instead of being forwarded through Gouno.
 
-Build with `npm ci && npm run build`. From the Blog root run `node scripts/ui/distribute.mjs blog-frontend ../gosso-admin/gosso-admin-frontend`, then install each frontend. The generated archives are immutable consumer artifacts, not editable component forks. Both consumers must commit identical version/integrity manifests. React is a peer dependency.
+## Component organization
 
-Run `npm run showcase:dev` for the standalone component documentation and page-template showcase, or `npm run showcase:build` for its production bundle. The Gouno UI workspace uses one hash-addressable page per Core component with Preview and Code panels, usage guidance, and state examples. The showcase provides a unified Blog, Blog Admin and Gosso Admin shell with deterministic static fixtures, switchable loading/empty/error/permission states, responsive list/editor/account templates, theme and brand controls, and an interactive table-density comparison. It never authenticates, reads cookies, calls APIs, or changes application state.
+One public component or tightly coupled component family belongs in one focused module. Barrel files are export-only. Catch-all implementation modules such as `misc`, `visual`, or mixed `date-time` files are intentionally avoided.
 
-Tables expose `default`, `compact`, and `touch` density through `Table` and `DataTable`. Use `default` for ordinary administration lists, `compact` for dense audit data, and `touch` when row targets need extra space. Consumers should use the shared density rather than page-local padding overrides.
+Examples:
 
-The showcase also includes a hash-addressable `状态与弹层` page covering shared Dialog, Drawer, ConfirmDialog, Toast, form-error, and Step-Up presentation. For example, open `/#overlays` during local development to review the interaction contract without connecting an application service.
+- Spinner, Progress, AspectRatio and Kbd each have focused Core modules.
+- Typography, Heading and Text share the typography domain.
+- DateRangePicker, TimePicker and ColorPicker have separate owners.
+- Gouno `layout.tsx` is a pure barrel over focused Panel, Page, DefinitionList and ListStack families.
+- DataTable remains one public Pattern contract even though its sorting/filtering/pagination/selection behavior is internally compound; future decomposition should prefer internal hooks/renderers rather than multiplying public APIs.
 
-The compact 48px global workbench uses a distinct semantic sidebar surface and exposes only `产品空间` and `预览宽度`. Every mode renders the selected workspace in one same-origin iframe: full width fills the available canvas, while the fixed options provide real 1024×768, 768×1024, or 390×844 content viewports. This triggers the same media queries as the consuming applications. Use the URL printed by Vite because it will select another port when 5173 is already occupied.
+## API governance
 
-The `产品空间` selector keeps information architecture separate from visual brand tokens: Gouno UI owns Foundations and overlay contracts, while Blog, Blog Admin, and Gosso Admin each own their product pages. Navigation and light/dark/system controls live only inside the iframe shell. Gouno UI also exposes a theme-color preview for the three product token sets; product workspaces always use their fixed brand. Iframe navigation is synchronized to the workbench so changing viewport preserves the current page.
+Before changing a public component, read:
 
-Import Tailwind once in the consuming app, then `@gouno/ui/tokens.css` and `@gouno/ui/base.css`; explicitly register `node_modules/@gouno/ui/dist` with `@source`. Wrap the complete app (including error and auth boundaries) in `ThemeProvider`; supply its origin-local storage key and brand. Install the exported bootstrap as a parser-blocking, same-origin script before application CSS. A router adapter provides `Link` through `NavigationProvider`.
+- `AGENTS.md`
+- `docs/api-specification.md` — binding target API contract
+- `docs/api-conformance.md` — current conformance register
+- `docs/migration.md` — compatibility and ownership migrations
 
-`AdminShell` accepts navigation, branding, breadcrumbs, toolbar, account and footer slots. The caller filters navigation permissions and implements all operations. Shared components must not query services, change session state or invent unavailable actions.
+Public API changes must synchronize exported types, component API documentation, Showcase examples, interaction/accessibility behavior and focused tests. Existing APIs or closed conformance records are not naming precedents when they conflict with the specification.
 
-Themes: light/dark/system, default system. Brands: Blog (blue), Blog Admin (teal), Gosso Admin (violet). Status colors are invariant. Use semantic utilities only; concrete colors belong in tokens.css. Fonts ship locally with licenses. Inter UI, 14px; reading 18px/1.8; 4px spacing unit; 6px controls; 10px panels; 36px desktop and at least 44px touch targets.
+## Theme and CSS
+
+Import Tailwind once in the consuming app, then import `@gouno/ui/tokens.css` and `@gouno/ui/base.css`; register `node_modules/@gouno/ui/dist` with Tailwind `@source` when required by the consumer build.
+
+Wrap the application in `ThemeProvider`, including error/auth boundaries, and provide an origin-local `storageKey` plus brand. The package supports light/dark/system theme modes and Blog, Blog Admin and Gosso Admin brands.
+
+```tsx
+import { ThemeProvider, ThemeToggle } from "@gouno/ui/theme";
+
+<ThemeProvider brand="blog-admin" storageKey="blog-admin:theme">
+  <App />
+</ThemeProvider>
+```
+
+## Build and verification
+
+```bash
+npm ci
+npm run typecheck
+npm test -- --run
+npm run build
+npm run showcase:build
+```
+
+The main-branch GitHub Actions workflow runs the same verification before publishing the Showcase to `gh-pages`.
+
+Run `npm run showcase:dev` for local component documentation and product scenarios. Showcase fixtures are static: they do not authenticate, read cookies, call APIs, or mutate application state.
+
+## Consumer distribution
+
+React and React DOM are peer dependencies. Generated consumer archives are immutable distribution artifacts rather than editable component forks. Consumers should migrate through the formal package APIs and follow `docs/migration.md` when ownership changes.

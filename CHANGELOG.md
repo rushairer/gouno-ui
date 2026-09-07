@@ -14,30 +14,27 @@ All notable changes to this project are documented here.
 - Added a first-class Form wrapper with vertical/horizontal layouts, native FormData submission, disabled/loading fieldsets, and `onFinish` support.
 - Added Overlay behavior coverage for Modal and Drawer Escape handling, focus restoration, placement metadata, and responsive direction semantics.
 - Added keyboard navigation to AutoComplete and a typed, accessible TreeSelect API with controlled values, multiple selection, disabled nodes, and native form attributes.
-- Expanded Button with dashed/text variants, Ant-style size aliases, round/circle shapes, block layout, loading text, and a fully navigable ButtonLink supporting `href`, router `to`, disabled, and loading states.
-- Added the Core Icon API, Form alias, DateRangePicker, Splitter, Layout regions, InputOTP, Popconfirm, Message, Notification, Tour, Cascader, TreeSelect, Transfer, Mentions, Tree, Menu, QRCode, Watermark, Affix, BackTop, Slider, Rate, Segmented, AutoComplete, Collapse, Popover, Tooltip, and DropdownMenu.
-- Added hash-addressable Showcase documentation for each Core component with live Preview, source Code, usage guidance, and API tables.
-- Added multi-example documentation support and detailed Form, Select, Upload, and Table state examples.
-- Added controlled and uncontrolled Upload file lists, count and size limits, removal callbacks, errors, and accessible error relationships.
-- Added a dedicated Showcase TypeScript project so `npm run typecheck` validates the component documentation and product scenarios.
-- Added Core tests for state, boundaries, ARIA semantics, keyboard behavior, and Upload list management.
+- Added architecture regression coverage for curated package exports, layer dependency direction, canonical ownership, product-policy leakage, catch-all implementation modules, theme ownership, and Gouno layout aliases.
 - Added `AGENTS.md` with the Core, Patterns, Gouno, primitives, and Showcase architecture rules.
 
 ### Changed
 
-- Clarified the Core, Patterns, and Gouno ownership boundaries: product status tags and page abstractions now live in the Gouno entry, reusable patterns no longer import product shells, and the root ESM entry resolves to concrete built subpath files.
+- Curated package exports to the formal root, Core, Patterns, Gouno, and Theme entry points instead of exposing source directories through wildcard subpaths.
+- Enforced single component ownership: Core owns Tabs/Pagination/Form layout/TableDensity, Theme owns ThemeProvider/useTheme/ThemeToggle, and Patterns no longer reimplements or re-exports those APIs.
+- Made `BulkActionBar` product-agnostic; product actions such as AI assistance are caller-composed children rather than dedicated Pattern props.
+- Split unrelated Core implementation catch-alls: Spinner, Progress, AspectRatio, Kbd, ConfigProvider, App, FloatButton, Anchor, Spin, DateRangePicker, TimePicker, ColorPicker, Statistic, and Timeline now have focused modules; generic Typography is grouped with the typography family.
+- Converted Gouno `layout.tsx` into a pure export barrel and split Panel, Page, DefinitionList, and ListStack families into focused modules.
+- Clarified the Core, Patterns, Gouno, and Theme ownership boundaries while preserving the package root as a convenience aggregate entry.
 - Standardized `TableCaption` and `DataTable` on `captionSide`; removed the former `captionPosition`, `position`, and `TableCaptionPosition` aliases.
 - Widened the desktop and mobile Showcase navigation surfaces and reserved flexible label space so progress badges never cover long component names.
 - Replaced status-pill uses of Badge in Showcase product scenarios and data examples with the semantically correct Tag component.
 - Expanded Showcase Data Display examples to cover DataTable behavior and selection state.
 - Expanded Showcase Form examples to cover validation, horizontal responsive layout, read-only, disabled, and loading states.
-- Expanded data-entry tests for AutoComplete keyboard selection and TreeSelect controlled behavior.
 - Rebuilt the Button Showcase page as the documentation reference with variant, size, icon, loading, disabled, shape, block, link semantics, per-demo source, and complete API examples.
 - Split Core Showcase documents into General, Layout, Data Entry, Navigation, Data Display, Feedback, and Other registries.
 - Split Blog, Blog Admin, and Gosso Admin scenarios into focused product demo modules.
 - Reduced `showcase/main.tsx` to application shell, routing, navigation, theme, and viewport responsibilities.
 - Lazy-load Core documentation to reduce the initial Showcase bundle.
-- Exported `TableDensity` from the public Patterns API.
 
 ### Fixed
 
@@ -51,6 +48,10 @@ All notable changes to this project are documented here.
 
 ### Removed
 
+- Removed source-directory wildcard public subpaths (`@gouno/ui/core/*`, `@gouno/ui/patterns/*`, `@gouno/ui/gouno/*`).
+- Removed duplicate Patterns Tabs/Pagination implementations and the `SubnavTabs` alias.
+- Removed Gouno `WorkspacePanel` and `AdminPageHeader` synonym aliases; use `Panel` and `PageHeader`.
+- Removed product-specific `onAIAssist`/`aiLabel` policy from `BulkActionBar`.
 - Removed obsolete overview, placeholder category, combined overlay, and superseded demo pages.
 
 ## [0.1.0] - 2026-09-05
