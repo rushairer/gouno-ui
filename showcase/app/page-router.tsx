@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { AccountDemo } from "../demos/products/account-demo";
 import { DashboardDemo } from "../demos/products/dashboard-demo";
 import { EditorDemo } from "../demos/products/editor-demo";
+import { GossoOverviewDemo } from "../demos/products/gosso-overview";
 import { GossoUsersDemo, ListDemo } from "../demos/products/list-pages";
 
 const CoreComponentPage = lazy(() =>
@@ -29,6 +30,8 @@ export function ShowcasePage({ page }: { page: string }) {
     case "admin-settings":
     case "gosso-settings":
       return <EditorDemo />;
+    case "gosso-overview":
+      return <GossoOverviewDemo />;
     case "gosso-login":
       return <AccountDemo login />;
     case "gosso-system":
