@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 type PackageManifest = {
@@ -10,7 +11,7 @@ type PackageLock = {
 };
 
 function readJson<T>(filename: string): T {
-  return JSON.parse(readFileSync(new URL(`../${filename}`, import.meta.url), "utf8")) as T;
+  return JSON.parse(readFileSync(resolve(process.cwd(), filename), "utf8")) as T;
 }
 
 function isFloatingRuntimeSpec(spec: string): boolean {
