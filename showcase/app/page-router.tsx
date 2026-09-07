@@ -9,6 +9,12 @@ const CoreComponentPage = lazy(() =>
   import("../demos/core-components").then((module) => ({ default: module.CoreComponentPage })),
 );
 
+const GossoAccountSettingsDemo = lazy(() =>
+  import("../demos/products/gosso-account-settings").then((module) => ({
+    default: module.GossoAccountSettingsDemo,
+  })),
+);
+
 const loading = <div className="p-8 text-sm text-muted-foreground">Loading component documentation…</div>;
 
 const workspaceNames: Record<ShowcaseWorkspace, string> = {
@@ -58,6 +64,12 @@ export function ShowcasePage({
       return <GounoComponentDemo component="page-container" />;
     case "gosso-overview":
       return <GossoOverviewDemo />;
+    case "gosso-account-settings":
+      return (
+        <Suspense fallback={loading}>
+          <GossoAccountSettingsDemo />
+        </Suspense>
+      );
     default:
       return <EmptyWorkspace workspace={workspace} />;
   }

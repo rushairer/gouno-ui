@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Box, Home, LayoutDashboard, Palette, PanelsTopLeft } from "lucide-react";
+import { Box, Home, LayoutDashboard, Palette, PanelsTopLeft, Settings } from "lucide-react";
 import { componentProgress } from "./component-progress";
 
 export type ShowcaseWorkspace = "gouno-ui" | "blog" | "blog-admin" | "gosso-admin";
@@ -192,6 +192,9 @@ export const showcaseCatalog: ShowcaseGroup[] = [
   {
     workspace: "gosso-admin",
     group: "Migrated Pages 已迁移页面",
-    items: [item("gosso-overview", "Overview", "概览", 100, <Home />)],
+    items: [
+      item("gosso-overview", "Overview", "概览", 100, <Home />),
+      item("gosso-account-settings", "Account Settings", "账户设置", 100, <Settings />),
+    ],
   },
 ];

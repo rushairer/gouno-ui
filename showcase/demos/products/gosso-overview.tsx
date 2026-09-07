@@ -30,6 +30,7 @@ interface QuickLink {
   tone: QuickLinkTone;
   title: string;
   description: string;
+  showcasePage?: string;
 }
 
 const roleOptions = [
@@ -69,6 +70,7 @@ const userQuickLinks: readonly QuickLink[] = [
     tone: "primary",
     title: "个人资料与密码",
     description: "查看并维护个人账户基础信息、电子邮箱及登录密码凭据。",
+    showcasePage: "gosso-account-settings",
   },
   {
     href: "/account-settings/mfa",
@@ -77,6 +79,7 @@ const userQuickLinks: readonly QuickLink[] = [
     title: "安全认证 (MFA 与通行密钥)",
     description:
       "绑定双因素认证 (TOTP) 或注册 FIDO2 通行密钥以强化账户安全。",
+    showcasePage: "gosso-account-settings",
   },
   {
     href: "/account-settings/sessions",
@@ -85,16 +88,26 @@ const userQuickLinks: readonly QuickLink[] = [
     title: "活跃登录会话",
     description:
       "查看当前登录设备、IP 地址及最后活跃时间，支持一键下线异常会话。",
+    showcasePage: "gosso-account-settings",
   },
 ];
 
 function QuickLinkCard({ link }: { link: QuickLink }) {
+  const migrated = Boolean(link.showcasePage);
   return (
     <a
-      href={link.href}
-      title={`真实产品目标：${link.href}；该目标页面尚未迁入 Showcase`}
-      aria-label={`${link.title}，目标页面尚未迁入 Showcase`}
-      onClick={(event) => event.preventDefault()}
+      href={migrated ? `#${link.showcasePage}` : link.href}
+      title={
+        migrated
+          ? `真实产品目标：${link.href}；已由 Account Settings Showcase 页面族覆盖`
+          : `真实产品目标：${link.href}；该目标页面尚未迁入 Showcase`
+      }
+      aria-label={
+        migrated
+          ? `${link.title}，查看已迁移 Account Settings Showcase`
+          : `${link.title}，目标页面尚未迁入 Showcase`
+      }
+      onClick={migrated ? undefined : (event) => event.preventDefault()}
       className="group flex min-h-32 w-full items-center gap-4 rounded-lg border bg-card p-5 text-left text-card-foreground shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
       <span
@@ -127,6 +140,7 @@ export function GossoOverviewDemo() {
   const quickLinks = isAdmin ? adminQuickLinks : userQuickLinks;
   const userName = isAdmin ? "admin" : "demo-user";
   const primaryTarget = isAdmin ? "/system-management" : "/account-settings/profile";
+  const primaryHref = isAdmin ? primaryTarget : "#gosso-account-settings";
 
   return (
     <div className="flex flex-col gap-6 lg:gap-8">
@@ -182,9 +196,13 @@ export function GossoOverviewDemo() {
           </Text>
 
           <ButtonLink
-            href={primaryTarget}
-            title={`真实产品目标：${primaryTarget}；该目标页面尚未迁入 Showcase`}
-            onClick={(event) => event.preventDefault()}
+            href={primaryHref}
+            title={
+              isAdmin
+                ? `真实产品目标：${primaryTarget}；该目标页面尚未迁入 Showcase`
+                : `真实产品目标：${primaryTarget}；已由 Account Settings Showcase 页面族覆盖`
+            }
+            onClick={isAdmin ? (event) => event.preventDefault() : undefined}
             variant="solid"
             color="primary"
             icon={<ArrowRight className="size-4" />}
