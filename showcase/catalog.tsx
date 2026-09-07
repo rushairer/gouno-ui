@@ -50,6 +50,6 @@ export const showcaseCatalog: { group: string; items: ShowcasePage[] }[] = [
     item("admin-dashboard", "Dashboard", "仪表盘", 90, <LayoutDashboard />), item("admin-list", "Content List", "文章与页面列表", 88, <FileText />), item("admin-taxonomy", "Taxonomy", "分类标签与评论", 80, <FileText />), item("admin-media", "Media Library", "媒体库", 78, <FileText />), item("admin-editor", "Editor", "内容编辑器", 86, <Activity />), item("admin-settings", "Settings & AI", "设置与人工智能", 80, <Settings />),
   ] },
   { group: "Gosso Admin", items: [
-    item("gosso-login", "Login & MFA", "登录与多因素认证", 88, <Lock />), item("gosso-account", "Account", "账户设置", 84, <Users />), item("gosso-system", "System", "系统管理", 86, <Shield />), item("gosso-users", "Users", "用户管理", 88, <Users />), item("gosso-clients", "Clients", "客户端管理", 84, <Shield />), item("gosso-audit", "Audit Log", "审计日志", 82, <FileText />), item("gosso-settings", "Site Settings", "站点设置", 80, <Settings />), item("gosso-status", "System Status", "系统状态", 84, <Activity />),
+    item("gosso-overview", "Overview", "概览", 95, <LayoutDashboard />), item("gosso-login", "Login & MFA", "登录与多因素认证", 88, <Lock />), item("gosso-account", "Account", "账户设置", 84, <Users />), item("gosso-system", "System", "系统管理", 86, <Shield />), item("gosso-users", "Users", "用户管理", 88, <Users />), item("gosso-clients", "Clients", "客户端管理", 84, <Shield />), item("gosso-audit", "Audit Log", "审计日志", 82, <FileText />), item("gosso-settings", "Site Settings", "站点设置", 80, <Settings />), item("gosso-status", "System Status", "系统状态", 84, <Activity />),
   ] },
 ];
