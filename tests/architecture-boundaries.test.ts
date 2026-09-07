@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -18,9 +18,7 @@ function sourceFiles(directory: string): string[] {
 }
 
 function contents(directory: string): string {
-  return sourceFiles(directory)
-    .map((file) => readFileSync(file, "utf8"))
-    .join("\n");
+  return sourceFiles(directory).map((file) => readFileSync(file, "utf8")).join("\n");
 }
 
 describe("public layer architecture", () => {
@@ -45,9 +43,7 @@ describe("public layer architecture", () => {
   });
 
   it("publishes curated layer entry points instead of source-directory wildcards", () => {
-    const packageJson = JSON.parse(
-      readFileSync(resolve(process.cwd(), "package.json"), "utf8"),
-    ) as { exports: Record<string, unknown> };
+    const packageJson = JSON.parse(readFileSync(resolve(process.cwd(), "package.json"), "utf8")) as { exports: Record<string, unknown> };
     const exportKeys = Object.keys(packageJson.exports);
     expect(exportKeys).not.toContain("./core/*");
     expect(exportKeys).not.toContain("./patterns/*");
@@ -57,6 +53,7 @@ describe("public layer architecture", () => {
   it("does not create a second canonical Core import path through Patterns", () => {
     const patternsIndex = readFileSync(resolve(sourceRoot, "patterns/index.ts"), "utf8");
     expect(patternsIndex).not.toMatch(/from\s+["']\.\.\/core\//);
+    expect(patternsIndex).not.toContain("TableDensity");
   });
 
   it("does not reimplement Core-owned Tabs or Pagination inside Patterns", () => {
@@ -79,5 +76,26 @@ describe("public layer architecture", () => {
     expect("ThemeToggle" in gouno).toBe(false);
     expect(typeof theme.ThemeProvider).toBe("function");
     expect(typeof theme.ThemeToggle).toBe("function");
+  });
+
+  it("does not recreate public catch-all implementation modules", () => {
+    for (const relativePath of [
+      "core/misc.tsx",
+      "core/visual.tsx",
+      "core/date-time.tsx",
+      "patterns/navigation-patterns.tsx",
+    ]) {
+      expect(existsSync(resolve(sourceRoot, relativePath))).toBe(false);
+    }
+  });
+
+  it("keeps Gouno layout families split and free of synonym aliases", async () => {
+    const layoutSource = readFileSync(resolve(sourceRoot, "gouno/layout.tsx"), "utf8");
+    expect(layoutSource).not.toMatch(/function\s+/);
+    const gouno = await import("../src/gouno/index");
+    expect("WorkspacePanel" in gouno).toBe(false);
+    expect("AdminPageHeader" in gouno).toBe(false);
+    expect(typeof gouno.Panel).toBe("function");
+    expect(typeof gouno.PageHeader).toBe("function");
   });
 });
