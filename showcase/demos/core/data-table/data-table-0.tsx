@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Input, Space, Tag, Text } from "../../../../src/core";
-import { DataTable } from "../../../../src";
+import { DataTable } from "../../../../src/patterns";
 function DataTableDemo() {
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<string[]>([]);

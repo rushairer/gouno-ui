@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { ArrowUpRight, BarChart3, CheckCircle2, Clock3, FileText, Plus, Settings, Shield } from "lucide-react";
+import { Button, Card, CardContent, CardHeader, Tag } from "../../../src/core";
 import {
-  ActionGroup, Button, Card, CardContent, CardHeader, DashboardTemplate, Tag,
-  Panel, PanelHeader,
-} from "../../../src";
+  ActionGroup,
+  DashboardTemplate,
+  Panel,
+  PanelHeader,
+} from "../../../src/gouno";
 import { showcaseRecords as records } from "../../fixtures";
 import { StateControls, StatePanel, type DemoState } from "../../scenarios";
 

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Lock } from "lucide-react";
-import { Button, Feedback, EmptyState, ErrorState, LoadingState } from "../src";
+import { Button } from "../src/core";
+import { Feedback, EmptyState, ErrorState, LoadingState } from "../src/patterns";
 
 export type DemoState =
   "ready" | "loading" | "empty" | "error" | "forbidden" | "success" | "conflict";

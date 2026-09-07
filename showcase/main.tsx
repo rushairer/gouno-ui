@@ -1,10 +1,16 @@
 import { StrictMode, useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Menu } from "lucide-react";
+import { Badge, Select } from "../src/core";
+import { ToastProvider } from "../src/patterns";
 import {
-  ActionGroup, AdminPage, AdminShell, Badge, NavigationGroup, Select, ThemeProvider,
-  ThemeToggle, ToastProvider, navigationItemClass,
-} from "../src";
+  ActionGroup,
+  AdminPage,
+  AdminShell,
+  NavigationGroup,
+  navigationItemClass,
+} from "../src/gouno";
+import { ThemeProvider, ThemeToggle } from "../src/theme";
 import { showcaseCatalog as nav } from "./catalog";
 import { ShowcasePage } from "./app/page-router";
 import "./showcase.css";

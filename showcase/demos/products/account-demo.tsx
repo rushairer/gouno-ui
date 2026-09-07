@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { ActionGroup, Button, Feedback, Field, Input, PageHeader, Panel } from "../../../src";
+import { Button, Field, Input } from "../../../src/core";
+import { Feedback } from "../../../src/patterns";
+import { ActionGroup, PageHeader, Panel } from "../../../src/gouno";
 
 export function AccountDemo({ login = false }: { login?: boolean }) {
   const [submitted, setSubmitted] = useState(false);

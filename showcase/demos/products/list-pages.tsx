@@ -1,10 +1,30 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, Plus, Search } from "lucide-react";
 import {
-  ActionGroup, Button, Card, CardContent, DataTable, Feedback, Field, FilterBar,
-  Input, ListPageTemplate, Modal, Panel, PanelHeader, ResponsiveList, Select,
-  TableBody, TableCell, TableHead, TableHeader, TableRow, Tag, type TableDensity,
-} from "../../../src";
+  Button,
+  Card,
+  CardContent,
+  Field,
+  Input,
+  Modal,
+  Select,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Tag,
+  type TableDensity,
+} from "../../../src/core";
+import { DataTable, Feedback } from "../../../src/patterns";
+import {
+  ActionGroup,
+  FilterBar,
+  ListPageTemplate,
+  Panel,
+  PanelHeader,
+  ResponsiveList,
+} from "../../../src/gouno";
 import { gossoUsers, showcaseRecords as records } from "../../fixtures";
 import { StateControls, StatePanel, type DemoState } from "../../scenarios";
 

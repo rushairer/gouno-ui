@@ -44,7 +44,7 @@ import {
   Timeline,
   Tree,
 } from "../../../src/core";
-import { DataTable } from "../../../src";
+import { DataTable } from "../../../src/patterns";
 import type { ComponentDocument } from "../../components/component-page";
 
 export const dataDisplayDocuments: Record<string, ComponentDocument> = {

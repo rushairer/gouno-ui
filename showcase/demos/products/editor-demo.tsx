@@ -1,8 +1,13 @@
 import { useState } from "react";
+import { Button, Field, Input, Select } from "../../../src/core";
+import { Feedback } from "../../../src/patterns";
 import {
-  ActionGroup, Button, EditorWorkspaceTemplate, Feedback, Field, Input,
-  PageHeader, Panel, PanelHeader, Select,
-} from "../../../src";
+  ActionGroup,
+  EditorWorkspaceTemplate,
+  PageHeader,
+  Panel,
+  PanelHeader,
+} from "../../../src/gouno";
 import { StateControls, StatePanel, type DemoState } from "../../scenarios";
 
 export function EditorDemo() {
