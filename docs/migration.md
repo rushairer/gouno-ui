@@ -31,6 +31,12 @@ import { AdminShell } from "@gouno/ui/gouno";
 
 Patterns no longer carries duplicate Tabs/Pagination implementations or the `SubnavTabs` alias.
 
+## Removed inert ConfigProvider
+
+`ConfigProvider`, `useConfig`, and `UIConfig` have been removed from the public API. The former context stored `componentSize` and `direction`, but no public component consumed those values, so wrapping an application in it did not change component behavior.
+
+Use explicit component props for control configuration and `ThemeProvider` only for theme/brand/density behavior. A future global configuration API must be introduced only together with audited component consumption, precedence rules, documentation and behavior tests.
+
 ## BulkActionBar
 
 `BulkActionBar` is product-agnostic. Product-specific actions such as AI assistance are caller-provided children instead of dedicated `onAIAssist`/`aiLabel` props.

@@ -23,11 +23,13 @@ src/components/primitives + src/lib
 - `src/components/primitives` contains internal Radix/shadcn behavior primitives. It is not a public product domain and must not become a dumping ground for composite components.
 - `showcase` composes public APIs and static fixtures. It does not implement component behavior or call services.
 
-The executable architecture contract is documented in [docs/architecture.md](docs/architecture.md) and enforced by architecture, dependency-graph and public-ownership tests.
+The executable architecture contract is documented in [docs/architecture.md](docs/architecture.md) and enforced by architecture, dependency-graph, public-ownership and public-component-props tests.
 
 ## Public ownership
 
 - Every public symbol, including type-only exports, has exactly one canonical owner: Core, Theme, Patterns, or Gouno.
+- Every PascalCase runtime component in a formal public layer must export a same-owner `ComponentNameProps` type. There is no component allowlist for this rule.
+- Complex components keep explicit handwritten Props when semantics or generics matter. Thin wrappers and compound primitives may expose type-only runtime-derived Props aliases when those aliases exactly track implementation and add no runtime dependency.
 - The four formal layer entry points must use explicit symbol manifests; `export *` manifests are not allowed there.
 - The package root is the only compatibility umbrella. It must equal the exact union of the four formal entries plus `cn` and must not become a fifth ownership layer.
 - Do not expose source-directory wildcard package subpaths such as `core/*`, `patterns/*`, or `gouno/*`.
@@ -41,6 +43,7 @@ The executable architecture contract is documented in [docs/architecture.md](doc
 - Large compound components may split state, derivation and render helpers into private modules without expanding the public API. `DataTable` is the reference pattern: one public component with a private model module.
 - Do not recreate `src/legacy`, compatibility directories, catch-all implementation files such as `misc.tsx`/`visual.tsx`, or product-specific synonym aliases.
 - Prefer one state/orchestration backend per public concept. Do not maintain parallel internal implementations for the same Toast, overlay, navigation, pagination or selection contract.
+- Do not publish speculative global configuration contexts. A public provider/config surface must be consumed by formal components with documented precedence and behavior tests; otherwise keep it private or remove it.
 - Use semantic design tokens and `cn`; do not add page-local colors or business-specific styling to Core.
 - Public components should support controlled and/or uncontrolled state where meaningful, disabled/readOnly/loading/error states, keyboard operation, focus management, and ARIA relationships.
 

@@ -3,6 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import {
   Breadcrumb,
   Calendar,
+  Carousel,
   InputNumber,
   Pagination,
   Table,
@@ -106,20 +107,8 @@ describe("core components", () => {
     expect(progress.querySelector('[data-slot="progress-indicator"]')?.getAttribute("style")).toContain("width: 0%");
   });
 });
-import { ConfigProvider, useConfig, Carousel } from "../src/core";
 
-describe("core context and composite controls", () => {
-  it("provides configuration without product state", () => {
-    function Probe() {
-      return <output>{useConfig().componentSize}</output>;
-    }
-    render(
-      <ConfigProvider componentSize="large">
-        <Probe />
-      </ConfigProvider>,
-    );
-    expect(screen.getByText("large")).toBeTruthy();
-  });
+describe("core composite controls", () => {
   it("supports carousel keyboard-free button navigation", () => {
     render(
       <Carousel items={[<span key="a">A</span>, <span key="b">B</span>]} />,

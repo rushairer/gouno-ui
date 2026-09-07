@@ -43,7 +43,6 @@ export { List } from "./list";
 export { Descriptions } from "./descriptions";
 export { Image } from "./image";
 export { Calendar } from "./calendar";
-export { ConfigProvider, useConfig, type UIConfig, type ConfigProviderProps } from "./config-provider";
 export { App, type AppProps } from "./app";
 export { FloatButton, type FloatButtonProps } from "./float-button";
 export { Anchor, type AnchorProps, type AnchorItem } from "./anchor";

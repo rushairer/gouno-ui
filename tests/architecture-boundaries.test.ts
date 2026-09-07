@@ -92,6 +92,13 @@ describe("public layer architecture", () => {
     expect(typeof theme.ThemeToggle).toBe("function");
   });
 
+  it("does not expose inert global configuration surfaces", async () => {
+    expect(existsSync(resolve(sourceRoot, "core/config-provider.tsx"))).toBe(false);
+    const core = await import("../src/core/index");
+    expect("ConfigProvider" in core).toBe(false);
+    expect("useConfig" in core).toBe(false);
+  });
+
   it("does not recreate public catch-all implementation modules", () => {
     for (const relativePath of [
       "core/misc.tsx",

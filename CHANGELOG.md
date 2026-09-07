@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- Added a zero-whitelist TypeScript contract test requiring every formal public JSX component in Core, Theme, Patterns, and Gouno to export an exact named `ComponentNameProps` type.
 - Added bilingual names and red, explicitly estimated API-plus-examples completion badges to incomplete Core component and product-scenario entries in the Showcase navigation; completed entries omit the badge.
 - Added separate Ant Design-style Badge and Tag APIs: Badge now covers counts, dots, overflow, zero visibility, statuses, colors, sizes, offsets, and dynamic values; Tag covers semantic and custom colors, icons, borders, closing, disabled behavior, and controlled or uncontrolled CheckableTag selection.
 - Added dedicated Badge and Tag Showcase pages with interaction-complete examples, matching source code, and full API tables.
@@ -21,6 +22,7 @@ All notable changes to this project are documented here.
 
 ### Changed
 
+- Completed named Props coverage for all currently exported public JSX components; thin wrappers use type-only runtime-derived aliases so the formal contract cannot drift from implementation.
 - Curated package exports to the formal root, Core, Patterns, Gouno, and Theme entry points instead of exposing source directories through wildcard subpaths.
 - Converted all four formal layer entry points to explicit symbol manifests; the root remains the sole compatibility umbrella and is verified as the exact layer union plus `cn`.
 - Enforced single component ownership: Core owns Tabs/Pagination/Form layout/TableDensity, Theme owns ThemeProvider/useTheme/ThemeToggle, and Patterns no longer reimplements or re-exports those APIs.
@@ -29,7 +31,7 @@ All notable changes to this project are documented here.
 - Unified ToastProvider, `useToast` and the declarative Toast bridge on one Sonner-backed orchestration path instead of maintaining a second local toast state/timer stack.
 - Added named public Props for Gouno navigation groups and page-template components.
 - Made `BulkActionBar` product-agnostic; product actions such as AI assistance are caller-composed children rather than dedicated Pattern props.
-- Split unrelated Core implementation catch-alls: Spinner, Progress, AspectRatio, Kbd, ConfigProvider, App, FloatButton, Anchor, Spin, DateRangePicker, TimePicker, ColorPicker, Statistic, and Timeline now have focused modules; generic Typography is grouped with the typography family.
+- Split unrelated Core implementation catch-alls: Spinner, Progress, AspectRatio, Kbd, App, FloatButton, Anchor, Spin, DateRangePicker, TimePicker, ColorPicker, Statistic, and Timeline now have focused modules; generic Typography is grouped with the typography family.
 - Converted Gouno `layout.tsx` into a pure export barrel and split Panel, Page, DefinitionList, and ListStack families into focused modules.
 - Clarified the Core, Theme, Patterns and Gouno ownership boundaries while preserving the package root as a convenience aggregate entry.
 - Standardized `TableCaption` and `DataTable` on `captionSide`; removed the former `captionPosition`, `position`, and `TableCaptionPosition` aliases.
@@ -56,6 +58,7 @@ All notable changes to this project are documented here.
 
 ### Removed
 
+- Removed inert `ConfigProvider`, `useConfig`, and `UIConfig` APIs because no public component consumed their `componentSize` or `direction` values.
 - Removed source-directory wildcard public subpaths (`@gouno/ui/core/*`, `@gouno/ui/patterns/*`, `@gouno/ui/gouno/*`).
 - Removed duplicate Patterns Tabs/Pagination implementations and the `SubnavTabs` alias.
 - Removed dead, non-public feedback exports and the duplicate local ToastProvider state/timer implementation.
