@@ -18,7 +18,6 @@ import {
   Textarea,
   Upload,
 } from "../src/core";
-import { DataTable } from "../src/patterns";
 import { componentProgress } from "../showcase/component-progress";
 import { dataEntryDocuments } from "../showcase/demos/core/data-entry";
 import { dataDisplayDocuments } from "../showcase/demos/core/data-display";
@@ -137,31 +136,22 @@ describe("audited target components", () => {
     expect((drawer as HTMLElement).style.width).toBe("378px");
   });
 
-  it("supports table options and expandable DataTable rows", () => {
+  it("supports canonical Table layout options", () => {
     render(
-      <>
-        <Table bordered fixed stickyHeader>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell>Gouno</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-        <DataTable
-          rowKey="id"
-          dataSource={[{ id: "a", name: "Alpha" }]}
-          columns={[{ key: "name", title: "Name", dataIndex: "name" }]}
-          expandedRowRender={(row) => <span>{row.name} details</span>}
-        />
-      </>,
+      <Table bordered fixed stickyHeader>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Name</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow>
+            <TableCell>Gouno</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>,
     );
-    fireEvent.click(screen.getByRole("button", { name: "展开行" }));
-    expect(screen.getByText("Alpha details")).toBeTruthy();
+    expect(screen.getByText("Gouno")).toBeTruthy();
     expect(document.querySelector('[data-sticky-header="true"]')).toBeTruthy();
   });
 
@@ -178,7 +168,7 @@ describe("audited target components", () => {
     expect(onChange).toHaveBeenCalledWith(2, 10);
   });
 
-  it("reports 100% only for the completed and reviewed batch", () => {
+  it("reports 100% only for the completed and reviewed canonical batch", () => {
     for (const id of [
       "core-input",
       "core-textarea",
@@ -188,7 +178,6 @@ describe("audited target components", () => {
       "core-date-picker",
       "core-upload",
       "core-table",
-      "core-data-table",
       "core-pagination",
       "core-modal",
       "core-drawer",
@@ -196,9 +185,10 @@ describe("audited target components", () => {
       expect(componentProgress(id, 0)).toBe(100);
     }
     expect(componentProgress("core-button", 0)).toBeLessThan(100);
+    expect(componentProgress("core-data-table", 0)).toBe(0);
   });
 
-  it("keeps audited API rows atomic and demo source readable", () => {
+  it("keeps audited canonical API rows atomic and demo source readable", () => {
     const documents = [
       dataEntryDocuments.input,
       dataEntryDocuments.textarea,
@@ -208,14 +198,14 @@ describe("audited target components", () => {
       dataEntryDocuments["date-picker"],
       dataEntryDocuments.upload,
       dataDisplayDocuments.table,
-      dataDisplayDocuments["data-table"],
       feedbackDocuments.modal,
       feedbackDocuments.drawer,
       paginationDocument,
     ];
     for (const document of documents) {
-      for (const row of document.api ?? [])
+      for (const row of document.api ?? []) {
         expect(row.name).not.toMatch(/\s\/\s/);
+      }
       const examples = [document, ...(document.demos ?? [])];
       expect(new Set(examples.map((demo) => demo.code)).size).toBe(
         examples.length,

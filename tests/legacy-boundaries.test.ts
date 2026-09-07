@@ -51,13 +51,18 @@ function moduleSpecifiers(file: string): string[] {
 }
 
 describe("Legacy quarantine", () => {
-  it("excludes Legacy from both source build configurations", () => {
+  it("excludes Legacy from every TypeScript compilation surface", () => {
     for (const filename of ["tsconfig.json", "tsconfig.build.json"]) {
       const config = JSON.parse(readFileSync(resolve(root, filename), "utf8")) as {
         exclude?: string[];
       };
       expect(config.exclude).toContain("src/legacy/**/*");
     }
+
+    const showcaseConfig = JSON.parse(
+      readFileSync(resolve(root, "showcase/tsconfig.json"), "utf8"),
+    ) as { exclude?: string[] };
+    expect(showcaseConfig.exclude).toContain("../src/legacy/**/*");
   });
 
   it("does not publish a Legacy package path", () => {
