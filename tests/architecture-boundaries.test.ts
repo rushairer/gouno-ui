@@ -7,8 +7,6 @@ const sourceRoot = resolve(process.cwd(), "src");
 function sourceFiles(directory: string): string[] {
   const result: string[] = [];
   const visit = (path: string) => {
-    // Keep this small and dependency-free: the test only needs source files in
-    // the three public architectural layers.
     for (const entry of readdirSync(path)) {
       const child = resolve(path, entry);
       if (statSync(child).isDirectory()) visit(child);
@@ -55,4 +53,21 @@ describe("public layer architecture", () => {
     expect(typeof gouno.RiskBadge).toBe("function");
   });
 
+  it("publishes curated layer entry points instead of source-directory wildcards", () => {
+    const packageJson = JSON.parse(
+      readFileSync(resolve(process.cwd(), "package.json"), "utf8"),
+    ) as { exports: Record<string, unknown> };
+    const exportKeys = Object.keys(packageJson.exports);
+    expect(exportKeys).not.toContain("./core/*");
+    expect(exportKeys).not.toContain("./patterns/*");
+    expect(exportKeys).not.toContain("./gouno/*");
+  });
+
+  it("does not create a second canonical Core import path through Patterns", () => {
+    const patternsIndex = readFileSync(
+      resolve(sourceRoot, "patterns/index.ts"),
+      "utf8",
+    );
+    expect(patternsIndex).not.toMatch(/from\s+["']\.\.\/core\//);
+  });
 });

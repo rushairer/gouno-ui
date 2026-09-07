@@ -1,6 +1,5 @@
 /** Reusable multi-component interaction patterns. */
 export { DataTable, type DataTableProps, type TableDensity } from "./data-table";
-export { FormLayout, FormGrid, FormActions } from "../core/form";
 export { Feedback, EmptyState, ErrorState, LoadingState, AsyncState, Toast, ToastProvider, useToast } from "./feedback";
 export { BulkActionBar, SectionNav } from "./navigation-patterns";
 export { ConfirmDialog, useConfirm } from "./confirm-dialog";

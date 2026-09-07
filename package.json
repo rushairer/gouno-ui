@@ -18,10 +18,6 @@
       "types": "./dist/core/index.d.ts",
       "import": "./dist/core/index.js"
     },
-    "./core/*": {
-      "types": "./dist/core/*.d.ts",
-      "import": "./dist/core/*.js"
-    },
     "./patterns": {
       "types": "./dist/patterns/index.d.ts",
       "import": "./dist/patterns/index.js"
@@ -37,15 +33,7 @@
     "./tokens.css": "./dist/tokens.css",
     "./base.css": "./dist/base.css",
     "./bootstrap.js": "./dist/bootstrap.js",
-    "./fonts/*": "./dist/fonts/*",
-    "./patterns/*": {
-      "types": "./dist/patterns/*.d.ts",
-      "import": "./dist/patterns/*.js"
-    },
-    "./gouno/*": {
-      "types": "./dist/gouno/*.d.ts",
-      "import": "./dist/gouno/*.js"
-    }
+    "./fonts/*": "./dist/fonts/*"
   },
   "sideEffects": [
     "**/*.css"
