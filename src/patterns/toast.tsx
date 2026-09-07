@@ -4,12 +4,10 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
-  useState,
   type ReactNode,
 } from "react";
 import { X } from "lucide-react";
-import { toast } from "sonner";
+import { Toaster, toast } from "sonner";
 import { useTheme } from "../theme/provider";
 import { cn } from "../lib/utils";
 import {
@@ -28,11 +26,46 @@ export interface ToastApi {
   showInfo: (message: string) => void;
 }
 
-type ToastItem = {
-  id: number;
-  message: string;
-  type: FeedbackType;
-};
+interface NotifyToastOptions extends ToastOptions {
+  onDismiss?: () => void;
+  onAutoClose?: () => void;
+}
+
+function notifyToast(
+  message: string,
+  type: FeedbackType = "success",
+  options?: NotifyToastOptions,
+) {
+  let id: string | number;
+  id = toast.custom(
+    () => (
+      <div
+        role={type === "warning" || type === "error" ? "alert" : "status"}
+        className={cn(
+          `toast--${type}`,
+          "flex min-w-72 items-center gap-3 rounded-lg border bg-popover p-4 text-sm text-popover-foreground shadow-lg",
+          feedbackToneClasses[type],
+        )}
+      >
+        <span className="min-w-0 flex-1">{message}</span>
+        <button
+          type="button"
+          aria-label="关闭提示"
+          className="rounded-sm p-1 text-muted-foreground hover:text-foreground"
+          onClick={() => toast.dismiss(id)}
+        >
+          <X aria-hidden="true" className="size-4" />
+        </button>
+      </div>
+    ),
+    {
+      duration: options?.duration === 0 ? Infinity : options?.duration,
+      onDismiss: options?.onDismiss,
+      onAutoClose: options?.onAutoClose,
+    },
+  );
+  return id;
+}
 
 const ToastContext = createContext<ToastApi | null>(null);
 
@@ -48,37 +81,12 @@ export interface ToastProviderProps {
 
 function ToastProviderRoot({ children }: ToastProviderProps) {
   const { resolvedMode } = useTheme();
-  const [items, setItems] = useState<ToastItem[]>([]);
-  const nextId = useRef(1);
-  const timers = useRef(new Set<ReturnType<typeof setTimeout>>());
-
-  useEffect(
-    () => () => {
-      for (const timer of timers.current) clearTimeout(timer);
-      timers.current.clear();
+  const notify = useCallback<ToastApi["notify"]>(
+    (message, type = "success", options) => {
+      notifyToast(message, type, options);
     },
     [],
   );
-
-  const notify = useCallback(
-    (
-      message: string,
-      type: FeedbackType = "success",
-      options?: ToastOptions,
-    ) => {
-      const id = nextId.current++;
-      setItems((current) => [...current, { id, message, type }]);
-      if (options?.duration === 0) return;
-
-      const timer = setTimeout(() => {
-        timers.current.delete(timer);
-        setItems((current) => current.filter((item) => item.id !== id));
-      }, options?.duration ?? 4000);
-      timers.current.add(timer);
-    },
-    [],
-  );
-
   const api = useMemo<ToastApi>(
     () => ({
       notify,
@@ -89,43 +97,10 @@ function ToastProviderRoot({ children }: ToastProviderProps) {
     [notify],
   );
 
-  const dismiss = useCallback((id: number) => {
-    setItems((current) => current.filter((entry) => entry.id !== id));
-  }, []);
-
   return (
     <ToastContext.Provider value={api}>
       {children}
-      <div
-        className="fixed bottom-4 right-4 z-50 flex flex-col gap-3"
-        data-theme={resolvedMode}
-      >
-        {items.map((item) => (
-          <div
-            key={item.id}
-            role={
-              item.type === "warning" || item.type === "error"
-                ? "alert"
-                : "status"
-            }
-            className={cn(
-              `toast--${item.type}`,
-              "flex min-w-72 items-center gap-3 rounded-lg border bg-popover p-4 text-sm text-popover-foreground shadow-lg",
-              feedbackToneClasses[item.type],
-            )}
-          >
-            <span className="min-w-0 flex-1">{item.message}</span>
-            <button
-              type="button"
-              aria-label="关闭提示"
-              className="rounded-sm p-1 text-muted-foreground hover:text-foreground"
-              onClick={() => dismiss(item.id)}
-            >
-              <X aria-hidden="true" className="size-4" />
-            </button>
-          </div>
-        ))}
-      </div>
+      <Toaster theme={resolvedMode} position="bottom-right" />
     </ToastContext.Provider>
   );
 }
@@ -156,13 +131,11 @@ export function Toast({ toast: message, onDismiss }: ToastProps) {
           : message.tone === "success"
             ? "success"
             : "info");
-    const id = toast[kind](message.message, {
-      onDismiss: () => onDismiss?.(),
-      onAutoClose: () => onDismiss?.(),
+    const id = notifyToast(message.message, kind, {
+      onDismiss,
+      onAutoClose: onDismiss,
     });
-    return () => {
-      toast.dismiss(id);
-    };
+    return () => toast.dismiss(id);
   }, [message.message, message.type, message.tone, onDismiss]);
 
   return null;

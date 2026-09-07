@@ -14,17 +14,24 @@ All notable changes to this project are documented here.
 - Added a first-class Form wrapper with vertical/horizontal layouts, native FormData submission, disabled/loading fieldsets, and `onFinish` support.
 - Added Overlay behavior coverage for Modal and Drawer Escape handling, focus restoration, placement metadata, and responsive direction semantics.
 - Added keyboard navigation to AutoComplete and a typed, accessible TreeSelect API with controlled values, multiple selection, disabled nodes, and native form attributes.
-- Added architecture regression coverage for curated package exports, layer dependency direction, canonical ownership, product-policy leakage, catch-all implementation modules, theme ownership, and Gouno layout aliases.
-- Added `AGENTS.md` with the Core, Patterns, Gouno, primitives, and Showcase architecture rules.
+- Added architecture regression coverage for curated package exports, canonical symbol ownership including type-only exports, exact root-union compatibility, real TypeScript dependency direction, direct internal imports, product-policy leakage, catch-all implementation modules, theme ownership, and Gouno layout aliases.
+- Added `docs/architecture.md` as the executable ownership and dependency contract.
+- Added focused Toast tests covering one backend, nested-provider inheritance and the declarative bridge.
+- Added `AGENTS.md` with the Core, Theme, Patterns, Gouno, primitives, Showcase and dependency-DAG architecture rules.
 
 ### Changed
 
 - Curated package exports to the formal root, Core, Patterns, Gouno, and Theme entry points instead of exposing source directories through wildcard subpaths.
+- Converted all four formal layer entry points to explicit symbol manifests; the root remains the sole compatibility umbrella and is verified as the exact layer union plus `cn`.
 - Enforced single component ownership: Core owns Tabs/Pagination/Form layout/TableDensity, Theme owns ThemeProvider/useTheme/ThemeToggle, and Patterns no longer reimplements or re-exports those APIs.
+- Split Pattern feedback responsibilities into focused Feedback, AsyncState and Toast modules.
+- Kept DataTable as one public Pattern while moving sorting/filtering/pagination/selection/expansion state and derivation to a private model module; DataTable no longer re-exports Core Table primitives or its internal types.
+- Unified ToastProvider, `useToast` and the declarative Toast bridge on one Sonner-backed orchestration path instead of maintaining a second local toast state/timer stack.
+- Added named public Props for Gouno navigation groups and page-template components.
 - Made `BulkActionBar` product-agnostic; product actions such as AI assistance are caller-composed children rather than dedicated Pattern props.
 - Split unrelated Core implementation catch-alls: Spinner, Progress, AspectRatio, Kbd, ConfigProvider, App, FloatButton, Anchor, Spin, DateRangePicker, TimePicker, ColorPicker, Statistic, and Timeline now have focused modules; generic Typography is grouped with the typography family.
 - Converted Gouno `layout.tsx` into a pure export barrel and split Panel, Page, DefinitionList, and ListStack families into focused modules.
-- Clarified the Core, Patterns, Gouno, and Theme ownership boundaries while preserving the package root as a convenience aggregate entry.
+- Clarified the Core, Theme, Patterns and Gouno ownership boundaries while preserving the package root as a convenience aggregate entry.
 - Standardized `TableCaption` and `DataTable` on `captionSide`; removed the former `captionPosition`, `position`, and `TableCaptionPosition` aliases.
 - Widened the desktop and mobile Showcase navigation surfaces and reserved flexible label space so progress badges never cover long component names.
 - Replaced status-pill uses of Badge in Showcase product scenarios and data examples with the semantically correct Tag component.
@@ -38,6 +45,7 @@ All notable changes to this project are documented here.
 
 ### Fixed
 
+- Nested `ToastProvider` instances now inherit the existing provider instead of creating an invisible second notification state.
 - Restored a visible separator between `DataTable` captions and table content in both top and bottom positions.
 - Prevented vertical Space from stretching inline Badge and CheckableTag children to the full container width; `align="stretch"` remains available for intentional full-width layouts.
 - Kept code syntax colors synchronized with the active light, dark, system, and brand theme tokens instead of using a fixed editor theme.
@@ -50,6 +58,7 @@ All notable changes to this project are documented here.
 
 - Removed source-directory wildcard public subpaths (`@gouno/ui/core/*`, `@gouno/ui/patterns/*`, `@gouno/ui/gouno/*`).
 - Removed duplicate Patterns Tabs/Pagination implementations and the `SubnavTabs` alias.
+- Removed dead, non-public feedback exports and the duplicate local ToastProvider state/timer implementation.
 - Removed Gouno `WorkspacePanel` and `AdminPageHeader` synonym aliases; use `Panel` and `PageHeader`.
 - Removed product-specific `onAIAssist`/`aiLabel` policy from `BulkActionBar`.
 - Removed obsolete overview, placeholder category, combined overlay, and superseded demo pages.

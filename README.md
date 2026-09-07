@@ -6,17 +6,23 @@ Shared React UI library for the Gouno product family, including reusable Core co
 
 ## Architecture
 
-The source has four formal public owners plus one internal primitive layer:
+The source has four formal public owners plus internal primitive/utility foundations:
 
-- `src/components/primitives` — internal Radix/shadcn behavior primitives. Not a public product domain.
+- `src/components/primitives` / `src/lib` — internal behavior primitives and utilities; not public product domains.
 - `src/core` — pure, product-agnostic controls, layout, data entry, display, feedback and overlay APIs.
-- `src/patterns` — reusable multi-component interactions such as DataTable, async feedback and confirmation flows.
+- `src/theme` — theme state, persistence contract and theme controls.
+- `src/patterns` — reusable multi-component interactions such as DataTable, async feedback, Toast and confirmation flows.
 - `src/gouno` — Gouno product-family shells, page layout families, templates and business-status presentation.
-- `src/theme` — theme context, persistence contract and theme controls.
 
-Dependency direction is one-way: Core never depends on Patterns or Gouno; Patterns never depends on Gouno. Product policy, authentication, API clients, routes and application session state do not belong in Core or Patterns.
+Dependency direction is one-way:
 
-Each public symbol has one canonical owner. Lower-level components may be composed by higher layers, but they are not reimplemented or re-exported from another formal layer simply to provide a second import path.
+```text
+components/primitives + lib → Core → Theme → Patterns → Gouno
+```
+
+A layer may depend on itself or anything to its left, never anything to its right. Product policy, authentication, API clients, routes and application session state do not belong in Core or Patterns. The executable contract is documented in [`docs/architecture.md`](docs/architecture.md) and enforced from real TypeScript imports/exports.
+
+Each public symbol, including type-only exports, has one canonical owner. Higher layers may compose lower layers, but they do not reimplement or re-export them merely to create a second import path.
 
 ## Public entry points
 
@@ -28,7 +34,9 @@ import { AdminShell, Panel, PageHeader } from "@gouno/ui/gouno";
 import { ThemeProvider, ThemeToggle, useTheme } from "@gouno/ui/theme";
 ```
 
-The package intentionally does **not** expose source-directory wildcard subpaths such as `@gouno/ui/core/*`, `@gouno/ui/patterns/*`, or `@gouno/ui/gouno/*`. Physical source files are implementation details; public contracts are curated by the formal entry points.
+The four formal layer entries use explicit symbol manifests. The package intentionally does **not** expose source-directory wildcard subpaths such as `@gouno/ui/core/*`, `@gouno/ui/patterns/*`, or `@gouno/ui/gouno/*`.
+
+The root `@gouno/ui` entry is retained only as a compatibility/convenience umbrella. Automated TypeScript-symbol tests require its public surface to equal the exact union of Core, Theme, Patterns and Gouno plus `cn`; it does not own additional APIs.
 
 Core deliberately excludes product concepts such as `AdminShell`, `StatusBadge`, `RiskBadge`, page templates and product action policy. Patterns likewise does not duplicate Core components such as Tabs or Pagination. Theme APIs have a dedicated owner instead of being forwarded through Gouno.
 
@@ -42,13 +50,16 @@ Examples:
 - Typography, Heading and Text share the typography domain.
 - DateRangePicker, TimePicker and ColorPicker have separate owners.
 - Gouno `layout.tsx` is a pure barrel over focused Panel, Page, DefinitionList and ListStack families.
-- DataTable remains one public Pattern contract even though its sorting/filtering/pagination/selection behavior is internally compound; future decomposition should prefer internal hooks/renderers rather than multiplying public APIs.
+- DataTable remains one public Pattern contract while sorting/filtering/pagination/selection/expansion state lives in a private model module.
+- Feedback, AsyncState and Toast have separate Pattern owners.
+- ToastProvider, `useToast` and the declarative Toast bridge share one Sonner-backed orchestration path instead of parallel notification state machines.
 
 ## API governance
 
 Before changing a public component, read:
 
 - `AGENTS.md`
+- `docs/architecture.md` — executable ownership/dependency contract
 - `docs/api-specification.md` — binding target API contract
 - `docs/api-conformance.md` — current conformance register
 - `docs/migration.md` — compatibility and ownership migrations

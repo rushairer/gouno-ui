@@ -27,8 +27,9 @@
 | API-014 / STYLE-01 | DataTable 两模式拥有稳定 `data-table` 根节点，className owner 固定。 | [DataTable](../src/patterns/data-table.tsx) | tests、Showcase build |
 | API-015 / COMP-03、STATE-03 | DataTable 两模式都支持 caption，并保留合法 falsy ReactNode。 | [DataTable](../src/patterns/data-table.tsx) | tests、typecheck |
 | API-016 / DOM-01、A11Y-01 | Modal/Drawer 使用原生 `aria-label` 并作用到 dialog 节点。 | [Modal](../src/core/modal.tsx)、[Drawer](../src/core/drawer.tsx) | tests、Showcase build |
-| API-020 / GOV-02、COMP-03、TYPE-01 | 建立 Core → Patterns → Gouno 分层；业务状态标签和页面抽象归 Gouno；Patterns 不依赖 Gouno。 | [Core](../src/core/index.ts)、[Patterns](../src/patterns/index.ts)、[Gouno](../src/gouno/index.ts) | architecture tests、typecheck、tests、build |
+| API-020 / GOV-02、COMP-03、TYPE-01 | 建立 `Core → Theme → Patterns → Gouno` 正向依赖层级；业务状态标签和页面抽象归 Gouno；低层不得依赖高层。 | [Core](../src/core/index.ts)、[Theme](../src/theme/index.ts)、[Patterns](../src/patterns/index.ts)、[Gouno](../src/gouno/index.ts) | architecture/dependency tests、typecheck、tests、build |
 | API-021 / GOV-02、COMP-03、TYPE-01、DOC-01 | 完成公共面纯化：移除 `core/*/patterns/*/gouno/*` 源目录通配 subpath；Patterns 不再二次导出 Core Form 或重复实现 Tabs/Pagination；Theme 独立为唯一 owner；BulkActionBar 去产品 AI 语义；Core 拆除 `misc/visual/date-time` 聚合实现；Gouno layout 改为纯 barrel 并拆分 Panel/Page/DefinitionList/ListStack 家族；移除 `WorkspacePanel`/`AdminPageHeader` 同义 alias；`TableDensity` 仅由 Core owner。 | [package exports](../package.json)、[Core](../src/core/index.ts)、[Patterns](../src/patterns/index.ts)、[Theme](../src/theme/index.ts)、[Gouno layout](../src/gouno/layout.tsx)、[Architecture tests](../tests/architecture-boundaries.test.ts) | staged main commits、GitHub Actions typecheck/tests/package build/Showcase build |
+| API-022 / GOV-02、TYPE-01、COMP-03、DOC-01 | 进一步硬化架构纯度：Feedback/AsyncState/Toast 分离 owner；DataTable 状态与派生逻辑下沉 private model 且不再 re-export Table primitives；四个正式 layer 入口全部改成显式 symbol manifest；TypeScript checker 验证 type-only symbol 唯一 owner 与 root 精确并集；真实 import/export DAG 自动校验；Gouno 模板补齐具名 Props；ToastProvider/useToast/Toast 统一到单一 Sonner backend。 | [Architecture contract](architecture.md)、[Feedback](../src/patterns/feedback.tsx)、[AsyncState](../src/patterns/async-state.tsx)、[Toast](../src/patterns/toast.tsx)、[DataTable model](../src/patterns/data-table-model.ts)、[Public ownership tests](../tests/public-api-ownership.test.ts)、[Dependency graph tests](../tests/dependency-graph.test.ts) | focused Toast tests、architecture tests、typecheck、tests、package build、Showcase build、main GitHub Actions |
 
 ## 公共 API 兼容说明
 
@@ -41,6 +42,7 @@
 - `BulkActionBar` 只处理 selection/action composition；AI 等产品动作通过 `children` 组合。
 - 物理文件不再自动成为 public subpath。消费者必须使用包根或 `core/patterns/gouno/theme` 正式入口。
 - `WorkspacePanel`、`AdminPageHeader` 同义 alias 已移除，分别使用 `Panel`、`PageHeader`。
+- `DataTable` 仍是唯一公开表格 Pattern；`useDataTableModel`/`DataTableRecord` 为 private implementation，不从正式入口导出。
 
 这些变化包含公开导出归属调整和破坏式兼容影响。发布时必须按 SemVer 评估主版本或提供明确迁移公告；本轮不自动修改版本号、不发布包。迁移路径见 [Migration guide](migration.md)。
 
@@ -48,7 +50,9 @@
 
 `ConfigProvider` 当前是可选 Core 上下文；`componentSize` 与 `direction` 只通过 `useConfig` 暴露，组件不会隐式消费。未来若让控件消费这些字段，必须逐组件补充默认值、优先级、API 表、示例与行为测试。
 
-DataTable 是同一领域的复合 Pattern。它可以继续把 sorting/filtering/pagination/selection/expansion 的内部实现放在同一公开组件契约下；如继续拆分，应优先拆 internal hooks/renderer，不扩大 public API。
+DataTable 是同一领域的复合 Pattern。公开契约保持单一；sorting/filtering/pagination/selection/expansion 的模型状态与派生已移动到 private model。后续如拆 render helpers，仍不得扩大 public API。
+
+根 `@gouno/ui` 保留作为兼容 umbrella，但不拥有独立 symbol。正式 owner 仍只有 Core/Theme/Patterns/Gouno，根入口必须持续通过精确并集测试。
 
 ## 本轮验证基线
 
@@ -64,6 +68,7 @@ DataTable 是同一领域的复合 Pattern。它可以继续把 sorting/filterin
 - `Text.tone` 等独立语义不能被用来恢复 Tag 的 `tone`。
 - `density="default | compact | touch"`、弹窗宽度、二维码像素尺寸具有独立语义，不机械套用 control size。
 - 每个 public symbol 必须只有一个 canonical owner；barrel 只能负责导出，不能承载无关实现；不得重新引入源目录 wildcard exports 或同义 alias。
+- 正式层依赖只能沿 `Core → Theme → Patterns → Gouno` 正向组合；实现模块禁止反向依赖、禁止绕回根 umbrella、禁止内部依赖正式 layer barrel。
 
 ## 后续登记与关闭
 
