@@ -4,6 +4,13 @@ import { GossoAccountSettingsDemo } from "../showcase/demos/products/gosso-accou
 
 afterEach(cleanup);
 
+function selectTab(name: string) {
+  fireEvent.mouseDown(screen.getByRole("tab", { name }), {
+    button: 0,
+    ctrlKey: false,
+  });
+}
+
 describe("Gosso Admin Account Settings migration fixture", () => {
   it("preserves the five route-backed account settings sections", () => {
     render(<GossoAccountSettingsDemo />);
@@ -12,18 +19,18 @@ describe("Gosso Admin Account Settings migration fixture", () => {
     expect(screen.getByText("/account-settings/profile")).toBeTruthy();
     expect(screen.getByRole("heading", { name: "个人资料" })).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("tab", { name: "修改密码" }));
+    selectTab("修改密码");
     expect(screen.getByText("/account-settings/password")).toBeTruthy();
     expect(screen.getByRole("heading", { name: "修改密码" })).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("tab", { name: "活跃会话" }));
+    selectTab("活跃会话");
     expect(screen.getByText("/account-settings/sessions")).toBeTruthy();
     expect(screen.getByRole("heading", { name: "活跃会话" })).toBeTruthy();
   });
 
   it("keeps password validation local to the page fixture", () => {
     render(<GossoAccountSettingsDemo />);
-    fireEvent.click(screen.getByRole("tab", { name: "修改密码" }));
+    selectTab("修改密码");
 
     fireEvent.change(screen.getByLabelText("当前密码"), {
       target: { value: "current-password" },
@@ -47,11 +54,11 @@ describe("Gosso Admin Account Settings migration fixture", () => {
   it("represents passkey and session management without restoring Legacy patterns", () => {
     render(<GossoAccountSettingsDemo />);
 
-    fireEvent.click(screen.getByRole("tab", { name: "通行密钥 (FIDO2)" }));
+    selectTab("通行密钥 (FIDO2)");
     expect(screen.getByText("MacBook Pro")).toBeTruthy();
     expect(screen.getByText("iPhone")).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("tab", { name: "活跃会话" }));
+    selectTab("活跃会话");
     expect(screen.getByText("macOS · Chrome")).toBeTruthy();
     expect(screen.getByText("当前会话")).toBeTruthy();
 
