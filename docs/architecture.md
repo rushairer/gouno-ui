@@ -1,6 +1,6 @@
 # Gouno UI Architecture Contract
 
-This document defines the architectural boundaries enforced by the source and test suite. Public API naming remains governed by `docs/api-specification.md`.
+This document defines the architectural boundaries enforced by the source and test suite. Public API naming remains governed by `docs/api-specification.md`. Public abstraction admission and product-driven evolution are governed by `docs/product-driven-development.md`, with durable decisions recorded in `docs/abstraction-register.md`.
 
 ## Dependency direction
 
@@ -40,6 +40,21 @@ Repository implementation code and the Showcase do not consume the root umbrella
 
 Every PascalCase runtime component exported by a formal layer must also export a same-owner `ComponentNameProps` type. `tests/public-component-props.test.ts` discovers components directly from the TypeScript symbol table and has no component allowlist. Complex components keep explicit handwritten public props; thin wrappers and compound primitives may use type-only runtime-derived aliases when that preserves the exact implementation contract.
 
+## Product-driven admission before ownership
+
+Layer ownership does not prove that an abstraction deserves to exist. Before creating a new public Pattern/Gouno component or materially extending Core, apply `docs/product-driven-development.md` first.
+
+The current product-validation model is deliberately asymmetric:
+
+- Gosso Admin is the primary page-by-page implementation line.
+- Blog Admin and relevant Blog pages are mandatory cross-product prior-art and validation corpora.
+- Product pages are rebuilt Core-first with the minimum accepted Gouno shell and local composition before shared extraction.
+- Existing Pattern/Gouno exports outside the minimum product scaffolding are prior art rather than automatic precedent.
+- The third semantically equivalent occurrence triggers review, not automatic extraction.
+- Cross-product comparison is based on user intent, state, interaction, accessibility and responsive semantics rather than legacy component names or DOM similarity.
+
+Once an abstraction is admitted, this architecture document determines its canonical owner and legal dependency direction; `docs/api-specification.md` then governs the public API contract.
+
 ## Internal composition
 
 Implementation modules import concrete modules rather than the package root or formal layer barrels. This keeps dependency edges visible and reduces accidental cycles and barrel-driven bundle coupling.
@@ -64,6 +79,8 @@ Preview/Code source transformation may display package-form import paths as text
 
 Component-catalog completion percentages are documentation-audit evidence, not architecture scores. A component remains below 100% until its own API table, examples, source equivalence, accessibility and focused tests satisfy `AGENTS.md`, even when the package architecture itself is fully conformant.
 
+During product migration, Showcase is also the product-validation laboratory: real product pages are reconstructed there with static fixtures so that Core/API gaps and candidate shared abstractions can be evaluated against the same canonical public layers.
+
 ## Delivery contract
 
 The main-branch verification workflow uses Node.js 24 and pins every external GitHub Action to an immutable commit SHA. Before Pages publication it must run, in order as one verification gate:
@@ -78,3 +95,5 @@ The main-branch verification workflow uses Node.js 24 and pins every external Gi
 ## Change rule
 
 Any architectural change that introduces a new public owner, layer edge, alias, package subpath, public component, global configuration surface, cross-layer re-export, Showcase root-umbrella import, runtime value in a type-contract manifest, or delivery-workflow dependency must update the relevant invariant tests in the same change. Tests describe invariants; they are not compatibility exceptions.
+
+Any product-driven change that admits, rejects, merges, moves, removes, or materially changes a public abstraction must also keep `docs/abstraction-register.md` current so later sessions can reconstruct the evidence without relying on chat history.

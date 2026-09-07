@@ -49,6 +49,23 @@ The executable architecture contract is documented in [docs/architecture.md](doc
 - Use semantic design tokens and `cn`; do not add page-local colors or business-specific styling to Core.
 - Public components should support controlled and/or uncontrolled state where meaningful, disabled/readOnly/loading/error states, keyboard operation, focus management, and ARIA relationships.
 
+## Product-driven evolution
+
+Before migrating product pages, extracting shared code, adding a Pattern/Gouno component, or materially extending a Core API, read [Product-Driven Component Evolution Contract](docs/product-driven-development.md) and [Abstraction Evidence Register](docs/abstraction-register.md).
+
+The repository is now in a product-validation phase:
+
+- Gosso Admin is the primary page-by-page migration line.
+- Gouno Blog Admin and relevant Gouno Blog pages are mandatory cross-product prior-art and validation corpora, not parallel migration workstreams by default.
+- Rebuild migrated pages with Core, Theme, the minimum accepted product shell and local JSX/Tailwind composition first.
+- The minimum pre-accepted Gouno product-space scaffolding is `AdminShell`, `AdminPage`, `NavigationGroup` and `navigationItemClass`. Other existing Pattern/Gouno exports are prior art, not automatic precedent, and must be revalidated when encountered.
+- Prefer local duplication while a repeated contract is still uncertain. The third semantically equivalent occurrence triggers abstraction review; it does not automatically authorize extraction.
+- Compare user intent, state, interactions, accessibility and responsive behavior rather than legacy component/file names. Similar DOM is not sufficient evidence, and different legacy structures do not prove different semantics.
+- Before any new public Pattern/Gouno abstraction or material Core capability, search Gouno UI, Gosso Admin, Blog Admin and relevant Blog pages for prior art.
+- Public abstraction admission must answer the checklist in `docs/product-driven-development.md`; if evidence is insufficient, keep the code product-local.
+- Record durable accept/reject/merge/move/remove decisions in `docs/abstraction-register.md` so later agents do not reconstruct architecture decisions from chat history.
+- Product evidence may refine Core APIs, but `docs/api-specification.md` remains binding and legacy product APIs never become naming precedents.
+
 ## API and quality
 
 - Before designing, implementing, modifying, or reviewing public components, read [Public API Specification](docs/api-specification.md) and the applicable semantic entries. It is the binding target API contract; existing APIs are not naming precedents.
