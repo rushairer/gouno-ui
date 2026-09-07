@@ -17,16 +17,7 @@ describe("Core Alert", () => {
   });
 
   it("supports title, description, icons, action and filled visual variant", () => {
-    render(
-      <Alert
-        type="success"
-        variant="filled"
-        showIcon
-        title="Saved"
-        description="Changes are durable."
-        action={<button type="button">Undo</button>}
-      />,
-    );
+    render(<Alert type="success" variant="filled" showIcon title="Saved" description="Changes are durable." action={<button type="button">Undo</button>} />);
     expect(screen.getByText("Saved")).toBeTruthy();
     expect(screen.getByText("Changes are durable.")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Undo" })).toBeTruthy();
@@ -46,12 +37,7 @@ describe("Core Alert", () => {
     vi.useFakeTimers();
     const onClose = vi.fn();
     const afterClose = vi.fn();
-    render(
-      <Alert
-        title="Closable"
-        closable={{ "aria-label": "Dismiss alert", onClose, afterClose }}
-      />,
-    );
+    render(<Alert title="Closable" closable={{ "aria-label": "Dismiss alert", onClose, afterClose }} />);
     fireEvent.click(screen.getByRole("button", { name: "Dismiss alert" }));
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(screen.getByRole("alert")).toBeTruthy();
@@ -61,15 +47,7 @@ describe("Core Alert", () => {
   });
 
   it("applies semantic classNames and styles without DOM-selector coupling", () => {
-    render(
-      <Alert
-        type="info"
-        title="Semantic"
-        description="Stable slots"
-        classNames={{ title: "fixture-title" }}
-        styles={{ description: { maxWidth: 321 } }}
-      />,
-    );
+    render(<Alert type="info" title="Semantic" description="Stable slots" classNames={{ title: "fixture-title" }} styles={{ description: { maxWidth: 321 } }} />);
     expect(screen.getByText("Semantic").className).toContain("fixture-title");
     expect((screen.getByText("Stable slots") as HTMLElement).style.maxWidth).toBe("321px");
   });
@@ -82,14 +60,10 @@ describe("Core Alert", () => {
 
   it("exposes Alert.ErrorBoundary for local render failures", () => {
     const error = vi.spyOn(console, "error").mockImplementation(() => undefined);
-    function Broken() {
+    function Broken(): never {
       throw new Error("fixture render failure");
     }
-    render(
-      <Alert.ErrorBoundary title="Module failed">
-        <Broken />
-      </Alert.ErrorBoundary>,
-    );
+    render(<Alert.ErrorBoundary title="Module failed"><Broken /></Alert.ErrorBoundary>);
     expect(screen.getByRole("alert").getAttribute("data-type")).toBe("error");
     expect(screen.getByText("Module failed")).toBeTruthy();
     expect(screen.getByText("fixture render failure")).toBeTruthy();
