@@ -38,9 +38,7 @@ export function GossoResetPasswordDemo() {
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               autoComplete="new-password"
-              suffixIcon={
-                <IconButton label={show ? "隐藏密码" : "显示密码"} size="small" variant="ghost" icon={show ? <EyeOff /> : <Eye />} onClick={() => setShow((value) => !value)} />
-              }
+              suffix={<IconButton label={show ? "隐藏密码" : "显示密码"} size="small" variant="ghost" icon={show ? <EyeOff /> : <Eye />} onClick={() => setShow((value) => !value)} />}
             />
           </FormField>
           <FormField label="确认密码" required>

@@ -18,7 +18,7 @@ export function GossoForgotPasswordDemo() {
       {submitted ? <Alert className="mb-5">如果该邮箱对应有效账户，重置链接已经发送（Showcase 模拟）。</Alert> : null}
       <form onSubmit={submit} className="flex flex-col gap-4">
         <FormField label="邮箱" hint="为避免账户枚举，真实服务端无论账户是否存在都会返回一致响应。" required>
-          <Input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="name@example.com" prefixIcon={<Mail />} />
+          <Input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="name@example.com" prefix={<Mail />} />
         </FormField>
         <Button type="submit" variant="solid" color="primary" disabled={!email.trim()} className="w-full">发送重置链接</Button>
       </form>
