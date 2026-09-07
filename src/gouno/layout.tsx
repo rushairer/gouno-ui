@@ -1,7 +1,7 @@
 import { type ReactNode, type ElementType, type HTMLAttributes } from "react";
-import { X } from "lucide-react";
+import { LoaderCircle, X } from "lucide-react";
 import { cn } from "../lib/utils";
-import { IconButton } from "../core";
+import { IconButton } from "../core/icon-button";
 import type { TableDensity } from "../components/primitives/table";
 export function Panel({
   as: Component = "section",
@@ -137,6 +137,25 @@ export function PageHeader({
   );
 }
 export const AdminPageHeader = PageHeader;
+export function AdminPageState({
+  title,
+  description,
+  label,
+}: {
+  title: ReactNode;
+  description?: ReactNode;
+  label: ReactNode;
+}) {
+  return (
+    <AdminPage>
+      <PageHeader title={title} description={description} />
+      <div role="status" className="flex items-center justify-center gap-3 py-12 text-sm text-muted-foreground">
+        <LoaderCircle aria-hidden="true" className="size-5 animate-spin" />
+        {label}
+      </div>
+    </AdminPage>
+  );
+}
 export function AdminPage({
   className,
   ...props

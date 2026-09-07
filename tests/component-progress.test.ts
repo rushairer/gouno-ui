@@ -20,4 +20,10 @@ describe("audited batch completion", () => {
       expect(componentProgress(id, 0), id).toBe(100);
     }
   });
+
+  it("reports the completed same-source demo batch as complete", () => {
+    for (const id of ["core-space", "core-card", "core-typography", "core-progress"]) {
+      expect(componentProgress(id, 0), id).toBe(100);
+    }
+  });
 });

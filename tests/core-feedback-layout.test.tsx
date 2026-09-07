@@ -24,6 +24,12 @@ describe("Core layout and feedback", () => {
     expect(root.textContent).toContain("|");
     expect(root.className).not.toContain("items-start");
   });
+  it("forwards Space ref to its root and supports numeric gaps", () => {
+    const ref = React.createRef<HTMLDivElement>();
+    render(<Space ref={ref} gap={12}><button>A</button></Space>);
+    expect(ref.current?.getAttribute("data-slot")).toBe("space");
+    expect(ref.current?.className).toContain("[gap:12px]");
+  });
   it("supports OTP digit entry",()=>{render(<InputOTP length={4}/>);const first=screen.getByLabelText("Digit 1");fireEvent.change(first,{target:{value:"1"}});expect((first as HTMLInputElement).value).toBe("1");});
   it("opens a confirmation dialog",()=>{render(<Popconfirm title="Delete item?"><button>Delete</button></Popconfirm>);fireEvent.click(screen.getByRole("button",{name:"Delete"}));expect(screen.getByRole("alertdialog")).toBeTruthy();});
   it("provides transient message API",()=>{function Probe(){const api=useMessage();return <button onClick={()=>api.success("Saved")}>Show</button>}render(<MessageProvider><Probe/></MessageProvider>);fireEvent.click(screen.getByRole("button",{name:"Show"}));expect(screen.getByText("Saved")).toBeTruthy();});

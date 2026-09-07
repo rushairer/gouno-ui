@@ -58,7 +58,7 @@ function CheckableTagDemo() {
 
 function UncontrolledTagDemo() {
   const [action, setAction] = useState("点击标签切换状态");
-  return <Space orientation="vertical">
+  return <Space orientation="vertical" align="start">
     <CheckableTag defaultChecked onChange={(checked) => setAction(checked ? "已选中 TypeScript" : "已取消 TypeScript")}>TypeScript</CheckableTag>
     <Text tone="muted" aria-live="polite">{action}</Text>
   </Space>;
@@ -140,7 +140,7 @@ function CheckableTagDemo() {
         title: "非受控可选标签",
         code: `function UncontrolledTagDemo() {
   const [action, setAction] = useState("点击标签切换状态");
-  return <Space orientation="vertical">
+  return <Space orientation="vertical" align="start">
     <CheckableTag defaultChecked onChange={(checked) => setAction(checked ? "已选中 TypeScript" : "已取消 TypeScript")}>TypeScript</CheckableTag>
     <Text tone="muted" aria-live="polite">{action}</Text>
   </Space>;

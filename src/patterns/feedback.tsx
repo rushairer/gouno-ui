@@ -27,8 +27,7 @@ import {
   EmptyContent,
 } from "../components/primitives/empty";
 import { Skeleton as PrimitiveSkeleton } from "../components/primitives/skeleton";
-import { Button } from "../core";
-import { AdminPage, PageHeader } from "../gouno/layout";
+import { Button } from "../core/button";
 import { useTheme } from "../theme/provider";
 import { cn } from "../lib/utils";
 export type FeedbackType = "error" | "success" | "warning" | "info";
@@ -198,22 +197,6 @@ export function LoadingState({
 export const PageLoader = ({ message }: { message?: string }) => (
   <LoadingState label={message} />
 );
-export function AdminPageState({
-  title,
-  description,
-  label,
-}: {
-  title: string;
-  description?: ReactNode;
-  label: string;
-}) {
-  return (
-    <AdminPage>
-      <PageHeader title={title} description={description} />
-      <LoadingState label={label} />
-    </AdminPage>
-  );
-}
 export interface AsyncStateProps {
   loading: boolean;
   loadingLabel?: string;

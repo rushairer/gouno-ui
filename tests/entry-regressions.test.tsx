@@ -149,10 +149,9 @@ it("supports controlled Select and DatePicker clearing", () => {
       />
     </>,
   );
-  fireEvent.change(screen.getByRole("combobox", { name: "Status" }), {
-    target: { value: "done" },
-  });
-  expect(selectChange).toHaveBeenCalledOnce();
+  fireEvent.click(screen.getByRole("combobox", { name: "Status" }));
+  fireEvent.click(screen.getByRole("option", { name: "Done" }));
+  expect(selectChange).toHaveBeenLastCalledWith("done", { value: "done", label: "Done" });
   fireEvent.click(screen.getByRole("button", { name: "Clear date" }));
   expect(dateChange).toHaveBeenLastCalledWith("", null);
   rerender(
@@ -161,7 +160,7 @@ it("supports controlled Select and DatePicker clearing", () => {
     </Select>,
   );
   expect(
-    (screen.getByRole("combobox", { name: "Status" }) as HTMLSelectElement)
+    (screen.getByRole("combobox", { name: "Status" }) as HTMLButtonElement)
       .disabled,
   ).toBe(true);
 });

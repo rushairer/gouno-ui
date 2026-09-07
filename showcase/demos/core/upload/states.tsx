@@ -15,7 +15,7 @@ export default function UploadStatesDemo() {
       <Select
         aria-label="上传状态"
         value={state}
-        onChange={(event) => setState(event.target.value)}
+        onChange={(next) => setState(String(next))}
       >
         <option value="ready">可编辑</option>
         <option value="disabled">禁用</option>

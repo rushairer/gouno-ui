@@ -22,7 +22,7 @@ export default function TableStates() {
         <Select
           aria-label="表格密度"
           value={density}
-          onChange={(event) => setDensity(event.target.value as typeof density)}
+          onChange={(next) => setDensity(String(next) as typeof density)}
         >
           <option value="default">默认</option>
           <option value="compact">紧凑</option>

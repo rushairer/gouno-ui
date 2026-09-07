@@ -51,6 +51,8 @@ import {
   type DrawerPlacement,
 } from "../../../src/core";
 import type { ComponentDocument } from "../../components/component-page";
+import ProgressExample from "./progress/progress-0";
+import ProgressExampleSource from "./progress/progress-0.tsx?raw";
 
 function MessageDemo() {
   const api = useMessage();
@@ -288,6 +290,12 @@ export const feedbackDocuments: Record<string, ComponentDocument> = {
         <div className="h-32 rounded border" />
       </Spin>
     ),
+    api: [
+      { name: "spinning", description: "是否显示加载遮罩", type: "boolean", defaultValue: "false" },
+      { name: "tip", description: "加载说明文字", type: "ReactNode" },
+      { name: "children", description: "被遮罩的内容", type: "ReactNode" },
+      { name: "className", description: "外层样式类", type: "string" },
+    ],
   },
   alert: {
     title: "Alert 警告提示",
@@ -297,14 +305,15 @@ export const feedbackDocuments: Record<string, ComponentDocument> = {
   },
   progress: {
     title: "Progress 进度条",
-    description: "展示任务完成进度。",
-    code: "<Progress value={60} />",
-    render: () => (
-      <Space orientation="vertical">
-        <Progress value={60} />
-        <Progress value={100} />
-      </Space>
-    ),
+    description: "确定性进度，value 和 max 为同一数值单位；非法 max 回退为 100，value 会限制在 0 到 max。",
+    code: ProgressExampleSource.replaceAll("../../../../src/core", "@gouno/ui/core"),
+    render: () => <ProgressExample />,
+    api: [
+      { name: "value", description: "当前值，超出范围会限制", type: "number", defaultValue: "0" },
+      { name: "max", description: "最大值，必须为正数；否则使用 100", type: "number", defaultValue: "100" },
+      { name: "aria-label", description: "进度条可访问名称", type: "string" },
+      { name: "className", description: "progress 容器样式类", type: "string" },
+    ],
   },
   skeleton: {
     title: "Skeleton 骨架屏",

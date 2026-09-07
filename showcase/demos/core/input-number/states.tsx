@@ -10,7 +10,7 @@ export default function InputNumberStatesDemo() {
       <Select
         aria-label="数字输入状态"
         value={state}
-        onChange={(event) => setState(event.target.value)}
+        onChange={(next) => setState(String(next))}
       >
         <option value="ready">正常</option>
         <option value="disabled">禁用</option>

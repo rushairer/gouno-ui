@@ -12,7 +12,7 @@ export default function DatePickerStatesDemo() {
       <Select
         aria-label="日期状态"
         value={state}
-        onChange={(event) => setState(event.target.value)}
+        onChange={(next) => setState(String(next))}
       >
         <option value="ready">正常</option>
         <option value="disabled">禁用</option>

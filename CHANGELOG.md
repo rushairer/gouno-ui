@@ -25,7 +25,8 @@ All notable changes to this project are documented here.
 
 ### Changed
 
-- Renamed the low-level `TableCaption` position prop from `captionPosition` to `position`; `DataTable` exposes the contextual `captionPosition` prop instead.
+- Clarified the Core, Patterns, and Gouno ownership boundaries: product status tags and page abstractions now live in the Gouno entry, reusable patterns no longer import product shells, and the root ESM entry resolves to concrete built subpath files.
+- Standardized `TableCaption` and `DataTable` on `captionSide`; removed the former `captionPosition`, `position`, and `TableCaptionPosition` aliases.
 - Widened the desktop and mobile Showcase navigation surfaces and reserved flexible label space so progress badges never cover long component names.
 - Replaced status-pill uses of Badge in Showcase product scenarios and data examples with the semantically correct Tag component.
 - Expanded Showcase Data Display examples to cover DataTable behavior and selection state.

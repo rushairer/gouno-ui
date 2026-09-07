@@ -14,8 +14,44 @@ export type AuditItem = {
 
 const done = (area: AuditArea, ...requirements: string[]): AuditItem[] =>
   requirements.map((requirement) => ({ area, requirement, complete: true }));
-
 const previousAudits = {
+  "core-badge": [
+    ...done("api", "count/dot/showZero/overflowCount", "status/text/color", "size and offset", "children, title and native host attributes"),
+    ...done("states", "numeric, text and zero values", "dot and semantic statuses", "small size and offset"),
+    ...done("interaction", "dynamic count controls"),
+    ...done("accessibility", "status role and accessible names", "live dynamic feedback"),
+    ...done("examples", "count and overflow", "dot and status", "size/offset and dynamic updates"),
+    ...done("source", "Preview and Code use one reusable ?raw module"),
+    ...done("tests", "count, zero, overflow, status and custom color coverage"),
+  ],
+  "core-space": [
+    ...done("api", "orientation and gap naming", "align/wrap/split/block", "children, className, style and ref contract"),
+    ...done("states", "horizontal and vertical layouts", "content-sized and stretched children", "numeric and token gaps"),
+    ...done("interaction", "split insertion between adjacent children", "wrap layout"),
+    ...done("accessibility", "native div attributes and ref target"),
+    ...done("examples", "basic spacing", "vertical alignment and block", "wrap and split"),
+    ...done("source", "every Preview and Code panel uses the same reusable ?raw module"),
+    ...done("tests", "layout, split, block, numeric gap and ref coverage"),
+  ],
+  "core-card": [
+    ...done("api", "Card and CardHeader/CardTitle/CardDescription/CardContent/CardFooter tables", "variant, padding and interactive", "native host attributes"),
+    ...done("states", "default/subtle/elevated variants", "zero and empty ReactNode slots"),
+    ...done("examples", "composition with footer", "custom content slots"),
+    ...done("source", "Preview and Code are sourced from one reusable ?raw demo module"),
+    ...done("tests", "zero content and public type coverage"),
+  ],
+  "core-typography": [
+    ...done("api", "Heading and Text named props", "level, size, tone and as semantics"),
+    ...done("examples", "heading hierarchy and semantic tones"),
+    ...done("source", "Preview and Code are sourced from one reusable ?raw demo module"),
+  ],
+  "core-progress": [
+    ...done("api", "value/max units and defaults", "ARIA progress semantics"),
+    ...done("states", "clamped values and invalid max fallback"),
+    ...done("examples", "determinate progress"),
+    ...done("source", "Preview and Code are sourced from one reusable ?raw demo module"),
+    ...done("tests", "invalid bounds regression"),
+  ],
   "core-input": [
     ...done(
       "api",
@@ -109,6 +145,7 @@ const previousAudits = {
       "placeholder",
       "small/middle/large sizes",
       "loading and status API",
+      "single/multiple/tags modes with search and removable Tags",
       "native select attributes and ref",
     ),
     ...done(
@@ -116,10 +153,12 @@ const previousAudits = {
       "disabled and loading",
       "error and warning",
       "controlled and uncontrolled value",
+      "multi-value selection and maxTagCount",
     ),
     ...done(
       "interaction",
-      "native keyboard selection",
+      "trigger/list keyboard navigation and Enter/Escape selection",
+      "popover option list and tag removal",
       "native form serialization",
     ),
     ...done(
@@ -373,6 +412,8 @@ const previousAudits = {
 // focused demos, source panels, regression tests, and browser checks are kept
 // together in the same change so the catalog score reflects reviewed evidence.
 const completedBatch = new Set([
+  "core-badge",
+  "core-space",
   "core-input",
   "core-textarea",
   "core-input-number",
@@ -385,6 +426,9 @@ const completedBatch = new Set([
   "core-pagination",
   "core-modal",
   "core-drawer",
+  "core-card",
+  "core-typography",
+  "core-progress",
 ]);
 
 export const componentAudits: Record<string, AuditItem[]> = Object.fromEntries(

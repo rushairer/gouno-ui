@@ -24,6 +24,10 @@ import Example8 from "./select/select-1";
 import Example8Source from "./select/select-1.tsx?raw";
 import Example9 from "./select/select-2";
 import Example9Source from "./select/select-2.tsx?raw";
+import SelectClearDemo from "./select/select-3";
+import SelectClearDemoSource from "./select/select-3.tsx?raw";
+import SelectTagsDemo from "./select/select-4";
+import SelectTagsDemoSource from "./select/select-4.tsx?raw";
 import Example10 from "./input-number/input-number-0";
 import Example10Source from "./input-number/input-number-0.tsx?raw";
 import Example11 from "./input-number/input-number-1";
@@ -160,15 +164,21 @@ const api = {
     },
     { name: "status", description: "校验状态", type: '"error" | "warning"' },
     { name: "loading", description: "加载中并禁用选择", type: "boolean" },
+    { name: "allowClear", description: "显示清除当前选择的按钮", type: "boolean", defaultValue: "false" },
+    { name: "onClear", description: "点击清除按钮后触发；清除值通过 onChange(value, option) 回传", type: "() => void" },
+    { name: "mode", description: "选择模式；multiple 显示已选 Tags，tags 允许输入新值", type: '"single" | "multiple" | "tags"', defaultValue: '"single"' },
+    { name: "showSearch", description: "在弹层中显示搜索输入", type: "boolean", defaultValue: "false" },
+    { name: "optionFilterProp", description: "搜索匹配字段", type: '"label" | "value"', defaultValue: '"label"' },
+    { name: "maxTagCount", description: "最多显示的 Tag 数量，超出显示汇总数量", type: "number" },
+    { name: "onSearch", description: "搜索文本变化回调", type: "(value: string) => void" },
     { name: "disabled", description: "禁用选择", type: "boolean" },
-    { name: "multiple", description: "允许多选", type: "boolean" },
     { name: "name", description: "原生表单字段名", type: "string" },
     { name: "id", description: "原生元素 ID", type: "string" },
     { name: "required", description: "原生必填约束", type: "boolean" },
     {
       name: "onChange",
-      description: "原生值变化事件",
-      type: "ChangeEventHandler<HTMLSelectElement>",
+      description: "复合值变化回调；单选传值与选项，多选传值数组与选项数组",
+      type: "(value: string | string[], option: SelectOption | SelectOption[]) => void",
     },
     {
       name: "ref",
@@ -398,7 +408,7 @@ export const dataEntryDocuments: Record<string, ComponentDocument> = {
   },
   select: {
     title: "Select 选择器",
-    description: "原生选择器、键盘操作、表单序列化和移动端体验。",
+    description: "自渲染选择弹层、单选/多选、可搜索 Tags 和表单序列化。",
     code: Example7Source.replaceAll(
       "../../../../src/core",
       "@gouno/ui/core",
@@ -420,6 +430,22 @@ export const dataEntryDocuments: Record<string, ComponentDocument> = {
           "@gouno/ui/core",
         ).replaceAll("../../../../src", "@gouno/ui"),
         render: () => <Example9 />,
+      },
+      {
+        title: "清除选择",
+        code: SelectClearDemoSource.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ),
+        render: () => <SelectClearDemo />,
+      },
+      {
+        title: "多选 Tags 与搜索",
+        code: SelectTagsDemoSource.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ),
+        render: () => <SelectTagsDemo />,
       },
     ],
     api: api.select,

@@ -41,9 +41,7 @@ export function ListDemo({ kind = "posts" }: { kind?: "posts" | "users" | "clien
             <Select
               aria-label="列表密度"
               value={density}
-              onChange={(event) =>
-                setDensity(event.target.value as TableDensity)
-              }
+              onChange={(next) => setDensity(String(next) as TableDensity)}
             >
               <option value="default">默认密度</option>
               <option value="compact">紧凑密度</option>

@@ -1,6 +1,6 @@
 import { type ReactNode, useRef, useState } from "react";
 import { Menu } from "lucide-react";
-import { IconButton } from "../core";
+import { IconButton } from "../core/icon-button";
 import {
   Sheet,
   SheetContent,

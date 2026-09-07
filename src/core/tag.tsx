@@ -42,7 +42,3 @@ export type CheckableTagProps = Omit<TagProps, "checkable">;
 export function CheckableTag(props: CheckableTagProps) {
   return <Tag {...props} checkable />;
 }
-
-export function StatusIndicator({ status, label, className }: { status: string; label: ReactNode; className?: string }) { const color: TagColor = /^(success|published|completed|active|approved|delivered)$/.test(status) ? "success" : /^(danger|failed|rejected|error)$/.test(status) ? "error" : /^(warning|pending|draft|running|waiting_for_user|awaiting_approval)$/.test(status) ? "warning" : "default"; return <Tag color={color} className={cn(`status-pill--${status}`, className)}>{label}</Tag>; }
-export function RiskBadge({ level, label, className }: { level: string; label: ReactNode; className?: string }) { return <Tag className={className} color={["high", "critical"].includes(level) ? "error" : ["medium", "moderate"].includes(level) ? "warning" : "default"}>{label}</Tag>; }
-export function StatusBadge({ status = "draft", children, label, color, compact, className }: { status?: string; children?: ReactNode; label?: ReactNode; color?: TagColor; compact?: boolean; className?: string }) { const text = children || label || ({ published: "已发布", draft: "草稿", scheduled: "定时发布", hidden: "已隐藏" } as Record<string, string>)[status] || status; return <Tag color={color || (status === "published" ? "success" : status === "failed" ? "error" : status === "pending" ? "warning" : "default")} className={cn(`status-badge status-badge--${status} status-pill`, compact && "compact", className)}>{text}</Tag>; }

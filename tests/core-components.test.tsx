@@ -12,6 +12,9 @@ import {
   TableHeader,
   TableRow,
   Steps,
+  Card,
+  CardHeader,
+  Progress,
 } from "../src/core";
 
 describe("core components", () => {
@@ -89,6 +92,18 @@ describe("core components", () => {
     );
     expect(screen.getAllByRole("list").length).toBeGreaterThan(0);
     expect(screen.getByRole("grid")).toBeTruthy();
+  });
+  it("preserves zero and empty string card header slots", () => {
+    render(<Card><CardHeader title={0} description="" /></Card>);
+    expect(screen.getByText("0")).toBeTruthy();
+    expect(document.querySelector('[data-slot="card-description"]')).toBeTruthy();
+  });
+  it("normalizes invalid progress bounds without invalid ARIA values", () => {
+    render(<Progress value={Number.NaN} max={0} data-testid="progress" />);
+    const progress = screen.getByTestId("progress");
+    expect(progress.getAttribute("aria-valuenow")).toBe("0");
+    expect(progress.getAttribute("aria-valuemax")).toBe("100");
+    expect(progress.querySelector('[data-slot="progress-indicator"]')?.getAttribute("style")).toContain("width: 0%");
   });
 });
 import { ConfigProvider, useConfig, Carousel } from "../src/core";

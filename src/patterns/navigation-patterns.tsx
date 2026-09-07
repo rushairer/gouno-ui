@@ -2,8 +2,6 @@ import {
   type ReactNode,
   type ComponentProps,
   type KeyboardEvent,
-  useLayoutEffect,
-  useState,
 } from "react";
 import * as Primitive from "../components/primitives/tabs";
 import {
@@ -14,7 +12,8 @@ import {
   Moon,
   Monitor,
 } from "lucide-react";
-import { Button, IconButton } from "../core";
+import { Button } from "../core/button";
+import { IconButton } from "../core/icon-button";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -153,37 +152,11 @@ export function ThemeToggle({
   label?: string;
   labels?: Record<ThemeMode, string>;
 }) {
-  const { mode, setMode } = useTheme();
-  const storageKey = "gouno-blog:theme";
-  const [fallbackMode, setFallbackMode] = useState<ThemeMode>(() => {
-    try {
-      const stored = localStorage.getItem(storageKey);
-      return stored === "dark" || stored === "light"
-        ? stored
-        : label.includes("后台")
-          ? "dark"
-          : "system";
-    } catch {
-      return label.includes("后台") ? "dark" : "system";
-    }
-  });
-  const effectiveMode = mode === "system" ? fallbackMode : mode;
-  useLayoutEffect(() => {
-    if (mode !== "system") return;
-    const resolved = fallbackMode === "system" ? "light" : fallbackMode;
-    document.documentElement.dataset.theme = resolved;
-    try {
-      if (label.includes("后台") && !localStorage.getItem(storageKey)) {
-        localStorage.setItem(storageKey, resolved);
-      }
-    } catch {
-      // Preference storage is optional.
-    }
-  }, [mode, fallbackMode, label]);
+  const { mode, resolvedMode, setMode } = useTheme();
   const Icon =
-    effectiveMode === "system"
+    mode === "system"
       ? Monitor
-      : effectiveMode === "dark"
+      : resolvedMode === "dark"
         ? Moon
         : Sun;
   return (
@@ -192,27 +165,20 @@ export function ThemeToggle({
         <IconButton
           label={label}
           icon={<Icon />}
-          aria-pressed={effectiveMode === "dark"}
+          aria-pressed={resolvedMode === "dark"}
           onClick={() => {
             const nextMode: ThemeMode =
-              effectiveMode === "dark" ? "light" : "dark";
-            setFallbackMode(nextMode);
+              resolvedMode === "dark" ? "light" : "dark";
             setMode(nextMode);
-            try {
-              localStorage.setItem(storageKey, nextMode);
-            } catch {
-              // Preference storage is optional.
-            }
           }}
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuGroup>
           <DropdownMenuRadioGroup
-            value={effectiveMode}
+            value={mode}
             onValueChange={(next) => {
               const nextMode = next as ThemeMode;
-              setFallbackMode(nextMode);
               setMode(nextMode);
             }}
           >

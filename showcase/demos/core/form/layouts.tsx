@@ -24,7 +24,7 @@ export default function FormLayoutsDemo() {
       <Select
         aria-label="表单布局"
         value={layout}
-        onChange={(event) => setLayout(event.target.value as typeof layout)}
+        onChange={(next) => setLayout(String(next) as typeof layout)}
       >
         <option value="vertical">垂直布局</option>
         <option value="horizontal">水平布局</option>

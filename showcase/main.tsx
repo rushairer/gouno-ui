@@ -184,7 +184,7 @@ function App() {
         aria-label="产品空间"
         size="small"
         value={workspace}
-        onChange={(e) => switchWorkspace(e.target.value as Workspace)}
+        onChange={(next) => switchWorkspace(String(next) as Workspace)}
       >
         <option value="gouno-ui">Gouno UI</option>
         <option value="blog">Blog</option>
@@ -197,9 +197,7 @@ function App() {
       aria-label="预览宽度"
       size="small"
       value={previewWidth}
-      onChange={(event) =>
-        setPreviewWidth(event.target.value as PreviewWidth)
-      }
+      onChange={(next) => setPreviewWidth(String(next) as PreviewWidth)}
     >
       <option value="full">全宽</option>
       <option value="desktop">桌面 1024</option>
@@ -211,8 +209,8 @@ function App() {
     <Select
       aria-label="Gouno UI 主题色"
       value={brand}
-      onChange={(event) => {
-        const nextBrand = event.target.value as Brand;
+      onChange={(next) => {
+        const nextBrand = String(next) as Brand;
         setBrand(nextBrand);
         if (embedded && window.parent !== window)
           window.parent.postMessage(
