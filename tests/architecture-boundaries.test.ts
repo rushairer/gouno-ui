@@ -89,6 +89,16 @@ describe("public layer architecture", () => {
     }
   });
 
+  it("keeps feedback, async state and toast as separate pattern owners", () => {
+    const feedback = readFileSync(resolve(sourceRoot, "patterns/feedback.tsx"), "utf8");
+    const asyncState = readFileSync(resolve(sourceRoot, "patterns/async-state.tsx"), "utf8");
+    const toast = readFileSync(resolve(sourceRoot, "patterns/toast.tsx"), "utf8");
+    expect(feedback).not.toContain("AsyncState");
+    expect(feedback).not.toContain("ToastProvider");
+    expect(asyncState).not.toContain("ToastProvider");
+    expect(toast).not.toContain("EmptyState");
+  });
+
   it("keeps Gouno layout families split and free of synonym aliases", async () => {
     const layoutSource = readFileSync(resolve(sourceRoot, "gouno/layout.tsx"), "utf8");
     expect(layoutSource).not.toMatch(/function\s+/);
