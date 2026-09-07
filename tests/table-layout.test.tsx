@@ -5,6 +5,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableCaption,
   TableFooter,
   TableHead,
   TableHeader,
@@ -52,5 +53,23 @@ describe("Table layout contract", () => {
       </Table>,
     );
     expect(screen.getByRole("table").className).not.toContain("border-r");
+  });
+
+  it("centers caption text with symmetric vertical padding", () => {
+    render(
+      <Table>
+        <TableCaption>Table caption</TableCaption>
+        <TableBody>
+          <TableRow>
+            <TableCell>Cell</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>,
+    );
+    const caption = screen.getByText("Table caption");
+    expect(caption.className).toContain("py-3");
+    expect(caption.className).toContain("text-center");
+    expect(caption.className).toContain("leading-6");
+    expect(caption.className).not.toContain("pt-3");
   });
 });

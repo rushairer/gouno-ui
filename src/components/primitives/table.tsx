@@ -142,7 +142,7 @@ function TableCaption({
     <caption
       data-slot="table-caption"
       className={cn(
-        "border-t border-border/60 pt-3 text-sm text-muted-foreground",
+        "border-t border-border/60 px-4 py-3 text-center text-sm leading-6 text-muted-foreground",
         className,
       )}
       {...props}
