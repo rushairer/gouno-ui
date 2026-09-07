@@ -17,18 +17,8 @@ function BasicAlerts() {
 function DescriptionAlerts() {
   return (
     <div className="grid w-full gap-3">
-      <Alert
-        type="success"
-        showIcon
-        title="部署完成"
-        description="生产环境已经切换到新版本，所有健康检查均通过。"
-      />
-      <Alert
-        type="warning"
-        showIcon
-        title="需要关注"
-        description="当前客户端拥有 admin scope，请确认它只分配给受信任服务。"
-      />
+      <Alert type="success" showIcon title="部署完成" description="生产环境已经切换到新版本，所有健康检查均通过。" />
+      <Alert type="warning" showIcon title="需要关注" description="当前客户端拥有 admin scope，请确认它只分配给受信任服务。" />
     </div>
   );
 }
@@ -45,11 +35,7 @@ function ClosableAlert() {
         title="可关闭通知"
         description="关闭完成后会触发 afterClose。"
         action={<Button size="small">查看详情</Button>}
-        closable={{
-          "aria-label": "关闭通知",
-          onClose: () => setStatus("正在关闭"),
-          afterClose: () => setStatus("已关闭"),
-        }}
+        closable={{ "aria-label": "关闭通知", onClose: () => setStatus("正在关闭"), afterClose: () => setStatus("已关闭") }}
       />
       <div className="flex items-center justify-between gap-3 text-sm text-muted-foreground">
         <span aria-live="polite">{status}</span>
@@ -86,7 +72,7 @@ function SemanticStyles() {
   );
 }
 
-function BrokenWidget() {
+function BrokenWidget(): never {
   throw new Error("Widget render failed");
 }
 
@@ -190,36 +176,26 @@ export const alertDocuments: Record<string, ComponentDocument> = {
       { name: "style", description: "根节点标准 React style；在 styles.root 之后合并", type: "CSSProperties" },
     ],
     apiSections: [
-      {
-        title: "AlertClosableConfig",
-        rows: [
-          { name: "closeIcon", description: "自定义关闭图标", type: "ReactNode" },
-          { name: "onClose", description: "点击关闭按钮时触发", type: "(event: MouseEvent<HTMLButtonElement>) => void" },
-          { name: "afterClose", description: "退出过渡完成并卸载后触发", type: "() => void" },
-          { name: "aria-*", description: "传给关闭按钮的标准 ARIA 属性", type: "React.AriaAttributes" },
-        ],
-      },
-      {
-        title: "Semantic DOM",
-        description: "classNames/styles 的稳定 key。",
-        rows: [
-          { name: "root", description: "Alert 根节点", type: "semantic slot" },
-          { name: "icon", description: "图标区域", type: "semantic slot" },
-          { name: "section", description: "文本内容区域", type: "semantic slot" },
-          { name: "title", description: "标题区域", type: "semantic slot" },
-          { name: "description", description: "说明区域", type: "semantic slot" },
-          { name: "actions", description: "操作区域", type: "semantic slot" },
-          { name: "close", description: "关闭按钮", type: "semantic slot" },
-        ],
-      },
-      {
-        title: "Alert.ErrorBoundary",
-        rows: [
-          { name: "title", description: "错误边界捕获后显示的标题", type: "ReactNode", defaultValue: '"Something went wrong"' },
-          { name: "description", description: "自定义说明；未提供时显示捕获到的 error.message", type: "ReactNode" },
-          { name: "children", description: "受错误边界保护的 React 子树", type: "ReactNode" },
-        ],
-      },
+      { title: "AlertClosableConfig", rows: [
+        { name: "closeIcon", description: "自定义关闭图标", type: "ReactNode" },
+        { name: "onClose", description: "点击关闭按钮时触发", type: "(event: MouseEvent<HTMLButtonElement>) => void" },
+        { name: "afterClose", description: "退出过渡完成并卸载后触发", type: "() => void" },
+        { name: "aria-*", description: "传给关闭按钮的标准 ARIA 属性", type: "React.AriaAttributes" },
+      ]},
+      { title: "Semantic DOM", description: "classNames/styles 的稳定 key。", rows: [
+        { name: "root", description: "Alert 根节点", type: "semantic slot" },
+        { name: "icon", description: "图标区域", type: "semantic slot" },
+        { name: "section", description: "文本内容区域", type: "semantic slot" },
+        { name: "title", description: "标题区域", type: "semantic slot" },
+        { name: "description", description: "说明区域", type: "semantic slot" },
+        { name: "actions", description: "操作区域", type: "semantic slot" },
+        { name: "close", description: "关闭按钮", type: "semantic slot" },
+      ]},
+      { title: "Alert.ErrorBoundary", rows: [
+        { name: "title", description: "错误边界捕获后显示的标题", type: "ReactNode", defaultValue: '"Something went wrong"' },
+        { name: "description", description: "自定义说明；未提供时显示捕获到的 error.message", type: "ReactNode" },
+        { name: "children", description: "受错误边界保护的 React 子树", type: "ReactNode" },
+      ]},
     ],
     notes: <div className="text-sm leading-relaxed text-muted-foreground">旧 primitive 的 <code>variant="destructive"</code> / <code>variant="default"</code> 不再是公共 Alert API；语义使用 <code>type</code>，视觉使用 <code>variant</code>。当前 Ant Design 已弃用的 message/onClose/afterClose/closeText/closeIcon 顶层别名不进入 Gouno canonical API。</div>,
   },
