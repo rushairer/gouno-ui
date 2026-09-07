@@ -13,6 +13,7 @@ const completedComponents = new Set([
   "core-upload",
   "core-table",
   "core-pagination",
+  "core-tabs",
   "core-modal",
   "core-drawer",
   "core-card",

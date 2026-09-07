@@ -3,6 +3,7 @@ import ts from "typescript";
 import { dataEntryDocuments } from "../showcase/demos/core/data-entry";
 import { feedbackDocuments } from "../showcase/demos/core/feedback";
 import { paginationDocument } from "../showcase/demos/core/pagination";
+import { tabsDocument } from "../showcase/demos/core/tabs";
 import { tagDocuments } from "../showcase/demos/core/tag";
 import { badgeDocuments } from "../showcase/demos/core/badge";
 
@@ -37,6 +38,7 @@ const cases = [
   ["src/core/modal.tsx", "ModalProps", feedbackDocuments.modal],
   ["src/core/drawer.tsx", "DrawerProps", feedbackDocuments.drawer],
   ["src/core/pagination.tsx", "PaginationProps", paginationDocument],
+  ["src/core/tabs.tsx", "TabsProps", tabsDocument],
 ] as const;
 
 describe("public API documentation", () => {
@@ -91,5 +93,12 @@ describe("public API documentation", () => {
     expect(demo.code).toContain('status="success"');
     expect(demo.code).toContain("setCount");
     expect(demo.api?.map((row) => row.name)).toContain("title");
+  });
+
+  it("keeps Tabs canonical examples on activeKey/items.key rather than primitive naming", () => {
+    expect(tabsDocument.code).toContain("defaultActiveKey");
+    expect(tabsDocument.code).toContain('key: "overview"');
+    expect(tabsDocument.code).not.toContain("defaultValue=");
+    expect(tabsDocument.api?.map((row) => row.name)).toContain("tabPosition");
   });
 });

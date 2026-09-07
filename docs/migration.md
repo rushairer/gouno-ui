@@ -53,6 +53,38 @@ Rationale:
 
 Do not introduce `Admin*` aliases unless administration itself becomes a proven semantic contract with independent behavior.
 
+## Tabs high-level API alignment
+
+Core Tabs now uses the mature high-level naming adopted by the repository API rules while retaining the Radix-backed composition API.
+
+```tsx
+// Canonical high-level API
+<Tabs
+  activeKey={activeKey}
+  defaultActiveKey="profile"
+  items={[
+    { key: "profile", label: "Profile" },
+    { key: "security", label: "Security" },
+  ]}
+  onChange={setActiveKey}
+/>
+```
+
+Migrate pre-reset call sites as they are touched:
+
+```text
+value              → activeKey
+defaultValue       → defaultActiveKey
+items[].value      → items[].key
+onValueChange      → onChange
+```
+
+`type="line"` is the default product style; `type="card"` is explicit. `size` uses `small/middle/large`; `tabPosition` uses `top/right/bottom/left`.
+
+The pre-reset `value/defaultValue/items[].value` shape is temporarily accepted only so already-migrated fixtures are not broken in the middle of the product-validation sequence. It is not documented as a second canonical API and must be removed before the next stable package release.
+
+For custom composition, use `Tabs` with `TabList`, `Tab`, and `TabPanel`; do not create another public active-state write path.
+
 ## Curated subpaths
 
 Physical source files are not public subpaths. Use the owning formal layer:
@@ -81,13 +113,13 @@ Use explicit component props for control configuration and `ThemeProvider` for t
 
 ## Showcase migration meaning
 
-Product workspace navigation now represents real migration only:
+Product workspace navigation represents real migration only:
 
-- Gosso Admin currently contains only the migrated Overview page.
+- Gosso Admin contains only pages actually migrated under the current process.
 - Blog Admin and Blog remain empty until real pages are moved.
 - Old simulated pages are intentionally removed rather than kept as placeholders.
 
-The Gouno UI workspace documents only canonical APIs. Legacy is not shown.
+The Gouno UI workspace documents only canonical APIs. Legacy is not shown. Showcase-local documentation utilities are not public-abstraction evidence by themselves; see `docs/architecture.md` and PD-009.
 
 ## Compatibility assessment
 

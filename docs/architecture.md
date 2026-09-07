@@ -112,6 +112,19 @@ Core retains usage-oriented categories such as General, Layout, Data Entry, Navi
 
 Only admitted canonical APIs appear in the Gouno UI workspace. Legacy is hidden entirely. Product workspaces contain only pages genuinely migrated under the product-driven process; empty workspaces show an empty state instead of simulated pages.
 
+Showcase has two responsibilities that must not be confused:
+
+- as an **integration consumer**, it should dogfood admitted Core/Theme/Pattern/Gouno APIs whenever those APIs match the job;
+- as **documentation/development tooling**, it may own private utilities such as source-code preview, API tables, viewport simulation and demo framing.
+
+Showcase-local repetition is not sufficient evidence for a public Pattern/Gouno/Core abstraction. Evidence quality is ordered as follows:
+
+1. independent real-product, cross-product evidence (strongest);
+2. repeated semantically equivalent pages inside one real product;
+3. Showcase/tests/tooling usage (supporting evidence only).
+
+A Showcase-local utility may later become canonical when a real product independently creates the same product-agnostic need. At that point run the normal prior-art/admission review; if admitted, move the capability into the correct canonical owner and change Showcase to consume it. For example, the current Showcase source `CodeBlock` remains private until a real product such as Blog article rendering proves the same read-only code/highlight/copy contract.
+
 Component completion percentages are documentation-audit evidence, not architecture scores.
 
 ## Delivery contract

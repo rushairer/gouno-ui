@@ -110,3 +110,23 @@ Each entry should contain:
 - **Reasoning:** the five tabs share one product route family but contain materially different workflows: profile editing, password mutation, TOTP enrollment/status, WebAuthn credential management and session revocation. Reintroducing historical wrapper names would mainly compress markup rather than establish a stable cross-product semantic contract. The Sessions tab deliberately uses Core `Table` because the real page exposes a small read/action table with no demonstrated sorting/filtering/pagination model; this is not evidence for re-admitting the historical `DataTable` Pattern. Confirmation behavior is represented by a page-local Modal composition until repeated product evidence proves a reusable lifecycle contract.
 - **API impact:** none. No canonical public API was added, restored, renamed or expanded. The Pattern layer remains intentionally empty.
 - **Follow-up:** migrate System Management next. Its clients/users/audit/system tabs are expected to provide stronger evidence around data-table orchestration, status presentation, destructive confirmation and repeated surface structure. If those semantics recur across later Gosso Admin and Blog Admin pages, perform the Rule-of-Three abstraction review instead of restoring Legacy by name.
+
+### PD-009 — Showcase is supporting evidence, not a public-abstraction demand source
+
+- **Status:** accepted
+- **Owner:** repository process
+- **Evidence:** architecture review of Showcase-local `CodeBlock`, API table, demo framing, viewport simulation and its use of canonical `AppShell`/`PageContainer`.
+- **Cross-product review:** Showcase consumes canonical Gouno UI; real Gosso Admin, Blog Admin and Blog remain the demand/evidence sources for public capabilities. Blog is expected to introduce article code rendering later, but that future need is not counted before a real page exists.
+- **Reasoning:** Showcase has two roles. It should dogfood already-admitted canonical APIs, but documentation/tooling-only reuse must not manufacture public Core/Pattern/Gouno components. Evidence strength is cross-product real pages first, repeated same-product real pages second, Showcase/tests/tooling only as supporting evidence. A Showcase-local utility can be promoted only after independent real-product semantics trigger the normal prior-art review.
+- **API impact:** none. `showcase/components/code-block.tsx` remains private; `AppShell`/`PageContainer` remain canonical consumers inside Showcase.
+- **Follow-up:** when Blog article rendering requires syntax highlighting/copyable code, compare that real requirement with Showcase `CodeBlock`. If the semantic contract matches and passes admission, implement a clean canonical Core `CodeBlock` and migrate Showcase to consume it.
+
+### PD-010 — Tabs adopts Ant-style high-level semantics with Radix composition
+
+- **Status:** accepted
+- **Owner:** Core
+- **Evidence:** Account Settings uses route-like tabs and System Management immediately introduces another five-section route family. The previous active state used Radix-style `value/defaultValue` naming while the repository API specification explicitly prefers mature high-level conventions when industry practice diverges.
+- **Cross-product review:** Ant Design Tabs high-level API (`activeKey`, `defaultActiveKey`, `items`, `onChange`, `type`, `tabPosition`, `size`, `centered`) was used as the semantic reference; Radix/shadcn composition remains the accessibility/primitive basis. No product-specific tab semantics were introduced.
+- **Reasoning:** the public high-level API should read like a stable design-system contract rather than leak the primitive implementation. The default visual treatment becomes a clean line/ink-bar style instead of per-tab square borders. Composition through `TabList`, `Tab`, and `TabPanel` remains available for cases the item API does not express cleanly.
+- **API impact:** canonical high-level names are `activeKey`, `defaultActiveKey`, `items[].key`, and `onChange`; add `type`, `size`, `tabPosition`, `centered`, and `tabBarExtraContent`. Pre-reset `value/defaultValue/items[].value` remain temporary compatibility input only and are not the canonical documented write path; remove after migrated consumers are converted.
+- **Follow-up:** convert Gosso Admin migrations to canonical names as they are touched, validate line/card/vertical/controlled behavior in Showcase/tests, and remove compatibility aliases before the next stable package release.

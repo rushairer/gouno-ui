@@ -15,6 +15,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Tabs,
   Textarea,
   Upload,
 } from "../src/core";
@@ -23,6 +24,7 @@ import { dataEntryDocuments } from "../showcase/demos/core/data-entry";
 import { dataDisplayDocuments } from "../showcase/demos/core/data-display";
 import { feedbackDocuments } from "../showcase/demos/core/feedback";
 import { paginationDocument } from "../showcase/demos/core/pagination";
+import { tabsDocument } from "../showcase/demos/core/tabs";
 
 describe("audited target components", () => {
   it("supports clearable input and textarea count", () => {
@@ -168,6 +170,24 @@ describe("audited target components", () => {
     expect(onChange).toHaveBeenCalledWith(2, 10);
   });
 
+  it("supports canonical Tabs high-level state", () => {
+    const onChange = vi.fn();
+    render(
+      <Tabs
+        ariaLabel="Sections"
+        defaultActiveKey="overview"
+        items={[
+          { key: "overview", label: "Overview", children: "Overview panel" },
+          { key: "security", label: "Security", children: "Security panel" },
+        ]}
+        onChange={onChange}
+      />,
+    );
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "Security" }), { button: 0 });
+    expect(onChange).toHaveBeenCalledWith("security");
+    expect(screen.getByText("Security panel")).toBeTruthy();
+  });
+
   it("reports 100% only for the completed and reviewed canonical batch", () => {
     for (const id of [
       "core-input",
@@ -179,6 +199,7 @@ describe("audited target components", () => {
       "core-upload",
       "core-table",
       "core-pagination",
+      "core-tabs",
       "core-modal",
       "core-drawer",
     ]) {
@@ -201,6 +222,7 @@ describe("audited target components", () => {
       feedbackDocuments.modal,
       feedbackDocuments.drawer,
       paginationDocument,
+      tabsDocument,
     ];
     for (const document of documents) {
       for (const row of document.api ?? []) {

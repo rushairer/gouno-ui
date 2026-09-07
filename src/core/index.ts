@@ -17,7 +17,7 @@ export { Field, FormField, FieldGroup, FieldSet, FieldLegend, FieldLabel, type F
 export { Checkbox, Radio, Switch, CheckboxField, CheckboxGroup, type CheckProps } from "./selection-controls";
 export { FormLayout, Form, FormGrid, FormActions, OverlayForm, type FormProps } from "./form";
 export type { ControlSize } from "./control-types";
-export { Tabs, TabList, Tab, TabPanel, type TabsProps } from "./tabs";
+export { Tabs, TabList, Tab, TabPanel, type TabsProps, type TabItem, type TabsType, type TabsPosition } from "./tabs";
 export { Modal, type ModalProps } from "./modal";
 export { Drawer, type DrawerProps, type DrawerPlacement } from "./drawer";
 export { Alert, Skeleton } from "./feedback";
