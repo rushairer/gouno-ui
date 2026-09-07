@@ -79,7 +79,8 @@ export const tableApiSections: ComponentDocument["apiSections"] = [
         name: "side",
         type: '"top" | "bottom"',
         defaultValue: '"top"',
-        description: "Caption 位置；默认遵循 HTML 语义放在表头上方，底部说明请显式使用 side=bottom",
+        description:
+          "Caption 位置；默认遵循 HTML 语义放在表头上方，底部说明请显式使用 side=bottom",
       },
     ],
   },
@@ -90,7 +91,8 @@ export const tableApiSections: ComponentDocument["apiSections"] = [
         name: "bordered=false",
         type: "boolean",
         defaultValue: "false",
-        description: "不显示列之间的垂直分隔线，仅保留行分隔线；参见无列垂直分隔线 Demo",
+        description:
+          "不显示列之间的垂直分隔线，仅保留行分隔线；参见无列垂直分隔线 Demo",
       },
       {
         name: "TableFooter",
