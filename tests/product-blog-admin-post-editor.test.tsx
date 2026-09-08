@@ -35,8 +35,10 @@ describe("Blog Admin PostEditor", () => {
     expect(container.querySelector('[aria-label="文章预览"] table')?.parentElement?.className).toContain("overflow-x-auto");
 
     fireEvent.mouseDown(screen.getByRole("tab", { name: "Markdown" }), { button: 0 });
-    expect(screen.getByLabelText("标题")).toHaveValue("不会丢失的编辑标题");
-    expect(screen.getByLabelText("文章正文 Markdown")).toHaveValue("## 新章节\n\n```ts\nconst wide = true;\n```");
+    expect((screen.getByLabelText("标题") as HTMLTextAreaElement).value).toBe("不会丢失的编辑标题");
+    expect((screen.getByLabelText("文章正文 Markdown") as HTMLTextAreaElement).value).toBe(
+      "## 新章节\n\n```ts\nconst wide = true;\n```",
+    );
   });
 
   it("saves a new draft and transitions the fixture to an editable persisted route", () => {
@@ -48,7 +50,7 @@ describe("Blog Admin PostEditor", () => {
 
     expect(screen.getByText("草稿已保存。")).toBeTruthy();
     expect(screen.getByText("已于 22:48 保存")).toBeTruthy();
-    expect(screen.getByLabelText("标题")).toHaveValue("新草稿");
+    expect((screen.getByLabelText("标题") as HTMLTextAreaElement).value).toBe("新草稿");
   });
 
   it("preserves the real 409 conflict feedback path without discarding the draft", () => {
@@ -58,7 +60,7 @@ describe("Blog Admin PostEditor", () => {
     fireEvent.click(screen.getByRole("button", { name: "保存草稿" }));
 
     expect(screen.getByText("内容已被其他编辑者更新（409 冲突）")).toBeTruthy();
-    expect(screen.getByLabelText("标题")).toHaveValue("发生冲突但仍保留");
+    expect((screen.getByLabelText("标题") as HTMLTextAreaElement).value).toBe("发生冲突但仍保留");
     expect(screen.getByText("有未保存的更改")).toBeTruthy();
   });
 
@@ -71,7 +73,7 @@ describe("Blog Admin PostEditor", () => {
     fireEvent.click(screen.getByRole("button", { name: "恢复版本" }));
 
     expect(screen.getByText("已成功恢复历史版本。")).toBeTruthy();
-    expect(screen.getByLabelText("文章正文 Markdown")).toHaveValue(
+    expect((screen.getByLabelText("文章正文 Markdown") as HTMLTextAreaElement).value).toBe(
       "## 背景\n\n上一版重点讨论 Agent 运行记录。\n\n## 结论\n\n先把执行证据做完整，再扩大自动化范围。",
     );
     expect(screen.getByText("已于 22:42 保存")).toBeTruthy();
@@ -81,8 +83,8 @@ describe("Blog Admin PostEditor", () => {
     render(<BlogAdminPostEditorDemo initialRoute="readonly" />);
 
     expect(screen.getByText(/只读模式（他人文章）/)).toBeTruthy();
-    expect(screen.getByLabelText("标题")).toBeDisabled();
-    expect(screen.getByLabelText("文章正文 Markdown")).toBeDisabled();
+    expect((screen.getByLabelText("标题") as HTMLTextAreaElement).disabled).toBe(true);
+    expect((screen.getByLabelText("文章正文 Markdown") as HTMLTextAreaElement).disabled).toBe(true);
     expect(screen.queryByRole("button", { name: "保存草稿" })).toBeNull();
     expect(screen.queryByRole("button", { name: "发布" })).toBeNull();
     expect(screen.queryByRole("button", { name: "AI 一键补全元数据" })).toBeNull();
@@ -108,7 +110,7 @@ describe("Blog Admin PostEditor", () => {
     fireEvent.click(screen.getByRole("button", { name: "开始生图" }));
     expect(screen.getByText("AI 生成插图预览")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "设为文章封面" }));
-    expect(screen.getByLabelText("封面 URL")).toHaveValue("/media/ai-generated-agent-workflow.webp");
-    expect(screen.getByLabelText("替代文本")).toHaveValue("Agent 审批工作流");
+    expect((screen.getByLabelText("封面 URL") as HTMLInputElement).value).toBe("/media/ai-generated-agent-workflow.webp");
+    expect((screen.getByLabelText("替代文本") as HTMLInputElement).value).toBe("Agent 审批工作流");
   });
 });
