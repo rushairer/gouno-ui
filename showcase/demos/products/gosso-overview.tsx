@@ -121,7 +121,7 @@ export function GossoOverviewDemo() {
           <Text as="div" size="sm" className="font-medium">场景预览</Text>
           <Text size="xs" tone="muted" className="mt-0.5">真实页面由当前会话角色决定；Showcase 使用静态身份切换覆盖两种主要状态。</Text>
         </div>
-        <Segmented<PreviewRole> ariaLabel="预览身份" options={roleOptions} value={role} onChange={setRole} />
+        <Segmented<PreviewRole> aria-label="预览身份" options={roleOptions} value={role} onChange={setRole} />
       </div>
 
       <Card padding="lg" variant="elevated" className="relative overflow-hidden border-primary/20">

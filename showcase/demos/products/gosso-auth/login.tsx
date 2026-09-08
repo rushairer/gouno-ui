@@ -58,7 +58,7 @@ export function GossoLoginDemo() {
           value={scenario}
           options={scenarios}
           onChange={selectScenario}
-          ariaLabel="登录场景 Fixture"
+          aria-label="登录场景 Fixture"
         />
       )}
     >

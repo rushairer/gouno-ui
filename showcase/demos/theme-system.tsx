@@ -36,7 +36,7 @@ export function ThemeSystemDemo() {
               模式控制
             </Text>
             <Segmented<ThemeMode>
-              ariaLabel="主题模式"
+              aria-label="主题模式"
               options={modeOptions}
               value={mode}
               onChange={setMode}

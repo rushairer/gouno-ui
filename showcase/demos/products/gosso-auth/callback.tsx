@@ -21,7 +21,7 @@ export function GossoCallbackDemo() {
           value={state}
           options={states}
           onChange={setState}
-          ariaLabel="Callback 场景 Fixture"
+          aria-label="Callback 场景 Fixture"
         />
       )}
     >

@@ -11,6 +11,7 @@ const completedComponents = new Set([
   "core-form",
   "core-date-picker",
   "core-upload",
+  "core-segmented",
   "core-table",
   "core-pagination",
   "core-tabs",
