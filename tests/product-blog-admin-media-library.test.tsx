@@ -12,10 +12,10 @@ describe("Blog Admin Media Library product migration fixture", () => {
     expect(header.closest('[data-slot="page-header"]')).toBeTruthy();
     expect(screen.getByRole("button", { name: "AI 文生图" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "上传图片" })).toBeTruthy();
-    expect(screen.queryByText("/admin/medialibrary")).toBeNull();
+    expect(screen.queryByText("/admin/media")).toBeNull();
 
     fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
-    expect(screen.getByText("/admin/medialibrary")).toBeTruthy();
+    expect(screen.getByText("/admin/media")).toBeTruthy();
   });
 
   it("preserves media metadata, search and content-type filtering", () => {
