@@ -33,9 +33,9 @@ describe("Blog Admin Members product migration fixture", () => {
     const editButtons = screen.getAllByRole("button", { name: "编辑 内容编辑 成员与权限" });
     fireEvent.click(editButtons[0]);
 
-    const name = screen.getByLabelText("显示名称");
+    const name = screen.getByRole("textbox", { name: /显示名称/ });
     fireEvent.change(name, { target: { value: "内容主编" } });
-    fireEvent.change(screen.getByLabelText("Blog 角色"), { target: { value: "admin" } });
+    fireEvent.change(screen.getByLabelText(/Blog 角色/), { target: { value: "admin" } });
     fireEvent.click(screen.getByRole("button", { name: "保存成员" }));
 
     expect(screen.getByText("成员“内容主编”的信息与权限已更新（Showcase 模拟）。")).toBeTruthy();
