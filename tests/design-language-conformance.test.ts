@@ -1,5 +1,5 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
-import { resolve } from "node:path";
+import { relative, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const repoRoot = process.cwd();
@@ -163,11 +163,25 @@ describe("design-language conformance", () => {
     }
   });
 
-  it("keeps BulkActionBar as an intentional semantic overlay instead of a decorative Card shadow", () => {
+  it("reserves raised product elevation for the audited focal surface whitelist", () => {
+    const elevatedFiles = allProductFiles
+      .filter((file) => readFileSync(file, "utf8").includes('variant="elevated"'))
+      .map((file) => relative(productsRoot, file).replaceAll("\\", "/"))
+      .sort();
+
+    expect(elevatedFiles).toEqual([
+      "gosso-auth/shared.tsx",
+      "gosso-overview.tsx",
+    ]);
+  });
+
+  it("keeps BulkActionBar sticky but ground-level by default", () => {
     const source = readFileSync(resolve(sourceRoot, "patterns/bulk-action-bar.tsx"), "utf8");
     expect(source).toContain("sticky bottom-4");
-    expect(source).toContain("shadow-overlay");
-    expect(source).not.toMatch(/shadow-(?:xs|sm|md|lg|xl|2xl)(?:\s|["'])/);
+    expect(source).toContain("bg-card");
+    expect(source).not.toContain("shadow-overlay");
+    expect(source).not.toContain("backdrop-blur");
+    expect(source).not.toMatch(/shadow-(?:xs|sm|md|lg|xl|2xl|raised|overlay|modal|\[)/);
   });
 
   it("uses one route-family PageHeader before Tabs on normal tabbed task pages", () => {

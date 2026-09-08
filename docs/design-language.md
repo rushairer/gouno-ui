@@ -8,6 +8,7 @@ This document is the durable specification for cross-component visual compositio
 - `docs/architecture.md` decides layer ownership and dependency direction.
 - `docs/api-specification.md` decides public API naming, state and behavior.
 - This document defines binding composition invariants such as hierarchy, surfaces, spacing ownership, alignment, elevation and interaction geometry.
+- `docs/product-surface-elevation-audit.md` records the current business-page elevation classification and explicit raised-surface whitelist.
 - `docs/abstraction-register.md` records the evidence and decision history behind material changes.
 
 ## Foundation model
@@ -220,22 +221,26 @@ Elevation is not a page-local decoration knob. Canonical depth roles are:
 
 | Role | Meaning | Typical surfaces | Shadow |
 | --- | --- | --- | --- |
-| **ground/default** | normal content in document flow | page, normal Card, bordered Table/List, form controls, selected navigation/Tabs, in-flow feedback | none |
-| **raised** | deliberately promoted/focal surface that still belongs to the page | explicit `Card variant="elevated"`, movable/focal surface | `shadow-raised` + raised surface tone |
-| **overlay** | temporary/floating UI above another surface | Select/Dropdown/Popover menus, floating toolbars, `BulkActionBar`, floating notifications/tooling | `shadow-overlay` + overlay/popover surface |
+| **ground/default** | normal content in document flow | page, normal Card, bordered Table/List, filters, form controls, selected navigation/Tabs, contextual sticky bars, in-flow feedback | none |
+| **raised** | deliberately promoted focal surface that is visually detached from peer page content | explicitly audited `Card variant="elevated"` focal/standalone surface | `shadow-raised` + raised surface tone |
+| **overlay** | temporary/floating UI that actually occupies a layer above other content | Select/Dropdown/Popover menus, floating notifications/tooling | `shadow-overlay` + overlay/popover surface |
 | **modal** | blocking high-depth overlay | Dialog/Modal, AlertDialog, Drawer/Sheet | `shadow-modal` + modal/overlay surface |
 | **overflow** | indicates clipped/scrollable content, not object height | table/scroll edge cue | directional/inset edge shadow only when a border is insufficient |
 
 Binding rules:
 
-- Normal Cards, bordered Tables, inputs and ordinary navigation do not receive ambient shadow merely to look “finished”. Border, spacing and surface tone should carry ground-level grouping.
+- Normal Cards, bordered Tables, inputs, filters, lists, editor frames, dashboard tiles and ordinary navigation do not receive ambient shadow merely to look “finished”. Border, spacing and surface tone should carry ground-level grouping.
+- A white/neutral box, border, radius, empty page, selected state, unread state or semantic grouping is **not** an elevation signal by itself.
+- CSS positioning is not elevation semantics. `sticky`, `fixed` and `absolute` describe layout behavior; visible depth is allowed only when the surface actually establishes a layer above peer content.
+- `BulkActionBar` is sticky for contextual access but remains ground-level by default. Its border and opaque surface communicate selection context without an ambient shadow. A future truly detached/floating toolbar requires an explicit product/Pattern contract rather than inheriting `shadow-overlay` from `sticky`.
 - Product/Showcase fixture code must not create **non-zero** elevation with raw size utilities such as `shadow-md`/`shadow-lg`, arbitrary box-shadow values, or page-local custom shadow colors. Request a semantic component variant/role or document a genuine exception.
-- `shadow-xs` and `shadow-sm` are temporary flat compatibility aliases in the theme. They intentionally produce no visible elevation and must not be used as a new design mechanism.
+- `shadow-xs` and `shadow-sm` are temporary flat compatibility aliases in the theme. They intentionally produce no visible elevation and must not be used as new design vocabulary; product-fixture remnants should be removed so source code communicates the intended flatness directly.
 - Canonical component code should migrate toward `shadow-raised`, `shadow-overlay` and `shadow-modal`; size aliases remain compatibility implementation paths, not design-language vocabulary.
 - A raised/overlay surface must remain legible in dark mode even when its shadow is hard to see. Pair the semantic shadow with an appropriate surface tone/border rather than increasing black alpha without limit.
 - Do not promote a surface on hover unless that depth change itself communicates interaction. For small controls and ordinary navigation, background/border/color changes are preferred to elevation animation.
+- Visible `raised` elevation in business pages is whitelist-governed. The current audited product whitelist is the Gosso Overview focal hero and the standalone Gosso authentication card, recorded in `docs/product-surface-elevation-audit.md` and enforced by conformance tests.
 
-Ownership is therefore split cleanly: **Theme tokens define depth values; Core/Pattern/Gouno components own when depth is structurally appropriate; product pages own only the business reason for choosing an existing semantic variant.**
+Ownership is therefore split cleanly: **Theme tokens define depth values; Core/Pattern/Gouno components own when depth is structurally appropriate; product pages own only the business reason for choosing an existing semantic variant; the product elevation audit owns the current business-surface whitelist.**
 
 ## DL-11 — Route-family identity precedes page-local Tabs without label echo
 
@@ -311,8 +316,8 @@ When a page looks inconsistent, ask in this order:
 6. Is the discrepancy actually page gutter, surface inset, compound structural gap, content spacing, or edge geometry ownership?
 7. If an internal region reaches the parent edge, does the parent still own border/radius/clipping without negative-margin hacks?
 8. Would removing one border/radius make the hierarchy clearer without losing meaning?
-9. Is a shadow communicating real depth, and is the component using the correct semantic elevation role rather than a page-local size utility?
-10. Does the same depth/surface hierarchy remain clear in both light and dark themes?
+9. Is a shadow communicating a real Z-axis relationship, or is it being inferred from a box, border, white background, empty page or CSS positioning?
+10. If a product surface is raised, is it on the audited whitelist with a reason that remains valid in both light and dark themes?
 11. If a Table has repeated row actions, do they remain one structural family on one line while Table overflow owns width pressure?
 12. Can selected/count/error/loading state change without altering sibling control geometry?
 13. If this rule just changed, have all already-migrated governed surfaces been scanned and migrated or explicitly documented as intentional exceptions?

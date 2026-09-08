@@ -8,10 +8,11 @@ Before changing public components, product pages, ownership or API contracts, re
 2. `docs/architecture.md`;
 3. `docs/design-language.md`;
 4. `docs/product-interface-governance.md`;
-5. `docs/api-specification.md`;
-6. `docs/product-driven-development.md`;
-7. `docs/abstraction-register.md`;
-8. `docs/api-conformance.md` when an existing public contract changes.
+5. `docs/product-surface-elevation-audit.md` when changing business surfaces, shadows or elevation;
+6. `docs/api-specification.md`;
+7. `docs/product-driven-development.md`;
+8. `docs/abstraction-register.md`;
+9. `docs/api-conformance.md` when an existing public contract changes.
 
 Repository contracts are the durable source of truth. Do not reconstruct decisions from chat history or legacy component names.
 
@@ -115,6 +116,7 @@ Example: Showcase `CodeBlock` stays private. If a real Blog article page later i
 - `docs/api-specification.md` is binding; legacy product APIs are not naming precedents.
 - `docs/design-language.md` is binding for visual composition, surface boundaries, edge alignment, elevation and spacing ownership.
 - `docs/product-interface-governance.md` is binding for product navigation depth, tab-panel lead placement, surface-local title semantics and corpus-level interface conformance.
+- `docs/product-surface-elevation-audit.md` is binding evidence for current business-page elevation classification and the raised-product whitelist.
 - Do not introduce undocumented aliases or duplicate semantic write paths.
 - API migrations require compatibility assessment and migration instructions.
 - Synchronize exported types, Showcase API/docs/examples, accessibility behavior and focused tests.
@@ -128,7 +130,7 @@ Example: Showcase `CodeBlock` stays private. If a real Blog article page later i
 - A landing/dashboard page may be structurally exceptional without using a different normal surface edge axis. In application-shell pages, `Card padding="lg"` or ad-hoc `p-5/p-8` must not be used as an accidental alignment substitute; any spacious exception must be semantic and documented.
 - Dense desktop Table row actions follow DL-09: use one compact structural action family, keep the cluster single-line, and let Core Table horizontal overflow absorb width pressure. Semantic danger changes color rather than button structure; excessive low-frequency actions move behind an overflow interaction instead of wrapping.
 - A design/interface hardening stage is incomplete until its corpus conformance pass has covered the completed comparison corpus and currently migrated pages in the active product line. Documentation-only adoption is not enough.
-- Visible elevation must use semantic roles (`shadow-raised`, `shadow-overlay`, `shadow-modal`). Raw size shadow aliases are compatibility-only and intentionally flat. `BulkActionBar` remains an intentional `shadow-overlay` because it is a sticky floating selection surface above scrolling content.
+- Visible elevation must use semantic roles (`shadow-raised`, `shadow-overlay`, `shadow-modal`). Raw size shadow aliases are compatibility-only and intentionally flat. Business surfaces remain ground by default; a box, border, white/neutral background or CSS positioning does not justify elevation. `sticky` does not imply overlay, and `BulkActionBar` is a sticky contextual ground surface by default. New raised product surfaces must be added to the explicit audit whitelist with a product-level reason.
 
 Current Tabs canonical high-level API follows PD-010: `activeKey`, `defaultActiveKey`, `items[].key`, `onChange`; pre-reset value-style names are temporary migration compatibility only. Tabs owns the TabBar↔TabPanel structural gap and keeps its active indicator inside the TabList scroll boundary.
 
