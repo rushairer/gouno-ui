@@ -27,12 +27,18 @@ describe("Blog Admin Posts product migration fixture", () => {
     expect(screen.getAllByText("从真实产品抽象一套可维护的 UI 组件体系").length).toBe(2);
   });
 
-  it("supports selection and batch status updates without restoring a public BulkActionBar", () => {
+  it("preserves the real sticky selection toolbar while keeping it product-local", () => {
     render(<BlogAdminPostsDemo />);
     const [desktopCheckbox] = screen.getAllByLabelText(/选择文章 从真实产品抽象一套可维护的 UI 组件体系/);
     fireEvent.click(desktopCheckbox);
 
     expect(screen.getByText("已选择 1 篇")).toBeTruthy();
+    const toolbar = screen.getByRole("toolbar", { name: "批量操作" });
+    const surface = toolbar.closest('[data-slot="card"]');
+    expect(surface?.className).toContain("sticky");
+    expect(surface?.className).toContain("bottom-4");
+    expect(screen.getByRole("button", { name: "交给 AI" })).toBeTruthy();
+
     fireEvent.click(screen.getByRole("button", { name: "转为草稿" }));
     expect(screen.getByText("已将 1 篇文章转为草稿（Showcase 模拟）。")).toBeTruthy();
   });

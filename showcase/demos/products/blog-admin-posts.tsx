@@ -341,15 +341,15 @@ export function BlogAdminPostsDemo() {
       </Card>
 
       {selected.length > 0 ? (
-        <Card padding="sm" className="border-primary/25 bg-accent/30 shadow-sm">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <Text size="sm" className="font-medium">已选择 {selected.length} 篇</Text>
+        <Card padding="sm" className="sticky bottom-4 z-20 border-primary/30 bg-background/95 shadow-lg backdrop-blur">
+          <div role="toolbar" aria-label="批量操作" className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <Text size="sm" className="font-medium sm:mr-auto">已选择 {selected.length} 篇</Text>
             <div className="flex flex-wrap items-center gap-2">
-              <Button size="small" icon={<Sparkles />} onClick={() => setNotice(`将对 ${selected.length} 篇文章启动 AI 辅助流程（Showcase 模拟）。`)}>AI 辅助</Button>
+              <Button size="small" icon={<Sparkles />} onClick={() => setNotice(`将对 ${selected.length} 篇文章启动 AI 辅助流程（Showcase 模拟）。`)}>交给 AI</Button>
               <Button size="small" onClick={() => applyBatch("publish")}>立即发布</Button>
               <Button size="small" onClick={() => applyBatch("draft")}>转为草稿</Button>
               <Button size="small" color="error" icon={<Trash2 />} onClick={() => setDeleteTarget({ kind: "batch" })}>删除</Button>
-              <Button size="small" variant="text" onClick={() => setSelected([])}>取消选择</Button>
+              <Button size="small" variant="text" onClick={() => setSelected([])}>取消</Button>
             </div>
           </div>
         </Card>
