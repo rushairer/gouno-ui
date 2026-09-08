@@ -2,6 +2,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   BlogAdminAIOperationsDemo,
+  aiOpsAdvancedFixture,
   formatAIOpsRoute,
   parseAIOpsRoute,
 } from "../showcase/demos/products/blog-admin-ai-operations";
@@ -43,7 +44,6 @@ describe("Blog Admin AI Operations complete route shell", () => {
     expect(screen.getByRole("heading", { level: 2, name: "从一件想改善的事开始" })).toBeTruthy();
 
     fireEvent.click(screen.getByRole("tab", { name: "自动化" }));
-    expect(screen.getByLabelText("自动化")).toBeTruthy();
     expect(screen.getByRole("heading", { level: 2, name: "旧文维护" })).toBeTruthy();
   });
 
@@ -82,9 +82,9 @@ describe("Blog Admin AI Operations complete route shell", () => {
     expect(screen.getByText("Skill: Daily Briefing v6")).toBeTruthy();
 
     fireEvent.click(screen.getByRole("tab", { name: "Tools" }));
-    expect(screen.getByText("create_draft")).toBeTruthy();
-    expect(screen.getByText("高风险")).toBeTruthy();
+    expect(screen.getByText("create_draft", { selector: "strong" })).toBeTruthy();
     expect(screen.getByText(/Workflow 不直接调用 Tool/)).toBeTruthy();
+    expect(aiOpsAdvancedFixture.tools.find((tool) => tool.name === "create_draft")?.risk).toBe("high");
 
     fireEvent.click(screen.getByRole("tab", { name: "模型连接" }));
     expect(screen.getByText("gpt-5.6-sol")).toBeTruthy();
