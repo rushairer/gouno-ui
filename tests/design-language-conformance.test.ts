@@ -17,6 +17,7 @@ const gossoApplicationFiles = [
 ].filter((file) => /\.(tsx?|jsx?)$/.test(file));
 
 const blogAdminApplicationFiles = [
+  resolve(productsRoot, "blog-admin-dashboard.tsx"),
   resolve(productsRoot, "blog-admin-posts.tsx"),
   resolve(productsRoot, "blog-admin-categories.tsx"),
   resolve(productsRoot, "blog-admin-tags.tsx"),
@@ -77,6 +78,7 @@ describe("design-language conformance", () => {
 
   it("keeps dense Table row actions single-line and structurally uniform", () => {
     const actionFiles = [
+      resolve(productsRoot, "blog-admin-dashboard.tsx"),
       resolve(productsRoot, "blog-admin-posts.tsx"),
       resolve(productsRoot, "blog-admin-categories.tsx"),
       resolve(productsRoot, "blog-admin-pages.tsx"),
