@@ -24,6 +24,7 @@ import {
   Columns2,
   Columns3,
   CreditCard,
+  FileText,
   Frame,
   GalleryHorizontal,
   Gauge,
@@ -218,7 +219,9 @@ export const showcaseCatalog: ShowcaseGroup[] = [
     item("gouno-page-header", "PageHeader", "页面标题", 100, <Heading1 />),
   ]},
   { workspace: "blog", group: "Migrated Pages 已迁移页面", items: [] },
-  { workspace: "blog-admin", group: "Migrated Pages 已迁移页面", items: [] },
+  { workspace: "blog-admin", group: "Content 内容管理", items: [
+    item("blog-admin-posts", "Posts", "文章管理", 100, <FileText />),
+  ]},
   { workspace: "gosso-admin", group: "Application Pages 应用页", items: [
     item("gosso-overview", "Overview", "概览", 100, <Home />),
     item("gosso-account-settings", "Account Settings", "账户设置", 100, <UserCog />),

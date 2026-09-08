@@ -6,13 +6,23 @@ Follow `docs/product-driven-development.md` rather than copying historical abstr
 
 ## Gosso Admin coverage
 
-The current Gosso Admin Showcase covers every user-facing route family with static fixtures:
+The Gosso Admin Showcase covers every user-facing route family with static fixtures:
 
 1. `gosso-overview.tsx` — Overview `/`.
 2. `gosso-account-settings.tsx` — Account Settings `/account-settings/:tab`.
 3. `gosso-system-management/` — System Management `/system-management/:tab`.
 4. `gosso-auth/` — Login, forgot/reset password and OAuth callback standalone identity routes.
 5. `gosso-auth/not-found.tsx` — application-family Not Found state.
+
+Gosso Admin is now the completed comparison corpus while Blog Admin is the active migration line.
+
+## Blog Admin coverage
+
+Blog Admin migration starts with the real resource-management surface that creates the strongest cross-product pressure:
+
+1. `blog-admin-posts.tsx` — Posts `/admin/posts`, including filters, loading/error/empty states, desktop Table, mobile list presentation, selection/batch actions, pagination and destructive confirmation.
+
+The Posts migration reuses admitted `PageHeader`, but filter bars, bulk actions, responsive resource-list composition and DataTable-like behavior remain product-local until additional Blog Admin pages prove a smaller stable shared contract.
 
 ## Showcase fixture tooling
 
@@ -59,4 +69,4 @@ Login, password recovery/reset and OAuth callback preserve their real standalone
 
 When a new Gosso page or state is added, compare it with its own surface family first: page grammar, heading hierarchy, content hierarchy, spacing, action prominence, surface/radius treatment, state controls, feedback semantics, terminology and responsive behavior. Fix same-product drift locally before using Gosso as evidence for Blog Admin or a public Pattern/Gouno abstraction.
 
-Blog Admin and Blog remain separate validation workspaces until their own real pages are migrated. They should challenge Gosso-derived assumptions rather than mechanically copy this product-local grammar.
+Blog Admin is now the active second-product validation workspace. It must challenge Gosso-derived assumptions rather than mechanically copy the Gosso product-local grammar. Blog remains empty until its own real pages are migrated.

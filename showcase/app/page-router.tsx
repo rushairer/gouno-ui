@@ -9,6 +9,9 @@ import { ThemeSystemDemo } from "../demos/theme-system";
 const CoreComponentPage = lazy(() =>
   import("../demos/core-components").then((module) => ({ default: module.CoreComponentPage })),
 );
+const BlogAdminPostsDemo = lazy(() =>
+  import("../demos/products/blog-admin-posts").then((module) => ({ default: module.BlogAdminPostsDemo })),
+);
 const GossoAccountSettingsDemo = lazy(() =>
   import("../demos/products/gosso-account-settings").then((module) => ({ default: module.GossoAccountSettingsDemo })),
 );
@@ -60,6 +63,8 @@ export function ShowcasePage({ page, workspace }: { page: string; workspace: Sho
       return <GounoComponentDemo component="page-container" />;
     case "gouno-page-header":
       return <GounoPageHeaderDemo />;
+    case "blog-admin-posts":
+      return <Suspense fallback={loading}><BlogAdminPostsDemo /></Suspense>;
     case "gosso-overview":
       return <GossoOverviewDemo />;
     case "gosso-account-settings":
