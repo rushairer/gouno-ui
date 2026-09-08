@@ -74,6 +74,8 @@ Gouno UI is in product-validation mode.
 - Before any Pattern/Gouno addition or material Core extension, search canonical Gouno UI, Legacy, Gosso Admin, Blog Admin and relevant Blog pages.
 - If evidence is insufficient, keep code product-local.
 - Record durable accept/reject/defer/merge/move/remove/API decisions in `docs/abstraction-register.md`.
+- Follow the Product Validation Loop in `docs/product-driven-development.md`: real pages may stop further migration when they expose a canonical component defect, accessibility problem, material API gap or semantic API split. Harden the component, synchronize Showcase/docs/tests, validate it back on the triggering product page, then continue migration.
+- Ant Design and other mature systems are benchmarks during hardening, not automatic API authorities. Platform semantics, accessibility, Gouno API governance and real product evidence still decide the final contract.
 
 ## Showcase evidence rule
 
@@ -109,6 +111,7 @@ Example: Showcase `CodeBlock` stays private. If a real Blog article page later i
 - Preserve controlled/uncontrolled semantics where meaningful and native interoperability where useful.
 - A Showcase Preview and displayed Code sample must represent the same implementation.
 - Completion percentages are audit evidence, not architecture scores.
+- A component is `100%` only for its proven Gouno scope after runtime API, exported types, representative demos, example code, accessibility behavior, focused tests and real product validation agree. It never means blindly copying another library's historical surface.
 
 Current Tabs canonical high-level API follows PD-010: `activeKey`, `defaultActiveKey`, `items[].key`, `onChange`; pre-reset value-style names are temporary migration compatibility only.
 
@@ -124,6 +127,10 @@ npm run showcase:build
 ```
 
 Main CI uses Node.js 24 and must pass the same gate before Pages publication. External Actions remain pinned to immutable SHAs.
+
+A pushed commit is not a completed phase. Do not claim CI/Showcase deployment success until the latest `main` workflow is `completed/success`. When Showcase output changed, also verify that the publish step succeeded and `gh-pages` contains a deploy commit for the expected `main` SHA. Pending, cancelled or failed runs are not completion.
+
+Prefer one reviewable commit per coherent migration/hardening stage when practical. If CI reveals a defect, fix it in a focused follow-up commit and keep checking until the latest `main` run is green.
 
 ## Scope boundaries
 

@@ -230,3 +230,92 @@ A new AI session or agent working on product migration, extraction or public API
 Do not reconstruct development philosophy from chat history. Repository documents are the durable source of truth.
 
 Change this contract only as an explicit architecture/process decision. Do not weaken it incidentally to make one migration easier.
+
+## 15. Product Validation Loop
+
+Product migration and design-system hardening are one closed loop, not two separate projects.
+
+```text
+real product page/page-family
+        ↓
+rebuild with canonical UI + product-local composition
+        ↓
+observe real API / visual / interaction / accessibility pressure
+        ↓
+classify the issue
+        ↓
+keep local OR stop the line and harden the canonical component
+        ↓
+update API + Showcase + examples + tests when canonical code changes
+        ↓
+return to the same real page and validate the result
+        ↓
+continue migration
+        ↓
+periodic page-family retrospective
+```
+
+### 15.1 Stop-the-line conditions
+
+Pause further page migration and resolve the canonical component first when a real product page exposes any of the following:
+
+- a visible or behavioral defect in an admitted Core/Theme/Pattern/Gouno component;
+- an accessibility, keyboard, focus or semantic defect;
+- a material product-agnostic capability gap that would otherwise force a product-specific wrapper or workaround;
+- a second public prop name/write path for the same semantic concept;
+- a mismatch where Showcase/demo behavior no longer represents real canonical behavior;
+- a mature component API whose current Gouno contract is demonstrably unstable or inconsistent under real product use.
+
+Do **not** stop the line for every small page-local styling preference. Minor spacing/polish differences that do not reveal a shared contract defect may be batched for later review. If a local workaround starts spreading, reclassify it and stop the line.
+
+### 15.2 Benchmark protocol for component hardening
+
+When a canonical component needs hardening, do not mechanically copy another library. Review evidence in this order:
+
+1. platform/HTML/WAI-ARIA semantics and accessibility requirements;
+2. mature behavior primitives such as Radix or React Aria when relevant;
+3. mature design-system high-level APIs and demos, with Ant Design as an important benchmark for broad product conventions;
+4. `docs/api-specification.md` naming/state/type/composition rules;
+5. the real Gouno product cases that triggered the review.
+
+Ant Design is a benchmark, not an authority. Deprecated aliases, historical compatibility baggage or API shapes that violate Gouno naming/composition rules must not be copied merely for parity.
+
+### 15.3 Definition of component hardening completion
+
+A component may be called complete for its **proven scope** only when the relevant work is synchronized across:
+
+- canonical runtime implementation;
+- public TypeScript API and exported types;
+- API-specification compliance;
+- representative Showcase demos/states;
+- displayed example code matching the demo implementation;
+- accessibility/keyboard/focus behavior where applicable;
+- focused regression/behavior tests;
+- at least one real product usage that validates the corrected contract.
+
+`100%` means the proven Gouno scope is coherent and verified. It does **not** mean copying 100% of Ant Design's historical API surface.
+
+### 15.4 Page-family retrospective cadence
+
+After a significant page family, or roughly two to four representative real pages, pause briefly and review:
+
+- which canonical components were stressed or corrected;
+- which product-local workarounds remain and whether any are spreading;
+- which repeated semantics reached abstraction-review threshold;
+- which existing Pattern/Gouno assumptions were strengthened, weakened or disproved;
+- whether Showcase still accurately reflects canonical behavior;
+- whether the API specification itself exposed a governance gap.
+
+Only durable abstraction/API/process decisions belong in `docs/abstraction-register.md`. Small visual-polish backlog items can stay in the current work item or a dedicated issue until they become architectural evidence.
+
+### 15.5 Delivery discipline
+
+Treat each coherent hardening or page-migration stage as its own reviewable commit when practical. A stage is not complete merely because code was pushed.
+
+Before declaring a stage complete:
+
+1. the expected `main` commit must exist;
+2. the repository verification gate must complete successfully;
+3. when the stage affects Showcase output, the publish step must complete successfully and `gh-pages` must deploy the expected `main` SHA.
+
+Do not report CI or GitHub Pages success while the latest run is pending, cancelled or failed.

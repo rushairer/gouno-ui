@@ -122,3 +122,13 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Reasoning:** this was visual drift created by migration order, not two intentionally different product concepts. The stable page grammar is `fixture context → route Tabs → PageHeader → content surfaces`. Cards group content; they do not own the route-level page title. This also revalidates PD-011 on a second major Gosso page family.
 - **API impact:** none beyond existing `PageHeader`; Account Settings switches its Tabs call site to canonical `activeKey/items[].key` while touched.
 - **Follow-up:** Blog Admin migration should challenge the same grammar. If a real page intentionally needs a contained card title, keep that as card-local content rather than extending PageHeader.
+
+### PD-017 — Product migration uses a stop-the-line validation loop
+- **Status:** accepted
+- **Owner:** repository process / component governance
+- **Evidence:** Gosso migration repeatedly exposed issues that component-only review had not surfaced: Tabs visual/API drift, Alert primitive leakage, Account/System page-grammar divergence and mistaken Input affix naming. Resolving these immediately produced a cleaner canonical API than either “finish every page first” or “design the full library first”.
+- **Decision:** product migration and component hardening form one Product Validation Loop. Continue page migration until a real page exposes a canonical defect, accessibility issue, material product-agnostic API gap, duplicate semantic write path or Showcase/canonical mismatch; then stop the line, harden the component using standards + mature-library benchmarks + Gouno API rules + real product evidence, synchronize Showcase/examples/tests, validate back on the triggering page, and resume migration.
+- **Benchmark rule:** Ant Design is an important high-level API/demo benchmark, not the authority. Do not copy deprecated aliases, compatibility baggage or APIs that conflict with Gouno naming/state/composition rules.
+- **Completion rule:** “100%” means coherent completion for the proven Gouno scope across runtime, public types, demos, example code, accessibility, focused tests and real product validation—not 100% parity with another library.
+- **Cadence:** after a significant page family or roughly 2–4 representative pages, run a short retrospective for Core defects, spreading local workarounds, abstraction candidates, challenged Gouno/Pattern assumptions, Showcase drift and API-governance gaps.
+- **Delivery:** a pushed commit is not a completed phase. Latest `main` CI must be `completed/success`; when Showcase output changes, the publish step and `gh-pages` deploy for the expected main SHA must also be confirmed before reporting completion.
