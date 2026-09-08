@@ -7,6 +7,7 @@ This document exists because some interface defects are neither a public compone
 Read this together with:
 
 - `docs/design-language.md` for visual hierarchy, surfaces, spacing, elevation and control geometry;
+- `docs/product-surface-elevation-audit.md` for the current Showcase business-surface depth classification;
 - `docs/product-driven-development.md` for evidence and stop-the-line workflow;
 - `docs/abstraction-register.md` for material architecture decisions;
 - `docs/api-specification.md` for public React API contracts.
@@ -124,19 +125,23 @@ A title that merely restates route/Tab identity belongs to navigation, not to th
 
 ## PI-04 — Visible elevation uses semantic roles only
 
-Visible depth is a semantic role, never a raw Tailwind shadow size.
+Visible depth is a semantic role, never a raw Tailwind shadow size and never an automatic consequence of CSS positioning.
 
 Canonical roles remain:
 
-- `shadow-raised`: deliberately promoted in-flow surface;
-- `shadow-overlay`: temporary/floating/sticky surface above page content;
+- `shadow-raised`: deliberately promoted focal surface that is visually detached from peer page content;
+- `shadow-overlay`: temporary/floating UI that actually occupies a layer above other content;
 - `shadow-modal`: blocking high-depth overlay.
 
 All raw size aliases (`shadow-xs`, `shadow-sm`, `shadow-md`, `shadow-lg`, `shadow-xl`, `shadow-2xl`) are compatibility-only and intentionally resolve to no visible shadow. New canonical/product code must not use them as design vocabulary.
 
-`BulkActionBar` is an intentional `overlay` case: it is sticky, floats above scrolling collection content and must remain visually separable while selection is active. Its `shadow-overlay` is therefore correct. Removing that shadow merely to make every surface flat would erase a real depth relationship.
+`sticky`, `fixed` and `absolute` describe layout behavior; they do **not** by themselves establish elevation. A sticky region may remain part of its owning surface or normal page flow.
 
-Normal Cards, tables, filters, navigation, form controls and in-flow feedback stay ground-level unless an existing semantic role clearly applies.
+`BulkActionBar` is the current proof: it stays sticky for access during selection, but its normal product presentation is contextual ground. Border + opaque card surface separate it from the collection without manufacturing a floating layer. If a future product needs a genuinely detached toolbar that covers unrelated content, that behavior must be admitted explicitly instead of inheriting `shadow-overlay` from `position: sticky`.
+
+Normal Cards, tables, filters, dashboards, lists, form sections, editor frames, navigation, selected/unread states and in-flow feedback stay ground-level. A border, neutral/white box, rounded container or otherwise empty page does not justify a shadow.
+
+The current business-product raised whitelist is deliberately small and is recorded in `docs/product-surface-elevation-audit.md`: the Gosso Overview focal hero and the standalone Gosso authentication card. New visible product elevation is a corpus-level design-language change, not a page-local styling choice.
 
 ## PI-05 — New binding rules require a corpus pass, not screenshot patching
 
@@ -159,7 +164,8 @@ Current automated checks should cover at least:
 - PageHeader-before-Tabs ordering;
 - no immediate Tab-label heading echo in governed settings/management pages;
 - open panel leads outside Card boundaries where a lead is used;
-- semantic elevation ownership and flat raw shadow aliases;
+- semantic elevation ownership, the explicit raised-product whitelist and flat raw shadow aliases;
+- sticky product surfaces remaining ground unless a real layer relationship is admitted;
 - dense Table action geometry;
 - surface edge/radius/padding ownership.
 
@@ -173,8 +179,9 @@ Before accepting a normal Admin page or route family, ask:
 4. Is explanatory copy an open panel lead, or has it been trapped inside a Card only because the Card needed a header?
 5. Does every Card-local heading name a concept owned by that Card rather than the route/Tab?
 6. Does any normal in-flow surface have visible elevation without a semantic depth role?
-7. If a semantic overlay has a shadow, can its depth relationship be explained structurally (for example sticky `BulkActionBar` over scrolling content)?
-8. Has the same rule been scanned across Gosso Admin + Blog Admin rather than fixed only where a screenshot exposed it?
-9. Is there a regression gate for the invariant, or a documented reason why only visual review can prove it?
+7. Is elevation being inferred merely from `sticky`/`fixed`/`absolute`, a border, a white box or an empty background? If yes, keep it ground unless an actual Z-axis relationship can be explained.
+8. If a semantic overlay has a shadow, does it actually cover or float above peer content rather than simply remaining visible while scrolling?
+9. Has the same rule been scanned across Gosso Admin + Blog Admin rather than fixed only where a screenshot exposed it?
+10. Is there a regression gate for the invariant, or a documented reason why only visual review can prove it?
 
 A page that passes component API tests but fails these questions is not interface-conformant.
