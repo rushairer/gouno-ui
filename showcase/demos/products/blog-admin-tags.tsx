@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from "react";
-import { Bot, Combine, Edit2, Plus, Tag as TagIcon, Trash2 } from "lucide-react";
+import { Bot, Combine, Edit2, Tag as TagIcon, Trash2 } from "lucide-react";
 import {
   Alert,
   Button,
@@ -10,6 +10,7 @@ import {
   Input,
   Modal,
   Segmented,
+  Select,
   Skeleton,
   Tag,
   Text,
@@ -181,17 +182,7 @@ export function BlogAdminTagsDemo() {
 
       <PageHeader
         title="标签"
-        description="维护可复用的文章标签，并清理重复或低价值的主题词。"
-        actions={(
-          <Button
-            variant="solid"
-            color="primary"
-            icon={<Plus />}
-            onClick={() => setNotice({ type: "success", text: "真实产品会在编辑文章时创建新标签；此处保留管理入口语义。" })}
-          >
-            新建标签
-          </Button>
-        )}
+        description="清理重复标签、合并语义相近的主题词，并保持文章标签体系简洁。"
       />
 
       {notice ? (
@@ -269,17 +260,12 @@ export function BlogAdminTagsDemo() {
           </FormField>
         ) : (
           <FormField label="合并目标" required hint="源标签会被删除，文章将改用目标标签。">
-            <select
-              aria-label="合并目标"
-              value={mergeTarget}
-              onChange={(event) => setMergeTarget(event.target.value)}
-              className="h-10 w-full rounded-md border border-border bg-input px-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
+            <Select aria-label="合并目标" value={mergeTarget} onChange={(value) => setMergeTarget(String(value))}>
               <option value="">请选择目标标签</option>
-              {tags.filter((tag) => tag.id !== editor.id).map((tag) => (
-                <option key={tag.id} value={tag.id}>{tag.name} · {tag.postCount} 篇</option>
+              {tags.filter((tag) => tag.id !== editor?.id).map((tag) => (
+                <option key={tag.id} value={String(tag.id)}>{tag.name} · {tag.postCount} 篇</option>
               ))}
-            </select>
+            </Select>
           </FormField>
         )}
       </Modal>
