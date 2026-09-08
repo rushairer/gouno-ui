@@ -1,6 +1,8 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { Tabs } from "../src/core";
+
+afterEach(cleanup);
 
 describe("Core Tabs", () => {
   it("uses Ant-style key semantics and selects the first enabled item by default", () => {
