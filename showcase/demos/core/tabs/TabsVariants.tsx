@@ -1,7 +1,7 @@
 import { Card, Tabs, Text } from "../../../../src/core";
 
 const panel = (label: string) => (
-  <Card padding="md" className="bg-muted/15 shadow-none">
+  <Card padding="base" className="bg-muted/15 shadow-none">
     <Text>{label}</Text>
   </Card>
 );
