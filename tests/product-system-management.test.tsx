@@ -10,9 +10,11 @@ function selectTab(name: string) {
 }
 
 describe("Gosso Admin System Management migration fixture", () => {
-  it("preserves all five route-backed management sections", () => {
+  it("preserves all five route-backed management sections without in-flow fixture chrome", () => {
     render(<GossoSystemManagementDemo />);
     expect(screen.getAllByRole("tab")).toHaveLength(5);
+    expect(screen.queryByText("真实产品路由")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
     expect(screen.getByText("/system-management/clients")).toBeTruthy();
     expect(screen.getByRole("heading", { name: "OAuth2 客户端" })).toBeTruthy();
 
