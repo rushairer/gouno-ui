@@ -39,9 +39,9 @@ describe("public layer architecture", () => {
     expect(patterns).not.toMatch(/from\s+["']\.\.\/(?:gouno|legacy)\//);
   });
 
-  it("keeps the Pattern public surface intentionally empty until admission", async () => {
+  it("publishes only admitted Pattern interactions", async () => {
     const patterns = await import("../src/patterns/index");
-    expect(Object.keys(patterns).sort()).toEqual([]);
+    expect(Object.keys(patterns).sort()).toEqual(["BulkActionBar"]);
   });
 
   it("publishes only admitted Gouno product-family structure", async () => {
