@@ -18,11 +18,22 @@ Gosso Admin is now the completed comparison corpus while Blog Admin is the activ
 
 ## Blog Admin coverage
 
-Blog Admin migration starts with the real resource-management surface that creates the strongest cross-product pressure:
+Blog Admin is the active second-product validation workspace. The current migrated pages are:
 
 1. `blog-admin-posts.tsx` — Posts `/admin/posts`, including filters, loading/error/empty states, desktop Table, mobile list presentation, selection/batch actions, pagination and destructive confirmation.
+2. `blog-admin-users.tsx` — Members & Roles `/admin/users`, including Blog-local membership/role semantics, desktop Table/mobile Cards, edit role/name, suspend/restore, ownership transfer and product-local Sudo/MFA security states.
 
-The Posts migration reuses admitted `PageHeader`, but filter bars, bulk actions, responsive resource-list composition and DataTable-like behavior remain product-local until additional Blog Admin pages prove a smaller stable shared contract.
+The Posts migration was rechecked after PD-023/PD-024. Its normal application surfaces conform to the shared surface contract; the one spacious `Card padding="lg"` is intentionally limited to the contained `Empty` result surface and is not an application alignment precedent. `tests/design-language-conformance.test.ts` now protects both migrated Blog Admin pages from drifting back to accidental 20px/32px normal application insets.
+
+Posts and Members both independently reuse admitted `PageHeader` without expanding its API. They also both need responsive resource presentation, but this is not yet evidence for restoring Legacy `DataTable`, `ResponsiveList`, `FilterBar`, `BulkActionBar` or `AsyncState`. The current evidence says that resource-management mechanics repeat; it does not yet prove one stable public feature-bag boundary.
+
+Do not collapse Gosso identity users and Blog members into one page/domain abstraction merely because both render a user-like table. Gosso manages identity-platform accounts; Blog Admin manages product membership, roles and high-privilege product actions. Shared abstractions must come from smaller stable presentation/interaction contracts, not from similar nouns or screenshots.
+
+Real Blog `SudoGate` prior art currently appears in multiple Blog-owned high-privilege areas (including Members, Site Settings and advanced/AI administration). That is sufficient to trigger review, but not to admit a public Pattern: all current evidence is still one product family and tightly coupled to GOSSO step-up/MFA policy. Keep the security gate product-local until independent product evidence proves a product-agnostic interaction contract.
+
+The next high-value Blog Admin target is Site Settings. It should challenge both PD-024 full-bleed/sticky action anatomy and the repeated Sudo/MFA gate before any shared form/security Pattern is considered.
+
+A product-page catalog value of `100` means that the individual Showcase fixture is complete for the migrated route scope; it never means the entire Blog Admin product space has been migrated.
 
 ## Showcase fixture tooling
 

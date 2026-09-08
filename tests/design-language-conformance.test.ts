@@ -16,6 +16,11 @@ const gossoApplicationFiles = [
   ...sourceFiles(resolve(productsRoot, "gosso-system-management")),
 ].filter((file) => /\.(tsx?|jsx?)$/.test(file));
 
+const blogAdminApplicationFiles = [
+  resolve(productsRoot, "blog-admin-posts.tsx"),
+  resolve(productsRoot, "blog-admin-users.tsx"),
+];
+
 function combined(files: readonly string[]): string {
   return files.map((file) => readFileSync(file, "utf8")).join("\n");
 }
@@ -44,14 +49,16 @@ describe("design-language conformance", () => {
     expect(siteSettings).not.toContain("-mb-6");
   });
 
-  it("keeps Blog Admin Posts on the current surface contract", () => {
-    const posts = readFileSync(resolve(productsRoot, "blog-admin-posts.tsx"), "utf8");
-    const spaciousCards = posts.match(/<Card\b[^>]*padding=["']lg["']/g) ?? [];
+  it("keeps migrated Blog Admin pages on the current surface contract", () => {
+    for (const file of blogAdminApplicationFiles) {
+      const source = readFileSync(file, "utf8");
+      const spaciousCards = source.match(/<Card\b[^>]*padding=["']lg["'][^>]*>/g) ?? [];
+      const spaciousEmptyCards = source.match(/<Card\b[^>]*padding=["']lg["'][^>]*>\s*<Empty\b/g) ?? [];
 
-    // DL-07 permits this single spacious treatment because it is a contained Empty/result surface,
-    // not a normal application content surface or an alignment shim.
-    expect(spaciousCards).toHaveLength(1);
-    expect(posts).toContain('<Card padding="lg">\n          <Empty');
-    expect(posts).not.toMatch(/(?:^|\s)p-(?:5|8)(?:\s|["'])/);
+      // DL-07 permits spacious treatment for a contained Empty/result surface, not for normal
+      // application content or as an alignment shim. Every current Blog Admin lg Card must be one.
+      expect(spaciousCards).toHaveLength(spaciousEmptyCards.length);
+      expect(source).not.toMatch(/(?:^|\s)p-(?:5|8)(?:\s|["'])/);
+    }
   });
 });
