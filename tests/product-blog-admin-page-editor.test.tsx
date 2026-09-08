@@ -71,7 +71,7 @@ describe("Blog Admin PageEditor", () => {
     fireEvent.click(screen.getByRole("option", { name: "问答与指南 (FAQ)" }));
     expect(template.textContent).toContain("问答与指南");
 
-    const navigation = screen.getByRole("checkbox", { name: "显示在顶部主导航栏" }) as HTMLInputElement;
+    const navigation = screen.getByRole("checkbox", { name: /显示在顶部主导航栏/ }) as HTMLInputElement;
     expect(navigation.checked).toBe(true);
     fireEvent.click(navigation);
     expect(screen.queryByLabelText("导航排序权重")).toBeNull();
