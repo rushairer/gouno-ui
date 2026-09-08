@@ -1,5 +1,5 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   AIOpsInboxPanel,
   AIOpsOverviewPanel,
@@ -10,6 +10,8 @@ import {
   type InteractionFixture,
   type OperationsFixture,
 } from "../showcase/demos/products/blog-admin-ai-operations/fixtures";
+
+afterEach(cleanup);
 
 describe("Blog Admin AI Operations overview/inbox migration modules", () => {
   it("preserves the decision-first overview and routes work to Inbox/Automation", () => {
