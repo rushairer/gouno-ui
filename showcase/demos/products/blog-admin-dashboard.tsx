@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import {
   Alert,
-  Badge,
   Button,
   Card,
   CardContent,
@@ -32,6 +31,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Tag,
   Text,
 } from "../../../src/core";
 import { PageHeader } from "../../../src/gouno";
@@ -217,7 +217,6 @@ export function BlogAdminDashboardDemo() {
   const canCreatePost = capability === "admin";
   const canModerate = capability !== "viewer";
   const canManageAI = capability === "admin";
-  const canViewPosts = true;
   const drafts = Math.max(0, summary.totalPosts - summary.publishedPosts);
   const maxTraffic = Math.max(1, ...summary.dailyEvents.map((item) => item.count));
   const trafficTotal = useMemo(
@@ -289,7 +288,7 @@ export function BlogAdminDashboardDemo() {
               title="文章总数"
               value={summary.totalPosts.toLocaleString()}
               detail={<span>已发布 {summary.publishedPosts} · 草稿 {drafts}</span>}
-              route={canViewPosts ? "/admin/posts" : undefined}
+              route="/admin/posts"
               onNavigate={navigate}
             />
             <MetricCard
@@ -297,7 +296,7 @@ export function BlogAdminDashboardDemo() {
               title="总阅读量"
               value={summary.totalViews.toLocaleString()}
               detail="全站累计公开阅读次数"
-              route={canViewPosts ? "/admin/posts?status=published" : undefined}
+              route="/admin/posts?status=published"
               onNavigate={navigate}
             />
             <MetricCard
@@ -305,7 +304,7 @@ export function BlogAdminDashboardDemo() {
               title="总获赞数"
               value={summary.totalLikes.toLocaleString()}
               detail="读者正向互动累计"
-              route={canViewPosts ? "/admin/posts" : undefined}
+              route="/admin/posts"
               onNavigate={navigate}
             />
             <MetricCard
@@ -329,7 +328,7 @@ export function BlogAdminDashboardDemo() {
                     </CardTitle>
                     <Text size="xs" tone="muted">每日页面访问量分布 · 当前 Fixture 展示最近 14 个采样日</Text>
                   </div>
-                  <Badge tone="brand" pill>{trafficTotal.toLocaleString()} 次访问</Badge>
+                  <Tag color="primary">{trafficTotal.toLocaleString()} 次访问</Tag>
                 </div>
               </CardHeader>
               <CardContent className="p-6">
@@ -353,8 +352,10 @@ export function BlogAdminDashboardDemo() {
 
             <Card padding="none" className="overflow-hidden">
               <CardHeader className="border-b p-6">
-                <CardTitle className="text-base">内容治理与指标</CardTitle>
-                <Text size="xs" tone="muted">关键待办事项与健康指标</Text>
+                <div className="flex flex-col gap-1">
+                  <CardTitle className="text-base">内容治理与指标</CardTitle>
+                  <Text size="xs" tone="muted">关键待办事项与健康指标</Text>
+                </div>
               </CardHeader>
               <CardContent className="flex flex-col gap-5 p-6">
                 <div className="grid grid-cols-2 gap-3">
@@ -473,14 +474,14 @@ export function BlogAdminDashboardDemo() {
                               size="small"
                               variant="ghost"
                               icon={<Edit2 />}
-                              aria-label={`${post.editable ? "编辑" : "查看"}文章 ${post.title}`}
+                              label={`${post.editable ? "编辑" : "查看"}文章 ${post.title}`}
                               onClick={() => navigate(`/admin/posts/${post.id}/edit`)}
                             />
                             <IconButton
                               size="small"
                               variant="ghost"
                               icon={<ExternalLink />}
-                              aria-label={`打开前台文章 ${post.title}`}
+                              label={`打开前台文章 ${post.title}`}
                               onClick={() => navigate(`/articles/${post.slug || post.id}`)}
                             />
                           </div>
