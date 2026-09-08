@@ -6,6 +6,7 @@ import {
   ArrowUpToLine,
   AtSign,
   Bell,
+  Bot,
   Calendar,
   CalendarDays,
   CalendarRange,
@@ -235,6 +236,7 @@ export const showcaseCatalog: ShowcaseGroup[] = [
   ]},
   { workspace: "blog-admin", group: "AI Automation AI 运营", items: [
     item("blog-admin-ai-operations", "AI Operations", "AI 运营", 100, <Network />),
+    item("blog-admin-ai-settings", "AI Settings", "AI 设置", 100, <Bot />),
   ]},
   { workspace: "blog-admin", group: "Site 站点管理", items: [
     item("blog-admin-users", "Members", "成员与权限", 100, <CircleUserRound />),
