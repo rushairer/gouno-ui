@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { BlogAdminCategoriesDemo } from "../showcase/demos/products/blog-admin-categories";
 
@@ -55,9 +55,10 @@ describe("Blog Admin Categories product migration fixture", () => {
     expect(screen.getByText("已选择 1 个分类")).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "交给 AI" }));
-    expect(screen.getByText("将所选分类交给 AI")).toBeTruthy();
-    expect(screen.getByText("工程实践")).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "启动工作流" }));
+    const dialog = screen.getByRole("dialog");
+    expect(within(dialog).getByText("将所选分类交给 AI")).toBeTruthy();
+    expect(within(dialog).getByText("工程实践")).toBeTruthy();
+    fireEvent.click(within(dialog).getByRole("button", { name: "启动工作流" }));
     expect(screen.getByText("已将 1 个分类交给 AI 工作流（Showcase 模拟）。")).toBeTruthy();
   });
 
