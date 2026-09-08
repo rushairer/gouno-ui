@@ -12,6 +12,9 @@ const CoreComponentPage = lazy(() =>
 const BlogAdminPostsDemo = lazy(() =>
   import("../demos/products/blog-admin-posts").then((module) => ({ default: module.BlogAdminPostsDemo })),
 );
+const BlogAdminCategoriesDemo = lazy(() =>
+  import("../demos/products/blog-admin-categories").then((module) => ({ default: module.BlogAdminCategoriesDemo })),
+);
 const BlogAdminCommentsDemo = lazy(() =>
   import("../demos/products/blog-admin-comments").then((module) => ({ default: module.BlogAdminCommentsDemo })),
 );
@@ -74,6 +77,8 @@ export function ShowcasePage({ page, workspace }: { page: string; workspace: Sho
       return <GounoPageHeaderDemo />;
     case "blog-admin-posts":
       return <Suspense fallback={loading}><BlogAdminPostsDemo /></Suspense>;
+    case "blog-admin-categories":
+      return <Suspense fallback={loading}><BlogAdminCategoriesDemo /></Suspense>;
     case "blog-admin-comments":
       return <Suspense fallback={loading}><BlogAdminCommentsDemo /></Suspense>;
     case "blog-admin-users":
