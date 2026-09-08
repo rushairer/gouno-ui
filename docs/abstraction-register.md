@@ -242,3 +242,23 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Architectural impact:** Card Grid validation further demonstrates that the stable shared interaction is smaller than the surrounding collection presentation and continues to reject restoration of broad Legacy `DataTable`, `ResponsiveList` or `AsyncState` feature bags.
 - **Validation:** the migrated Tags fixture covers Card Grid presentation, rename/merge, canonical BulkActionBar, single/batch delete, partial-failure retention and loading/error/empty states; the complete main gate and Showcase publish pass.
 - **Follow-up:** migrate Pages `/admin/pages`; use its responsive Table/mobile list, filters and pagination to challenge the Pattern again without expanding its API by default.
+
+### PD-030 — Pages revalidates responsive collection grammar without DataTable extraction
+- **Status:** accepted validation
+- **Owner:** Patterns / Product-local
+- **Evidence:** real Blog Admin `/admin/pages` combines search/status filtering, desktop Table, mobile list presentation, path/template/navigation metadata, selection/batch deletion, pagination, destructive confirmation and AI Workflow resource keys.
+- **Decision:** Pages reuses canonical `BulkActionBar` unchanged while keeping filter state, pagination, responsive presentation and page-domain actions product-local. Its similarity to Posts is useful composition evidence but still does not justify a broad `DataTable`, `ResponsiveList` or `FilterBar` Pattern because the stable shared interaction remains smaller than the collection feature set.
+- **API impact:** none. `BulkActionBar` receives no domain props; no collection Pattern is admitted.
+- **Design-language impact:** Pages joins the DL-07 application-surface corpus and DL-09 dense Table row-action corpus; desktop actions remain one-line ghost `IconButton`s while Core Table owns horizontal width pressure.
+- **Validation:** the migrated Pages fixture covers search/status filters, filtered/unfiltered empty states, desktop/mobile presentation, metadata/actions, canonical BulkActionBar, pagination, single/batch deletion, AI workflow entry and loading/error states; main CI and Showcase publish pass.
+- **Follow-up:** migrate Notifications `/admin/notifications` and challenge the Pattern with a non-CRUD state-machine action set.
+
+### PD-031 — Notifications validates product-owned action semantics inside the same Pattern
+- **Status:** accepted validation
+- **Owner:** Patterns / Product-local
+- **Evidence:** real Blog Admin `/admin/notifications` is a Card-based notification queue with status/type filtering, unread/read state transitions, per-item destinations, selected-item mark-read, batch deletion, global mark-all-read and clear-read/clear-all operations. Its selected actions are materially different from Posts, Tags and Pages.
+- **Decision:** canonical `BulkActionBar` remains unchanged and intentionally ignorant of notification semantics. Notifications supplies `标为已读` and `批量删除` as arbitrary child actions while retaining read-state transitions, destinations, filter counts and global cleanup behavior in product code.
+- **API impact:** none. Do not add action-type, read-state, resource-type or workflow-specific props to `BulkActionBar`.
+- **Architectural impact:** the notification Card queue further rejects a broad collection/`AsyncState` feature bag: shared state orchestration is not stable enough to own publicly, while the already-admitted selection toolbar remains stable across heterogeneous product surfaces.
+- **Validation:** the migrated Notifications fixture covers notification presentation types, status/type filters, read transitions, canonical BulkActionBar, single/batch delete, clear-read/clear-all confirmation and loading/error/empty states; main CI and Showcase publish pass.
+- **Follow-up:** migrate Media Library `/admin/medialibrary`; use upload/AI/edit Drawers, reference-aware deletion and partial batch failure as the next stronger Core/Pattern pressure test.
