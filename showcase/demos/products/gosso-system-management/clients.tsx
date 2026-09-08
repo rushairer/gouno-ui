@@ -18,7 +18,7 @@ import {
   Tag,
   Text,
 } from "../../../../src/core";
-import { ConfirmAction, ManagementSectionHeader, StatusNotice } from "./shared";
+import { ConfirmAction, ManagementPanelLead, StatusNotice } from "./shared";
 
 type ClientFixture = {
   id: string;
@@ -91,7 +91,7 @@ export function ClientsPanel() {
 
   return (
     <div className="flex flex-col gap-5">
-      <ManagementSectionHeader title="OAuth2 客户端" description="注册与维护 OAuth 2.0 / OpenID Connect 客户端、回调地址、授权类型和访问范围。" actions={<Button variant="solid" color="primary" icon={<Plus />} onClick={() => openEditor()}>注册客户端</Button>} />
+      <ManagementPanelLead description="注册与维护 OAuth 2.0 / OpenID Connect 客户端、回调地址、授权类型和访问范围。" actions={<Button variant="solid" color="primary" icon={<Plus />} onClick={() => openEditor()}>注册客户端</Button>} />
       {status ? <StatusNotice>{status}</StatusNotice> : null}
       <Table bordered>
         <TableHeader><TableRow><TableHead>客户端</TableHead><TableHead>类型</TableHead><TableHead>Redirect URI</TableHead><TableHead>Grant Types</TableHead><TableHead>Scopes</TableHead><TableHead className="text-right">操作</TableHead></TableRow></TableHeader>

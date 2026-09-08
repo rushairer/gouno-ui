@@ -18,7 +18,7 @@ import {
   Tag,
   Text,
 } from "../../../../src/core";
-import { ConfirmAction, ManagementSectionHeader, StatusNotice } from "./shared";
+import { ConfirmAction, ManagementPanelLead, StatusNotice } from "./shared";
 
 type UserStatus = "active" | "suspended";
 type UserFixture = {
@@ -104,8 +104,7 @@ export function UsersPanel() {
 
   return (
     <div className="flex flex-col gap-5">
-      <ManagementSectionHeader
-        title="用户管理"
+      <ManagementPanelLead
         description="管理身份平台账户状态、角色、安全凭据与高风险管理操作。"
         actions={
           <Button variant="solid" color="primary" icon={<Plus />} onClick={() => setCreateOpen(true)}>

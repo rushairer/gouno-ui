@@ -12,7 +12,7 @@ function selectTab(name: string) {
 }
 
 describe("Gosso Admin Account Settings migration fixture", () => {
-  it("preserves the route-family H1 before five tab-backed local sections without fixture chrome in product flow", () => {
+  it("keeps one route-family H1, tab-labelled panels and non-redundant panel leads", () => {
     render(<GossoAccountSettingsDemo />);
 
     expect(screen.getByRole("heading", { level: 1, name: "账户设置" })).toBeTruthy();
@@ -20,15 +20,18 @@ describe("Gosso Admin Account Settings migration fixture", () => {
     expect(screen.queryByText("真实产品路由")).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
     expect(screen.getByText("/account-settings/profile")).toBeTruthy();
-    expect(screen.getByRole("heading", { level: 2, name: "个人资料" })).toBeTruthy();
+    expect(screen.queryByRole("heading", { level: 2, name: "个人资料" })).toBeNull();
+    expect(screen.getByText("查看并维护账户基础资料、联系邮箱与身份标识。")).toBeTruthy();
 
     selectTab("修改密码");
     expect(screen.getByText("/account-settings/password")).toBeTruthy();
-    expect(screen.getByRole("heading", { level: 2, name: "修改密码" })).toBeTruthy();
+    expect(screen.queryByRole("heading", { level: 2, name: "修改密码" })).toBeNull();
+    expect(screen.getByText("使用当前密码验证身份，并设置新的登录密码。")).toBeTruthy();
 
     selectTab("活跃会话");
     expect(screen.getByText("/account-settings/sessions")).toBeTruthy();
-    expect(screen.getByRole("heading", { level: 2, name: "活跃会话" })).toBeTruthy();
+    expect(screen.queryByRole("heading", { level: 2, name: "活跃会话" })).toBeNull();
+    expect(screen.getByText("查看当前登录设备、IP 地址与最后活动时间，并终止异常会话。")).toBeTruthy();
   });
 
   it("keeps password validation local to the page fixture", () => {

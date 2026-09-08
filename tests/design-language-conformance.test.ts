@@ -174,4 +174,29 @@ describe("design-language conformance", () => {
       expect(readFileSync(file, "utf8")).not.toContain("PageHeader");
     }
   });
+
+  it("does not echo tab labels as immediate panel headings", () => {
+    const accountEchoes = [
+      ["gosso-account-settings/profile.tsx", 'title="个人资料"'],
+      ["gosso-account-settings/password.tsx", 'title="修改密码"'],
+      ["gosso-account-settings/mfa.tsx", 'title="多因素认证 (MFA)"'],
+      ["gosso-account-settings/security.tsx", 'title="通行密钥 (FIDO2)"'],
+      ["gosso-account-settings/security.tsx", 'title="活跃会话"'],
+    ] as const;
+    const managementEchoes = [
+      ["gosso-system-management/clients.tsx", 'title="OAuth2 客户端"'],
+      ["gosso-system-management/users.tsx", 'title="用户管理"'],
+      ["gosso-system-management/audit-logs.tsx", 'title="审计日志"'],
+      ["gosso-system-management/site-settings.tsx", 'title="站点设置"'],
+      ["gosso-system-management/system-status.tsx", 'title="系统状态"'],
+    ] as const;
+
+    for (const [path, echo] of [...accountEchoes, ...managementEchoes]) {
+      expect(readFileSync(resolve(productsRoot, path), "utf8")).not.toContain(echo);
+    }
+
+    const systemStatus = readFileSync(resolve(productsRoot, "gosso-system-management/system-status.tsx"), "utf8");
+    expect(systemStatus).toContain('<Heading level={2} className="text-base">基础设施健康</Heading>');
+    expect(systemStatus).toContain('return <Card padding="base"><Heading level={2}');
+  });
 });

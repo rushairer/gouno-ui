@@ -22,7 +22,7 @@ export function ProfilePanel() {
   };
 
   return (
-    <Section title="个人资料" description="查看并维护账户基础资料、联系邮箱与身份标识。">
+    <Section description="查看并维护账户基础资料、联系邮箱与身份标识。">
       <div className="flex flex-col gap-4">
         {status ? <StatusMessage message={status} /> : null}
         <dl>

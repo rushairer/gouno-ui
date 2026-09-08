@@ -45,7 +45,6 @@ export function MfaPanel() {
 
   return (
     <Section
-      title="多因素认证 (MFA)"
       description="绑定 TOTP 身份验证器，并管理恢复备用代码。"
       actions={preview === "enabled" ? <Tag color="success">已启用</Tag> : <Tag>{preview === "enrolling" ? "配置中" : "未启用"}</Tag>}
     >
@@ -70,7 +69,7 @@ export function MfaPanel() {
               </div>
               <div className="flex flex-col gap-4">
                 <div>
-                  <Heading level={3} className="text-base">使用身份验证器扫描二维码</Heading>
+                  <Heading level={2} className="text-base">使用身份验证器扫描二维码</Heading>
                   <Text size="sm" tone="muted" className="mt-1 leading-relaxed">如果无法扫描，可以手动输入下面的密钥。真实产品中的密钥由服务端临时生成。</Text>
                 </div>
                 <div className="flex max-w-lg items-center justify-between gap-3 rounded-md border bg-muted/30 p-3">
@@ -116,7 +115,7 @@ export function MfaPanel() {
         ) : null}
         {showBackupCodes && preview === "enabled" ? (
           <section className="flex flex-col gap-4 border-t pt-5" aria-labelledby="gosso-backup-codes-heading">
-            <Heading id="gosso-backup-codes-heading" level={3} className="text-base">恢复备用代码</Heading>
+            <Heading id="gosso-backup-codes-heading" level={2} className="text-base">恢复备用代码</Heading>
             <Text size="sm" tone="muted">每个代码只能使用一次。请保存到与主身份验证器分离的安全位置。</Text>
             <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {backupCodes.map((code) => <code key={code} className="rounded-md border bg-muted/30 px-3 py-2 text-center font-mono text-sm">{code}</code>)}

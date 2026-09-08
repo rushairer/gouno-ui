@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Image, Save } from "lucide-react";
 import { Alert, Button, Card, CardContent, CardFooter, FormField, Input, Text, Textarea } from "../../../../src/core";
-import { ManagementSectionHeader } from "./shared";
+import { ManagementPanelLead } from "./shared";
 
 type Branding = {
   productName: string;
@@ -39,7 +39,7 @@ export function SiteSettingsPanel() {
 
   return (
     <div className="flex flex-col gap-5">
-      <ManagementSectionHeader title="站点设置" description="维护 GOSSO 登录入口的产品名称、品牌资源和登录页文案，并在保存前预览结果。" />
+      <ManagementPanelLead description="维护 GOSSO 登录入口的产品名称、品牌资源和登录页文案，并在保存前预览结果。" />
       {saved ? <Alert type="success" showIcon title="站点设置已保存（Showcase 模拟）。" /> : null}
 
       <form onSubmit={save} className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">

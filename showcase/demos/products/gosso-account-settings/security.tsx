@@ -71,7 +71,6 @@ export function PasskeysPanel() {
 
   return (
     <Section
-      title="通行密钥 (FIDO2)"
       description="使用设备生物识别或安全密钥完成抗钓鱼登录。"
       surface="direct"
       actions={<Button variant="solid" color="primary" icon={<Plus />} onClick={openRegistration}>添加通行密钥</Button>}
@@ -139,7 +138,7 @@ export function SessionsPanel() {
   const [status, setStatus] = useState<string | null>(null);
 
   return (
-    <Section title="活跃会话" description="查看当前登录设备、IP 地址与最后活动时间，并终止异常会话。" surface="direct">
+    <Section description="查看当前登录设备、IP 地址与最后活动时间，并终止异常会话。" surface="direct">
       <div className="flex flex-col gap-4">
         {status ? <StatusMessage message={status} /> : null}
         {sessions.length === 0 ? (

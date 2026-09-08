@@ -32,7 +32,7 @@ export function PasswordPanel() {
   };
 
   return (
-    <Section title="修改密码" description="使用当前密码验证身份，并设置新的登录密码。">
+    <Section description="使用当前密码验证身份，并设置新的登录密码。">
       <form onSubmit={submit} className="flex flex-col gap-5">
         <div className="flex max-w-xl flex-col gap-5">
           {error ? <StatusMessage type="error" message={error} /> : null}

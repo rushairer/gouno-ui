@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { Alert, Heading, IconButton, Modal, Text } from "../../../../src/core";
+import { Alert, IconButton, Modal, Text } from "../../../../src/core";
 import { FixtureDock } from "../../../components/fixture-dock";
 
 export function FixtureBanner({ route }: { route: string }) {
@@ -11,23 +11,19 @@ export function FixtureBanner({ route }: { route: string }) {
   );
 }
 
-export function ManagementSectionHeader({
-  title,
+export function ManagementPanelLead({
   description,
   actions,
 }: {
-  title: ReactNode;
   description?: ReactNode;
   actions?: ReactNode;
 }) {
+  if (!description && !actions) return null;
   return (
-    <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-      <div className="min-w-0">
-        <Heading level={2} className="text-lg leading-tight">{title}</Heading>
-        {description ? <Text tone="muted" size="sm" className="mt-1.5 max-w-3xl leading-relaxed">{description}</Text> : null}
-      </div>
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      {description ? <Text tone="muted" size="sm" className="max-w-3xl leading-relaxed">{description}</Text> : <span />}
       {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
-    </header>
+    </div>
   );
 }
 

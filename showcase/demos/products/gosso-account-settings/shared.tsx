@@ -2,8 +2,8 @@ import { useState, type ReactNode } from "react";
 import { Alert, Button, Card, Heading, Modal, Text } from "../../../../src/core";
 
 export interface SectionProps {
-  title: ReactNode;
-  description: ReactNode;
+  title?: ReactNode;
+  description?: ReactNode;
   actions?: ReactNode;
   surface?: "card" | "direct";
   children: ReactNode;
@@ -25,19 +25,26 @@ export interface ConfirmActionProps {
 }
 
 export function Section({ title, description, actions, surface = "card", children }: SectionProps) {
+  const hasLead = Boolean(title || description || actions);
   return (
-    <section className="flex flex-col gap-5">
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <Heading level={2} className="text-lg leading-tight">{title}</Heading>
-          <Text tone="muted" size="sm" className="mt-1.5 max-w-3xl leading-relaxed">{description}</Text>
-        </div>
-        {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
-      </header>
+    <div className="flex flex-col gap-5">
+      {hasLead ? (
+        <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
+            {title ? <Heading level={2} className="text-lg leading-tight">{title}</Heading> : null}
+            {description ? (
+              <Text tone="muted" size="sm" className={title ? "mt-1.5 max-w-3xl leading-relaxed" : "max-w-3xl leading-relaxed"}>
+                {description}
+              </Text>
+            ) : null}
+          </div>
+          {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
+        </header>
+      ) : null}
       {surface === "card" ? (
         <Card padding="base" className="overflow-hidden">{children}</Card>
       ) : children}
-    </section>
+    </div>
   );
 }
 

@@ -55,6 +55,7 @@ Gouno does not copy another library's API or aesthetics, but mature systems are 
 - **Atlassian Design System — Elevation:** default surfaces are flat; raised/overlay elevations pair surface and shadow tokens; raised elevation should be used intentionally because excessive elevation creates visual noise; dark mode relies on surface differences as well as shadows.
 - **Carbon Design System — Layering:** layer/contextual tokens model nested surface hierarchy instead of relying on decorative shadow. This reinforces the separation between surface level and shadow effect.
 - **Carbon Design System — Tabs:** line tabs use deterministic component heights (for example 40px for the medium text tab), reinforcing geometry-stable navigation.
+- **WAI-ARIA Tabs pattern:** the active `tabpanel` is labelled by its owning `tab`; a second visible heading that merely repeats the tab label is not required to identify the panel.
 - **Ant Design — Shadow:** height is modeled as semantic UI layers; ground-level elements such as inputs do not require shadow.
 
 These references are evidence, not authorities. Gouno's binding choices still require current product evidence and compatibility with the repository's API/design rules.
@@ -236,28 +237,32 @@ Binding rules:
 
 Ownership is therefore split cleanly: **Theme tokens define depth values; Core/Pattern/Gouno components own when depth is structurally appropriate; product pages own only the business reason for choosing an existing semantic variant.**
 
-## DL-11 — Route-family identity precedes page-local Tabs
+## DL-11 — Route-family identity precedes page-local Tabs without label echo
 
 For normal task/settings pages where Tabs switch peer sections within one route family, the stable anatomy is:
 
 ```text
 PageHeader (one route-family H1)
 Tabs (page-local navigation)
-Active panel
-└─ optional local H2 / section description / section actions
+Active panel (already labelled by the active Tab)
+├─ optional compact lead: description / active-panel actions
+└─ optional H2 only for a distinct subsection or task concept
 ```
 
 Rules:
 
 - `PageHeader` identifies the route-family page and therefore appears before page-local Tabs.
-- A tab change must not replace the route-family H1 with a different H1. Tab-local content uses H2/local section headings as needed.
-- Tab-local actions that truly belong only to the active section may stay with the local H2 instead of being hoisted into the route-level `PageHeader`.
+- A tab change must not replace the route-family H1 with a different H1.
+- The active Tab already names and accessibly labels its `tabpanel`. Do **not** mechanically repeat the same wording as an immediate visible H2 (`系统管理 → 用户管理 Tab → 用户管理 H2`, for example). That is label echo, not useful hierarchy.
+- A panel may place a concise description/status/action lead below Tabs when it adds active-section context. The lead should not invent another title merely to justify actions.
+- Use a visible H2 when it names a real concept *inside* the active panel, differs materially from the Tab label, or divides the panel into meaningful subsections. If the repeated panel H2 is removed, those real subsections may be H2 directly under the route H1; the Tab is navigation/tabpanel labelling, not a document-outline heading.
+- Tab-local actions that truly belong only to the active section stay with the panel lead or the relevant local section instead of being hoisted into the route-level `PageHeader`.
 - Tabs that are themselves the primary route-family switch still follow the same visual order even when the URL segment/query changes with the active key.
 - Do not choose `Tabs → PageHeader` on one product and `PageHeader → Tabs` on another merely because each local implementation was migrated at a different time.
 - Editor workspaces are an explicit exception: PD-035/PD-036 intentionally use command-bar/editor grammar instead of normal `PageHeader → Tabs → content` composition.
 - Standalone identity surfaces are a separate surface family and are not forced into this task-page grammar.
 
-This rule standardizes hierarchy, not implementation. It does not create a `TabbedPage` Pattern.
+This rule standardizes hierarchy and information density, not implementation. It does not create a `TabbedPage`, `TabPanelHeader` or `PanelLead` public Pattern.
 
 ## DL-12 — Stateful decoration must not change control geometry
 
@@ -298,7 +303,7 @@ Any new binding rule involving color, border, surface, elevation, focus or state
 
 When a page looks inconsistent, ask in this order:
 
-1. Is the information hierarchy correct before styling (single route H1, local H2s, Tabs in the right level)?
+1. Is the information hierarchy correct before styling (single route H1, Tabs at the right level, and no duplicate Tab-label heading unless it adds new meaning)?
 2. Is this boundary communicating a real semantic grouping, or only adding padding?
 3. Is the child already a complete surface?
 4. Are peer surfaces aligned by edge inset rather than by extra wrappers?
