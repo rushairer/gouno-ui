@@ -7,10 +7,11 @@ Before changing public components, product pages, ownership or API contracts, re
 1. this file;
 2. `docs/architecture.md`;
 3. `docs/design-language.md`;
-4. `docs/api-specification.md`;
-5. `docs/product-driven-development.md`;
-6. `docs/abstraction-register.md`;
-7. `docs/api-conformance.md` when an existing public contract changes.
+4. `docs/product-interface-governance.md`;
+5. `docs/api-specification.md`;
+6. `docs/product-driven-development.md`;
+7. `docs/abstraction-register.md`;
+8. `docs/api-conformance.md` when an existing public contract changes.
 
 Repository contracts are the durable source of truth. Do not reconstruct decisions from chat history or legacy component names.
 
@@ -77,9 +78,9 @@ Gouno UI is in second-product validation mode.
 - If evidence is insufficient, keep code product-local.
 - Record durable accept/reject/defer/merge/move/remove/API decisions in `docs/abstraction-register.md`.
 - Follow the Product Validation Loop in `docs/product-driven-development.md`: real pages may stop further migration when they expose a canonical component defect, accessibility problem, material API gap or semantic API split. Harden the component, synchronize Showcase/docs/tests, validate it back on the triggering product page, then continue migration.
-- **API-valid composition is necessary but not sufficient for page acceptance.** Before a migrated page is marked complete, run a composition-level conformance pass against every applicable binding rule in `docs/design-language.md` and compare the page with the already-migrated members of the same surface family for spacing, action hierarchy, responsive behavior, feedback semantics and state presentation.
-- If that pass exposes a missing shared visual/composition constraint, stop the line before migrating another page: add or refine the binding Design Language rule, scan/fix the governed migrated corpus, and add or extend conformance coverage where practical. Do not hide the gap with page-local styling or change a Core default when the rule is context-specific.
-- When a binding rule in `docs/design-language.md` is added or materially changed, stop ordinary migration until the already-migrated governed corpus has been scanned. Fix stale occurrences, document intentional exceptions and add source/runtime regression coverage where practical (DL-07).
+- **API-valid composition is necessary but not sufficient for page acceptance.** Before a migrated page is marked complete, run a composition-level conformance pass against every applicable binding rule in `docs/design-language.md` and `docs/product-interface-governance.md`, then compare the page with already-migrated members of the same surface family for spacing, action hierarchy, navigation depth, responsive behavior, feedback semantics and state presentation.
+- If that pass exposes a missing shared visual/composition/IA constraint, stop the line before migrating another page: add or refine the binding rule, scan/fix the governed migrated corpus, and add or extend conformance coverage where practical. Do not hide the gap with page-local styling or change a Core default when the rule is context-specific.
+- When a binding rule in `docs/design-language.md` or `docs/product-interface-governance.md` is added or materially changed, stop ordinary migration until the already-migrated governed corpus has been scanned. Fix stale occurrences, document intentional exceptions and add source/runtime regression coverage where practical.
 - Ant Design and other mature systems are benchmarks during hardening, not automatic API authorities. Platform semantics, accessibility, Gouno API governance and real product evidence still decide the final contract.
 
 ## Showcase evidence rule
@@ -107,11 +108,13 @@ Example: Showcase `CodeBlock` stays private. If a real Blog article page later i
 - Only canonical APIs appear in Gouno UI.
 - Product workspaces show only genuinely migrated pages; no simulated placeholders.
 - Patterns may visibly remain empty.
+- Normal product routes get one persistent page-local Tabs layer. If a second persistent Tab family is independently nameable/configurable/navigation-worthy, stop and apply PI-01 instead of nesting it. Editor view-state Tabs remain an explicit exception.
 
 ## API and quality
 
 - `docs/api-specification.md` is binding; legacy product APIs are not naming precedents.
-- `docs/design-language.md` is binding for visual composition, surface boundaries, edge alignment and spacing ownership.
+- `docs/design-language.md` is binding for visual composition, surface boundaries, edge alignment, elevation and spacing ownership.
+- `docs/product-interface-governance.md` is binding for product navigation depth, tab-panel lead placement, surface-local title semantics and corpus-level interface conformance.
 - Do not introduce undocumented aliases or duplicate semantic write paths.
 - API migrations require compatibility assessment and migration instructions.
 - Synchronize exported types, Showcase API/docs/examples, accessibility behavior and focused tests.
@@ -124,7 +127,8 @@ Example: Showcase `CodeBlock` stays private. If a real Blog article page later i
 - One semantic collection/section should normally expose one dominant surface boundary. Do not wrap a self-surfaced Table/List in Card merely to obtain padding/alignment. Normal bordered surfaces align first/last primary content to the shared 24px edge inset while preserving denser internal Table columns (PD-023 / `docs/design-language.md`).
 - A landing/dashboard page may be structurally exceptional without using a different normal surface edge axis. In application-shell pages, `Card padding="lg"` or ad-hoc `p-5/p-8` must not be used as an accidental alignment substitute; any spacious exception must be semantic and documented.
 - Dense desktop Table row actions follow DL-09: use one compact structural action family, keep the cluster single-line, and let Core Table horizontal overflow absorb width pressure. Semantic danger changes color rather than button structure; excessive low-frequency actions move behind an overflow interaction instead of wrapping.
-- A design-language hardening stage is incomplete until its corpus conformance pass has covered the completed comparison corpus and currently migrated pages in the active product line (DL-07). Documentation-only adoption is not enough.
+- A design/interface hardening stage is incomplete until its corpus conformance pass has covered the completed comparison corpus and currently migrated pages in the active product line. Documentation-only adoption is not enough.
+- Visible elevation must use semantic roles (`shadow-raised`, `shadow-overlay`, `shadow-modal`). Raw size shadow aliases are compatibility-only and intentionally flat. `BulkActionBar` remains an intentional `shadow-overlay` because it is a sticky floating selection surface above scrolling content.
 
 Current Tabs canonical high-level API follows PD-010: `activeKey`, `defaultActiveKey`, `items[].key`, `onChange`; pre-reset value-style names are temporary migration compatibility only. Tabs owns the TabBar↔TabPanel structural gap and keeps its active indicator inside the TabList scroll boundary.
 

@@ -52,11 +52,13 @@
   --shadow-raised: var(--elevation-shadow-raised);
   --shadow-overlay: var(--elevation-shadow-overlay);
   --shadow-modal: var(--elevation-shadow-modal);
-  /* Compatibility size utilities are deterministic; ground-level xs/sm are intentionally flat. */
+  /* Raw size aliases are compatibility-only and intentionally flat. Visible depth must use a semantic role. */
   --shadow-xs: 0 0 #0000;
   --shadow-sm: 0 0 #0000;
-  --shadow-md: var(--elevation-shadow-overlay);
-  --shadow-lg: var(--elevation-shadow-modal);
+  --shadow-md: 0 0 #0000;
+  --shadow-lg: 0 0 #0000;
+  --shadow-xl: 0 0 #0000;
+  --shadow-2xl: 0 0 #0000;
 }
 @layer base {
   :root,
