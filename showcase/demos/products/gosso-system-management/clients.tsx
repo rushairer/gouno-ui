@@ -115,7 +115,7 @@ export function ClientsPanel() {
           <FormField label="Redirect URI" hint="多个地址使用逗号分隔" required><Input value={redirectUris} onChange={(event) => setRedirectUris(event.target.value)} placeholder="https://example.com/auth/callback" /></FormField>
           <Checkbox label="Confidential client" checked={confidential} disabled={Boolean(editing)} onChange={(event) => setConfidential(event.target.checked)} />
           <CheckboxGroup label="Grant Types">{grantOptions.map((grant) => <Checkbox key={grant} label={grant.replace("_", " ")} checked={grants.includes(grant)} onChange={() => toggle(grants, grant, setGrants)} />)}</CheckboxGroup>
-          <CheckboxGroup label="Scopes">{scopeOptions.map((scope) => <Checkbox key={scope} label={scope} checked={scopes.includes(scope)} onChange={() => toggle(scopes, scope, setScopes)} />}</CheckboxGroup>
+          <CheckboxGroup label="Scopes">{scopeOptions.map((scope) => <Checkbox key={scope} label={scope} checked={scopes.includes(scope)} onChange={() => toggle(scopes, scope, setScopes)} />)}</CheckboxGroup>
           {scopes.includes("admin") ? <Alert type="warning" showIcon title="高权限 Scope" description="Admin scope 可访问高权限管理 API，应仅分配给受信任客户端。" /> : null}
         </form>
       </Modal>
