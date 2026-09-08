@@ -60,7 +60,7 @@ describe("Blog Admin Tags product migration fixture", () => {
     expect(screen.getByText("标签“Kafka”已合并至“Go”（Showcase 模拟）。")).toBeTruthy();
   });
 
-  it("keeps failed batch items selected for retry and preserves async states", () => {
+  it("keeps failed batch items selected for retry", () => {
     render(<BlogAdminTagsDemo />);
 
     fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
@@ -74,17 +74,24 @@ describe("Blog Admin Tags product migration fixture", () => {
     expect(screen.getByText("OAuth")).toBeTruthy();
     expect(screen.getByText("已选择 1 个标签")).toBeTruthy();
     expect(screen.getByText("已删除 1 个标签；1 个未删除：模拟 API 拒绝删除，失败项继续保持选中。")).toBeTruthy();
+  });
 
-    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
-    fireEvent.click(screen.getByRole("radio", { name: "加载中" }));
+  it("preserves loading, empty and error states in isolated fixture renders", () => {
+    const renderScenario = (name: "加载中" | "空状态" | "错误") => {
+      render(<BlogAdminTagsDemo />);
+      fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
+      fireEvent.click(screen.getByRole("radio", { name }));
+    };
+
+    renderScenario("加载中");
     expect(screen.getByRole("status", { name: "标签加载中" })).toBeTruthy();
+    cleanup();
 
-    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
-    fireEvent.click(screen.getByRole("radio", { name: "空状态" }));
+    renderScenario("空状态");
     expect(screen.getByText("文章添加标签后会自动在这里汇总。")).toBeTruthy();
+    cleanup();
 
-    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
-    fireEvent.click(screen.getByRole("radio", { name: "错误" }));
+    renderScenario("错误");
     expect(screen.getByText("标签加载失败")).toBeTruthy();
   });
 });
