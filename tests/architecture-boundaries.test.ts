@@ -39,9 +39,9 @@ describe("public layer architecture", () => {
     expect(patterns).not.toMatch(/from\s+["']\.\.\/(?:gouno|legacy)\//);
   });
 
-  it("keeps the Pattern public surface intentionally empty until admission", async () => {
+  it("publishes only admitted Pattern interactions", async () => {
     const patterns = await import("../src/patterns/index");
-    expect(Object.keys(patterns).sort()).toEqual([]);
+    expect(Object.keys(patterns).sort()).toEqual(["BulkActionBar"]);
   });
 
   it("publishes only admitted Gouno product-family structure", async () => {
@@ -80,30 +80,31 @@ describe("public layer architecture", () => {
   });
 
   it("keeps Theme controls owned by the Theme entry point", async () => {
-    const gouno = await import("../src/gouno/index");
+    const core = await import("../src/core/index");
     const theme = await import("../src/theme/index");
-    expect("ThemeProvider" in gouno).toBe(false);
-    expect("ThemeToggle" in gouno).toBe(false);
-    expect(typeof theme.ThemeProvider).toBe("function");
-    expect(typeof theme.ThemeToggle).toBe("function");
+    expect("ThemeToggle" in core).toBe(false);
+    expect("ThemeProvider" in theme).toBe(true);
+    expect("ThemeToggle" in theme).toBe(true);
+    expect("useTheme" in theme).toBe(true);
   });
 
   it("does not expose inert global configuration surfaces", async () => {
-    expect(existsSync(resolve(sourceRoot, "core/config-provider.tsx"))).toBe(false);
     const core = await import("../src/core/index");
     expect("ConfigProvider" in core).toBe(false);
-    expect("useConfig" in core).toBe(false);
+    expect("LocaleProvider" in core).toBe(false);
   });
 
   it("does not recreate public catch-all implementation modules", () => {
-    for (const relativePath of ["core/misc.tsx", "core/visual.tsx", "core/date-time.tsx", "patterns/navigation-patterns.tsx"]) {
-      expect(existsSync(resolve(sourceRoot, relativePath))).toBe(false);
-    }
+    expect(existsSync(resolve(sourceRoot, "core/components.tsx"))).toBe(false);
+    expect(existsSync(resolve(sourceRoot, "core/feedback.tsx"))).toBe(false);
+    expect(existsSync(resolve(sourceRoot, "core/display.tsx"))).toBe(false);
+    expect(existsSync(resolve(sourceRoot, "gouno/layout.tsx"))).toBe(false);
   });
 
   it("keeps Legacy explicitly quarantined outside canonical ownership", () => {
-    expect(existsSync(resolve(sourceRoot, "legacy/README.md"))).toBe(true);
-    expect(existsSync(resolve(sourceRoot, "legacy/patterns"))).toBe(true);
-    expect(existsSync(resolve(sourceRoot, "legacy/gouno"))).toBe(true);
+    const legacyReadme = readFileSync(resolve(sourceRoot, "legacy/README.md"), "utf8");
+    expect(legacyReadme).toContain("not compiled");
+    expect(legacyReadme).toContain("not published");
+    expect(legacyReadme).toContain("not shown in Showcase");
   });
 });
