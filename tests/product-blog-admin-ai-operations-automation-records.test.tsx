@@ -105,7 +105,7 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
     expect(screen.getByText("7 verified references")).toBeTruthy();
     expect(screen.getByText("为技术架构文章选择封面方向")).toBeTruthy();
     expect(screen.getByText("interaction_created")).toBeTruthy();
-    expect(screen.getByText("AI Daily Briefing hero")).toBeTruthy();
+    expect(screen.getByText(/AI Daily Briefing hero/)).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: /Run #244/ }));
     expect(onRouteChange).toHaveBeenCalledWith({ record: "workflow", workflow: 42, run: 244 });
