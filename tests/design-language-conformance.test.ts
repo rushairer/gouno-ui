@@ -27,6 +27,7 @@ const blogAdminApplicationFiles = [
   resolve(productsRoot, "blog-admin-media-library.tsx"),
   resolve(productsRoot, "blog-admin-users.tsx"),
   resolve(productsRoot, "blog-admin-site-settings.tsx"),
+  ...sourceFiles(resolve(productsRoot, "blog-admin-ai-operations")),
 ];
 
 function combined(files: readonly string[]): string {
