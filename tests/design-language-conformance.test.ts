@@ -204,11 +204,12 @@ describe("design-language conformance", () => {
     }
 
     const aiOps = combined(sourceFiles(resolve(productsRoot, "blog-admin-ai-operations")));
-    const aiSettings = combined(sourceFiles(resolve(productsRoot, "blog-admin-ai-settings")));
+    const aiSettingsRoot = readFileSync(resolve(productsRoot, "blog-admin-ai-settings/index.tsx"), "utf8");
+    const aiSettingsSections = readFileSync(resolve(productsRoot, "blog-admin-ai-settings/sections.tsx"), "utf8");
     expect(aiOps).not.toContain("AIOpsAdvancedPanel");
     expect(aiOps).not.toContain('key: "advanced"');
-    expect(aiSettings).not.toContain("<Tabs<AISettingsSection>") || expect(aiSettings).toBeTruthy();
-    expect(readFileSync(resolve(productsRoot, "blog-admin-ai-settings/sections.tsx"), "utf8")).not.toContain("<Tabs");
+    expect(aiSettingsRoot).toContain("<Tabs<AISettingsSection>");
+    expect(aiSettingsSections).not.toContain("<Tabs");
 
     // Editor mode Tabs are view-state controls, not product-navigation tiers.
     for (const editor of ["blog-admin-post-editor.tsx", "blog-admin-page-editor.tsx"]) {
