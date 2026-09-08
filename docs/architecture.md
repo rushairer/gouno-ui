@@ -20,7 +20,7 @@ A formal layer may depend on itself or a lower layer, never a higher layer.
 
 - `core` owns product-agnostic controls, layout, data entry, navigation, display, feedback and overlay APIs.
 - `theme` owns theme state, persistence and theme controls.
-- `patterns` owns only admitted reusable compound interactions and may remain empty.
+- `patterns` owns only admitted reusable compound interactions. Current canonical runtime surface: `BulkActionBar`.
 - `gouno` owns admitted Gouno product-family structure/policy. Current canonical runtime surface: `AppShell`, `PageContainer`, `PageHeader`, `NavigationGroup`, `navigationItemClass`.
 - `components/primitives` and `lib` are implementation foundations, not public package domains.
 
@@ -56,8 +56,16 @@ Current operating model:
 - New pages start with Core + Theme + admitted Gouno structure + product-local composition.
 - The initial shell baseline is `AppShell`, `PageContainer`, `NavigationGroup`, `navigationItemClass`.
 - `PageHeader` was admitted from real cross-product page evidence; Blog Admin must continue validating its small title/description/actions contract.
-- Pattern remains intentionally empty until a compound interaction earns admission.
+- `BulkActionBar` is the first admitted Pattern, proven by independent Posts, Comments and Categories selection workflows; future pages must validate rather than automatically expand its API.
 - The third semantically equivalent occurrence triggers review, not automatic extraction.
+
+## Admitted Pattern interactions
+
+### BulkActionBar
+
+Selection-aware bulk-action interaction shared across otherwise different resource presentations. It owns the accessible `toolbar` surface, selected-context label, sticky action visibility and a canonical cancel-selection affordance. Product actions remain arbitrary `children`; the Pattern does not know about AI, publishing, deletion, resource types or selection state storage.
+
+Its public API intentionally stays smaller than Legacy prior art: `selectionLabel`, `onCancel`, optional `cancelLabel`, `children`, standard `aria-label` and normal HTML/className extension. Product-specific convenience props are not admitted.
 
 ## Admitted Gouno structure
 
