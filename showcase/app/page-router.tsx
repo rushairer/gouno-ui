@@ -9,6 +9,9 @@ import { ThemeSystemDemo } from "../demos/theme-system";
 const CoreComponentPage = lazy(() =>
   import("../demos/core-components").then((module) => ({ default: module.CoreComponentPage })),
 );
+const PatternBulkActionBarDemo = lazy(() =>
+  import("../demos/pattern-bulk-action-bar").then((module) => ({ default: module.PatternBulkActionBarDemo })),
+);
 const BlogAdminPostsDemo = lazy(() =>
   import("../demos/products/blog-admin-posts").then((module) => ({ default: module.BlogAdminPostsDemo })),
 );
@@ -69,6 +72,8 @@ export function ShowcasePage({ page, workspace }: { page: string; workspace: Sho
   switch (page) {
     case "theme-system":
       return <ThemeSystemDemo />;
+    case "pattern-bulk-action-bar":
+      return <Suspense fallback={loading}><PatternBulkActionBarDemo /></Suspense>;
     case "gouno-app-shell":
       return <GounoComponentDemo component="app-shell" />;
     case "gouno-page-container":
