@@ -44,10 +44,13 @@ Application pages render inside canonical `AppShell` + `PageContainer`.
 
 - Task/settings page families use the stable product grammar `route Tabs when needed → PageHeader → content surfaces`; Showcase fixture context floats outside that grammar in `FixtureDock`.
 - `PageHeader` owns route-level title, description and page actions. Cards own content grouping, not the route title. A contained result/error Card uses local `Heading`/`Text` instead of nesting `PageHeader`.
-- Overview is an intentional landing-page exception: its prominent identity/role hero is page content rather than a task-page `PageHeader`.
+- Overview is an intentional landing-page exception in **composition**, not in the normal horizontal content axis: its Hero and peer quick-link surfaces still use the shared 24px application-surface edge inset.
+- Normal application-shell `Card`, bordered `Table` and self-surfaced `List` content starts on the shared 24px edge axis. Do not introduce `padding="lg"`, `p-5` or `p-8` merely to make one page feel more prominent or to repair alignment.
+- A larger/spacious inset is allowed only for a semantic exception such as an intentionally spacious standalone/result/reading surface; document the exception where the page is defined rather than letting it become accidental precedent.
 - Not Found remains in the application page family, but its centered error Card is a contained result surface rather than a task-page header layout.
 - Persistent in-flow success/info/warning/error feedback uses canonical `Alert`; do not recreate Alert semantics with one-off subtle Cards.
 - Resource tables rely on Core `Table` for horizontal overflow. Do not add redundant responsive wrappers merely for product consistency.
+- `tests/design-language-conformance.test.ts` protects the completed Gosso application corpus from drifting back to 20px/32px normal surface insets. If an intentional exception is added, document its semantics instead of weakening the normal-axis rule globally.
 
 ### Standalone identity pages
 
@@ -68,5 +71,7 @@ Login, password recovery/reset and OAuth callback preserve their real standalone
 ### Consistency review rule
 
 When a new Gosso page or state is added, compare it with its own surface family first: page grammar, heading hierarchy, content hierarchy, spacing, action prominence, surface/radius treatment, state controls, feedback semantics, terminology and responsive behavior. Fix same-product drift locally before using Gosso as evidence for Blog Admin or a public Pattern/Gouno abstraction.
+
+When a binding rule in `docs/design-language.md` changes, do not only fix the page that exposed it. Run the DL-07 corpus-conformance pass across every already-migrated governed Gosso application surface, fix stale call sites, document real exceptions and keep the automated conformance test synchronized.
 
 Blog Admin is now the active second-product validation workspace. It must challenge Gosso-derived assumptions rather than mechanically copy the Gosso product-local grammar. Blog remains empty until its own real pages are migrated.
