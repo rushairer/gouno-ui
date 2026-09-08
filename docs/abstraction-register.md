@@ -272,3 +272,13 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Architectural impact:** Media is a stronger counterexample to feature-bag extraction: substantial workflow complexity can be composed from mature Core surfaces plus one small admitted selection Pattern while domain orchestration remains local.
 - **Validation:** the migrated Media Library fixture covers metadata/search/type filters, canonical BulkActionBar, reference-blocked deletion, Promise.allSettled-style partial batch deletion, SVG/ICO-compatible Upload, Alt Text editing, AI generation/insertion and loading/error/empty states. `main@b44d2e9` passed the full gate; the FixtureDock route was then corrected to the real `/admin/media` route and `main@0e2beb8` repassed Verify and `gh-pages`.
 - **Follow-up:** migrate Dashboard `/admin/dashboard`; use metric cards, traffic trend, content-health summaries, top-post data and AI failure alerts to validate read-dominant dashboard composition before considering any dashboard-specific Pattern.
+
+### PD-033 — Dashboard stays Core-first without dashboard-specific Pattern extraction
+- **Status:** accepted validation
+- **Owner:** Core / Product-local
+- **Evidence:** real Blog Admin `/admin/dashboard` is a read-dominant operational overview with permission-aware primary actions, four KPI cards, a 30-day traffic trend, content-governance health metrics, AI failure alerts and a Top Posts table with product destinations.
+- **Decision:** existing Core `Statistic`, `Card`, `Tag`, `Alert`, `Table` and `IconButton` plus product-local metric/trend composition are sufficient. Repetition among four cards on one page is local presentation reuse, not evidence for a public dashboard abstraction.
+- **API impact:** none. Do not add `MetricCard`, `ChartCard`, `DashboardGrid` or a dashboard-specific Pattern from this page.
+- **Design-language impact:** Dashboard joins the DL-07 normal application-surface corpus and its Top Posts table joins DL-09; the real product's older 20px (`p-5`) metric surfaces are intentionally normalized to the current 24px surface axis instead of being copied as precedent.
+- **Validation:** the migrated Dashboard fixture covers metric values/destinations, permission-dependent header actions, traffic trend, governance health, AI failure destinations and mark-all-read, Top Posts actions, plus isolated loading/empty/error states. `main@46b1986` passed Verify, the full test/build gate and `gh-pages` publication.
+- **Follow-up:** migrate AI Operations `/admin/ai-ops` as a route family. Preserve `tab`, `record`, `run` and `workflow` URL semantics, and split the large workspace into coherent sub-stages rather than hiding its heterogeneous behavior behind one new public feature-bag Pattern.
