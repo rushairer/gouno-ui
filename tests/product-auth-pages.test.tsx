@@ -15,7 +15,7 @@ describe("Gosso Admin authentication route fixtures", () => {
     expect(screen.getByRole("heading", { level: 1, name: "统一身份中心" })).toBeTruthy();
     expect(screen.getByText("/login")).toBeTruthy();
     fireEvent.change(screen.getByLabelText(/用户名/), { target: { value: "admin" } });
-    fireEvent.change(screen.getByLabelText(/^密码/), { target: { value: "correct-horse-battery" } });
+    fireEvent.change(screen.getByLabelText(/^密码/, { selector: 'input[type="password"]' }), { target: { value: "correct-horse-battery" } });
     fireEvent.click(screen.getByRole("button", { name: "登录" }));
     expect(screen.getByLabelText(/动态验证码/)).toBeTruthy();
     const transitionAlert = screen.getByText("密码验证通过；fixture 模拟服务端要求第二因素。").closest('[role="alert"]');
