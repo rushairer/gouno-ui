@@ -41,7 +41,8 @@ describe("Blog Admin Pages product migration fixture", () => {
     fireEvent.click(screen.getByRole("button", { name: "清除" }));
     expect(screen.getAllByText("关于我").length).toBeGreaterThan(0);
 
-    fireEvent.change(screen.getByLabelText("单页状态"), { target: { value: "draft" } });
+    fireEvent.click(screen.getByRole("combobox", { name: "单页状态" }));
+    fireEvent.click(screen.getByRole("option", { name: "草稿" }));
     expect(screen.getAllByText("服务条款").length).toBeGreaterThan(0);
     expect(screen.queryByText("友情链接")).toBeNull();
   });
