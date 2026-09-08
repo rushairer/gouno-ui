@@ -18,7 +18,8 @@ describe("Gosso Admin authentication route fixtures", () => {
     fireEvent.change(screen.getByLabelText(/^密码/), { target: { value: "correct-horse-battery" } });
     fireEvent.click(screen.getByRole("button", { name: "登录" }));
     expect(screen.getByLabelText(/动态验证码/)).toBeTruthy();
-    expect(screen.getByRole("alert").getAttribute("data-type")).toBe("info");
+    const transitionAlert = screen.getByText("密码验证通过；fixture 模拟服务端要求第二因素。").closest('[role="alert"]');
+    expect(transitionAlert?.getAttribute("data-type")).toBe("info");
 
     fireEvent.click(screen.getByRole("radio", { name: "Sudo" }));
     expect(screen.getByRole("heading", { level: 1, name: "验证敏感操作" })).toBeTruthy();
