@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { ShieldCheck } from "lucide-react";
-import { Card, Heading, Tag, Text } from "../../../../src/core";
+import { Card, Heading, Text } from "../../../../src/core";
+import { FixtureDock } from "../../../components/fixture-dock";
 
 export function AuthSurface({
   children,
@@ -17,16 +18,13 @@ export function AuthSurface({
 }) {
   return (
     <div className="relative flex min-h-dvh w-full items-center justify-center overflow-hidden bg-background p-4 sm:p-8">
+      <FixtureDock
+        route={route}
+        note="认证状态与路由均为 Showcase 静态 fixture；真实产品页面不会渲染这个工具。"
+        controls={fixtureControl}
+      />
       <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,color-mix(in_srgb,var(--primary)_18%,transparent),transparent_38%),radial-gradient(circle_at_90%_90%,color-mix(in_srgb,var(--muted-foreground)_10%,transparent),transparent_42%)]" />
       <div className="relative w-full max-w-md">
-        {fixtureControl ? (
-          <div
-            data-slot="gosso-auth-fixture-control"
-            className="absolute left-1/2 top-0 z-10 w-fit max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border/80 bg-background/92 p-1.5 shadow-lg backdrop-blur-xl"
-          >
-            {fixtureControl}
-          </div>
-        ) : null}
         <Card padding="lg" className="w-full border-border/80 bg-card/95 shadow-xl backdrop-blur">
           <div className="mb-7 text-center">
             <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -36,10 +34,6 @@ export function AuthSurface({
             {description ? <Text tone="muted" size="sm" className="mt-2 leading-relaxed">{description}</Text> : null}
           </div>
           {children}
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-2 border-t pt-4">
-            <Tag>静态 Fixture</Tag>
-            <code className="max-w-full break-all text-center text-xs text-muted-foreground">{route}</code>
-          </div>
         </Card>
       </div>
     </div>
