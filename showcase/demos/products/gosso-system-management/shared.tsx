@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { Alert, Button, Modal, Text } from "../../../../src/core";
+import { Alert, IconButton, Modal, Text } from "../../../../src/core";
 import { FixtureDock } from "../../../components/fixture-dock";
 
 export function FixtureBanner({ route }: { route: string }) {
@@ -25,11 +25,11 @@ export function ConfirmAction({
   disabled = false,
   onConfirm,
 }: {
-  label: ReactNode;
+  label: string;
   title: ReactNode;
   description: ReactNode;
   confirmText: string;
-  icon?: ReactNode;
+  icon: ReactNode;
   color?: "primary" | "error";
   disabled?: boolean;
   onConfirm: () => void;
@@ -37,7 +37,14 @@ export function ConfirmAction({
   const [open, setOpen] = useState(false);
   return (
     <>
-      <Button size="small" variant={color === "error" ? "solid" : "outline"} color={color} icon={icon} disabled={disabled} onClick={() => setOpen(true)}>{label}</Button>
+      <IconButton
+        label={label}
+        icon={icon}
+        variant="ghost"
+        color={color}
+        disabled={disabled}
+        onClick={() => setOpen(true)}
+      />
       <Modal
         open={open}
         title={title}

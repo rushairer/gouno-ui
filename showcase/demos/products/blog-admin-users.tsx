@@ -197,7 +197,7 @@ export function BlogAdminUsersDemo() {
   };
 
   const memberActions = (member: MemberFixture) => (
-    <div className="flex flex-wrap items-center justify-end gap-1">
+    <div className="flex min-w-max flex-nowrap items-center justify-end gap-1">
       <IconButton
         label={`复制 ${member.displayName} Subject ID`}
         icon={<Copy />}
@@ -207,12 +207,14 @@ export function BlogAdminUsersDemo() {
       <IconButton
         label={`编辑 ${member.displayName} 成员与权限`}
         icon={<KeyRound />}
+        variant="ghost"
         onClick={() => openEditor(member)}
       />
       {!member.current && member.status === "active" ? (
         <IconButton
           label={`暂停 ${member.displayName}`}
           icon={<Ban />}
+          variant="ghost"
           color="error"
           onClick={() => setConfirmTarget({ memberId: member.id, action: "suspend" })}
         />
@@ -221,6 +223,7 @@ export function BlogAdminUsersDemo() {
         <IconButton
           label={`恢复 ${member.displayName}`}
           icon={<RotateCcw />}
+          variant="ghost"
           onClick={() => setConfirmTarget({ memberId: member.id, action: "restore" })}
         />
       ) : null}
@@ -228,6 +231,7 @@ export function BlogAdminUsersDemo() {
         <IconButton
           label={`移交所有权给 ${member.displayName}`}
           icon={<Crown />}
+          variant="ghost"
           onClick={() => setConfirmTarget({ memberId: member.id, action: "transfer" })}
         />
       ) : null}

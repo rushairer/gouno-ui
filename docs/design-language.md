@@ -152,6 +152,20 @@ Do not add a second Card or second outer radius around a footer simply to solve 
 
 This is a design-language rule, not evidence for a new `StickyFormFooter`, `SaveBar` or Pattern. Keep the composition product-local until repeated real product behavior proves a shared interaction contract.
 
+## DL-09 — Dense Table row actions stay single-line and structurally uniform
+
+Desktop Table row-action cells optimize for stable row geometry. A row's action cluster should use one compact structural control family, remain on one line, and contribute its full intrinsic width to Table layout.
+
+- Prefer icon-only `IconButton` controls for repeated Table row actions when each icon has a clear accessible `label`/tooltip.
+- Within one action cluster, keep one structural variant. Dense row actions currently use `ghost`; semantic danger/success may change `color`, but severity alone must not switch a sibling into a filled or rectangular control.
+- Use `flex-nowrap` plus a max-content minimum for the action group. Do not use `flex-wrap` to make a desktop Table fit.
+- Let the Table's horizontal overflow own width pressure. Stable rows are preferable to different row heights caused by action wrapping.
+- If a real action set later exceeds a reasonable single-line width, move lower-frequency actions into an overflow/dropdown interaction rather than permitting wrap.
+- Mobile Card/List surfaces are separate responsive presentations and may choose a different action arrangement.
+- A one-action cell may use an explicit text Button when that is semantically clearer. This rule primarily forbids mixed sibling structures and wrapped desktop row-action groups.
+
+This is a visual-composition rule, not evidence for a public `RowActions`, `ActionGroup` or DataTable abstraction.
+
 ## Review checklist
 
 When a page looks misaligned or over-framed, ask in this order:
@@ -163,6 +177,7 @@ When a page looks misaligned or over-framed, ask in this order:
 5. Is the discrepancy actually page gutter, surface inset, compound structural gap, content spacing, or edge geometry ownership?
 6. If an internal region reaches the parent edge, does the parent still own border/radius/clipping without negative-margin hacks?
 7. Would removing one border/radius make the hierarchy clearer without losing meaning?
-8. If this rule just changed, have all already-migrated governed surfaces been scanned and migrated or explicitly documented as intentional exceptions?
+8. If a Table has repeated row actions, do they remain one structural family on one line while Table overflow owns width pressure?
+9. If this rule just changed, have all already-migrated governed surfaces been scanned and migrated or explicitly documented as intentional exceptions?
 
 These rules are design-language invariants, not permission to create new Pattern/Gouno components. Public abstraction still requires the product-driven admission process.

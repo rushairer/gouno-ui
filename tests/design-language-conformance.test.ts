@@ -61,4 +61,23 @@ describe("design-language conformance", () => {
       expect(source).not.toMatch(/(?:^|\s)p-(?:5|8)(?:\s|["'])/);
     }
   });
+
+  it("keeps dense Table row actions single-line and structurally uniform", () => {
+    const actionFiles = [
+      resolve(productsRoot, "blog-admin-posts.tsx"),
+      resolve(productsRoot, "blog-admin-users.tsx"),
+      resolve(productsRoot, "gosso-system-management/users.tsx"),
+      resolve(productsRoot, "gosso-system-management/clients.tsx"),
+    ];
+
+    for (const file of actionFiles) {
+      const source = readFileSync(file, "utf8");
+      expect(source).toContain("min-w-max flex-nowrap");
+    }
+
+    const systemActions = readFileSync(resolve(productsRoot, "gosso-system-management/shared.tsx"), "utf8");
+    expect(systemActions).toContain("<IconButton");
+    expect(systemActions).toContain('variant="ghost"');
+    expect(systemActions).not.toContain('<Button size="small" variant={color === "error" ? "solid" : "outline"}');
+  });
 });

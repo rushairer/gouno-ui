@@ -149,11 +149,11 @@ export function UsersPanel() {
                 </div>
               </TableCell>
               <TableCell>
-                <div className="flex flex-wrap justify-end gap-2">
-                  <IconButton label={`管理 ${user.displayName} 角色`} size="small" icon={<UserRoundCog />} onClick={() => openRoles(user)} />
+                <div className="flex min-w-max flex-nowrap items-center justify-end gap-1">
+                  <IconButton label={`管理 ${user.displayName} 角色`} variant="ghost" icon={<UserRoundCog />} onClick={() => openRoles(user)} />
                   <IconButton
                     label={`重置 ${user.displayName} 密码`}
-                    size="small"
+                    variant="ghost"
                     icon={<KeyRound />}
                     disabled={user.current}
                     onClick={() => { setPassword(""); setPasswordTarget(user); }}

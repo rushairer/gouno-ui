@@ -144,7 +144,7 @@ function RowActions({
   onDelete: (id: string) => void;
 }) {
   return (
-    <div className="flex flex-wrap items-center justify-end gap-1">
+    <div className="flex min-w-max flex-nowrap items-center justify-end gap-1">
       <IconButton
         label={post.status === "published" ? "查看文章" : "预览文章"}
         icon={<Eye />}
@@ -160,11 +160,13 @@ function RowActions({
       <IconButton
         label="编辑文章"
         icon={<Edit2 />}
+        variant="ghost"
         onClick={() => onNotice(`将进入 /admin/posts/${post.id}/edit（Showcase 模拟）。`)}
       />
       <IconButton
         label="删除文章"
         icon={<Trash2 />}
+        variant="ghost"
         color="error"
         onClick={() => onDelete(post.id)}
       />

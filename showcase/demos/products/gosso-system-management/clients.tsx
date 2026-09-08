@@ -103,7 +103,7 @@ export function ClientsPanel() {
             <TableCell className="min-w-72 whitespace-normal"><div className="flex flex-col gap-2">{client.redirectUris.map((uri) => <div key={uri} className="flex items-center gap-2 rounded-md bg-muted/60 px-2 py-1.5"><code className="min-w-0 flex-1 truncate text-xs">{uri}</code><IconButton label={`复制 ${uri}`} size="small" icon={<Copy />} onClick={() => setStatus(`已复制 ${uri}（Showcase 模拟）。`)} /></div>)}</div></TableCell>
             <TableCell className="min-w-48 whitespace-normal"><div className="flex flex-wrap gap-1.5">{client.grants.map((grant) => <Tag key={grant}>{grant.replace("_", " ")}</Tag>)}</div></TableCell>
             <TableCell className="min-w-40 whitespace-normal"><div className="flex flex-wrap gap-1.5">{client.scopes.map((scope) => <Tag key={scope} color={scope === "admin" ? "warning" : "primary"}>{scope}</Tag>)}</div></TableCell>
-            <TableCell><div className="flex justify-end gap-2"><IconButton label={`编辑 ${client.name}`} size="small" icon={<Edit2 />} onClick={() => openEditor(client)} />{client.confidential ? <IconButton label={`轮换 ${client.name} 密钥`} size="small" icon={<RotateCcw />} onClick={() => rotateSecret(client)} /> : null}<ConfirmAction label="删除" icon={<Trash2 />} title={`删除“${client.name}”？`} description="删除客户端会立即阻止新的授权流程；真实产品还会要求 Sudo/强认证。" confirmText="确认删除" onConfirm={() => { setClients((items) => items.filter((item) => item.id !== client.id)); setStatus(`客户端“${client.name}”已删除（Showcase 模拟）。`); }} /></div></TableCell>
+            <TableCell><div className="flex min-w-max flex-nowrap items-center justify-end gap-1"><IconButton label={`编辑 ${client.name}`} variant="ghost" icon={<Edit2 />} onClick={() => openEditor(client)} />{client.confidential ? <IconButton label={`轮换 ${client.name} 密钥`} variant="ghost" icon={<RotateCcw />} onClick={() => rotateSecret(client)} /> : null}<ConfirmAction label="删除" icon={<Trash2 />} title={`删除“${client.name}”？`} description="删除客户端会立即阻止新的授权流程；真实产品还会要求 Sudo/强认证。" confirmText="确认删除" onConfirm={() => { setClients((items) => items.filter((item) => item.id !== client.id)); setStatus(`客户端“${client.name}”已删除（Showcase 模拟）。`); }} /></div></TableCell>
           </TableRow>
         ))}</TableBody>
       </Table>
@@ -115,7 +115,7 @@ export function ClientsPanel() {
           <FormField label="Redirect URI" hint="多个地址使用逗号分隔" required><Input value={redirectUris} onChange={(event) => setRedirectUris(event.target.value)} placeholder="https://example.com/auth/callback" /></FormField>
           <Checkbox label="Confidential client" checked={confidential} disabled={Boolean(editing)} onChange={(event) => setConfidential(event.target.checked)} />
           <CheckboxGroup label="Grant Types">{grantOptions.map((grant) => <Checkbox key={grant} label={grant.replace("_", " ")} checked={grants.includes(grant)} onChange={() => toggle(grants, grant, setGrants)} />)}</CheckboxGroup>
-          <CheckboxGroup label="Scopes">{scopeOptions.map((scope) => <Checkbox key={scope} label={scope} checked={scopes.includes(scope)} onChange={() => toggle(scopes, scope, setScopes)} />)}</CheckboxGroup>
+          <CheckboxGroup label="Scopes">{scopeOptions.map((scope) => <Checkbox key={scope} label={scope} checked={scopes.includes(scope)} onChange={() => toggle(scopes, scope, setScopes)} />}</CheckboxGroup>
           {scopes.includes("admin") ? <Alert type="warning" showIcon title="高权限 Scope" description="Admin scope 可访问高权限管理 API，应仅分配给受信任客户端。" /> : null}
         </form>
       </Modal>
