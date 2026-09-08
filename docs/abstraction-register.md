@@ -160,3 +160,12 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **API impact:** no new Tabs prop. This is a layout-contract correction: remove `TabPanel`'s top-only padding, use root structural gap for every position, keep line/card edge treatment orientation-aware, and keep the active indicator inside TabList so scrollbars represent real tab overflow only.
 - **Documentation impact:** the general rule is binding in `docs/product-driven-development.md`; Tabs Showcase demonstrates content-owned Card padding rather than implying that Tabs pads arbitrary panel content.
 - **Follow-up:** apply the same ownership test when Card, Modal, Drawer, Collapse or future compound components expose slot-spacing inconsistencies. Do not add page-local margins to hide a canonical structural-spacing defect.
+
+### PD-021 — Showcase fixture metadata stays outside product layout
+- **Status:** accepted
+- **Owner:** Showcase tooling
+- **Evidence:** Gosso Overview scenario strip, Account/System route banners, MFA preview switcher and authentication route footer were useful while migrating, but they occupied normal product layout space and made the Showcase preview look like the real product owned those surfaces.
+- **Decision:** route labels, static-fixture markers and scenario-only controls belong to a compact Showcase-private `FixtureDock` outside normal document flow. The dock may expose a popover for route, notes and scenario controls, but real product page hierarchy must remain visually untouched when the tooling is closed.
+- **Abstraction impact:** none. `FixtureDock` is documentation/development tooling under PD-009, not Core, Pattern or Gouno; its reuse cannot count toward public Rule-of-Three evidence.
+- **Product impact:** Gosso Overview, Account Settings, System Management and standalone identity pages remove in-flow fixture banners/footers. Real product feedback remains in-flow and continues to use canonical components such as Alert.
+- **Follow-up:** Blog Admin fixtures should use the same Showcase-private dock instead of inventing product-local route banners, while still treating the dock as zero public-abstraction evidence.
