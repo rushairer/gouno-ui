@@ -231,6 +231,9 @@ export const showcaseCatalog: ShowcaseGroup[] = [
     item("blog-admin-notifications", "Notifications", "通知中心", 100, <Bell />),
     item("blog-admin-media-library", "Media Library", "媒体库", 100, <ImageIcon />),
   ]},
+  { workspace: "blog-admin", group: "AI Automation AI 运营", items: [
+    item("blog-admin-ai-operations", "AI Operations", "AI 运营", 100, <Network />),
+  ]},
   { workspace: "blog-admin", group: "Site 站点管理", items: [
     item("blog-admin-users", "Members", "成员与权限", 100, <CircleUserRound />),
     item("blog-admin-site-settings", "Site Settings", "站点设置", 100, <SlidersHorizontal />),
