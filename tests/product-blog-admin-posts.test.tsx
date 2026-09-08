@@ -24,13 +24,13 @@ describe("Blog Admin Posts product migration fixture", () => {
 
     expect(screen.getByText("没有符合当前筛选条件的文章")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "清除筛选" }));
-    expect(screen.getByText("从真实产品抽象一套可维护的 UI 组件体系")).toBeTruthy();
+    expect(screen.getAllByText("从真实产品抽象一套可维护的 UI 组件体系").length).toBe(2);
   });
 
   it("supports selection and batch status updates without restoring a public BulkActionBar", () => {
     render(<BlogAdminPostsDemo />);
-    const firstCheckbox = screen.getByLabelText(/选择文章 从真实产品抽象一套可维护的 UI 组件体系/);
-    fireEvent.click(firstCheckbox);
+    const [desktopCheckbox] = screen.getAllByLabelText(/选择文章 从真实产品抽象一套可维护的 UI 组件体系/);
+    fireEvent.click(desktopCheckbox);
 
     expect(screen.getByText("已选择 1 篇")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "转为草稿" }));
