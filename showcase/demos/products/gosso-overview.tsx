@@ -1,7 +1,6 @@
 import { useState, type ReactNode } from "react";
 import {
   ArrowRight,
-  Info,
   Key,
   Laptop,
   LogOut,
@@ -12,6 +11,7 @@ import {
   UserCheck,
 } from "lucide-react";
 import {
+  Alert,
   Button,
   ButtonLink,
   Card,
@@ -22,12 +22,10 @@ import {
 } from "../../../src/core";
 
 type PreviewRole = "admin" | "user";
-type QuickLinkTone = "primary" | "neutral";
 
 interface QuickLink {
   href: string;
   icon: ReactNode;
-  tone: QuickLinkTone;
   title: string;
   description: string;
   showcasePage?: string;
@@ -42,7 +40,6 @@ const adminQuickLinks: readonly QuickLink[] = [
   {
     href: "/system-management/clients",
     icon: <Key className="size-5" />,
-    tone: "primary",
     title: "客户端注册",
     description: "注册和配置 OAuth2 客户端凭据、授权重定向 URI、范围及授权流程模式。",
     showcasePage: "gosso-system-management",
@@ -50,7 +47,6 @@ const adminQuickLinks: readonly QuickLink[] = [
   {
     href: "/system-management/users",
     icon: <UserCheck className="size-5" />,
-    tone: "neutral",
     title: "用户管理",
     description: "审计活跃账户、更新账户状态、分配权限范围角色。",
     showcasePage: "gosso-system-management",
@@ -58,7 +54,6 @@ const adminQuickLinks: readonly QuickLink[] = [
   {
     href: "/system-management/system",
     icon: <Settings className="size-5" />,
-    tone: "primary",
     title: "系统状态与审计",
     description: "查看系统运行指标、全局审计日志与站点公开品牌配置。",
     showcasePage: "gosso-system-management",
@@ -69,7 +64,6 @@ const userQuickLinks: readonly QuickLink[] = [
   {
     href: "/account-settings/profile",
     icon: <User className="size-5" />,
-    tone: "primary",
     title: "个人资料与密码",
     description: "查看并维护个人账户基础信息、电子邮箱及登录密码凭据。",
     showcasePage: "gosso-account-settings",
@@ -77,7 +71,6 @@ const userQuickLinks: readonly QuickLink[] = [
   {
     href: "/account-settings/mfa",
     icon: <Shield className="size-5" />,
-    tone: "neutral",
     title: "安全认证 (MFA 与通行密钥)",
     description: "绑定双因素认证 (TOTP) 或注册 FIDO2 通行密钥以强化账户安全。",
     showcasePage: "gosso-account-settings",
@@ -85,7 +78,6 @@ const userQuickLinks: readonly QuickLink[] = [
   {
     href: "/account-settings/sessions",
     icon: <Laptop className="size-5" />,
-    tone: "primary",
     title: "活跃登录会话",
     description: "查看当前登录设备、IP 地址及最后活跃时间，支持一键下线异常会话。",
     showcasePage: "gosso-account-settings",
@@ -102,7 +94,7 @@ function QuickLinkCard({ link }: { link: QuickLink }) {
       onClick={migrated ? undefined : (event) => event.preventDefault()}
       className="group flex min-h-32 w-full items-center gap-4 rounded-lg border bg-card p-5 text-left text-card-foreground shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
-      <span className={link.tone === "primary" ? "flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent text-primary" : "flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground"} aria-hidden="true">
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent text-primary" aria-hidden="true">
         {link.icon}
       </span>
       <span className="min-w-0 flex-1">
@@ -165,15 +157,13 @@ export function GossoOverviewDemo() {
       </Card>
 
       {!isAdmin ? (
-        <Card padding="sm" variant="subtle">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex min-w-0 flex-1 items-start gap-3">
-              <Info aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-primary" />
-              <Text size="sm" tone="muted">如需访问系统管理（OAuth2 客户端及用户管理），请联系管理员分配权限或切换管理员账户登录。</Text>
-            </div>
-            <Button size="small" icon={<LogOut className="size-4" />} onClick={() => setRole("admin")}>切换账户</Button>
-          </div>
-        </Card>
+        <Alert
+          type="info"
+          showIcon
+          title="系统管理权限受限"
+          description="如需访问系统管理（OAuth2 客户端及用户管理），请联系管理员分配权限或切换管理员账户登录。"
+          action={<Button size="small" icon={<LogOut className="size-4" />} onClick={() => setRole("admin")}>切换账户</Button>}
+        />
       ) : null}
 
       <section aria-labelledby="gosso-overview-quick-navigation" className="flex flex-col gap-5">

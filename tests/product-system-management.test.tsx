@@ -17,6 +17,8 @@ describe("Gosso Admin System Management migration fixture", () => {
     selectTab("用户管理");
     expect(screen.getByText("/system-management/users")).toBeTruthy();
     expect(screen.getByRole("heading", { name: "用户管理" })).toBeTruthy();
+    expect(screen.getAllByText("正常").length).toBeGreaterThan(0);
+    expect(screen.getByText("已暂停")).toBeTruthy();
 
     selectTab("审计日志");
     expect(screen.getByText("/system-management/audit-logs")).toBeTruthy();
@@ -29,7 +31,18 @@ describe("Gosso Admin System Management migration fixture", () => {
     selectTab("系统状态");
     expect(screen.getByText("/system-management/system")).toBeTruthy();
     expect(screen.getByRole("heading", { name: "系统状态" })).toBeTruthy();
-    expect(screen.getByText("基础设施健康")).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "基础设施健康" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "OpenID Connect 配置" })).toBeTruthy();
+    expect(screen.getAllByText("正常").length).toBeGreaterThan(0);
+  });
+
+  it("uses the Core Empty state when audit filters have no results", () => {
+    render(<GossoSystemManagementDemo />);
+    selectTab("审计日志");
+    fireEvent.change(screen.getByLabelText("事件类型"), { target: { value: "no.such.event" } });
+    fireEvent.click(screen.getByRole("button", { name: "查询" }));
+    expect(screen.getByText("没有匹配的审计事件")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "清除筛选" })).toBeTruthy();
   });
 
   it("keeps OAuth client editing as page-local Core composition", () => {

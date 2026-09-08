@@ -1,9 +1,10 @@
 import { useState, type FormEvent } from "react";
 import { KeyRound, Shield } from "lucide-react";
-import { Alert, Button, FormField, Input, Segmented, Text } from "../../../../src/core";
+import { Alert, Button, FormField, Input, Segmented, Text, type AlertType } from "../../../../src/core";
 import { AuthSurface, DividerLabel } from "./shared";
 
 type LoginScenario = "password" | "mfa" | "sudo";
+type LoginFeedback = { type: AlertType; message: string };
 
 const scenarios = [
   { label: "密码登录", value: "password" },
@@ -16,25 +17,35 @@ export function GossoLoginDemo() {
   const [username, setUsername] = useState("admin");
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
-  const [message, setMessage] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<LoginFeedback | null>(null);
+
+  const selectScenario = (next: LoginScenario) => {
+    setScenario(next);
+    setCode("");
+    setFeedback(null);
+  };
 
   const submitPassword = (event: FormEvent) => {
     event.preventDefault();
     if (!username.trim() || !password) {
-      setMessage("请输入用户名和密码。");
+      setFeedback({ type: "error", message: "请输入用户名和密码。" });
       return;
     }
     setScenario("mfa");
-    setMessage("密码验证通过；fixture 模拟服务端要求第二因素。");
+    setCode("");
+    setFeedback({ type: "info", message: "密码验证通过；fixture 模拟服务端要求第二因素。" });
   };
 
   const submitMfa = (event: FormEvent) => {
     event.preventDefault();
     if (code.trim().length < 6) {
-      setMessage("请输入 6–8 位动态验证码。");
+      setFeedback({ type: "error", message: "请输入 6–8 位动态验证码。" });
       return;
     }
-    setMessage(scenario === "sudo" ? "强认证已完成（Showcase 模拟）。" : "登录成功（Showcase 模拟）。");
+    setFeedback({
+      type: "success",
+      message: scenario === "sudo" ? "强认证已完成（Showcase 模拟）。" : "登录成功（Showcase 模拟）。",
+    });
   };
 
   return (
@@ -46,12 +57,12 @@ export function GossoLoginDemo() {
         <Segmented<LoginScenario>
           value={scenario}
           options={scenarios}
-          onChange={setScenario}
+          onChange={selectScenario}
           ariaLabel="登录场景 Fixture"
         />
       )}
     >
-      {message ? <Alert type="info" showIcon title={message} className="mb-5" /> : null}
+      {feedback ? <Alert type={feedback.type} showIcon title={feedback.message} className="mb-5" /> : null}
 
       {scenario === "password" ? (
         <form onSubmit={submitPassword} className="flex flex-col gap-4">
@@ -64,7 +75,7 @@ export function GossoLoginDemo() {
           <div className="text-right"><a className="text-xs font-medium text-primary hover:underline" href="#gosso-forgot-password">忘记密码？</a></div>
           <Button type="submit" variant="solid" color="primary" className="w-full">登录</Button>
           <DividerLabel>或</DividerLabel>
-          <Button type="button" icon={<KeyRound />} className="w-full" onClick={() => setMessage("通行密钥登录成功（Showcase 模拟）。")}>使用通行密钥登录</Button>
+          <Button type="button" icon={<KeyRound />} className="w-full" onClick={() => setFeedback({ type: "success", message: "通行密钥登录成功（Showcase 模拟）。" })}>使用通行密钥登录</Button>
         </form>
       ) : (
         <form onSubmit={submitMfa} className="flex flex-col gap-4">
@@ -79,8 +90,8 @@ export function GossoLoginDemo() {
           </FormField>
           <Button type="submit" variant="solid" color="primary" className="w-full">{scenario === "sudo" ? "完成强认证" : "验证并登录"}</Button>
           <DividerLabel>或</DividerLabel>
-          <Button type="button" icon={<KeyRound />} className="w-full" onClick={() => setMessage(scenario === "sudo" ? "通行密钥强认证成功（Showcase 模拟）。" : "通行密钥登录成功（Showcase 模拟）。")}>使用通行密钥</Button>
-          <Button type="button" variant="ghost" className="w-full" onClick={() => { setScenario("password"); setCode(""); setMessage(null); }}>返回密码登录</Button>
+          <Button type="button" icon={<KeyRound />} className="w-full" onClick={() => setFeedback({ type: "success", message: scenario === "sudo" ? "通行密钥强认证成功（Showcase 模拟）。" : "通行密钥登录成功（Showcase 模拟）。" })}>使用通行密钥</Button>
+          <Button type="button" variant="ghost" className="w-full" onClick={() => selectScenario("password")}>返回密码登录</Button>
         </form>
       )}
     </AuthSurface>

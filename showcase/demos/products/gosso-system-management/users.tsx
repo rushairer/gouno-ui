@@ -1,5 +1,5 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { KeyRound, Lock, Plus, ShieldCheck, Trash2, Unlock, UserRoundCog } from "lucide-react";
+import { KeyRound, Lock, Plus, Trash2, Unlock, UserRoundCog } from "lucide-react";
 import {
   Button,
   Checkbox,
@@ -140,7 +140,7 @@ export function UsersPanel() {
               </TableCell>
               <TableCell>
                 <Tag color={user.status === "active" ? "success" : "error"}>
-                  {user.status === "active" ? "Active" : "Suspended"}
+                  {user.status === "active" ? "正常" : "已暂停"}
                 </Tag>
               </TableCell>
               <TableCell className="min-w-48 whitespace-normal">

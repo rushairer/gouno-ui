@@ -3,6 +3,7 @@ import { Search, X } from "lucide-react";
 import {
   Button,
   Card,
+  Empty,
   FormField,
   Input,
   Modal,
@@ -14,7 +15,6 @@ import {
   TableHeader,
   TableRow,
   Tag,
-  Text,
 } from "../../../../src/core";
 import { PageHeader } from "../../../../src/gouno";
 
@@ -105,7 +105,11 @@ export function AuditLogsPanel() {
           <Pagination page={page} total={filtered.length} pageSize={pageSize} onChange={setPage} showTotal={(total) => `${total} 条审计事件`} />
         </>
       ) : (
-        <Card variant="subtle" className="py-10 text-center"><Text tone="muted">没有符合当前筛选条件的审计事件。</Text></Card>
+        <Empty
+          title="没有匹配的审计事件"
+          description="调整事件类型或目标账户筛选条件后重试。"
+          action={<Button size="small" icon={<X />} onClick={clear}>清除筛选</Button>}
+        />
       )}
 
       <Modal open={Boolean(selected)} title="审计事件详情" onOpenChange={(next) => { if (!next) setSelected(null); }} footer={<Button onClick={() => setSelected(null)}>关闭</Button>}>

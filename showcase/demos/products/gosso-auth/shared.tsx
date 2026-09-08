@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { ShieldCheck } from "lucide-react";
-import { Card, Tag, Text } from "../../../../src/core";
+import { Card, Heading, Tag, Text } from "../../../../src/core";
 
 export function AuthSurface({
   children,
@@ -22,7 +22,7 @@ export function AuthSurface({
         {fixtureControl ? (
           <div
             data-slot="gosso-auth-fixture-control"
-            className="absolute left-1/2 top-0 z-10 max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border/80 bg-background/92 p-1.5 shadow-lg backdrop-blur-xl"
+            className="absolute left-1/2 top-0 z-10 w-fit max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border/80 bg-background/92 p-1.5 shadow-lg backdrop-blur-xl"
           >
             {fixtureControl}
           </div>
@@ -32,13 +32,13 @@ export function AuthSurface({
             <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <ShieldCheck aria-hidden="true" className="size-6" />
             </div>
-            <div className="text-2xl font-bold tracking-tight">{title}</div>
+            <Heading level={1} className="text-2xl font-bold tracking-tight">{title}</Heading>
             {description ? <Text tone="muted" size="sm" className="mt-2 leading-relaxed">{description}</Text> : null}
           </div>
           {children}
-          <div className="mt-6 flex items-center justify-center gap-2 border-t pt-4">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-2 border-t pt-4">
             <Tag>静态 Fixture</Tag>
-            <code className="text-xs text-muted-foreground">{route}</code>
+            <code className="max-w-full break-all text-center text-xs text-muted-foreground">{route}</code>
           </div>
         </Card>
       </div>
