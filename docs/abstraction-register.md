@@ -195,3 +195,29 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Implementation impact:** Site Settings uses a clipped outer Card, 24px `CardContent`, and a full-bleed sticky `CardFooter`; `overflow: clip` is preferred here because clipping is needed without creating a new scroll container.
 - **API impact:** none. Existing Core `CardContent`/`CardFooter` are sufficient; do not introduce `StickyFormFooter`, `SaveBar` or a Pattern from this single product case.
 - **Follow-up:** if Blog Admin editor/settings pages independently prove the same sticky-save lifecycle and interaction semantics, review a shared Pattern then. Until then, keep the composition product-local and reuse only the design-language rule.
+
+### PD-025 — Dense Table row actions preserve row geometry
+- **Status:** accepted
+- **Owner:** design-language governance
+- **Evidence:** Blog Admin Posts/Members and Gosso Admin Users/OAuth Clients independently exposed the same failure mode: mixed outline/ghost/filled row-action controls plus wrapping action clusters created visual inconsistency and width-dependent row heights.
+- **Decision:** repeated desktop Table row actions use one compact structural control family, remain single-line and let Core Table horizontal overflow own width pressure. The current row-action family is `IconButton variant="ghost"`; semantic danger may change `color` but not the control structure. If a real action set becomes too wide, lower-frequency actions move behind an overflow/dropdown interaction rather than wrapping.
+- **Implementation impact:** migrate the governed Blog/Gosso action clusters to `min-w-max flex-nowrap`, normalize sibling controls to ghost IconButtons, and protect the corpus through `tests/design-language-conformance.test.ts`.
+- **API impact:** none. This is DL-09, not evidence for public `RowActions`, `ActionGroup` or DataTable APIs.
+
+### PD-026 — Cross-product sticky settings surfaces still do not justify a SaveBar Pattern
+- **Status:** accepted / defer extraction
+- **Owner:** Core composition / Product-local validation
+- **Evidence:** Gosso System Management Site Settings and Blog Admin Site Settings independently require a padded settings body plus a full-bleed sticky save region inside one rounded surface.
+- **Decision:** the repeated stable contract is the Card anatomy and edge-ownership rule already captured by PD-024, not a new interaction component. `Card padding="none"` + `CardContent` + `CardFooter` expresses the invariant without hiding product-specific dirty state, validation, save lifecycle, secondary actions or authorization policy.
+- **Reasoning:** a `StickyFormFooter` or `SaveBar` would currently mostly wrap class names while forcing different product save semantics behind one API. Cross-product repetition therefore strengthens the design-language rule but does not automatically promote the composition to Pattern.
+- **API impact:** none. Pattern remains empty; existing Core Card anatomy is sufficient.
+- **Follow-up:** reconsider only when another real workflow proves additional stable behavior beyond surface anatomy, such as shared unsaved-change orchestration, submit ownership or navigation blocking.
+
+### PD-027 — Blog privileged-edit gate passes Rule-of-Three review but remains product-local
+- **Status:** reviewed / defer extraction
+- **Owner:** Product-local security interaction
+- **Evidence:** real Blog Members, Site Settings and advanced/AI administration all protect high-privilege operations with recent MFA/Sudo policy; Members and Site Settings now exercise distinct migrated Showcase workflows.
+- **Decision:** do not admit `SudoGate` as a public Pattern yet. All current evidence belongs to one Blog product family and is coupled to GOSSO step-up/MFA semantics, a roughly 10-minute elevated window and Blog-specific authorization boundaries.
+- **Reasoning:** Rule of Three triggers mandatory abstraction review, not automatic promotion. A generic visual lock overlay would discard the security semantics that make this interaction meaningful, while a GOSSO-aware public Pattern would leak one product integration policy into the shared UI layer.
+- **API impact:** none. Keep the gate product-local and compose it from Core surfaces/actions.
+- **Follow-up:** revisit if an independently owned product proves the same privileged-action lifecycle with a product-agnostic contract. Continue with Blog Admin Comments next because its moderation-list workflow pressures collection/filter/batch/async assumptions without selecting another page merely for Table similarity.
