@@ -1,8 +1,8 @@
 import { useState, type ReactNode } from "react";
-import { Alert, Button, Card, Heading, Modal, Text } from "../../../../src/core";
+import { Alert, Button, Card, Modal, Text } from "../../../../src/core";
+import { TabPanelLead } from "../../../components/tab-panel-lead";
 
 export interface SectionProps {
-  title?: ReactNode;
   description?: ReactNode;
   actions?: ReactNode;
   surface?: "card" | "direct";
@@ -24,23 +24,10 @@ export interface ConfirmActionProps {
   onConfirm: () => void;
 }
 
-export function Section({ title, description, actions, surface = "card", children }: SectionProps) {
-  const hasLead = Boolean(title || description || actions);
+export function Section({ description, actions, surface = "card", children }: SectionProps) {
   return (
     <div className="flex flex-col gap-5">
-      {hasLead ? (
-        <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0">
-            {title ? <Heading level={2} className="text-lg leading-tight">{title}</Heading> : null}
-            {description ? (
-              <Text tone="muted" size="sm" className={title ? "mt-1.5 max-w-3xl leading-relaxed" : "max-w-3xl leading-relaxed"}>
-                {description}
-              </Text>
-            ) : null}
-          </div>
-          {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
-        </header>
-      ) : null}
+      <TabPanelLead description={description} actions={actions} />
       {surface === "card" ? (
         <Card padding="base" className="overflow-hidden">{children}</Card>
       ) : children}
