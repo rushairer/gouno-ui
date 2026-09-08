@@ -1,5 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it } from "vitest";
 import { showcaseCatalog } from "../showcase/catalog";
 import { GossoCallbackDemo } from "../showcase/demos/products/gosso-auth/callback";
 import { GossoForgotPasswordDemo } from "../showcase/demos/products/gosso-auth/forgot-password";
@@ -7,10 +7,13 @@ import { GossoLoginDemo } from "../showcase/demos/products/gosso-auth/login";
 import { GossoNotFoundDemo } from "../showcase/demos/products/gosso-auth/not-found";
 import { GossoResetPasswordDemo } from "../showcase/demos/products/gosso-auth/reset-password";
 
+afterEach(cleanup);
+
 describe("Gosso Admin authentication route fixtures", () => {
   it("preserves password, MFA and Sudo login states without a public auth abstraction", () => {
-    render(<GossoLoginDemo />);
+    const { container } = render(<GossoLoginDemo />);
     expect(screen.getByText("/login")).toBeTruthy();
+    expect(container.querySelector('[data-slot="gosso-auth-fixture-control"]')).toBeTruthy();
     fireEvent.change(screen.getByLabelText(/用户名/), { target: { value: "admin" } });
     fireEvent.change(screen.getByLabelText(/^密码/), { target: { value: "correct-horse-battery" } });
     fireEvent.click(screen.getByRole("button", { name: "登录" }));
@@ -36,8 +39,9 @@ describe("Gosso Admin authentication route fixtures", () => {
     expect(screen.getByText("新密码至少需要 12 个字符。")).toBeTruthy();
   });
 
-  it("represents callback loading and error states", () => {
-    render(<GossoCallbackDemo />);
+  it("represents callback loading and error states on the same auth fixture-control anchor", () => {
+    const { container } = render(<GossoCallbackDemo />);
+    expect(container.querySelector('[data-slot="gosso-auth-fixture-control"]')).toBeTruthy();
     expect(screen.getByText(/Authorization Code \+ PKCE/)).toBeTruthy();
     fireEvent.click(screen.getByRole("radio", { name: "失败" }));
     expect(screen.getByText(/CALLBACK_PARAMS_MISSING/)).toBeTruthy();

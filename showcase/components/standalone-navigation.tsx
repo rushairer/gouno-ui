@@ -16,7 +16,7 @@ export function StandaloneNavigation({
   currentPage,
   onNavigate,
 }: StandaloneNavigationProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const groups = showcaseCatalog.filter(
     (group) => group.workspace === workspace && group.items.length > 0,
   );
@@ -25,10 +25,6 @@ export function StandaloneNavigation({
       ?.items.find((item) => item.presentation !== "standalone")?.id ??
     groups[0]?.items[0]?.id ??
     "";
-
-  useEffect(() => {
-    setOpen(false);
-  }, [currentPage]);
 
   useEffect(() => {
     if (!open) return;
