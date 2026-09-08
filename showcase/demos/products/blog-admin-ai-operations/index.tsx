@@ -1,6 +1,5 @@
 import { useState, type ReactNode } from "react";
 import {
-  Bot,
   Clock3,
   GitBranch,
   RefreshCw,
@@ -211,6 +210,22 @@ export function BlogAdminAIOperationsDemo({
     { key: "advanced", label: tabLabel("高级设置", <Settings2 aria-hidden="true" className="size-4" />) },
   ] as const;
 
+  const automationFixture = route.workflow
+    ? {
+        ...aiOpsAutomationRecordsFixture,
+        workflows: [
+          ...aiOpsAutomationRecordsFixture.workflows.filter((item) => item.id === route.workflow),
+          ...aiOpsAutomationRecordsFixture.workflows.filter((item) => item.id !== route.workflow),
+        ],
+      }
+    : aiOpsAutomationRecordsFixture;
+  const recordsFixture = route.record === "workflow" && route.workflow
+    ? {
+        ...aiOpsAutomationRecordsFixture,
+        workflowRuns: aiOpsAutomationRecordsFixture.workflowRuns.filter((item) => item.workflowId === route.workflow),
+      }
+    : aiOpsAutomationRecordsFixture;
+
   let content: ReactNode = null;
   if (scenario === "loading") {
     content = <LoadingSurface />;
@@ -235,8 +250,7 @@ export function BlogAdminAIOperationsDemo({
   } else if (route.tab === "automation") {
     content = (
       <AIOpsAutomationPanel
-        fixture={aiOpsAutomationRecordsFixture}
-        initialWorkflowId={route.workflow}
+        fixture={automationFixture}
         onPreflight={async () => ({ ready: true })}
         onRun={async (_workflowId, dryRun) => ({ id: dryRun ? 246 : 247, status: dryRun ? "succeeded" : "awaiting_approval" })}
         onRollback={(workflowId, version) => setNotice(`Workflow #${workflowId} 已请求回滚到 v${version}。`)}
@@ -246,9 +260,8 @@ export function BlogAdminAIOperationsDemo({
   } else if (route.tab === "records") {
     content = (
       <AIOpsRecordsPanel
-        fixture={aiOpsAutomationRecordsFixture}
+        fixture={recordsFixture}
         initialRecord={route.record}
-        initialWorkflowId={route.workflow}
         initialRunId={route.run}
         onRouteChange={updateRecordsRoute}
       />
