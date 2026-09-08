@@ -451,7 +451,7 @@ export function BlogAdminNotificationsDemo() {
                       size="small"
                       variant="text"
                       icon={<ChevronRight />}
-                      iconPosition="end"
+                      iconPlacement="end"
                       onClick={() => {
                         if (unread) markOneRead(item.id);
                         setNotice(`前往 ${item.destination}（Showcase 模拟）。`);
