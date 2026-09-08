@@ -43,7 +43,7 @@ export function SiteSettingsPanel() {
       {saved ? <Alert type="success" showIcon title="站点设置已保存（Showcase 模拟）。" /> : null}
 
       <form onSubmit={save} className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
-        <Card padding="lg" className="flex flex-col gap-5">
+        <Card padding="base" className="flex flex-col gap-5">
           <FormField label="产品名称" required><Input value={settings.productName} onChange={(event) => update("productName", event.target.value)} maxLength={120} /></FormField>
           <FormField label="Logo URL"><Input value={settings.logoUrl} onChange={(event) => update("logoUrl", event.target.value)} placeholder="https://…/logo.svg" /></FormField>
           <FormField label="Favicon URL"><Input value={settings.faviconUrl} onChange={(event) => update("faviconUrl", event.target.value)} placeholder="https://…/favicon.svg" /></FormField>
@@ -57,7 +57,7 @@ export function SiteSettingsPanel() {
         </Card>
 
         <div className="xl:sticky xl:top-4 xl:self-start">
-          <Card padding="lg" className="overflow-hidden">
+          <Card padding="base" className="overflow-hidden">
             <div className="mb-4 flex items-center gap-2"><Image aria-hidden="true" className="size-4 text-muted-foreground" /><Text size="sm" className="font-medium">登录页预览</Text></div>
             <div className="relative min-h-[430px] overflow-hidden rounded-xl border bg-muted/30 p-6">
               <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-muted/60" />
