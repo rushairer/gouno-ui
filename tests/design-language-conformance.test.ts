@@ -34,10 +34,13 @@ describe("design-language conformance", () => {
     expect(overview).toContain('<Card padding="base" variant="elevated"');
   });
 
-  it("keeps site-settings sticky actions on the same 24px card inset", () => {
+  it("uses explicit Card anatomy for full-bleed sticky actions", () => {
     const siteSettings = readFileSync(resolve(productsRoot, "gosso-system-management/site-settings.tsx"), "utf8");
-    expect(siteSettings).toContain('<Card padding="base"');
-    expect(siteSettings).toContain("-mx-6 -mb-6");
-    expect(siteSettings).toContain("px-6 py-4");
+
+    expect(siteSettings).toContain('<Card padding="none" className="gap-0 overflow-clip">');
+    expect(siteSettings).toContain('<CardContent className="flex flex-col gap-5 p-6">');
+    expect(siteSettings).toContain('<CardFooter className="sticky bottom-0 z-10 justify-between border-t bg-card/95 px-6 py-4 backdrop-blur">');
+    expect(siteSettings).not.toContain("-mx-6");
+    expect(siteSettings).not.toContain("-mb-6");
   });
 });
