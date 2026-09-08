@@ -43,7 +43,7 @@ describe("Blog Admin AI Operations overview/inbox migration modules", () => {
       />,
     );
 
-    expect(screen.getByRole("heading", { name: "AI 每日资讯：模型、Agent 与工具链更新" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 3, name: "AI 每日资讯：模型、Agent 与工具链更新" })).toBeTruthy();
     expect(screen.getByText("汇总过去 24 小时经过核验的 AI 行业变化。")).toBeTruthy();
     expect(screen.getByText("今日重点")).toBeTruthy();
     expect(screen.getByText("• Agent 工具调用治理继续加强。")).toBeTruthy();
