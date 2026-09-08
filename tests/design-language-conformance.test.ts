@@ -23,6 +23,7 @@ const blogAdminApplicationFiles = [
   resolve(productsRoot, "blog-admin-categories.tsx"),
   resolve(productsRoot, "blog-admin-tags.tsx"),
   resolve(productsRoot, "blog-admin-pages.tsx"),
+  resolve(productsRoot, "blog-admin-page-editor.tsx"),
   resolve(productsRoot, "blog-admin-comments.tsx"),
   resolve(productsRoot, "blog-admin-notifications.tsx"),
   resolve(productsRoot, "blog-admin-media-library.tsx"),
