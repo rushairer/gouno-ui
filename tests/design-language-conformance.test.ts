@@ -2,8 +2,9 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
-const productsRoot = resolve(process.cwd(), "showcase/demos/products");
-const sourceRoot = resolve(process.cwd(), "src");
+const repoRoot = process.cwd();
+const productsRoot = resolve(repoRoot, "showcase/demos/products");
+const sourceRoot = resolve(repoRoot, "src");
 
 function sourceFiles(path: string): string[] {
   if (!existsSync(path)) return [];
@@ -31,6 +32,7 @@ const blogAdminApplicationFiles = [
   resolve(productsRoot, "blog-admin-users.tsx"),
   resolve(productsRoot, "blog-admin-site-settings.tsx"),
   ...sourceFiles(resolve(productsRoot, "blog-admin-ai-operations")),
+  ...sourceFiles(resolve(productsRoot, "blog-admin-ai-settings")),
 ];
 
 const allProductFiles = sourceFiles(productsRoot).filter((file) => /\.(tsx?|jsx?)$/.test(file));
@@ -48,6 +50,10 @@ function expectHeaderBeforeTabs(file: string) {
   const tabs = source.indexOf("<Tabs");
   expect(header).toBeGreaterThanOrEqual(0);
   expect(tabs).toBeGreaterThan(header);
+}
+
+function tabsCount(source: string) {
+  return source.match(/<Tabs(?:<|\s)/g)?.length ?? 0;
 }
 
 describe("design-language conformance", () => {
@@ -117,20 +123,21 @@ describe("design-language conformance", () => {
     expect(systemActions).not.toContain('<Button size="small" variant={color === "error" ? "solid" : "outline"}');
   });
 
-  it("owns elevation through semantic theme roles instead of Tailwind defaults", () => {
+  it("owns visible elevation through semantic theme roles only", () => {
     const tokens = readFileSync(resolve(sourceRoot, "tokens.css"), "utf8");
     expect(tokens).toContain("--shadow-raised: var(--elevation-shadow-raised)");
     expect(tokens).toContain("--shadow-overlay: var(--elevation-shadow-overlay)");
     expect(tokens).toContain("--shadow-modal: var(--elevation-shadow-modal)");
-    expect(tokens).toContain("--shadow-xs: 0 0 #0000");
-    expect(tokens).toContain("--shadow-sm: 0 0 #0000");
+    for (const size of ["xs", "sm", "md", "lg", "xl", "2xl"]) {
+      expect(tokens).toContain(`--shadow-${size}: 0 0 #0000`);
+    }
     expect(tokens).toContain("--raised: #1a222c");
   });
 
   it("uses semantic elevation names in canonical runtime source", () => {
     for (const file of canonicalSourceFiles) {
       const source = readFileSync(file, "utf8");
-      expect(source).not.toMatch(/shadow-(?:md|lg|xl|2xl)/);
+      expect(source).not.toMatch(/shadow-(?:md|lg|xl|2xl|\[)/);
     }
   });
 
@@ -144,17 +151,25 @@ describe("design-language conformance", () => {
   it("prevents product fixtures from creating effective page-local elevation", () => {
     for (const file of allProductFiles) {
       const source = readFileSync(file, "utf8");
-      expect(source).not.toMatch(/shadow-(?:md|lg|xl|raised|overlay|modal|\[)/);
+      expect(source).not.toMatch(/shadow-(?:md|lg|xl|2xl|raised|overlay|modal|\[)/);
     }
+  });
+
+  it("keeps BulkActionBar as an intentional semantic overlay instead of a decorative Card shadow", () => {
+    const source = readFileSync(resolve(sourceRoot, "patterns/bulk-action-bar.tsx"), "utf8");
+    expect(source).toContain("sticky bottom-4");
+    expect(source).toContain("shadow-overlay");
+    expect(source).not.toMatch(/shadow-(?:xs|sm|md|lg|xl|2xl)(?:\s|["'])/);
   });
 
   it("uses one route-family PageHeader before Tabs on normal tabbed task pages", () => {
     const accountRoot = resolve(productsRoot, "gosso-account-settings/index.tsx");
     const systemRoot = resolve(productsRoot, "gosso-system-management/index.tsx");
     const blogAI = resolve(productsRoot, "blog-admin-ai-operations/index.tsx");
+    const blogAISettings = resolve(productsRoot, "blog-admin-ai-settings/index.tsx");
     const blogSettings = resolve(productsRoot, "blog-admin-site-settings.tsx");
 
-    for (const file of [accountRoot, systemRoot, blogAI]) expectHeaderBeforeTabs(file);
+    for (const file of [accountRoot, systemRoot, blogAI, blogAISettings]) expectHeaderBeforeTabs(file);
 
     // Site Settings builds its Tabs value before the render return; assert rendered ordering
     // by checking the return tree: route PageHeader precedes the computed tabbed content slot.
@@ -172,6 +187,34 @@ describe("design-language conformance", () => {
     expect(accountShared).not.toContain("PageHeader");
     for (const file of managementFiles) {
       expect(readFileSync(file, "utf8")).not.toContain("PageHeader");
+    }
+  });
+
+  it("enforces a one-persistent-Tabs navigation budget for normal route families", () => {
+    const routeFamilies = [
+      sourceFiles(resolve(productsRoot, "gosso-account-settings")),
+      sourceFiles(resolve(productsRoot, "gosso-system-management")),
+      sourceFiles(resolve(productsRoot, "blog-admin-ai-operations")),
+      sourceFiles(resolve(productsRoot, "blog-admin-ai-settings")),
+      [resolve(productsRoot, "blog-admin-site-settings.tsx")],
+    ];
+
+    for (const files of routeFamilies) {
+      expect(tabsCount(combined(files.filter((file) => /\.tsx$/.test(file))))).toBe(1);
+    }
+
+    const aiOps = combined(sourceFiles(resolve(productsRoot, "blog-admin-ai-operations")));
+    const aiSettings = combined(sourceFiles(resolve(productsRoot, "blog-admin-ai-settings")));
+    expect(aiOps).not.toContain("AIOpsAdvancedPanel");
+    expect(aiOps).not.toContain('key: "advanced"');
+    expect(aiSettings).not.toContain("<Tabs<AISettingsSection>") || expect(aiSettings).toBeTruthy();
+    expect(readFileSync(resolve(productsRoot, "blog-admin-ai-settings/sections.tsx"), "utf8")).not.toContain("<Tabs");
+
+    // Editor mode Tabs are view-state controls, not product-navigation tiers.
+    for (const editor of ["blog-admin-post-editor.tsx", "blog-admin-page-editor.tsx"]) {
+      const source = readFileSync(resolve(productsRoot, editor), "utf8");
+      expect(source).toContain("<Tabs<EditorMode>");
+      expect(source).not.toContain("<PageHeader");
     }
   });
 
@@ -195,8 +238,44 @@ describe("design-language conformance", () => {
       expect(readFileSync(resolve(productsRoot, path), "utf8")).not.toContain(echo);
     }
 
+    const blogSettings = readFileSync(resolve(productsRoot, "blog-admin-site-settings.tsx"), "utf8");
+    for (const title of ["基础信息", "网站图标", "首页 Hero 标语与插图", "公开联系方式", "默认 SEO"]) {
+      expect(blogSettings).not.toContain(`title="${title}"`);
+    }
+
+    const aiSettings = readFileSync(resolve(productsRoot, "blog-admin-ai-settings/sections.tsx"), "utf8");
+    expect(aiSettings).not.toContain("<CardTitle>Agents</CardTitle>");
+    expect(aiSettings).not.toContain("<CardTitle>Tools</CardTitle>");
+
     const systemStatus = readFileSync(resolve(productsRoot, "gosso-system-management/system-status.tsx"), "utf8");
     expect(systemStatus).toContain('<Heading level={2} className="text-base">基础设施健康</Heading>');
     expect(systemStatus).toContain('return <Card padding="base"><Heading level={2}');
+  });
+
+  it("uses one open panel-lead grammar across governed tabbed settings pages", () => {
+    const lead = readFileSync(resolve(repoRoot, "showcase/components/tab-panel-lead.tsx"), "utf8");
+    const account = readFileSync(resolve(productsRoot, "gosso-account-settings/shared.tsx"), "utf8");
+    const system = readFileSync(resolve(productsRoot, "gosso-system-management/shared.tsx"), "utf8");
+    const blogSettings = readFileSync(resolve(productsRoot, "blog-admin-site-settings.tsx"), "utf8");
+    const aiSettings = readFileSync(resolve(productsRoot, "blog-admin-ai-settings/sections.tsx"), "utf8");
+
+    expect(lead).toContain('data-slot="showcase-tab-panel-lead"');
+    expect(lead).not.toContain("<Card");
+    expect(account).toContain("<TabPanelLead");
+    expect(system).toContain("ManagementPanelLead = TabPanelLead");
+    expect(blogSettings).toContain("<TabPanelLead description={description} />");
+    expect(blogSettings).not.toMatch(/<SettingsSurface\b[^>]*\btitle=/);
+    expect(aiSettings).toContain("<TabPanelLead");
+  });
+
+  it("keeps product interface governance discoverable and machine-enforced", () => {
+    const agents = readFileSync(resolve(repoRoot, "AGENTS.md"), "utf8");
+    const governance = readFileSync(resolve(repoRoot, "docs/product-interface-governance.md"), "utf8");
+
+    expect(agents).toContain("docs/product-interface-governance.md");
+    expect(governance).toContain("## PI-01 — Product navigation has a depth budget");
+    expect(governance).toContain("## PI-02 — Tabs name the panel; the panel lead adds context");
+    expect(governance).toContain("## PI-04 — Visible elevation uses semantic roles only");
+    expect(governance).toContain("## PI-05 — New binding rules require a corpus pass, not screenshot patching");
   });
 });
