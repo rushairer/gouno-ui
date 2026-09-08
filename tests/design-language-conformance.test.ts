@@ -134,10 +134,18 @@ describe("design-language conformance", () => {
     expect(tokens).toContain("--raised: #1a222c");
   });
 
-  it("uses semantic elevation names in canonical runtime source", () => {
+  it("uses semantic elevation names in canonical runtime source and isolates the one overflow shadow cue", () => {
+    const tablePath = resolve(sourceRoot, "components/primitives/table.tsx");
     for (const file of canonicalSourceFiles) {
       const source = readFileSync(file, "utf8");
-      expect(source).not.toMatch(/shadow-(?:md|lg|xl|2xl|\[)/);
+      expect(source).not.toMatch(/shadow-(?:md|lg|xl|2xl)/);
+      if (file === tablePath) {
+        expect(source.match(/shadow-\[/g) ?? []).toHaveLength(2);
+        expect(source).toContain("shadow-[inset_0_1px_0_");
+        expect(source).toContain("shadow-[inset_0_-1px_0_");
+      } else {
+        expect(source).not.toContain("shadow-[");
+      }
     }
   });
 
