@@ -221,6 +221,7 @@ export const showcaseCatalog: ShowcaseGroup[] = [
   { workspace: "blog", group: "Migrated Pages 已迁移页面", items: [] },
   { workspace: "blog-admin", group: "Content 内容管理", items: [
     item("blog-admin-posts", "Posts", "文章管理", 100, <FileText />),
+    item("blog-admin-comments", "Comments", "评论审核", 100, <MessageSquare />),
   ]},
   { workspace: "blog-admin", group: "Site 站点管理", items: [
     item("blog-admin-users", "Members", "成员与权限", 100, <CircleUserRound />),
