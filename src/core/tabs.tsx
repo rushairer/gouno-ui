@@ -68,7 +68,7 @@ function flexDirectionFor(position: TabsPosition): CSSProperties["flexDirection"
   }[position] as CSSProperties["flexDirection"];
 }
 
-function listPositionClass(position: TabsPosition) {
+function listEdgeClass(position: TabsPosition) {
   switch (position) {
     case "bottom":
       return "w-full border-t border-border/70";
@@ -81,14 +81,27 @@ function listPositionClass(position: TabsPosition) {
   }
 }
 
-function triggerPositionClass(position: TabsPosition) {
+function lineIndicatorPositionClass(position: TabsPosition) {
   switch (position) {
     case "bottom":
-      return "after:top-[-1px] after:bottom-auto";
+      return "[&::after]:!top-0 [&::after]:!bottom-auto";
     case "right":
-      return "after:left-[-1px] after:right-auto";
+      return "[&::after]:!left-0 [&::after]:!right-auto";
     default:
       return "";
+  }
+}
+
+function cardTriggerPositionClass(position: TabsPosition) {
+  switch (position) {
+    case "bottom":
+      return "group-data-[variant=default]/tabs-list:!rounded-t-none group-data-[variant=default]/tabs-list:!rounded-b-md group-data-[variant=default]/tabs-list:!border-t-0";
+    case "left":
+      return "group-data-[variant=default]/tabs-list:!rounded-r-none group-data-[variant=default]/tabs-list:!rounded-l-md group-data-[variant=default]/tabs-list:!border-r-0";
+    case "right":
+      return "group-data-[variant=default]/tabs-list:!rounded-l-none group-data-[variant=default]/tabs-list:!rounded-r-md group-data-[variant=default]/tabs-list:!border-l-0";
+    default:
+      return "group-data-[variant=default]/tabs-list:!rounded-b-none group-data-[variant=default]/tabs-list:!rounded-t-md group-data-[variant=default]/tabs-list:!border-b-0";
   }
 }
 
@@ -128,7 +141,7 @@ export function Tabs<T extends string = string>({
       data-tab-position={tabPosition}
       data-tab-type={type}
       data-tab-size={size}
-      className={cn("gap-0", className)}
+      className={cn("gap-5", className)}
       style={{ ...style, flexDirection: flexDirectionFor(tabPosition) }}
     >
       {items ? (
@@ -195,10 +208,11 @@ export function TabList({
       variant={type === "line" ? "line" : "default"}
       data-tab-position={tabPosition}
       className={cn(
-        "max-w-full justify-start overflow-x-auto !rounded-none !bg-transparent !p-0",
-        vertical && "flex-col items-stretch overflow-x-visible overflow-y-auto",
-        type === "line" && listPositionClass(tabPosition),
-        type === "card" && "border-b border-border/70",
+        "max-w-full justify-start !rounded-none !bg-transparent !p-0",
+        vertical
+          ? "max-h-full flex-col items-stretch overflow-x-hidden overflow-y-auto"
+          : "overflow-x-auto overflow-y-hidden",
+        listEdgeClass(tabPosition),
         className,
       )}
       style={{
@@ -234,8 +248,9 @@ export function Tab({
         "group-data-[variant=line]/tabs-list:!rounded-none group-data-[variant=line]/tabs-list:!border-0 group-data-[variant=line]/tabs-list:!bg-transparent group-data-[variant=line]/tabs-list:!px-0 group-data-[variant=line]/tabs-list:!shadow-none",
         "group-data-[variant=line]/tabs-list:text-muted-foreground group-data-[variant=line]/tabs-list:hover:text-foreground group-data-[variant=line]/tabs-list:data-[state=active]:!bg-transparent group-data-[variant=line]/tabs-list:data-[state=active]:text-primary",
         "group-data-[variant=line]/tabs-list:after:bg-primary group-data-[variant=line]/tabs-list:data-[state=active]:after:opacity-100",
-        "group-data-[variant=default]/tabs-list:!rounded-t-md group-data-[variant=default]/tabs-list:border group-data-[variant=default]/tabs-list:border-b-0 group-data-[variant=default]/tabs-list:border-border/70 group-data-[variant=default]/tabs-list:bg-muted/35 group-data-[variant=default]/tabs-list:data-[state=active]:bg-background group-data-[variant=default]/tabs-list:data-[state=active]:text-foreground",
-        triggerPositionClass(tabPosition),
+        "group-data-[variant=default]/tabs-list:border group-data-[variant=default]/tabs-list:border-border/70 group-data-[variant=default]/tabs-list:bg-muted/35 group-data-[variant=default]/tabs-list:data-[state=active]:bg-background group-data-[variant=default]/tabs-list:data-[state=active]:text-foreground",
+        lineIndicatorPositionClass(tabPosition),
+        cardTriggerPositionClass(tabPosition),
         className,
       )}
     />
@@ -243,5 +258,5 @@ export function Tab({
 }
 
 export function TabPanel({ className, ...props }: ComponentProps<typeof Primitive.TabsContent>) {
-  return <Primitive.TabsContent {...props} className={cn("pt-5", className)} />;
+  return <Primitive.TabsContent {...props} className={cn("min-w-0 flex-1", className)} />;
 }

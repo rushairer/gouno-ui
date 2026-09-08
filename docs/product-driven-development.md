@@ -319,3 +319,16 @@ Before declaring a stage complete:
 3. when the stage affects Showcase output, the publish step must complete successfully and `gh-pages` must deploy the expected `main` SHA.
 
 Do not report CI or GitHub Pages success while the latest run is pending, cancelled or failed.
+
+### 15.6 Structural spacing ownership for compound components
+
+Nested/compound components must distinguish **structural spacing** from **content spacing**.
+
+- The parent compound component owns spacing between its own semantic regions/slots. Examples: Tabs owns `TabList ↔ TabPanel`; Card owns header/body/footer relationships; Modal owns header/body/footer relationships.
+- A content slot owns the layout relationship to the parent, but it must not silently impose arbitrary padding on the business content placed inside it unless padding is itself part of that slot's documented semantic contract.
+- Content inside a slot owns its own internal rhythm. A Form, Card, Table, stack or product-local wrapper decides spacing between its own descendants.
+- Orientation/placement variants must preserve the same structural-spacing semantics. A top/left/right/bottom Tabs layout may change the axis, but not silently drop or invent the navigation-to-panel gap.
+- Decorative indicators, borders and focus affordances belong inside the component's visual/scroll boundary unless the public contract explicitly requires overflow. A child pseudo-element must not enlarge a scroll area merely to draw an active line.
+- Do not repair a structural-spacing defect by adding page-local margins around every occurrence. That is a canonical-component defect and triggers the Product Validation Loop.
+
+For Tabs specifically: the component owns the TabBar-to-panel structural gap; `TabPanel` does not inject business-content padding. Consumers add Card/panel/form padding when their content needs it. The active line stays inside `TabList`, so horizontal/vertical scroll behavior is reserved for real tab overflow rather than decoration.

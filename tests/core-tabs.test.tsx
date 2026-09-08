@@ -48,26 +48,58 @@ describe("Core Tabs", () => {
     expect(root.dataset.tabType).toBe("card");
     expect(root.dataset.tabSize).toBe("small");
     expect(root.style.flexDirection).toBe("row");
+    expect(root.className).toContain("gap-5");
     expect(list.getAttribute("data-variant")).toBe("default");
+    expect(list.className).toContain("border-r");
+    expect(list.className).toContain("overflow-x-hidden");
 
     fireEvent.mouseDown(screen.getByRole("tab", { name: "Advanced" }), { button: 0 });
     expect(onChange).toHaveBeenCalledWith("advanced");
     expect(screen.getByRole("tab", { name: "General" }).getAttribute("aria-selected")).toBe("true");
   });
 
-  it("keeps line tabs visually borderless at the trigger level", () => {
-    render(
+  it("keeps line indicators inside the tab-list scroll boundary and leaves content padding to consumers", () => {
+    const { container } = render(
       <Tabs
         ariaLabel="Line tabs"
         items={[
-          { key: "one", label: "One" },
-          { key: "two", label: "Two" },
+          { key: "one", label: "One", children: "One panel" },
+          { key: "two", label: "Two", children: "Two panel" },
         ]}
       />,
     );
     const trigger = screen.getByRole("tab", { name: "One" });
+    const list = screen.getByRole("tablist", { name: "Line tabs" });
+    const panel = container.querySelector('[data-slot="tabs-content"]') as HTMLElement;
+
     expect(trigger.className).toContain("group-data-[variant=line]/tabs-list:!border-0");
-    expect(screen.getByRole("tablist", { name: "Line tabs" }).getAttribute("data-variant")).toBe("line");
+    expect(trigger.className).toContain("group-data-[variant=line]/tabs-list:after:bg-primary");
+    expect(list.getAttribute("data-variant")).toBe("line");
+    expect(list.className).toContain("overflow-y-hidden");
+    expect(panel.className).not.toContain("pt-5");
+    expect(panel.className).toContain("min-w-0");
+  });
+
+  it("maps bottom/right positions without pushing the indicator outside the list", () => {
+    const { rerender } = render(
+      <Tabs
+        ariaLabel="Bottom tabs"
+        tabPosition="bottom"
+        items={[{ key: "one", label: "One", children: "Panel" }]}
+      />,
+    );
+    expect(screen.getByRole("tab", { name: "One" }).className).toContain("[&::after]:!top-0");
+    expect(screen.getByRole("tablist", { name: "Bottom tabs" }).className).toContain("border-t");
+
+    rerender(
+      <Tabs
+        ariaLabel="Right tabs"
+        tabPosition="right"
+        items={[{ key: "one", label: "One", children: "Panel" }]}
+      />,
+    );
+    expect(screen.getByRole("tab", { name: "One" }).className).toContain("[&::after]:!left-0");
+    expect(screen.getByRole("tablist", { name: "Right tabs" }).className).toContain("border-l");
   });
 
   it("temporarily accepts the pre-reset value/item.value fixture shape", () => {

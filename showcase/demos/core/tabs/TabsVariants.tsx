@@ -1,9 +1,15 @@
-import { Tabs, Text } from "../../../../src/core";
+import { Card, Tabs, Text } from "../../../../src/core";
+
+const panel = (label: string) => (
+  <Card padding="md" className="bg-muted/15 shadow-none">
+    <Text>{label}</Text>
+  </Card>
+);
 
 const items = [
-  { key: "one", label: "项目", children: <Text>项目列表。</Text> },
-  { key: "two", label: "成员", children: <Text>成员列表。</Text> },
-  { key: "three", label: "权限", children: <Text>权限设置。</Text> },
+  { key: "one", label: "项目", children: panel("项目列表。") },
+  { key: "two", label: "成员", children: panel("成员列表。") },
+  { key: "three", label: "权限", children: panel("权限设置。") },
 ] as const;
 
 export function TabsVariants() {
