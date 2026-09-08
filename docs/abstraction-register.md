@@ -169,3 +169,12 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Abstraction impact:** none. `FixtureDock` is documentation/development tooling under PD-009, not Core, Pattern or Gouno; its reuse cannot count toward public Rule-of-Three evidence.
 - **Product impact:** Gosso Overview, Account Settings, System Management and standalone identity pages remove in-flow fixture banners/footers. Real product feedback remains in-flow and continues to use canonical components such as Alert.
 - **Follow-up:** Blog Admin fixtures should use the same Showcase-private dock instead of inventing product-local route banners, while still treating the dock as zero public-abstraction evidence.
+
+### PD-022 — Blog Admin Posts starts second-product validation without restoring collection Patterns
+- **Status:** accepted / defer extraction
+- **Owner:** Product-local + Gouno validation
+- **Evidence:** real Blog Admin `/admin/posts`, compared with Gosso System Management Clients/Users/Audit and Legacy DataTable/FilterBar/BulkActionBar/ResponsiveList-related prior art.
+- **Decision:** Blog Admin becomes the active migration line and Gosso Admin becomes the completed first-product comparison corpus. Posts independently revalidates `PageHeader(title, description, actions)` without expanding its API. Search/status/category/tag filtering, desktop Table/mobile list presentation, selection/batch actions, loading/error/empty orchestration, pagination and destructive confirmation remain product-local.
+- **Reasoning:** cross-product evidence now clearly proves that resource-management pages repeat across products, but it still does not prove that one public DataTable feature bag is the correct boundary. Gosso management tables and Blog Posts share some mechanics while Blog Posts also requires content metadata, responsive alternate presentation and different batch workflows. Restoring Legacy DataTable/BulkActionBar/FilterBar/ResponsiveList now would freeze accidental coupling rather than a stable semantic contract.
+- **API impact:** none. Pattern remains intentionally empty. `PageHeader` evidence is strengthened; DataTable/filter/bulk/responsive-list candidates remain deferred.
+- **Follow-up:** migrate the next representative Blog Admin list pages (for example Users, Categories or Comments) one at a time. If a smaller interaction contract repeats or a canonical component defect becomes clear, stop the line immediately and review it rather than waiting for full Blog Admin migration.

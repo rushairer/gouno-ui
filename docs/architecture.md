@@ -50,11 +50,12 @@ Layer correctness does not prove that a component deserves to exist. Apply `docs
 
 Current operating model:
 
-- Gosso Admin is the primary page-by-page implementation line.
-- Blog Admin and relevant Blog pages are cross-product prior-art/validation corpora.
+- Gosso Admin has completed route-level migration plus product-language convergence and now acts as the first comparison corpus.
+- Blog Admin is the active page-by-page validation line; its real pages must challenge abstractions formed during Gosso rather than mechanically copy them.
+- Relevant Blog public-site pages remain additional cross-product evidence when semantics overlap.
 - New pages start with Core + Theme + admitted Gouno structure + product-local composition.
 - The initial shell baseline is `AppShell`, `PageContainer`, `NavigationGroup`, `navigationItemClass`.
-- `PageHeader` was later admitted from real cross-product page evidence; see PD-011.
+- `PageHeader` was admitted from real cross-product page evidence; Blog Admin must continue validating its small title/description/actions contract.
 - Pattern remains intentionally empty until a compound interaction earns admission.
 - The third semantically equivalent occurrence triggers review, not automatic extraction.
 
@@ -78,6 +79,12 @@ Shared product navigation grouping/presentation used by admitted shells.
 
 Product-specific names and policies stay local until separately proven.
 
+## Compound layout ownership
+
+Compound components own structural relationships between their semantic regions; content placed into a region owns its own internal padding/rhythm unless the slot contract explicitly says otherwise.
+
+For example, Tabs owns the TabBar↔TabPanel structural gap in every placement, while `TabPanel` does not pad arbitrary business content. Decorative indicators, borders and focus affordances stay inside the relevant component visual/scroll boundary so they do not create accidental overflow. See PD-020.
+
 ## Internal composition
 
 Implementation modules import concrete modules rather than formal barrels. Large compound components may split private helpers without publishing them. Public providers are allowed only when canonical components actually consume them with documented precedence and tests.
@@ -87,7 +94,7 @@ Implementation modules import concrete modules rather than formal barrels. Large
 Showcase has two distinct roles:
 
 1. **Integration consumer** — dogfood admitted Core/Theme/Pattern/Gouno APIs when they match the job.
-2. **Documentation/development tooling** — own private utilities such as source preview, API tables, demo framing and viewport simulation.
+2. **Documentation/development tooling** — own private utilities such as source preview, API tables, demo framing, viewport simulation and fixture controls.
 
 Showcase-local repetition is not sufficient public-abstraction evidence. Evidence strength is:
 
@@ -96,6 +103,8 @@ Showcase-local repetition is not sufficient public-abstraction evidence. Evidenc
 3. Showcase/tests/tooling usage as supporting evidence only.
 
 A Showcase-local utility can become canonical only when a real product independently creates the same semantic need and the normal admission review passes. Example: Showcase `CodeBlock` stays private until a real page such as Blog article rendering proves the same read-only code/highlight/copy contract; if admitted, implement Core `CodeBlock` and migrate Showcase to it.
+
+`FixtureDock` is another private tooling example: route labels and scenario controls float outside normal product layout so fixtures remain accessible without becoming part of the demonstrated product design. Its reuse is zero evidence for Pattern/Gouno admission.
 
 Showcase information architecture keeps product workspace and design-system owner separate:
 

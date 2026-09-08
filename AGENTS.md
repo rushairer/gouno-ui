@@ -61,13 +61,14 @@ A layer may depend on itself or a lower layer, never a higher layer.
 
 ## Product-driven evolution
 
-Gouno UI is in product-validation mode.
+Gouno UI is in second-product validation mode.
 
-- **Primary line:** Gosso Admin, one real page/page-family at a time.
-- **Cross-product corpora:** Blog Admin and relevant Blog pages.
+- **Completed comparison corpus:** Gosso Admin route-level Showcase coverage, including its product-language convergence pass.
+- **Active migration line:** Blog Admin, one real page/page-family at a time, beginning with `/admin/posts`.
+- **Additional cross-product corpus:** relevant Gouno Blog public-site pages when their semantics overlap.
 - Start pages with Core + Theme + admitted Gouno structure + product-local JSX/Tailwind.
 - Initial shell baseline: `AppShell`, `PageContainer`, `NavigationGroup`, `navigationItemClass`.
-- `PageHeader` is additionally admitted from cross-product page evidence (PD-011).
+- `PageHeader` is additionally admitted from cross-product page evidence (PD-011) and must continue to be challenged by Blog Admin rather than treated as untouchable precedent.
 - Existing Legacy implementations are evidence, never automatic precedent.
 - First semantic occurrence stays local; second similarity is noted; third semantically equivalent occurrence triggers review, not automatic extraction.
 - Compare intent, state, lifecycle, accessibility, responsive behavior and content/action policy—not old names or DOM similarity.
@@ -82,7 +83,7 @@ Gouno UI is in product-validation mode.
 Showcase has two roles:
 
 1. dogfood already-admitted canonical APIs;
-2. own documentation/development tooling such as code preview, API tables, demo framing and viewport simulation.
+2. own documentation/development tooling such as code preview, API tables, demo framing, viewport simulation and `FixtureDock`.
 
 Showcase-only repetition does **not** count as sufficient public-abstraction evidence. Evidence order:
 
@@ -91,6 +92,8 @@ Showcase-only repetition does **not** count as sufficient public-abstraction evi
 3. Showcase/tests/tooling as supporting evidence only.
 
 Example: Showcase `CodeBlock` stays private. If a real Blog article page later independently requires the same read-only code/highlight/copy behavior, run the normal admission review; if accepted, create Core `CodeBlock` and migrate Showcase to it.
+
+`FixtureDock` is likewise Showcase-private. Route labels, static-fixture markers and scenario controls stay outside normal product layout and never count toward Pattern/Gouno admission evidence.
 
 ## Showcase information architecture
 
@@ -112,8 +115,9 @@ Example: Showcase `CodeBlock` stays private. If a real Blog article page later i
 - A Showcase Preview and displayed Code sample must represent the same implementation.
 - Completion percentages are audit evidence, not architecture scores.
 - A component is `100%` only for its proven Gouno scope after runtime API, exported types, representative demos, example code, accessibility behavior, focused tests and real product validation agree. It never means blindly copying another library's historical surface.
+- Compound components own structural spacing between their semantic slots; content regions own their own internal padding/rhythm. Do not fix canonical slot-spacing defects with page-local margins (PD-020).
 
-Current Tabs canonical high-level API follows PD-010: `activeKey`, `defaultActiveKey`, `items[].key`, `onChange`; pre-reset value-style names are temporary migration compatibility only.
+Current Tabs canonical high-level API follows PD-010: `activeKey`, `defaultActiveKey`, `items[].key`, `onChange`; pre-reset value-style names are temporary migration compatibility only. Tabs owns the TabBar↔TabPanel structural gap and keeps its active indicator inside the TabList scroll boundary.
 
 ## Delivery
 
