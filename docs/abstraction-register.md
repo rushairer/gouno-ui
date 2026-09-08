@@ -86,7 +86,7 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Evidence:** Gosso Admin `/system-management/:tab` Clients, Users and Audit all use tabular resource management; Users/Audit add pagination/filtering. Blog Admin Posts and Users independently show table/list, filtering, selection, responsive and action needs.
 - **Cross-product/Legacy review:** Gosso Clients/Users/Audit, Blog Admin Posts/Users, Legacy `patterns/data-table.tsx`.
 - **Reasoning:** there is now enough evidence to review a shared resource-table interaction, but not enough semantic convergence to freeze one API. Legacy DataTable is a broad feature bag combining loading/error/empty, columns, selection, sorting, filtering, pagination, expansion, toolbar and batch actions. Re-admitting it now would force unrelated product requirements into one contract.
-- **API impact:** none. Pattern layer remains empty. System Management uses Core `Table`/`Pagination` plus product-local filters/actions/state.
+- **API impact:** none. Pattern layer remains empty at this decision point. System Management uses Core `Table`/`Pagination` plus product-local filters/actions/state.
 - **Follow-up:** later Gosso and Blog Admin list pages should reveal the smallest stable interaction contract. Only then design a new Pattern from evidence rather than moving Legacy back.
 
 ### PD-013 — Gosso authentication surfaces remain product-local and standalone
@@ -176,8 +176,8 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Evidence:** real Blog Admin `/admin/posts`, compared with Gosso System Management Clients/Users/Audit and Legacy DataTable/FilterBar/BulkActionBar/ResponsiveList-related prior art.
 - **Decision:** Blog Admin becomes the active migration line and Gosso Admin becomes the completed first-product comparison corpus. Posts independently revalidates `PageHeader(title, description, actions)` without expanding its API. Search/status/category/tag filtering, desktop Table/mobile list presentation, selection/batch actions, loading/error/empty orchestration, pagination and destructive confirmation remain product-local.
 - **Reasoning:** cross-product evidence now clearly proves that resource-management pages repeat across products, but it still does not prove that one public DataTable feature bag is the correct boundary. Gosso management tables and Blog Posts share some mechanics while Blog Posts also requires content metadata, responsive alternate presentation and different batch workflows. Restoring Legacy DataTable/BulkActionBar/FilterBar/ResponsiveList now would freeze accidental coupling rather than a stable semantic contract.
-- **API impact:** none. Pattern remains intentionally empty. `PageHeader` evidence is strengthened; DataTable/filter/bulk/responsive-list candidates remain deferred.
-- **Follow-up:** migrate the next representative Blog Admin list pages (for example Users, Categories or Comments) one at a time. If a smaller interaction contract repeats or a canonical component defect becomes clear, stop the line immediately and review it rather than waiting for full Blog Admin migration.
+- **API impact:** none at this decision point. `PageHeader` evidence is strengthened; DataTable/filter/bulk/responsive-list candidates remain deferred.
+- **Follow-up:** migrate representative Blog Admin collection pages one at a time. If a smaller interaction contract repeats, review that contract independently from the surrounding collection feature bag.
 
 ### PD-023 — Single Surface + Shared Edge Inset
 - **Status:** accepted
@@ -210,7 +210,7 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Evidence:** Gosso System Management Site Settings and Blog Admin Site Settings independently require a padded settings body plus a full-bleed sticky save region inside one rounded surface.
 - **Decision:** the repeated stable contract is the Card anatomy and edge-ownership rule already captured by PD-024, not a new interaction component. `Card padding="none"` + `CardContent` + `CardFooter` expresses the invariant without hiding product-specific dirty state, validation, save lifecycle, secondary actions or authorization policy.
 - **Reasoning:** a `StickyFormFooter` or `SaveBar` would currently mostly wrap class names while forcing different product save semantics behind one API. Cross-product repetition therefore strengthens the design-language rule but does not automatically promote the composition to Pattern.
-- **API impact:** none. Pattern remains empty; existing Core Card anatomy is sufficient.
+- **API impact:** none. Existing Core Card anatomy is sufficient.
 - **Follow-up:** reconsider only when another real workflow proves additional stable behavior beyond surface anatomy, such as shared unsaved-change orchestration, submit ownership or navigation blocking.
 
 ### PD-027 — Blog privileged-edit gate passes Rule-of-Three review but remains product-local
@@ -220,4 +220,15 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Decision:** do not admit `SudoGate` as a public Pattern yet. All current evidence belongs to one Blog product family and is coupled to GOSSO step-up/MFA semantics, a roughly 10-minute elevated window and Blog-specific authorization boundaries.
 - **Reasoning:** Rule of Three triggers mandatory abstraction review, not automatic promotion. A generic visual lock overlay would discard the security semantics that make this interaction meaningful, while a GOSSO-aware public Pattern would leak one product integration policy into the shared UI layer.
 - **API impact:** none. Keep the gate product-local and compose it from Core surfaces/actions.
-- **Follow-up:** revisit if an independently owned product proves the same privileged-action lifecycle with a product-agnostic contract. Continue with Blog Admin Comments next because its moderation-list workflow pressures collection/filter/batch/async assumptions without selecting another page merely for Table similarity.
+- **Follow-up:** revisit if an independently owned product proves the same privileged-action lifecycle with a product-agnostic contract.
+
+### PD-028 — BulkActionBar becomes the first admitted Pattern
+- **Status:** accepted
+- **Owner:** Patterns
+- **Evidence:** three independently rebuilt Blog Admin workflows now converge on the same interaction despite different collection presentations: Posts uses responsive Table/mobile cards, Comments uses a moderation Card/List queue, and Categories uses a taxonomy Table plus create/edit Drawer. Each requires a visible selected-context label, an accessible bulk-action toolbar, arbitrary batch actions, a canonical cancel-selection affordance and sticky bottom visibility. Real Blog prior art additionally shows the same concept in Tags, Pages, Notifications, Media Library and Operations Workspace.
+- **Legacy review:** `src/legacy/patterns/bulk-action-bar.tsx` and the Blog package implementation were reviewed only as prior art. Their existence did not decide admission.
+- **Decision:** admit a new canonical `BulkActionBar` Pattern because the stable contract is now an interaction, not merely repeated styling. The Pattern owns `role="toolbar"`, the default accessible name, sticky surface presentation, selected-context presentation and cancel affordance. The product continues to own selection state and every domain action.
+- **API impact:** add `BulkActionBar`/`BulkActionBarProps` to `@gouno/ui/patterns` with the minimal API `selectionLabel`, `onCancel`, optional `cancelLabel`, arbitrary `children`, standard `aria-label` and normal HTML/className extension. Do not restore product-specific convenience props such as `onAIAssist`, and do not add a non-standard `ariaLabel` alias.
+- **Migration impact:** Posts, Comments and Categories adopt the canonical Pattern. This does not re-admit `DataTable`, `FilterBar`, `AsyncState` or a collection feature bag; it demonstrates the intended strategy of extracting a smaller stable interaction from heterogeneous pages.
+- **Validation:** the Gouno UI Patterns workspace gains a dedicated Showcase page with live demo, example code and API table; focused tests cover toolbar semantics, custom accessible naming, cancel behavior and product-owned actions.
+- **Follow-up:** migrate another real Blog Admin page such as Tags and use it to challenge the Pattern without expanding its API by default. If a later workflow cannot fit this contract cleanly, revise or shrink the Pattern rather than creating aliases.
