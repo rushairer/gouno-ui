@@ -20,6 +20,7 @@ import {
   Tag,
   Text,
 } from "../../../src/core";
+import { FixtureDock } from "../../components/fixture-dock";
 
 type PreviewRole = "admin" | "user";
 
@@ -116,13 +117,11 @@ export function GossoOverviewDemo() {
 
   return (
     <div className="flex flex-col gap-6 lg:gap-8">
-      <div className="flex flex-col gap-3 rounded-lg border bg-muted/30 p-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0">
-          <Text as="div" size="sm" className="font-medium">场景预览</Text>
-          <Text size="xs" tone="muted" className="mt-0.5">真实页面由当前会话角色决定；Showcase 使用静态身份切换覆盖两种主要状态。</Text>
-        </div>
-        <Segmented<PreviewRole> aria-label="预览身份" options={roleOptions} value={role} onChange={setRole} />
-      </div>
+      <FixtureDock
+        route="/"
+        note="真实页面由当前会话角色决定；Showcase 使用静态身份覆盖管理员与普通用户两种主要状态。"
+        controls={<Segmented<PreviewRole> aria-label="预览身份" options={roleOptions} value={role} onChange={setRole} block />}
+      />
 
       <Card padding="lg" variant="elevated" className="relative overflow-hidden border-primary/20">
         <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-28 size-72 rounded-full bg-primary/10 blur-3xl" />
