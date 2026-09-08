@@ -43,7 +43,7 @@ describe("Blog Admin AI Operations complete route shell", () => {
     expect(screen.getByRole("tab", { name: "高级设置" })).toBeTruthy();
     expect(screen.getByRole("heading", { level: 2, name: "从一件想改善的事开始" })).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("tab", { name: "自动化" }));
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "自动化" }), { button: 0 });
     expect(screen.getByRole("heading", { level: 2, name: "旧文维护" })).toBeTruthy();
   });
 
@@ -81,12 +81,12 @@ describe("Blog Admin AI Operations complete route shell", () => {
     expect(screen.getByText("Daily Briefing Writer")).toBeTruthy();
     expect(screen.getByText("Skill: Daily Briefing v6")).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("tab", { name: "Tools" }));
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "Tools" }), { button: 0 });
     expect(screen.getByText("create_draft", { selector: "strong" })).toBeTruthy();
     expect(screen.getByText(/Workflow 不直接调用 Tool/)).toBeTruthy();
     expect(aiOpsAdvancedFixture.tools.find((tool) => tool.name === "create_draft")?.risk).toBe("high");
 
-    fireEvent.click(screen.getByRole("tab", { name: "模型连接" }));
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "模型连接" }), { button: 0 });
     expect(screen.getByText("gpt-5.6-sol")).toBeTruthy();
     fireEvent.click(screen.getAllByRole("button", { name: "测试连接" })[0]);
     expect(screen.getByText("OpenAI GPT-5.6：连接测试成功。")).toBeTruthy();
