@@ -26,7 +26,7 @@ export function BulkActionBar({
       aria-label={ariaLabel}
       data-slot="bulk-action-bar"
       className={cn(
-        "sticky bottom-4 z-20 flex flex-col gap-3 rounded-lg border border-primary/30 bg-popover/95 p-4 shadow-overlay backdrop-blur sm:flex-row sm:items-center",
+        "sticky bottom-4 z-20 flex flex-col gap-3 rounded-lg border border-primary/30 bg-card p-4 sm:flex-row sm:items-center",
         className,
       )}
     >
