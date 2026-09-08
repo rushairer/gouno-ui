@@ -42,7 +42,7 @@ describe("BulkActionBar", () => {
     expect(onCancel).toHaveBeenCalledTimes(1);
   });
 
-  it("keeps sticky presentation and arbitrary actions inside one stable pattern surface", () => {
+  it("keeps sticky context without manufacturing overlay elevation", () => {
     render(
       <BulkActionBar selectionLabel="已选择 1 项" onCancel={() => undefined}>
         <Button size="small" color="error">删除</Button>
@@ -52,6 +52,9 @@ describe("BulkActionBar", () => {
     const toolbar = screen.getByRole("toolbar", { name: "批量操作" });
     expect(toolbar.className).toContain("sticky");
     expect(toolbar.className).toContain("bottom-4");
+    expect(toolbar.className).toContain("bg-card");
+    expect(toolbar.className).not.toContain("shadow-");
+    expect(toolbar.className).not.toContain("backdrop-blur");
     expect(screen.getByRole("button", { name: "删除" })).toBeTruthy();
   });
 });
