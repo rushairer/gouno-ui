@@ -62,7 +62,7 @@ describe("Blog Admin Tags product migration fixture", () => {
     render(<BlogAdminTagsDemo />);
 
     fireEvent.click(screen.getByRole("checkbox", { name: "选择标签 OAuth" }));
-    const toolbar = screen.getByRole("toolbar", { name: "批量操作" });
+    let toolbar = screen.getByRole("toolbar", { name: "批量操作" });
     fireEvent.click(within(toolbar).getByRole("button", { name: "交给 AI" }));
 
     const aiDialog = screen.getByRole("dialog");
@@ -70,8 +70,14 @@ describe("Blog Admin Tags product migration fixture", () => {
     fireEvent.click(within(aiDialog).getByRole("button", { name: "启动工作流" }));
     expect(screen.getByText("已将 1 个标签交给 AI 工作流（Showcase 模拟）。")).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("checkbox", { name: "选择标签 OAuth" }));
-    fireEvent.click(screen.getByRole("toolbar", { name: "批量操作" }).querySelector('button[aria-label]') ?? screen.getByRole("button", { name: "删除" }));
+    toolbar = screen.getByRole("toolbar", { name: "批量操作" });
+    fireEvent.click(within(toolbar).getByRole("button", { name: "删除" }));
+    const deleteDialog = screen.getByRole("dialog");
+    expect(within(deleteDialog).getByText("确认删除选中的 1 个标签？文章本身不会被删除。")).toBeTruthy();
+    fireEvent.click(within(deleteDialog).getByRole("button", { name: "确认删除" }));
+
+    expect(screen.queryByText("OAuth")).toBeNull();
+    expect(screen.getByText("标签已删除（Showcase 模拟）。")).toBeTruthy();
   });
 
   it("preserves loading, empty and error states", () => {
