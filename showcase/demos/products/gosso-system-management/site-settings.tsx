@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Image, Save } from "lucide-react";
 import { Alert, Button, Card, CardContent, CardFooter, FormField, Input, Text, Textarea } from "../../../../src/core";
-import { PageHeader } from "../../../../src/gouno";
+import { ManagementSectionHeader } from "./shared";
 
 type Branding = {
   productName: string;
@@ -39,7 +39,7 @@ export function SiteSettingsPanel() {
 
   return (
     <div className="flex flex-col gap-5">
-      <PageHeader title="站点设置" description="维护 GOSSO 登录入口的产品名称、品牌资源和登录页文案，并在保存前预览结果。" />
+      <ManagementSectionHeader title="站点设置" description="维护 GOSSO 登录入口的产品名称、品牌资源和登录页文案，并在保存前预览结果。" />
       {saved ? <Alert type="success" showIcon title="站点设置已保存（Showcase 模拟）。" /> : null}
 
       <form onSubmit={save} className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
@@ -63,7 +63,7 @@ export function SiteSettingsPanel() {
             <div className="mb-4 flex items-center gap-2"><Image aria-hidden="true" className="size-4 text-muted-foreground" /><Text size="sm" className="font-medium">登录页预览</Text></div>
             <div className="relative min-h-[430px] overflow-hidden rounded-xl border bg-muted/30 p-6">
               <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-muted/60" />
-              <div className="relative mx-auto mt-12 max-w-sm rounded-xl border bg-background/95 p-6 shadow-lg">
+              <div className="relative mx-auto mt-12 max-w-sm rounded-xl border bg-background/95 p-6">
                 <div className="mb-5 flex items-center gap-3">
                   <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-sm font-bold text-primary">{settings.productName.slice(0, 2).toUpperCase()}</div>
                   <div><div className="font-semibold">{settings.productName || "GOSSO"}</div><Text size="xs" tone="muted">Identity Provider</Text></div>

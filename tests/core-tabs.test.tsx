@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { Tabs } from "../src/core";
+import { Tabs, Tag } from "../src/core";
 
 afterEach(cleanup);
 
@@ -80,6 +80,41 @@ describe("Core Tabs", () => {
     expect(list.className).toContain("overflow-y-hidden");
     expect(panel.className).not.toContain("pt-5");
     expect(panel.className).toContain("min-w-0");
+  });
+
+  it("keeps tab block-size stable when labels contain badges or other metadata", () => {
+    render(
+      <Tabs
+        ariaLabel="Operations"
+        items={[
+          { key: "overview", label: "概览", children: "Overview" },
+          {
+            key: "inbox",
+            label: <span className="inline-flex items-center gap-2">待我处理 <Tag color="warning">6</Tag></span>,
+            children: "Inbox",
+          },
+        ]}
+      />,
+    );
+
+    const normal = screen.getByRole("tab", { name: "概览" });
+    const withMetadata = screen.getByRole("tab", { name: /待我处理/ });
+    expect(normal.className).toContain("!h-10");
+    expect(withMetadata.className).toContain("!h-10");
+    expect(normal.className).toContain("!py-0");
+    expect(withMetadata.className).toContain("!py-0");
+  });
+
+  it("maps fixed heights across all public sizes", () => {
+    const item = [{ key: "one", label: "One", children: "Panel" }] as const;
+    const { rerender } = render(<Tabs ariaLabel="Sized tabs" size="small" items={item} />);
+    expect(screen.getByRole("tab", { name: "One" }).className).toContain("!h-8");
+
+    rerender(<Tabs ariaLabel="Sized tabs" size="middle" items={item} />);
+    expect(screen.getByRole("tab", { name: "One" }).className).toContain("!h-10");
+
+    rerender(<Tabs ariaLabel="Sized tabs" size="large" items={item} />);
+    expect(screen.getByRole("tab", { name: "One" }).className).toContain("!h-11");
   });
 
   it("maps bottom/right positions without pushing the indicator outside the list", () => {

@@ -18,8 +18,7 @@ import {
   Tag,
   Text,
 } from "../../../../src/core";
-import { PageHeader } from "../../../../src/gouno";
-import { ConfirmAction, StatusNotice } from "./shared";
+import { ConfirmAction, ManagementSectionHeader, StatusNotice } from "./shared";
 
 type UserStatus = "active" | "suspended";
 type UserFixture = {
@@ -105,7 +104,7 @@ export function UsersPanel() {
 
   return (
     <div className="flex flex-col gap-5">
-      <PageHeader
+      <ManagementSectionHeader
         title="用户管理"
         description="管理身份平台账户状态、角色、安全凭据与高风险管理操作。"
         actions={

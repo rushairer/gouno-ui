@@ -10,32 +10,33 @@ function selectTab(name: string) {
 }
 
 describe("Gosso Admin System Management migration fixture", () => {
-  it("preserves all five route-backed management sections without in-flow fixture chrome", () => {
+  it("preserves one route-family H1 with five tab-backed H2 sections and nested H3 content", () => {
     render(<GossoSystemManagementDemo />);
+    expect(screen.getByRole("heading", { level: 1, name: "系统管理" })).toBeTruthy();
     expect(screen.getAllByRole("tab")).toHaveLength(5);
     expect(screen.queryByText("真实产品路由")).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
     expect(screen.getByText("/system-management/clients")).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "OAuth2 客户端" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "OAuth2 客户端" })).toBeTruthy();
 
     selectTab("用户管理");
     expect(screen.getByText("/system-management/users")).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "用户管理" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "用户管理" })).toBeTruthy();
     expect(screen.getAllByText("正常").length).toBeGreaterThan(0);
 
     selectTab("审计日志");
     expect(screen.getByText("/system-management/audit-logs")).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "审计日志" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "审计日志" })).toBeTruthy();
 
     selectTab("站点设置");
     expect(screen.getByText("/system-management/site-settings")).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "站点设置" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "站点设置" })).toBeTruthy();
 
     selectTab("系统状态");
     expect(screen.getByText("/system-management/system")).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "系统状态" })).toBeTruthy();
-    expect(screen.getByRole("heading", { level: 2, name: "基础设施健康" })).toBeTruthy();
-    expect(screen.getByRole("heading", { level: 2, name: "OpenID Connect 配置" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "系统状态" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 3, name: "基础设施健康" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 3, name: "OpenID Connect 配置" })).toBeTruthy();
     expect(screen.getAllByText("正常").length).toBeGreaterThan(0);
   });
 

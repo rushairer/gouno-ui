@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FileText, KeyRound, Shield, SlidersHorizontal, Users } from "lucide-react";
 import { Tabs } from "../../../../src/core";
+import { PageHeader } from "../../../../src/gouno";
 import { AuditLogsPanel } from "./audit-logs";
 import { ClientsPanel } from "./clients";
 import { FixtureBanner } from "./shared";
@@ -39,6 +40,10 @@ export function GossoSystemManagementDemo() {
   return (
     <div className="flex flex-col gap-6">
       <FixtureBanner route={`/system-management/${activeTab}`} />
+      <PageHeader
+        title="系统管理"
+        description="管理身份平台客户端、用户、审计记录、公开站点配置与系统运行状态。"
+      />
       <Tabs<SystemManagementTab>
         activeKey={activeTab}
         items={systemTabs}

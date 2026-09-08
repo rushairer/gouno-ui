@@ -32,7 +32,7 @@ export function Card({ as: Component = "div", variant = "default", padding = "ba
     "ui-card min-w-0 rounded-lg border bg-card text-card-foreground flex flex-col gap-5",
     padding === "sm" ? "p-4" : padding === "lg" ? "p-8" : padding === "none" ? "p-0" : "p-6",
     variant === "subtle" && "bg-muted",
-    variant === "elevated" && "shadow-lg",
+    variant === "elevated" && "bg-raised shadow-raised",
     interactive && "cursor-pointer hover:border-primary",
     className,
   )} />;

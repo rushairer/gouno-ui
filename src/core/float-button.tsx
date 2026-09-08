@@ -13,7 +13,7 @@ export interface FloatButtonProps {
 export function FloatButton({ icon, tooltip, onClick, href, className, style }: FloatButtonProps) {
   const content = <span aria-hidden={!tooltip}>{icon || "↑"}</span>;
   const commonProps = {
-    className: cn("fixed bottom-6 right-6 z-40 flex size-12 items-center justify-center rounded-full border bg-background shadow-lg hover:bg-accent", className),
+    className: cn("fixed bottom-6 right-6 z-40 flex size-12 items-center justify-center rounded-full border bg-popover shadow-overlay hover:bg-accent", className),
     style,
     title: typeof tooltip === "string" ? tooltip : undefined,
     "aria-label": typeof tooltip === "string" ? tooltip : undefined,

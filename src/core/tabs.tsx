@@ -46,9 +46,9 @@ const gapBySize: Record<ControlSize, number> = {
 };
 
 const triggerSizeClass: Record<ControlSize, string> = {
-  small: "min-h-8 px-1.5 py-1.5 text-sm",
-  middle: "min-h-10 px-2 py-2.5 text-sm",
-  large: "min-h-11 px-2.5 py-3 text-base",
+  small: "!h-8 px-1.5 !py-0 text-sm",
+  middle: "!h-10 px-2 !py-0 text-sm",
+  large: "!h-11 px-2.5 !py-0 text-base",
 };
 
 function itemKey<T extends string>(item: TabItem<T> | LegacyTabItem<T>) {

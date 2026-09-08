@@ -1,6 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { Alert, Button, Card, Modal, Text } from "../../../../src/core";
-import { PageHeader } from "../../../../src/gouno";
+import { Alert, Button, Card, Heading, Modal, Text } from "../../../../src/core";
 
 export interface SectionProps {
   title: ReactNode;
@@ -28,7 +27,13 @@ export interface ConfirmActionProps {
 export function Section({ title, description, actions, surface = "card", children }: SectionProps) {
   return (
     <section className="flex flex-col gap-5">
-      <PageHeader title={title} description={description} actions={actions} />
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <Heading level={2} className="text-lg leading-tight">{title}</Heading>
+          <Text tone="muted" size="sm" className="mt-1.5 max-w-3xl leading-relaxed">{description}</Text>
+        </div>
+        {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
+      </header>
       {surface === "card" ? (
         <Card padding="base" className="overflow-hidden">{children}</Card>
       ) : children}

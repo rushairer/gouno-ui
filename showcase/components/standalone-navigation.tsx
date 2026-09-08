@@ -42,7 +42,7 @@ export function StandaloneNavigation({
       aria-label="Standalone Showcase navigation"
       className="fixed left-4 top-4 z-[100] flex max-w-[calc(100vw-2rem)] flex-col items-start gap-2"
     >
-      <div className="flex items-center gap-1 rounded-full border border-border/80 bg-background/88 p-1 shadow-lg backdrop-blur-xl">
+      <div className="flex items-center gap-1 rounded-full border border-border/80 bg-popover/90 p-1 shadow-overlay backdrop-blur-xl">
         <button
           type="button"
           aria-label="返回应用页"
@@ -71,7 +71,7 @@ export function StandaloneNavigation({
       {open ? (
         <div
           id="standalone-showcase-menu"
-          className="w-[min(19rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-border/80 bg-background/94 p-2 shadow-xl backdrop-blur-xl"
+          className="w-[min(19rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-border/80 bg-popover/94 p-2 shadow-overlay backdrop-blur-xl"
         >
           {groups.map((group) => (
             <div key={group.group} className="py-1 first:pt-0 last:pb-0">

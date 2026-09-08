@@ -2,15 +2,62 @@
 
 Status: binding visual-composition contract for canonical Gouno UI and migrated product surfaces.
 
-Decision records: **PD-023 — Single Surface + Shared Edge Inset** and **PD-024 — Surface Edge Ownership + Full-Bleed Anatomy**. This document is the durable specification for those decisions and future visual-composition rules.
-
-This document governs visual structure that is too durable to leave as page-local taste but is not itself a public React API contract.
+This document is the durable specification for cross-component visual composition. It governs design decisions that are too stable to leave as page-local taste but are not themselves public React API contracts.
 
 - `docs/product-driven-development.md` decides when real product evidence requires design-system work.
 - `docs/architecture.md` decides layer ownership and dependency direction.
 - `docs/api-specification.md` decides public API naming, state and behavior.
-- This document defines cross-component visual composition invariants such as surfaces, spacing ownership and alignment.
-- `docs/abstraction-register.md` records abstraction evidence; PD-023/PD-024 are recorded there because they govern composition rather than introducing public React abstractions.
+- This document defines binding composition invariants such as hierarchy, surfaces, spacing ownership, alignment, elevation and interaction geometry.
+- `docs/abstraction-register.md` records the evidence and decision history behind material changes.
+
+## Foundation model
+
+Gouno UI should not accumulate visual rules only after screenshots expose defects. New pages and components start from the following system model, and product-validation findings refine that model rather than replacing it with one-off fixes.
+
+### F-01 — Semantic hierarchy before decoration
+
+Hierarchy is established in this order:
+
+1. information architecture and heading level;
+2. spacing and grouping;
+3. surface/background/border separation;
+4. semantic state color;
+5. elevation only when actual visual depth needs to be communicated.
+
+Do not use shadow, saturated color, extra borders or oversized radius to compensate for an unclear information hierarchy.
+
+### F-02 — One screen has an attention budget
+
+Every strong visual cue spends attention: primary color, destructive color, large typography, heavy border, shadow, animation and persistent floating chrome all compete for focus.
+
+A surface should not become “important” merely by stacking several strong treatments. Prefer one primary emphasis mechanism and let peer content stay quieter. In particular, do not combine strong tint + strong border + strong shadow + exaggerated radius on ordinary application content.
+
+### F-03 — Depth is semantic, not decorative
+
+Visual depth answers a structural question: is this surface on the page, intentionally raised above the page, or temporarily over another surface? Shadow size is an implementation detail of that semantic role.
+
+Normal page content is flat by default. Raised and overlay depth are scarce resources.
+
+### F-04 — Interaction state must preserve geometry
+
+Hover, selected, unread, count, error, loading and permission states may change appearance but should not unexpectedly change the component's outer geometry. State changes must not make sibling controls jump, change row heights, or detach active indicators from their owning boundary unless reflow is an explicit behavior of that component.
+
+### F-05 — Light and dark themes express the same roles, not the same raw values
+
+Theme parity means that semantic hierarchy survives in both themes. Dark mode must not depend on a shadow that is visually indistinguishable from the background; raised/overlay surfaces may therefore use a different neutral surface tone as well as a shadow.
+
+Validate roles (`default`, `raised`, `overlay`, semantic feedback) rather than assuming one numeric color/shadow recipe works in both themes.
+
+## External reference basis
+
+Gouno does not copy another library's API or aesthetics, but mature systems are used to challenge our assumptions:
+
+- **Atlassian Design System — Elevation:** default surfaces are flat; raised/overlay elevations pair surface and shadow tokens; raised elevation should be used intentionally because excessive elevation creates visual noise; dark mode relies on surface differences as well as shadows.
+- **Carbon Design System — Layering:** layer/contextual tokens model nested surface hierarchy instead of relying on decorative shadow. This reinforces the separation between surface level and shadow effect.
+- **Carbon Design System — Tabs:** line tabs use deterministic component heights (for example 40px for the medium text tab), reinforcing geometry-stable navigation.
+- **Ant Design — Shadow:** height is modeled as semantic UI layers; ground-level elements such as inputs do not require shadow.
+
+These references are evidence, not authorities. Gouno's binding choices still require current product evidence and compatibility with the repository's API/design rules.
 
 ## DL-01 — One semantic region, one dominant surface boundary
 
@@ -121,7 +168,7 @@ For every binding visual-composition change:
 
 A rule that exists only in documentation while completed product fixtures still violate it is not considered fully adopted.
 
-Current Gosso Admin application-shell surfaces are a completed comparison corpus. Their normal Card/List/Table/landing surfaces use the shared 24px edge axis. Standalone identity and contained result surfaces may intentionally use a different spacious treatment, but the exception must be semantic and internally consistent rather than accidental legacy padding.
+Current Gosso Admin and Blog Admin application surfaces form the completed Admin comparison corpus. Standalone identity, editor workspaces and contained result surfaces may intentionally use different composition, but the exception must be semantic and internally consistent rather than accidental migration history.
 
 New migrated pages start from the current contract. Do not introduce 20px/32px normal application-surface insets and rely on a future cleanup pass.
 
@@ -166,18 +213,103 @@ Desktop Table row-action cells optimize for stable row geometry. A row's action 
 
 This is a visual-composition rule, not evidence for a public `RowActions`, `ActionGroup` or DataTable abstraction.
 
+## DL-10 — Elevation is a semantic role owned by the design system
+
+Elevation is not a page-local decoration knob. Canonical depth roles are:
+
+| Role | Meaning | Typical surfaces | Shadow |
+| --- | --- | --- | --- |
+| **ground/default** | normal content in document flow | page, normal Card, bordered Table/List, form controls, selected navigation/Tabs, in-flow feedback | none |
+| **raised** | deliberately promoted/focal surface that still belongs to the page | explicit `Card variant="elevated"`, movable/focal surface | `shadow-raised` + raised surface tone |
+| **overlay** | temporary/floating UI above another surface | Select/Dropdown/Popover menus, floating toolbars, `BulkActionBar`, floating notifications/tooling | `shadow-overlay` + overlay/popover surface |
+| **modal** | blocking high-depth overlay | Dialog/Modal, AlertDialog, Drawer/Sheet | `shadow-modal` + modal/overlay surface |
+| **overflow** | indicates clipped/scrollable content, not object height | table/scroll edge cue | directional/inset edge shadow only when a border is insufficient |
+
+Binding rules:
+
+- Normal Cards, bordered Tables, inputs and ordinary navigation do not receive ambient shadow merely to look “finished”. Border, spacing and surface tone should carry ground-level grouping.
+- Product/Showcase fixture code must not create **non-zero** elevation with raw size utilities such as `shadow-md`/`shadow-lg`, arbitrary box-shadow values, or page-local custom shadow colors. Request a semantic component variant/role or document a genuine exception.
+- `shadow-xs` and `shadow-sm` are temporary flat compatibility aliases in the theme. They intentionally produce no visible elevation and must not be used as a new design mechanism.
+- Canonical component code should migrate toward `shadow-raised`, `shadow-overlay` and `shadow-modal`; size aliases remain compatibility implementation paths, not design-language vocabulary.
+- A raised/overlay surface must remain legible in dark mode even when its shadow is hard to see. Pair the semantic shadow with an appropriate surface tone/border rather than increasing black alpha without limit.
+- Do not promote a surface on hover unless that depth change itself communicates interaction. For small controls and ordinary navigation, background/border/color changes are preferred to elevation animation.
+
+Ownership is therefore split cleanly: **Theme tokens define depth values; Core/Pattern/Gouno components own when depth is structurally appropriate; product pages own only the business reason for choosing an existing semantic variant.**
+
+## DL-11 — Route-family identity precedes page-local Tabs
+
+For normal task/settings pages where Tabs switch peer sections within one route family, the stable anatomy is:
+
+```text
+PageHeader (one route-family H1)
+Tabs (page-local navigation)
+Active panel
+└─ optional local H2 / section description / section actions
+```
+
+Rules:
+
+- `PageHeader` identifies the route-family page and therefore appears before page-local Tabs.
+- A tab change must not replace the route-family H1 with a different H1. Tab-local content uses H2/local section headings as needed.
+- Tab-local actions that truly belong only to the active section may stay with the local H2 instead of being hoisted into the route-level `PageHeader`.
+- Tabs that are themselves the primary route-family switch still follow the same visual order even when the URL segment/query changes with the active key.
+- Do not choose `Tabs → PageHeader` on one product and `PageHeader → Tabs` on another merely because each local implementation was migrated at a different time.
+- Editor workspaces are an explicit exception: PD-035/PD-036 intentionally use command-bar/editor grammar instead of normal `PageHeader → Tabs → content` composition.
+- Standalone identity surfaces are a separate surface family and are not forced into this task-page grammar.
+
+This rule standardizes hierarchy, not implementation. It does not create a `TabbedPage` Pattern.
+
+## DL-12 — Stateful decoration must not change control geometry
+
+Reusable controls own their outer block size. Auxiliary content such as icons, counts, status dots, badges or metadata may fit *inside* that geometry but must not silently enlarge one sibling control.
+
+For Tabs specifically:
+
+- public Tab sizes have deterministic block heights;
+- line indicators remain attached to the TabList edge;
+- adding a count/status label to one Tab must not increase TabList height or leave other active indicators floating above the list boundary;
+- if auxiliary content cannot fit within the supported Tab size, the content composition is invalid and should be redesigned rather than allowing one Tab to redefine the row geometry.
+
+Apply the same test to Buttons, segmented controls, toolbar items, table rows and navigation items: state should not cause accidental layout shift.
+
+## DL-13 — Emphasis uses the weakest sufficient signal
+
+Choose the weakest signal that communicates the semantic difference clearly:
+
+1. spacing/grouping;
+2. typography weight/size;
+3. neutral surface or border;
+4. semantic tint/color;
+5. elevation;
+6. motion.
+
+Do not reach immediately for shadow or saturated brand color. This keeps admin/product screens calm enough that destructive actions, warnings, focus rings and true overlays remain obvious when they matter.
+
+## DL-14 — Binding visual rules are dual-theme contracts
+
+Any new binding rule involving color, border, surface, elevation, focus or state contrast must be reviewed in both light and dark themes.
+
+- A treatment that only “works” because dark mode hides its shadow is not accepted.
+- A dark-mode fix that destroys light-mode hierarchy is not accepted.
+- Prefer semantic role tokens over one theme's literal values.
+- Where automated source/runtime checks cannot prove visual parity, the migration acceptance record must explicitly call for light + dark visual verification in an environment that can render the page.
+
 ## Review checklist
 
-When a page looks misaligned or over-framed, ask in this order:
+When a page looks inconsistent, ask in this order:
 
-1. Is this boundary communicating a real semantic grouping, or only adding padding?
-2. Is the child already a complete surface?
-3. Are peer surfaces aligned by edge inset rather than by extra wrappers?
-4. Can Table/List preserve internal density while aligning only its outer content edges?
-5. Is the discrepancy actually page gutter, surface inset, compound structural gap, content spacing, or edge geometry ownership?
-6. If an internal region reaches the parent edge, does the parent still own border/radius/clipping without negative-margin hacks?
-7. Would removing one border/radius make the hierarchy clearer without losing meaning?
-8. If a Table has repeated row actions, do they remain one structural family on one line while Table overflow owns width pressure?
-9. If this rule just changed, have all already-migrated governed surfaces been scanned and migrated or explicitly documented as intentional exceptions?
+1. Is the information hierarchy correct before styling (single route H1, local H2s, Tabs in the right level)?
+2. Is this boundary communicating a real semantic grouping, or only adding padding?
+3. Is the child already a complete surface?
+4. Are peer surfaces aligned by edge inset rather than by extra wrappers?
+5. Can Table/List preserve internal density while aligning only its outer content edges?
+6. Is the discrepancy actually page gutter, surface inset, compound structural gap, content spacing, or edge geometry ownership?
+7. If an internal region reaches the parent edge, does the parent still own border/radius/clipping without negative-margin hacks?
+8. Would removing one border/radius make the hierarchy clearer without losing meaning?
+9. Is a shadow communicating real depth, and is the component using the correct semantic elevation role rather than a page-local size utility?
+10. Does the same depth/surface hierarchy remain clear in both light and dark themes?
+11. If a Table has repeated row actions, do they remain one structural family on one line while Table overflow owns width pressure?
+12. Can selected/count/error/loading state change without altering sibling control geometry?
+13. If this rule just changed, have all already-migrated governed surfaces been scanned and migrated or explicitly documented as intentional exceptions?
 
 These rules are design-language invariants, not permission to create new Pattern/Gouno components. Public abstraction still requires the product-driven admission process.

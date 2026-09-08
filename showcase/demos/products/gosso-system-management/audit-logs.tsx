@@ -16,7 +16,7 @@ import {
   TableRow,
   Tag,
 } from "../../../../src/core";
-import { PageHeader } from "../../../../src/gouno";
+import { ManagementSectionHeader } from "./shared";
 
 type AuditFixture = {
   id: string;
@@ -69,7 +69,7 @@ export function AuditLogsPanel() {
 
   return (
     <div className="flex flex-col gap-5">
-      <PageHeader title="审计日志" description="按事件类型和目标账户查询身份平台安全审计事件，并查看事件上下文。" />
+      <ManagementSectionHeader title="审计日志" description="按事件类型和目标账户查询身份平台安全审计事件，并查看事件上下文。" />
 
       <Card padding="sm">
         <form onSubmit={search} className="flex flex-col gap-3 md:flex-row md:items-end">

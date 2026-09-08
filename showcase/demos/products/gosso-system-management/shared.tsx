@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { Alert, IconButton, Modal, Text } from "../../../../src/core";
+import { Alert, Heading, IconButton, Modal, Text } from "../../../../src/core";
 import { FixtureDock } from "../../../components/fixture-dock";
 
 export function FixtureBanner({ route }: { route: string }) {
@@ -8,6 +8,26 @@ export function FixtureBanner({ route }: { route: string }) {
       route={route}
       note="Showcase 使用本地 fixture 表达真实交互状态；该工具层不会进入真实 GOSSO 页面。"
     />
+  );
+}
+
+export function ManagementSectionHeader({
+  title,
+  description,
+  actions,
+}: {
+  title: ReactNode;
+  description?: ReactNode;
+  actions?: ReactNode;
+}) {
+  return (
+    <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <div className="min-w-0">
+        <Heading level={2} className="text-lg leading-tight">{title}</Heading>
+        {description ? <Text tone="muted" size="sm" className="mt-1.5 max-w-3xl leading-relaxed">{description}</Text> : null}
+      </div>
+      {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
+    </header>
   );
 }
 
