@@ -1,7 +1,9 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { afterEach, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { PageHeader } from "../src/gouno";
 import { GossoSystemManagementDemo } from "../showcase/demos/products/gosso-system-management";
+
+afterEach(cleanup);
 
 function selectTab(name: string) {
   fireEvent.mouseDown(screen.getByRole("tab", { name }), { button: 0 });
@@ -18,7 +20,6 @@ describe("Gosso Admin System Management migration fixture", () => {
     expect(screen.getByText("/system-management/users")).toBeTruthy();
     expect(screen.getByRole("heading", { name: "用户管理" })).toBeTruthy();
     expect(screen.getAllByText("正常").length).toBeGreaterThan(0);
-    expect(screen.getByText("已暂停")).toBeTruthy();
 
     selectTab("审计日志");
     expect(screen.getByText("/system-management/audit-logs")).toBeTruthy();

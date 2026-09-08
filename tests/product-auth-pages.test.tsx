@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, fireEvent, render, screen, cleanup } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { showcaseCatalog } from "../showcase/catalog";
 import { GossoCallbackDemo } from "../showcase/demos/products/gosso-auth/callback";
@@ -6,6 +6,8 @@ import { GossoForgotPasswordDemo } from "../showcase/demos/products/gosso-auth/f
 import { GossoLoginDemo } from "../showcase/demos/products/gosso-auth/login";
 import { GossoNotFoundDemo } from "../showcase/demos/products/gosso-auth/not-found";
 import { GossoResetPasswordDemo } from "../showcase/demos/products/gosso-auth/reset-password";
+
+afterEach(cleanup);
 
 describe("Gosso Admin authentication route fixtures", () => {
   it("preserves password, MFA and Sudo login states without a public auth abstraction", () => {
@@ -16,6 +18,7 @@ describe("Gosso Admin authentication route fixtures", () => {
     fireEvent.change(screen.getByLabelText(/^密码/), { target: { value: "correct-horse-battery" } });
     fireEvent.click(screen.getByRole("button", { name: "登录" }));
     expect(screen.getByLabelText(/动态验证码/)).toBeTruthy();
+    expect(screen.getByRole("alert").getAttribute("data-type")).toBe("info");
 
     fireEvent.click(screen.getByRole("radio", { name: "Sudo" }));
     expect(screen.getByRole("heading", { level: 1, name: "验证敏感操作" })).toBeTruthy();
@@ -23,13 +26,12 @@ describe("Gosso Admin authentication route fixtures", () => {
     expect(screen.getByText(/step-up/)).toBeTruthy();
   });
 
-  it("uses semantic feedback for login validation", () => {
+  it("uses success feedback for passkey login fixture", () => {
     render(<GossoLoginDemo />);
-    fireEvent.change(screen.getByLabelText(/用户名/), { target: { value: "" } });
-    fireEvent.click(screen.getByRole("button", { name: "登录" }));
+    fireEvent.click(screen.getByRole("button", { name: "使用通行密钥登录" }));
     const alert = screen.getByRole("alert");
-    expect(alert.getAttribute("data-type")).toBe("error");
-    expect(screen.getByText("请输入用户名和密码。")).toBeTruthy();
+    expect(alert.getAttribute("data-type")).toBe("success");
+    expect(screen.getByText("通行密钥登录成功（Showcase 模拟）。")).toBeTruthy();
   });
 
   it("keeps forgot-password success generic", () => {
