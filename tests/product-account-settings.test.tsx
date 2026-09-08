@@ -12,10 +12,12 @@ function selectTab(name: string) {
 }
 
 describe("Gosso Admin Account Settings migration fixture", () => {
-  it("preserves the five route-backed account settings sections", () => {
+  it("preserves the five route-backed account settings sections without putting fixture chrome in product flow", () => {
     render(<GossoAccountSettingsDemo />);
 
     expect(screen.getAllByRole("tab")).toHaveLength(5);
+    expect(screen.queryByText("真实产品路由")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
     expect(screen.getByText("/account-settings/profile")).toBeTruthy();
     expect(screen.getByRole("heading", { name: "个人资料" })).toBeTruthy();
 
