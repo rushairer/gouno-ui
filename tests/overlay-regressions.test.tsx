@@ -6,7 +6,7 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import { Modal, Drawer, Input } from "../src/core";
+import { Button, Modal, Drawer, Input } from "../src/core";
 
 afterEach(cleanup);
 describe("overlay retention and actions", () => {
@@ -49,6 +49,21 @@ describe("overlay retention and actions", () => {
       );
     });
   }
+  it("supports description-only confirmation without an empty body region", () => {
+    render(
+      <Modal
+        open
+        title="恢复历史版本"
+        description="恢复后当前内容会保留为历史版本。"
+        footer={<Button>恢复版本</Button>}
+      />,
+    );
+
+    const dialog = screen.getByRole("dialog");
+    expect(screen.getByText("恢复后当前内容会保留为历史版本。")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "恢复版本" })).toBeTruthy();
+    expect(dialog.querySelector('[data-slot="modal-body"]')).toBeNull();
+  });
   it("provides action events, busy states, mask policy and z-index", () => {
     const ok = vi.fn();
     const cancel = vi.fn();

@@ -26,7 +26,7 @@ export interface ModalProps {
   defaultOpen?: boolean;
   title?: ReactNode;
   description?: ReactNode;
-  children: ReactNode;
+  children?: ReactNode;
   footer?: ReactNode;
   onClose?: () => void;
   onOpenChange?: (open: boolean) => void;
@@ -94,6 +94,7 @@ export function Modal({
   const previousFocus = useRef<HTMLElement | null>(null);
   const controlled = open !== undefined;
   const visible = open ?? internalOpen;
+  const hasBody = loading || children != null;
   const retained = useOverlayBody(children, visible, destroyOnClose);
   const changeOpen = (next: boolean) => {
     if (!controlled) setInternalOpen(next);
@@ -161,21 +162,24 @@ export function Modal({
               <DialogDescription>{description}</DialogDescription>
             ) : null}
           </DialogHeader>
-          <div
-            className="min-w-0 py-2"
-            style={styles?.body}
-            aria-busy={loading || undefined}
-          >
-            {loading && (
-              <div
-                role="status"
-                className="py-8 text-center text-sm text-muted-foreground"
-              >
-                加载中…
-              </div>
-            )}
-            <div hidden={loading}>{retained.body}</div>
-          </div>
+          {hasBody ? (
+            <div
+              data-slot="modal-body"
+              className="min-w-0 py-2"
+              style={styles?.body}
+              aria-busy={loading || undefined}
+            >
+              {loading && (
+                <div
+                  role="status"
+                  className="py-8 text-center text-sm text-muted-foreground"
+                >
+                  加载中…
+                </div>
+              )}
+              <div hidden={loading}>{retained.body}</div>
+            </div>
+          ) : null}
           {(footer !== undefined ? footer !== null : Boolean(onOk)) && (
             <div
               className="flex flex-wrap justify-end gap-3 border-t pt-4"

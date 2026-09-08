@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Input, Modal, Space, Text } from "../../../../src/core";
+import { Button, Modal, Space, Text } from "../../../../src/core";
 
 export default function ModalActions() {
   const [open, setOpen] = useState(false);
@@ -11,7 +11,7 @@ export default function ModalActions() {
       <Modal
         open={open}
         title="保存草稿"
-        description="保存期间确认与取消按钮禁用。"
+        description="当前修改会保存为草稿。保存期间确认与取消按钮禁用。"
         centered={false}
         maxWidth="min(520px, calc(100vw - 32px))"
         confirmLoading={saving}
@@ -34,9 +34,7 @@ export default function ModalActions() {
         afterOpenChange={(value) => {
           if (value) setMessage("编辑中");
         }}
-      >
-        <Input aria-label="标题" defaultValue="Gouno UI" />
-      </Modal>
+      />
       <Text aria-live="polite">{message}</Text>
     </Space>
   );

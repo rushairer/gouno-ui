@@ -102,7 +102,11 @@ const modalApi = [
   },
   { name: "title", description: "标题", type: "ReactNode" },
   { name: "description", description: "辅助描述", type: "ReactNode" },
-  { name: "children", description: "对话框主体内容", type: "ReactNode" },
+  {
+    name: "children",
+    description: "可选的主体内容；仅 title / description / footer 的确认框可省略",
+    type: "ReactNode",
+  },
   { name: "footer", description: "底部操作区域", type: "ReactNode" },
   {
     name: "size",
@@ -329,7 +333,7 @@ export const feedbackDocuments: Record<string, ComponentDocument> = {
   modal: {
     apiSections: modalApiSections,
     title: "Modal 对话框",
-    description: "焦点锁定、Escape 关闭、焦点回收、受控/非受控状态和加载状态。",
+    description: "焦点锁定、Escape 关闭、焦点回收、受控/非受控状态、无主体确认框和加载状态。",
     code: Example1Source.replaceAll(
       "../../../../src/core",
       "@gouno/ui/core",

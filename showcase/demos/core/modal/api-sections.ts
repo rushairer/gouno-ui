@@ -12,7 +12,7 @@ export const overlayStyleApi: ComponentDocument["apiSections"] = [
       {
         name: "body",
         type: "CSSProperties",
-        description: "主体区域（包括 loading 占位）的内联样式",
+        description: "主体区域（存在 children 或 loading 时）的内联样式",
       },
       {
         name: "footer",
