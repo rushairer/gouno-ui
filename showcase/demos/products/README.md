@@ -23,10 +23,11 @@ Blog Admin is the active second-product validation workspace. The current migrat
 1. `blog-admin-posts.tsx` — Posts `/admin/posts`, including filters, loading/error/empty states, desktop Table, mobile list presentation, selection/batch actions, pagination and destructive confirmation.
 2. `blog-admin-users.tsx` — Members & Roles `/admin/users`, including Blog-local membership/role semantics, desktop Table/mobile Cards, edit role/name, suspend/restore, ownership transfer and product-local Sudo/MFA security states.
 3. `blog-admin-site-settings.tsx` — Site Settings `/admin/settings`, including all five real settings groups, RSS validation, favicon/Hero upload semantics, dirty/save lifecycle, loading/error states and product-local Sudo/MFA protection.
+4. `blog-admin-comments.tsx` — Comments `/admin/comments`, including status/reported filters, moderation queue, selection/batch delete, AI workflow entry, destructive confirmation and loading/error/empty states.
 
 The Posts migration was rechecked after PD-023/PD-024. Its normal application surfaces conform to the shared surface contract; the one spacious `Card padding="lg"` is intentionally limited to the contained `Empty` result surface and is not an application alignment precedent. `tests/design-language-conformance.test.ts` protects every currently migrated Blog Admin page from drifting back to accidental 20px/32px normal application insets.
 
-Posts and Members both independently reuse admitted `PageHeader` without expanding its API. They also both need responsive resource presentation, but this is not yet evidence for restoring Legacy `DataTable`, `ResponsiveList`, `FilterBar`, `BulkActionBar` or `AsyncState`. The current evidence says that resource-management mechanics repeat; it does not yet prove one stable public feature-bag boundary.
+Posts and Members independently reuse admitted `PageHeader` without expanding its API. Comments now validates the same route-header contract on a third, non-Table workflow. Resource-management mechanics repeat across Posts, Members and Comments, but Comments is intentionally a moderation Card/List rather than a Table. That weakens the case for restoring one broad Legacy `DataTable`, `ResponsiveList`, `FilterBar`, `BulkActionBar` or `AsyncState` feature bag: the shared mechanics are smaller than the page presentation itself.
 
 Do not collapse Gosso identity users and Blog members into one page/domain abstraction merely because both render a user-like table. Gosso manages identity-platform accounts; Blog Admin manages product membership, roles and high-privilege product actions. Shared abstractions must come from smaller stable presentation/interaction contracts, not from similar nouns or screenshots.
 
@@ -36,9 +37,21 @@ Blog Admin Site Settings independently revalidates the Gosso Site Settings full-
 
 Real Blog `SudoGate` prior art appears in multiple Blog-owned high-privilege areas, and Members plus Site Settings now exercise two distinct real workflows in Showcase. The Rule-of-Three review threshold is therefore satisfied, but public admission is still deferred: all evidence remains inside the Blog product and is tightly coupled to GOSSO recent-MFA/Sudo policy. Keep the security gate product-local until an independently owned product proves the same product-agnostic interaction contract.
 
-The next high-value Blog Admin target is Comments `/admin/comments`. Its moderation queue is intentionally a card/list workflow rather than another Table, which will challenge collection/filter/batch/async assumptions without selecting pages merely because they resemble the current DataTable candidate.
+Comments creates a more focused abstraction question than DataTable: a selection-aware bulk-action toolbar. Real Blog prior art uses the same `BulkActionBar` idea in Posts, Comments, Tags, Pages, Categories, Notifications, Media Library and Operations Workspace, while the migrated Posts and Comments fixtures independently reproduce the semantic core as local composition: selected-count context, `role="toolbar"`, arbitrary batch actions, cancel-selection behavior and a sticky bottom surface. This is enough evidence to require an explicit Pattern review, but not permission to restore the Legacy component automatically. The migration line pauses at this review boundary; if extraction is deferred, Categories is the next representative Blog Admin page.
 
 A product-page catalog value of `100` means that the individual Showcase fixture is complete for the migrated route scope; it never means the entire Blog Admin product space has been migrated.
+
+## Per-page acceptance guard
+
+A new Showcase migration is not accepted merely because every individual Core/Gouno prop is valid. Before a page is marked complete, perform an explicit composition-level conformance pass against the current binding design language and the already-migrated comparison corpus.
+
+- Check every applicable rule in `docs/design-language.md`; a component API may permit several variants while the product corpus intentionally permits only one composition in a given context.
+- Compare the new page with already-migrated pages from the same surface family for spacing, action hierarchy, responsive behavior, feedback semantics and state presentation.
+- For dense desktop Table row actions, DL-09 is mandatory: one compact structural action family, no wrapping, and width pressure belongs to Core Table overflow.
+- If the new page exposes a missing design-language constraint, stop the line, update the binding rule, fix the governed corpus and add/extend conformance coverage before resuming migration.
+- If the difference is genuinely product-local, document or preserve it rather than weakening a shared rule to make the page match mechanically.
+
+This guard closes an important distinction exposed by the first Blog/Gosso row-action drift: **API-valid composition is necessary but not sufficient for design-language conformance.**
 
 ## Showcase fixture tooling
 
