@@ -1,7 +1,5 @@
 /**
- * Canonical reusable compound interaction patterns.
- *
- * Intentionally empty during product validation. A Pattern is exported here
- * only after it passes docs/product-driven-development.md admission.
+ * Canonical reusable compound interaction patterns admitted through
+ * docs/product-driven-development.md evidence review.
  */
-export {};
+export { BulkActionBar, type BulkActionBarProps } from "./bulk-action-bar";
