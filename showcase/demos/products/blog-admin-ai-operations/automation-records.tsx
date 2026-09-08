@@ -314,7 +314,7 @@ export function AIOpsAutomationPanel({
                     </div>
                     {version.version !== selected.currentVersion ? (
                       <Button
-                        size="sm"
+                        size="small"
                         variant="outline"
                         icon={<RotateCcw />}
                         onClick={() => onRollback(selected.id, version.version)}
