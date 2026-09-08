@@ -178,3 +178,20 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Reasoning:** cross-product evidence now clearly proves that resource-management pages repeat across products, but it still does not prove that one public DataTable feature bag is the correct boundary. Gosso management tables and Blog Posts share some mechanics while Blog Posts also requires content metadata, responsive alternate presentation and different batch workflows. Restoring Legacy DataTable/BulkActionBar/FilterBar/ResponsiveList now would freeze accidental coupling rather than a stable semantic contract.
 - **API impact:** none. Pattern remains intentionally empty. `PageHeader` evidence is strengthened; DataTable/filter/bulk/responsive-list candidates remain deferred.
 - **Follow-up:** migrate the next representative Blog Admin list pages (for example Users, Categories or Comments) one at a time. If a smaller interaction contract repeats or a canonical component defect becomes clear, stop the line immediately and review it rather than waiting for full Blog Admin migration.
+
+### PD-023 — Single Surface + Shared Edge Inset
+- **Status:** accepted
+- **Owner:** design-language governance
+- **Evidence:** Gosso Account Settings Passkeys/Sessions and System Management tables exposed double-surface framing and inconsistent first/last content axes across Card, Table and List surfaces.
+- **Decision:** one semantic region should normally expose one dominant surface boundary. Normal application Card/List/bordered Table surfaces align their first/last primary content to the shared 24px edge axis while preserving denser internal Table columns. Card is not a generic padding shim around an already complete surface.
+- **Implementation impact:** remove redundant outer Cards around self-surfaced Passkey/Sessions collections; align bordered Table first/last edges to the normal 24px axis; migrate completed Gosso application surfaces away from accidental 20px/32px horizontal insets.
+- **API impact:** no new Pattern/Gouno abstraction. This is a binding composition rule in `docs/design-language.md`.
+
+### PD-024 — Surface Edge Ownership + Full-Bleed Anatomy
+- **Status:** accepted
+- **Owner:** design-language governance / Product-local validation
+- **Evidence:** Gosso System Management Site Settings used a sticky save region with `-mx-6 -mb-6` to escape a padded Card. While sticky, the region looked acceptable; at its natural resting position its square child background competed with the parent's rounded bottom corners and coupled the implementation to one padding value.
+- **Decision:** the outer surface owner owns its outer border, radius and clipping. Internal full-bleed regions use explicit anatomy (`Card padding="none"` + independently padded `CardContent`/`CardFooter`) rather than negative-margin escape hacks. Sticky changes scroll behavior only; it does not create a second surface or take ownership of the parent's outer corners.
+- **Implementation impact:** Site Settings uses a clipped outer Card, 24px `CardContent`, and a full-bleed sticky `CardFooter`; `overflow: clip` is preferred here because clipping is needed without creating a new scroll container.
+- **API impact:** none. Existing Core `CardContent`/`CardFooter` are sufficient; do not introduce `StickyFormFooter`, `SaveBar` or a Pattern from this single product case.
+- **Follow-up:** if Blog Admin editor/settings pages independently prove the same sticky-save lifecycle and interaction semantics, review a shared Pattern then. Until then, keep the composition product-local and reuse only the design-language rule.

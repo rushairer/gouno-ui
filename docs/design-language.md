@@ -2,7 +2,7 @@
 
 Status: binding visual-composition contract for canonical Gouno UI and migrated product surfaces.
 
-Decision record: **PD-023 — Single Surface + Shared Edge Inset**. This document is the durable specification for that decision and future visual-composition rules.
+Decision records: **PD-023 — Single Surface + Shared Edge Inset** and **PD-024 — Surface Edge Ownership + Full-Bleed Anatomy**. This document is the durable specification for those decisions and future visual-composition rules.
 
 This document governs visual structure that is too durable to leave as page-local taste but is not itself a public React API contract.
 
@@ -10,7 +10,7 @@ This document governs visual structure that is too durable to leave as page-loca
 - `docs/architecture.md` decides layer ownership and dependency direction.
 - `docs/api-specification.md` decides public API naming, state and behavior.
 - This document defines cross-component visual composition invariants such as surfaces, spacing ownership and alignment.
-- `docs/abstraction-register.md` records abstraction evidence; this visual decision is identified here as PD-023 because it governs composition rather than introducing a public abstraction.
+- `docs/abstraction-register.md` records abstraction evidence; PD-023/PD-024 are recorded there because they govern composition rather than introducing public React abstractions.
 
 ## DL-01 — One semantic region, one dominant surface boundary
 
@@ -125,6 +125,33 @@ Current Gosso Admin application-shell surfaces are a completed comparison corpus
 
 New migrated pages start from the current contract. Do not introduce 20px/32px normal application-surface insets and rely on a future cleanup pass.
 
+## DL-08 — The outer surface owns edge geometry
+
+The component that owns a surface boundary also owns that boundary's outer border, outer radius and clipping. Internal regions such as headers, content bodies, tables or sticky action footers must compose *inside* that geometry rather than redefining it.
+
+When an internal region needs to run full-bleed to a Card edge, prefer explicit Card anatomy:
+
+```text
+Card (padding: none, owns border/radius/clipping)
+├─ CardContent (owns its own 24px inset)
+└─ CardFooter  (full-bleed edge region, owns its own inset)
+```
+
+Do not make a padded Card full-bleed by using negative margins such as `-mx-*` / `-mb-*` merely to escape the parent's padding. Negative-margin edge hacks couple the child to one padding value, make radius behavior fragile and can expose square child backgrounds across rounded parent corners.
+
+For a full-bleed sticky footer/action region:
+
+- keep the footer in normal document flow so it still reserves layout space;
+- let `position: sticky` change only its scroll behavior, not its ownership;
+- keep the footer's outer bottom corners visually owned by the parent surface;
+- clip edge-reaching child backgrounds to the parent radius;
+- prefer `overflow: clip` when the goal is only visual clipping and the current browser baseline supports it, because it does not create a scroll container the way `overflow: hidden/auto` can;
+- use `overflow: hidden/auto` only when scrolling/clipping semantics themselves are required.
+
+Do not add a second Card or second outer radius around a footer simply to solve the corner problem. The footer is a semantic region of the parent surface, not a sibling floating surface.
+
+This is a design-language rule, not evidence for a new `StickyFormFooter`, `SaveBar` or Pattern. Keep the composition product-local until repeated real product behavior proves a shared interaction contract.
+
 ## Review checklist
 
 When a page looks misaligned or over-framed, ask in this order:
@@ -133,8 +160,9 @@ When a page looks misaligned or over-framed, ask in this order:
 2. Is the child already a complete surface?
 3. Are peer surfaces aligned by edge inset rather than by extra wrappers?
 4. Can Table/List preserve internal density while aligning only its outer content edges?
-5. Is the discrepancy actually page gutter, surface inset, compound structural gap, or content spacing?
-6. Would removing one border/radius make the hierarchy clearer without losing meaning?
-7. If this rule just changed, have all already-migrated governed surfaces been scanned and migrated or explicitly documented as intentional exceptions?
+5. Is the discrepancy actually page gutter, surface inset, compound structural gap, content spacing, or edge geometry ownership?
+6. If an internal region reaches the parent edge, does the parent still own border/radius/clipping without negative-margin hacks?
+7. Would removing one border/radius make the hierarchy clearer without losing meaning?
+8. If this rule just changed, have all already-migrated governed surfaces been scanned and migrated or explicitly documented as intentional exceptions?
 
 These rules are design-language invariants, not permission to create new Pattern/Gouno components. Public abstraction still requires the product-driven admission process.
