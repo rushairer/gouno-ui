@@ -14,6 +14,16 @@ The current Gosso Admin Showcase covers every user-facing route family with stat
 4. `gosso-auth/` — Login, forgot/reset password and OAuth callback standalone identity routes.
 5. `gosso-auth/not-found.tsx` — application-family Not Found state.
 
+## Showcase fixture tooling
+
+Fixture controls are development tooling, not product UI. Route labels, scenario switches and `静态 Fixture` markers must not consume normal product-layout space or be styled as if they belonged to the real application.
+
+- Use the Showcase-private `FixtureDock` for route/state metadata and scenario controls that need to remain quickly accessible.
+- The dock is fixed outside normal document flow and defaults visually compact; its popover may temporarily overlay the preview when opened.
+- Do not reproduce route/status fixture banners inside `PageContainer`, Cards, forms or authentication surfaces.
+- Do not use `FixtureDock` as Pattern/Gouno evidence. It belongs to Showcase tooling under PD-009/PD-021.
+- Real product feedback still belongs in the product surface and uses canonical components such as `Alert`; only simulation metadata belongs in the dock.
+
 ## Gosso Admin product-level design grammar
 
 Gosso Admin intentionally has two surface families. They should be internally consistent, but they must not be forced into one layout merely for visual uniformity.
@@ -22,11 +32,10 @@ Gosso Admin intentionally has two surface families. They should be internally co
 
 Application pages render inside canonical `AppShell` + `PageContainer`.
 
-- Task/settings page families use the stable grammar `Showcase fixture context → route Tabs when needed → PageHeader → content surfaces`.
+- Task/settings page families use the stable product grammar `route Tabs when needed → PageHeader → content surfaces`; Showcase fixture context floats outside that grammar in `FixtureDock`.
 - `PageHeader` owns route-level title, description and page actions. Cards own content grouping, not the route title. A contained result/error Card uses local `Heading`/`Text` instead of nesting `PageHeader`.
 - Overview is an intentional landing-page exception: its prominent identity/role hero is page content rather than a task-page `PageHeader`.
 - Not Found remains in the application page family, but its centered error Card is a contained result surface rather than a task-page header layout.
-- Showcase-only fixture controls may use local strips/panels, but they are not evidence for public Pattern/Gouno APIs.
 - Persistent in-flow success/info/warning/error feedback uses canonical `Alert`; do not recreate Alert semantics with one-off subtle Cards.
 - Resource tables rely on Core `Table` for horizontal overflow. Do not add redundant responsive wrappers merely for product consistency.
 
@@ -35,8 +44,8 @@ Application pages render inside canonical `AppShell` + `PageContainer`.
 Login, password recovery/reset and OAuth callback preserve their real standalone route structure.
 
 - `AuthSurface` is a Gosso-product-local fixture helper, not a public Gouno abstraction.
-- Identity cards share the same width, H1 title hierarchy, surface treatment and route fixture footer.
-- Scenario-only fixture controls such as Login mode and Callback state are supplied through `AuthSurface.fixtureControl` and are anchored to the authentication card's top-center edge. Do not position them independently against the viewport.
+- Identity cards share the same width, H1 title hierarchy and surface treatment. Showcase route/scenario metadata is no longer embedded in the card.
+- Login/Callback scenario controls are exposed through the Showcase-private `FixtureDock`, keeping the authentication card visually equivalent to the real product surface.
 - Validation errors, informational transitions and successful authentication fixtures use the matching Alert semantic type instead of one generic feedback color.
 - `StandaloneNavigation` belongs only to Showcase tooling. It defaults expanded so standalone routes remain easy to navigate, but it does not change the real product surface contract.
 
