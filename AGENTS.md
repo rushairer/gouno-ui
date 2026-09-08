@@ -6,10 +6,11 @@ Before changing public components, product pages, ownership or API contracts, re
 
 1. this file;
 2. `docs/architecture.md`;
-3. `docs/api-specification.md`;
-4. `docs/product-driven-development.md`;
-5. `docs/abstraction-register.md`;
-6. `docs/api-conformance.md` when an existing public contract changes.
+3. `docs/design-language.md`;
+4. `docs/api-specification.md`;
+5. `docs/product-driven-development.md`;
+6. `docs/abstraction-register.md`;
+7. `docs/api-conformance.md` when an existing public contract changes.
 
 Repository contracts are the durable source of truth. Do not reconstruct decisions from chat history or legacy component names.
 
@@ -107,6 +108,7 @@ Example: Showcase `CodeBlock` stays private. If a real Blog article page later i
 ## API and quality
 
 - `docs/api-specification.md` is binding; legacy product APIs are not naming precedents.
+- `docs/design-language.md` is binding for visual composition, surface boundaries, edge alignment and spacing ownership.
 - Do not introduce undocumented aliases or duplicate semantic write paths.
 - API migrations require compatibility assessment and migration instructions.
 - Synchronize exported types, Showcase API/docs/examples, accessibility behavior and focused tests.
@@ -116,6 +118,7 @@ Example: Showcase `CodeBlock` stays private. If a real Blog article page later i
 - Completion percentages are audit evidence, not architecture scores.
 - A component is `100%` only for its proven Gouno scope after runtime API, exported types, representative demos, example code, accessibility behavior, focused tests and real product validation agree. It never means blindly copying another library's historical surface.
 - Compound components own structural spacing between their semantic slots; content regions own their own internal padding/rhythm. Do not fix canonical slot-spacing defects with page-local margins (PD-020).
+- One semantic collection/section should normally expose one dominant surface boundary. Do not wrap a self-surfaced Table/List in Card merely to obtain padding/alignment. Normal bordered surfaces align first/last primary content to the shared 24px edge inset while preserving denser internal Table columns (PD-023 / `docs/design-language.md`).
 
 Current Tabs canonical high-level API follows PD-010: `activeKey`, `defaultActiveKey`, `items[].key`, `onChange`; pre-reset value-style names are temporary migration compatibility only. Tabs owns the TabBar↔TabPanel structural gap and keeps its active indicator inside the TabList scroll boundary.
 
