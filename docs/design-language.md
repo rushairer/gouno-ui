@@ -54,6 +54,8 @@ Compact surfaces may use `16px` (`spacing-4`) when density is an explicit compac
 
 The edge inset governs the distance from the outer surface boundary to the first/last meaningful content. It does **not** require every internal gap or table column to use the same value.
 
+A landing/dashboard composition may differ in typography, elevation, background treatment and vertical rhythm without inventing a different horizontal content axis. A normal application-surface Hero therefore uses the same base edge inset unless a genuinely different spacious reading/result surface is intentionally documented.
+
 ## DL-03 — Preserve data density inside aligned Tables
 
 Table edge alignment and internal column density are separate axes.
@@ -87,6 +89,8 @@ Use a Card when its boundary communicates meaningful grouping. Do not use Card a
 
 Task-page `PageHeader` remains outside content surfaces unless the title is genuinely card-local. Open layouts, direct Table/List surfaces and Cards may coexist as peer children under one page composition.
 
+`Card padding="lg"` is a deliberate spacious-surface choice, not the default for an application page. Use it only when a larger inset is part of the semantic presentation (for example, an intentionally spacious standalone/result/reading surface). Do not use it merely because a page is visually important.
+
 ## DL-06 — Structural spacing versus content spacing
 
 PD-020 remains binding: compound components own structural spacing between their semantic regions; content regions own their own internal content rhythm.
@@ -100,6 +104,27 @@ This rule and the surface rules are complementary:
 
 Do not solve a defect in one level by adding arbitrary margin/padding at another level.
 
+## DL-07 — Binding design changes require corpus conformance
+
+A new or changed binding design-language rule is not complete when only the triggering page is fixed. The change must be migrated through the existing product evidence corpus before normal page migration continues.
+
+For every binding visual-composition change:
+
+1. fix the triggering page/component;
+2. identify the already-migrated product surfaces governed by the same rule;
+3. scan the completed comparison corpus and the currently migrated pages in the active product line;
+4. classify each occurrence as conforming, stale, or an intentional exception;
+5. fix stale occurrences in the same hardening phase;
+6. document intentional exceptions where a future agent will encounter them (this document or the product migration README);
+7. add an automated regression check when the invariant is reasonably detectable from source or runtime structure;
+8. only then resume ordinary page migration.
+
+A rule that exists only in documentation while completed product fixtures still violate it is not considered fully adopted.
+
+Current Gosso Admin application-shell surfaces are a completed comparison corpus. Their normal Card/List/Table/landing surfaces use the shared 24px edge axis. Standalone identity and contained result surfaces may intentionally use a different spacious treatment, but the exception must be semantic and internally consistent rather than accidental legacy padding.
+
+New migrated pages start from the current contract. Do not introduce 20px/32px normal application-surface insets and rely on a future cleanup pass.
+
 ## Review checklist
 
 When a page looks misaligned or over-framed, ask in this order:
@@ -110,5 +135,6 @@ When a page looks misaligned or over-framed, ask in this order:
 4. Can Table/List preserve internal density while aligning only its outer content edges?
 5. Is the discrepancy actually page gutter, surface inset, compound structural gap, or content spacing?
 6. Would removing one border/radius make the hierarchy clearer without losing meaning?
+7. If this rule just changed, have all already-migrated governed surfaces been scanned and migrated or explicitly documented as intentional exceptions?
 
 These rules are design-language invariants, not permission to create new Pattern/Gouno components. Public abstraction still requires the product-driven admission process.
