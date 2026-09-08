@@ -202,7 +202,7 @@ export function BlogAdminCommentsDemo() {
 
       {notice ? <Alert type="success" showIcon title={notice} closable={{ onClose: () => setNotice(null) }} /> : null}
 
-      <Card padding="base" className="shadow-sm">
+      <Card padding="base">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0 sm:w-48">
             <Select
@@ -257,7 +257,7 @@ export function BlogAdminCommentsDemo() {
       ) : (
         <div role="list" aria-label="评论审核列表" className="space-y-3">
           {visibleComments.map((comment) => (
-            <Card key={comment.id} padding="base" role="listitem" className="shadow-sm">
+            <Card key={comment.id} padding="base" role="listitem">
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="flex min-w-0 flex-1 items-start gap-3.5">
                   <div className="pt-0.5">
