@@ -224,6 +224,7 @@ export const showcaseCatalog: ShowcaseGroup[] = [
   ]},
   { workspace: "blog-admin", group: "Site 站点管理", items: [
     item("blog-admin-users", "Members", "成员与权限", 100, <CircleUserRound />),
+    item("blog-admin-site-settings", "Site Settings", "站点设置", 100, <SlidersHorizontal />),
   ]},
   { workspace: "gosso-admin", group: "Application Pages 应用页", items: [
     item("gosso-overview", "Overview", "概览", 100, <Home />),

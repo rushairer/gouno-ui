@@ -19,6 +19,7 @@ const gossoApplicationFiles = [
 const blogAdminApplicationFiles = [
   resolve(productsRoot, "blog-admin-posts.tsx"),
   resolve(productsRoot, "blog-admin-users.tsx"),
+  resolve(productsRoot, "blog-admin-site-settings.tsx"),
 ];
 
 function combined(files: readonly string[]): string {
@@ -39,14 +40,20 @@ describe("design-language conformance", () => {
     expect(overview).toContain('<Card padding="base" variant="elevated"');
   });
 
-  it("uses explicit Card anatomy for full-bleed sticky actions", () => {
-    const siteSettings = readFileSync(resolve(productsRoot, "gosso-system-management/site-settings.tsx"), "utf8");
+  it("uses explicit Card anatomy for full-bleed sticky actions across products", () => {
+    const siteSettingsFiles = [
+      resolve(productsRoot, "gosso-system-management/site-settings.tsx"),
+      resolve(productsRoot, "blog-admin-site-settings.tsx"),
+    ];
 
-    expect(siteSettings).toContain('<Card padding="none" className="gap-0 overflow-clip">');
-    expect(siteSettings).toContain('<CardContent className="flex flex-col gap-5 p-6">');
-    expect(siteSettings).toContain('<CardFooter className="sticky bottom-0 z-10 justify-between border-t bg-card/95 px-6 py-4 backdrop-blur">');
-    expect(siteSettings).not.toContain("-mx-6");
-    expect(siteSettings).not.toContain("-mb-6");
+    for (const file of siteSettingsFiles) {
+      const source = readFileSync(file, "utf8");
+      expect(source).toContain('<Card padding="none" className="gap-0 overflow-clip">');
+      expect(source).toContain('<CardContent className="flex flex-col gap-5 p-6">');
+      expect(source).toContain('<CardFooter className="sticky bottom-0 z-10 justify-between border-t bg-card/95 px-6 py-4 backdrop-blur">');
+      expect(source).not.toContain("-mx-6");
+      expect(source).not.toContain("-mb-6");
+    }
   });
 
   it("keeps migrated Blog Admin pages on the current surface contract", () => {

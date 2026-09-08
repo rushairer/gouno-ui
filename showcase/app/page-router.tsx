@@ -15,6 +15,9 @@ const BlogAdminPostsDemo = lazy(() =>
 const BlogAdminUsersDemo = lazy(() =>
   import("../demos/products/blog-admin-users").then((module) => ({ default: module.BlogAdminUsersDemo })),
 );
+const BlogAdminSiteSettingsDemo = lazy(() =>
+  import("../demos/products/blog-admin-site-settings").then((module) => ({ default: module.BlogAdminSiteSettingsDemo })),
+);
 const GossoAccountSettingsDemo = lazy(() =>
   import("../demos/products/gosso-account-settings").then((module) => ({ default: module.GossoAccountSettingsDemo })),
 );
@@ -70,6 +73,8 @@ export function ShowcasePage({ page, workspace }: { page: string; workspace: Sho
       return <Suspense fallback={loading}><BlogAdminPostsDemo /></Suspense>;
     case "blog-admin-users":
       return <Suspense fallback={loading}><BlogAdminUsersDemo /></Suspense>;
+    case "blog-admin-site-settings":
+      return <Suspense fallback={loading}><BlogAdminSiteSettingsDemo /></Suspense>;
     case "gosso-overview":
       return <GossoOverviewDemo />;
     case "gosso-account-settings":
