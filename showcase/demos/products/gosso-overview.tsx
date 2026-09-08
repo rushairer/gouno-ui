@@ -93,7 +93,7 @@ function QuickLinkCard({ link }: { link: QuickLink }) {
       title={migrated ? `真实产品目标：${link.href}；已由对应 Showcase 页面族覆盖` : `真实产品目标：${link.href}；该目标页面尚未迁入 Showcase`}
       aria-label={migrated ? `${link.title}，查看已迁移 Showcase 页面` : `${link.title}，目标页面尚未迁入 Showcase`}
       onClick={migrated ? undefined : (event) => event.preventDefault()}
-      className="group flex min-h-32 w-full items-center gap-4 rounded-lg border bg-card p-5 text-left text-card-foreground shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      className="group flex min-h-32 w-full items-center gap-4 rounded-lg border bg-card px-6 py-5 text-left text-card-foreground shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
       <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent text-primary" aria-hidden="true">
         {link.icon}
@@ -123,7 +123,7 @@ export function GossoOverviewDemo() {
         controls={<Segmented<PreviewRole> aria-label="预览身份" options={roleOptions} value={role} onChange={setRole} block />}
       />
 
-      <Card padding="lg" variant="elevated" className="relative overflow-hidden border-primary/20">
+      <Card padding="base" variant="elevated" className="relative overflow-hidden border-primary/20">
         <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-28 size-72 rounded-full bg-primary/10 blur-3xl" />
         <div className="relative flex flex-col items-start gap-6">
           <div className="flex flex-wrap items-center gap-4 sm:gap-5">
