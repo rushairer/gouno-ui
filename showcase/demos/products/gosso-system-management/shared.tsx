@@ -1,17 +1,13 @@
 import { useState, type ReactNode } from "react";
-import { Alert, Button, Modal, Tag, Text } from "../../../../src/core";
+import { Alert, Button, Modal, Text } from "../../../../src/core";
+import { FixtureDock } from "../../../components/fixture-dock";
 
 export function FixtureBanner({ route }: { route: string }) {
   return (
-    <div className="flex flex-col gap-3 rounded-lg border bg-muted/30 p-3 sm:flex-row sm:items-center sm:justify-between">
-      <div className="min-w-0">
-        <Text as="div" size="sm" className="font-medium">真实产品路由</Text>
-        <Text size="xs" tone="muted" className="mt-0.5">
-          <code className="font-mono">{route}</code> · Showcase 使用本地 fixture 表达真实交互状态。
-        </Text>
-      </div>
-      <Tag>静态 Fixture</Tag>
-    </div>
+    <FixtureDock
+      route={route}
+      note="Showcase 使用本地 fixture 表达真实交互状态；该工具层不会进入真实 GOSSO 页面。"
+    />
   );
 }
 
