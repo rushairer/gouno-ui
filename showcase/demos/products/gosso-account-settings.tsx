@@ -43,6 +43,7 @@ import {
   Text,
 } from "../../../src/core";
 import { PageHeader } from "../../../src/gouno";
+import { FixtureDock } from "../../components/fixture-dock";
 
 type AccountSettingsTab = "profile" | "password" | "mfa" | "passkeys" | "sessions";
 type MfaPreviewState = "disabled" | "enrolling" | "enabled";
@@ -265,8 +266,12 @@ function MfaPanel() {
       description="绑定 TOTP 身份验证器，并管理恢复备用代码。"
       actions={preview === "enabled" ? <Tag color="success">已启用</Tag> : <Tag>{preview === "enrolling" ? "配置中" : "未启用"}</Tag>}
     >
+      <FixtureDock
+        route="/account-settings/mfa"
+        note="真实页面由身份服务返回 MFA 状态；Showcase 仅用本地状态覆盖关键分支。"
+        controls={<Segmented<MfaPreviewState> aria-label="MFA 状态预览" options={mfaPreviewOptions} value={preview} onChange={(value) => { setPreview(value); setStatus(null); }} block />}
+      />
       <div className="flex flex-col gap-5">
-        <div className="flex flex-col gap-2 rounded-md border bg-muted/30 p-3 sm:flex-row sm:items-center sm:justify-between"><div><Text as="div" size="sm" className="font-medium">Showcase 状态预览</Text><Text size="xs" tone="muted">真实页面由身份服务返回的 MFA 状态决定。</Text></div><Segmented<MfaPreviewState> aria-label="MFA 状态预览" options={mfaPreviewOptions} value={preview} onChange={(value) => { setPreview(value); setStatus(null); }} /></div>
         {status ? <StatusMessage message={status} type={status.startsWith("请输入") ? "error" : "success"} /> : null}
         {preview === "disabled" ? <div className="flex flex-col items-start gap-4 py-2"><Text tone="muted" size="sm" className="max-w-2xl leading-relaxed">当前账户尚未绑定身份验证器。启用后，登录时除密码外还需要一次性动态验证码。</Text><Button variant="solid" color="primary" icon={<QrCode />} onClick={() => setPreview("enrolling")}>配置身份验证器</Button></div> : null}
         {preview === "enrolling" ? (
@@ -339,7 +344,12 @@ export function GossoAccountSettingsDemo() {
   const [activeTab, setActiveTab] = useState<AccountSettingsTab>("profile");
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-3 rounded-lg border bg-muted/30 p-3 sm:flex-row sm:items-center sm:justify-between"><div className="min-w-0"><Text as="div" size="sm" className="font-medium">真实产品路由</Text><Text size="xs" tone="muted" className="mt-0.5"><code className="font-mono">/account-settings/{activeTab}</code> · Showcase 使用本地状态模拟路由 Tab。</Text></div><Tag>静态 Fixture</Tag></div>
+      {activeTab === "mfa" ? null : (
+        <FixtureDock
+          route={`/account-settings/${activeTab}`}
+          note="Showcase 使用本地状态模拟真实 route-backed Tab；该工具层不会进入真实账户页面。"
+        />
+      )}
       <Tabs<AccountSettingsTab> activeKey={activeTab} items={accountTabs} onChange={setActiveTab} ariaLabel="账户设置栏目" />
       <AccountSettingsPanel tab={activeTab} />
     </div>
