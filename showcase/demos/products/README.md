@@ -14,11 +14,11 @@ The Gosso Admin Showcase covers every user-facing route family with static fixtu
 4. `gosso-auth/` — Login, forgot/reset password and OAuth callback standalone identity routes.
 5. `gosso-auth/not-found.tsx` — application-family Not Found state.
 
-Gosso Admin is now the completed comparison corpus while Blog Admin is the active migration line.
+Gosso Admin remains the completed first-product comparison corpus. Blog Admin now forms the completed second-product Admin validation corpus.
 
 ## Blog Admin coverage
 
-Blog Admin is the active second-product validation workspace. The current migrated pages are:
+Blog Admin has route-level Showcase coverage across the current Admin product surface. The migrated pages are:
 
 1. `blog-admin-posts.tsx` — Posts `/admin/posts`, including filters, loading/error/empty states, desktop Table, mobile list presentation, selection/batch actions, pagination and destructive confirmation.
 2. `blog-admin-users.tsx` — Members & Roles `/admin/users`, including Blog-local membership/role semantics, desktop Table/mobile Cards, edit role/name, suspend/restore, ownership transfer and product-local Sudo/MFA security states.
@@ -32,14 +32,19 @@ Blog Admin is the active second-product validation workspace. The current migrat
 10. `blog-admin-dashboard.tsx` — Dashboard `/admin/dashboard`, including permission-aware KPI destinations, traffic trend, content-governance health, AI failure alerts and Top Posts.
 11. `blog-admin-ai-operations/` — AI Operations `/admin/ai-ops`, including Overview, Inbox, Automation, Workflow/Agent Records, Advanced governance surfaces and the real `tab`/`record`/`workflow`/`run` query contract.
 12. `blog-admin-post-editor.tsx` — PostEditor `/admin/posts/new` and `/admin/posts/:id/edit`, including command bar, outline/version history, Markdown/preview canvas, metadata inspector, dirty/save state, draft/publish/scheduled intent, 409 conflict retention, version restore, read-only ownership state and product-owned AI metadata/writing/image flows.
+13. `blog-admin-page-editor.tsx` — PageEditor `/admin/pages/new` and `/admin/pages/:id/edit`, including a two-column canvas/inspector workspace, title+Slug save validation, draft/published intent, preview-before-save behavior, 409 conflict retention, template selection, main-navigation visibility/sort order, Markdown/preview and product-owned AI metadata/writing/image flows.
 
 The Posts migration was rechecked after PD-023/PD-024. Its normal application surfaces conform to the shared surface contract; the one spacious `Card padding="lg"` is intentionally limited to the contained `Empty` result surface and is not an application alignment precedent. `tests/design-language-conformance.test.ts` protects every currently migrated Blog Admin page from drifting back to accidental 20px/32px normal application insets.
 
 Posts and Members independently reuse admitted `PageHeader` without expanding its API. Comments, Categories, Tags, Pages, Notifications and Media Library continue validating the same route-header contract across moderation-list, taxonomy-table, Card-Grid, responsive collection, notification-queue and media-workflow surfaces. Resource-management mechanics repeat, but the surrounding presentations remain intentionally different; this continues to reject restoration of one broad Legacy `DataTable`, `ResponsiveList`, `FilterBar` or `AsyncState` feature bag.
 
-Dashboard, AI Operations and PostEditor extend the validation corpus beyond resource collections. Dashboard remains Core-first without `MetricCard`/dashboard Pattern extraction. AI Operations proves that a heterogeneous five-tab route family—with approvals, workflow execution, run evidence and Advanced governance—can stay product-local on top of canonical Core + `PageHeader` without admitting an AI/workspace feature bag. PostEditor intentionally does not use the normal `PageHeader → content surfaces` grammar: its command bar → outline / canvas / inspector workspace remains product-local until PageEditor independently challenges the same semantic responsibilities. Its Markdown/preview Tabs preserve PD-020: Tabs owns navigation and structural spacing while the editor canvas owns content padding and horizontal overflow.
+Dashboard and AI Operations extend the validation corpus beyond resource collections. Dashboard remains Core-first without `MetricCard`/dashboard Pattern extraction. AI Operations proves that a heterogeneous five-tab route family—with approvals, workflow execution, run evidence and Advanced governance—can stay product-local on top of canonical Core + `PageHeader` without admitting an AI/workspace feature bag.
 
-PostEditor also exposed one genuine Core contract defect rather than an editor-specific need: description-only confirmation dialogs should not require meaningless `children={null}`. PD-035 therefore makes `ModalProps.children` optional and omits the body region when neither body content nor loading exists; no editor or confirmation convenience Pattern was added.
+PostEditor and PageEditor are intentional exceptions to the normal `PageHeader → content surfaces` task-page grammar. They independently prove an editor-family anatomy built around a command bar, Markdown/preview canvas and metadata inspector, but PD-036 does **not** promote that anatomy to a public Editor Pattern. PostEditor additionally owns outline/version history, scheduled publishing, other-author read-only behavior, version restore and article-specific taxonomy/cover metadata. PageEditor instead requires Slug before persistence, saves before frontsite preview, has only draft/published states and owns page-template/navigation/sort-order semantics. Their state machines and Inspector contracts therefore remain product-local even though their visual family is related.
+
+Both editor fixtures preserve PD-020: Tabs owns Markdown/preview navigation and structural spacing; editor content owns canvas padding and horizontal overflow. Both also participate in DL-07 surface conformance. No binding cross-product editor rule is introduced from two same-product samples.
+
+PostEditor exposed one genuine Core contract defect rather than an editor-specific need: description-only confirmation dialogs should not require meaningless `children={null}`. PD-035 therefore makes `ModalProps.children` optional and omits the body region when neither body content nor loading exists; PageEditor reuses the corrected Modal contract without further Core expansion.
 
 Do not collapse Gosso identity users and Blog members into one page/domain abstraction merely because both render a user-like table. Gosso manages identity-platform accounts; Blog Admin manages product membership, roles and high-privilege product actions. Shared abstractions must come from smaller stable presentation/interaction contracts, not from similar nouns or screenshots.
 
@@ -57,9 +62,9 @@ The Pattern stays deliberately small. It owns toolbar semantics/presentation and
 
 Tags, Pages, Notifications and Media Library are later validation cases after admission. Tags proves the Pattern across a responsive Card Grid and partial batch failure; Pages proves it alongside responsive Table/mobile-list filtering and pagination; Notifications changes the selected action set to `标为已读` + `批量删除` inside a Card-based state machine; Media combines Upload/Drawer workflows, reference-aware deletion and partial batch failure. All fit the same canonical API unchanged. Domain failure state, workflow resource keys, read transitions, media references and upload/AI lifecycle remain product-owned.
 
-All top-level Blog Admin route families plus PostEditor are now represented in Showcase. The remaining Admin route family is **PageEditor** (`/admin/pages/new`, `/admin/pages/:id/edit`). PostEditor remains the first editor pressure sample rather than a public abstraction; PageEditor is the independent second sample required before reviewing any shared Editor Pattern. Compare stable semantic responsibilities only after both editors are green, and do not promote a shared editor surface merely because both happen to use a similar multi-column layout.
+All current Blog Admin route families, including both editor families, are now represented in Showcase. This closes the Blog Admin route-level migration milestone. The completed Gosso Admin + Blog Admin corpora are now the evidence base for the next real product/page family; public editor extraction remains deferred until independently owned product evidence proves a stable interaction contract beyond shared layout anatomy.
 
-A product-page catalog value of `100` means that the individual Showcase fixture is complete for the migrated route scope; it never means the entire Blog Admin product space has been migrated.
+A product-page catalog value of `100` means that the individual Showcase fixture is complete for the migrated route scope; it never means every future Blog Admin feature has been implemented or that every local composition deserves a public abstraction.
 
 ## Per-page acceptance guard
 
@@ -124,4 +129,4 @@ When a new Gosso page or state is added, compare it with its own surface family 
 
 When a binding rule in `docs/design-language.md` changes, do not only fix the page that exposed it. Run the DL-07 corpus-conformance pass across every already-migrated governed Gosso application surface, fix stale call sites, document real exceptions and keep the automated conformance test synchronized.
 
-Blog Admin is now the active second-product validation workspace. It must challenge Gosso-derived assumptions rather than mechanically copy the Gosso product-local grammar. Blog remains empty until its own real pages are migrated.
+Gosso Admin and Blog Admin are now completed route-level validation corpora. Future product migration should challenge their proven abstractions rather than mechanically copying either product's local grammar. Blog public pages remain unmigrated until their own real surfaces are taken through the same product-driven process.
