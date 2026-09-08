@@ -75,12 +75,15 @@ describe("Blog Admin Tags product migration fixture", () => {
     expect(screen.getByText("已选择 1 个标签")).toBeTruthy();
     expect(screen.getByText("已删除 1 个标签；1 个未删除：模拟 API 拒绝删除，失败项继续保持选中。")).toBeTruthy();
 
+    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
     fireEvent.click(screen.getByRole("radio", { name: "加载中" }));
     expect(screen.getByRole("status", { name: "标签加载中" })).toBeTruthy();
 
+    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
     fireEvent.click(screen.getByRole("radio", { name: "空状态" }));
     expect(screen.getByText("文章添加标签后会自动在这里汇总。")).toBeTruthy();
 
+    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
     fireEvent.click(screen.getByRole("radio", { name: "错误" }));
     expect(screen.getByText("标签加载失败")).toBeTruthy();
   });
