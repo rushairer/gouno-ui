@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from "react";
-import { Bot, Check, EyeOff, Flag, Trash2, X } from "lucide-react";
+import { Bot, Check, EyeOff, Flag, Trash2 } from "lucide-react";
 import {
   Alert,
   Badge,
@@ -15,6 +15,7 @@ import {
   Text,
 } from "../../../src/core";
 import { PageHeader } from "../../../src/gouno";
+import { BulkActionBar } from "../../../src/patterns";
 import { FixtureDock } from "../../components/fixture-dock";
 
 type CommentStatus = "pending" | "visible" | "hidden";
@@ -227,16 +228,13 @@ export function BlogAdminCommentsDemo() {
       </Card>
 
       {selected.length > 0 ? (
-        <Card padding="sm" className="sticky bottom-4 z-20 border-primary/30 bg-background/95 shadow-lg backdrop-blur">
-          <div role="toolbar" aria-label="批量操作" className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <Text size="sm" className="font-medium sm:mr-auto">已选择 {selected.length} 条评论</Text>
-            <div className="flex flex-wrap items-center gap-2">
-              <Button size="small" icon={<Bot />} onClick={() => setAIOpen(true)}>交给 AI</Button>
-              <Button size="small" color="error" icon={<Trash2 />} onClick={() => setDeleteTarget({ kind: "batch" })}>删除</Button>
-              <Button size="small" variant="text" icon={<X />} onClick={clearSelection}>取消</Button>
-            </div>
-          </div>
-        </Card>
+        <BulkActionBar
+          selectionLabel={`已选择 ${selected.length} 条评论`}
+          onCancel={clearSelection}
+        >
+          <Button size="small" icon={<Bot />} onClick={() => setAIOpen(true)}>交给 AI</Button>
+          <Button size="small" color="error" icon={<Trash2 />} onClick={() => setDeleteTarget({ kind: "batch" })}>删除</Button>
+        </BulkActionBar>
       ) : null}
 
       {scenario === "error" ? (
