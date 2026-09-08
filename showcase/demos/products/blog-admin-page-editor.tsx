@@ -155,7 +155,7 @@ export function BlogAdminPageEditorDemo({
     setNotice(null);
     setError(null);
     setExitOpen(false);
-    setAiPanel(null);
+    setAIPanel(null);
     setTitleCandidates([]);
     setSummaryCandidates([]);
     setSlugCandidates([]);
