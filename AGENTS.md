@@ -77,6 +77,7 @@ Gouno UI is in second-product validation mode.
 - If evidence is insufficient, keep code product-local.
 - Record durable accept/reject/defer/merge/move/remove/API decisions in `docs/abstraction-register.md`.
 - Follow the Product Validation Loop in `docs/product-driven-development.md`: real pages may stop further migration when they expose a canonical component defect, accessibility problem, material API gap or semantic API split. Harden the component, synchronize Showcase/docs/tests, validate it back on the triggering product page, then continue migration.
+- When a binding rule in `docs/design-language.md` is added or materially changed, stop ordinary migration until the already-migrated governed corpus has been scanned. Fix stale occurrences, document intentional exceptions and add source/runtime regression coverage where practical (DL-07).
 - Ant Design and other mature systems are benchmarks during hardening, not automatic API authorities. Platform semantics, accessibility, Gouno API governance and real product evidence still decide the final contract.
 
 ## Showcase evidence rule
@@ -119,6 +120,8 @@ Example: Showcase `CodeBlock` stays private. If a real Blog article page later i
 - A component is `100%` only for its proven Gouno scope after runtime API, exported types, representative demos, example code, accessibility behavior, focused tests and real product validation agree. It never means blindly copying another library's historical surface.
 - Compound components own structural spacing between their semantic slots; content regions own their own internal padding/rhythm. Do not fix canonical slot-spacing defects with page-local margins (PD-020).
 - One semantic collection/section should normally expose one dominant surface boundary. Do not wrap a self-surfaced Table/List in Card merely to obtain padding/alignment. Normal bordered surfaces align first/last primary content to the shared 24px edge inset while preserving denser internal Table columns (PD-023 / `docs/design-language.md`).
+- A landing/dashboard page may be structurally exceptional without using a different normal surface edge axis. In application-shell pages, `Card padding="lg"` or ad-hoc `p-5/p-8` must not be used as an accidental alignment substitute; any spacious exception must be semantic and documented.
+- A design-language hardening stage is incomplete until its corpus conformance pass has covered the completed comparison corpus and currently migrated pages in the active product line (DL-07). Documentation-only adoption is not enough.
 
 Current Tabs canonical high-level API follows PD-010: `activeKey`, `defaultActiveKey`, `items[].key`, `onChange`; pre-reset value-style names are temporary migration compatibility only. Tabs owns the TabBar↔TabPanel structural gap and keeps its active indicator inside the TabList scroll boundary.
 
