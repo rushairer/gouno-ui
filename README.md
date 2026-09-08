@@ -10,7 +10,7 @@ Formal public owners:
 
 - `src/core` — product-agnostic controls, layout, data entry/display, navigation, feedback and overlays.
 - `src/theme` — brand/theme state, persistence and controls.
-- `src/patterns` — admitted reusable compound interactions; intentionally allowed to remain empty.
+- `src/patterns` — admitted reusable compound interactions. Current runtime surface: `BulkActionBar`.
 - `src/gouno` — admitted Gouno product-family structure/policy. Current runtime surface: `AppShell`, `PageContainer`, `PageHeader`, `NavigationGroup`, `navigationItemClass`.
 
 ```text
@@ -26,17 +26,19 @@ See [`docs/architecture.md`](docs/architecture.md) and [`docs/product-driven-dev
 ```ts
 import { Button, Pagination, Table, Tabs } from "@gouno/ui/core";
 import { ThemeProvider, ThemeToggle, useTheme } from "@gouno/ui/theme";
+import { BulkActionBar } from "@gouno/ui/patterns";
 import { AppShell, PageContainer, PageHeader } from "@gouno/ui/gouno";
 ```
 
-`@gouno/ui/patterns` remains a formal owner boundary but currently exports no admitted Pattern.
+`BulkActionBar` is the first admitted Pattern. It was extracted only after three independently rebuilt Blog Admin workflows (Posts, Comments and Categories) converged on the same selection-aware toolbar interaction. Its API intentionally excludes resource-specific or AI-specific shortcuts.
 
 The root `@gouno/ui` is an external compatibility umbrella, not a fifth owner. Repository implementation and Showcase import canonical formal layers instead. Source wildcard paths and Legacy paths are not public API.
 
 ## Product-driven evolution
 
-- Gosso Admin is the primary page-by-page migration line.
-- Blog Admin and relevant Blog pages are cross-product evidence corpora.
+- Gosso Admin is the completed first-product comparison corpus.
+- Blog Admin is the active page-by-page migration line.
+- Relevant public Blog pages remain additional cross-product evidence when semantics overlap.
 - Pages start Core-first with Theme, admitted Gouno structure and local composition.
 - Small repetition is preferred over premature extraction.
 - The third semantically equivalent occurrence triggers review, not automatic extraction.
@@ -44,15 +46,16 @@ The root `@gouno/ui` is an external compatibility umbrella, not a fifth owner. R
 - Durable decisions live in [`docs/abstraction-register.md`](docs/abstraction-register.md).
 - Public naming/state/composition rules live in [`docs/api-specification.md`](docs/api-specification.md).
 
-Current admitted Gouno examples demonstrate the process rather than a fixed catalog: `AppShell`/`PageContainer` were the initial shell baseline; `PageHeader` was later re-admitted only after Gosso Admin and Blog Admin independently proved the same title/description/actions page contract.
+Current admitted abstractions demonstrate the process rather than a fixed catalog: `AppShell`/`PageContainer` were the initial shell baseline; `PageHeader` was re-admitted only after real page evidence; `BulkActionBar` became the first Pattern only after three different migrated collection workflows proved a smaller shared interaction than the surrounding page structures.
 
 ## Showcase role
 
 Showcase separates product workspace from design-system ownership:
 
 - **Gouno UI** — canonical `Core / Theme / Patterns / Gouno` documentation.
-- **Gosso Admin** — only genuinely migrated pages.
-- **Blog Admin** and **Blog** — remain empty until their real migration begins.
+- **Gosso Admin** — completed first-product comparison corpus.
+- **Blog Admin** — active real-page migration workspace.
+- **Blog** — remains empty until its real migration begins.
 
 Showcase dogfoods admitted canonical APIs, but documentation tooling such as `CodeBlock`, API tables, demo framing and viewport simulation may stay private. Showcase-only repetition is supporting evidence, not sufficient reason to create a public abstraction. If a real product independently needs the same capability, the normal admission process decides whether it moves into Core/Pattern/Gouno.
 
