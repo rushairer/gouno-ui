@@ -232,3 +232,13 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Migration impact:** Posts, Comments and Categories adopt the canonical Pattern. This does not re-admit `DataTable`, `FilterBar`, `AsyncState` or a collection feature bag; it demonstrates the intended strategy of extracting a smaller stable interaction from heterogeneous pages.
 - **Validation:** the Gouno UI Patterns workspace gains a dedicated Showcase page with live demo, example code and API table; focused tests cover toolbar semantics, custom accessible naming, cancel behavior and product-owned actions.
 - **Follow-up:** migrate another real Blog Admin page such as Tags and use it to challenge the Pattern without expanding its API by default. If a later workflow cannot fit this contract cleanly, revise or shrink the Pattern rather than creating aliases.
+
+### PD-029 — Tags validates BulkActionBar across a Card Grid without API expansion
+- **Status:** accepted validation
+- **Owner:** Patterns / Product-local
+- **Evidence:** real Blog Admin `/admin/tags` uses a responsive Card Grid rather than a Table or moderation queue, while preserving selection, batch deletion and AI workflow entry. It additionally requires product-local rename/merge semantics and partial batch failure where unsuccessful resources remain selected for retry.
+- **Decision:** canonical `BulkActionBar` fits this fourth independent workflow unchanged. The Pattern continues to own toolbar semantics, selected-context presentation, sticky visibility and cancel-selection; Tags owns rename/merge, batch result handling, retained failed selections and WorkflowLauncher resource semantics.
+- **API impact:** none. Do not add `onAIAssist`, resource-type, partial-failure, retry or collection-presentation props to `BulkActionBar`.
+- **Architectural impact:** Card Grid validation further demonstrates that the stable shared interaction is smaller than the surrounding collection presentation and continues to reject restoration of broad Legacy `DataTable`, `ResponsiveList` or `AsyncState` feature bags.
+- **Validation:** the migrated Tags fixture covers Card Grid presentation, rename/merge, canonical BulkActionBar, single/batch delete, partial-failure retention and loading/error/empty states; the complete main gate and Showcase publish pass.
+- **Follow-up:** migrate Pages `/admin/pages`; use its responsive Table/mobile list, filters and pagination to challenge the Pattern again without expanding its API by default.
