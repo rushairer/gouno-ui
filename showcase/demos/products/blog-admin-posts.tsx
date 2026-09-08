@@ -33,6 +33,7 @@ import {
   Text,
 } from "../../../src/core";
 import { PageHeader } from "../../../src/gouno";
+import { BulkActionBar } from "../../../src/patterns";
 import { FixtureDock } from "../../components/fixture-dock";
 
 type PostStatus = "published" | "draft" | "scheduled";
@@ -303,182 +304,54 @@ export function BlogAdminPostsDemo() {
       <Card padding="base" className="shadow-sm">
         <div className="flex flex-col gap-3 xl:flex-row xl:items-center">
           <div className="min-w-0 flex-1">
-            <Input
-              aria-label="搜索文章"
-              prefix={<Search className="size-4" />}
-              value={query}
-              onChange={(event) => updateFilter(setQuery, event.target.value)}
-              placeholder="搜索标题或 slug"
-            />
+            <Input aria-label="搜索文章" prefix={<Search className="size-4" />} value={query} onChange={(event) => updateFilter(setQuery, event.target.value)} placeholder="搜索标题或 slug" />
           </div>
           <div className="grid gap-3 sm:grid-cols-3 xl:flex xl:shrink-0">
-            <div className="min-w-0 xl:w-36">
-              <Select aria-label="文章状态" value={status} onChange={(value) => updateFilter(setStatus, String(value))}>
-                <option value="">全部状态</option>
-                <option value="published">已发布</option>
-                <option value="draft">草稿</option>
-                <option value="scheduled">定时发布</option>
-              </Select>
-            </div>
-            <div className="min-w-0 xl:w-40">
-              <Select aria-label="文章分类" value={category} onChange={(value) => updateFilter(setCategory, String(value))}>
-                <option value="">全部分类</option>
-                {categories.map((item) => <option key={item} value={item}>{item}</option>)}
-              </Select>
-            </div>
-            <div className="min-w-0 xl:w-40">
-              <Select aria-label="文章标签" value={tag} onChange={(value) => updateFilter(setTag, String(value))}>
-                <option value="">全部标签</option>
-                {tags.map((item) => <option key={item} value={item}>{item}</option>)}
-              </Select>
-            </div>
+            <div className="min-w-0 xl:w-36"><Select aria-label="文章状态" value={status} onChange={(value) => updateFilter(setStatus, String(value))}><option value="">全部状态</option><option value="published">已发布</option><option value="draft">草稿</option><option value="scheduled">定时发布</option></Select></div>
+            <div className="min-w-0 xl:w-40"><Select aria-label="文章分类" value={category} onChange={(value) => updateFilter(setCategory, String(value))}><option value="">全部分类</option>{categories.map((item) => <option key={item} value={item}>{item}</option>)}</Select></div>
+            <div className="min-w-0 xl:w-40"><Select aria-label="文章标签" value={tag} onChange={(value) => updateFilter(setTag, String(value))}><option value="">全部标签</option>{tags.map((item) => <option key={item} value={item}>{item}</option>)}</Select></div>
           </div>
-          <div className="flex items-center justify-between gap-3 xl:justify-end">
-            <Text size="sm" tone="muted" className="whitespace-nowrap">{filtered.length} 篇</Text>
-            {hasFilters ? <Button size="small" variant="text" icon={<X />} onClick={clearFilters}>清除</Button> : null}
-          </div>
+          <div className="flex items-center justify-between gap-3 xl:justify-end"><Text size="sm" tone="muted" className="whitespace-nowrap">{filtered.length} 篇</Text>{hasFilters ? <Button size="small" variant="text" icon={<X />} onClick={clearFilters}>清除</Button> : null}</div>
         </div>
       </Card>
 
       {selected.length > 0 ? (
-        <Card padding="sm" className="sticky bottom-4 z-20 border-primary/30 bg-background/95 shadow-lg backdrop-blur">
-          <div role="toolbar" aria-label="批量操作" className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <Text size="sm" className="font-medium sm:mr-auto">已选择 {selected.length} 篇</Text>
-            <div className="flex flex-wrap items-center gap-2">
-              <Button size="small" icon={<Sparkles />} onClick={() => setNotice(`将对 ${selected.length} 篇文章启动 AI 辅助流程（Showcase 模拟）。`)}>交给 AI</Button>
-              <Button size="small" onClick={() => applyBatch("publish")}>立即发布</Button>
-              <Button size="small" onClick={() => applyBatch("draft")}>转为草稿</Button>
-              <Button size="small" color="error" icon={<Trash2 />} onClick={() => setDeleteTarget({ kind: "batch" })}>删除</Button>
-              <Button size="small" variant="text" onClick={() => setSelected([])}>取消</Button>
-            </div>
-          </div>
-        </Card>
+        <BulkActionBar selectionLabel={`已选择 ${selected.length} 篇`} onCancel={() => setSelected([])}>
+          <Button size="small" icon={<Sparkles />} onClick={() => setNotice(`将对 ${selected.length} 篇文章启动 AI 辅助流程（Showcase 模拟）。`)}>交给 AI</Button>
+          <Button size="small" onClick={() => applyBatch("publish")}>立即发布</Button>
+          <Button size="small" onClick={() => applyBatch("draft")}>转为草稿</Button>
+          <Button size="small" color="error" icon={<Trash2 />} onClick={() => setDeleteTarget({ kind: "batch" })}>删除</Button>
+        </BulkActionBar>
       ) : null}
 
       {scenario === "error" ? (
-        <Alert
-          type="error"
-          showIcon
-          title="文章加载失败"
-          description="无法读取文章列表。真实产品会保留筛选条件并允许重新请求。"
-          action={<Button size="small" onClick={() => setScenario("data")}>重新载入</Button>}
-        />
+        <Alert type="error" showIcon title="文章加载失败" description="无法读取文章列表。真实产品会保留筛选条件并允许重新请求。" action={<Button size="small" onClick={() => setScenario("data")}>重新载入</Button>} />
       ) : scenario === "loading" ? (
         <LoadingPosts />
       ) : visiblePosts.length === 0 ? (
-        <Card padding="lg">
-          <Empty
-            icon={<FileText className="size-7 text-muted-foreground" />}
-            title={hasFilters ? "没有符合当前筛选条件的文章" : "还没有文章"}
-            description={hasFilters ? "调整或清除筛选条件后重试。" : "创建第一篇文章，开始构建站点内容。"}
-            action={hasFilters ? <Button onClick={clearFilters}>清除筛选</Button> : <Button variant="solid" color="primary" icon={<Plus />} onClick={() => setNotice("将进入 /admin/posts/new（Showcase 模拟）。")}>撰写第一篇文章</Button>}
-          />
-        </Card>
+        <Card padding="lg"><Empty icon={<FileText className="size-7 text-muted-foreground" />} title={hasFilters ? "没有符合当前筛选条件的文章" : "还没有文章"} description={hasFilters ? "调整或清除筛选条件后重试。" : "创建第一篇文章，开始构建站点内容。"} action={hasFilters ? <Button onClick={clearFilters}>清除筛选</Button> : <Button variant="solid" color="primary" icon={<Plus />} onClick={() => setNotice("将进入 /admin/posts/new（Showcase 模拟）。")}>撰写第一篇文章</Button>} /></Card>
       ) : (
         <>
           <div className="hidden md:block">
             <Table density="compact" bordered>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-12 text-center">
-                    <Checkbox
-                      aria-label="选择当前页全部文章"
-                      checked={allVisibleSelected}
-                      onChange={(event) => {
-                        const visibleIds = visiblePosts.map((post) => post.id);
-                        setSelected((current) => event.target.checked
-                          ? [...new Set([...current, ...visibleIds])]
-                          : current.filter((id) => !visibleIds.includes(id)));
-                      }}
-                    />
-                  </TableHead>
-                  <TableHead>文章</TableHead>
-                  <TableHead className="w-28">状态</TableHead>
-                  <TableHead className="w-28">更新时间</TableHead>
-                  <TableHead className="w-24 text-right">阅读</TableHead>
-                  <TableHead className="w-40 text-right">操作</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {visiblePosts.map((post) => (
-                  <TableRow key={post.id} data-state={selected.includes(post.id) ? "selected" : undefined}>
-                    <TableCell className="text-center">
-                      <Checkbox
-                        aria-label={`选择文章 ${post.title}`}
-                        checked={selected.includes(post.id)}
-                        onChange={(event) => setSelection(post.id, event.target.checked)}
-                      />
-                    </TableCell>
-                    <TableCell className="min-w-72 whitespace-normal">
-                      <div className="flex flex-col gap-1">
-                        <span className="font-semibold leading-snug">{post.title}</span>
-                        <span className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                          <code className="font-mono">/{post.slug}</code>
-                          <Tag bordered={false}>{post.category}</Tag>
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell><StatusTag status={post.status} /></TableCell>
-                    <TableCell><time className="font-mono text-xs text-muted-foreground">{post.updatedAt}</time></TableCell>
-                    <TableCell className="text-right font-mono text-xs text-muted-foreground">{post.views.toLocaleString()}</TableCell>
-                    <TableCell><RowActions post={post} onNotice={setNotice} onDelete={(id) => setDeleteTarget({ kind: "single", id })} /></TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
+              <TableHeader><TableRow><TableHead className="w-12 text-center"><Checkbox aria-label="选择当前页全部文章" checked={allVisibleSelected} onChange={(event) => { const visibleIds = visiblePosts.map((post) => post.id); setSelected((current) => event.target.checked ? [...new Set([...current, ...visibleIds])] : current.filter((id) => !visibleIds.includes(id))); }} /></TableHead><TableHead>文章</TableHead><TableHead className="w-28">状态</TableHead><TableHead className="w-28">更新时间</TableHead><TableHead className="w-24 text-right">阅读</TableHead><TableHead className="w-40 text-right">操作</TableHead></TableRow></TableHeader>
+              <TableBody>{visiblePosts.map((post) => <TableRow key={post.id} data-state={selected.includes(post.id) ? "selected" : undefined}><TableCell className="text-center"><Checkbox aria-label={`选择文章 ${post.title}`} checked={selected.includes(post.id)} onChange={(event) => setSelection(post.id, event.target.checked)} /></TableCell><TableCell className="min-w-72 whitespace-normal"><div className="flex flex-col gap-1"><span className="font-semibold leading-snug">{post.title}</span><span className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground"><code className="font-mono">/{post.slug}</code><Tag bordered={false}>{post.category}</Tag></span></div></TableCell><TableCell><StatusTag status={post.status} /></TableCell><TableCell><time className="font-mono text-xs text-muted-foreground">{post.updatedAt}</time></TableCell><TableCell className="text-right font-mono text-xs text-muted-foreground">{post.views.toLocaleString()}</TableCell><TableCell><RowActions post={post} onNotice={setNotice} onDelete={(id) => setDeleteTarget({ kind: "single", id })} /></TableCell></TableRow>)}</TableBody>
             </Table>
           </div>
 
           <div className="grid gap-3 md:hidden" role="list" aria-label="文章列表">
             {visiblePosts.map((post) => (
               <Card key={post.id} padding="base" role="listitem" className={selected.includes(post.id) ? "border-primary/40 bg-accent/20" : undefined}>
-                <div className="flex flex-col gap-4">
-                  <div className="flex items-start gap-3">
-                    <Checkbox aria-label={`选择文章 ${post.title}`} checked={selected.includes(post.id)} onChange={(event) => setSelection(post.id, event.target.checked)} />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-start justify-between gap-3">
-                        <span className="font-semibold leading-snug">{post.title}</span>
-                        <StatusTag status={post.status} />
-                      </div>
-                      <code className="mt-1 block break-all font-mono text-xs text-muted-foreground">/{post.slug}</code>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                    <span>{post.category}</span>
-                    <time>更新于 {post.updatedAt}</time>
-                    <span>{post.views.toLocaleString()} 次阅读</span>
-                  </div>
-                  <RowActions post={post} onNotice={setNotice} onDelete={(id) => setDeleteTarget({ kind: "single", id })} />
-                </div>
+                <div className="flex flex-col gap-4"><div className="flex items-start gap-3"><Checkbox aria-label={`选择文章 ${post.title}`} checked={selected.includes(post.id)} onChange={(event) => setSelection(post.id, event.target.checked)} /><div className="min-w-0 flex-1"><div className="flex items-start justify-between gap-3"><span className="font-semibold leading-snug">{post.title}</span><StatusTag status={post.status} /></div><code className="mt-1 block break-all font-mono text-xs text-muted-foreground">/{post.slug}</code></div></div><div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground"><span>{post.category}</span><time>更新于 {post.updatedAt}</time><span>{post.views.toLocaleString()} 次阅读</span></div><RowActions post={post} onNotice={setNotice} onDelete={(id) => setDeleteTarget({ kind: "single", id })} /></div>
               </Card>
             ))}
           </div>
 
-          {total > pageSize ? (
-            <Pagination
-              ariaLabel="文章分页"
-              page={currentPage}
-              total={total}
-              pageSize={pageSize}
-              onChange={(nextPage) => { setPage(nextPage); setSelected([]); }}
-              align="center"
-              showTotal={(count, range) => `${range[0]}-${range[1]} / ${count} 篇`}
-            />
-          ) : null}
+          {total > pageSize ? <Pagination ariaLabel="文章分页" page={currentPage} total={total} pageSize={pageSize} onChange={(nextPage) => { setPage(nextPage); setSelected([]); }} align="center" showTotal={(count, range) => `${range[0]}-${range[1]} / ${count} 篇`} /> : null}
         </>
       )}
 
-      <Modal
-        open={deleteTarget !== null}
-        title={deleteTarget?.kind === "batch" ? "批量删除文章" : "删除文章"}
-        description={deleteDescription}
-        onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}
-        onOk={confirmDelete}
-        okText="永久删除"
-        cancelText="取消"
-        okButtonProps={{ variant: "solid", color: "error" }}
-      >
-        <Text size="sm" tone="muted">这是静态 Showcase fixture；确认后只更新当前预览数据。</Text>
-      </Modal>
+      <Modal open={deleteTarget !== null} title={deleteTarget?.kind === "batch" ? "批量删除文章" : "删除文章"} description={deleteDescription} onOpenChange={(open) => { if (!open) setDeleteTarget(null); }} onOk={confirmDelete} okText="永久删除" cancelText="取消" okButtonProps={{ variant: "solid", color: "error" }}><Text size="sm" tone="muted">这是静态 Showcase fixture；确认后只更新当前预览数据。</Text></Modal>
     </div>
   );
 }
