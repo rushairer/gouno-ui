@@ -3,7 +3,6 @@ import {
   Clock3,
   GitBranch,
   RefreshCw,
-  Settings2,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
@@ -18,15 +17,6 @@ import {
 } from "../../../../src/core";
 import { PageHeader } from "../../../../src/gouno";
 import { FixtureDock } from "../../../components/fixture-dock";
-import { AIOpsAdvancedPanel } from "./advanced";
-import {
-  aiOpsAdvancedFixture,
-  type AIOpsAdvancedFixture,
-  type AIOpsAdvancedSection,
-  type AgentFixture,
-  type ProviderFixture,
-  type SkillFixture,
-} from "./advanced-fixtures";
 import {
   AIOpsAutomationPanel,
   AIOpsRecordsPanel,
@@ -46,7 +36,7 @@ export type AIOpsRouteState = {
 
 type FixtureScenario = "data" | "loading" | "error";
 
-const validTabs = new Set<AIOpsTab>(["overview", "inbox", "automation", "records", "advanced"]);
+const validTabs = new Set<AIOpsTab>(["overview", "inbox", "automation", "records"]);
 const validRecordTypes = new Set<AIOpsRecordType>(["workflow", "agent"]);
 
 function positiveInt(value: string | null): number | undefined {
@@ -98,21 +88,6 @@ function cloneDecisionFixture(): AIOpsDecisionFixture {
   };
 }
 
-function cloneAdvancedFixture(): AIOpsAdvancedFixture {
-  return {
-    ...aiOpsAdvancedFixture,
-    agents: aiOpsAdvancedFixture.agents.map((item) => ({ ...item, capabilities: [...item.capabilities] })),
-    skills: aiOpsAdvancedFixture.skills.map((item) => ({ ...item, capabilities: [...item.capabilities] })),
-    tools: aiOpsAdvancedFixture.tools.map((item) => ({ ...item, surfaces: [...item.surfaces] })),
-    knowledge: {
-      profiles: aiOpsAdvancedFixture.knowledge.profiles.map((item) => ({ ...item })),
-      index: { ...aiOpsAdvancedFixture.knowledge.index },
-    },
-    providers: aiOpsAdvancedFixture.providers.map((item) => ({ ...item })),
-    connectors: aiOpsAdvancedFixture.connectors.map((item) => ({ ...item })),
-  };
-}
-
 function pendingDecisionCount(fixture: AIOpsDecisionFixture) {
   return (
     fixture.approvals.filter((item) => item.status === "pending" || item.status === "failed").length +
@@ -153,8 +128,6 @@ export function BlogAdminAIOperationsDemo({
   const [route, setRoute] = useState<AIOpsRouteState>(initialRoute);
   const [scenario, setScenario] = useState<FixtureScenario>("data");
   const [decisionFixture, setDecisionFixture] = useState(cloneDecisionFixture);
-  const [advancedFixture, setAdvancedFixture] = useState(cloneAdvancedFixture);
-  const [advancedSection, setAdvancedSection] = useState<AIOpsAdvancedSection>("agents");
   const [selectedApprovalId, setSelectedApprovalId] = useState<number | null>(decisionFixture.approvals[0]?.id ?? null);
   const [notice, setNotice] = useState<string>("");
 
@@ -194,20 +167,11 @@ export function BlogAdminAIOperationsDemo({
     setNotice(approved ? `审批 #${id} 已批准，后续执行仍受 Workflow 运行状态约束。` : `审批 #${id} 已拒绝。`);
   };
 
-  const toggleAgent = (agent: AgentFixture) => {
-    setAdvancedFixture((current) => ({
-      ...current,
-      agents: current.agents.map((item) => item.id === agent.id ? { ...item, enabled: !item.enabled } : item),
-    }));
-    setNotice(`${agent.name} 已${agent.enabled ? "停用" : "启用"}。`);
-  };
-
   const tabs = [
     { key: "overview", label: tabLabel("概览", <Sparkles aria-hidden="true" className="size-4" />) },
     { key: "inbox", label: tabLabel("待我处理", <ShieldCheck aria-hidden="true" className="size-4" />, pendingDecisionCount(decisionFixture)) },
     { key: "automation", label: tabLabel("自动化", <GitBranch aria-hidden="true" className="size-4" />) },
     { key: "records", label: tabLabel("运行中心", <Clock3 aria-hidden="true" className="size-4" />) },
-    { key: "advanced", label: tabLabel("高级设置", <Settings2 aria-hidden="true" className="size-4" />) },
   ] as const;
 
   const automationFixture = route.workflow
@@ -257,7 +221,7 @@ export function BlogAdminAIOperationsDemo({
         onOpenRecords={openRecords}
       />
     );
-  } else if (route.tab === "records") {
+  } else {
     content = (
       <AIOpsRecordsPanel
         fixture={recordsFixture}
@@ -266,27 +230,13 @@ export function BlogAdminAIOperationsDemo({
         onRouteChange={updateRecordsRoute}
       />
     );
-  } else {
-    content = (
-      <AIOpsAdvancedPanel
-        fixture={advancedFixture}
-        section={advancedSection}
-        onSectionChange={setAdvancedSection}
-        onRunAgent={(agent) => setNotice(`${agent.name} 已排队运行；运行证据会进入运行中心。`)}
-        onToggleAgent={toggleAgent}
-        onCopySkill={(skill: SkillFixture) => setNotice(`${skill.name} v${skill.version} 已创建自定义副本。`)}
-        onRetryIndex={() => setNotice("失败索引任务已重新排队。")}
-        onRebuildIndex={() => setNotice("知识索引已请求全量重建。")}
-        onTestProvider={(provider: ProviderFixture) => setNotice(`${provider.name}：连接测试成功。`)}
-      />
-    );
   }
 
   return (
     <div className="flex flex-col gap-6">
       <FixtureDock
         route={formatAIOpsRoute(route)}
-        note="保留真实 AI Ops 五个顶层 Tab、运行深链接与 Advanced 配置语义；Fixture 不请求真实 Agent/Workflow API。"
+        note="AI 运营保留发现、决策、自动化与运行证据；稳定治理配置已拆分到独立 AI 设置路由。"
         controls={(
           <Segmented<FixtureScenario>
             aria-label="AI Ops 场景"
@@ -302,7 +252,7 @@ export function BlogAdminAIOperationsDemo({
       />
       <PageHeader
         title="AI 运营"
-        description="从发现机会、人工决策、自动化执行到运行证据与治理配置，保持完整的人机协作边界。"
+        description="从发现机会、人工决策、自动化执行到运行证据，保持完整的人机协作闭环。"
         actions={<Button variant="outline" icon={<RefreshCw />} onClick={() => { setScenario("data"); setNotice("AI 运营数据已刷新。"); }}>刷新</Button>}
       />
       <Tabs<AIOpsTab> activeKey={route.tab} items={tabs} onChange={selectTab} ariaLabel="AI 运营工作区" />
@@ -312,4 +262,4 @@ export function BlogAdminAIOperationsDemo({
   );
 }
 
-export { aiOpsDecisionFixture, aiOpsAutomationRecordsFixture, aiOpsAdvancedFixture };
+export { aiOpsDecisionFixture, aiOpsAutomationRecordsFixture };

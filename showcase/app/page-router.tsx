@@ -18,6 +18,9 @@ const BlogAdminDashboardDemo = lazy(() =>
 const BlogAdminAIOperationsDemo = lazy(() =>
   import("../demos/products/blog-admin-ai-operations").then((module) => ({ default: module.BlogAdminAIOperationsDemo })),
 );
+const BlogAdminAISettingsDemo = lazy(() =>
+  import("../demos/products/blog-admin-ai-settings").then((module) => ({ default: module.BlogAdminAISettingsDemo })),
+);
 const BlogAdminPostsDemo = lazy(() =>
   import("../demos/products/blog-admin-posts").then((module) => ({ default: module.BlogAdminPostsDemo })),
 );
@@ -108,6 +111,8 @@ export function ShowcasePage({ page, workspace }: { page: string; workspace: Sho
       return <Suspense fallback={loading}><BlogAdminDashboardDemo /></Suspense>;
     case "blog-admin-ai-operations":
       return <Suspense fallback={loading}><BlogAdminAIOperationsDemo /></Suspense>;
+    case "blog-admin-ai-settings":
+      return <Suspense fallback={loading}><BlogAdminAISettingsDemo /></Suspense>;
     case "blog-admin-posts":
       return <Suspense fallback={loading}><BlogAdminPostsDemo /></Suspense>;
     case "blog-admin-post-editor":

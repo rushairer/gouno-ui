@@ -1,4 +1,4 @@
-export type AIOpsAdvancedSection =
+export type AISettingsSection =
   | "agents"
   | "skills"
   | "tools"
@@ -56,7 +56,7 @@ export type ConnectorFixture = {
   lastChecked: string;
 };
 
-export type AIOpsAdvancedFixture = {
+export type AISettingsFixture = {
   agents: AgentFixture[];
   skills: SkillFixture[];
   tools: ToolFixture[];
@@ -79,7 +79,7 @@ export type AIOpsAdvancedFixture = {
   connectors: ConnectorFixture[];
 };
 
-export const aiOpsAdvancedFixture: AIOpsAdvancedFixture = {
+export const aiSettingsFixture: AISettingsFixture = {
   agents: [
     {
       id: 81,

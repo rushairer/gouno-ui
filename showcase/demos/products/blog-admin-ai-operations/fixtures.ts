@@ -1,4 +1,4 @@
-export type AIOpsTab = "overview" | "inbox" | "automation" | "records" | "advanced";
+export type AIOpsTab = "overview" | "inbox" | "automation" | "records";
 
 export type ApprovalStatus = "pending" | "failed" | "approved" | "rejected";
 
