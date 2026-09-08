@@ -13,6 +13,8 @@ describe("Gosso Admin authentication route fixtures", () => {
   it("preserves password, MFA and Sudo login states without a public auth abstraction", () => {
     render(<GossoLoginDemo />);
     expect(screen.getByRole("heading", { level: 1, name: "统一身份中心" })).toBeTruthy();
+    expect(screen.queryByText("/login")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
     expect(screen.getByText("/login")).toBeTruthy();
     fireEvent.change(screen.getByLabelText(/用户名/), { target: { value: "admin" } });
     fireEvent.change(screen.getByLabelText(/^密码/, { selector: 'input[type="password"]' }), { target: { value: "correct-horse-battery" } });
@@ -54,6 +56,7 @@ describe("Gosso Admin authentication route fixtures", () => {
     render(<GossoCallbackDemo />);
     expect(screen.getByRole("heading", { level: 1, name: "正在完成身份验证" })).toBeTruthy();
     expect(screen.getByText(/Authorization Code \+ PKCE/)).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
     fireEvent.click(screen.getByRole("radio", { name: "失败" }));
     expect(screen.getByRole("heading", { level: 1, name: "身份验证失败" })).toBeTruthy();
     expect(screen.getByText(/CALLBACK_PARAMS_MISSING/)).toBeTruthy();
