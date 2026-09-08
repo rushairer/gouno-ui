@@ -52,6 +52,10 @@ function Table({
             : density === "touch"
               ? "[&_th]:px-4 [&_th]:py-4 [&_td]:px-4 [&_td]:py-4"
               : "[&_th]:px-4 [&_th]:py-3 [&_td]:px-4 [&_td]:py-3",
+          bordered &&
+            (density === "compact"
+              ? "[&_tr>*:first-child]:pl-4 [&_tr>*:last-child]:pr-4"
+              : "[&_tr>*:first-child]:pl-6 [&_tr>*:last-child]:pr-6"),
           "[&_tfoot_th]:align-middle [&_tfoot_td]:align-middle",
           density === "compact"
             ? "[&_tfoot_th]:h-10 [&_tfoot_td]:h-10"

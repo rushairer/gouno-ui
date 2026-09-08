@@ -53,16 +53,20 @@ describe("Gosso Admin Account Settings migration fixture", () => {
     expect(screen.getByText("密码更新流程已完成（Showcase 模拟）。")).toBeTruthy();
   });
 
-  it("represents passkey and session management without restoring Legacy patterns", () => {
+  it("keeps self-surfaced passkey and session collections out of redundant Cards", () => {
     render(<GossoAccountSettingsDemo />);
 
     selectTab("通行密钥 (FIDO2)");
+    const passkeyList = screen.getByRole("list", { name: "已注册通行密钥" });
     expect(screen.getByText("MacBook Pro")).toBeTruthy();
     expect(screen.getByText("iPhone")).toBeTruthy();
+    expect(passkeyList.closest('[data-slot="card"]')).toBeNull();
 
     selectTab("活跃会话");
+    const sessionTable = screen.getByRole("table");
     expect(screen.getByText("macOS · Chrome")).toBeTruthy();
     expect(screen.getByText("当前会话")).toBeTruthy();
+    expect(sessionTable.closest('[data-slot="card"]')).toBeNull();
 
     const terminateButtons = screen.getAllByRole("button", { name: "终止会话" });
     fireEvent.click(terminateButtons[0]);
