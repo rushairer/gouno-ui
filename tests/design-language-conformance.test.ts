@@ -19,6 +19,7 @@ const gossoApplicationFiles = [
 const blogAdminApplicationFiles = [
   resolve(productsRoot, "blog-admin-dashboard.tsx"),
   resolve(productsRoot, "blog-admin-posts.tsx"),
+  resolve(productsRoot, "blog-admin-post-editor.tsx"),
   resolve(productsRoot, "blog-admin-categories.tsx"),
   resolve(productsRoot, "blog-admin-tags.tsx"),
   resolve(productsRoot, "blog-admin-pages.tsx"),
