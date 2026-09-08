@@ -43,4 +43,15 @@ describe("design-language conformance", () => {
     expect(siteSettings).not.toContain("-mx-6");
     expect(siteSettings).not.toContain("-mb-6");
   });
+
+  it("keeps Blog Admin Posts on the current surface contract", () => {
+    const posts = readFileSync(resolve(productsRoot, "blog-admin-posts.tsx"), "utf8");
+    const spaciousCards = posts.match(/<Card\b[^>]*padding=["']lg["']/g) ?? [];
+
+    // DL-07 permits this single spacious treatment because it is a contained Empty/result surface,
+    // not a normal application content surface or an alignment shim.
+    expect(spaciousCards).toHaveLength(1);
+    expect(posts).toContain('<Card padding="lg">\n          <Empty');
+    expect(posts).not.toMatch(/(?:^|\s)p-(?:5|8)(?:\s|["'])/);
+  });
 });
