@@ -25,10 +25,11 @@ Blog Admin is the active second-product validation workspace. The current migrat
 3. `blog-admin-site-settings.tsx` — Site Settings `/admin/settings`, including all five real settings groups, RSS validation, favicon/Hero upload semantics, dirty/save lifecycle, loading/error states and product-local Sudo/MFA protection.
 4. `blog-admin-comments.tsx` — Comments `/admin/comments`, including status/reported filters, moderation queue, selection/batch delete, AI workflow entry, destructive confirmation and loading/error/empty states.
 5. `blog-admin-categories.tsx` — Categories `/admin/categories`, including taxonomy Table, selection/batch workflows, create/edit Drawer, AI Slug assistance, destructive confirmation and loading/error/empty states.
+6. `blog-admin-tags.tsx` — Tags `/admin/tags`, including compact tag-card Grid, rename/merge workflows, selection/batch actions, partial-failure retry semantics and loading/error/empty states.
 
 The Posts migration was rechecked after PD-023/PD-024. Its normal application surfaces conform to the shared surface contract; the one spacious `Card padding="lg"` is intentionally limited to the contained `Empty` result surface and is not an application alignment precedent. `tests/design-language-conformance.test.ts` protects every currently migrated Blog Admin page from drifting back to accidental 20px/32px normal application insets.
 
-Posts and Members independently reuse admitted `PageHeader` without expanding its API. Comments and Categories continue validating the same route-header contract across moderation-list and taxonomy-table workflows. Resource-management mechanics repeat, but the surrounding presentations remain intentionally different; this continues to reject restoration of one broad Legacy `DataTable`, `ResponsiveList`, `FilterBar` or `AsyncState` feature bag.
+Posts and Members independently reuse admitted `PageHeader` without expanding its API. Comments, Categories and Tags continue validating the same route-header contract across moderation-list, taxonomy-table and compact-card workflows. Resource-management mechanics repeat, but the surrounding presentations remain intentionally different; this continues to reject restoration of one broad Legacy `DataTable`, `ResponsiveList`, `FilterBar` or `AsyncState` feature bag.
 
 Do not collapse Gosso identity users and Blog members into one page/domain abstraction merely because both render a user-like table. Gosso manages identity-platform accounts; Blog Admin manages product membership, roles and high-privilege product actions. Shared abstractions must come from smaller stable presentation/interaction contracts, not from similar nouns or screenshots.
 
@@ -44,7 +45,9 @@ Posts, Comments and Categories are three independently rebuilt routes with diffe
 
 The Pattern stays deliberately small. It owns toolbar semantics/presentation and cancel affordance; the product owns selection state and every business action. AI, publish, delete, resource type and workflow-launcher concepts remain children/product code. Legacy `onAIAssist` and non-standard `ariaLabel` are not restored.
 
-The next high-value Blog Admin target is **Tags `/admin/tags`**. It should consume `BulkActionBar` immediately as a later validation case without expanding the Pattern API by default. If Tags cannot fit cleanly, challenge the Pattern rather than adding aliases or feature-bag props.
+Tags is the first page migrated **after** PD-028 and validates the admitted Pattern without API expansion. Its surrounding UI is a compact Card Grid rather than a Table or moderation list, and its partial-failure delete fixture deliberately keeps failed items selected for retry. None of those product semantics require a new `BulkActionBar` prop; they remain product-owned state around the same selection-aware toolbar contract.
+
+The next high-value Blog Admin target is **Media Library `/admin/media`**. It should pressure the same Pattern inside a visual asset Grid while independently testing search/type filtering, upload and AI-generation drawers, asset references and deletion-blocking semantics. Do not use Media as justification to re-admit a broad collection/DataTable feature bag.
 
 A product-page catalog value of `100` means that the individual Showcase fixture is complete for the migrated route scope; it never means the entire Blog Admin product space has been migrated.
 
