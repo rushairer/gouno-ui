@@ -17,14 +17,24 @@ describe("Blog Admin Site Settings product migration fixture", () => {
     expect(screen.getByRole("radio", { name: "已解锁" })).toBeTruthy();
   });
 
-  it("preserves all five real settings sections through canonical Tabs", () => {
+  it("preserves all five settings sections with one tablist and open panel leads", () => {
     render(<BlogAdminSiteSettingsDemo />);
 
+    expect(screen.getAllByRole("tablist")).toHaveLength(1);
     expect(screen.getByRole("tab", { name: "基础信息" })).toBeTruthy();
     expect(screen.getByRole("tab", { name: "网站图标" })).toBeTruthy();
     expect(screen.getByRole("tab", { name: "首页 Hero" })).toBeTruthy();
     expect(screen.getByRole("tab", { name: "公开联系方式" })).toBeTruthy();
     expect(screen.getByRole("tab", { name: "SEO" })).toBeTruthy();
+
+    const basicLead = screen.getByText("站点名称、内容定位和作者展示信息。");
+    expect(basicLead.closest('[data-slot="showcase-tab-panel-lead"]')).toBeTruthy();
+    expect(basicLead.closest('[data-slot="card"]')).toBeNull();
+    expect(screen.queryByRole("heading", { level: 2, name: "基础信息" })).toBeNull();
+
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "首页 Hero" }), { button: 0 });
+    expect(screen.getByText("定制前台首页顶部的 Slogan 标语、描述以及右侧系统图。")).toBeTruthy();
+    expect(screen.queryByRole("heading", { level: 2, name: "首页 Hero 标语与插图" })).toBeNull();
 
     fireEvent.mouseDown(screen.getByRole("tab", { name: "公开联系方式" }), { button: 0 });
     expect(screen.getByRole("textbox", { name: "RSS" })).toBeTruthy();

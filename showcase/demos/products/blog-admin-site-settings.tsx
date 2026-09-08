@@ -27,6 +27,7 @@ import {
 } from "../../../src/core";
 import { PageHeader } from "../../../src/gouno";
 import { FixtureDock } from "../../components/fixture-dock";
+import { TabPanelLead } from "../../components/tab-panel-lead";
 
 type SettingsTab = "basic" | "appearance" | "hero" | "social" | "seo";
 type FixtureScenario = "data" | "loading" | "error";
@@ -84,14 +85,12 @@ const securityOptions = [
 ] as const;
 
 function SettingsSurface({
-  title,
   description,
   dirty,
   onSave,
   secondaryAction,
   children,
 }: {
-  title: string;
   description: string;
   dirty: boolean;
   onSave: () => void;
@@ -99,24 +98,23 @@ function SettingsSurface({
   children: ReactNode;
 }) {
   return (
-    <Card padding="none" className="gap-0 overflow-clip">
-      <CardContent className="flex flex-col gap-5 p-6">
-        <div>
-          <Text className="text-base font-semibold">{title}</Text>
-          <Text size="sm" tone="muted" className="mt-1 leading-relaxed">{description}</Text>
-        </div>
-        {children}
-      </CardContent>
-      <CardFooter className="sticky bottom-0 z-10 justify-between border-t bg-card/95 px-6 py-4 backdrop-blur">
-        <div className="flex flex-wrap items-center gap-3">
-          {secondaryAction}
-          <Text size="sm" tone="muted">{dirty ? "有未保存修改" : "当前设置已同步"}</Text>
-        </div>
-        <Button variant="solid" color="primary" icon={<Save />} disabled={!dirty} onClick={onSave}>
-          保存设置
-        </Button>
-      </CardFooter>
-    </Card>
+    <div className="flex flex-col gap-5">
+      <TabPanelLead description={description} />
+      <Card padding="none" className="gap-0 overflow-clip">
+        <CardContent className="flex flex-col gap-5 p-6">
+          {children}
+        </CardContent>
+        <CardFooter className="sticky bottom-0 z-10 justify-between border-t bg-card/95 px-6 py-4 backdrop-blur">
+          <div className="flex flex-wrap items-center gap-3">
+            {secondaryAction}
+            <Text size="sm" tone="muted">{dirty ? "有未保存修改" : "当前设置已同步"}</Text>
+          </div>
+          <Button variant="solid" color="primary" icon={<Save />} disabled={!dirty} onClick={onSave}>
+            保存设置
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
   );
 }
 
@@ -243,7 +241,6 @@ export function BlogAdminSiteSettingsDemo() {
               icon: <FileText aria-hidden="true" className="size-4" />,
               children: (
                 <SettingsSurface
-                  title="基础信息"
                   description="站点名称、内容定位和作者展示信息。"
                   dirty={dirty}
                   onSave={save}
@@ -272,7 +269,6 @@ export function BlogAdminSiteSettingsDemo() {
               icon: <ImageIcon aria-hidden="true" className="size-4" />,
               children: (
                 <SettingsSurface
-                  title="网站图标"
                   description="设置浏览器标签页中显示的 Favicon。"
                   dirty={dirty}
                   onSave={save}
@@ -299,7 +295,6 @@ export function BlogAdminSiteSettingsDemo() {
               icon: <ImageIcon aria-hidden="true" className="size-4" />,
               children: (
                 <SettingsSurface
-                  title="首页 Hero 标语与插图"
                   description="定制前台首页顶部的 Slogan 标语、描述以及右侧系统图。"
                   dirty={dirty}
                   onSave={save}
@@ -338,7 +333,6 @@ export function BlogAdminSiteSettingsDemo() {
               icon: <Mail aria-hidden="true" className="size-4" />,
               children: (
                 <SettingsSurface
-                  title="公开联系方式"
                   description="留空时前台不会显示对应入口；这些信息与 GOSSO 登录账号资料相互独立。"
                   dirty={dirty}
                   onSave={save}
@@ -361,7 +355,6 @@ export function BlogAdminSiteSettingsDemo() {
               icon: <Search aria-hidden="true" className="size-4" />,
               children: (
                 <SettingsSurface
-                  title="默认 SEO"
                   description="作为文章未单独配置 SEO 信息时的站点级默认值。"
                   dirty={dirty}
                   onSave={save}

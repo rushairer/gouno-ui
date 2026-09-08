@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Alert, IconButton, Modal, Text } from "../../../../src/core";
 import { FixtureDock } from "../../../components/fixture-dock";
+import { TabPanelLead } from "../../../components/tab-panel-lead";
 
 export function FixtureBanner({ route }: { route: string }) {
   return (
@@ -11,21 +12,7 @@ export function FixtureBanner({ route }: { route: string }) {
   );
 }
 
-export function ManagementPanelLead({
-  description,
-  actions,
-}: {
-  description?: ReactNode;
-  actions?: ReactNode;
-}) {
-  if (!description && !actions) return null;
-  return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-      {description ? <Text tone="muted" size="sm" className="max-w-3xl leading-relaxed">{description}</Text> : <span />}
-      {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
-    </div>
-  );
-}
+export const ManagementPanelLead = TabPanelLead;
 
 export function StatusNotice({ children }: { children: ReactNode }) {
   return <Alert type="success" showIcon title={children} />;
