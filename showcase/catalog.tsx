@@ -225,6 +225,7 @@ export const showcaseCatalog: ShowcaseGroup[] = [
     item("blog-admin-posts", "Posts", "文章管理", 100, <FileText />),
     item("blog-admin-categories", "Categories", "分类管理", 100, <ListTree />),
     item("blog-admin-tags", "Tags", "标签管理", 100, <Tags />),
+    item("blog-admin-pages", "Pages", "单页管理", 100, <FileText />),
     item("blog-admin-comments", "Comments", "评论审核", 100, <MessageSquare />),
   ]},
   { workspace: "blog-admin", group: "Site 站点管理", items: [
