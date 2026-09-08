@@ -1,5 +1,5 @@
-import { afterEach, fireEvent, render, screen, cleanup } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it } from "vitest";
 import { showcaseCatalog } from "../showcase/catalog";
 import { GossoCallbackDemo } from "../showcase/demos/products/gosso-auth/callback";
 import { GossoForgotPasswordDemo } from "../showcase/demos/products/gosso-auth/forgot-password";

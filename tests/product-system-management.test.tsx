@@ -1,5 +1,5 @@
-import { afterEach, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { afterEach, describe, expect, it } from "vitest";
 import { PageHeader } from "../src/gouno";
 import { GossoSystemManagementDemo } from "../showcase/demos/products/gosso-system-management";
 
