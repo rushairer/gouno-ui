@@ -26,7 +26,7 @@ describe("Blog Admin Site Settings product migration fixture", () => {
     expect(screen.getByRole("tab", { name: "公开联系方式" })).toBeTruthy();
     expect(screen.getByRole("tab", { name: "SEO" })).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("tab", { name: "公开联系方式" }));
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "公开联系方式" }), { button: 0 });
     expect(screen.getByRole("textbox", { name: "RSS" })).toBeTruthy();
   });
 
@@ -55,7 +55,7 @@ describe("Blog Admin Site Settings product migration fixture", () => {
   it("preserves the real RSS validation and loading/error fixture states", () => {
     render(<BlogAdminSiteSettingsDemo />);
 
-    fireEvent.click(screen.getByRole("tab", { name: "公开联系方式" }));
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "公开联系方式" }), { button: 0 });
     const rss = screen.getByRole("textbox", { name: "RSS" });
     fireEvent.change(rss, { target: { value: "ftp://example.test/feed" } });
     fireEvent.click(screen.getByRole("button", { name: "保存设置" }));
