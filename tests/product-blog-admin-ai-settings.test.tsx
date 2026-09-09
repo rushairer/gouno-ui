@@ -41,7 +41,7 @@ describe("Blog Admin AI Settings route family", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "创建 Agent" }));
     expect(screen.getByRole("heading", { level: 2, name: "创建 Agent" })).toBeTruthy();
-    fireEvent.change(screen.getByLabelText("Agent 名称"), { target: { value: "Research Review Agent" } });
+    fireEvent.change(screen.getByLabelText(/Agent 名称/), { target: { value: "Research Review Agent" } });
     fireEvent.click(screen.getByRole("button", { name: "保存 Agent" }));
 
     expect(screen.getByText("Research Review Agent", { selector: "strong" })).toBeTruthy();
