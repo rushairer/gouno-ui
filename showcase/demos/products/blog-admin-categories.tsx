@@ -26,6 +26,7 @@ import {
 import { PageHeader } from "../../../src/gouno";
 import { BulkActionBar } from "../../../src/patterns";
 import { FixtureDock } from "../../components/fixture-dock";
+import { BlogAdminWorkflowLauncherFixture } from "./blog-admin-workflow-launcher-fixture";
 
 type FixtureScenario = "data" | "loading" | "empty" | "error" | "partial-failure";
 type DeleteTarget = { kind: "single"; id: number } | { kind: "batch" } | null;
@@ -43,46 +44,13 @@ type CategoryFixture = {
 type CategoryDraft = Omit<CategoryFixture, "id" | "postCount">;
 
 const initialCategories: readonly CategoryFixture[] = [
-  {
-    id: 31,
-    name: "工程实践",
-    slug: "engineering-practice",
-    description: "设计系统、研发流程与工程化实践。",
-    sortOrder: 10,
-    postCount: 18,
-  },
-  {
-    id: 32,
-    name: "身份安全",
-    slug: "identity-security",
-    description: "OAuth、OIDC、SSO 与应用安全。",
-    sortOrder: 20,
-    postCount: 12,
-  },
-  {
-    id: 33,
-    name: "前端",
-    slug: "frontend",
-    description: "React、Tailwind CSS 与交互设计。",
-    sortOrder: 30,
-    postCount: 24,
-  },
-  {
-    id: 34,
-    name: "后端架构",
-    slug: "backend-architecture",
-    description: "Go、Kafka 与分布式系统。",
-    sortOrder: 40,
-    postCount: 31,
-  },
+  { id: 31, name: "工程实践", slug: "engineering-practice", description: "设计系统、研发流程与工程化实践。", sortOrder: 10, postCount: 18 },
+  { id: 32, name: "身份安全", slug: "identity-security", description: "OAuth、OIDC、SSO 与应用安全。", sortOrder: 20, postCount: 12 },
+  { id: 33, name: "前端", slug: "frontend", description: "React、Tailwind CSS 与交互设计。", sortOrder: 30, postCount: 24 },
+  { id: 34, name: "后端架构", slug: "backend-architecture", description: "Go、Kafka 与分布式系统。", sortOrder: 40, postCount: 31 },
 ];
 
-const emptyDraft: CategoryDraft = {
-  name: "",
-  slug: "",
-  description: "",
-  sortOrder: 0,
-};
+const emptyDraft: CategoryDraft = { name: "", slug: "", description: "", sortOrder: 0 };
 
 const scenarioOptions = [
   { value: "data", label: "有数据" },
@@ -90,6 +58,10 @@ const scenarioOptions = [
   { value: "empty", label: "空状态" },
   { value: "error", label: "错误" },
   { value: "partial-failure", label: "批量部分失败" },
+] as const;
+
+const taxonomyWorkflows = [
+  { id: 77, name: "分类与标签整理", description: "联合分析手选分类与标签的结构质量。" },
 ] as const;
 
 const knownSlugCandidates: Record<string, string[]> = {
@@ -136,7 +108,7 @@ export function BlogAdminCategoriesDemo() {
   const [slugCandidates, setSlugCandidates] = useState<string[]>([]);
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
   const [aiOpen, setAIOpen] = useState(false);
-  const [notice, setNotice] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [notice, setNotice] = useState<{ type: "success" | "info" | "error"; text: string } | null>(null);
 
   const visibleCategories = scenario === "empty" ? [] : categories;
   const allSelected = visibleCategories.length > 0 && visibleCategories.every((category) => selected.includes(category.id));
@@ -154,12 +126,7 @@ export function BlogAdminCategoriesDemo() {
   };
 
   const openEdit = (category: CategoryFixture) => {
-    setDraft({
-      name: category.name,
-      slug: category.slug,
-      description: category.description,
-      sortOrder: category.sortOrder,
-    });
+    setDraft({ name: category.name, slug: category.slug, description: category.description, sortOrder: category.sortOrder });
     setSlugCandidates([]);
     setEditor({ mode: "edit", id: category.id });
   };
@@ -203,47 +170,28 @@ export function BlogAdminCategoriesDemo() {
   };
 
   const setSelection = (id: number, checked: boolean) => {
-    setSelected((current) => checked
-      ? [...new Set([...current, id])]
-      : current.filter((item) => item !== id));
+    setSelected((current) => checked ? [...new Set([...current, id])] : current.filter((item) => item !== id));
   };
 
   const confirmDelete = () => {
     if (!deleteTarget) return;
 
     if (deleteTarget.kind === "batch") {
-      const failed = scenario === "partial-failure" && selected.length > 1
-        ? [selected[selected.length - 1]]
-        : [];
+      const failed = scenario === "partial-failure" && selected.length > 1 ? [selected[selected.length - 1]] : [];
       const removed = selected.filter((id) => !failed.includes(id));
       setCategories((current) => current.filter((category) => !removed.includes(category.id)));
       setSelected(failed);
       setDeleteTarget(null);
       setNotice(failed.length > 0
-        ? {
-            type: "error",
-            text: `已删除 ${removed.length} 个分类；${failed.length} 个未删除：模拟 API 拒绝删除，失败项继续保持选中。`,
-          }
-        : {
-            type: "success",
-            text: `已删除 ${removed.length} 个分类，相关文章将进入未分类（Showcase 模拟）。`,
-          });
+        ? { type: "error", text: `已删除 ${removed.length} 个分类；${failed.length} 个未删除：模拟 API 拒绝删除，失败项继续保持选中。` }
+        : { type: "success", text: `已删除 ${removed.length} 个分类，相关文章将进入未分类（Showcase 模拟）。` });
       return;
     }
 
     setCategories((current) => current.filter((category) => category.id !== deleteTarget.id));
     setSelected((current) => current.filter((id) => id !== deleteTarget.id));
     setDeleteTarget(null);
-    setNotice({
-      type: "success",
-      text: "分类已删除，相关文章将进入未分类（Showcase 模拟）。",
-    });
-  };
-
-  const launchAI = () => {
-    const count = selected.length;
-    setAIOpen(false);
-    setNotice({ type: "success", text: `已将 ${count} 个分类交给 AI 工作流（Showcase 模拟）。` });
+    setNotice({ type: "success", text: "分类已删除，相关文章将进入未分类（Showcase 模拟）。" });
   };
 
   const deleteDescription: ReactNode = deleteTarget?.kind === "batch"
@@ -256,7 +204,7 @@ export function BlogAdminCategoriesDemo() {
     <div className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/categories"
-        note="保留真实分类表格、批量部分失败保留选择、Drawer 编辑与 AI Slug 辅助语义；Fixture 不请求真实 Blog API。"
+        note="保留真实分类表格、批量部分失败保留选择、Drawer 编辑、AI Slug，以及 category resource 的真实 WorkflowLauncher 资源输入与 Run 反馈；Fixture 不请求真实 Blog/AI API。"
         controls={(
           <Segmented<FixtureScenario>
             aria-label="分类页 Fixture 状态"
@@ -266,6 +214,7 @@ export function BlogAdminCategoriesDemo() {
               setScenario(value);
               clearSelection();
               setNotice(null);
+              setAIOpen(false);
             }}
             block
           />
@@ -275,49 +224,25 @@ export function BlogAdminCategoriesDemo() {
       <PageHeader
         title="分类"
         description="建立长期稳定的内容脉络与主题结构。"
-        actions={(
-          <Button variant="solid" color="primary" icon={<Plus />} onClick={openCreate}>
-            新建分类
-          </Button>
-        )}
+        actions={<Button variant="solid" color="primary" icon={<Plus />} onClick={openCreate}>新建分类</Button>}
       />
 
-      {notice ? (
-        <Alert
-          type={notice.type}
-          showIcon
-          title={notice.text}
-          closable={{ onClose: () => setNotice(null) }}
-        />
-      ) : null}
+      {notice ? <Alert type={notice.type} showIcon title={notice.text} closable={{ onClose: () => setNotice(null) }} /> : null}
 
       {selected.length > 0 ? (
-        <BulkActionBar
-          selectionLabel={`已选择 ${selected.length} 个分类`}
-          onCancel={clearSelection}
-        >
+        <BulkActionBar selectionLabel={`已选择 ${selected.length} 个分类`} onCancel={clearSelection}>
           <Button size="small" icon={<Bot />} onClick={() => setAIOpen(true)}>交给 AI</Button>
           <Button size="small" color="error" icon={<Trash2 />} onClick={() => setDeleteTarget({ kind: "batch" })}>删除</Button>
         </BulkActionBar>
       ) : null}
 
       {scenario === "error" ? (
-        <Alert
-          type="error"
-          showIcon
-          title="分类加载失败"
-          description="无法读取分类列表。真实产品会保留当前页面并允许重新请求。"
-          action={<Button size="small" onClick={() => setScenario("data")}>重新载入</Button>}
-        />
+        <Alert type="error" showIcon title="分类加载失败" description="无法读取分类列表。真实产品会保留当前页面并允许重新请求。" action={<Button size="small" onClick={() => setScenario("data")}>重新载入</Button>} />
       ) : scenario === "loading" ? (
         <LoadingCategories />
       ) : visibleCategories.length === 0 ? (
         <Card padding="lg">
-          <Empty
-            title="还没有分类"
-            description="创建第一个分类来组织长期主题。"
-            action={<Button variant="solid" color="primary" icon={<Plus />} onClick={openCreate}>创建分类</Button>}
-          />
+          <Empty title="还没有分类" description="创建第一个分类来组织长期主题。" action={<Button variant="solid" color="primary" icon={<Plus />} onClick={openCreate}>创建分类</Button>} />
         </Card>
       ) : (
         <Table density="compact" bordered>
@@ -329,9 +254,7 @@ export function BlogAdminCategoriesDemo() {
                   checked={allSelected}
                   onChange={(event) => {
                     const ids = visibleCategories.map((category) => category.id);
-                    setSelected((current) => event.target.checked
-                      ? [...new Set([...current, ...ids])]
-                      : current.filter((id) => !ids.includes(id)));
+                    setSelected((current) => event.target.checked ? [...new Set([...current, ...ids])] : current.filter((id) => !ids.includes(id)));
                   }}
                 />
               </TableHead>
@@ -346,11 +269,7 @@ export function BlogAdminCategoriesDemo() {
             {visibleCategories.map((category) => (
               <TableRow key={category.id} data-state={selected.includes(category.id) ? "selected" : undefined}>
                 <TableCell className="text-center">
-                  <Checkbox
-                    aria-label={`选择分类 ${category.name}`}
-                    checked={selected.includes(category.id)}
-                    onChange={(event) => setSelection(category.id, event.target.checked)}
-                  />
+                  <Checkbox aria-label={`选择分类 ${category.name}`} checked={selected.includes(category.id)} onChange={(event) => setSelection(category.id, event.target.checked)} />
                 </TableCell>
                 <TableCell><span className="font-mono text-xs text-muted-foreground">{category.sortOrder}</span></TableCell>
                 <TableCell className="min-w-72 whitespace-normal">
@@ -363,19 +282,8 @@ export function BlogAdminCategoriesDemo() {
                 <TableCell className="text-right font-mono text-xs text-muted-foreground">{category.postCount}</TableCell>
                 <TableCell>
                   <div className="flex min-w-max flex-nowrap items-center justify-end gap-1">
-                    <IconButton
-                      label={`编辑分类 ${category.name}`}
-                      icon={<Edit2 />}
-                      variant="ghost"
-                      onClick={() => openEdit(category)}
-                    />
-                    <IconButton
-                      label={`删除分类 ${category.name}`}
-                      icon={<Trash2 />}
-                      variant="ghost"
-                      color="error"
-                      onClick={() => setDeleteTarget({ kind: "single", id: category.id })}
-                    />
+                    <IconButton label={`编辑分类 ${category.name}`} icon={<Edit2 />} variant="ghost" onClick={() => openEdit(category)} />
+                    <IconButton label={`删除分类 ${category.name}`} icon={<Trash2 />} variant="ghost" color="error" onClick={() => setDeleteTarget({ kind: "single", id: category.id })} />
                   </div>
                 </TableCell>
               </TableRow>
@@ -393,58 +301,32 @@ export function BlogAdminCategoriesDemo() {
         footer={(
           <>
             <Button onClick={() => setEditor(null)}>取消</Button>
-            <Button variant="solid" color="primary" onClick={saveCategory}>
-              {editor?.mode === "edit" ? "保存修改" : "创建分类"}
-            </Button>
+            <Button variant="solid" color="primary" onClick={saveCategory}>{editor?.mode === "edit" ? "保存修改" : "创建分类"}</Button>
           </>
         )}
       >
         <div className="flex flex-col gap-5">
           <FormField label="分类名称" required>
-            <Input
-              aria-label="分类名称"
-              required
-              value={draft.name}
-              onChange={(event) => setDraft((current) => ({ ...current, name: event.target.value }))}
-            />
+            <Input aria-label="分类名称" required value={draft.name} onChange={(event) => setDraft((current) => ({ ...current, name: event.target.value }))} />
           </FormField>
           <FormField label="Slug 标识" required hint="用于分类 URL，建议使用稳定的英文短语。">
             <div className="flex flex-col gap-2">
               <div className="flex gap-2">
-                <Input
-                  aria-label="Slug 标识"
-                  required
-                  value={draft.slug}
-                  onChange={(event) => setDraft((current) => ({ ...current, slug: event.target.value }))}
-                />
+                <Input aria-label="Slug 标识" required value={draft.slug} onChange={(event) => setDraft((current) => ({ ...current, slug: event.target.value }))} />
                 <Button size="small" icon={<Sparkles />} onClick={requestSlug}>AI 生成</Button>
               </div>
               {slugCandidates.length > 0 ? (
                 <div className="flex flex-wrap gap-2" aria-label="Slug 候选">
-                  {slugCandidates.map((candidate) => (
-                    <Button key={candidate} size="small" variant="text" onClick={() => applySlug(candidate)}>
-                      {candidate}
-                    </Button>
-                  ))}
+                  {slugCandidates.map((candidate) => <Button key={candidate} size="small" variant="text" onClick={() => applySlug(candidate)}>{candidate}</Button>)}
                 </div>
               ) : null}
             </div>
           </FormField>
           <FormField label="分类描述">
-            <Textarea
-              aria-label="分类描述"
-              rows={4}
-              value={draft.description}
-              onChange={(event) => setDraft((current) => ({ ...current, description: event.target.value }))}
-            />
+            <Textarea aria-label="分类描述" rows={4} value={draft.description} onChange={(event) => setDraft((current) => ({ ...current, description: event.target.value }))} />
           </FormField>
           <FormField label="排序">
-            <InputNumber
-              aria-label="分类排序"
-              min={0}
-              value={draft.sortOrder}
-              onChange={(value) => setDraft((current) => ({ ...current, sortOrder: value ?? 0 }))}
-            />
+            <InputNumber aria-label="分类排序" min={0} value={draft.sortOrder} onChange={(value) => setDraft((current) => ({ ...current, sortOrder: value ?? 0 }))} />
           </FormField>
         </div>
       </Drawer>
@@ -461,27 +343,20 @@ export function BlogAdminCategoriesDemo() {
         <Text size="sm" tone="muted">删除分类不会删除文章，但相关文章需要重新归类。</Text>
       </Modal>
 
-      <Modal
+      <BlogAdminWorkflowLauncherFixture
         open={aiOpen}
         title="将所选分类交给 AI"
-        description="真实产品会把所选分类作为 category 资源传给 WorkflowLauncher。"
+        description="只显示 input schema 声明 category resource 的已启用 Workflow，并把本次手选分类写入资源字段。"
+        resourceLabel="分类"
+        resources={selectedCategories.map((category) => ({ key: category.id, label: category.name, detail: `/${category.slug} · ${category.postCount} 篇文章` }))}
+        workflows={taxonomyWorkflows}
+        runIdBase={261}
         onClose={() => setAIOpen(false)}
-        onOk={launchAI}
-        okText="启动工作流"
-        okButtonProps={{ variant: "solid", color: "primary" }}
-      >
-        <div className="space-y-3">
-          <Text size="sm" tone="muted">本次将处理 {selectedCategories.length} 个分类：</Text>
-          <ul className="space-y-2 text-sm">
-            {selectedCategories.map((category) => (
-              <li key={category.id} className="rounded-md border bg-muted/30 px-3 py-2">
-                <span className="font-medium">{category.name}</span>
-                <span className="ml-2 font-mono text-xs text-muted-foreground">/{category.slug}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </Modal>
+        onNavigate={(route) => {
+          setAIOpen(false);
+          setNotice({ type: "info", text: `将进入 ${route}（Showcase 模拟）。` });
+        }}
+      />
     </div>
   );
 }
