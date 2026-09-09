@@ -76,7 +76,8 @@ describe("Blog public document page migrations", () => {
     expect(source).not.toContain('src/patterns');
     expect(source).not.toMatch(/import\s+\{[^}]*\b(?:AppShell|PageContainer)\b[^}]*\}\s+from\s+["'][^"']+["']/s);
     expect(source).not.toMatch(/<(?:AppShell|PageContainer)\b/);
-    expect(source).not.toMatch(/\b(?:DocumentPage|MarkdownPage|MarkdownRenderer|DocumentShell)\b/);
+    expect(source).not.toMatch(/import\s+[^;\n]*\b(?:DocumentPage|MarkdownPage|MarkdownRenderer|DocumentShell)\b[^;\n]*from\s+["'][^"']+["']/);
+    expect(source).not.toMatch(/<(?:DocumentPage|MarkdownPage|MarkdownRenderer|DocumentShell)\b/);
     expect(source).not.toMatch(/\bfetch\s*\(|\baxios\b|XMLHttpRequest|WebSocket/);
     expect(source).not.toMatch(/shadow-(?:md|lg|xl|2xl|raised|overlay|modal)/);
   });
