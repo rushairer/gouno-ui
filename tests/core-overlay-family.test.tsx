@@ -21,6 +21,16 @@ import { feedbackDocuments } from "../showcase/demos/core/feedback";
 import { navigationDocuments } from "../showcase/demos/core/navigation";
 import { overlayDocuments } from "../showcase/demos/core/overlay";
 
+Object.defineProperty(globalThis, "ResizeObserver", {
+  configurable: true,
+  writable: true,
+  value: class ResizeObserverMock {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  },
+});
+
 afterEach(cleanup);
 
 describe("Core overlay and dropdown families", () => {

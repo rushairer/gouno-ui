@@ -21,6 +21,9 @@ jobs:
           node-version: 24
           cache: npm
 
+      - name: Install dependencies
+        run: npm ci
+
       - name: Certify overlay family inventory
         run: |
           python3 <<'PY'
@@ -60,12 +63,6 @@ jobs:
               raise SystemExit("component progress insertion marker missing")
           progress_path.write_text(progress.replace(marker, insertion, 1))
           PY
-
-      - name: Format changed source
-        run: npx prettier --write showcase/demos/core/feedback.tsx showcase/demos/core/navigation.tsx showcase/demos/core/overlay.tsx showcase/demos/core/dropdown.tsx showcase/demos/core/popover/popover-0.tsx showcase/demos/core/tooltip/tooltip-0.tsx showcase/demos/core/dropdown/dropdown-0.tsx showcase/demos/core/registry.ts showcase/core-family-coverage.ts showcase/component-progress.ts tests/core-overlay-family.test.tsx
-
-      - name: Install dependencies
-        run: npm ci
 
       - name: Verify sealed family
         run: |
