@@ -36,10 +36,10 @@ describe("product migration line", () => {
     }
   });
 
-  it("starts the Blog workspace with the real standalone Home migration", () => {
+  it("keeps the migrated Blog public surfaces standalone from the Showcase AppShell", () => {
     const catalog = read("showcase/catalog.tsx");
-    expect(catalog).toContain(
-      'item("blog-home", "Home", "首页", 100, <Home />, "standalone")',
-    );
+    expect(catalog).toContain('item("blog-home", "Home", "首页", 100, <Home />, "standalone")');
+    expect(catalog).toContain('item("blog-articles", "ArticleIndex", "文章列表", 100, <FileText />, "standalone")');
+    expect(catalog).toContain('item("blog-search", "Search", "搜索结果", 100, <Search />, "standalone")');
   });
 });
