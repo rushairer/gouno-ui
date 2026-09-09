@@ -339,7 +339,7 @@ export function BlogAccountSettingsDemo({
                   setNotice("");
                 }} />
               </Field>
-              <Field label="个人简介" description="在公开内容和讨论身份旁展示。">
+              <Field label="个人简介" hint="在公开内容和讨论身份旁展示。">
                 <Textarea rows={4} value={bio} onChange={(event) => {
                   setBio(event.target.value);
                   setNotice("");
