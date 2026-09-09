@@ -5,6 +5,7 @@ import { Anchor } from "../src/core";
 afterEach(() => {
   cleanup();
   window.history.replaceState(null, "", "/");
+  Object.defineProperty(window, "scrollY", { configurable: true, value: 0 });
   vi.restoreAllMocks();
 });
 
