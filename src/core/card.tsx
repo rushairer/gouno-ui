@@ -29,7 +29,7 @@ export type CardFooterProps = HTMLAttributes<HTMLElement>;
 
 export function Card({ as: Component = "div", variant = "default", padding = "base", interactive = false, className, ...props }: CardProps) {
   return <Component {...props} data-slot="card" className={cn(
-    "ui-card min-w-0 rounded-lg border bg-card text-card-foreground flex flex-col gap-5",
+    "min-w-0 rounded-lg border bg-card text-card-foreground flex flex-col gap-5",
     padding === "sm" ? "p-4" : padding === "lg" ? "p-8" : padding === "none" ? "p-0" : "p-6",
     variant === "subtle" && "bg-muted",
     variant === "elevated" && "bg-raised shadow-raised",
