@@ -24,7 +24,8 @@ describe("Blog public ArticleIndex product migration fixture", () => {
 
     expect(screen.getByRole("heading", { level: 1, name: "全部文章" })).toBeTruthy();
     expect(screen.getByRole("region", { name: "筛选" })).toBeTruthy();
-    expect(screen.getByRole("searchbox", { name: "搜索文章" })).toBeTruthy();
+    expect(screen.getAllByRole("searchbox", { name: "搜索文章" }).length).toBeGreaterThanOrEqual(2);
+    expect(document.getElementById("article-search-articles")).toBeTruthy();
     expect(screen.getByRole("navigation", { name: "文章分页" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Page 2" })).toBeTruthy();
 
@@ -38,7 +39,8 @@ describe("Blog public ArticleIndex product migration fixture", () => {
     expect(screen.getByRole("heading", { level: 1, name: "“OAuth2”的搜索结果" })).toBeTruthy();
     expect(screen.getByText("2 篇文章，持续记录问题、选择与实现。")).toBeTruthy();
 
-    const search = screen.getByRole("searchbox", { name: "搜索文章" });
+    const search = document.getElementById("article-search-search") as HTMLInputElement;
+    expect(search).toBeTruthy();
     fireEvent.change(search, { target: { value: "Kafka" } });
     fireEvent.submit(search.closest("form")!);
 
