@@ -1,0 +1,202 @@
+import { ArrowUpRight } from "lucide-react";
+
+export type BlogPostFixture = {
+  id: number;
+  title: string;
+  slug: string;
+  summary: string;
+  publishedAt: string;
+  readTime: number;
+  tags: string[];
+  category: string;
+  cover?: boolean;
+};
+
+export const blogPosts: BlogPostFixture[] = [
+  {
+    id: 1,
+    title: "从 OAuth2 BFF 到产品体验：安全边界如何影响前端架构",
+    slug: "oauth2-bff-product-experience",
+    summary: "浏览器不持有长期 Token 并不只是安全策略，它会进一步塑造会话恢复、错误反馈与跨产品导航。",
+    publishedAt: "2026-09-08",
+    readTime: 8,
+    tags: ["OAuth2", "BFF", "Architecture"],
+    category: "架构与安全",
+    cover: true,
+  },
+  {
+    id: 2,
+    title: "Gouno UI：用真实产品反推设计系统，而不是先造组件大全",
+    slug: "gouno-ui-product-driven",
+    summary: "从 Gosso Admin、Blog Admin 到公开 Blog，第三个产品形态开始检验哪些抽象是真的共享语义。",
+    publishedAt: "2026-09-07",
+    readTime: 6,
+    tags: ["Design System", "React"],
+    category: "工程实践",
+  },
+  {
+    id: 3,
+    title: "Kafka 背压实践：为什么并发更多不一定吞吐更高",
+    slug: "kafka-backpressure",
+    summary: "从分区、锁竞争和下游 I/O 看 goroutine 数量与真实吞吐之间的关系。",
+    publishedAt: "2026-09-05",
+    readTime: 7,
+    tags: ["Go", "Kafka"],
+    category: "工程实践",
+  },
+  {
+    id: 4,
+    title: "把 AI Agent 放进真实工程流程后，我们重新理解了自动化",
+    slug: "agent-engineering-loop",
+    summary: "Agent 的价值不只在生成代码，而在约束、验证、回归和可追踪交付形成闭环。",
+    publishedAt: "2026-09-03",
+    readTime: 9,
+    tags: ["AI", "Engineering"],
+    category: "AI 与工具",
+  },
+  {
+    id: 5,
+    title: "一个公开技术博客应该如何组织发现、阅读与长期归档",
+    slug: "public-blog-information-architecture",
+    summary: "首页不是后台 Dashboard。公开内容站点更关心阅读路径、主题索引、作者关系和长期可发现性。",
+    publishedAt: "2026-09-01",
+    readTime: 5,
+    tags: ["Blog", "UX"],
+    category: "工程实践",
+  },
+  {
+    id: 6,
+    title: "Go 流式处理五百万行数据：背压比 goroutine 数量更重要",
+    slug: "go-streaming-backpressure",
+    summary: "把读取、转换和写入拆开并不自动等于高吞吐，真正关键的是队列边界、批量策略和下游容量。",
+    publishedAt: "2026-08-29",
+    readTime: 10,
+    tags: ["Go", "Performance"],
+    category: "工程实践",
+  },
+  {
+    id: 7,
+    title: "OAuth2 Authorization Code + PKCE 在 BFF 里的边界怎么划",
+    slug: "oauth2-pkce-bff-boundary",
+    summary: "浏览器、BFF 与身份服务之间的 token 生命周期应该如何分工，决定了大量后续安全与体验细节。",
+    publishedAt: "2026-08-26",
+    readTime: 11,
+    tags: ["OAuth2", "Security", "BFF"],
+    category: "架构与安全",
+  },
+  {
+    id: 8,
+    title: "从 Xcode Agent 到国产模型：AI 编程工具的真实工程约束",
+    slug: "xcode-agent-engineering",
+    summary: "模型能力只是入口，真正落地还要处理上下文、工具权限、构建反馈和可复现性。",
+    publishedAt: "2026-08-22",
+    readTime: 7,
+    tags: ["AI", "Xcode"],
+    category: "AI 与工具",
+  },
+  {
+    id: 9,
+    title: "Kubernetes 里的任务分发：主从调度不是简单 RPC",
+    slug: "kubernetes-task-dispatch",
+    summary: "当任务需要拆分、派发、执行、回传和汇总时，状态模型与失败恢复比 RPC 选型更先决定架构。",
+    publishedAt: "2026-08-18",
+    readTime: 9,
+    tags: ["Kubernetes", "Go"],
+    category: "架构与安全",
+  },
+  {
+    id: 10,
+    title: "为什么设计系统里的间距归属必须写成规则",
+    slug: "design-system-spacing-ownership",
+    summary: "Tabs、Card、PageHeader 等复合组件一旦没有清晰的 spacing ownership，页面层就会积累互相抵消的 margin。",
+    publishedAt: "2026-08-14",
+    readTime: 6,
+    tags: ["Design System", "UX"],
+    category: "工程实践",
+  },
+  {
+    id: 11,
+    title: "Kafka 15 分区为什么不是 15 个 goroutine 就最快",
+    slug: "kafka-partitions-concurrency",
+    summary: "消费者并发最终受分区、锁、批量大小和下游 I/O 共同约束，线程数量只是其中一个变量。",
+    publishedAt: "2026-08-10",
+    readTime: 6,
+    tags: ["Kafka", "Performance"],
+    category: "工程实践",
+  },
+  {
+    id: 12,
+    title: "AI 自动化工作流需要哪些可观测性证据",
+    slug: "ai-workflow-observability",
+    summary: "真正可运营的 Agent 流程必须留下执行上下文、步骤、指标、错误与版本证据，不能只展示一次生成结果。",
+    publishedAt: "2026-08-06",
+    readTime: 8,
+    tags: ["AI", "Observability"],
+    category: "AI 与工具",
+  },
+];
+
+export const blogTags = [
+  "Go",
+  "React",
+  "OAuth2",
+  "AI",
+  "Design System",
+  "Kafka",
+  "BFF",
+  "Security",
+  "Performance",
+  "Kubernetes",
+] as const;
+
+export const blogCategories = [
+  { id: 1, name: "工程实践", slug: "engineering", description: "真实工程中的架构、性能与设计系统实践。", postCount: 6 },
+  { id: 2, name: "AI 与工具", slug: "ai-tools", description: "AI 编程、Agent 与自动化工作流的落地经验。", postCount: 3 },
+  { id: 3, name: "架构与安全", slug: "architecture-security", description: "身份、安全边界与分布式系统架构判断。", postCount: 3 },
+] as const;
+
+export function BlogArticleTeaser({
+  post,
+  featured = false,
+  compact = false,
+  onNavigate,
+}: {
+  post: BlogPostFixture;
+  featured?: boolean;
+  compact?: boolean;
+  onNavigate: (target: string) => void;
+}) {
+  return (
+    <article className={`group grid min-w-0 gap-5 border-b py-6 ${post.cover && !compact ? "sm:grid-cols-[minmax(0,1fr)_180px]" : ""}`}>
+      <div className="min-w-0">
+        <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+          <time dateTime={post.publishedAt}>{post.publishedAt}</time>
+          <span>{post.readTime} 分钟阅读</span>
+        </div>
+        <button type="button" className="inline-flex items-start gap-2 text-left" onClick={() => onNavigate(`/articles/${post.slug}`)}>
+          <h2 className={`${featured ? "text-2xl md:text-3xl" : compact ? "text-base" : "text-xl"} break-words font-semibold leading-snug tracking-tight group-hover:text-primary`}>
+            {post.title}
+          </h2>
+          <ArrowUpRight aria-hidden="true" className="mt-1 size-4 shrink-0 text-muted-foreground" />
+        </button>
+        <p className={`mt-3 text-sm leading-7 text-muted-foreground ${compact ? "line-clamp-2" : "line-clamp-3"}`}>{post.summary}</p>
+        <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-primary">
+          {post.tags.slice(0, compact ? 3 : post.tags.length).map((tag) => (
+            <button type="button" key={tag} className="hover:underline" onClick={() => onNavigate(`/tags/${encodeURIComponent(tag)}`)}>{tag}</button>
+          ))}
+        </div>
+      </div>
+      {post.cover && !compact ? (
+        <button
+          type="button"
+          tabIndex={-1}
+          aria-hidden="true"
+          className="aspect-[4/3] self-center overflow-hidden rounded-md border bg-gradient-to-br from-primary/15 via-muted to-background p-4"
+          onClick={() => onNavigate(`/articles/${post.slug}`)}
+        >
+          <span className="grid h-full place-items-center rounded border border-dashed text-center text-[11px] text-muted-foreground">文章封面静态占位</span>
+        </button>
+      ) : null}
+    </article>
+  );
+}
