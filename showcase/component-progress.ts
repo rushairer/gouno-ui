@@ -26,6 +26,7 @@ const completedComponents = new Set([
   "core-card",
   "core-typography",
   "core-progress",
+  "core-page-layout",
   "theme-system",
   "pattern-bulk-action-bar",
   "gouno-app-shell",
