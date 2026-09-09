@@ -255,11 +255,12 @@ export function BlogArticleDetailDemo({
         {scenario === "loading" ? (
           <ArticleDetailSkeleton />
         ) : scenario === "error" ? (
-          <Card variant="subtle">
+          <Card padding="none" variant="subtle">
             <Result
               status="error"
+              headingLevel={1}
               title="文章载入失败"
-              subTitle="公开文章接口暂时不可用，请稍后重试。"
+              description="公开文章接口暂时不可用，请稍后重试。"
               extra={
                 <div className="flex flex-wrap justify-center gap-2">
                   <Button onClick={() => setScenario("data")}>重试</Button>
@@ -269,11 +270,12 @@ export function BlogArticleDetailDemo({
             />
           </Card>
         ) : scenario === "not-found" ? (
-          <Card variant="subtle">
+          <Card padding="none" variant="subtle">
             <Result
               status="info"
+              headingLevel={1}
               title="文章不存在或已下线"
-              subTitle="可以返回文章索引继续浏览其他内容。"
+              description="可以返回文章索引继续浏览其他内容。"
               extra={<Button onClick={() => navigate("/articles")}>浏览全部文章</Button>}
             />
           </Card>
