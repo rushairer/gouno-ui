@@ -15,6 +15,7 @@ describe("Blog Admin Site Settings product migration fixture", () => {
     fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
     expect(screen.getByText("/admin/settings")).toBeTruthy();
     expect(screen.getByRole("radio", { name: "已解锁" })).toBeTruthy();
+    expect(screen.getByRole("radio", { name: "恢复暂存草稿" })).toBeTruthy();
   });
 
   it("preserves all five settings sections with one tablist and open panel leads", () => {
@@ -82,6 +83,21 @@ describe("Blog Admin Site Settings product migration fixture", () => {
     fireEvent.click(screen.getByRole("button", { name: "保存设置" }));
     expect(screen.getByText("站点设置已成功保存（Showcase 模拟）。")).toBeTruthy();
     expect((screen.getByRole("textbox", { name: /站点名称/ }) as HTMLInputElement).value).toBe("Draft survives MFA");
+  });
+
+  it("restores a previously persisted pending draft on page re-entry", () => {
+    render(<BlogAdminSiteSettingsDemo />);
+    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
+    fireEvent.click(screen.getByRole("radio", { name: "恢复暂存草稿" }));
+
+    const restored = screen.getByRole("textbox", { name: /站点名称/ }) as HTMLInputElement;
+    expect(restored.value).toBe("暂存的草稿标题");
+    expect(screen.getByText("已恢复未保存的修改内容。当前尚未生效，请点击“保存设置”以提交生效。")).toBeTruthy();
+    expect(screen.getByText("有未保存修改")).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "保存设置" }));
+    expect(screen.getByText("站点设置已成功保存（Showcase 模拟）。")).toBeTruthy();
+    expect(screen.getByText("当前设置已同步")).toBeTruthy();
   });
 
   it("preserves the real RSS validation and loading/error fixture states", () => {

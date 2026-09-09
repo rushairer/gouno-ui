@@ -31,7 +31,7 @@ import { TabPanelLead } from "../../components/tab-panel-lead";
 
 type SettingsTab = "basic" | "appearance" | "hero" | "social" | "seo";
 type FixtureScenario = "data" | "loading" | "error";
-type SecurityState = "unlocked" | "locked" | "expire-on-save";
+type SecurityState = "unlocked" | "locked" | "expire-on-save" | "restore-pending";
 
 type SiteSettingsFixture = {
   site_title: string;
@@ -73,6 +73,11 @@ const initialSettings: SiteSettingsFixture = {
   favicon_url: "/favicon.svg",
 };
 
+const restoredPendingSettings: SiteSettingsFixture = {
+  ...initialSettings,
+  site_title: "暂存的草稿标题",
+};
+
 const scenarioOptions = [
   { value: "data", label: "正常" },
   { value: "loading", label: "加载中" },
@@ -83,6 +88,7 @@ const securityOptions = [
   { value: "unlocked", label: "已解锁" },
   { value: "locked", label: "已锁定" },
   { value: "expire-on-save", label: "保存时过期" },
+  { value: "restore-pending", label: "恢复暂存草稿" },
 ] as const;
 
 function SettingsSurface({
@@ -102,28 +108,20 @@ function SettingsSurface({
     <div className="flex flex-col gap-5">
       <TabPanelLead description={description} />
       <Card padding="none" className="gap-0 overflow-clip">
-        <CardContent className="flex flex-col gap-5 p-6">
-          {children}
-        </CardContent>
+        <CardContent className="flex flex-col gap-5 p-6">{children}</CardContent>
         <CardFooter className="sticky bottom-0 z-10 justify-between border-t bg-card/95 px-6 py-4 backdrop-blur">
           <div className="flex flex-wrap items-center gap-3">
             {secondaryAction}
             <Text size="sm" tone="muted">{dirty ? "有未保存修改" : "当前设置已同步"}</Text>
           </div>
-          <Button variant="solid" color="primary" icon={<Save />} disabled={!dirty} onClick={onSave}>
-            保存设置
-          </Button>
+          <Button variant="solid" color="primary" icon={<Save />} disabled={!dirty} onClick={onSave}>保存设置</Button>
         </CardFooter>
       </Card>
     </div>
   );
 }
 
-function SiteSettingsSecurityGate({
-  locked,
-  onUnlock,
-  children,
-}: {
+function SiteSettingsSecurityGate({ locked, onUnlock, children }: {
   locked: boolean;
   onUnlock: () => void;
   children: ReactNode;
@@ -198,6 +196,21 @@ export function BlogAdminSiteSettingsDemo() {
     }
   };
 
+  const applySecurityFixture = (value: SecurityState) => {
+    setSecurity(value);
+    setPendingSettings(null);
+    if (value === "restore-pending") {
+      setSettings(restoredPendingSettings);
+      setBaseline(initialSettings);
+      setNotice({
+        type: "info",
+        message: "已恢复未保存的修改内容。当前尚未生效，请点击“保存设置”以提交生效。",
+      });
+      return;
+    }
+    if (value !== "locked") setNotice(null);
+  };
+
   const save = () => {
     const rss = settings.rss_url.trim();
     if (rss && !rss.startsWith("/") && !/^https?:\/\//i.test(rss)) {
@@ -216,6 +229,7 @@ export function BlogAdminSiteSettingsDemo() {
     setSettings(next);
     setBaseline(next);
     setPendingSettings(null);
+    setSecurity("unlocked");
     setNotice({ type: "success", message: "站点设置已成功保存（Showcase 模拟）。" });
   };
 
@@ -260,11 +274,7 @@ export function BlogAdminSiteSettingsDemo() {
               label: "基础信息",
               icon: <FileText aria-hidden="true" className="size-4" />,
               children: (
-                <SettingsSurface
-                  description="站点名称、内容定位和作者展示信息。"
-                  dirty={dirty}
-                  onSave={save}
-                >
+                <SettingsSurface description="站点名称、内容定位和作者展示信息。" dirty={dirty} onSave={save}>
                   <FormField label="站点名称" required>
                     <Input required value={settings.site_title} onChange={(event) => field("site_title", event.target.value)} />
                   </FormField>
@@ -288,11 +298,7 @@ export function BlogAdminSiteSettingsDemo() {
               label: "网站图标",
               icon: <ImageIcon aria-hidden="true" className="size-4" />,
               children: (
-                <SettingsSurface
-                  description="设置浏览器标签页中显示的 Favicon。"
-                  dirty={dirty}
-                  onSave={save}
-                >
+                <SettingsSurface description="设置浏览器标签页中显示的 Favicon。" dirty={dirty} onSave={save}>
                   <FormField label="Favicon 地址" hint="支持站内路径或完整 http(s) URL；真实产品上传支持 SVG、ICO、AVIF、BMP 等常见网络图片格式。">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                       <Input className="min-w-0 flex-1" value={settings.favicon_url} onChange={(event) => field("favicon_url", event.target.value)} placeholder="/favicon.svg" />
@@ -352,11 +358,7 @@ export function BlogAdminSiteSettingsDemo() {
               label: "公开联系方式",
               icon: <Mail aria-hidden="true" className="size-4" />,
               children: (
-                <SettingsSurface
-                  description="留空时前台不会显示对应入口；这些信息与 GOSSO 登录账号资料相互独立。"
-                  dirty={dirty}
-                  onSave={save}
-                >
+                <SettingsSurface description="留空时前台不会显示对应入口；这些信息与 GOSSO 登录账号资料相互独立。" dirty={dirty} onSave={save}>
                   <FormField label="公开联系邮箱">
                     <Input type="email" value={settings.email} onChange={(event) => field("email", event.target.value)} />
                   </FormField>
@@ -374,11 +376,7 @@ export function BlogAdminSiteSettingsDemo() {
               label: "SEO",
               icon: <Search aria-hidden="true" className="size-4" />,
               children: (
-                <SettingsSurface
-                  description="作为文章未单独配置 SEO 信息时的站点级默认值。"
-                  dirty={dirty}
-                  onSave={save}
-                >
+                <SettingsSurface description="作为文章未单独配置 SEO 信息时的站点级默认值。" dirty={dirty} onSave={save}>
                   <FormField label="默认标题">
                     <Input value={settings.default_seo_title} onChange={(event) => field("default_seo_title", event.target.value)} />
                   </FormField>
@@ -398,7 +396,7 @@ export function BlogAdminSiteSettingsDemo() {
     <div className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/settings"
-        note="真实 Blog Admin 站点设置页面；Fixture 保留五组配置、Sudo/MFA、保存时 Step-Up 草稿恢复、保存校验与上传状态，但不连接 Blog API 或媒体服务。"
+        note="真实 Blog Admin 站点设置页面；Fixture 保留五组配置、Sudo/MFA、保存时 Step-Up 草稿恢复、重新进入页面恢复 sessionStorage 暂存草稿、保存校验与上传状态，但不连接 Blog API 或媒体服务。"
         controls={(
           <div className="flex flex-col gap-3">
             <Segmented<FixtureScenario>
@@ -412,28 +410,17 @@ export function BlogAdminSiteSettingsDemo() {
               aria-label="站点设置安全状态"
               options={securityOptions}
               value={security}
-              onChange={(value) => {
-                setSecurity(value);
-                if (value !== "locked") setNotice(null);
-              }}
+              onChange={applySecurityFixture}
               block
             />
           </div>
         )}
       />
 
-      <PageHeader
-        title="站点设置"
-        description="管理品牌信息、首页标语、社交入口和默认 SEO 元数据。"
-      />
+      <PageHeader title="站点设置" description="管理品牌信息、首页标语、社交入口和默认 SEO 元数据。" />
 
       {notice ? (
-        <Alert
-          type={notice.type}
-          showIcon
-          title={notice.message}
-          closable={{ onClose: () => setNotice(null) }}
-        />
+        <Alert type={notice.type} showIcon title={notice.message} closable={{ onClose: () => setNotice(null) }} />
       ) : null}
 
       {content}
