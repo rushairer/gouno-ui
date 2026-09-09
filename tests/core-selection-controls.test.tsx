@@ -72,7 +72,7 @@ describe("Core selection controls", () => {
     const disabledSwitch = screen.getByRole("switch", { name: "系统策略" }) as HTMLInputElement;
     expect(disabledSwitch.disabled).toBe(true);
     expect(disabledSwitch.checked).toBe(true);
-    fireEvent.click(disabledSwitch);
+    disabledSwitch.click();
     expect(disabledSwitch.checked).toBe(true);
     expect(screen.getByRole("checkbox", { name: "后台任务" })).toBeTruthy();
   });
