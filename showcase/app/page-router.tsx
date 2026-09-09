@@ -18,6 +18,9 @@ const BlogHomeDemo = lazy(() =>
 const BlogArticleIndexDemo = lazy(() =>
   import("../demos/products/blog-article-index").then((module) => ({ default: module.BlogArticleIndexDemo })),
 );
+const BlogArticleDetailDemo = lazy(() =>
+  import("../demos/products/blog-article-detail").then((module) => ({ default: module.BlogArticleDetailDemo })),
+);
 const BlogDiscoveryIndexDemo = lazy(() =>
   import("../demos/products/blog-discovery-indexes").then((module) => ({ default: module.BlogDiscoveryIndexDemo })),
 );
@@ -120,6 +123,8 @@ export function ShowcasePage({ page, workspace }: { page: string; workspace: Sho
       return <Suspense fallback={loading}><BlogHomeDemo /></Suspense>;
     case "blog-articles":
       return <Suspense fallback={loading}><BlogArticleIndexDemo mode="articles" /></Suspense>;
+    case "blog-article-detail":
+      return <Suspense fallback={loading}><BlogArticleDetailDemo /></Suspense>;
     case "blog-search":
       return <Suspense fallback={loading}><BlogArticleIndexDemo mode="search" /></Suspense>;
     case "blog-categories":
