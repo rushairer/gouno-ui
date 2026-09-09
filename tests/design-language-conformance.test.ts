@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 const repoRoot = process.cwd();
 const productsRoot = resolve(repoRoot, "showcase/demos/products");
 const sourceRoot = resolve(repoRoot, "src");
+const rawShadowClass = /shadow-(?:xs|sm|md|lg|xl|2xl)(?:\s|["'`])/;
 
 function sourceFiles(path: string): string[] {
   if (!existsSync(path)) return [];
@@ -138,7 +139,7 @@ describe("design-language conformance", () => {
     const tablePath = resolve(sourceRoot, "components/primitives/table.tsx");
     for (const file of canonicalSourceFiles) {
       const source = readFileSync(file, "utf8");
-      expect(source).not.toMatch(/shadow-(?:md|lg|xl|2xl)/);
+      expect(source).not.toMatch(rawShadowClass);
       if (file === tablePath) {
         expect(source.match(/shadow-\[/g) ?? []).toHaveLength(2);
         expect(source).toContain("shadow-[inset_0_1px_0_");
@@ -156,10 +157,11 @@ describe("design-language conformance", () => {
     expect(shell).not.toContain("aria-[current=page]:shadow-sm");
   });
 
-  it("prevents product fixtures from creating effective page-local elevation", () => {
+  it("prevents product fixtures from carrying raw or page-local elevation classes", () => {
     for (const file of allProductFiles) {
       const source = readFileSync(file, "utf8");
-      expect(source).not.toMatch(/shadow-(?:md|lg|xl|2xl|raised|overlay|modal|\[)/);
+      expect(source).not.toMatch(rawShadowClass);
+      expect(source).not.toMatch(/shadow-(?:raised|overlay|modal|\[)/);
     }
   });
 
@@ -182,6 +184,40 @@ describe("design-language conformance", () => {
     expect(source).not.toContain("shadow-overlay");
     expect(source).not.toContain("backdrop-blur");
     expect(source).not.toMatch(/shadow-(?:xs|sm|md|lg|xl|2xl|raised|overlay|modal|\[)/);
+  });
+
+  it("keeps migration-only class hooks out of canonical and Showcase runtime", () => {
+    const base = readFileSync(resolve(sourceRoot, "base.css"), "utf8");
+    const showcaseCss = readFileSync(resolve(repoRoot, "showcase/showcase.css"), "utf8");
+    const button = readFileSync(resolve(sourceRoot, "core/button.tsx"), "utf8");
+    const card = readFileSync(resolve(sourceRoot, "core/card.tsx"), "utf8");
+    const form = readFileSync(resolve(sourceRoot, "core/form.tsx"), "utf8");
+    const showcaseMain = readFileSync(resolve(repoRoot, "showcase/main.tsx"), "utf8");
+    const demoBlock = readFileSync(resolve(repoRoot, "showcase/components/demo-block.tsx"), "utf8");
+    const codeBlock = readFileSync(resolve(repoRoot, "showcase/components/code-block.tsx"), "utf8");
+
+    for (const selector of [
+      "posts-list-surface",
+      "posts-filter-bar",
+      'data-slot=\"responsive-list\"',
+      "state-feedback",
+      ".feedback",
+      "icon-button__icon",
+      "icon-button--secondary",
+      "icon-button--danger",
+    ]) {
+      expect(base).not.toContain(selector);
+    }
+    expect(showcaseCss).not.toContain('data-slot="data-table"');
+    expect(button).not.toContain("btn-color-");
+    expect(button).not.toContain("is-loading");
+    expect(button).not.toContain("btn-sm");
+    expect(card).not.toContain("ui-card");
+    expect(form).not.toContain('"form-layout flex');
+    expect(showcaseMain).not.toContain('className={`${navigationItemClass} ${page === item.id ? "active" : ""}`}');
+    expect(showcaseMain).not.toMatch(rawShadowClass);
+    expect(demoBlock).not.toContain('className="demo-block ');
+    expect(codeBlock).not.toContain('className="code-block ');
   });
 
   it("uses one route-family PageHeader before Tabs on normal tabbed task pages", () => {
