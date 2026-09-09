@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" fill="none" color="currentColor">
   <title>Gouno Blog</title>
-  <path d="M94 20H48C32.536 20 20 32.536 20 48V80C20 95.464 32.536 108 48 108H80C95.464 108 108 95.464 108 80V66" stroke="#F97316" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M51 49H77C81.418 49 85 52.582 85 57V69C85 73.418 81.418 77 77 77H70L64 86L58 77H51C46.582 77 43 73.418 43 69V57C43 52.582 46.582 49 51 49Z" fill="#F97316"/>
+  <path d="M94 20H48C32.536 20 20 32.536 20 48V80C20 95.464 32.536 108 48 108H80C95.464 108 108 95.464 108 80V66" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M51 49H77C81.418 49 85 52.582 85 57V69C85 73.418 81.418 77 77 77H70L64 86L58 77H51C46.582 77 43 73.418 43 69V57C43 52.582 46.582 49 51 49Z" fill="currentColor"/>
 </svg>
