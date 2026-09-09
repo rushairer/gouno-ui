@@ -35,10 +35,13 @@ describe("Blog public discovery index migrations", () => {
     renderIndex("tags");
 
     expect(screen.getByRole("heading", { level: 1, name: "标签" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /Go 3 篇/ })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /OAuth2 2 篇/ })).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("button", { name: /OAuth2 2 篇/ }));
+    const goTag = screen.getByText("Go").closest("button");
+    const oauthTag = screen.getByText("OAuth2").closest("button");
+    expect(goTag?.textContent).toContain("3 篇");
+    expect(oauthTag?.textContent).toContain("2 篇");
+
+    fireEvent.click(oauthTag!);
     expect(screen.getByText(/\/tags\/OAuth2/)).toBeTruthy();
   });
 
