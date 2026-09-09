@@ -128,7 +128,7 @@ Invalid:
 
 A title that merely restates route/Tab identity belongs to navigation, not to the surface. Moving it inside a border does not create a new semantic section.
 
-## PI-04 — Product surfaces select from the semantic elevation ladder
+## PI-04 — Visible elevation uses semantic roles only
 
 Product code does not choose shadow blur/alpha. It classifies the surface and lets the design system own the treatment.
 
