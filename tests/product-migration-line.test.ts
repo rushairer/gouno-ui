@@ -36,8 +36,10 @@ describe("product migration line", () => {
     }
   });
 
-  it("starts the Blog workspace with the real Home migration", () => {
+  it("starts the Blog workspace with the real standalone Home migration", () => {
     const catalog = read("showcase/catalog.tsx");
-    expect(catalog).toContain('item("blog-home", "Home", "首页", 100, <Home />)');
+    expect(catalog).toContain(
+      'item("blog-home", "Home", "首页", 100, <Home />, "standalone")',
+    );
   });
 });
