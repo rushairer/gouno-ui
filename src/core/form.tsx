@@ -119,16 +119,14 @@ export function FormGrid({
 }
 
 export function FormActions({
-  surface,
   className,
   ...props
-}: HTMLAttributes<HTMLDivElement> & { surface?: boolean }) {
+}: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       {...props}
       className={cn(
         "flex flex-wrap items-center justify-end gap-3 border-t pt-5",
-        surface && "form-actions--surface",
         className,
       )}
     />
