@@ -58,7 +58,8 @@ describe("Blog Admin Pages product migration fixture", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "交给 AI" }));
     const dialog = screen.getByRole("dialog", { name: "将所选单页交给 AI" });
-    expect(within(dialog).getByRole("combobox", { name: "Workflow" })).toHaveValue("73");
+    const workflowSelect = within(dialog).getByRole("combobox", { name: "Workflow" }) as HTMLSelectElement;
+    expect(workflowSelect.value).toBe("73");
     expect(within(dialog).getByText("单页审校与优化（手选）")).toBeTruthy();
     expect(within(dialog).getByText("关于我")).toBeTruthy();
     expect(within(dialog).getByText("/about")).toBeTruthy();
@@ -77,7 +78,7 @@ describe("Blog Admin Pages product migration fixture", () => {
     const dialog = screen.getByRole("dialog", { name: "将所选单页交给 AI" });
     fireEvent.click(within(dialog).getByRole("button", { name: "移除" }));
     expect(within(dialog).getByText("至少保留 1 个单页资源才能运行。")).toBeTruthy();
-    expect(within(dialog).getByRole("button", { name: "运行" })).toBeDisabled();
+    expect((within(dialog).getByRole("button", { name: "运行" }) as HTMLButtonElement).disabled).toBe(true);
   });
 
   it("preserves single-page destructive confirmation", () => {
