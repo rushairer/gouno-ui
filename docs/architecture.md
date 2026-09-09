@@ -50,13 +50,14 @@ Layer correctness does not prove that a component deserves to exist. Apply `docs
 
 Current operating model:
 
-- Gosso Admin has completed route-level migration plus product-language convergence and now acts as the first comparison corpus.
-- Blog Admin is the active page-by-page validation line; its real pages must challenge abstractions formed during Gosso rather than mechanically copy them.
-- Relevant Blog public-site pages remain additional cross-product evidence when semantics overlap.
-- New pages start with Core + Theme + admitted Gouno structure + product-local composition.
-- The initial shell baseline is `AppShell`, `PageContainer`, `NavigationGroup`, `navigationItemClass`.
-- `PageHeader` was admitted from real cross-product page evidence; Blog Admin must continue validating its small title/description/actions contract.
-- `BulkActionBar` is the first admitted Pattern, proven by independent Posts, Comments and Categories selection workflows; future pages must validate rather than automatically expand its API.
+- Gosso Admin has completed route-level migration plus product-language convergence and acts as the first comparison corpus.
+- Blog Admin has completed route-level migration plus behavior/detail fidelity hardening and acts as the second comparison corpus.
+- Blog public site is the active page-by-page validation line, beginning with its real `PublicShell` + Home surface.
+- Public Blog pages must challenge abstractions formed during the two admin products rather than mechanically inherit application-shell assumptions.
+- New pages start with Core + Theme + admitted Gouno structure only where semantics match, plus product-local composition.
+- `AppShell`/`PageContainer` remain application-shell structure; a public document/content shell stays product-local until independent evidence proves a shared Gouno contract.
+- `PageHeader` remains admitted for route-level title/description/actions semantics; public Blog pages use it only when that semantic contract genuinely exists.
+- `BulkActionBar` is the first admitted Pattern, proven by independent Posts, Comments and Categories selection workflows; public Blog reading/discovery surfaces must not expand it by analogy.
 - The third semantically equivalent occurrence triggers review, not automatic extraction.
 
 ## Admitted Pattern interactions
@@ -120,6 +121,7 @@ Showcase information architecture keeps product workspace and design-system owne
 - inside Gouno UI: `Core`, `Theme`, `Patterns`, `Gouno`;
 - only canonical APIs appear in Gouno UI;
 - only genuinely migrated pages appear in product workspaces;
+- completed product workspaces remain comparison corpora rather than active implementation lines;
 - empty workspaces show an empty state, not simulated pages.
 
 ## Delivery contract

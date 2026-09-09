@@ -64,14 +64,14 @@ A layer may depend on itself or a lower layer, never a higher layer.
 
 ## Product-driven evolution
 
-Gouno UI is in second-product validation mode.
+Gouno UI is in third-product validation mode.
 
-- **Completed comparison corpus:** Gosso Admin route-level Showcase coverage, including its product-language convergence pass.
-- **Active migration line:** Blog Admin, one real page/page-family at a time, beginning with `/admin/posts`.
-- **Additional cross-product corpus:** relevant Gouno Blog public-site pages when their semantics overlap.
-- Start pages with Core + Theme + admitted Gouno structure + product-local JSX/Tailwind.
-- Initial shell baseline: `AppShell`, `PageContainer`, `NavigationGroup`, `navigationItemClass`.
-- `PageHeader` is additionally admitted from cross-product page evidence (PD-011) and must continue to be challenged by Blog Admin rather than treated as untouchable precedent.
+- **Completed comparison corpora:** Gosso Admin route-level Showcase coverage plus product-language convergence, and Blog Admin route-level coverage plus behavior/detail fidelity hardening.
+- **Active migration line:** Gouno Blog public site, beginning with the real `PublicShell` + `/` Home surface, then discovery, reading and account page families.
+- **Comparison corpus:** completed Gosso Admin and Blog Admin pages remain mandatory prior art when public Blog pages challenge existing abstractions.
+- Start pages with Core + Theme + admitted Gouno structure + product-local JSX/Tailwind. Do not force public-site pages into `AppShell` when their semantics are a document/public-content shell.
+- Initial shell baseline: `AppShell`, `PageContainer`, `NavigationGroup`, `navigationItemClass` for application-shell products only.
+- `PageHeader` is additionally admitted from cross-product page evidence (PD-011); public Blog pages may validate it where route semantics match, but must not use it merely for visual consistency.
 - Existing Legacy implementations are evidence, never automatic precedent.
 - First semantic occurrence stays local; second similarity is noted; third semantically equivalent occurrence triggers review, not automatic extraction.
 - Compare intent, state, lifecycle, accessibility, responsive behavior and content/action policy—not old names or DOM similarity.

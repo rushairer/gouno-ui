@@ -37,12 +37,13 @@ The root `@gouno/ui` is an external compatibility umbrella, not a fifth owner. R
 ## Product-driven evolution
 
 - Gosso Admin is the completed first-product comparison corpus.
-- Blog Admin is the active page-by-page migration line.
-- Relevant public Blog pages remain additional cross-product evidence when semantics overlap.
-- Pages start Core-first with Theme, admitted Gouno structure and local composition.
+- Blog Admin is the completed second-product comparison corpus after route coverage and behavior/detail fidelity hardening.
+- Blog public site is the active migration line, starting with `PublicShell` + Home, followed by discovery, reading and account page families.
+- Pages start Core-first with Theme, admitted Gouno structure where semantics match, and local composition.
+- Public-site document/content shells are not forced into `AppShell` merely for visual consistency.
 - Small repetition is preferred over premature extraction.
 - The third semantically equivalent occurrence triggers review, not automatic extraction.
-- Before a Pattern/Gouno addition or material Core extension, compare canonical UI, Legacy and matching real product cases.
+- Before a Pattern/Gouno addition or material Core extension, compare canonical UI, Legacy and matching real product cases across Gosso Admin, Blog Admin and Blog.
 - Durable decisions live in [`docs/abstraction-register.md`](docs/abstraction-register.md).
 - Public naming/state/composition rules live in [`docs/api-specification.md`](docs/api-specification.md).
 
@@ -54,8 +55,8 @@ Showcase separates product workspace from design-system ownership:
 
 - **Gouno UI** — canonical `Core / Theme / Patterns / Gouno` documentation.
 - **Gosso Admin** — completed first-product comparison corpus.
-- **Blog Admin** — active real-page migration workspace.
-- **Blog** — remains empty until its real migration begins.
+- **Blog Admin** — completed second-product comparison corpus.
+- **Blog** — active public-site migration workspace; only genuinely migrated public pages appear here.
 
 Showcase dogfoods admitted canonical APIs, but documentation tooling such as `CodeBlock`, API tables, demo framing and viewport simulation may stay private. Showcase-only repetition is supporting evidence, not sufficient reason to create a public abstraction. If a real product independently needs the same capability, the normal admission process decides whether it moves into Core/Pattern/Gouno.
 

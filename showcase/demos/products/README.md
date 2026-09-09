@@ -7,14 +7,14 @@ A Showcase file existing for a route proves **route-level coverage only**. It do
 ## Current migration phase
 
 - **Gosso Admin:** completed first-product comparison corpus.
-- **Blog Admin:** route-level coverage is complete; **behavior/detail fidelity hardening remains active**.
-- **Blog public site:** not yet the active migration line.
+- **Blog Admin:** completed second-product comparison corpus after route-level coverage and behavior/detail fidelity hardening.
+- **Blog public site:** active migration line, beginning with `PublicShell` + Home.
 
-Do not call the Blog Admin migration globally “finished” merely because every route family appears in Showcase. A later real-page comparison may reopen an existing fixture when it exposes a missing behavior or a canonical design-system defect.
+Completed corpora remain live evidence. A later Blog public-site migration may reopen a canonical component or an existing product fixture if it exposes a genuine cross-product defect, but ordinary implementation work no longer advances Blog Admin page by page.
 
 ## Blog Admin route coverage
 
-Current migrated route families:
+Completed migrated route families:
 
 1. `blog-admin-dashboard.tsx` — `/admin/dashboard`.
 2. `blog-admin-posts.tsx` — `/admin/posts`.
@@ -28,21 +28,21 @@ Current migrated route families:
 10. `blog-admin-media-library.tsx` — `/admin/media`.
 11. `blog-admin-users.tsx` — `/admin/users`.
 12. `blog-admin-site-settings.tsx` — `/admin/settings`.
-13. `blog-admin-ai-operations/` — target `/admin/ai-ops` operations route family.
-14. `blog-admin-ai-settings/` — target `/admin/ai-settings` governance/configuration route family.
+13. `blog-admin-ai-operations/` — `/admin/ai-ops` operations route family.
+14. `blog-admin-ai-settings/` — `/admin/ai-settings` governance/configuration route family.
 
 ### AI Operations and AI Settings are intentionally separate
 
-The current real `gouno-blog` application still mounts AI administration under `/admin/ai-ops`; the independent AI Settings route is the **target information architecture established during Gouno UI migration**, not a claim about the current production router.
+The current real `gouno-blog` application mounts both `/admin/ai-ops` and `/admin/ai-settings`. The migration keeps the target information architecture split between operational work and stable governance/configuration.
 
-The target split is:
+The split is:
 
 - **AI Operations:** Overview, Inbox, Automation, Workflow/Agent Records; user work is discovery, decision, execution, and evidence review.
 - **AI Settings:** Agents, Skills, Tools, Knowledge/Embedding, Model Connections, Sandbox Connectors; user work is stable governance/configuration.
 
-Do not restore the historical nested `Advanced` navigation merely to match old source structure. Migrate the capabilities into the correct target route family instead.
+Do not restore the historical nested `Advanced` navigation merely to match old source structure. Migrate capabilities into the correct target route family instead.
 
-The fidelity pass must preserve management entry points after this IA split. Current fixtures therefore cover, among other behavior:
+The fidelity pass preserves management entry points after this IA split. Current fixtures cover, among other behavior:
 
 - Agent create/edit/delete, enable/disable and run entry points;
 - Skill create/import/export/copy/edit/delete;
@@ -57,7 +57,7 @@ All of these remain **static Showcase behavior**. No real API key, OAuth credent
 
 ## Fidelity acceptance rule
 
-For each migrated Blog Admin route, compare the current real product source with the Showcase fixture across these dimensions before treating the route as fidelity-complete:
+For each migrated product route, compare the current real product source with the Showcase fixture across these dimensions before treating the route as fidelity-complete:
 
 1. route/page identity and product-navigation depth;
 2. primary and secondary action entry points;
@@ -72,7 +72,7 @@ For each migrated Blog Admin route, compare the current real product source with
 11. displayed Showcase source matching the rendered implementation;
 12. current binding design-language and product-interface rules.
 
-A catalog value of `100` means the **currently audited/proven route scope** is coherent. It is not a permanent parity certificate. If a real-page comparison finds an omitted behavior, fix the fixture and focused tests before relying on that value again.
+A catalog value of `100` means the **currently audited/proven route scope** is coherent. It is not a permanent parity certificate. If a later real-page comparison finds an omitted behavior, fix the fixture and focused tests before relying on that value again.
 
 ## Product composition grammar
 
@@ -97,21 +97,23 @@ Binding consequences:
 
 Editor workspaces are an explicit exception. PostEditor and PageEditor use command-bar/editor grammar with Markdown/preview view-state Tabs rather than the normal task-page `PageHeader → Tabs → content` anatomy. Their state machines and inspectors remain product-local until independent product evidence proves a shared public contract.
 
+Public Blog pages are a different product family. Do not wrap them in `AppShell` or copy Admin page grammar merely for visual consistency. Start from their real document/navigation/reading semantics and promote only independently proven shared contracts.
+
 ## Current cross-product evidence
 
 ### PageHeader
 
-Posts, Members, Comments, Categories, Tags, Pages, Notifications, Media, Site Settings and AI workspaces continue validating the admitted Gouno `PageHeader` contract without expanding it into product policy.
+Posts, Members, Comments, Categories, Tags, Pages, Notifications, Media, Site Settings and AI workspaces validate the admitted Gouno `PageHeader` contract without expanding it into product policy. Public Blog pages may further challenge the contract only where route-level title/description/actions semantics actually match.
 
 ### BulkActionBar
 
-Posts, Comments and Categories supplied the independent evidence that admitted canonical `BulkActionBar`. Later Tags, Pages, Notifications and Media validate the same small contract across different presentations. The Pattern owns toolbar semantics, selected-context presentation and cancel-selection; products own selection state and business actions.
+Posts, Comments and Categories supplied the independent evidence that admitted canonical `BulkActionBar`. Tags, Pages, Notifications and Media validate the same small contract across different presentations. The Pattern owns toolbar semantics, selected-context presentation and cancel-selection; products own selection state and business actions.
 
-Do not recreate a broad Legacy `DataTable`, `ResponsiveList`, `FilterBar`, `AsyncState`, AI workspace, or editor feature bag simply because several pages contain similar markup. Compare user intent, state, lifecycle, accessibility, responsive behavior and failure semantics first.
+Do not recreate a broad Legacy `DataTable`, `ResponsiveList`, `FilterBar`, `AsyncState`, AI workspace, editor feature bag, or public-site shell merely because several pages contain similar markup. Compare user intent, state, lifecycle, accessibility, responsive behavior and failure semantics first.
 
 ### Sudo/MFA
 
-Members and Site Settings exercise distinct Blog-owned recent-MFA/Sudo workflows. This remains product-local policy; it is not yet a public Gouno Pattern merely because several Blog pages use it.
+Members and Site Settings exercise distinct Blog-owned recent-MFA/Sudo workflows. This remains product-local policy; it is not a public Gouno Pattern merely because several Blog Admin pages use it.
 
 ## Fixture tooling
 
