@@ -301,7 +301,7 @@ export function BlogAdminPostsDemo() {
 
       {notice ? <Alert type="success" showIcon title={notice} closable={{ onClose: () => setNotice(null) }} /> : null}
 
-      <Card padding="base" className="shadow-sm">
+      <Card padding="base">
         <div className="flex flex-col gap-3 xl:flex-row xl:items-center">
           <div className="min-w-0 flex-1">
             <Input
