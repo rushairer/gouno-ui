@@ -316,7 +316,7 @@ export function BlogAdminSiteSettingsDemo() {
                 <SettingsSurface description="设置浏览器标签页中显示的 Favicon。" dirty={dirty} onSave={save}>
                   <FormField label="Favicon 地址" hint="支持站内路径或完整 http(s) URL；上传支持 PNG、WebP、GIF、JPEG、SVG、ICO、AVIF 与 BMP。">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                      <Input className="min-w-0 flex-1" value={settings.favicon_url} onChange={(event) => field("favicon_url", event.target.value)} placeholder="/favicon.svg" />
+                      <Input aria-label="Favicon 地址" className="min-w-0 flex-1" value={settings.favicon_url} onChange={(event) => field("favicon_url", event.target.value)} placeholder="/favicon.svg" />
                       <input
                         ref={faviconFileInputRef}
                         aria-label="Favicon 文件"
