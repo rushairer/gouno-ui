@@ -40,7 +40,7 @@ export { Breadcrumb, type BreadcrumbItem } from "./breadcrumb";
 export { Pagination, type PaginationProps } from "./pagination";
 export { Steps } from "./steps";
 export { Empty, type EmptyProps } from "./empty";
-export { Result } from "./result";
+export { Result, type ResultProps, type ResultStatus } from "./result";
 export { List } from "./list";
 export { Descriptions } from "./descriptions";
 export { Image } from "./image";
@@ -127,7 +127,6 @@ export type {
   QRCodeProps,
   RadioProps,
   RateProps,
-  ResultProps,
   SearchFieldProps,
   SegmentedProps,
   SkeletonProps,
