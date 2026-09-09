@@ -190,6 +190,7 @@ describe("audited target components", () => {
 
   it("reports 100% only for the completed and reviewed canonical batch", () => {
     for (const id of [
+      "core-button",
       "core-input",
       "core-textarea",
       "core-input-number",
@@ -205,7 +206,6 @@ describe("audited target components", () => {
     ]) {
       expect(componentProgress(id, 0)).toBe(100);
     }
-    expect(componentProgress("core-button", 0)).toBeLessThan(100);
     expect(componentProgress("core-data-table", 0)).toBe(0);
   });
 
