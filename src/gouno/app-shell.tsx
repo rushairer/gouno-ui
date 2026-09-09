@@ -110,13 +110,23 @@ export function AppShell({
 }
 
 export interface NavigationGroupProps {
-  label: string;
+  label?: string;
   children: ReactNode;
 }
 
+const navigationGroupClass = "mb-6 flex flex-col gap-1";
+
 export function NavigationGroup({ label, children }: NavigationGroupProps) {
+  if (!label) {
+    return (
+      <div data-slot="navigation-group" className={navigationGroupClass}>
+        {children}
+      </div>
+    );
+  }
+
   return (
-    <section className="mb-6 flex flex-col gap-1">
+    <section data-slot="navigation-group" className={navigationGroupClass}>
       <h2 className="px-3 pb-2 text-xs font-medium text-muted-foreground">
         {label}
       </h2>

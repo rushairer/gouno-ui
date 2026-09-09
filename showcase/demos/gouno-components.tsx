@@ -1,5 +1,5 @@
 import { Card, Heading, Tag, Text } from "../../src/core";
-import { PageContainer } from "../../src/gouno";
+import { NavigationGroup, PageContainer, navigationItemClass } from "../../src/gouno";
 
 type GounoComponent = "app-shell" | "page-container";
 
@@ -75,14 +75,28 @@ export function GounoComponentDemo({ component }: { component: GounoComponent })
         <Heading level={3}>Preview</Heading>
         <Text size="sm" tone="muted" className="mt-1">
           {isShell
-            ? "当前 Showcase 的嵌入式产品预览本身就是 AppShell 的真实集成用例；下面只展示结构，避免在 AppShell 内再次嵌套完整 AppShell。"
+            ? "当前 Showcase 的嵌入式产品预览本身就是 AppShell 的真实集成用例；下面展示带标题与无标题 NavigationGroup 的统一侧栏节奏。"
             : "下面直接渲染一个 PageContainer，用虚线边界表现标准内容轨道。"}
         </Text>
         {isShell ? (
           <div className="mt-5 overflow-hidden rounded-lg border bg-muted/20">
             <div className="flex h-12 items-center border-b bg-background px-4 text-sm font-medium">Header / brand / toolbar / account</div>
             <div className="grid min-h-56 grid-cols-[180px_1fr]">
-              <div className="border-r bg-sidebar p-4 text-sm text-muted-foreground">Navigation</div>
+              <div className="border-r bg-sidebar p-3 text-sm">
+                <NavigationGroup>
+                  <button type="button" className={navigationItemClass}>
+                    概览
+                  </button>
+                </NavigationGroup>
+                <NavigationGroup label="系统管理">
+                  <button type="button" className={navigationItemClass}>
+                    OAuth2 客户端
+                  </button>
+                  <button type="button" className={navigationItemClass}>
+                    用户
+                  </button>
+                </NavigationGroup>
+              </div>
               <div className="p-5">
                 <div className="rounded-md border border-dashed p-6 text-sm text-muted-foreground">Main / children</div>
               </div>
@@ -103,6 +117,11 @@ export function GounoComponentDemo({ component }: { component: GounoComponent })
         <div className="mt-3">
           <ApiTable rows={isShell ? appShellApi : pageContainerApi} />
         </div>
+        {isShell ? (
+          <Text size="sm" tone="muted" className="mt-3">
+            NavigationGroup 的 label 可选：有 label 时渲染可见组标题；无 label 时仍拥有相同的组间距，用于概览等独立一级入口，不需要产品侧补 margin。
+          </Text>
+        ) : null}
       </div>
     </div>
   );

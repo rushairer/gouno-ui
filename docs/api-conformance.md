@@ -1,6 +1,6 @@
 # Gouno UI API 合规清单
 
-核查基线：2026-09-08。目标依据：[公共 API 规范](api-specification.md)。
+核查基线：2026-09-09。目标依据：[公共 API 规范](api-specification.md)。
 
 本清单只描述当前 canonical 公共面。`src/legacy` 不参加 canonical API 合规认证，也不构成重新引入时的命名/结构先例。
 
@@ -36,6 +36,7 @@
 | API-016 | Node.js 24 下 Pages 发布前必须通过 typecheck、tests、package build、Showcase build。 | workflow hardening |
 | API-017 | Alert 使用 `title/description/type/showIcon/icon/action/closable/banner/variant/classNames/styles` canonical API；语义 type 与视觉 variant 分离，并提供 `Alert.ErrorBoundary`。 | Alert docs/focused tests / PD-015 |
 | API-018 | 复合组件负责自身语义区域之间的 structural spacing；内容槽内部 padding/rhythm 由内容拥有者负责。Tabs 四个 `tabPosition` 保持同一 TabBar↔Panel 间距语义，active indicator 不得扩大 TabList 的滚动区域。 | Tabs docs/focused tests / PD-020 |
+| API-019 | `NavigationGroup` 拥有侧栏导航 section 的组内与组间节奏；`label` 可选。带 label 的组渲染可见标题，无 label 的组用于概览等独立一级入口并保持相同 section spacing，产品不得复制 `mb-*` 修补组间距。 | NavigationGroup focused test / AppShell Showcase / Gosso Admin |
 
 ## 当前破坏式迁移说明
 
@@ -65,6 +66,8 @@ onValueChange → onChange
 旧值仅作为迁移期临时兼容输入，不是第二套文档 API，并应在下一个稳定 package release 前删除。
 
 Tabs 布局还遵循 structural/content spacing 分离：Tabs 自己拥有 TabBar 与 TabPanel 的结构间距，`TabPanel` 不默认注入业务内容 padding；四个方向只改变轴向，不改变这条职责。活动指示线始终绘制在 TabList 可视/滚动边界内部，滚动只用于真实标签溢出。
+
+NavigationGroup 同样遵循 structural spacing ownership：组内 navigation item 使用统一紧凑节奏，组与下一个侧栏 section 的间距由 `NavigationGroup` 自己承担。`label` 是可选的可见标题，不是决定是否拥有 section spacing 的开关；独立一级入口应放入无标题 `NavigationGroup`，而不是在产品页面给裸 NavLink 追加 `margin`。
 
 Alert 不再暴露 shadcn primitive 的颜色化 `variant="default|destructive"`。迁移为：
 
