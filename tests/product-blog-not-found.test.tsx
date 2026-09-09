@@ -15,7 +15,7 @@ describe("Blog public NotFound migration", () => {
       </ThemeProvider>,
     );
 
-    expect(screen.getByText("页面未找到")).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 1, name: "页面未找到" })).toBeTruthy();
     expect(screen.getByText(/地址不存在、已经移动/)).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "返回首页" }));
@@ -39,6 +39,9 @@ describe("Blog public NotFound migration", () => {
 
     expect(source).toContain("BlogPublicShellFixture");
     expect(source).toContain("<Result");
+    expect(source).toContain('headingLevel={1}');
+    expect(source).toContain('padding="none"');
+    expect(source).not.toContain("subTitle=");
     expect(source).not.toContain('src/patterns');
     expect(source).not.toContain('src/gouno');
     expect(source).not.toMatch(/<(?:AppShell|PageContainer|PageHeader)\b/);
