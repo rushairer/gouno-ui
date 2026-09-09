@@ -72,7 +72,9 @@ describe("Table layout contract", () => {
     expect(caption.className).toContain("leading-6");
     expect(caption.className).not.toContain("pt-3");
     expect(caption.getAttribute("data-caption-side")).toBe("bottom");
-    expect(caption.className).toContain("inset_0_1px");
+    expect(caption.className).toContain("border-t");
+    expect(caption.className).toContain("border-border/60");
+    expect(caption.className).not.toContain("shadow-[");
   });
 
   it("uses the semantic top position by default", () => {
@@ -88,6 +90,8 @@ describe("Table layout contract", () => {
     );
     const caption = screen.getByText("Top caption");
     expect(caption.getAttribute("data-caption-side")).toBe("top");
-    expect(caption.className).toContain("inset_0_-1px");
+    expect(caption.className).toContain("border-b");
+    expect(caption.className).toContain("border-border/60");
+    expect(caption.className).not.toContain("shadow-[");
   });
 });
