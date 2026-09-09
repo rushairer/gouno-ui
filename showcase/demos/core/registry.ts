@@ -1,4 +1,5 @@
 import type { ComponentDocument } from "../../components/component-page";
+import { buttonDocuments } from "./button";
 import { generalDocuments } from "./general";
 import { badgeDocuments } from "./badge";
 import { tagDocuments } from "./tag";
@@ -13,6 +14,7 @@ import { alertDocuments } from "./alert";
 import { otherDocuments } from "./other";
 
 export const coreDocuments: Record<string, ComponentDocument> = {
+  ...buttonDocuments,
   ...generalDocuments,
   ...badgeDocuments,
   ...tagDocuments,

@@ -4,6 +4,7 @@ import { componentProgress } from "../showcase/component-progress";
 describe("audited batch completion", () => {
   it("reports complete only for the reviewed Core component batch", () => {
     for (const id of [
+      "core-button",
       "core-tag",
       "core-input",
       "core-textarea",

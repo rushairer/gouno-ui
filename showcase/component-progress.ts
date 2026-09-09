@@ -2,6 +2,7 @@
 // list limited to canonical components whose API/examples/source/a11y/tests have
 // been reviewed together. Product pages use their migration status directly.
 const completedComponents = new Set([
+  "core-button",
   "core-badge",
   "core-tag",
   "core-space",

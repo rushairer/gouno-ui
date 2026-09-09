@@ -102,9 +102,12 @@ export interface ButtonLinkProps extends Omit<LinkAdapterProps, "to"> {
 export function ButtonLink({ to, href, variant = "link", color = "default", size = "middle", icon, iconPlacement = "start", shape = "default", disabled, loading, loadingText, block, children, onClick, className, ...props }: ButtonLinkProps) {
   const Link = useContext(LinkContext);
   const inactive = disabled || loading;
+  const hasLabel = children !== undefined && children !== null && children !== "";
   const primitiveVariant = color === "error" && variant === "solid" ? "destructive" : variants[variant];
   return <PrimitiveButton asChild variant={primitiveVariant} size={sizes[size]}><Link {...props} to={to ?? href ?? "#"} className={cn(resolveColorClass(variant, color), variant === "dashed" && "border-dashed", shapeClass[shape], block && "w-full", inactive && "pointer-events-none opacity-50", className)} aria-disabled={inactive || undefined} aria-busy={loading || undefined} tabIndex={inactive ? -1 : props.tabIndex} onClick={(event) => { if (inactive) { event.preventDefault(); return; } onClick?.(event); }}>
-    {loading ? <LoaderCircle className="animate-spin" aria-hidden="true" /> : icon && iconPlacement === "start" ? <span className="btn__icon" aria-hidden="true">{icon}</span> : null}<span>{loading && loadingText ? loadingText : children}</span>{!loading && icon && iconPlacement === "end" ? <span className="btn__icon" aria-hidden="true">{icon}</span> : null}
+    {loading ? <LoaderCircle className="animate-spin" aria-hidden="true" /> : icon && iconPlacement === "start" ? <span className="btn__icon" aria-hidden="true">{icon}</span> : null}
+    {hasLabel || loadingText ? <span>{loading && loadingText ? loadingText : children}</span> : null}
+    {!loading && icon && iconPlacement === "end" ? <span className="btn__icon" aria-hidden="true">{icon}</span> : null}
   </Link></PrimitiveButton>;
 }
 export function IconButtonLink({ label, icon, className, variant = "outline", ...props }: ButtonLinkProps & { label: string; icon: ReactNode }) { return <ButtonLink {...props} size="small" shape="circle" icon={icon} variant={variant} className={cn("icon-button", className)} aria-label={label} title={label} />; }

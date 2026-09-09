@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import ts from "typescript";
+import { buttonDocuments } from "../showcase/demos/core/button";
 import { dataEntryDocuments } from "../showcase/demos/core/data-entry";
 import { feedbackDocuments } from "../showcase/demos/core/feedback";
 import { paginationDocument } from "../showcase/demos/core/pagination";
@@ -20,6 +21,7 @@ const parsed = ts.parseJsonConfigFileContent(
 const program = ts.createProgram(parsed.fileNames, parsed.options);
 const checker = program.getTypeChecker();
 const cases = [
+  ["src/core/button.tsx", "ButtonProps", buttonDocuments.button],
   ["src/core/input.tsx", "InputProps", dataEntryDocuments.input],
   ["src/core/textarea.tsx", "TextareaProps", dataEntryDocuments.textarea],
   ["src/core/select.tsx", "SelectProps", dataEntryDocuments.select],
@@ -69,6 +71,27 @@ describe("public API documentation", () => {
       ).toEqual([]);
     });
   }
+
+  it("documents every public Button-family role on the canonical Button page", () => {
+    const sections = new Map(
+      buttonDocuments.button.apiSections?.map((section) => [section.title, section.rows]) ?? [],
+    );
+    expect(sections.get("ButtonLink API")?.map((row) => row.name)).toEqual(
+      expect.arrayContaining(["to", "href", "disabled", "loading"]),
+    );
+    expect(sections.get("IconButton API")?.map((row) => row.name)).toEqual(
+      expect.arrayContaining(["label", "icon", "...ButtonProps"]),
+    );
+    expect(sections.get("IconButtonLink API")?.map((row) => row.name)).toEqual(
+      expect.arrayContaining(["label", "icon", "...ButtonLinkProps"]),
+    );
+    expect(sections.get("ChoiceButton API")?.map((row) => row.name)).toEqual(
+      expect.arrayContaining(["selected", "...ButtonProps"]),
+    );
+    expect(sections.get("NavigationProvider API")?.map((row) => row.name)).toEqual(
+      expect.arrayContaining(["link", "children"]),
+    );
+  });
 
   it("keeps the Select multi-tag Preview and Code example sourced from the same capability", () => {
     const demo = dataEntryDocuments.select.demos?.find(
