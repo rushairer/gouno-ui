@@ -1,5 +1,6 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { LayoutDashboard, Menu, Rss, Search } from "lucide-react";
+import gounoBlogLogo from "../../../assets/brand-icons/gouno-blog.svg";
 import { Drawer, IconButton, Input } from "../../../src/core";
 import { ThemeToggle } from "../../../src/theme";
 
@@ -45,10 +46,11 @@ export function BlogPublicShellFixture({
           <button
             type="button"
             aria-label="Gouno Blog 首页"
-            className="mr-auto min-w-0 truncate text-lg font-semibold tracking-tight text-primary"
+            className="mr-auto inline-flex min-w-0 items-center gap-2 text-lg font-semibold tracking-tight text-primary"
             onClick={() => onNavigate("/")}
           >
-            Gouno Blog
+            <img src={gounoBlogLogo} alt="" aria-hidden="true" className="size-8 shrink-0" />
+            <span className="truncate">Gouno Blog</span>
           </button>
           <nav aria-label="主导航" className="hidden items-center gap-6 md:flex">
             {navItems.map((item) => (
@@ -101,7 +103,10 @@ export function BlogPublicShellFixture({
       <footer className="mt-12 border-t">
         <div className="mx-auto grid w-full max-w-[1200px] gap-8 px-4 py-10 md:grid-cols-[1fr_1fr] md:px-6">
           <div>
-            <button type="button" className="font-semibold" onClick={() => onNavigate("/")}>Gouno Blog</button>
+            <button type="button" className="inline-flex items-center gap-2 font-semibold" onClick={() => onNavigate("/")}>
+              <img src={gounoBlogLogo} alt="" aria-hidden="true" className="size-7 shrink-0" />
+              <span>Gouno Blog</span>
+            </button>
             <p className="mt-2 max-w-md text-sm text-muted-foreground">
               互联网技术分析、工程实践与长期思考。
             </p>
