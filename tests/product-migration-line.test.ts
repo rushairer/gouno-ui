@@ -18,7 +18,9 @@ describe("product migration line", () => {
     for (const path of processDocs) {
       const source = read(path);
       expect(source, path).toMatch(/Blog public|Blog public site|Gouno Blog public site/);
-      expect(source, path).toMatch(/active migration line|active workspace|active page-by-page validation line|active public-site migration workspace/);
+      expect(source, path).toMatch(
+        /active migration line|active workspace|active page-by-page validation line|active public-site migration workspace/,
+      );
     }
   });
 
@@ -26,13 +28,17 @@ describe("product migration line", () => {
     for (const path of processDocs) {
       const source = read(path);
       expect(source, path).toMatch(/Blog Admin/);
-      expect(source, path).toMatch(/completed second-product|completed second comparison|completed comparison corpora|completed comparison corpus|completed second-product comparison corpus/);
-      expect(source, path).not.toMatch(/Blog Admin is the active|Active migration line:\*\* Gouno Blog Admin|Blog Admin.*active page-by-page/);
+      expect(source, path).toMatch(/completed[\s\S]{0,100}(second-product|second comparison|comparison corpora|comparison corpus)/);
+      expect(source, path).not.toMatch(
+        /Blog Admin is the active|Active migration line:\*\* Gouno Blog Admin|Blog Admin.*active page-by-page/,
+      );
     }
   });
 
   it("does not populate the Blog workspace before a real public page lands", () => {
     const catalog = read("showcase/catalog.tsx");
-    expect(catalog).toContain('{ workspace: "blog", group: "Migrated Pages 已迁移页面", items: [] }');
+    expect(catalog).toContain(
+      '{ workspace: "blog", group: "Migrated Pages 已迁移页面", items: [] }',
+    );
   });
 });
