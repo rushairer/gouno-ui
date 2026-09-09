@@ -40,7 +40,7 @@ describe("Blog Admin Media Library product migration fixture", () => {
     expect(screen.queryByText("design-system-cover.png")).toBeNull();
   });
 
-  it("uses canonical BulkActionBar and keeps AI resource semantics product-owned", () => {
+  it("restores media_asset WorkflowLauncher resource and Run semantics", () => {
     render(<BlogAdminMediaLibraryDemo />);
 
     fireEvent.click(screen.getByRole("checkbox", { name: "选择媒体 design-system-cover.png" }));
@@ -49,11 +49,27 @@ describe("Blog Admin Media Library product migration fixture", () => {
     expect(screen.getByText("已选择 1 个媒体")).toBeTruthy();
 
     fireEvent.click(within(toolbar).getByRole("button", { name: "交给 AI" }));
-    const dialog = screen.getByRole("dialog");
-    expect(within(dialog).getByText("将所选媒体交给 AI")).toBeTruthy();
+    const dialog = screen.getByRole("dialog", { name: "将所选媒体交给 AI" });
+    expect((within(dialog).getByRole("combobox", { name: "Workflow" }) as HTMLButtonElement).textContent).toContain("媒体无障碍检查");
+    expect(within(dialog).getByText("检查手选媒体的 Alt 文本与复用质量。")).toBeTruthy();
     expect(within(dialog).getByText("design-system-cover.png")).toBeTruthy();
-    fireEvent.click(within(dialog).getByRole("button", { name: "启动工作流" }));
-    expect(screen.getByText("已将 1 个媒体交给 AI 工作流（Showcase 模拟）。")).toBeTruthy();
+    expect(within(dialog).getByText("PNG · Alt：设计系统文章封面")).toBeTruthy();
+
+    fireEvent.click(within(dialog).getByRole("button", { name: "运行" }));
+    expect(within(dialog).getByText("Workflow 已提交（Run #263）。范围已锁定到本次选择的 1 项资源。")).toBeTruthy();
+    fireEvent.click(within(dialog).getByRole("button", { name: "打开运行中心" }));
+    expect(screen.getByText("将进入 /admin/ai-ops?tab=records&record=workflow&workflow=79&run=263（Showcase 模拟）。")).toBeTruthy();
+  });
+
+  it("allows removing the preselected media resource before running", () => {
+    render(<BlogAdminMediaLibraryDemo />);
+    fireEvent.click(screen.getByRole("checkbox", { name: "选择媒体 design-system-cover.png" }));
+    fireEvent.click(screen.getByRole("button", { name: "交给 AI" }));
+
+    const dialog = screen.getByRole("dialog", { name: "将所选媒体交给 AI" });
+    fireEvent.click(within(dialog).getByRole("button", { name: "移除" }));
+    expect(within(dialog).getByText("至少保留 1 个媒体资源才能运行。")).toBeTruthy();
+    expect((within(dialog).getByRole("button", { name: "运行" }) as HTMLButtonElement).disabled).toBe(true);
   });
 
   it("blocks deletion for referenced media and exposes the referencing posts", () => {

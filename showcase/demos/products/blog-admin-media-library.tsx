@@ -21,6 +21,7 @@ import {
 import { PageHeader } from "../../../src/gouno";
 import { BulkActionBar } from "../../../src/patterns";
 import { FixtureDock } from "../../components/fixture-dock";
+import { BlogAdminWorkflowLauncherFixture } from "./blog-admin-workflow-launcher-fixture";
 
 type FixtureScenario = "data" | "loading" | "empty" | "error";
 type MediaReference = { postId: number; title: string };
@@ -36,14 +37,21 @@ type MediaFixture = {
   references: MediaReference[];
 };
 type DeleteTarget = { kind: "single"; id: number } | { kind: "batch" } | null;
-
-type FeedbackState = { type: "success" | "error"; text: string } | null;
+type FeedbackState = { type: "success" | "info" | "error"; text: string } | null;
 
 const scenarioOptions = [
   { value: "data", label: "有数据" },
   { value: "loading", label: "加载中" },
   { value: "empty", label: "空状态" },
   { value: "error", label: "错误" },
+] as const;
+
+const mediaWorkflows = [
+  {
+    id: 79,
+    name: "媒体无障碍检查",
+    description: "检查手选媒体的 Alt 文本与复用质量。",
+  },
 ] as const;
 
 function mediaSvg(label: string, seed: number) {
@@ -267,10 +275,7 @@ export function BlogAdminMediaLibraryDemo() {
     setDeleteTarget(null);
     setBlockedReferences(failed.flatMap((asset) => asset.references));
     if (failed.length > 0) {
-      setFeedback({
-        type: "error",
-        text: `已删除 ${removed.length} 个媒体；${failed.length} 个未删除：可能仍被文章引用。`,
-      });
+      setFeedback({ type: "error", text: `已删除 ${removed.length} 个媒体；${failed.length} 个未删除：可能仍被文章引用。` });
     } else {
       setFeedback({ type: "success", text: `已删除 ${removed.length} 个媒体（Showcase 模拟）。` });
     }
@@ -286,7 +291,7 @@ export function BlogAdminMediaLibraryDemo() {
     <div className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/media"
-        note="保留真实媒体 Card Grid、上传/AI/Alt Text Drawers、引用感知删除、批量部分失败和 AI Workflow 语义；Fixture 不请求 media API。"
+        note="保留真实媒体 Card Grid、上传/AI/Alt Text Drawers、引用感知删除、批量部分失败，以及 media_asset resource 的 WorkflowLauncher 资源输入与 Run 反馈；Fixture 不请求真实 media/AI API。"
         controls={(
           <Segmented<FixtureScenario>
             aria-label="媒体库 Fixture 状态"
@@ -297,6 +302,7 @@ export function BlogAdminMediaLibraryDemo() {
               setSelected([]);
               clearOperationFeedback();
               setDeleteTarget(null);
+              setWorkflowOpen(false);
             }}
             block
           />
@@ -338,12 +344,7 @@ export function BlogAdminMediaLibraryDemo() {
       />
 
       {feedback ? (
-        <Alert
-          type={feedback.type}
-          showIcon
-          title={feedback.text}
-          closable={{ onClose: clearOperationFeedback }}
-        >
+        <Alert type={feedback.type} showIcon title={feedback.text} closable={{ onClose: clearOperationFeedback }}>
           {blockedReferences.length > 0 ? (
             <ul className="mt-2 flex flex-col gap-1 text-sm">
               {blockedReferences.map((reference) => (
@@ -351,7 +352,7 @@ export function BlogAdminMediaLibraryDemo() {
                   <button
                     type="button"
                     className="text-left font-medium text-primary underline-offset-4 hover:underline"
-                    onClick={() => setFeedback({ type: "success", text: `将进入 /admin/posts/${reference.postId}/edit（Showcase 模拟）。` })}
+                    onClick={() => setFeedback({ type: "info", text: `将进入 /admin/posts/${reference.postId}/edit（Showcase 模拟）。` })}
                   >
                     {reference.title}
                   </button>
@@ -376,23 +377,13 @@ export function BlogAdminMediaLibraryDemo() {
           <div className="min-w-0 lg:w-44 lg:shrink-0">
             <Select aria-label="媒体类型" value={type} onChange={(value) => setType(String(value))}>
               <option value="">全部类型</option>
-              {contentTypes.map((contentType) => (
-                <option key={contentType} value={contentType}>{typeLabel(contentType)}</option>
-              ))}
+              {contentTypes.map((contentType) => <option key={contentType} value={contentType}>{typeLabel(contentType)}</option>)}
             </Select>
           </div>
           <div className="flex items-center justify-between gap-3 lg:justify-end">
             <Text size="sm" tone="muted" className="whitespace-nowrap">{visibleAssets.length} / {assets.length}</Text>
             {hasFilters ? (
-              <Button
-                size="small"
-                variant="text"
-                icon={<X />}
-                onClick={() => {
-                  setQuery("");
-                  setType("");
-                }}
-              >
+              <Button size="small" variant="text" icon={<X />} onClick={() => { setQuery(""); setType(""); }}>
                 清除
               </Button>
             ) : null}
@@ -403,23 +394,14 @@ export function BlogAdminMediaLibraryDemo() {
       {selected.length > 0 ? (
         <BulkActionBar selectionLabel={`已选择 ${selected.length} 个媒体`} onCancel={() => setSelected([])}>
           <Button size="small" icon={<Sparkles />} onClick={() => setWorkflowOpen(true)}>交给 AI</Button>
-          <Button size="small" color="error" icon={<Trash2 />} onClick={() => {
-            clearOperationFeedback();
-            setDeleteTarget({ kind: "batch" });
-          }}>
+          <Button size="small" color="error" icon={<Trash2 />} onClick={() => { clearOperationFeedback(); setDeleteTarget({ kind: "batch" }); }}>
             删除
           </Button>
         </BulkActionBar>
       ) : null}
 
       {scenario === "error" ? (
-        <Alert
-          type="error"
-          showIcon
-          title="媒体加载失败"
-          description="无法读取媒体库。真实产品会保留当前筛选上下文并允许重新请求。"
-          action={<Button size="small" onClick={() => setScenario("data")}>重新载入</Button>}
-        />
+        <Alert type="error" showIcon title="媒体加载失败" description="无法读取媒体库。真实产品会保留当前筛选上下文并允许重新请求。" action={<Button size="small" onClick={() => setScenario("data")}>重新载入</Button>} />
       ) : scenario === "loading" ? (
         <LoadingMedia />
       ) : visibleAssets.length === 0 ? (
@@ -428,11 +410,7 @@ export function BlogAdminMediaLibraryDemo() {
             icon={<ImagePlus className="size-7 text-muted-foreground" />}
             title={hasFilters ? "没有符合条件的媒体资源。" : "还没有媒体资源"}
             description={hasFilters ? "调整文件名、替代文本或媒体类型筛选后重试。" : "上传图片或使用 AI 文生图创建第一张媒体资源。"}
-            action={hasFilters ? (
-              <Button onClick={() => { setQuery(""); setType(""); }}>清除筛选</Button>
-            ) : (
-              <Button variant="solid" color="primary" icon={<ImagePlus />} onClick={() => setUploadOpen(true)}>上传图片</Button>
-            )}
+            action={hasFilters ? <Button onClick={() => { setQuery(""); setType(""); }}>清除筛选</Button> : <Button variant="solid" color="primary" icon={<ImagePlus />} onClick={() => setUploadOpen(true)}>上传图片</Button>}
           />
         </Card>
       ) : (
@@ -444,9 +422,7 @@ export function BlogAdminMediaLibraryDemo() {
                   <Checkbox
                     aria-label={`选择媒体 ${asset.filename}`}
                     checked={selected.includes(asset.id)}
-                    onChange={(event) => setSelected((current) => event.target.checked
-                      ? [...new Set([...current, asset.id])]
-                      : current.filter((id) => id !== asset.id))}
+                    onChange={(event) => setSelected((current) => event.target.checked ? [...new Set([...current, asset.id])] : current.filter((id) => id !== asset.id))}
                   />
                 </div>
                 <img src={asset.url} alt={asset.altText || asset.filename} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
@@ -472,10 +448,7 @@ export function BlogAdminMediaLibraryDemo() {
                 </div>
                 <div className="flex flex-wrap items-center gap-1">
                   <Button size="small" variant="text" icon={<Pencil />} aria-label={`编辑替代文本 ${asset.filename}`} onClick={() => openAltEditor(asset)}>Alt Text</Button>
-                  <Button size="small" variant="text" color="error" icon={<Trash2 />} aria-label={`删除媒体 ${asset.filename}`} onClick={() => {
-                    clearOperationFeedback();
-                    setDeleteTarget({ kind: "single", id: asset.id });
-                  }}>删除</Button>
+                  <Button size="small" variant="text" color="error" icon={<Trash2 />} aria-label={`删除媒体 ${asset.filename}`} onClick={() => { clearOperationFeedback(); setDeleteTarget({ kind: "single", id: asset.id }); }}>删除</Button>
                 </div>
               </div>
             </Card>
@@ -498,14 +471,7 @@ export function BlogAdminMediaLibraryDemo() {
       >
         <div className="flex flex-col gap-5">
           <FormField label="图片文件" required>
-            <Upload
-              aria-label="媒体文件"
-              files={uploadFiles}
-              onFiles={setUploadFiles}
-              accept="image/*,.svg,.ico"
-              maxCount={1}
-              drag
-            >
+            <Upload aria-label="媒体文件" files={uploadFiles} onFiles={setUploadFiles} accept="image/*,.svg,.ico" maxCount={1} drag>
               点击或拖放图片到这里
             </Upload>
           </FormField>
@@ -578,26 +544,24 @@ export function BlogAdminMediaLibraryDemo() {
         <Text size="sm" tone="muted">仍被文章引用的媒体必须先移除引用；批量删除时失败项会继续保持选中。</Text>
       </Modal>
 
-      <Modal
+      <BlogAdminWorkflowLauncherFixture
         open={workflowOpen}
         title="将所选媒体交给 AI"
-        description="真实产品会以 media_asset resource keys 启动 WorkflowLauncher。"
+        description="只显示 input schema 声明 media_asset resource 的已启用 Workflow，并把本次手选媒体写入 media_ids。"
+        resourceLabel="媒体"
+        resources={selectedAssets.map((asset) => ({
+          key: asset.id,
+          label: asset.filename,
+          detail: `${typeLabel(asset.contentType)} · Alt：${asset.altText || "未设置"}`,
+        }))}
+        workflows={mediaWorkflows}
+        runIdBase={263}
         onClose={() => setWorkflowOpen(false)}
-        onOk={() => {
-          const count = selected.length;
+        onNavigate={(route) => {
           setWorkflowOpen(false);
-          setFeedback({ type: "success", text: `已将 ${count} 个媒体交给 AI 工作流（Showcase 模拟）。` });
+          setFeedback({ type: "info", text: `将进入 ${route}（Showcase 模拟）。` });
         }}
-        okText="启动工作流"
-        okButtonProps={{ variant: "solid", color: "primary" }}
-      >
-        <div className="flex flex-col gap-3">
-          <Text size="sm" tone="muted">本次将处理 {selectedAssets.length} 个媒体：</Text>
-          <div className="flex flex-wrap gap-2">
-            {selectedAssets.map((asset) => <Tag key={asset.id}>{asset.filename}</Tag>)}
-          </div>
-        </div>
-      </Modal>
+      />
     </div>
   );
 }
