@@ -6,10 +6,124 @@ import { TabsVariants } from "./TabsVariants";
 import TabsVariantsSource from "./TabsVariants.tsx?raw";
 import { TabsPlacement } from "./TabsPlacement";
 import TabsPlacementSource from "./TabsPlacement.tsx?raw";
+import { PrimitiveTabs } from "./PrimitiveTabs";
+import PrimitiveTabsSource from "./PrimitiveTabs.tsx?raw";
+import type { ApiRow } from "../../../components/api-table";
 import type { ComponentDocument } from "../../../components/component-page";
 
 const publicSource = (source: string) =>
   source.replaceAll("../../../../src/core", "@gouno/ui/core");
+
+const tabListApi: ApiRow[] = [
+  {
+    name: "type",
+    type: '"line" | "card"',
+    defaultValue: '"line"',
+    description: "与高层 Tabs 相同的导航视觉形态。",
+  },
+  {
+    name: "size",
+    type: '"small" | "middle" | "large"',
+    defaultValue: '"middle"',
+    description: "控制 Tab 的固定高度与导航间距。",
+  },
+  {
+    name: "tabPosition",
+    type: '"top" | "right" | "bottom" | "left"',
+    defaultValue: '"top"',
+    description: "决定横向/纵向布局、边线方向与滚动轴。",
+  },
+  {
+    name: "centered",
+    type: "boolean",
+    defaultValue: "false",
+    description: "无 extra 时居中排列标签。",
+  },
+  {
+    name: "extra",
+    type: "ReactNode",
+    description: "导航末端的补充操作或状态。",
+  },
+  {
+    name: "children",
+    type: "ReactNode",
+    description: "通常为同 owner 的 Tab。",
+  },
+  {
+    name: "className",
+    type: "string",
+    description: "扩展 canonical TabsList surface。",
+  },
+  {
+    name: "...TabsList props",
+    type: "ComponentProps<typeof Primitive.TabsList>",
+    description: "透传底层 tablist 的可访问性与原生属性。",
+  },
+];
+
+const tabApi: ApiRow[] = [
+  {
+    name: "value",
+    type: "string",
+    description: "与对应 TabPanel 共享的稳定 key。",
+  },
+  {
+    name: "disabled",
+    type: "boolean",
+    defaultValue: "false",
+    description: "禁用标签并从可用激活目标中排除。",
+  },
+  {
+    name: "size",
+    type: '"small" | "middle" | "large"',
+    defaultValue: '"middle"',
+    description: "控制标签固定高度。",
+  },
+  {
+    name: "tabPosition",
+    type: '"top" | "right" | "bottom" | "left"',
+    defaultValue: '"top"',
+    description: "控制活动指示线和 card 边角方向。",
+  },
+  {
+    name: "children",
+    type: "ReactNode",
+    description: "标签文案、图标或轻量元数据。",
+  },
+  {
+    name: "className",
+    type: "string",
+    description: "扩展 canonical Tab trigger。",
+  },
+  {
+    name: "...TabsTrigger props",
+    type: "ComponentProps<typeof Primitive.TabsTrigger>",
+    description: "透传底层 tab trigger 属性。",
+  },
+];
+
+const tabPanelApi: ApiRow[] = [
+  {
+    name: "value",
+    type: "string",
+    description: "与对应 Tab 的 value 一致。",
+  },
+  {
+    name: "children",
+    type: "ReactNode",
+    description: "面板业务内容；TabPanel 不注入业务 padding。",
+  },
+  {
+    name: "className",
+    type: "string",
+    description: "扩展 min-w-0/flex-1 的结构面板。",
+  },
+  {
+    name: "...TabsContent props",
+    type: "ComponentProps<typeof Primitive.TabsContent>",
+    description: "透传底层 tabpanel 属性。",
+  },
+];
 
 export const tabsDocument: ComponentDocument = {
   title: "Tabs 标签页",
@@ -20,21 +134,31 @@ export const tabsDocument: ComponentDocument = {
   demos: [
     {
       title: "受控状态与额外操作",
-      description: "activeKey 由业务路由或页面状态持有；tabBarExtraContent 用于同一导航栏的补充操作。",
+      description:
+        "activeKey 由业务路由或页面状态持有；tabBarExtraContent 用于同一导航栏的补充操作。",
       code: publicSource(ControlledTabsSource),
       render: () => <ControlledTabs />,
     },
     {
       title: "Line 与 Card",
-      description: "line 是默认产品导航样式；card 仅在明确需要卡片页签语义时使用。示例中的 Card padding 属于内容本身，不由 Tabs 注入。",
+      description:
+        "line 是默认产品导航样式；card 仅在明确需要卡片页签语义时使用。示例中的 Card padding 属于内容本身，不由 Tabs 注入。",
       code: publicSource(TabsVariantsSource),
       render: () => <TabsVariants />,
     },
     {
       title: "左侧标签页",
-      description: "tabPosition 负责高层位置语义。Tabs 在四个方向统一拥有 TabBar 与 TabPanel 的 structural gap；面板内部 padding 仍由内容自己决定。",
+      description:
+        "tabPosition 负责高层位置语义。Tabs 在四个方向统一拥有 TabBar 与 TabPanel 的 structural gap；面板内部 padding 仍由内容自己决定。",
       code: publicSource(TabsPlacementSource),
       render: () => <TabsPlacement />,
+    },
+    {
+      title: "Primitive composition",
+      description:
+        "需要完全自定义标签结构时，仍使用 Tabs 作为状态根，并组合同 owner 的 TabList、Tab、TabPanel。Preview 与 Code 来自同一份源码。",
+      code: publicSource(PrimitiveTabsSource),
+      render: () => <PrimitiveTabs />,
     },
   ],
   api: [
@@ -46,13 +170,15 @@ export const tabsDocument: ComponentDocument = {
     {
       name: "defaultActiveKey",
       type: "string",
-      description: "非受控初始激活项；未提供时选择 items 中第一个未禁用项。",
+      description:
+        "非受控初始激活项；未提供时选择 items 中第一个未禁用项。",
     },
     {
       name: "items",
       type: "readonly TabItem[]",
       defaultValue: "[]",
-      description: "标签项集合；每项使用 key、label，可选 icon、children 与 disabled。",
+      description:
+        "标签项集合；每项使用 key、label，可选 icon、children 与 disabled。",
     },
     {
       name: "onChange",
@@ -75,7 +201,8 @@ export const tabsDocument: ComponentDocument = {
       name: "tabPosition",
       type: '"top" | "right" | "bottom" | "left"',
       defaultValue: '"top"',
-      description: "标签导航相对内容的位置。四个方向使用同一结构间距规则；左右位置自动使用垂直方向键语义。",
+      description:
+        "标签导航相对内容的位置。四个方向使用同一结构间距规则；左右位置自动使用垂直方向键语义。",
     },
     {
       name: "centered",
@@ -92,6 +219,21 @@ export const tabsDocument: ComponentDocument = {
       name: "ariaLabel",
       type: "string",
       description: "标签列表的可访问名称。产品路由型 Tabs 应提供明确名称。",
+    },
+  ],
+  apiSections: [
+    {
+      title: "TabList API",
+      description: "完全自定义 Tabs 结构时使用。",
+      rows: tabListApi,
+    },
+    {
+      title: "Tab API",
+      rows: tabApi,
+    },
+    {
+      title: "TabPanel API",
+      rows: tabPanelApi,
     },
   ],
   notes: (
