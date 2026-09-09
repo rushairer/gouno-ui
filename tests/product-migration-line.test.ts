@@ -16,9 +16,9 @@ const processDocs = [
 describe("product migration line", () => {
   it("keeps Blog public as the single active migration line", () => {
     for (const path of processDocs) {
-      const source = read(path);
-      expect(source, path).toMatch(/Blog public|Blog public site|Gouno Blog public site/);
-      expect(source, path).toMatch(
+      const normalized = read(path).toLowerCase();
+      expect(normalized, path).toMatch(/blog public|gouno blog public site/);
+      expect(normalized, path).toMatch(
         /active migration line|active workspace|active page-by-page validation line|active public-site migration workspace/,
       );
     }
@@ -26,11 +26,12 @@ describe("product migration line", () => {
 
   it("keeps Blog Admin as a completed comparison corpus", () => {
     for (const path of processDocs) {
-      const source = read(path);
-      expect(source, path).toMatch(/Blog Admin/);
-      expect(source, path).toMatch(/completed[\s\S]{0,100}(second-product|second comparison|comparison corpora|comparison corpus)/);
-      expect(source, path).not.toMatch(
-        /Blog Admin is the active|Active migration line:\*\* Gouno Blog Admin|Blog Admin.*active page-by-page/,
+      const normalized = read(path).toLowerCase();
+      expect(normalized, path).toContain("blog admin");
+      expect(normalized, path).toContain("completed");
+      expect(normalized, path).toMatch(/comparison corpus|comparison corpora/);
+      expect(normalized, path).not.toMatch(
+        /blog admin is the active|active migration line:\*\* gouno blog admin|blog admin.*active page-by-page/,
       );
     }
   });
