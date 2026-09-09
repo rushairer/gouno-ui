@@ -3,6 +3,7 @@
 // been reviewed together. Product pages use their migration status directly.
 const completedComponents = new Set([
   "core-badge",
+  "core-tag",
   "core-space",
   "core-input",
   "core-textarea",
