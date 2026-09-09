@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ShieldCheck } from "lucide-react";
+import gossoLogo from "../../../../assets/brand-icons/gosso.svg";
 import { Card, Heading, Text } from "../../../../src/core";
 import { FixtureDock } from "../../../components/fixture-dock";
 
@@ -27,9 +27,7 @@ export function AuthSurface({
       <div className="relative w-full max-w-md">
         <Card padding="lg" variant="elevated" className="w-full border-border/80 bg-raised/95 backdrop-blur">
           <div className="mb-7 text-center">
-            <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <ShieldCheck aria-hidden="true" className="size-6" />
-            </div>
+            <img src={gossoLogo} alt="" aria-hidden="true" className="mx-auto mb-4 size-14" />
             <Heading level={1} className="text-2xl font-bold tracking-tight">{title}</Heading>
             {description ? <Text tone="muted" size="sm" className="mt-2 leading-relaxed">{description}</Text> : null}
           </div>
