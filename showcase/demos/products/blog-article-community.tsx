@@ -13,6 +13,7 @@ import {
 } from "../../../src/core";
 
 export type BlogArticleCommunityMode = "signed-in" | "guest" | "empty" | "error";
+type CommentFormError = "guest-name" | "content" | null;
 
 type CommunityComment = {
   id: string;
@@ -103,17 +104,20 @@ export function BlogArticleCommunity({
 }) {
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(96);
-  const [comments, setComments] = useState<CommunityComment[]>(initialComments);
+  const [createdComments, setCreatedComments] = useState<CommunityComment[]>([]);
   const [replyingTo, setReplyingTo] = useState<CommunityComment | null>(null);
   const [reportingComment, setReportingComment] = useState<CommunityComment | null>(null);
   const [reportReason, setReportReason] = useState("");
-  const [reportError, setReportError] = useState("");
+  const [reportError, setReportError] = useState(false);
   const [guestName, setGuestName] = useState("");
   const [commentContent, setCommentContent] = useState("");
-  const [formError, setFormError] = useState("");
+  const [formError, setFormError] = useState<CommentFormError>(null);
   const [notice, setNotice] = useState("");
 
-  const visibleComments = mode === "empty" ? [] : comments;
+  const visibleComments = useMemo(
+    () => (mode === "empty" ? createdComments : [...initialComments, ...createdComments]),
+    [createdComments, mode],
+  );
   const roots = useMemo(
     () => visibleComments.filter((comment) => !comment.parentId),
     [visibleComments],
@@ -138,7 +142,7 @@ export function BlogArticleCommunity({
 
   const beginReply = (comment: CommunityComment) => {
     setReplyingTo(comment);
-    setFormError("");
+    setFormError(null);
     setNotice("");
   };
 
@@ -148,16 +152,16 @@ export function BlogArticleCommunity({
     const content = commentContent.trim();
 
     if (!author) {
-      setFormError("请输入昵称。 ");
+      setFormError("guest-name");
       return;
     }
     if (!content) {
-      setFormError("请输入评论内容。 ");
+      setFormError("content");
       return;
     }
 
     const next: CommunityComment = {
-      id: `fixture-${comments.length + 1}`,
+      id: `fixture-${createdComments.length + 1}`,
       author,
       authorType: mode === "guest" ? "guest" : "user",
       createdAt: "刚刚",
@@ -165,29 +169,29 @@ export function BlogArticleCommunity({
       parentId: replyingTo?.id,
     };
 
-    setComments((current) => [...current, next]);
+    setCreatedComments((current) => [...current, next]);
     setCommentContent("");
-    setFormError("");
-    setNotice(replyingTo ? `已回复 ${replyingTo.author}。` : "评论已发布。 ");
+    setFormError(null);
+    setNotice(replyingTo ? `已回复 ${replyingTo.author}。` : "评论已发布。" );
     setReplyingTo(null);
   };
 
   const openReport = (comment: CommunityComment) => {
     setReportingComment(comment);
     setReportReason("");
-    setReportError("");
+    setReportError(false);
     setNotice("");
   };
 
   const closeReport = () => {
     setReportingComment(null);
     setReportReason("");
-    setReportError("");
+    setReportError(false);
   };
 
   const submitReport = () => {
     if (!reportReason.trim()) {
-      setReportError("请填写举报原因。 ");
+      setReportError(true);
       return;
     }
     const author = reportingComment?.author ?? "该评论";
@@ -272,16 +276,12 @@ export function BlogArticleCommunity({
 
         <form className="space-y-4" onSubmit={submitComment} noValidate>
           {mode === "guest" ? (
-            <Field
-              label="昵称"
-              required
-              error={formError === "请输入昵称。 " ? formError.trim() : undefined}
-            >
+            <Field label="昵称" required error={formError === "guest-name" ? "请输入昵称。" : undefined}>
               <Input
                 value={guestName}
                 onChange={(event) => {
                   setGuestName(event.target.value);
-                  if (formError) setFormError("");
+                  if (formError) setFormError(null);
                 }}
                 placeholder="怎么称呼你"
               />
@@ -290,14 +290,14 @@ export function BlogArticleCommunity({
           <Field
             label={replyingTo ? "回复内容" : "评论内容"}
             required
-            error={formError === "请输入评论内容。 " ? formError.trim() : undefined}
+            error={formError === "content" ? "请输入评论内容。" : undefined}
           >
             <Textarea
               rows={5}
               value={commentContent}
               onChange={(event) => {
                 setCommentContent(event.target.value);
-                if (formError) setFormError("");
+                if (formError) setFormError(null);
               }}
               placeholder={replyingTo ? `回复 ${replyingTo.author}…` : "写下你的想法…"}
             />
@@ -324,13 +324,13 @@ export function BlogArticleCommunity({
         okButtonProps={{ color: "error" }}
         cancelText="取消"
       >
-        <Field label="举报原因" required error={reportError ? reportError.trim() : undefined}>
+        <Field label="举报原因" required error={reportError ? "请填写举报原因。" : undefined}>
           <Textarea
             rows={4}
             value={reportReason}
             onChange={(event) => {
               setReportReason(event.target.value);
-              if (reportError) setReportError("");
+              if (reportError) setReportError(false);
             }}
             placeholder="请说明这条评论存在的问题"
           />
