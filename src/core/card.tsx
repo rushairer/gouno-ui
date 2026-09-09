@@ -31,9 +31,10 @@ export function Card({ as: Component = "div", variant = "default", padding = "ba
   return <Component {...props} data-slot="card" className={cn(
     "min-w-0 rounded-lg border bg-card text-card-foreground flex flex-col gap-5",
     padding === "sm" ? "p-4" : padding === "lg" ? "p-8" : padding === "none" ? "p-0" : "p-6",
+    variant === "default" && "shadow-surface",
     variant === "subtle" && "bg-muted",
     variant === "elevated" && "bg-raised shadow-raised",
-    interactive && "cursor-pointer hover:border-primary",
+    interactive && "cursor-pointer transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-raised",
     className,
   )} />;
 }
