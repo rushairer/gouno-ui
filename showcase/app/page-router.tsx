@@ -12,6 +12,9 @@ const CoreComponentPage = lazy(() =>
 const PatternBulkActionBarDemo = lazy(() =>
   import("../demos/pattern-bulk-action-bar").then((module) => ({ default: module.PatternBulkActionBarDemo })),
 );
+const BlogHomeDemo = lazy(() =>
+  import("../demos/products/blog-home").then((module) => ({ default: module.BlogHomeDemo })),
+);
 const BlogAdminDashboardDemo = lazy(() =>
   import("../demos/products/blog-admin-dashboard").then((module) => ({ default: module.BlogAdminDashboardDemo })),
 );
@@ -107,6 +110,8 @@ export function ShowcasePage({ page, workspace }: { page: string; workspace: Sho
       return <GounoComponentDemo component="page-container" />;
     case "gouno-page-header":
       return <GounoPageHeaderDemo />;
+    case "blog-home":
+      return <Suspense fallback={loading}><BlogHomeDemo /></Suspense>;
     case "blog-admin-dashboard":
       return <Suspense fallback={loading}><BlogAdminDashboardDemo /></Suspense>;
     case "blog-admin-ai-operations":
