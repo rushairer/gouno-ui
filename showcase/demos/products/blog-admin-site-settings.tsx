@@ -31,7 +31,7 @@ import { TabPanelLead } from "../../components/tab-panel-lead";
 
 type SettingsTab = "basic" | "appearance" | "hero" | "social" | "seo";
 type FixtureScenario = "data" | "loading" | "error";
-type SecurityState = "unlocked" | "locked";
+type SecurityState = "unlocked" | "locked" | "expire-on-save";
 
 type SiteSettingsFixture = {
   site_title: string;
@@ -82,6 +82,7 @@ const scenarioOptions = [
 const securityOptions = [
   { value: "unlocked", label: "已解锁" },
   { value: "locked", label: "已锁定" },
+  { value: "expire-on-save", label: "保存时过期" },
 ] as const;
 
 function SettingsSurface({
@@ -178,6 +179,7 @@ export function BlogAdminSiteSettingsDemo() {
   const [security, setSecurity] = useState<SecurityState>("unlocked");
   const [settings, setSettings] = useState<SiteSettingsFixture>(initialSettings);
   const [baseline, setBaseline] = useState<SiteSettingsFixture>(initialSettings);
+  const [pendingSettings, setPendingSettings] = useState<SiteSettingsFixture | null>(null);
   const [notice, setNotice] = useState<{ type: "success" | "error" | "info"; message: string } | null>(null);
 
   const dirty = JSON.stringify(settings) !== JSON.stringify(baseline);
@@ -187,6 +189,15 @@ export function BlogAdminSiteSettingsDemo() {
     setNotice(null);
   };
 
+  const unlock = () => {
+    setSecurity("unlocked");
+    if (pendingSettings) {
+      setSettings(pendingSettings);
+      setPendingSettings(null);
+      setNotice({ type: "info", message: "MFA 已完成，待保存草稿已恢复，请再次保存。" });
+    }
+  };
+
   const save = () => {
     const rss = settings.rss_url.trim();
     if (rss && !rss.startsWith("/") && !/^https?:\/\//i.test(rss)) {
@@ -194,8 +205,17 @@ export function BlogAdminSiteSettingsDemo() {
       return;
     }
     const next = { ...settings, rss_url: rss || "/feed.xml" };
+
+    if (security === "expire-on-save") {
+      setPendingSettings(next);
+      setSecurity("locked");
+      setNotice({ type: "info", message: "近期 MFA 已过期，未保存草稿已暂存；完成 Step-Up 后会恢复。" });
+      return;
+    }
+
     setSettings(next);
     setBaseline(next);
+    setPendingSettings(null);
     setNotice({ type: "success", message: "站点设置已成功保存（Showcase 模拟）。" });
   };
 
@@ -229,7 +249,7 @@ export function BlogAdminSiteSettingsDemo() {
     }
 
     return (
-      <SiteSettingsSecurityGate locked={security === "locked"} onUnlock={() => setSecurity("unlocked")}>
+      <SiteSettingsSecurityGate locked={security === "locked"} onUnlock={unlock}>
         <Tabs<SettingsTab>
           ariaLabel="站点设置"
           activeKey={activeTab}
@@ -378,7 +398,7 @@ export function BlogAdminSiteSettingsDemo() {
     <div className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/settings"
-        note="真实 Blog Admin 站点设置页面；Fixture 保留五组配置、Sudo/MFA、保存校验与上传状态，但不连接 Blog API 或媒体服务。"
+        note="真实 Blog Admin 站点设置页面；Fixture 保留五组配置、Sudo/MFA、保存时 Step-Up 草稿恢复、保存校验与上传状态，但不连接 Blog API 或媒体服务。"
         controls={(
           <div className="flex flex-col gap-3">
             <Segmented<FixtureScenario>
@@ -392,7 +412,10 @@ export function BlogAdminSiteSettingsDemo() {
               aria-label="站点设置安全状态"
               options={securityOptions}
               value={security}
-              onChange={setSecurity}
+              onChange={(value) => {
+                setSecurity(value);
+                if (value !== "locked") setNotice(null);
+              }}
               block
             />
           </div>

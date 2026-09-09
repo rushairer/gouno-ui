@@ -62,6 +62,28 @@ describe("Blog Admin Site Settings product migration fixture", () => {
     expect((title as HTMLInputElement).value).toBe("Gouno Engineering");
   });
 
+  it("preserves an unsaved draft when recent MFA expires during save", () => {
+    render(<BlogAdminSiteSettingsDemo />);
+    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
+    fireEvent.click(screen.getByRole("radio", { name: "保存时过期" }));
+
+    const title = screen.getByRole("textbox", { name: /站点名称/ });
+    fireEvent.change(title, { target: { value: "Draft survives MFA" } });
+    fireEvent.click(screen.getByRole("button", { name: "保存设置" }));
+
+    expect(screen.getByText("近期 MFA 已过期，未保存草稿已暂存；完成 Step-Up 后会恢复。")).toBeTruthy();
+    expect(screen.getByText("站点核心配置保护")).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "解锁以修改设置" }));
+    const restored = screen.getByRole("textbox", { name: /站点名称/ }) as HTMLInputElement;
+    expect(restored.value).toBe("Draft survives MFA");
+    expect(screen.getByText("MFA 已完成，待保存草稿已恢复，请再次保存。")).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "保存设置" }));
+    expect(screen.getByText("站点设置已成功保存（Showcase 模拟）。")).toBeTruthy();
+    expect((screen.getByRole("textbox", { name: /站点名称/ }) as HTMLInputElement).value).toBe("Draft survives MFA");
+  });
+
   it("preserves the real RSS validation and loading/error fixture states", () => {
     render(<BlogAdminSiteSettingsDemo />);
 
