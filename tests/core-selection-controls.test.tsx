@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { Checkbox, Radio, Switch } from "../src/core";
+import { Checkbox, CheckboxGroup, Radio, Switch } from "../src/core";
 
 afterEach(cleanup);
 
@@ -24,13 +24,41 @@ describe("Core selection controls", () => {
       </form>,
     );
 
-    const checkbox = screen.getByRole("checkbox", { name: "接受条款" }) as HTMLInputElement;
+    const checkbox = screen.getByRole("checkbox", {
+      name: "接受条款",
+    }) as HTMLInputElement;
     expect(checkbox.checked).toBe(false);
     fireEvent.click(checkbox);
     expect(checkbox.checked).toBe(true);
 
     const form = screen.getByTestId("form") as HTMLFormElement;
     expect(new FormData(form).get("terms")).toBe("accepted");
+  });
+
+  it("keeps CheckboxGroup fieldset semantics and native multi-value submission", () => {
+    render(
+      <form data-testid="form">
+        <CheckboxGroup label="内容权限">
+          <Checkbox
+            name="permissions"
+            value="read"
+            label="读取"
+            defaultChecked
+          />
+          <Checkbox name="permissions" value="write" label="编辑" />
+          <Checkbox name="permissions" value="publish" label="发布" />
+        </CheckboxGroup>
+      </form>,
+    );
+
+    const group = screen.getByRole("group", { name: "内容权限" });
+    expect(group.tagName).toBe("FIELDSET");
+    fireEvent.click(screen.getByRole("checkbox", { name: "编辑" }));
+
+    const values = new FormData(
+      screen.getByTestId("form") as HTMLFormElement,
+    ).getAll("permissions");
+    expect(values).toEqual(["read", "write"]);
   });
 
   it("keeps native Radio name exclusivity and submitted values", () => {
@@ -41,18 +69,26 @@ describe("Core selection controls", () => {
       </form>,
     );
 
-    const basic = screen.getByRole("radio", { name: "基础版" }) as HTMLInputElement;
-    const pro = screen.getByRole("radio", { name: "专业版" }) as HTMLInputElement;
+    const basic = screen.getByRole("radio", {
+      name: "基础版",
+    }) as HTMLInputElement;
+    const pro = screen.getByRole("radio", {
+      name: "专业版",
+    }) as HTMLInputElement;
     fireEvent.click(pro);
 
     expect(basic.checked).toBe(false);
     expect(pro.checked).toBe(true);
-    expect(new FormData(screen.getByTestId("form") as HTMLFormElement).get("plan")).toBe("pro");
+    expect(
+      new FormData(screen.getByTestId("form") as HTMLFormElement).get("plan"),
+    ).toBe("pro");
   });
 
   it("exposes Switch semantics while supporting controlled state", () => {
     render(<ControlledSwitch />);
-    const toggle = screen.getByRole("switch", { name: "启用通知" }) as HTMLInputElement;
+    const toggle = screen.getByRole("switch", {
+      name: "启用通知",
+    }) as HTMLInputElement;
 
     expect(toggle.checked).toBe(false);
     fireEvent.click(toggle);
@@ -69,7 +105,9 @@ describe("Core selection controls", () => {
       </>,
     );
 
-    const disabledSwitch = screen.getByRole("switch", { name: "系统策略" }) as HTMLInputElement;
+    const disabledSwitch = screen.getByRole("switch", {
+      name: "系统策略",
+    }) as HTMLInputElement;
     expect(disabledSwitch.disabled).toBe(true);
     expect(disabledSwitch.checked).toBe(true);
     disabledSwitch.click();

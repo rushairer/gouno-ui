@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 import ts from "typescript";
 import { buttonDocuments } from "../showcase/demos/core/button";
 import { dataEntryDocuments } from "../showcase/demos/core/data-entry";
+import { formDocuments } from "../showcase/demos/core/form";
 import { feedbackDocuments } from "../showcase/demos/core/feedback";
 import { paginationDocument } from "../showcase/demos/core/pagination";
+import { selectionControlDocuments } from "../showcase/demos/core/selection-controls";
 import { tabsDocument } from "../showcase/demos/core/tabs";
 import { tagDocuments } from "../showcase/demos/core/tag";
 import { badgeDocuments } from "../showcase/demos/core/badge";
@@ -36,7 +38,7 @@ const cases = [
     dataEntryDocuments["date-picker"],
   ],
   ["src/core/upload.tsx", "UploadProps", dataEntryDocuments.upload],
-  ["src/core/form.tsx", "FormProps", dataEntryDocuments.form],
+  ["src/core/form.tsx", "FormProps", formDocuments.form],
   ["src/core/tag.tsx", "TagProps", tagDocuments.tag],
   ["src/core/modal.tsx", "ModalProps", feedbackDocuments.modal],
   ["src/core/drawer.tsx", "DrawerProps", feedbackDocuments.drawer],
@@ -74,7 +76,10 @@ describe("public API documentation", () => {
 
   it("documents every public Button-family role on the canonical Button page", () => {
     const sections = new Map(
-      buttonDocuments.button.apiSections?.map((section) => [section.title, section.rows]) ?? [],
+      buttonDocuments.button.apiSections?.map((section) => [
+        section.title,
+        section.rows,
+      ]) ?? [],
     );
     expect(sections.get("ButtonLink API")?.map((row) => row.name)).toEqual(
       expect.arrayContaining(["to", "href", "disabled", "loading"]),
@@ -91,6 +96,72 @@ describe("public API documentation", () => {
     expect(sections.get("NavigationProvider API")?.map((row) => row.name)).toEqual(
       expect.arrayContaining(["link", "children"]),
     );
+  });
+
+  it("documents the high-level and low-level Form family on one canonical page", () => {
+    const sections = new Map(
+      formDocuments.form.apiSections?.map((section) => [
+        section.title,
+        section.rows,
+      ]) ?? [],
+    );
+
+    expect(sections.get("Field / FormField API")?.map((row) => row.name)).toEqual(
+      expect.arrayContaining([
+        "label",
+        "children",
+        "hint",
+        "error",
+        "required",
+        "hideLabel",
+      ]),
+    );
+    expect(sections.get("FieldGroup API")?.map((row) => row.name)).toEqual(
+      expect.arrayContaining(["children", "...div props"]),
+    );
+    expect(sections.get("FieldSet API")?.map((row) => row.name)).toEqual(
+      expect.arrayContaining(["children", "...fieldset props"]),
+    );
+    expect(sections.get("FieldLegend API")?.map((row) => row.name)).toEqual(
+      expect.arrayContaining(["variant", "children"]),
+    );
+    expect(sections.get("FieldLabel API")?.map((row) => row.name)).toEqual(
+      expect.arrayContaining(["htmlFor", "children"]),
+    );
+    expect(sections.get("FormGrid API")?.map((row) => row.name)).toContain(
+      "columns",
+    );
+    expect(sections.get("FormActions API")?.map((row) => row.name)).toContain(
+      "children",
+    );
+    expect(sections.get("OverlayForm API")?.map((row) => row.name)).toEqual(
+      expect.arrayContaining(["actions", "actionClassName", "children"]),
+    );
+
+    const demoTitles = formDocuments.form.demos?.map((demo) => demo.title) ?? [];
+    expect(demoTitles).toEqual(
+      expect.arrayContaining([
+        "Form composition helpers",
+        "Low-level Field anatomy",
+      ]),
+    );
+  });
+
+  it("documents CheckboxGroup and keeps selection Preview/Code on executable source", () => {
+    const checkbox = selectionControlDocuments.checkbox;
+    const group = checkbox.apiSections?.find(
+      (section) => section.title === "CheckboxGroup API",
+    );
+
+    expect(group?.rows.map((row) => row.name)).toEqual(["label", "children"]);
+    expect(checkbox.code).toContain('label="已锁定选项" disabled');
+    expect(checkbox.code).toContain("aria-live=\"polite\"");
+    expect(
+      checkbox.demos?.find((demo) => demo.title === "CheckboxGroup 组级语义")
+        ?.code,
+    ).toContain('name="permissions"');
+    expect(selectionControlDocuments.radio.code).toContain('label="旧套餐" disabled');
+    expect(selectionControlDocuments.switch.code).toContain('label="系统策略" disabled');
   });
 
   it("keeps the Select multi-tag Preview and Code example sourced from the same capability", () => {

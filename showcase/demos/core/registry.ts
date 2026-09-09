@@ -5,6 +5,7 @@ import { badgeDocuments } from "./badge";
 import { tagDocuments } from "./tag";
 import { layoutDocuments } from "./layout";
 import { dataEntryDocuments } from "./data-entry";
+import { formDocuments } from "./form";
 import { selectionControlDocuments } from "./selection-controls";
 import { segmentedDocuments } from "./segmented";
 import { navigationDocuments } from "./navigation";
@@ -20,6 +21,7 @@ export const coreDocuments: Record<string, ComponentDocument> = {
   ...tagDocuments,
   ...layoutDocuments,
   ...dataEntryDocuments,
+  ...formDocuments,
   ...selectionControlDocuments,
   ...segmentedDocuments,
   ...navigationDocuments,

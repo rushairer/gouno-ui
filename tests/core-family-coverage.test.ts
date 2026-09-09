@@ -3,7 +3,11 @@ import ts from "typescript";
 import { showcaseCatalog } from "../showcase/catalog";
 import { coreRuntimeFamilyCoverage } from "../showcase/core-family-coverage";
 
-const configPath = ts.findConfigFile(process.cwd(), ts.sys.fileExists, "tsconfig.json")!;
+const configPath = ts.findConfigFile(
+  process.cwd(),
+  ts.sys.fileExists,
+  "tsconfig.json",
+)!;
 const parsed = ts.parseJsonConfigFileContent(
   ts.readConfigFile(configPath, ts.sys.readFile).config,
   ts.sys,
@@ -19,7 +23,10 @@ function runtimePascalCaseExports() {
     .getExportsOfModule(moduleSymbol)
     .filter((symbol) => /^[A-Z]/.test(symbol.name))
     .filter((symbol) => {
-      const target = symbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(symbol) : symbol;
+      const target =
+        symbol.flags & ts.SymbolFlags.Alias
+          ? checker.getAliasedSymbol(symbol)
+          : symbol;
       return Boolean(target.flags & ts.SymbolFlags.Value);
     })
     .map((symbol) => symbol.name)
@@ -28,20 +35,46 @@ function runtimePascalCaseExports() {
 
 describe("Core runtime Showcase family coverage", () => {
   it("inventories every PascalCase runtime export from the canonical Core entry", () => {
-    expect(Object.keys(coreRuntimeFamilyCoverage).sort()).toEqual(runtimePascalCaseExports());
+    expect(Object.keys(coreRuntimeFamilyCoverage).sort()).toEqual(
+      runtimePascalCaseExports(),
+    );
   });
 
   it("points every assigned runtime export at a visible Core Showcase family", () => {
     const visibleCoreFamilies = new Set(
       showcaseCatalog
-        .filter((group) => group.workspace === "gouno-ui" && group.layer === "core")
+        .filter(
+          (group) =>
+            group.workspace === "gouno-ui" && group.layer === "core",
+        )
         .flatMap((group) => group.items)
         .map((item) => item.id),
     );
 
     for (const [name, coverage] of Object.entries(coreRuntimeFamilyCoverage)) {
       if (coverage.familyId === null) continue;
-      expect(visibleCoreFamilies.has(coverage.familyId), `${name} -> ${coverage.familyId}`).toBe(true);
+      expect(
+        visibleCoreFamilies.has(coverage.familyId),
+        `${name} -> ${coverage.familyId}`,
+      ).toBe(true);
+    }
+  });
+
+  it("certifies product-proven Form and selection siblings in their canonical families", () => {
+    for (const name of [
+      "Field",
+      "FormField",
+      "FieldGroup",
+      "FieldSet",
+      "FieldLegend",
+      "FieldLabel",
+      "FormLayout",
+      "FormGrid",
+      "FormActions",
+      "OverlayForm",
+      "CheckboxGroup",
+    ] as const) {
+      expect(coreRuntimeFamilyCoverage[name].review, name).toBe("covered");
     }
   });
 
