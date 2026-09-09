@@ -61,6 +61,19 @@ describe("Blog Admin Dashboard product migration fixture", () => {
     expect(screen.getByText("AI 运营提醒已全部标记为已读（Showcase 模拟）。")).toBeTruthy();
   });
 
+  it("keeps AI alerts visible when mark-all-read fails", () => {
+    render(<BlogAdminDashboardDemo />);
+    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
+    fireEvent.click(screen.getByRole("radio", { name: "提醒操作失败" }));
+
+    fireEvent.click(screen.getByRole("button", { name: "全部已读" }));
+
+    const failure = screen.getByText("标记 AI 运营提醒为已读失败；提醒仍保留，可稍后重试（Showcase 模拟）。");
+    expect(failure.closest('[role="alert"]')?.getAttribute("data-type")).toBe("error");
+    expect(screen.getByText("AI 运营提醒")).toBeTruthy();
+    expect(screen.getByText("AI 每日资讯")).toBeTruthy();
+  });
+
   it("preserves the Top Posts table and one-line canonical row actions", () => {
     render(<BlogAdminDashboardDemo />);
 
@@ -76,14 +89,22 @@ describe("Blog Admin Dashboard product migration fixture", () => {
     expect(screen.getByText("将进入 /articles/oauth-bff-browser-session（Showcase 模拟）。")).toBeTruthy();
   });
 
-  it("preserves the permission-dependent primary action", () => {
+  it("preserves permission-dependent primary actions and metric destinations", () => {
     render(<BlogAdminDashboardDemo />);
 
     fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
     fireEvent.click(screen.getByRole("radio", { name: "审核员" }));
     expect(screen.queryByRole("button", { name: "新建文章" })).toBeNull();
     expect(screen.getByRole("button", { name: "审核评论" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: /文章总数/ })).toBeNull();
+    expect(screen.getByRole("button", { name: /评论互动/ })).toBeTruthy();
     expect(screen.queryByText("AI 运营提醒")).toBeNull();
+
+    fireEvent.click(screen.getByRole("radio", { name: "其他后台权限" }));
+    expect(screen.queryByRole("button", { name: "审核评论" })).toBeNull();
+    expect(screen.queryByRole("button", { name: /评论互动/ })).toBeNull();
+    expect(screen.queryByRole("button", { name: "文章管理" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "查看全部文章" })).toBeNull();
   });
 
   it("preserves loading, empty and error states in isolated renders", () => {

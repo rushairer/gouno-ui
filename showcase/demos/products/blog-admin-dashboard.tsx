@@ -39,6 +39,8 @@ import { FixtureDock } from "../../components/fixture-dock";
 
 type FixtureScenario = "data" | "loading" | "empty" | "error";
 type CapabilityScenario = "admin" | "moderator" | "viewer";
+type AlertMutationScenario = "success" | "error";
+type Notice = { type: "info" | "error"; message: string } | null;
 
 type TopPostFixture = {
   id: number;
@@ -81,7 +83,12 @@ const scenarioOptions = [
 const capabilityOptions = [
   { value: "admin", label: "管理员" },
   { value: "moderator", label: "审核员" },
-  { value: "viewer", label: "只读" },
+  { value: "viewer", label: "其他后台权限" },
+] as const;
+
+const alertMutationOptions = [
+  { value: "success", label: "提醒操作成功" },
+  { value: "error", label: "提醒操作失败" },
 ] as const;
 
 const fullSummary: DashboardSummary = {
@@ -210,12 +217,15 @@ function DashboardLoading() {
 export function BlogAdminDashboardDemo() {
   const [scenario, setScenario] = useState<FixtureScenario>("data");
   const [capability, setCapability] = useState<CapabilityScenario>("admin");
+  const [alertMutation, setAlertMutation] = useState<AlertMutationScenario>("success");
   const [alerts, setAlerts] = useState<AIAlertFixture[]>(() => [...fullSummary.aiAlerts]);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [notice, setNotice] = useState<Notice>(null);
 
   const summary = scenario === "empty" ? emptySummary : { ...fullSummary, aiAlerts: alerts };
   const canCreatePost = capability === "admin";
-  const canModerate = capability !== "viewer";
+  const canViewPosts = capability === "admin";
+  const canViewMedia = capability === "admin";
+  const canModerate = capability === "moderator" || capability === "admin";
   const canManageAI = capability === "admin";
   const drafts = Math.max(0, summary.totalPosts - summary.publishedPosts);
   const maxTraffic = Math.max(1, ...summary.dailyEvents.map((item) => item.count));
@@ -224,13 +234,21 @@ export function BlogAdminDashboardDemo() {
     [summary.dailyEvents],
   );
 
-  const navigate = (route: string) => setNotice(`将进入 ${route}（Showcase 模拟）。`);
+  const navigate = (route: string) => setNotice({ type: "info", message: `将进入 ${route}（Showcase 模拟）。` });
+  const dismissAllAlerts = () => {
+    if (alertMutation === "error") {
+      setNotice({ type: "error", message: "标记 AI 运营提醒为已读失败；提醒仍保留，可稍后重试（Showcase 模拟）。" });
+      return;
+    }
+    setAlerts([]);
+    setNotice({ type: "info", message: "AI 运营提醒已全部标记为已读（Showcase 模拟）。" });
+  };
 
   return (
     <div className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/dashboard"
-        note="保留真实指标、30 天趋势、治理健康度、AI 失败提醒和 Top Posts；Fixture 不请求 analytics/notifications API。"
+        note="保留真实指标、权限化指标入口、30 天趋势、治理健康度、AI 失败提醒及其已读失败分支和 Top Posts；Fixture 不请求 analytics/notifications API。"
         controls={(
           <div className="flex flex-col gap-3">
             <Segmented<FixtureScenario>
@@ -254,6 +272,17 @@ export function BlogAdminDashboardDemo() {
               }}
               block
             />
+            <Segmented<AlertMutationScenario>
+              aria-label="AI 提醒写操作场景"
+              options={alertMutationOptions}
+              value={alertMutation}
+              onChange={(value) => {
+                setAlertMutation(value);
+                setNotice(null);
+                setAlerts([...fullSummary.aiAlerts]);
+              }}
+              block
+            />
           </div>
         )}
       />
@@ -268,7 +297,7 @@ export function BlogAdminDashboardDemo() {
         ) : null}
       />
 
-      {notice ? <Alert type="info" showIcon title={notice} closable={{ onClose: () => setNotice(null) }} /> : null}
+      {notice ? <Alert type={notice.type} showIcon title={notice.message} closable={{ onClose: () => setNotice(null) }} /> : null}
 
       {scenario === "error" ? (
         <Alert
@@ -288,7 +317,7 @@ export function BlogAdminDashboardDemo() {
               title="文章总数"
               value={summary.totalPosts.toLocaleString()}
               detail={<span>已发布 {summary.publishedPosts} · 草稿 {drafts}</span>}
-              route="/admin/posts"
+              route={canViewPosts ? "/admin/posts" : undefined}
               onNavigate={navigate}
             />
             <MetricCard
@@ -296,7 +325,7 @@ export function BlogAdminDashboardDemo() {
               title="总阅读量"
               value={summary.totalViews.toLocaleString()}
               detail="全站累计公开阅读次数"
-              route="/admin/posts?status=published"
+              route={canViewPosts ? "/admin/posts?status=published" : undefined}
               onNavigate={navigate}
             />
             <MetricCard
@@ -304,7 +333,7 @@ export function BlogAdminDashboardDemo() {
               title="总获赞数"
               value={summary.totalLikes.toLocaleString()}
               detail="读者正向互动累计"
-              route="/admin/posts"
+              route={canViewPosts ? "/admin/posts" : undefined}
               onNavigate={navigate}
             />
             <MetricCard
@@ -312,7 +341,7 @@ export function BlogAdminDashboardDemo() {
               title="评论互动"
               value={summary.totalComments.toLocaleString()}
               detail={summary.pendingComments > 0 ? `待审核 ${summary.pendingComments} 条` : "全站互动良好"}
-              route={canModerate ? "/admin/comments?status=pending" : "/admin/media"}
+              route={canModerate ? "/admin/comments?status=pending" : canViewMedia ? "/admin/media" : undefined}
               onNavigate={navigate}
             />
           </div>
@@ -378,7 +407,7 @@ export function BlogAdminDashboardDemo() {
                 </div>
                 <div className="flex items-center justify-between gap-3 border-t pt-4">
                   <Text size="xs" tone="muted">系统状态正常</Text>
-                  <Button size="small" variant="text" onClick={() => navigate("/admin/posts")}>文章管理</Button>
+                  {canViewPosts ? <Button size="small" variant="text" onClick={() => navigate("/admin/posts")}>文章管理</Button> : null}
                 </div>
               </CardContent>
             </Card>
@@ -396,10 +425,7 @@ export function BlogAdminDashboardDemo() {
                     <Text size="xs" tone="muted">需要关注的 Agent / Workflow 执行失败记录。</Text>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <Button size="small" icon={<CheckCheck />} onClick={() => {
-                      setAlerts([]);
-                      setNotice("AI 运营提醒已全部标记为已读（Showcase 模拟）。");
-                    }}>全部已读</Button>
+                    <Button size="small" icon={<CheckCheck />} onClick={dismissAllAlerts}>全部已读</Button>
                     <Button size="small" variant="text" onClick={() => navigate("/admin/ai-ops?tab=records")}>查看全部记录</Button>
                   </div>
                 </div>
@@ -442,7 +468,7 @@ export function BlogAdminDashboardDemo() {
                   <CardTitle className="text-base">表现最佳文章</CardTitle>
                   <Text size="xs" tone="muted">按全站阅读量与点赞数排序的热门内容</Text>
                 </div>
-                <Button size="small" variant="text" onClick={() => navigate("/admin/posts")}>查看全部文章</Button>
+                {canViewPosts ? <Button size="small" variant="text" onClick={() => navigate("/admin/posts")}>查看全部文章</Button> : null}
               </div>
             </CardHeader>
             <CardContent className="p-0">
