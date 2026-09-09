@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" fill="none" color="currentColor">
   <title>Gosso</title>
-  <path d="M94 20H48C32.536 20 20 32.536 20 48V80C20 95.464 32.536 108 48 108H80C95.464 108 108 95.464 108 80V66" stroke="#0F766E" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M53 57V52C53 45.925 57.925 41 64 41C70.075 41 75 45.925 75 52V57" stroke="#0F766E" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-  <path fill-rule="evenodd" clip-rule="evenodd" d="M55 57H73C77.418 57 81 60.582 81 65V79C81 83.418 77.418 87 73 87H55C50.582 87 47 83.418 47 79V65C47 60.582 50.582 57 55 57ZM64 63C61.791 63 60 64.791 60 67C60 68.451 60.773 69.722 61.93 70.423V76C61.93 77.143 62.857 78.07 64 78.07C65.143 78.07 66.07 77.143 66.07 76V70.423C67.227 69.722 68 68.451 68 67C68 64.791 66.209 63 64 63Z" fill="#0F766E"/>
+  <path d="M94 20H48C32.536 20 20 32.536 20 48V80C20 95.464 32.536 108 48 108H80C95.464 108 108 95.464 108 80V66" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M53 57V52C53 45.925 57.925 41 64 41C70.075 41 75 45.925 75 52V57" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M55 57H73C77.418 57 81 60.582 81 65V79C81 83.418 77.418 87 73 87H55C50.582 87 47 83.418 47 79V65C47 60.582 50.582 57 55 57ZM64 63C61.791 63 60 64.791 60 67C60 68.451 60.773 69.722 61.93 70.423V76C61.93 77.143 62.857 78.07 64 78.07C65.143 78.07 66.07 77.143 66.07 76V70.423C67.227 69.722 68 68.451 68 67C68 64.791 66.209 63 64 63Z" fill="currentColor"/>
 </svg>

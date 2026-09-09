@@ -3,6 +3,7 @@ import { LayoutDashboard, Menu, Rss, Search } from "lucide-react";
 import gounoBlogLogo from "../../../assets/brand-icons/gouno-blog.svg";
 import { Drawer, IconButton, Input } from "../../../src/core";
 import { ThemeToggle } from "../../../src/theme";
+import { BrandMark } from "../../components/brand-mark";
 
 const navItems = [
   { label: "文章", path: "/articles" },
@@ -49,7 +50,7 @@ export function BlogPublicShellFixture({
             className="mr-auto inline-flex min-w-0 items-center gap-2 text-lg font-semibold tracking-tight text-primary"
             onClick={() => onNavigate("/")}
           >
-            <img src={gounoBlogLogo} alt="" aria-hidden="true" className="size-8 shrink-0" />
+            <BrandMark src={gounoBlogLogo} className="size-8" />
             <span className="truncate">Gouno Blog</span>
           </button>
           <nav aria-label="主导航" className="hidden items-center gap-6 md:flex">
@@ -104,7 +105,7 @@ export function BlogPublicShellFixture({
         <div className="mx-auto grid w-full max-w-[1200px] gap-8 px-4 py-10 md:grid-cols-[1fr_1fr] md:px-6">
           <div>
             <button type="button" className="inline-flex items-center gap-2 font-semibold" onClick={() => onNavigate("/")}>
-              <img src={gounoBlogLogo} alt="" aria-hidden="true" className="size-7 shrink-0" />
+              <BrandMark src={gounoBlogLogo} className="size-7 text-primary" />
               <span>Gouno Blog</span>
             </button>
             <p className="mt-2 max-w-md text-sm text-muted-foreground">

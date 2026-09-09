@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import gossoLogo from "../../../../assets/brand-icons/gosso.svg";
 import { Card, Heading, Text } from "../../../../src/core";
+import { BrandMark } from "../../../components/brand-mark";
 import { FixtureDock } from "../../../components/fixture-dock";
 
 export function AuthSurface({
@@ -27,7 +28,7 @@ export function AuthSurface({
       <div className="relative w-full max-w-md">
         <Card padding="lg" variant="elevated" className="w-full border-border/80 bg-raised/95 backdrop-blur">
           <div className="mb-7 text-center">
-            <img src={gossoLogo} alt="" aria-hidden="true" className="mx-auto mb-4 size-14" />
+            <BrandMark src={gossoLogo} className="mx-auto mb-4 size-14 text-primary" />
             <Heading level={1} className="text-2xl font-bold tracking-tight">{title}</Heading>
             {description ? <Text tone="muted" size="sm" className="mt-2 leading-relaxed">{description}</Text> : null}
           </div>
