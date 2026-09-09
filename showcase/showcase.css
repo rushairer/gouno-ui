@@ -6,7 +6,7 @@
 @source "./";
 
 @layer components {
-.code-block__pre {
+  .code-block__pre {
     margin: 0;
     tab-size: 2;
   }
@@ -64,7 +64,6 @@
 }
 
 .demo-block__content > [data-slot="table-container"],
-.demo-block__content > [data-slot="data-table"],
 .demo-block__content > .w-full,
 .demo-block__content > form,
 .demo-block__content > [data-slot="input-group"],

@@ -19,6 +19,29 @@ describe("Core Button", () => {
     expect(loading.getAttribute("aria-busy")).toBe("true");
   });
 
+  it("maps semantic colors to canonical utility classes instead of dead migration hooks", () => {
+    render(<>
+      <Button variant="outline" color="success">Success</Button>
+      <Button variant="solid" color="warning">Warning</Button>
+      <ButtonLink href="/info" color="info">Info</ButtonLink>
+    </>);
+
+    const success = screen.getByRole("button", { name: "Success" });
+    expect(success.className).toContain("border-success/50");
+    expect(success.className).toContain("text-success");
+
+    const warning = screen.getByRole("button", { name: "Warning" });
+    expect(warning.className).toContain("bg-warning");
+
+    const info = screen.getByRole("link", { name: "Info" });
+    expect(info.className).toContain("text-info");
+
+    for (const element of [success, warning, info]) {
+      expect(element.className).not.toContain("btn-color-");
+      expect(element.className).not.toContain("is-loading");
+    }
+  });
+
   it("renders navigation as a real link and prevents disabled navigation", () => {
     const onClick = vi.fn();
     render(<><ButtonLink href="/external">External</ButtonLink><ButtonLink href="/disabled" disabled onClick={onClick}>Disabled</ButtonLink></>);

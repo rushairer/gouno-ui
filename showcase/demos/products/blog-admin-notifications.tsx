@@ -413,7 +413,7 @@ export function BlogAdminNotificationsDemo() {
                 role="listitem"
                 className={cn(
                   "transition-colors",
-                  unread ? "border-primary/40 shadow-sm" : "border-border/60 bg-card/70",
+                  unread ? "border-primary/40" : "border-border/60 bg-card/70",
                   checked && "bg-accent/20",
                 )}
               >

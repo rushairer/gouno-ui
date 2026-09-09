@@ -82,7 +82,7 @@ Use border contrast, neutral surface tone, spacing, typography and semantic stat
 
 ## Compatibility shadow aliases
 
-`shadow-xs` / `shadow-sm` and the other raw size aliases currently resolve to zero visible shadow in Theme. They are compatibility implementation vocabulary, not design approval. Existing product-fixture remnants should be removed during corpus cleanup so the source itself communicates the intended flatness instead of relying on zero-valued aliases.
+`shadow-xs` / `shadow-sm` and the other raw size aliases still resolve to zero visible shadow in Theme only as external compatibility vocabulary. The migrated canonical runtime and Showcase product corpus no longer carry those raw shadow classes: source now expresses flatness directly, while automated conformance rejects their reintroduction. New visible depth continues to require the semantic `raised`, `overlay` or `modal` role owned by the appropriate component/layer.
 
 ## Acceptance rule
 
@@ -91,6 +91,7 @@ A future business-page change passes the elevation audit only when:
 - ordinary product surfaces remain ground-level;
 - any visible raised product surface is present in the explicit whitelist with a product-level reason;
 - overlays/modals obtain depth from canonical Core behavior, not page-local shadow classes;
+- raw `shadow-xs` / `shadow-sm` / `shadow-md` / `shadow-lg` / `shadow-xl` / `shadow-2xl` classes do not return to canonical runtime or product fixtures;
 - `sticky`/`fixed`/`absolute` are not treated as automatic elevation;
 - light and dark themes preserve the same hierarchy;
 - the full migrated product corpus and conformance tests remain green.

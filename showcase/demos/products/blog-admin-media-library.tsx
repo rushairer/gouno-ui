@@ -362,7 +362,7 @@ export function BlogAdminMediaLibraryDemo() {
         </Alert>
       ) : null}
 
-      <Card padding="base" className="shadow-sm">
+      <Card padding="base">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
           <div className="min-w-0 flex-1">
             <Input
@@ -438,9 +438,9 @@ export function BlogAdminMediaLibraryDemo() {
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4" role="list" aria-label="媒体资源">
           {visibleAssets.map((asset) => (
-            <Card key={asset.id} padding="none" role="listitem" className="group overflow-hidden transition-all hover:border-primary/40 hover:shadow-sm">
+            <Card key={asset.id} padding="none" role="listitem" className="group overflow-hidden transition-all hover:border-primary/40">
               <div className="relative aspect-video overflow-hidden border-b bg-muted/40">
-                <div className="absolute left-2 top-2 z-10 rounded-md bg-background/85 p-1 shadow-sm backdrop-blur">
+                <div className="absolute left-2 top-2 z-10 rounded-md bg-background/85 p-1 backdrop-blur">
                   <Checkbox
                     aria-label={`选择媒体 ${asset.filename}`}
                     checked={selected.includes(asset.id)}

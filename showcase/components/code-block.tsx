@@ -25,7 +25,7 @@ export function CodeBlock({ code, language = "tsx" }: { code: string; language?:
     return () => window.clearTimeout(timer);
   }, [copied]);
   return (
-    <div className="code-block overflow-hidden rounded-md border bg-card">
+    <div className="overflow-hidden rounded-md border bg-card">
       <div className="flex min-h-10 items-center justify-between border-b bg-muted/50 px-3">
         <span className="font-mono text-xs uppercase tracking-wide text-muted-foreground">{language}</span>
         <button
