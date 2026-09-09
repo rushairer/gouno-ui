@@ -141,19 +141,16 @@ describe("design-language conformance", () => {
     expect(tokens).toContain("--raised: #1a222c");
   });
 
-  it("uses semantic elevation names in canonical runtime source and isolates the one overflow shadow cue", () => {
-    const tablePath = resolve(sourceRoot, "components/primitives/table.tsx");
+  it("uses semantic elevation names in canonical runtime source without arbitrary shadow utilities", () => {
     for (const file of canonicalSourceFiles) {
       const source = readFileSync(file, "utf8");
       expect(source).not.toMatch(rawShadowClass);
-      if (file === tablePath) {
-        expect(source.match(/shadow-\[/g) ?? []).toHaveLength(2);
-        expect(source).toContain("shadow-[inset_0_1px_0_");
-        expect(source).toContain("shadow-[inset_0_-1px_0_");
-      } else {
-        expect(source).not.toContain("shadow-[");
-      }
+      expect(source).not.toContain("shadow-[");
     }
+
+    const table = readFileSync(resolve(sourceRoot, "components/primitives/table.tsx"), "utf8");
+    expect(table).toContain("caption-side-bottom border-t border-border/60");
+    expect(table).toContain("caption-side-top border-b border-border/60");
   });
 
   it("keeps navigation ground-level while bordered tables use low surface separation", () => {

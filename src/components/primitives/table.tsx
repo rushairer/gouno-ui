@@ -161,9 +161,9 @@ function TableCaption({
       className={cn(
         "px-4 py-3 text-center text-sm leading-6 text-muted-foreground",
         captionSide === "bottom" &&
-          "caption-side-bottom shadow-[inset_0_1px_0_color-mix(in_srgb,var(--border)_60%,transparent)]",
+          "caption-side-bottom border-t border-border/60",
         captionSide === "top" &&
-          "caption-side-top shadow-[inset_0_-1px_0_color-mix(in_srgb,var(--border)_60%,transparent)]",
+          "caption-side-top border-b border-border/60",
         className,
       )}
       {...props}
