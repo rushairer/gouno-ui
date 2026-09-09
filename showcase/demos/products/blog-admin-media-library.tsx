@@ -46,6 +46,18 @@ const scenarioOptions = [
   { value: "error", label: "错误" },
 ] as const;
 
+const commonImageAccept = "image/jpeg,image/png,image/webp,image/gif,image/svg+xml,image/x-icon,image/vnd.microsoft.icon,image/avif,image/bmp,.svg,.ico,.avif,.bmp";
+
+const imageStylePresets = [
+  { label: "📊 架构图解", prompt: "A sleek modern architectural diagram illustration showing system components, clean lines, isometric view, tech palette" },
+  { label: "🖼️ 科技插画", prompt: "A modern minimal editorial vector illustration for a clean web page, subtle gradients, flat design" },
+  { label: "🎬 电影概念", prompt: "Cinematic concept art, hyper-detailed futuristic scene, volumetric lighting, 8k wallpaper quality" },
+  { label: "🎨 3D 立体", prompt: "Cute 3D isometric clay render illustration, soft studio lighting, playful scene" },
+  { label: "🧸 简单卡通", prompt: "Cute and simple 2D cartoon flat illustration, clean line art, playful vibrant colors, minimal modern aesthetic" },
+  { label: "🌄 自然风光", prompt: "Breathtaking atmospheric nature landscape, morning golden hour mist, tranquil mountain reflections, award-winning photography" },
+  { label: "🏙️ 极简抽象", prompt: "Ultra-minimalist modern abstract geometry, soft pastel tones, clean negative space, fine art" },
+] as const;
+
 const mediaWorkflows = [
   {
     id: 79,
@@ -199,10 +211,7 @@ export function BlogAdminMediaLibraryDemo() {
 
   const upload = () => {
     const file = uploadFiles[0];
-    if (!file) {
-      setFeedback({ type: "error", text: "请选择要上传的图片。" });
-      return;
-    }
+    if (!file) return;
     const id = Math.max(0, ...assets.map((asset) => asset.id)) + 1;
     const extension = file.name.split(".").pop()?.toLowerCase() || "image";
     const contentType = file.type || (extension === "ico" ? "image/x-icon" : `image/${extension}`);
@@ -226,10 +235,7 @@ export function BlogAdminMediaLibraryDemo() {
 
   const generateImage = () => {
     const prompt = aiPrompt.trim();
-    if (!prompt) {
-      setAiError("请输入生图提示词。");
-      return;
-    }
+    if (!prompt) return;
     const id = Math.max(0, ...assets.map((asset) => asset.id)) + 1;
     const next: MediaFixture = {
       id,
@@ -291,7 +297,7 @@ export function BlogAdminMediaLibraryDemo() {
     <div className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/media"
-        note="保留真实媒体 Card Grid、上传/AI/Alt Text Drawers、引用感知删除、批量部分失败，以及 media_asset resource 的 WorkflowLauncher 资源输入与 Run 反馈；Fixture 不请求真实 media/AI API。"
+        note="保留真实媒体 Card Grid、上传/AI/Alt Text Drawers、图片格式契约、AI 风格预设、引用感知删除、批量部分失败，以及 media_asset resource 的 WorkflowLauncher 资源输入与 Run 反馈；Fixture 不请求真实 media/AI API。"
         controls={(
           <Segmented<FixtureScenario>
             aria-label="媒体库 Fixture 状态"
@@ -465,13 +471,13 @@ export function BlogAdminMediaLibraryDemo() {
         footer={(
           <>
             <Button onClick={() => setUploadOpen(false)}>取消</Button>
-            <Button variant="solid" color="primary" onClick={upload}>上传图片</Button>
+            <Button variant="solid" color="primary" disabled={uploadFiles.length === 0} onClick={upload}>上传图片</Button>
           </>
         )}
       >
         <div className="flex flex-col gap-5">
           <FormField label="图片文件" required>
-            <Upload aria-label="媒体文件" files={uploadFiles} onFiles={setUploadFiles} accept="image/*,.svg,.ico" maxCount={1} drag>
+            <Upload aria-label="媒体文件" files={uploadFiles} onFiles={setUploadFiles} accept={commonImageAccept} maxCount={1} drag>
               点击或拖放图片到这里
             </Upload>
           </FormField>
@@ -490,14 +496,31 @@ export function BlogAdminMediaLibraryDemo() {
         footer={(
           <>
             <Button onClick={() => setAiDrawerOpen(false)}>关闭</Button>
-            <Button variant="solid" color="primary" icon={<Sparkles />} onClick={generateImage}>生成并入库</Button>
+            <Button variant="solid" color="primary" icon={<Sparkles />} disabled={!aiPrompt.trim()} onClick={generateImage}>开始生图并入库</Button>
           </>
         )}
       >
         <div className="flex flex-col gap-5">
           {aiError ? <Alert type="error" showIcon title={aiError} /> : null}
+          <FormField label="风格预设" hint="选择预设会填充提示词，仍可继续编辑。">
+            <div className="flex flex-wrap gap-2">
+              {imageStylePresets.map((preset) => (
+                <Button
+                  key={preset.label}
+                  size="small"
+                  variant="outline"
+                  onClick={() => {
+                    setAiPrompt(preset.prompt);
+                    setAiError("");
+                  }}
+                >
+                  {preset.label}
+                </Button>
+              ))}
+            </div>
+          </FormField>
           <FormField label="生图提示词" required>
-            <Textarea aria-label="AI 生图提示词" rows={5} value={aiPrompt} onChange={(event) => setAiPrompt(event.target.value)} placeholder="例如：极简技术架构图，深色背景，清晰的数据流…" />
+            <Textarea aria-label="AI 生图提示词" rows={5} value={aiPrompt} onChange={(event) => { setAiPrompt(event.target.value); setAiError(""); }} placeholder="例如：极简技术架构图，深色背景，清晰的数据流…" />
           </FormField>
           <FormField label="替代文本">
             <Input aria-label="AI 图片替代文本" value={aiAlt} onChange={(event) => setAiAlt(event.target.value)} placeholder="留空时使用默认描述" />

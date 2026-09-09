@@ -103,18 +103,21 @@ describe("Blog Admin Media Library product migration fixture", () => {
     expect(screen.getByText("已删除 1 个媒体；1 个未删除：可能仍被文章引用。")).toBeTruthy();
   });
 
-  it("uses canonical Upload for SVG/ICO-compatible upload and stores the new asset", () => {
+  it("uses the real image format contract and disables upload until a file is selected", () => {
     render(<BlogAdminMediaLibraryDemo />);
 
     fireEvent.click(screen.getByRole("button", { name: "上传图片" }));
     const dialog = screen.getByRole("dialog");
     const input = within(dialog).getByLabelText("媒体文件");
-    expect(input.getAttribute("accept")).toBe("image/*,.svg,.ico");
+    expect(input.getAttribute("accept")).toBe("image/jpeg,image/png,image/webp,image/gif,image/svg+xml,image/x-icon,image/vnd.microsoft.icon,image/avif,image/bmp,.svg,.ico,.avif,.bmp");
+    const uploadButton = within(dialog).getByRole("button", { name: "上传图片" }) as HTMLButtonElement;
+    expect(uploadButton.disabled).toBe(true);
 
     const file = new File(["<svg></svg>"], "architecture-new.svg", { type: "image/svg+xml" });
     fireEvent.change(input, { target: { files: [file] } });
+    expect(uploadButton.disabled).toBe(false);
     fireEvent.change(within(dialog).getByLabelText("上传图片替代文本"), { target: { value: "新架构图" } });
-    fireEvent.click(within(dialog).getByRole("button", { name: "上传图片" }));
+    fireEvent.click(uploadButton);
 
     expect(screen.queryByRole("dialog")).toBeNull();
     expect(screen.getByText("architecture-new.svg")).toBeTruthy();
@@ -134,6 +137,22 @@ describe("Blog Admin Media Library product migration fixture", () => {
     expect(screen.getByText("替代文本已更新（Showcase 模拟）。")).toBeTruthy();
   });
 
+  it("restores AI image style presets and disables generation before a prompt exists", () => {
+    render(<BlogAdminMediaLibraryDemo />);
+
+    fireEvent.click(screen.getByRole("button", { name: "AI 文生图" }));
+    const dialog = screen.getByRole("dialog");
+    const generate = within(dialog).getByRole("button", { name: "开始生图并入库" }) as HTMLButtonElement;
+    expect(generate.disabled).toBe(true);
+    expect(within(dialog).getByRole("button", { name: "📊 架构图解" })).toBeTruthy();
+    expect(within(dialog).getByRole("button", { name: "🖼️ 科技插画" })).toBeTruthy();
+    expect(within(dialog).getByRole("button", { name: "🧸 简单卡通" })).toBeTruthy();
+
+    fireEvent.click(within(dialog).getByRole("button", { name: "📊 架构图解" }));
+    expect((within(dialog).getByLabelText("AI 生图提示词") as HTMLTextAreaElement).value).toBe("A sleek modern architectural diagram illustration showing system components, clean lines, isometric view, tech palette");
+    expect(generate.disabled).toBe(false);
+  });
+
   it("preserves AI text-to-image generation and automatic library insertion", () => {
     render(<BlogAdminMediaLibraryDemo />);
 
@@ -141,7 +160,7 @@ describe("Blog Admin Media Library product migration fixture", () => {
     const dialog = screen.getByRole("dialog");
     fireEvent.change(within(dialog).getByLabelText("AI 生图提示词"), { target: { value: "深色分布式系统架构插画" } });
     fireEvent.change(within(dialog).getByLabelText("AI 图片替代文本"), { target: { value: "AI 生成架构插画" } });
-    fireEvent.click(within(dialog).getByRole("button", { name: "生成并入库" }));
+    fireEvent.click(within(dialog).getByRole("button", { name: "开始生图并入库" }));
 
     expect(within(dialog).getByText(/已自动存入媒体库/)).toBeTruthy();
     expect(screen.getByText("ai-generated-706.png")).toBeTruthy();
