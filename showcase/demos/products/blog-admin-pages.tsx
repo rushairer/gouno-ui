@@ -6,6 +6,7 @@ import {
   Card,
   Checkbox,
   Empty,
+  FormField,
   IconButton,
   Input,
   Modal,
@@ -28,7 +29,9 @@ import { FixtureDock } from "../../components/fixture-dock";
 
 type PageStatus = "published" | "draft";
 type FixtureScenario = "data" | "loading" | "empty" | "error";
+type MutationScenario = "success" | "delete-error";
 type DeleteTarget = { kind: "single"; id: number } | { kind: "batch" } | null;
+type Notice = { type: "success" | "info" | "error"; message: string } | null;
 
 type PageFixture = {
   id: number;
@@ -43,6 +46,7 @@ type PageFixture = {
 };
 
 const pageSize = 4;
+const pageReviewWorkflow = { id: 73, name: "单页审校与优化（手选）" } as const;
 
 const initialPages: readonly PageFixture[] = [
   {
@@ -120,6 +124,11 @@ const scenarioOptions = [
   { value: "error", label: "错误" },
 ] as const;
 
+const mutationOptions = [
+  { value: "success", label: "删除成功" },
+  { value: "delete-error", label: "删除失败" },
+] as const;
+
 function PageStatusTag({ status }: { status: PageStatus }) {
   return status === "published" ? <Tag color="success">已发布</Tag> : <Tag>草稿</Tag>;
 }
@@ -130,7 +139,7 @@ function PageActions({
   onDelete,
 }: {
   page: PageFixture;
-  onNotice: (message: string) => void;
+  onNotice: (notice: Notice) => void;
   onDelete: (id: number) => void;
 }) {
   return (
@@ -139,19 +148,19 @@ function PageActions({
         label={`${page.status === "published" ? "查看" : "预览"}单页 ${page.title}`}
         icon={<Eye />}
         variant="ghost"
-        onClick={() => onNotice(`${page.status === "published" ? "查看" : "预览"} /${page.slug}（Showcase 模拟）。`)}
+        onClick={() => onNotice({ type: "info", message: `${page.status === "published" ? "查看" : "预览"} /${page.slug}（Showcase 模拟）。` })}
       />
       <IconButton
         label={`复制单页链接 ${page.title}`}
         icon={<Copy />}
         variant="ghost"
-        onClick={() => onNotice(`已复制 /${page.slug}（Showcase 模拟）。`)}
+        onClick={() => onNotice({ type: "success", message: `已复制 /${page.slug}（Showcase 模拟）。` })}
       />
       <IconButton
         label={`编辑单页 ${page.title}`}
         icon={<Edit2 />}
         variant="ghost"
-        onClick={() => onNotice(`将进入 /admin/pages/${page.id}/edit（Showcase 模拟）。`)}
+        onClick={() => onNotice({ type: "info", message: `将进入 /admin/pages/${page.id}/edit（Showcase 模拟）。` })}
       />
       <IconButton
         label={`删除单页 ${page.title}`}
@@ -191,13 +200,17 @@ function LoadingPages() {
 export function BlogAdminPagesDemo() {
   const [pagesData, setPagesData] = useState<PageFixture[]>(() => [...initialPages]);
   const [scenario, setScenario] = useState<FixtureScenario>("data");
+  const [mutation, setMutation] = useState<MutationScenario>("success");
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<number[]>([]);
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
   const [aiOpen, setAIOpen] = useState(false);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [workflowInputKeys, setWorkflowInputKeys] = useState<number[]>([]);
+  const [workflowFeedback, setWorkflowFeedback] = useState<string | null>(null);
+  const [nextRunID, setNextRunID] = useState(251);
+  const [notice, setNotice] = useState<Notice>(null);
 
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -215,9 +228,9 @@ export function BlogAdminPagesDemo() {
   const visiblePages = resultPages.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   const hasFilters = Boolean(query || status);
   const allVisibleSelected = visiblePages.length > 0 && visiblePages.every((item) => selected.includes(item.id));
-  const selectedPages = useMemo(
-    () => pagesData.filter((item) => selected.includes(item.id)),
-    [pagesData, selected],
+  const workflowPages = useMemo(
+    () => pagesData.filter((item) => workflowInputKeys.includes(item.id)),
+    [pagesData, workflowInputKeys],
   );
 
   const updateFilter = (setter: (value: string) => void, value: string) => {
@@ -241,21 +254,36 @@ export function BlogAdminPagesDemo() {
 
   const confirmDelete = () => {
     if (!deleteTarget) return;
+    if (mutation === "delete-error") {
+      setNotice({ type: "error", message: "删除单页失败；当前列表、选择与确认窗口保持不变，可直接重试（Showcase 模拟）。" });
+      return;
+    }
+
     const ids = deleteTarget.kind === "batch" ? selected : [deleteTarget.id];
     const count = ids.length;
     const single = deleteTarget.kind === "single" ? pagesData.find((item) => item.id === deleteTarget.id) : null;
     setPagesData((current) => current.filter((item) => !ids.includes(item.id)));
     setSelected((current) => current.filter((id) => !ids.includes(id)));
     setDeleteTarget(null);
-    setNotice(deleteTarget.kind === "batch"
-      ? `所选 ${count} 个单页已删除（Showcase 模拟）。`
-      : `单页《${single?.title ?? "该单页"}》已删除（Showcase 模拟）。`);
+    setNotice({
+      type: "success",
+      message: deleteTarget.kind === "batch"
+        ? `所选 ${count} 个单页已删除（Showcase 模拟）。`
+        : `单页《${single?.title ?? "该单页"}》已删除（Showcase 模拟）。`,
+    });
   };
 
-  const launchAI = () => {
-    const count = selected.length;
-    setAIOpen(false);
-    setNotice(`已将 ${count} 个单页交给 AI 工作流（Showcase 模拟）。`);
+  const openWorkflowLauncher = () => {
+    setWorkflowInputKeys([...selected]);
+    setWorkflowFeedback(null);
+    setAIOpen(true);
+  };
+
+  const runWorkflow = () => {
+    if (!workflowInputKeys.length) return;
+    const runID = nextRunID;
+    setNextRunID((current) => current + 1);
+    setWorkflowFeedback(`Workflow 已提交（Run #${runID}）。范围已固定为本次输入的 ${workflowInputKeys.length} 个单页。`);
   };
 
   const deleteDescription: ReactNode = deleteTarget?.kind === "batch"
@@ -268,21 +296,30 @@ export function BlogAdminPagesDemo() {
     <div className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/pages"
-        note="保留真实单页筛选、响应式 Table/List、路径/模板/导航元数据、批量工作流与异步状态；Fixture 不请求真实 Blog API。"
+        note="保留真实单页筛选、响应式 Table/List、路径/模板/导航元数据、删除失败重试与 page_ids WorkflowLauncher；Fixture 不请求真实 Blog/AI API。"
         controls={(
-          <Segmented<FixtureScenario>
-            aria-label="单页 Fixture 状态"
-            options={scenarioOptions}
-            value={scenario}
-            onChange={(value) => {
-              setScenario(value);
-              setSelected([]);
-              setNotice(null);
-              setDeleteTarget(null);
-              setAIOpen(false);
-            }}
-            block
-          />
+          <div className="flex flex-col gap-3">
+            <Segmented<FixtureScenario>
+              aria-label="单页 Fixture 状态"
+              options={scenarioOptions}
+              value={scenario}
+              onChange={(value) => {
+                setScenario(value);
+                setSelected([]);
+                setNotice(null);
+                setDeleteTarget(null);
+                setAIOpen(false);
+              }}
+              block
+            />
+            <Segmented<MutationScenario>
+              aria-label="单页删除场景"
+              options={mutationOptions}
+              value={mutation}
+              onChange={(value) => { setMutation(value); setNotice(null); }}
+              block
+            />
+          </div>
         )}
       />
 
@@ -294,7 +331,7 @@ export function BlogAdminPagesDemo() {
             variant="solid"
             color="primary"
             icon={<Plus />}
-            onClick={() => setNotice("将进入 /admin/pages/new（Showcase 模拟）。")}
+            onClick={() => setNotice({ type: "info", message: "将进入 /admin/pages/new（Showcase 模拟）。" })}
           >
             新建单页
           </Button>
@@ -302,7 +339,7 @@ export function BlogAdminPagesDemo() {
       />
 
       {notice ? (
-        <Alert type="success" showIcon title={notice} closable={{ onClose: () => setNotice(null) }} />
+        <Alert type={notice.type} showIcon title={notice.message} closable={{ onClose: () => setNotice(null) }} />
       ) : null}
 
       <Card padding="base">
@@ -332,7 +369,7 @@ export function BlogAdminPagesDemo() {
 
       {selected.length > 0 ? (
         <BulkActionBar selectionLabel={`已选择 ${selected.length} 页`} onCancel={() => setSelected([])}>
-          <Button size="small" icon={<Sparkles />} onClick={() => setAIOpen(true)}>交给 AI</Button>
+          <Button size="small" icon={<Sparkles />} onClick={openWorkflowLauncher}>交给 AI</Button>
           <Button
             size="small"
             color="error"
@@ -367,7 +404,7 @@ export function BlogAdminPagesDemo() {
                   variant="solid"
                   color="primary"
                   icon={<Plus />}
-                  onClick={() => setNotice("将进入 /admin/pages/new（Showcase 模拟）。")}
+                  onClick={() => setNotice({ type: "info", message: "将进入 /admin/pages/new（Showcase 模拟）。" })}
                 >
                   新建单页
                 </Button>
@@ -514,17 +551,60 @@ export function BlogAdminPagesDemo() {
       <Modal
         open={aiOpen}
         title="将所选单页交给 AI"
-        description="真实产品会把选中的 page resource keys 交给 WorkflowLauncher。"
-        onClose={() => setAIOpen(false)}
-        onOk={launchAI}
-        okText="启动工作流"
-        okButtonProps={{ variant: "solid", color: "primary" }}
+        description={`已选择 ${selected.length} 项资源；Workflow 默认只能访问这些目标。`}
+        onClose={() => { setAIOpen(false); setWorkflowFeedback(null); }}
+        onOk={runWorkflow}
+        okText="运行"
+        cancelText="关闭"
+        okButtonProps={{ variant: "solid", color: "primary", disabled: workflowInputKeys.length === 0 }}
       >
-        <div className="flex flex-col gap-3">
-          <Text size="sm" tone="muted">本次将处理 {selectedPages.length} 个单页：</Text>
-          <div className="flex flex-wrap gap-2">
-            {selectedPages.map((item) => <Tag key={item.id}>/{item.slug}</Tag>)}
+        <div className="flex flex-col gap-4">
+          <FormField label="Workflow">
+            <Select aria-label="Workflow" value={String(pageReviewWorkflow.id)} disabled>
+              <option value={pageReviewWorkflow.id}>{pageReviewWorkflow.name}</option>
+            </Select>
+          </FormField>
+          <div className="flex flex-col gap-2">
+            <Text size="sm" className="font-medium">单页</Text>
+            {workflowPages.length > 0 ? (
+              <div className="flex flex-col gap-2 rounded-lg border p-3">
+                {workflowPages.map((item) => (
+                  <div key={item.id} className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <Text size="sm" className="truncate">{item.title}</Text>
+                      <Text size="xs" tone="muted" className="font-mono">/{item.slug}</Text>
+                    </div>
+                    <Button
+                      size="small"
+                      variant="text"
+                      onClick={() => {
+                        setWorkflowInputKeys((current) => current.filter((id) => id !== item.id));
+                        setWorkflowFeedback(null);
+                      }}
+                    >
+                      移除
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ) : <Alert type="warning" showIcon title="至少保留 1 个单页资源才能运行。" />}
           </div>
+          {workflowFeedback ? (
+            <Alert
+              type="success"
+              showIcon
+              title={workflowFeedback}
+              action={(
+                <Button
+                  size="small"
+                  variant="text"
+                  onClick={() => setNotice({ type: "info", message: `将进入 /admin/ai-ops?tab=records&record=workflow&workflow=${pageReviewWorkflow.id}（Showcase 模拟）。` })}
+                >
+                  打开运行中心
+                </Button>
+              )}
+            />
+          ) : null}
         </div>
       </Modal>
     </div>
