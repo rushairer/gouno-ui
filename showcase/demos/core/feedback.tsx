@@ -40,6 +40,7 @@ import {
   Skeleton,
   Space,
   Spin,
+  Spinner,
   Text,
   Tooltip,
   TooltipContent,
@@ -287,18 +288,39 @@ export const feedbackDocuments: Record<string, ComponentDocument> = {
   },
   spin: {
     title: "Spin 加载",
-    description: "局部内容加载遮罩。",
+    description: "Spin 用于局部内容加载遮罩；Spinner 用于按钮、行内状态等不需要遮罩的轻量等待反馈。",
     code: '<Spin spinning tip="加载中"><Card /></Spin>',
     render: () => (
       <Spin spinning tip="加载中">
         <div className="h-32 rounded border" />
       </Spin>
     ),
+    demos: [
+      {
+        title: "Spinner 行内指示器",
+        description: "Spinner 自带 role=status；业务应提供明确的 aria-label。",
+        code: '<Spinner aria-label="正在保存" />',
+        render: () => (
+          <Space>
+            <Spinner aria-label="正在保存" />
+            <Text>正在保存</Text>
+          </Space>
+        ),
+      },
+    ],
     api: [
-      { name: "spinning", description: "是否显示加载遮罩", type: "boolean", defaultValue: "false" },
+      { name: "spinning", description: "是否显示加载遮罩", type: "boolean", defaultValue: "true" },
       { name: "tip", description: "加载说明文字", type: "ReactNode" },
       { name: "children", description: "被遮罩的内容", type: "ReactNode" },
-      { name: "className", description: "外层样式类", type: "string" },
+    ],
+    apiSections: [
+      {
+        title: "Spinner API",
+        rows: [
+          { name: "aria-label", description: "可访问名称；未提供时为 Loading", type: "string", defaultValue: '"Loading"' },
+          { name: "className", description: "span 样式类", type: "string" },
+        ],
+      },
     ],
   },
   alert: {

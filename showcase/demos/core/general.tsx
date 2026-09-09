@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ArrowRight, Download, LoaderCircle, Plus } from "lucide-react";
-import { Avatar, AvatarFallback, Button, ButtonLink, Icon, IconButton, Kbd, Space, Spinner, Text, Typography } from "../../../src/core";
+import { Avatar, AvatarFallback, Button, ButtonLink, Icon, IconButton, Kbd, Space, Text, Typography } from "../../../src/core";
 import type { ComponentDocument } from "../../components/component-page";
 import CardExample from "./card/card-0";
 import CardExampleSource from "./card/card-0.tsx?raw";
@@ -117,10 +117,26 @@ export const generalDocuments: Record<string, ComponentDocument> = {
     ],
   },
   icon: { title:"Icon 图标", description:"统一图标尺寸、旋转、加载动画和无障碍标签。", code:'<Icon icon={<LoaderCircle />} spin label="Loading" />', render:()=> <Space><Icon icon={<LoaderCircle/>}/><Icon icon={<LoaderCircle/>} spin label="Loading"/><Icon icon={<LoaderCircle/>} rotate={45}/></Space> },
-  typography: { title: "Typography 排版", description: "统一标题、正文、辅助文字和语义色；as 只改变宿主语义，不改变视觉 token。", code: TypographyExampleSource.replaceAll("../../../../src/core", "@gouno/ui/core"), render: () => <TypographyExample />, apiSections: [{ title: "Heading API", rows: [{ name: "level", description: "标题级别，映射 h1-h6", type: "1 | 2 | 3 | 4 | 5 | 6", defaultValue: "2" }, { name: "children", description: "标题内容", type: "ReactNode" }, { name: "className", description: "h1-h6 样式类", type: "string" }] }, { title: "Text API", rows: [{ name: "as", description: "宿主元素或组件", type: "ElementType", defaultValue: '"p"' }, { name: "size", description: "文字尺寸", type: '"xs" | "sm" | "md" | "lg"', defaultValue: '"md"' }, { name: "tone", description: "语义色调", type: '"default" | "muted" | "danger" | "success"', defaultValue: '"default"' }, { name: "children", description: "文本内容", type: "ReactNode" }, { name: "className", description: "宿主样式类", type: "string" }] }] },
+  typography: {
+    title: "Typography 排版",
+    description: "统一标题、正文、辅助文字和轻量 Typography 宿主原语；as 只改变宿主语义，不改变视觉 token。",
+    code: TypographyExampleSource.replaceAll("../../../../src/core", "@gouno/ui/core"),
+    render: () => <TypographyExample />,
+    demos: [
+      {
+        title: "Typography 宿主原语",
+        description: "仅需要统一基础文字样式而不需要 Heading/Text 语义配置时使用。",
+        code: '<Typography as="span">辅助文本</Typography>',
+        render: () => <Typography as="span">辅助文本</Typography>,
+      },
+    ],
+    apiSections: [
+      { title: "Heading API", rows: [{ name: "level", description: "标题级别，映射 h1-h6", type: "1 | 2 | 3 | 4 | 5 | 6", defaultValue: "2" }, { name: "children", description: "标题内容", type: "ReactNode" }, { name: "className", description: "h1-h6 样式类", type: "string" }] },
+      { title: "Text API", rows: [{ name: "as", description: "宿主元素或组件", type: "ElementType", defaultValue: '"p"' }, { name: "size", description: "文字尺寸", type: '"xs" | "sm" | "md" | "lg"', defaultValue: '"md"' }, { name: "tone", description: "语义色调", type: '"default" | "muted" | "danger" | "success"', defaultValue: '"default"' }, { name: "children", description: "文本内容", type: "ReactNode" }, { name: "className", description: "宿主样式类", type: "string" }] },
+      { title: "Typography API", rows: [{ name: "as", description: "宿主元素或组件", type: "ElementType", defaultValue: '"p"' }, { name: "children", description: "文本内容", type: "ReactNode" }, { name: "className", description: "宿主样式类", type: "string" }] },
+    ],
+  },
   kbd: { title: "Kbd 键盘按键", description: "表达键盘快捷键，宿主为原生 kbd。", code: '<Space><Kbd>⌘</Kbd><Kbd>K</Kbd></Space>', render: () => <Space><Kbd>⌘</Kbd><Kbd>K</Kbd></Space>, api: [{ name: "children", description: "按键标签", type: "ReactNode" }, { name: "className", description: "kbd 样式类", type: "string" }] },
   card: { title: "Card 卡片", description: "用 header、content、footer 组合内容分组；间距在 Card 内部统一管理。", code: CardExampleSource.replaceAll("../../../../src/core", "@gouno/ui/core"), render: () => <CardExample />, api: [{ name: "as", description: "Card 宿主元素；交互行为应使用语义元素", type: "ElementType", defaultValue: '"div"' }, { name: "variant", description: "视觉形态", type: '"default" | "subtle" | "elevated"', defaultValue: '"default"' }, { name: "padding", description: "内边距 token", type: '"none" | "sm" | "base" | "lg"', defaultValue: '"base"' }, { name: "interactive", description: "增加悬停提示样式，不自动提供键盘动作", type: "boolean", defaultValue: "false" }, { name: "className", description: "Card 主体样式类", type: "string" }], apiSections: [{ title: "CardHeader API", rows: [{ name: "title", description: "标题内容；0 和空字符串均会渲染", type: "ReactNode" }, { name: "description", description: "说明内容；0 和空字符串均会渲染", type: "ReactNode" }, { name: "action", description: "右侧操作槽", type: "ReactNode" }, { name: "children", description: "自定义 header 内容；设置后优先于 title/description/action", type: "ReactNode" }] }, { title: "CardTitle API", rows: [{ name: "children", description: "标题内容", type: "ReactNode" }, { name: "className", description: "h3 样式类", type: "string" }] }, { title: "CardDescription API", rows: [{ name: "children", description: "说明内容", type: "ReactNode" }, { name: "className", description: "p 样式类", type: "string" }] }, { title: "CardContent API", rows: [{ name: "flush", description: "兼容字段；组件不自行添加内边距", type: "boolean" }, { name: "children", description: "正文内容", type: "ReactNode" }, { name: "className", description: "正文样式类", type: "string" }] }, { title: "CardFooter API", rows: [{ name: "children", description: "底部内容", type: "ReactNode" }, { name: "className", description: "footer 样式类", type: "string" }] }] },
   avatar: { title: "Avatar 头像", description: "图片头像和文字回退。", code: '<Avatar><AvatarFallback>GU</AvatarFallback></Avatar>', render: () => <Avatar><AvatarFallback>GU</AvatarFallback></Avatar> },
-  spinner: { title: "Spinner 加载指示器", description: "表达进行中的等待状态；默认 role=status 和 Loading 名称。", code: '<Spinner aria-label="正在保存" />', render: () => <Space><Spinner aria-label="正在保存" /><Text>正在保存</Text></Space>, api: [{ name: "aria-label", description: "可访问名称；未提供时为 Loading", type: "string", defaultValue: '"Loading"' }, { name: "className", description: "span 样式类", type: "string" }] },
-  "typography-primitive": { title: "Typography 原语", description: "轻量文本原语，默认渲染为 p。", code: '<Typography as="span">辅助文本</Typography>', render: () => <Typography as="span">辅助文本</Typography>, api: [{ name: "as", description: "宿主元素或组件", type: "ElementType", defaultValue: '"p"' }, { name: "children", description: "文本内容", type: "ReactNode" }, { name: "className", description: "宿主样式类", type: "string" }] }
 };
