@@ -8,9 +8,23 @@ A Showcase file existing for a route proves **route-level coverage only**. It do
 
 - **Gosso Admin:** completed first-product comparison corpus.
 - **Blog Admin:** completed second-product comparison corpus after route-level coverage and behavior/detail fidelity hardening.
-- **Blog public site:** active migration line, beginning with `PublicShell` + Home.
+- **Blog public site:** active migration line. `PublicShell` + Home and the discovery family are now represented; reading/account families remain next evidence.
 
 Completed corpora remain live evidence. A later Blog public-site migration may reopen a canonical component or an existing product fixture if it exposes a genuine cross-product defect, but ordinary implementation work no longer advances Blog Admin page by page.
+
+## Blog public route coverage
+
+Current migrated public surfaces:
+
+1. `blog-home.tsx` — `/`, composed with the product-local shared `BlogPublicShellFixture` and `BlogArticleTeaser` grammar.
+2. `blog-article-index.tsx` — `/articles` and `/search`; the same mode-driven implementation also contains the route semantics later used by `/categories/:slug` and `/tags/:slug`.
+3. `blog-discovery-indexes.tsx` — `/categories`, `/tags`, `/archive`.
+
+All public-site catalog entries use `presentation="standalone"`. Showcase navigation tooling may float above the preview, but it must not wrap the public site in `AppShell` or `PageContainer`.
+
+`PublicShell` and article teaser repetition is intentionally shared only inside the Blog Showcase product fixture. It is not a Pattern/Gouno admission event. By contrast, Categories, Tags and Archive independently validate the already-admitted `PageHeader(title, description, actions)` contract because their real route-level semantics match it; this validation does not extend the PageHeader API or turn the rest of the public-site shell into Gouno structure.
+
+Discovery migration uses current canonical APIs rather than restoring older product aliases/feature bags: Core `Card`, `Empty`, `Skeleton`, `SearchField`, `Pagination` and related controls own their narrow contracts, while loading/filtering/navigation/data grouping remain product-local.
 
 ## Blog Admin route coverage
 
@@ -103,7 +117,7 @@ Public Blog pages are a different product family. Do not wrap them in `AppShell`
 
 ### PageHeader
 
-Posts, Members, Comments, Categories, Tags, Pages, Notifications, Media, Site Settings and AI workspaces validate the admitted Gouno `PageHeader` contract without expanding it into product policy. Public Blog pages may further challenge the contract only where route-level title/description/actions semantics actually match.
+Posts, Members, Comments, Categories, Tags, Pages, Notifications, Media, Site Settings and AI workspaces validate the admitted Gouno `PageHeader` contract without expanding it into product policy. Public Blog Categories, Tags and Archive now validate the same narrow route-title/description responsibility in a standalone document/content shell. This strengthens the contract while confirming that `PageHeader` does not imply `AppShell` ownership.
 
 ### BulkActionBar
 
