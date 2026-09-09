@@ -160,35 +160,7 @@
   [data-slot="table-container"][data-density="touch"] [data-slot="table-cell"] {
     padding: 14px 16px;
   }
-  .posts-list-surface[data-density="compact"] .posts-filter-bar {
-    gap: 8px;
-    padding-bottom: 0;
-  }
-  .posts-list-surface[data-density="touch"] .posts-filter-bar {
-    gap: 16px;
-    padding-bottom: 8px;
-  }
-  [data-slot="responsive-list"][data-density="compact"] .grid.md\:hidden {
-    gap: 8px;
-  }
-  [data-slot="responsive-list"][data-density="touch"] .grid.md\:hidden {
-    gap: 16px;
-  }
-  .state-feedback > div {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .feedback {
-    display: flex !important;
-    align-items: center !important;
-    grid-template-columns: none !important;
-  }
-  .feedback > svg {
-    transform: none !important;
-    translate: none !important;
-  }
+
   /* Icon-only actions share one size, optical center, and state treatment. */
   .icon-button {
     display: inline-flex;
@@ -201,7 +173,6 @@
     line-height: 1;
   }
 
-  .icon-button > .icon-button__icon,
   .icon-button > .btn__icon {
     display: inline-flex;
     width: 16px;
@@ -211,43 +182,10 @@
     line-height: 1;
   }
 
-  .icon-button > :is(.icon-button__icon, .btn__icon) > svg {
+  .icon-button > .btn__icon > svg {
     display: block;
     width: 16px;
     height: 16px;
     flex: 0 0 16px;
-  }
-
-  .icon-button--secondary {
-    border: 1px solid var(--border);
-    background: var(--secondary);
-    color: var(--muted-foreground);
-  }
-
-  .icon-button--secondary:hover:not(:disabled),
-  .icon-button--secondary:focus-visible {
-    border-color: var(--primary);
-    background: var(--accent);
-    color: var(--foreground);
-  }
-
-  .icon-button--danger {
-    border: 1px solid
-      var(
-        --destructive-border,
-        color-mix(in srgb, var(--destructive) 42%, var(--border))
-      );
-    background: var(
-      --destructive-subtle,
-      color-mix(in srgb, var(--destructive) 12%, transparent)
-    );
-    color: var(--destructive);
-  }
-
-  .icon-button--danger:hover:not(:disabled),
-  .icon-button--danger:focus-visible {
-    border-color: var(--destructive);
-    background: color-mix(in srgb, var(--destructive) 20%, var(--card));
-    color: var(--destructive);
   }
 }
