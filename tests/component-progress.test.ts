@@ -39,6 +39,12 @@ describe("audited batch completion", () => {
     expect(componentProgress("pattern-bulk-action-bar", 0)).toBe(100);
   });
 
+  it("reports admitted Gouno structure complete only after family API and behavior review", () => {
+    for (const id of ["gouno-app-shell", "gouno-page-container", "gouno-page-header"]) {
+      expect(componentProgress(id, 0), id).toBe(100);
+    }
+  });
+
   it("does not let unaudited canonical entries claim 100 percent", () => {
     for (const id of ["core-unreviewed", "theme-unreviewed", "pattern-unreviewed", "gouno-unreviewed"]) {
       expect(componentProgress(id, 100), id).toBe(99);

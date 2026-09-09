@@ -28,6 +28,9 @@ const completedComponents = new Set([
   "core-progress",
   "theme-system",
   "pattern-bulk-action-bar",
+  "gouno-app-shell",
+  "gouno-page-container",
+  "gouno-page-header",
 ]);
 
 const canonicalComponentId = /^(core|theme|pattern|gouno)-/;
