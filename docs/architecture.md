@@ -58,6 +58,7 @@ Current operating model:
 - `AppShell`/`PageContainer` remain application-shell structure; a public document/content shell stays product-local until independent evidence proves a shared Gouno contract.
 - `PageHeader` remains admitted for route-level title/description/actions semantics; public Blog pages use it only when that semantic contract genuinely exists.
 - `BulkActionBar` is the first admitted Pattern, proven by independent Posts, Comments and Categories selection workflows; public Blog reading/discovery surfaces must not expand it by analogy.
+- `CodeBlock` is an admitted Core display interaction only after the real Blog article renderer independently proved the same read-only code/highlight/copy need that Showcase had previously exercised privately. Core owns the frame/copy contract; syntax engines remain caller-owned.
 - The third semantically equivalent occurrence triggers review, not automatic extraction.
 
 ## Admitted Pattern interactions
@@ -111,7 +112,7 @@ Showcase-local repetition is not sufficient public-abstraction evidence. Evidenc
 2. repeated semantically equivalent real pages within one product;
 3. Showcase/tests/tooling usage as supporting evidence only.
 
-A Showcase-local utility can become canonical only when a real product independently creates the same semantic need and the normal admission review passes. Example: Showcase `CodeBlock` stays private until a real page such as Blog article rendering proves the same read-only code/highlight/copy contract; if admitted, implement Core `CodeBlock` and migrate Showcase to it.
+A Showcase-local utility can become canonical only when a real product independently creates the same semantic need and the normal admission review passes. `CodeBlock` is the current concrete example: it remained private under PD-009, then the real Blog article renderer independently proved the same read-only code/highlight/copy contract and PD-038 admitted the code-frame/copy interaction to Core. Showcase now keeps only its Prism syntax-rendering adapter private; that adapter is still tooling evidence, not a second public owner.
 
 `FixtureDock` is another private tooling example: route labels and scenario controls float outside normal product layout so fixtures remain accessible without becoming part of the demonstrated product design. Its reuse is zero evidence for Pattern/Gouno admission.
 
