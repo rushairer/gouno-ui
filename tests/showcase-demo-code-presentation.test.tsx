@@ -14,14 +14,14 @@ describe("Showcase Demo + Code presentation", () => {
       </DemoSection>,
     );
 
-    expect(screen.getByText("Rendered preview")).toBeInTheDocument();
-    expect(screen.getByRole("tab", { name: "Preview" })).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByText("Rendered preview")).toBeTruthy();
+    expect(screen.getByRole("tab", { name: "Preview" }).getAttribute("aria-selected")).toBe("true");
 
     await user.click(screen.getByRole("tab", { name: "Code" }));
 
-    expect(screen.queryByText("Rendered preview")).not.toBeInTheDocument();
-    expect(screen.getByRole("tab", { name: "Code" })).toHaveAttribute("aria-selected", "true");
-    expect(screen.getByRole("button", { name: "复制代码" })).toBeInTheDocument();
+    expect(screen.queryByText("Rendered preview")).toBeNull();
+    expect(screen.getByRole("tab", { name: "Code" }).getAttribute("aria-selected")).toBe("true");
+    expect(screen.getByRole("button", { name: "复制代码" })).toBeTruthy();
   });
 
   it.each([
