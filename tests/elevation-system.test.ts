@@ -49,8 +49,7 @@ describe("semantic elevation system", () => {
     const segmented = source("src/core/segmented.tsx");
 
     for (const variant of ["default", "destructive", "outline", "secondary"]) {
-      const line = button.split("\n").find((entry) => entry.trimStart().startsWith(`${variant}:`));
-      expect(line ?? button).toContain("shadow-control");
+      expect(button).toMatch(new RegExp(`${variant}:\\s*\\n?\\s*"[^"]*shadow-control`));
     }
     expect(button).toContain('ghost: "hover:bg-accent hover:text-accent-foreground"');
     expect(button).toContain('link: "text-primary underline-offset-4 hover:underline"');
