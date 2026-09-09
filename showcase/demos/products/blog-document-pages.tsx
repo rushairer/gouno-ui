@@ -130,20 +130,22 @@ export function BlogCustomPageDemo({
         {scenario === "loading" ? (
           <CustomPageSkeleton />
         ) : scenario === "error" ? (
-          <Card variant="subtle" className="mx-auto max-w-[900px]">
+          <Card padding="none" variant="subtle" className="mx-auto max-w-[900px]">
             <Result
               status="error"
+              headingLevel={1}
               title="页面载入失败"
-              subTitle="公开单页接口暂时不可用，请稍后重试。"
+              description="公开单页接口暂时不可用，请稍后重试。"
               extra={<Button onClick={() => setScenario("data")}>重试</Button>}
             />
           </Card>
         ) : scenario === "not-found" ? (
-          <Card variant="subtle" className="mx-auto max-w-[900px]">
+          <Card padding="none" variant="subtle" className="mx-auto max-w-[900px]">
             <Result
               status="info"
+              headingLevel={1}
               title="页面不存在或已下线"
-              subTitle="可以返回首页继续浏览。"
+              description="可以返回首页继续浏览。"
               extra={<Button onClick={() => setNotice("将进入 /（Showcase 模拟）。")}>返回首页</Button>}
             />
           </Card>
