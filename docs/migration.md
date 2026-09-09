@@ -135,9 +135,49 @@ Empty's implicit role="status"        → add role/aria-live only for states tha
 
 Do not add `variant`, `bordered`, product copy presets or a second live-region convenience prop merely to recreate the old defaults.
 
+## Result terminal-state semantics
+
+Canonical `Result` represents a completed/terminal result and recovery or next-step actions. It keeps a semantic `status`, but page heading level, surrounding Surface and announcement policy remain caller-owned.
+
+Use the canonical `description` name rather than the historical `subTitle`. Embedded results default to an H2; a page-level 404/error result explicitly sets `headingLevel={1}`. `Result` owns its internal centered `p-8` result rhythm, so a Card used only as its outer boundary/elevation wrapper should use `padding="none"` rather than stacking another inset.
+
+```tsx
+<Card padding="none" variant="subtle">
+  <Result
+    status="info"
+    headingLevel={1}
+    title="页面未找到"
+    description="你访问的地址不存在或已经移动。"
+    extra={<Button>返回首页</Button>}
+  />
+</Card>
+```
+
+Static initial result pages are not forced into a live region. For a dynamic operation result that genuinely needs announcement, opt into standard ARIA semantics:
+
+```tsx
+<Result
+  status="error"
+  role="alert"
+  title="保存失败"
+  description="修改仍保留在当前页面。"
+/>
+```
+
+Migrate touched call sites as follows:
+
+```text
+subTitle                              → description
+fixed internal H2                    → default H2; page-level result uses headingLevel={1}
+implicit role="status"               → explicit role/aria-live only when announcement is required
+<Card><Result ... /></Card>           → <Card padding="none"><Result ... /></Card> when Result owns the content inset
+```
+
+Do not add a `subTitle` alias, custom status-color aliases, `variant`, `size`, or a Result-owned Card/elevation API. Status icons are decorative; semantic meaning remains in the visible title/description and the caller-selected ARIA role when needed.
+
 ## DataTable status
 
-System Management plus Blog Admin list-page prior art is enough to trigger DataTable review, but not enough to re-admit the historical feature-bag API. Current migrations use Core `Table`/`Pagination` plus product-local filter/action/state composition. See PD-012.
+System Management plus Blog Admin list-page prior art is enough to trigger DataTable review, but not enough to re-admit the historical feature-bag API. Current migrations use Core `Table`/`Pagination` plus product-local filters/actions/state. See PD-012.
 
 ## Curated subpaths
 
@@ -157,4 +197,4 @@ Standalone product fixtures may add Showcase-only navigation chrome around the r
 
 ## Compatibility assessment
 
-The product-validation reset and canonical renames are breaking changes for consumers that update to the next package artifact. Alert's primitive-to-high-level API correction is also breaking for consumers that used `variant="destructive|default"` as semantic colors. Empty hardening is behaviorally breaking for consumers that relied on its previous English default copy, implicit dashed surface or automatic `role="status"`; migrate those responsibilities explicitly as described above. Treat publication accordingly under SemVer/release notes. Existing products fixed to older immutable vendored archives can migrate page-by-page rather than mechanically replacing old wrappers with new ones.
+The product-validation reset and canonical renames are breaking changes for consumers that update to the next package artifact. Alert's primitive-to-high-level API correction is also breaking for consumers that used `variant="destructive|default"` as semantic colors. Empty hardening is behaviorally breaking for consumers that relied on its previous English default copy, implicit dashed surface or automatic `role="status"`. Result hardening is breaking for consumers that use `subTitle`, rely on its fixed H2 or automatic `role="status"`, or expect a padded parent Card to compose without a double inset. Migrate those responsibilities explicitly as described above. Treat publication accordingly under SemVer/release notes. Existing products fixed to older immutable vendored archives can migrate page-by-page rather than mechanically replacing old wrappers with new ones.
