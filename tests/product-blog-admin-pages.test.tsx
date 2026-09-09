@@ -58,9 +58,9 @@ describe("Blog Admin Pages product migration fixture", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "交给 AI" }));
     const dialog = screen.getByRole("dialog", { name: "将所选单页交给 AI" });
-    const workflowSelect = within(dialog).getByRole("combobox", { name: "Workflow" }) as HTMLSelectElement;
-    expect(workflowSelect.value).toBe("73");
-    expect(within(dialog).getByText("单页审校与优化（手选）")).toBeTruthy();
+    const workflowSelect = within(dialog).getByRole("combobox", { name: "Workflow" }) as HTMLButtonElement;
+    expect(workflowSelect.textContent).toContain("单页审校与优化（手选）");
+    expect(workflowSelect.disabled).toBe(true);
     expect(within(dialog).getByText("关于我")).toBeTruthy();
     expect(within(dialog).getByText("/about")).toBeTruthy();
 
