@@ -1,5 +1,6 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { BlogAdminAIOperationsDemo } from "../showcase/demos/products/blog-admin-ai-operations";
 import {
   AIOpsAutomationPanel,
   AIOpsRecordsPanel,
@@ -87,6 +88,39 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
 
     fireEvent.click(screen.getByRole("button", { name: "回滚到 v3" }));
     expect(onRollback).toHaveBeenCalledWith(42, 3);
+  });
+
+  it("restores Workflow create, edit, enable/disable and delete management entry points", () => {
+    render(<BlogAdminAIOperationsDemo initialRoute={{ tab: "automation", record: "workflow" }} />);
+
+    expect(screen.getByRole("button", { name: "创建 Workflow" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "编辑" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "停用" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "删除" })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "创建 Workflow" }));
+    fireEvent.change(screen.getByLabelText(/Workflow 名称/), { target: { value: "内容巡检" } });
+    fireEvent.click(screen.getByRole("button", { name: "保存 Workflow" }));
+    expect(screen.getByText("内容巡检 已保存，当前版本 v1。")).toBeTruthy();
+    expect(screen.getByRole("option", { name: "内容巡检 · v1" })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "停用" }));
+    expect(screen.getByText("内容巡检 已停用。")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "删除" }));
+    expect(screen.getByRole("heading", { name: "确认删除 Workflow" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "删除" }));
+    expect(screen.getByText("内容巡检 已从静态 Fixture 删除。")).toBeTruthy();
+  });
+
+  it("keeps a newly created Dry-run reachable as real run evidence in the run center", async () => {
+    render(<BlogAdminAIOperationsDemo initialRoute={{ tab: "automation", record: "workflow" }} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Dry-run" }));
+    fireEvent.click(await screen.findByRole("button", { name: "查看 Run #246" }));
+
+    expect(await screen.findByRole("heading", { level: 3, name: "Run #246 · 旧文维护" })).toBeTruthy();
+    expect(screen.getByText("验证 Workflow 配置")).toBeTruthy();
+    expect(screen.getByText("No writes applied")).toBeTruthy();
   });
 
   it("preserves workflow run deep-link evidence across steps, resources, interactions and events", () => {

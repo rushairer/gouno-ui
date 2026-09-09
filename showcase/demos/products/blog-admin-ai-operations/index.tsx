@@ -17,12 +17,18 @@ import {
 } from "../../../../src/core";
 import { PageHeader } from "../../../../src/gouno";
 import { FixtureDock } from "../../../components/fixture-dock";
+import { AutomationManagement } from "./automation-management";
 import {
   AIOpsAutomationPanel,
   AIOpsRecordsPanel,
   type AIOpsRecordsTarget,
 } from "./automation-records";
-import { aiOpsAutomationRecordsFixture } from "./automation-records-fixtures";
+import {
+  aiOpsAutomationRecordsFixture,
+  type AIOpsAutomationRecordsFixture,
+  type WorkflowFixture,
+  type WorkflowRunFixture,
+} from "./automation-records-fixtures";
 import { aiOpsDecisionFixture, type AIOpsDecisionFixture, type AIOpsTab } from "./fixtures";
 import { AIOpsInboxPanel, AIOpsOverviewPanel } from "./overview-inbox";
 
@@ -88,6 +94,30 @@ function cloneDecisionFixture(): AIOpsDecisionFixture {
   };
 }
 
+function cloneAutomationFixture(): AIOpsAutomationRecordsFixture {
+  return {
+    workflows: aiOpsAutomationRecordsFixture.workflows.map((workflow) => ({
+      ...workflow,
+      discoveryTools: [...workflow.discoveryTools],
+      input: { ...workflow.input },
+      metrics: { ...workflow.metrics },
+      versions: workflow.versions.map((version) => ({ ...version })),
+    })),
+    workflowRuns: aiOpsAutomationRecordsFixture.workflowRuns.map((run) => ({
+      ...run,
+      steps: run.steps.map((step) => ({ ...step })),
+      resources: run.resources.map((resource) => ({ ...resource })),
+      interactions: run.interactions.map((interaction) => ({ ...interaction })),
+      events: run.events.map((event) => ({ ...event })),
+      mediaCandidates: run.mediaCandidates.map((candidate) => ({ ...candidate })),
+    })),
+    agentRuns: aiOpsAutomationRecordsFixture.agentRuns.map((run) => ({
+      ...run,
+      toolCalls: run.toolCalls.map((call) => ({ ...call })),
+    })),
+  };
+}
+
 function pendingDecisionCount(fixture: AIOpsDecisionFixture) {
   return (
     fixture.approvals.filter((item) => item.status === "pending" || item.status === "failed").length +
@@ -128,6 +158,7 @@ export function BlogAdminAIOperationsDemo({
   const [route, setRoute] = useState<AIOpsRouteState>(initialRoute);
   const [scenario, setScenario] = useState<FixtureScenario>("data");
   const [decisionFixture, setDecisionFixture] = useState(cloneDecisionFixture);
+  const [automationRecordsFixture, setAutomationRecordsFixture] = useState(cloneAutomationFixture);
   const [selectedApprovalId, setSelectedApprovalId] = useState<number | null>(decisionFixture.approvals[0]?.id ?? null);
   const [notice, setNotice] = useState<string>("");
 
@@ -167,6 +198,86 @@ export function BlogAdminAIOperationsDemo({
     setNotice(approved ? `审批 #${id} 已批准，后续执行仍受 Workflow 运行状态约束。` : `审批 #${id} 已拒绝。`);
   };
 
+  const saveWorkflow = (workflow: WorkflowFixture) => {
+    setAutomationRecordsFixture((current) => ({
+      ...current,
+      workflows: current.workflows.some((item) => item.id === workflow.id)
+        ? current.workflows.map((item) => item.id === workflow.id ? workflow : item)
+        : [...current.workflows, workflow],
+    }));
+    setNotice(`${workflow.name} 已保存，当前版本 v${workflow.currentVersion}。`);
+  };
+
+  const deleteWorkflow = (workflow: WorkflowFixture) => {
+    setAutomationRecordsFixture((current) => ({
+      ...current,
+      workflows: current.workflows.filter((item) => item.id !== workflow.id),
+      workflowRuns: current.workflowRuns.filter((run) => run.workflowId !== workflow.id),
+    }));
+    setRoute((current) => current.workflow === workflow.id ? { ...current, workflow: undefined } : current);
+    setNotice(`${workflow.name} 已从静态 Fixture 删除。`);
+  };
+
+  const toggleWorkflow = (workflow: WorkflowFixture) => {
+    setAutomationRecordsFixture((current) => ({
+      ...current,
+      workflows: current.workflows.map((item) => item.id === workflow.id ? { ...item, enabled: !item.enabled, nextRunAt: item.enabled ? "—" : "待重新计算" } : item),
+    }));
+    setNotice(`${workflow.name} 已${workflow.enabled ? "停用" : "启用"}。`);
+  };
+
+  const rollbackWorkflow = (workflowId: number, version: number) => {
+    setAutomationRecordsFixture((current) => ({
+      ...current,
+      workflows: current.workflows.map((workflow) => workflow.id === workflowId ? { ...workflow, currentVersion: version } : workflow),
+    }));
+    setNotice(`Workflow #${workflowId} 已回滚到 v${version}。`);
+  };
+
+  const runWorkflow = async (workflowId: number, dryRun: boolean): Promise<{ id: number; status: WorkflowRunFixture["status"] }> => {
+    const workflow = automationRecordsFixture.workflows.find((item) => item.id === workflowId);
+    if (!workflow) throw new Error("Workflow 不存在。");
+    const id = automationRecordsFixture.workflowRuns.reduce((highest, run) => Math.max(highest, run.id), 0) + 1;
+    const status: WorkflowRunFixture["status"] = dryRun ? "succeeded" : "awaiting_approval";
+    const run: WorkflowRunFixture = {
+      id,
+      workflowId,
+      workflowName: workflow.name,
+      status,
+      dryRun,
+      startedAt: "刚刚",
+      finishedAt: dryRun ? "刚刚" : undefined,
+      tokenUsage: dryRun ? 320 : 1180,
+      steps: [{
+        id: dryRun ? "dry-run" : "candidate",
+        name: dryRun ? "验证 Workflow 配置" : "生成候选结果",
+        status: "succeeded",
+        durationMs: dryRun ? 260 : 840,
+        detail: dryRun ? "Preflight 与受控输入验证通过，未写入产品数据。" : "候选结果已生成，等待人工审批。",
+      }],
+      resources: dryRun ? [] : [{ type: "candidate", label: `${workflow.name} 候选结果` }],
+      interactions: dryRun ? [] : [{ type: "approval", label: "确认应用候选结果", status: "pending" }],
+      events: [
+        { type: "run_started", message: `${dryRun ? "Dry-run" : "Run"} requested from Showcase` },
+        { type: dryRun ? "run_succeeded" : "approval_created", message: dryRun ? "No writes applied" : "Approval fixture created" },
+      ],
+      mediaCandidates: [],
+    };
+    setAutomationRecordsFixture((current) => ({
+      ...current,
+      workflowRuns: [run, ...current.workflowRuns],
+      workflows: current.workflows.map((item) => item.id === workflowId ? {
+        ...item,
+        metrics: {
+          runs: item.metrics.runs + 1,
+          failures: item.metrics.failures,
+          tokens: item.metrics.tokens + run.tokenUsage,
+        },
+      } : item),
+    }));
+    return { id, status };
+  };
+
   const tabs = [
     { key: "overview", label: tabLabel("概览", <Sparkles aria-hidden="true" className="size-4" />) },
     { key: "inbox", label: tabLabel("待我处理", <ShieldCheck aria-hidden="true" className="size-4" />, pendingDecisionCount(decisionFixture)) },
@@ -176,19 +287,19 @@ export function BlogAdminAIOperationsDemo({
 
   const automationFixture = route.workflow
     ? {
-        ...aiOpsAutomationRecordsFixture,
+        ...automationRecordsFixture,
         workflows: [
-          ...aiOpsAutomationRecordsFixture.workflows.filter((item) => item.id === route.workflow),
-          ...aiOpsAutomationRecordsFixture.workflows.filter((item) => item.id !== route.workflow),
+          ...automationRecordsFixture.workflows.filter((item) => item.id === route.workflow),
+          ...automationRecordsFixture.workflows.filter((item) => item.id !== route.workflow),
         ],
       }
-    : aiOpsAutomationRecordsFixture;
+    : automationRecordsFixture;
   const recordsFixture = route.record === "workflow" && route.workflow
     ? {
-        ...aiOpsAutomationRecordsFixture,
-        workflowRuns: aiOpsAutomationRecordsFixture.workflowRuns.filter((item) => item.workflowId === route.workflow),
+        ...automationRecordsFixture,
+        workflowRuns: automationRecordsFixture.workflowRuns.filter((item) => item.workflowId === route.workflow),
       }
-    : aiOpsAutomationRecordsFixture;
+    : automationRecordsFixture;
 
   let content: ReactNode = null;
   if (scenario === "loading") {
@@ -213,13 +324,21 @@ export function BlogAdminAIOperationsDemo({
     );
   } else if (route.tab === "automation") {
     content = (
-      <AIOpsAutomationPanel
-        fixture={automationFixture}
-        onPreflight={async () => ({ ready: true })}
-        onRun={async (_workflowId, dryRun) => ({ id: dryRun ? 246 : 247, status: dryRun ? "succeeded" : "awaiting_approval" })}
-        onRollback={(workflowId, version) => setNotice(`Workflow #${workflowId} 已请求回滚到 v${version}。`)}
-        onOpenRecords={openRecords}
-      />
+      <div className="flex flex-col gap-6">
+        <AutomationManagement
+          workflows={automationFixture.workflows}
+          onSave={saveWorkflow}
+          onDelete={deleteWorkflow}
+          onToggle={toggleWorkflow}
+        />
+        <AIOpsAutomationPanel
+          fixture={automationFixture}
+          onPreflight={async () => ({ ready: true })}
+          onRun={async (workflowId, dryRun) => runWorkflow(workflowId, dryRun)}
+          onRollback={rollbackWorkflow}
+          onOpenRecords={openRecords}
+        />
+      </div>
     );
   } else {
     content = (
