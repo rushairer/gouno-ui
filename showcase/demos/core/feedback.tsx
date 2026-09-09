@@ -25,6 +25,12 @@ import EmptyExample from "./empty/empty-0";
 import EmptyExampleSource from "./empty/empty-0.tsx?raw";
 import EmptyLiveRegionExample from "./empty/empty-1";
 import EmptyLiveRegionExampleSource from "./empty/empty-1.tsx?raw";
+import ResultExample from "./result/result-0";
+import ResultExampleSource from "./result/result-0.tsx?raw";
+import ResultPageExample from "./result/result-1";
+import ResultPageExampleSource from "./result/result-1.tsx?raw";
+import ResultLiveRegionExample from "./result/result-2";
+import ResultLiveRegionExampleSource from "./result/result-2.tsx?raw";
 import { useState } from "react";
 import {
   Alert,
@@ -36,7 +42,6 @@ import {
   NotificationProvider,
   Popconfirm,
   Progress,
-  Result,
   Skeleton,
   Space,
   Spin,
@@ -288,16 +293,43 @@ export const feedbackDocuments: Record<string, ComponentDocument> = {
   },
   result: {
     title: "Result 结果",
-    description: "操作结果和下一步入口。",
-    code: '<Result status="success" title="操作成功" />',
-    render: () => (
-      <Result
-        status="success"
-        title="操作成功"
-        subTitle="数据已经保存"
-        extra={<Button>返回列表</Button>}
-      />
+    description: "表达操作终态、错误恢复或页面级结果；标题层级、外层 Surface 与 live-region 策略由调用方按上下文拥有。",
+    code: ResultExampleSource.replaceAll(
+      "../../../../src/core",
+      "@gouno/ui/core",
     ),
+    render: () => <ResultExample />,
+    demos: [
+      {
+        title: "页面级结果",
+        description: "整页 404/终态使用 H1；Result 自己拥有内容节奏，外层 Card 只拥有边界与 elevation，因此关闭 Card padding。",
+        code: ResultPageExampleSource.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ),
+        render: () => <ResultPageExample />,
+      },
+      {
+        title: "显式动态播报",
+        description: "Result 默认不是 live region；异步错误或操作终态确实需要播报时使用标准 role/ARIA。",
+        code: ResultLiveRegionExampleSource.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ),
+        render: () => <ResultLiveRegionExample />,
+      },
+    ],
+    api: [
+      { name: "status", description: "结果语义状态与默认状态图标", type: '"success" | "error" | "info" | "warning"', defaultValue: '"info"' },
+      { name: "title", description: "结果标题", type: "ReactNode" },
+      { name: "description", description: "结果补充说明；统一使用 canonical description 命名", type: "ReactNode" },
+      { name: "extra", description: "恢复、返回或下一步操作区域", type: "ReactNode" },
+      { name: "children", description: "可选结果详情内容", type: "ReactNode" },
+      { name: "headingLevel", description: "结果标题语义层级；页面主结果显式使用 1", type: "HeadingLevel", defaultValue: "2" },
+      { name: "className", description: "根 section 附加类名", type: "string" },
+      { name: "role", description: "标准 ARIA role；动态结果需要播报时按语义选择 status/alert", type: "AriaRole" },
+      { name: "aria-live", description: "标准 live-region 策略；组件不提供默认值", type: '"off" | "assertive" | "polite"' },
+    ],
   },
   spin: {
     title: "Spin 加载",
