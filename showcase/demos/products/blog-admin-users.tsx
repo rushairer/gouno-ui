@@ -8,7 +8,6 @@ import {
   Lock,
   RefreshCw,
   RotateCcw,
-  ShieldCheck,
 } from "lucide-react";
 import {
   Alert,
@@ -35,7 +34,7 @@ import { PageHeader } from "../../../src/gouno";
 import { FixtureDock } from "../../components/fixture-dock";
 
 type FixtureScenario = "data" | "loading" | "empty" | "error";
-type SecurityState = "unlocked" | "locked";
+type SecurityState = "unlocked" | "locked" | "expire-on-action";
 type MembershipStatus = "active" | "suspended" | "removed";
 type MemberRole = "owner" | "admin" | "editor" | "author" | "moderator";
 
@@ -51,6 +50,10 @@ type MemberFixture = {
 
 type ConfirmAction = "suspend" | "restore" | "transfer";
 type ConfirmTarget = { memberId: string; action: ConfirmAction } | null;
+type PendingAction =
+  | { type: "save"; memberId: string; displayName: string; role: MemberRole }
+  | { type: "confirm"; target: Exclude<ConfirmTarget, null> }
+  | null;
 
 const initialMembers: readonly MemberFixture[] = [
   {
@@ -98,6 +101,7 @@ const scenarioOptions = [
 const securityOptions = [
   { value: "unlocked", label: "已解锁" },
   { value: "locked", label: "已锁定" },
+  { value: "expire-on-action", label: "操作时过期" },
 ] as const;
 
 const roleOptions: readonly { value: MemberRole; label: string }[] = [
@@ -113,6 +117,13 @@ const roleLabels: Record<MemberRole, string> = {
   editor: "编辑",
   author: "作者",
   moderator: "审核员",
+};
+
+const roleDescriptions: Record<Exclude<MemberRole, "owner">, string> = {
+  admin: "管理后台成员、站点设置及全站内容",
+  editor: "创建、编辑、审核与发布全站内容",
+  author: "撰写、发布与管理本人创建的内容",
+  moderator: "审核与管理读者评论、互动和举报",
 };
 
 function statusLabel(status: MembershipStatus) {
@@ -158,6 +169,8 @@ export function BlogAdminUsersDemo() {
   const [draftName, setDraftName] = useState("");
   const [draftRole, setDraftRole] = useState<MemberRole>("author");
   const [confirmTarget, setConfirmTarget] = useState<ConfirmTarget>(null);
+  const [stepUpOpen, setStepUpOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState<PendingAction>(null);
 
   const editing = members.find((member) => member.id === editingId) ?? null;
   const confirmMember = confirmTarget ? members.find((member) => member.id === confirmTarget.memberId) ?? null : null;
@@ -168,32 +181,79 @@ export function BlogAdminUsersDemo() {
     setDraftRole(member.role === "owner" ? "admin" : member.role);
   };
 
+  const applyMemberSave = (memberId: string, displayName: string, role: MemberRole) => {
+    setMembers((current) => current.map((member) => member.id === memberId
+      ? { ...member, displayName, role: member.role === "owner" ? "owner" : role }
+      : member));
+    setNotice(`成员“${displayName}”的信息与权限已更新（Showcase 模拟）。`);
+    setEditingId(null);
+  };
+
   const saveMember = () => {
     if (!editing) return;
     const nextName = draftName.trim() || editing.displayName;
-    setMembers((current) => current.map((member) => member.id === editing.id
-      ? { ...member, displayName: nextName, role: member.role === "owner" ? "owner" : draftRole }
-      : member));
-    setNotice(`成员“${nextName}”的信息与权限已更新（Showcase 模拟）。`);
-    setEditingId(null);
+    const nextRole = editing.role === "owner" ? "owner" : draftRole;
+
+    if (security === "expire-on-action") {
+      setPendingAction({ type: "save", memberId: editing.id, displayName: nextName, role: nextRole });
+      setStepUpOpen(true);
+      setEditingId(null);
+      setNotice("近期 MFA 已过期；待保存成员变更已保留，完成 Step-Up 后会自动继续。");
+      return;
+    }
+
+    applyMemberSave(editing.id, nextName, nextRole);
+  };
+
+  const applyConfirm = (target: Exclude<ConfirmTarget, null>) => {
+    const member = members.find((item) => item.id === target.memberId);
+    if (!member) return;
+
+    if (target.action === "transfer") {
+      setMembers((current) => current.map((item) => {
+        if (item.role === "owner") return { ...item, role: "admin" };
+        if (item.id === member.id) return { ...item, role: "owner" };
+        return item;
+      }));
+      setNotice(`Blog 所有权已移交给“${member.displayName}”（Showcase 模拟）。`);
+    } else {
+      const nextStatus: MembershipStatus = target.action === "suspend" ? "suspended" : "active";
+      setMembers((current) => current.map((item) => item.id === member.id ? { ...item, status: nextStatus } : item));
+      setNotice(`成员“${member.displayName}”已${target.action === "suspend" ? "暂停" : "恢复"}（Showcase 模拟）。`);
+    }
+    setConfirmTarget(null);
   };
 
   const executeConfirm = () => {
     if (!confirmTarget || !confirmMember) return;
-    const { action } = confirmTarget;
-    if (action === "transfer") {
-      setMembers((current) => current.map((member) => {
-        if (member.role === "owner") return { ...member, role: "admin" };
-        if (member.id === confirmMember.id) return { ...member, role: "owner" };
-        return member;
-      }));
-      setNotice(`Blog 所有权已移交给“${confirmMember.displayName}”（Showcase 模拟）。`);
-    } else {
-      const nextStatus: MembershipStatus = action === "suspend" ? "suspended" : "active";
-      setMembers((current) => current.map((member) => member.id === confirmMember.id ? { ...member, status: nextStatus } : member));
-      setNotice(`成员“${confirmMember.displayName}”已${action === "suspend" ? "暂停" : "恢复"}（Showcase 模拟）。`);
+
+    if (security === "expire-on-action") {
+      setPendingAction({ type: "confirm", target: confirmTarget });
+      setStepUpOpen(true);
+      setNotice("近期 MFA 已过期；高权限操作已保留，完成 Step-Up 后会自动继续。");
+      return;
     }
-    setConfirmTarget(null);
+
+    applyConfirm(confirmTarget);
+  };
+
+  const completeStepUp = () => {
+    const pending = pendingAction;
+    setSecurity("unlocked");
+    setStepUpOpen(false);
+    setPendingAction(null);
+
+    if (!pending) {
+      setNotice("近期 MFA 已完成（Showcase 模拟）。");
+      return;
+    }
+
+    if (pending.type === "save") {
+      applyMemberSave(pending.memberId, pending.displayName, pending.role);
+      return;
+    }
+
+    applyConfirm(pending.target);
   };
 
   const memberActions = (member: MemberFixture) => (
@@ -283,13 +343,22 @@ export function BlogAdminUsersDemo() {
 
     return (
       <>
-        <Alert
-          type="success"
-          showIcon
-          title="高权限操作已解锁"
-          description="当前 Showcase 模拟近期 MFA 已完成；真实产品会在约 10 分钟后重新要求验证。"
-          action={<Button size="small" onClick={() => setSecurity("locked")}>重新锁定</Button>}
-        />
+        {security === "expire-on-action" ? (
+          <Alert
+            type="warning"
+            showIcon
+            title="近期 MFA 将在下一次高权限写操作时过期"
+            description="用于复现真实产品在保存成员、暂停/恢复或移交所有权过程中收到 recent_mfa_required 后的 Step-Up 重试链路。"
+          />
+        ) : (
+          <Alert
+            type="success"
+            showIcon
+            title="高权限操作已解锁"
+            description="当前 Showcase 模拟近期 MFA 已完成；真实产品会在约 10 分钟后重新要求验证。"
+            action={<Button size="small" onClick={() => setSecurity("locked")}>重新锁定</Button>}
+          />
+        )}
 
         <div className="hidden md:block">
           <Table density="compact" bordered>
@@ -362,7 +431,7 @@ export function BlogAdminUsersDemo() {
     <div className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/users"
-        note="真实 Blog Admin 成员与权限页面；Fixture 只模拟成员目录与 Sudo/MFA 状态，不连接真实 GOSSO 或 Blog API。"
+        note="真实 Blog Admin 成员与权限页面；Fixture 模拟成员目录、Sudo/MFA 入口状态与写操作过程中 recent_mfa_required 的 Step-Up 重试，不连接真实 GOSSO 或 Blog API。"
         controls={(
           <div className="flex flex-col gap-3">
             <Segmented<FixtureScenario>
@@ -376,7 +445,12 @@ export function BlogAdminUsersDemo() {
               aria-label="高权限安全状态"
               options={securityOptions}
               value={security}
-              onChange={setSecurity}
+              onChange={(value) => {
+                setSecurity(value);
+                setNotice(null);
+                setPendingAction(null);
+                setStepUpOpen(false);
+              }}
               block
             />
           </div>
@@ -409,7 +483,7 @@ export function BlogAdminUsersDemo() {
           <FormField label="显示名称" required>
             <Input value={draftName} onChange={(event) => setDraftName(event.target.value)} />
           </FormField>
-          <FormField label="Blog 角色" hint={editing?.role === "owner" ? "当前所有者角色只能通过所有权移交流程变更。" : "每次只保留一个主角色用于此 Showcase fixture。"}>
+          <FormField label="Blog 角色" hint={editing?.role === "owner" ? "当前所有者角色只能通过所有权移交流程变更。" : "每次只保留一个主角色；下方说明与真实产品的角色权限文案一致。"}>
             <Select
               aria-label="Blog 角色"
               value={editing?.role === "owner" ? "owner" : draftRole}
@@ -420,6 +494,11 @@ export function BlogAdminUsersDemo() {
               {roleOptions.map((role) => <option key={role.value} value={role.value}>{role.label}</option>)}
             </Select>
           </FormField>
+          {editing?.role === "owner" ? (
+            <Text size="xs" tone="muted">拥有 Blog 最高管理权限；所有权仅可通过“移交所有权”操作转让。</Text>
+          ) : (
+            <Text size="xs" tone="muted">{roleDescriptions[draftRole as Exclude<MemberRole, "owner">]}</Text>
+          )}
         </div>
       </Modal>
 
@@ -437,6 +516,25 @@ export function BlogAdminUsersDemo() {
           showIcon
           title="这是高权限操作"
           description="真实产品会要求 Sudo/MFA 最近验证，并由后端再次校验当前操作者权限。"
+        />
+      </Modal>
+
+      <Modal
+        open={stepUpOpen}
+        title="需要近期 MFA 验证"
+        description="身份服务返回 recent_mfa_required；原高权限动作已经保留，验证成功后会自动重试。"
+        onOpenChange={(open) => {
+          setStepUpOpen(open);
+          if (!open) setPendingAction(null);
+        }}
+        onOk={completeStepUp}
+        okText="完成 MFA 并继续"
+      >
+        <Alert
+          type="info"
+          showIcon
+          title="Step-Up MFA"
+          description="Showcase 不调用真实身份服务；此确认只用于验证真实产品的动作恢复链路。"
         />
       </Modal>
     </div>
