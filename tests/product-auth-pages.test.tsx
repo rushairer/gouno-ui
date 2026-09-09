@@ -68,9 +68,14 @@ describe("Gosso Admin authentication route fixtures", () => {
     expect(screen.getByRole("button", { name: "返回概览" })).toBeTruthy();
   });
 
-  it("marks only real standalone auth routes as Showcase standalone presentation", () => {
-    const pages = showcaseCatalog.flatMap((group) => group.items);
-    const standalone = pages.filter((page) => page.presentation === "standalone").map((page) => page.id).sort();
+  it("marks only real Gosso auth routes as standalone presentation", () => {
+    const pages = showcaseCatalog
+      .filter((group) => group.workspace === "gosso-admin")
+      .flatMap((group) => group.items);
+    const standalone = pages
+      .filter((page) => page.presentation === "standalone")
+      .map((page) => page.id)
+      .sort();
     expect(standalone).toEqual([
       "gosso-callback",
       "gosso-forgot-password",

@@ -160,7 +160,7 @@ function PublicShellFixture({ children, onNavigate }: { children: ReactNode; onN
 
   return (
     <div className="min-h-[720px] bg-background text-foreground">
-      <a href="#blog-main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:shadow-overlay">
+      <a href="#blog-main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-background focus:px-3 focus:py-2">
         跳到正文
       </a>
       <header className="sticky top-0 z-30 border-b bg-background/92 backdrop-blur-xl">
