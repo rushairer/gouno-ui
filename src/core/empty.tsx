@@ -1,12 +1,12 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "../lib/utils";
 
-type EmptyRuntimeProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
+export interface EmptyProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
   title?: ReactNode;
   description?: ReactNode;
   action?: ReactNode;
   icon?: ReactNode;
-};
+}
 
 export function Empty({
   title,
@@ -15,7 +15,7 @@ export function Empty({
   icon,
   className,
   ...props
-}: EmptyRuntimeProps) {
+}: EmptyProps) {
   return (
     <div
       {...props}
