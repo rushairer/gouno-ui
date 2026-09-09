@@ -223,6 +223,8 @@ export const showcaseCatalog: ShowcaseGroup[] = [
   ]},
   { workspace: "blog", group: "Migrated Pages 已迁移页面", items: [
     item("blog-home", "Home", "首页", 100, <Home />, "standalone"),
+    item("blog-articles", "ArticleIndex", "文章列表", 100, <FileText />, "standalone"),
+    item("blog-search", "Search", "搜索结果", 100, <Search />, "standalone"),
   ]},
   { workspace: "blog-admin", group: "Content 内容管理", items: [
     item("blog-admin-dashboard", "Dashboard", "数据概览", 100, <ChartColumn />),
