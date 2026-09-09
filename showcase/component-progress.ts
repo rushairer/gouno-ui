@@ -20,6 +20,8 @@ const completedComponents = new Set([
   "core-table",
   "core-pagination",
   "core-tabs",
+  "core-anchor",
+  "core-code-block",
   "core-alert",
   "core-modal",
   "core-drawer",
