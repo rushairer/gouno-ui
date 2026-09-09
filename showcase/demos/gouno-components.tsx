@@ -1,5 +1,6 @@
 import { Card, Heading, Tag, Text } from "../../src/core";
 import { NavigationGroup, PageContainer, navigationItemClass } from "../../src/gouno";
+import { DemoSection } from "../components/demo-section";
 
 type GounoComponent = "app-shell" | "page-container";
 
@@ -8,6 +9,39 @@ type ApiRow = {
   type: string;
   description: string;
 };
+
+const appShellExampleCode = `import { AppShell, NavigationGroup, navigationItemClass } from "@gouno/ui/gouno";
+
+export function AdminShell({ children }: { children: React.ReactNode }) {
+  return (
+    <AppShell
+      brand="Gouno Admin"
+      navigation={(close) => (
+        <>
+          <NavigationGroup>
+            <a href="/admin" className={navigationItemClass} onClick={close}>概览</a>
+          </NavigationGroup>
+          <NavigationGroup label="系统管理">
+            <a href="/admin/oauth" className={navigationItemClass} onClick={close}>OAuth2 客户端</a>
+            <a href="/admin/users" className={navigationItemClass} onClick={close}>用户</a>
+          </NavigationGroup>
+        </>
+      )}
+    >
+      {children}
+    </AppShell>
+  );
+}`;
+
+const pageContainerExampleCode = `import { PageContainer } from "@gouno/ui/gouno";
+
+export function SettingsPage() {
+  return (
+    <PageContainer>
+      <section>Settings content</section>
+    </PageContainer>
+  );
+}`;
 
 const appShellApi: ApiRow[] = [
   { name: "brand", type: "ReactNode", description: "应用品牌/产品标识区域。" },
@@ -71,15 +105,17 @@ export function GounoComponentDemo({ component }: { component: GounoComponent })
         </Text>
       </header>
 
-      <Card>
-        <Heading level={3}>Preview</Heading>
-        <Text size="sm" tone="muted" className="mt-1">
-          {isShell
-            ? "当前 Showcase 的嵌入式产品预览本身就是 AppShell 的真实集成用例；下面展示带标题与无标题 NavigationGroup 的统一侧栏节奏。"
-            : "下面直接渲染一个 PageContainer，用虚线边界表现标准内容轨道。"}
-        </Text>
+      <DemoSection
+        title="基础用法"
+        description={
+          isShell
+            ? "Showcase 用结构化缩略预览表达 AppShell 的真实区域关系，Code 展示 canonical 组件组合。"
+            : "Preview 直接渲染 PageContainer，Code 给出对应的 canonical 消费方式。"
+        }
+        code={isShell ? appShellExampleCode : pageContainerExampleCode}
+      >
         {isShell ? (
-          <div className="mt-5 overflow-hidden rounded-lg border bg-muted/20">
+          <div className="overflow-hidden rounded-lg border bg-muted/20">
             <div className="flex h-12 items-center border-b bg-background px-4 text-sm font-medium">Header / brand / toolbar / account</div>
             <div className="grid min-h-56 grid-cols-[180px_1fr]">
               <div className="border-r bg-sidebar p-3 text-sm">
@@ -103,14 +139,14 @@ export function GounoComponentDemo({ component }: { component: GounoComponent })
             </div>
           </div>
         ) : (
-          <div className="mt-5 rounded-lg bg-muted/20 p-3">
+          <div className="rounded-lg bg-muted/20 p-3">
             <PageContainer className="rounded-md border border-dashed bg-background p-5">
               <Text size="sm">PageContainer content track</Text>
               <Text size="xs" tone="muted">max-width 1440px · width 100% · vertical gap 24px</Text>
             </PageContainer>
           </div>
         )}
-      </Card>
+      </DemoSection>
 
       <div>
         <Heading level={3}>Public API</Heading>

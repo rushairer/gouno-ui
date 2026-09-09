@@ -1,6 +1,28 @@
 import { Plus, RefreshCw } from "lucide-react";
-import { Button, Card, Heading, Tag, Text } from "../../src/core";
+import { Button, Heading, Tag, Text } from "../../src/core";
 import { PageHeader } from "../../src/gouno";
+import { DemoSection } from "../components/demo-section";
+
+const exampleCode = `import { Plus, RefreshCw } from "lucide-react";
+import { Button } from "@gouno/ui/core";
+import { PageHeader } from "@gouno/ui/gouno";
+
+export function OAuthClientsHeader() {
+  return (
+    <PageHeader
+      title="OAuth2 客户端"
+      description="注册和维护身份平台客户端、回调地址与授权范围。"
+      actions={
+        <>
+          <Button icon={<RefreshCw />}>刷新</Button>
+          <Button variant="solid" color="primary" icon={<Plus />}>
+            注册客户端
+          </Button>
+        </>
+      }
+    />
+  );
+}`;
 
 const api = [
   ["title", "ReactNode", "页面主标题。"],
@@ -23,7 +45,11 @@ export function GounoPageHeaderDemo() {
         </Text>
       </header>
 
-      <Card padding="lg">
+      <DemoSection
+        title="基础用法"
+        description="Preview 与可复制的 @gouno/ui/gouno 代码保持在同一个示例单元。"
+        code={exampleCode}
+      >
         <PageHeader
           title="OAuth2 客户端"
           description="注册和维护身份平台客户端、回调地址与授权范围。"
@@ -34,7 +60,7 @@ export function GounoPageHeaderDemo() {
             </>
           }
         />
-      </Card>
+      </DemoSection>
 
       <div>
         <Heading level={3}>Public API</Heading>

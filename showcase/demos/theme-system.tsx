@@ -1,11 +1,44 @@
 import { Card, Heading, Segmented, Tag, Text } from "../../src/core";
 import { ThemeToggle, useTheme, type ThemeMode } from "../../src/theme";
+import { DemoSection } from "../components/demo-section";
 
 const modeOptions = [
   { label: "跟随系统", value: "system" },
   { label: "浅色", value: "light" },
   { label: "深色", value: "dark" },
 ] as const;
+
+const themeExampleCode = `import { Segmented, Tag } from "@gouno/ui/core";
+import { ThemeToggle, useTheme, type ThemeMode } from "@gouno/ui/theme";
+
+const modeOptions = [
+  { label: "跟随系统", value: "system" },
+  { label: "浅色", value: "light" },
+  { label: "深色", value: "dark" },
+] as const;
+
+export function ThemeControls() {
+  const { brand, mode, resolvedMode, setMode } = useTheme();
+
+  return (
+    <div className="flex flex-col gap-5">
+      <div className="flex flex-wrap items-center gap-3">
+        <Tag color="primary">brand: {brand}</Tag>
+        <Tag color="default">mode: {mode}</Tag>
+        <Tag color={resolvedMode === "dark" ? "info" : "success"}>
+          resolved: {resolvedMode}
+        </Tag>
+      </div>
+      <Segmented<ThemeMode>
+        aria-label="主题模式"
+        options={modeOptions}
+        value={mode}
+        onChange={setMode}
+      />
+      <ThemeToggle />
+    </div>
+  );
+}`;
 
 export function ThemeSystemDemo() {
   const { brand, mode, resolvedMode, setMode } = useTheme();
@@ -22,7 +55,11 @@ export function ThemeSystemDemo() {
         </Text>
       </header>
 
-      <Card>
+      <DemoSection
+        title="主题模式控制"
+        description="交互预览与 canonical @gouno/ui/theme 用法保持成对展示，便于直接核对和复制。"
+        code={themeExampleCode}
+      >
         <div className="flex flex-col gap-5">
           <div className="flex flex-wrap items-center gap-3">
             <Tag color="primary">brand: {brand}</Tag>
@@ -49,7 +86,7 @@ export function ThemeSystemDemo() {
             </Text>
           </div>
         </div>
-      </Card>
+      </DemoSection>
 
       <Card variant="subtle">
         <Heading level={3}>当前 canonical API</Heading>

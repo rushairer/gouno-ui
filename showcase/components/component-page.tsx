@@ -1,8 +1,7 @@
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Card, Heading, Text } from "../../src/core";
 import { ApiTable, type ApiRow } from "./api-table";
-import { CodeBlock } from "./code-block";
-import { DemoBlock } from "./demo-block";
+import { DemoSection } from "./demo-section";
 
 export interface ComponentDemo {
   title: string;
@@ -32,46 +31,12 @@ const commonApi: ApiRow[] = [
   { name: "className", description: "追加样式类", type: "string" },
 ];
 
-function DemoSection({ demo }: { demo: ComponentDemo }) {
-  const [tab, setTab] = useState<"preview" | "code">("preview");
-  return (
-    <Card>
-      <div className="mb-4">
-        <Heading level={3}>{demo.title}</Heading>
-        {demo.description ? <Text tone="muted">{demo.description}</Text> : null}
-      </div>
-      <div
-        className="mb-4 flex gap-1 border-b"
-        role="tablist"
-        aria-label={`${demo.title} 示例视图`}
-      >
-        {(["preview", "code"] as const).map((value) => (
-          <button
-            key={value}
-            type="button"
-            role="tab"
-            aria-selected={tab === value}
-            className={`border-b-2 px-3 py-2 text-sm ${tab === value ? "border-primary text-foreground" : "border-transparent text-muted-foreground"}`}
-            onClick={() => setTab(value)}
-          >
-            {value === "preview" ? "Preview" : "Code"}
-          </button>
-        ))}
-      </div>
-      {tab === "preview" ? (
-        <DemoBlock>{demo.render()}</DemoBlock>
-      ) : (
-        <CodeBlock code={demo.code} />
-      )}
-    </Card>
-  );
-}
-
 export function ComponentPage({ document }: { document: ComponentDocument }) {
   const demos: ComponentDemo[] = [
     { title: "基础用法", code: document.code, render: document.render },
     ...(document.demos ?? []),
   ];
+
   return (
     <div className="space-y-6">
       <header className="space-y-2">
@@ -84,7 +49,14 @@ export function ComponentPage({ document }: { document: ComponentDocument }) {
         </Text>
       </header>
       {demos.map((demo, index) => (
-        <DemoSection key={`${demo.title}-${index}`} demo={demo} />
+        <DemoSection
+          key={`${demo.title}-${index}`}
+          title={demo.title}
+          description={demo.description}
+          code={demo.code}
+        >
+          {demo.render()}
+        </DemoSection>
       ))}
       <Card>
         <Heading level={3}>状态与用法</Heading>

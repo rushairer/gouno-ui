@@ -1,16 +1,26 @@
 import { useState } from "react";
 import { Archive, Sparkles, Trash2 } from "lucide-react";
-import { Button, Card, Heading, Tag, Text } from "../../src/core";
+import { Button, Heading, Tag, Text } from "../../src/core";
 import { BulkActionBar } from "../../src/patterns";
-import { CodeBlock } from "../components/code-block";
+import { DemoSection } from "../components/demo-section";
 
-const exampleCode = `<BulkActionBar
-  selectionLabel={\`已选择 \${selected.length} 项\`}
-  onCancel={() => setSelected([])}
->
-  <Button size="small" onClick={archive}>归档</Button>
-  <Button size="small" color="error" onClick={remove}>删除</Button>
-</BulkActionBar>`;
+const exampleCode = `import { useState } from "react";
+import { Button } from "@gouno/ui/core";
+import { BulkActionBar } from "@gouno/ui/patterns";
+
+export function BatchActions() {
+  const [selected, setSelected] = useState(["a", "b", "c"]);
+
+  return selected.length > 0 ? (
+    <BulkActionBar
+      selectionLabel={"已选择 " + selected.length + " 项"}
+      onCancel={() => setSelected([])}
+    >
+      <Button size="small">归档</Button>
+      <Button size="small" color="error">删除</Button>
+    </BulkActionBar>
+  ) : null;
+}`;
 
 const api = [
   ["selectionLabel", "ReactNode", "当前选择上下文，例如“已选择 3 项”。"],
@@ -43,8 +53,12 @@ export function PatternBulkActionBarDemo() {
         </Text>
       </header>
 
-      <Card padding="base" className="min-h-72">
-        <div className="flex flex-col gap-4">
+      <DemoSection
+        title="批量选择与操作"
+        description="Preview 展示交互状态，Code 给出同一 Pattern 的 canonical 消费方式。"
+        code={exampleCode}
+      >
+        <div className="flex min-h-64 flex-col gap-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <Text size="sm" tone="muted">{message}</Text>
             {selected.length === 0 ? <Button size="small" onClick={reset}>恢复选择</Button> : null}
@@ -73,12 +87,7 @@ export function PatternBulkActionBarDemo() {
             </BulkActionBar>
           ) : null}
         </div>
-      </Card>
-
-      <div>
-        <Heading level={3}>Example</Heading>
-        <div className="mt-3"><CodeBlock code={exampleCode} /></div>
-      </div>
+      </DemoSection>
 
       <div>
         <Heading level={3}>Public API</Heading>
