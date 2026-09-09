@@ -8,7 +8,7 @@ A Showcase file existing for a route proves **route-level coverage only**. It do
 
 - **Gosso Admin:** completed first-product comparison corpus.
 - **Blog Admin:** completed second-product comparison corpus after route-level coverage and behavior/detail fidelity hardening.
-- **Blog public site:** active migration line. `PublicShell` + Home and the discovery family are now represented; reading/account families remain next evidence.
+- **Blog public site:** active migration line. `PublicShell` + Home, discovery and the base ArticleDetail reading surface are represented; community/account families remain active follow-up evidence.
 
 Completed corpora remain live evidence. A later Blog public-site migration may reopen a canonical component or an existing product fixture if it exposes a genuine cross-product defect, but ordinary implementation work no longer advances Blog Admin page by page.
 
@@ -19,12 +19,28 @@ Current migrated public surfaces:
 1. `blog-home.tsx` — `/`, composed with the product-local shared `BlogPublicShellFixture` and `BlogArticleTeaser` grammar.
 2. `blog-article-index.tsx` — `/articles` and `/search`; the same mode-driven implementation also contains the route semantics later used by `/categories/:slug` and `/tags/:slug`.
 3. `blog-discovery-indexes.tsx` — `/categories`, `/tags`, `/archive`.
+4. `blog-article-detail.tsx` — `/articles/:slug`; base reading fidelity covers cover/title/summary, author/date/read/view/like metadata, native-hash TOC, representative rich article content, canonical CodeBlock copy semantics, media, related reading, scroll-progress presentation and preview/loading/error/not-found states.
 
 All public-site catalog entries use `presentation="standalone"`. Showcase navigation tooling may float above the preview, but it must not wrap the public site in `AppShell` or `PageContainer`.
 
-`PublicShell` and article teaser repetition is intentionally shared only inside the Blog Showcase product fixture. It is not a Pattern/Gouno admission event. By contrast, Categories, Tags and Archive independently validate the already-admitted `PageHeader(title, description, actions)` contract because their real route-level semantics match it; this validation does not extend the PageHeader API or turn the rest of the public-site shell into Gouno structure.
+`PublicShell` and article teaser repetition is intentionally shared only inside the Blog Showcase product fixture. It is not a Pattern/Gouno admission event. By contrast, Categories, Tags, Archive and ArticleDetail validate the already-admitted `PageHeader(title, description, actions)` contract because their real route-level title/description semantics match it; this validation does not extend the PageHeader API or turn the rest of the public-site shell into Gouno structure.
 
 Discovery migration uses current canonical APIs rather than restoring older product aliases/feature bags: Core `Card`, `Empty`, `Skeleton`, `SearchField`, `Pagination` and related controls own their narrow contracts, while loading/filtering/navigation/data grouping remain product-local.
+
+### ArticleDetail reading boundary
+
+The first Reading pass intentionally migrates the document/reading contract before community state machines:
+
+- the article is one dominant ground-level reading surface; cover, PageHeader, metadata and body are not split into nested competing Cards;
+- ArticleDetail remains inside the product-local `BlogPublicShellFixture`; it does not use `AppShell` or `PageContainer`;
+- real heading IDs and `scroll-margin-top` remain product/content responsibilities while canonical `Anchor` supplies the native hash TOC links;
+- canonical `CodeBlock` owns the read-only code frame, horizontal overflow and copy feedback while syntax presentation stays caller/product-owned;
+- representative paragraphs, H2/H3, lists, blockquote, table, code and figure content validate reading rhythm without admitting a public `MarkdownRenderer`;
+- a ground-level sticky TOC aside remains page composition, not a public `TableOfContents` Pattern;
+- related reading reuses the Blog product-local article teaser instead of creating a shared Reading Pattern;
+- likes/comments/replies/reporting and comment form behavior are deliberately deferred to the next Reading stage so their state machines can be validated independently.
+
+This pass also confirms that a public reading page may use a more spacious internal article rhythm (`p-6 sm:p-8`) because the reading surface owns its content typography/measure. That is a semantic document-content exception and must not be copied back as an application-shell spacing repair.
 
 ## Blog Admin route coverage
 
@@ -111,19 +127,23 @@ Binding consequences:
 
 Editor workspaces are an explicit exception. PostEditor and PageEditor use command-bar/editor grammar with Markdown/preview view-state Tabs rather than the normal task-page `PageHeader → Tabs → content` anatomy. Their state machines and inspectors remain product-local until independent product evidence proves a shared public contract.
 
-Public Blog pages are a different product family. Do not wrap them in `AppShell` or copy Admin page grammar merely for visual consistency. Start from their real document/navigation/reading semantics and promote only independently proven shared contracts.
+Public Blog pages are a different product family. Do not wrap them in `AppShell` or copy Admin page grammar merely for visual consistency. Start from their real document/navigation/reading semantics and promote only independently proven shared contracts. A spacious public reading surface is likewise not precedent for changing the normal application-shell edge axis.
 
 ## Current cross-product evidence
 
 ### PageHeader
 
-Posts, Members, Comments, Categories, Tags, Pages, Notifications, Media, Site Settings and AI workspaces validate the admitted Gouno `PageHeader` contract without expanding it into product policy. Public Blog Categories, Tags and Archive now validate the same narrow route-title/description responsibility in a standalone document/content shell. This strengthens the contract while confirming that `PageHeader` does not imply `AppShell` ownership.
+Posts, Members, Comments, Categories, Tags, Pages, Notifications, Media, Site Settings and AI workspaces validate the admitted Gouno `PageHeader` contract without expanding it into product policy. Public Blog Categories, Tags, Archive and ArticleDetail now validate the same narrow route/document title + description responsibility in a standalone content shell. This strengthens the contract while confirming that `PageHeader` does not imply `AppShell` ownership.
+
+### Anchor and CodeBlock
+
+ArticleDetail is the first product fixture that consumes both reading-triggered Core hardening results together. `Anchor` remains a native-hash navigation primitive with target spacing owned by headings; `CodeBlock` keeps one canonical code string while syntax presentation remains caller-owned. Their coexistence inside one article does not create `ArticleShell`, `MarkdownRenderer`, `TableOfContents` or a generic Reading Pattern.
 
 ### BulkActionBar
 
 Posts, Comments and Categories supplied the independent evidence that admitted canonical `BulkActionBar`. Tags, Pages, Notifications and Media validate the same small contract across different presentations. The Pattern owns toolbar semantics, selected-context presentation and cancel-selection; products own selection state and business actions.
 
-Do not recreate a broad Legacy `DataTable`, `ResponsiveList`, `FilterBar`, `AsyncState`, AI workspace, editor feature bag, or public-site shell merely because several pages contain similar markup. Compare user intent, state, lifecycle, accessibility, responsive behavior and failure semantics first.
+Do not recreate a broad Legacy `DataTable`, `ResponsiveList`, `FilterBar`, `AsyncState`, AI workspace, editor feature bag, public-site shell or reading feature bag merely because several pages contain similar markup. Compare user intent, state, lifecycle, accessibility, responsive behavior and failure semantics first.
 
 ### Sudo/MFA
 
