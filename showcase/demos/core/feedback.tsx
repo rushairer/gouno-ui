@@ -21,12 +21,15 @@ import Example5 from "./drawer/drawer-1";
 import Example5Source from "./drawer/drawer-1.tsx?raw";
 import Example6 from "./drawer/drawer-2";
 import Example6Source from "./drawer/drawer-2.tsx?raw";
+import EmptyExample from "./empty/empty-0";
+import EmptyExampleSource from "./empty/empty-0.tsx?raw";
+import EmptyLiveRegionExample from "./empty/empty-1";
+import EmptyLiveRegionExampleSource from "./empty/empty-1.tsx?raw";
 import { useState } from "react";
 import {
   Alert,
   Button,
   Drawer,
-  Empty,
   Input,
   MessageProvider,
   Modal,
@@ -256,15 +259,32 @@ const drawerApi = [
 export const feedbackDocuments: Record<string, ComponentDocument> = {
   empty: {
     title: "Empty 空状态",
-    description: "无数据时的说明和操作入口。",
-    code: '<Empty title="暂无数据" description="创建第一条记录" />',
-    render: () => (
-      <Empty
-        title="暂无数据"
-        description="创建第一条记录后会显示在这里。"
-        action={<Button variant="solid" color="primary">新建</Button>}
-      />
+    description: "表达集合或内容为空的状态；业务文案、Surface 边界和 live-region 策略由调用方拥有。",
+    code: EmptyExampleSource.replaceAll(
+      "../../../../src/core",
+      "@gouno/ui/core",
     ),
+    render: () => <EmptyExample />,
+    demos: [
+      {
+        title: "显式动态播报",
+        description: "Empty 默认不是 live region；筛选等动态状态确实需要播报时，由调用方显式提供标准 ARIA 属性。",
+        code: EmptyLiveRegionExampleSource.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ),
+        render: () => <EmptyLiveRegionExample />,
+      },
+    ],
+    api: [
+      { name: "title", description: "调用方提供的空态标题；无默认业务文案", type: "ReactNode" },
+      { name: "description", description: "补充说明", type: "ReactNode" },
+      { name: "icon", description: "可选图标或视觉提示", type: "ReactNode" },
+      { name: "action", description: "可选操作入口", type: "ReactNode" },
+      { name: "className", description: "根 div 附加类名", type: "string" },
+      { name: "role", description: "标准 ARIA role；动态空态需要播报时可显式设为 status", type: "AriaRole" },
+      { name: "aria-live", description: "标准 live-region 策略；组件不提供默认值", type: '"off" | "assertive" | "polite"' },
+    ],
   },
   result: {
     title: "Result 结果",

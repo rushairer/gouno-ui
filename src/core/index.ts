@@ -39,7 +39,7 @@ export { Upload, type UploadProps } from "./upload";
 export { Breadcrumb, type BreadcrumbItem } from "./breadcrumb";
 export { Pagination, type PaginationProps } from "./pagination";
 export { Steps } from "./steps";
-export { Empty } from "./empty";
+export { Empty, type EmptyProps } from "./empty";
 export { Result } from "./result";
 export { List } from "./list";
 export { Descriptions } from "./descriptions";
@@ -95,7 +95,6 @@ export type {
   DropdownMenuProps,
   DropdownMenuSeparatorProps,
   DropdownMenuTriggerProps,
-  EmptyProps,
   FieldGroupProps,
   FieldLabelProps,
   FieldLegendProps,

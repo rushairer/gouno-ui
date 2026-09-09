@@ -28,6 +28,7 @@ const completedComponents = new Set([
   "core-card",
   "core-typography",
   "core-progress",
+  "core-empty",
   "core-popover",
   "core-tooltip",
   "core-dropdown",

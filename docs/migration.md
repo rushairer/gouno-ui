@@ -99,6 +99,42 @@ The current Ant Design aliases that are already deprecated there are deliberatel
 
 `children` remains a standard React composition slot for additional custom body content after `title/description`; it is not a second title write path.
 
+## Empty content and surface ownership
+
+Canonical `Empty` is a ground-level empty-state content block, not a Card replacement or an automatic live region. Product evidence across Gosso Admin, Blog Admin and the public Blog converged on four stable slots only: caller-owned `title`, optional `description`, optional `icon` and optional `action`.
+
+The component therefore no longer invents the English `"No data"` message, a dashed/rounded border, or `role="status"`. Surface boundaries belong to the surrounding Card/Table/List/route composition. Standard div/ARIA attributes remain available when a particular product state needs them.
+
+```tsx
+<Card padding="lg">
+  <Empty
+    title="没有匹配结果"
+    description="调整筛选条件后重试。"
+    action={<Button>清除筛选</Button>}
+  />
+</Card>
+```
+
+For a dynamically replaced result that genuinely needs assistive-technology announcement, opt in explicitly:
+
+```tsx
+<Empty
+  role="status"
+  aria-live="polite"
+  title="没有匹配结果"
+/>
+```
+
+Migrate touched call sites as follows:
+
+```text
+<Empty /> relying on "No data"        → provide product-local title/description
+Empty's implicit dashed border        → let the surrounding semantic surface own its boundary
+Empty's implicit role="status"        → add role/aria-live only for states that should be announced
+```
+
+Do not add `variant`, `bordered`, product copy presets or a second live-region convenience prop merely to recreate the old defaults.
+
 ## DataTable status
 
 System Management plus Blog Admin list-page prior art is enough to trigger DataTable review, but not enough to re-admit the historical feature-bag API. Current migrations use Core `Table`/`Pagination` plus product-local filter/action/state composition. See PD-012.
@@ -121,4 +157,4 @@ Standalone product fixtures may add Showcase-only navigation chrome around the r
 
 ## Compatibility assessment
 
-The product-validation reset and canonical renames are breaking changes for consumers that update to the next package artifact. Alert's primitive-to-high-level API correction is also breaking for consumers that used `variant="destructive|default"` as semantic colors. Treat publication accordingly under SemVer/release notes. Existing products fixed to older immutable vendored archives can migrate page-by-page rather than mechanically replacing old wrappers with new ones.
+The product-validation reset and canonical renames are breaking changes for consumers that update to the next package artifact. Alert's primitive-to-high-level API correction is also breaking for consumers that used `variant="destructive|default"` as semantic colors. Empty hardening is behaviorally breaking for consumers that relied on its previous English default copy, implicit dashed surface or automatic `role="status"`; migrate those responsibilities explicitly as described above. Treat publication accordingly under SemVer/release notes. Existing products fixed to older immutable vendored archives can migrate page-by-page rather than mechanically replacing old wrappers with new ones.
