@@ -177,7 +177,7 @@ Do not add a `subTitle` alias, custom status-color aliases, `variant`, `size`, o
 
 ## DataTable status
 
-System Management plus Blog Admin list-page prior art is enough to trigger DataTable review, but not enough to re-admit the historical feature-bag API. Current migrations use Core `Table`/`Pagination` plus product-local filters/actions/state. See PD-012.
+System Management plus Blog Admin list-page prior art is enough to trigger DataTable review, but not enough to re-admit the historical feature-bag API. Current migrations use Core `Table`/`Pagination` plus product-local filter/action/state composition. See PD-012.
 
 ## Curated subpaths
 
