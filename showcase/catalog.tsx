@@ -225,6 +225,7 @@ export const showcaseCatalog: ShowcaseGroup[] = [
   { workspace: "blog", group: "Migrated Pages 已迁移页面", items: [
     item("blog-home", "Home", "首页", 100, <Home />, "standalone"),
     item("blog-articles", "ArticleIndex", "文章列表", 100, <FileText />, "standalone"),
+    item("blog-article-detail", "ArticleDetail", "文章详情", 100, <FileText />, "standalone"),
     item("blog-search", "Search", "搜索结果", 100, <Search />, "standalone"),
     item("blog-categories", "Categories", "分类索引", 100, <ListTree />, "standalone"),
     item("blog-tags", "Tags", "标签索引", 100, <Tags />, "standalone"),
