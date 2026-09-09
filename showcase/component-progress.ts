@@ -29,6 +29,7 @@ const completedComponents = new Set([
   "core-typography",
   "core-progress",
   "core-empty",
+  "core-result",
   "core-popover",
   "core-tooltip",
   "core-dropdown",
