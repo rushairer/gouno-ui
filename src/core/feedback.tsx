@@ -1,1 +1,11 @@
-export { Skeleton } from "../components/primitives/skeleton";
+import type { ComponentProps } from "react";
+import { Skeleton as PrimitiveSkeleton } from "../components/primitives/skeleton";
+
+export type SkeletonProps = ComponentProps<typeof PrimitiveSkeleton>;
+
+export function Skeleton({
+  "aria-hidden": ariaHidden,
+  ...props
+}: SkeletonProps) {
+  return <PrimitiveSkeleton {...props} aria-hidden={ariaHidden ?? true} />;
+}
