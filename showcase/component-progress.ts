@@ -21,6 +21,7 @@ const completedComponents = new Set([
   "core-card",
   "core-typography",
   "core-progress",
+  "pattern-bulk-action-bar",
 ]);
 
 const canonicalComponentId = /^(core|theme|pattern|gouno)-/;

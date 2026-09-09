@@ -26,6 +26,10 @@ describe("audited batch completion", () => {
     }
   });
 
+  it("reports admitted Patterns complete only after focused review", () => {
+    expect(componentProgress("pattern-bulk-action-bar", 0)).toBe(100);
+  });
+
   it("does not let unaudited canonical entries claim 100 percent", () => {
     for (const id of ["core-unreviewed", "theme-unreviewed", "pattern-unreviewed", "gouno-unreviewed"]) {
       expect(componentProgress(id, 100), id).toBe(99);

@@ -10,7 +10,7 @@
 | --- | --- | --- |
 | Core | active | 产品无关基础组件；按真实产品持续压力测试 API。 |
 | Theme | active | ThemeProvider、ThemeToggle、useTheme 及主题/品牌类型。 |
-| Patterns | empty by design | 尚无经过真实产品重新认证的公共 Pattern。 |
+| Patterns | active/minimal | 当前仅准入 `BulkActionBar`；继续要求跨真实产品证据，不恢复历史 feature bag。 |
 | Gouno | active/minimal | `AppShell`、`PageContainer`、`PageHeader`、`NavigationGroup`、`navigationItemClass`。 |
 | Legacy | non-public | 不编译、不发布、不展示、canonical/Showcase 禁止依赖。 |
 
@@ -30,7 +30,7 @@
 | API-010 | Gouno UI Showcase 按 Core/Theme/Patterns/Gouno owner 展示；产品空间只显示真实迁移页面。 | Showcase catalog/router |
 | API-011 | 共享应用结构使用 `AppShell` / `PageContainer` 中性名称；不保留 `AdminShell` / `AdminPage` alias。 | Gouno source/tests |
 | API-012 | `PageHeader` 重新准入后只有 `title/description/actions/className`；不恢复 `action/actions` 双入口。 | PageHeader tests / PD-011 |
-| API-013 | Pattern 允许为空；System Management 的表格证据只触发 DataTable review，不恢复 Legacy feature bag。 | PD-012 / Pattern empty test |
+| API-013 | Pattern 层只保留经真实产品重新认证的窄职责抽象；当前准入 `BulkActionBar`。System Management 等表格证据继续只触发 DataTable review，不恢复 Legacy feature bag。 | BulkActionBar focused tests / product fixtures / PD-012 |
 | API-014 | Tabs canonical 高层 API 使用 `activeKey/defaultActiveKey/items[].key/onChange`，默认 line 视觉；Radix 保持行为/a11y。 | Tabs docs/tests / PD-010 |
 | API-015 | Showcase-local tooling 重复仅算辅助证据，不能单独创建公共抽象。 | architecture / PD-009 |
 | API-016 | Node.js 24 下 Pages 发布前必须通过 typecheck、tests、package build、Showcase build。 | workflow hardening |
@@ -41,6 +41,8 @@
 ## 当前破坏式迁移说明
 
 产品驱动归零阶段移除了尚未重新认证的历史 Pattern/Gouno surface，例如 DataTable、Toast、Feedback、AsyncState、ConfirmDialog、Panel、ActionGroup、FilterBar、模板和业务状态组件。
+
+当前重新准入的 Pattern 只有 `BulkActionBar`。它只拥有批量选择上下文、产品动作插槽、取消入口和 toolbar/sticky 语义；资源列表、选择状态、确认流程、AI/发布/删除等业务动作继续由产品拥有。它不能作为恢复 DataTable、FilterBar 或通用 feature bag 的先例。
 
 已重新确认的能力必须以新的 canonical contract 为准：
 
