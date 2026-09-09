@@ -1,4 +1,11 @@
-import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   AppShell,
@@ -41,7 +48,10 @@ describe("Gouno application structure", () => {
       />,
     );
 
-    const heading = screen.getByRole("heading", { level: 1, name: "OAuth2 客户端" });
+    const heading = screen.getByRole("heading", {
+      level: 1,
+      name: "OAuth2 客户端",
+    });
     const header = heading.closest('[data-slot="page-header"]');
     expect(header?.tagName).toBe("HEADER");
     expect(header?.className).toContain("page-heading");
@@ -71,16 +81,20 @@ describe("Gouno application structure", () => {
     );
 
     const skip = screen.getByRole("link", { name: "跳至主要内容" });
-    expect(skip.getAttribute("href")).toBe("#app-shell-main");
     const main = screen.getByRole("main");
-    expect(main.getAttribute("id")).toBe("app-shell-main");
+    expect(main.getAttribute("id")).toMatch(/^app-shell-main-/);
+    expect(skip.getAttribute("href")).toBe(`#${main.getAttribute("id")}`);
     expect((main as HTMLElement).tabIndex).toBe(-1);
-    expect(screen.getByRole("navigation", { name: "Workspace navigation" })).toBeTruthy();
+    expect(
+      screen.getByRole("navigation", { name: "Workspace navigation" }),
+    ).toBeTruthy();
     expect(screen.getByText("Home / Settings")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Search" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Account" })).toBeTruthy();
 
-    const trigger = screen.getByRole("button", { name: "Workspace navigation" });
+    const trigger = screen.getByRole("button", {
+      name: "Workspace navigation",
+    });
     fireEvent.click(trigger);
 
     const dialog = await screen.findByRole("dialog");
@@ -88,9 +102,43 @@ describe("Gouno application structure", () => {
     const mobileNavigation = within(dialog).getByRole("navigation", {
       name: "Workspace navigation",
     });
-    fireEvent.click(within(mobileNavigation).getByRole("button", { name: "Settings" }));
+    fireEvent.click(
+      within(mobileNavigation).getByRole("button", { name: "Settings" }),
+    );
 
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
     await waitFor(() => expect(document.activeElement).toBe(trigger));
+  });
+
+  it("assigns unique skip-link targets when multiple AppShell instances share a document", () => {
+    const navigation = () => <a href="#section">Section</a>;
+    render(
+      <>
+        <AppShell
+          brand="Outer"
+          navigationLabel="Outer navigation"
+          navigation={navigation}
+        >
+          Outer content
+        </AppShell>
+        <AppShell
+          brand="Preview"
+          navigationLabel="Preview navigation"
+          navigation={navigation}
+        >
+          Preview content
+        </AppShell>
+      </>,
+    );
+
+    const mains = screen.getAllByRole("main");
+    const skips = screen.getAllByRole("link", { name: "跳至主要内容" });
+    const ids = mains.map((main) => main.id);
+
+    expect(new Set(ids).size).toBe(2);
+    expect(ids.every((id) => id.startsWith("app-shell-main-"))).toBe(true);
+    expect(skips.map((skip) => skip.getAttribute("href"))).toEqual(
+      ids.map((id) => `#${id}`),
+    );
   });
 });

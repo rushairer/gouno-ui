@@ -1,4 +1,4 @@
-import { type ReactNode, useRef, useState } from "react";
+import { type ReactNode, useId, useRef, useState } from "react";
 import { Menu } from "lucide-react";
 import { IconButton } from "../core/icon-button";
 import {
@@ -35,11 +35,13 @@ export function AppShell({
 }: AppShellProps) {
   const [open, setOpen] = useState(false);
   const navigationTrigger = useRef<HTMLButtonElement>(null);
+  const instanceId = useId().replaceAll(":", "");
+  const mainId = `app-shell-main-${instanceId}`;
 
   return (
     <div data-slot="app-shell" className="min-h-dvh bg-canvas text-foreground">
       <a
-        href="#app-shell-main"
+        href={`#${mainId}`}
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-popover focus:p-3"
       >
         跳至主要内容
@@ -76,7 +78,7 @@ export function AppShell({
           {footer ? <div className="mt-4 border-t pt-4">{footer}</div> : null}
         </aside>
         <main
-          id="app-shell-main"
+          id={mainId}
           tabIndex={-1}
           className="min-w-0 px-4 py-6 outline-none md:px-6 xl:px-8"
         >
