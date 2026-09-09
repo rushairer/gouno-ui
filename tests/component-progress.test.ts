@@ -31,6 +31,10 @@ describe("audited batch completion", () => {
     }
   });
 
+  it("reports Theme complete only after persistence and browser-side effects are reviewed", () => {
+    expect(componentProgress("theme-system", 0)).toBe(100);
+  });
+
   it("reports admitted Patterns complete only after focused review", () => {
     expect(componentProgress("pattern-bulk-action-bar", 0)).toBe(100);
   });
