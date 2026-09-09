@@ -25,4 +25,15 @@ describe("audited batch completion", () => {
       expect(componentProgress(id, 0), id).toBe(100);
     }
   });
+
+  it("does not let unaudited canonical entries claim 100 percent", () => {
+    for (const id of ["core-unreviewed", "theme-unreviewed", "pattern-unreviewed", "gouno-unreviewed"]) {
+      expect(componentProgress(id, 100), id).toBe(99);
+    }
+  });
+
+  it("leaves real product migration progress untouched", () => {
+    expect(componentProgress("blog-admin-posts", 100)).toBe(100);
+    expect(componentProgress("gosso-overview", 100)).toBe(100);
+  });
 });

@@ -23,6 +23,9 @@ const completedComponents = new Set([
   "core-progress",
 ]);
 
+const canonicalComponentId = /^(core|theme|pattern|gouno)-/;
+
 export function componentProgress(id: string, fallback: number) {
-  return completedComponents.has(id) ? 100 : fallback;
+  if (!canonicalComponentId.test(id)) return fallback;
+  return completedComponents.has(id) ? 100 : Math.min(fallback, 99);
 }
