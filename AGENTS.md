@@ -64,24 +64,26 @@ A layer may depend on itself or a lower layer, never a higher layer.
 
 ## Product-driven evolution
 
-Gouno UI is in third-product validation mode.
+Gouno UI currently has **three completed real-product comparison corpora and no selected fourth-product migration line**.
 
-- **Completed comparison corpora:** Gosso Admin route-level Showcase coverage plus product-language convergence, and Blog Admin route-level coverage plus behavior/detail fidelity hardening.
-- **Active migration line:** Gouno Blog public site, beginning with the real `PublicShell` + `/` Home surface, then discovery, reading and account page families.
-- **Comparison corpus:** completed Gosso Admin and Blog Admin pages remain mandatory prior art when public Blog pages challenge existing abstractions.
-- Start pages with Core + Theme + admitted Gouno structure + product-local JSX/Tailwind. Do not force public-site pages into `AppShell` when their semantics are a document/public-content shell.
-- Initial shell baseline: `AppShell`, `PageContainer`, `NavigationGroup`, `navigationItemClass` for application-shell products only.
-- `PageHeader` is additionally admitted from cross-product page evidence (PD-011); public Blog pages may validate it where route semantics match, but must not use it merely for visual consistency.
+- **Completed first corpus:** Gosso Admin route-level Showcase coverage plus product-language convergence.
+- **Completed second corpus:** Blog Admin route-level coverage plus behavior/detail fidelity hardening.
+- **Completed third corpus:** Gouno Blog public-site PublicShell/Home, discovery, reading, document, account and final NotFound route-family validation.
+- **Active migration line:** none selected. Do not invent a fourth product/workspace merely to keep migration moving.
+- Completed corpora remain mandatory prior art. Reopen a completed fixture only when a real new product/page family or a later audit exposes a genuine cross-product defect, missing fidelity evidence or canonical API problem.
+- New real product work still starts with Core + Theme + admitted Gouno structure + product-local JSX/Tailwind. Do not force public-site pages into `AppShell` when their semantics are a document/public-content shell.
+- Initial shell baseline remains `AppShell`, `PageContainer`, `NavigationGroup`, `navigationItemClass` for application-shell products only.
+- `PageHeader` is additionally admitted from cross-product page evidence (PD-011); public content pages may validate it where route semantics match, but must not use it merely for visual consistency.
 - Existing Legacy implementations are evidence, never automatic precedent.
 - First semantic occurrence stays local; second similarity is noted; third semantically equivalent occurrence triggers review, not automatic extraction.
 - Compare intent, state, lifecycle, accessibility, responsive behavior and content/action policy—not old names or DOM similarity.
-- Before any Pattern/Gouno addition or material Core extension, search canonical Gouno UI, Legacy, Gosso Admin, Blog Admin and relevant Blog pages.
+- Before any Pattern/Gouno addition or material Core extension, search canonical Gouno UI, Legacy and all completed real-product corpora.
 - If evidence is insufficient, keep code product-local.
 - Record durable accept/reject/defer/merge/move/remove/API decisions in `docs/abstraction-register.md`.
-- Follow the Product Validation Loop in `docs/product-driven-development.md`: real pages may stop further migration when they expose a canonical component defect, accessibility problem, material API gap or semantic API split. Harden the component, synchronize Showcase/docs/tests, validate it back on the triggering product page, then continue migration.
+- Follow the Product Validation Loop in `docs/product-driven-development.md`: a real page or a completed-corpus audit may stop further work when it exposes a canonical component defect, accessibility problem, material API gap or semantic API split. Harden the component, synchronize Showcase/docs/tests, validate it back on the triggering product evidence, then continue.
 - **API-valid composition is necessary but not sufficient for page acceptance.** Before a migrated page is marked complete, run a composition-level conformance pass against every applicable binding rule in `docs/design-language.md` and `docs/product-interface-governance.md`, then compare the page with already-migrated members of the same surface family for spacing, action hierarchy, navigation depth, responsive behavior, feedback semantics and state presentation.
 - If that pass exposes a missing shared visual/composition/IA constraint, stop the line before migrating another page: add or refine the binding rule, scan/fix the governed migrated corpus, and add or extend conformance coverage where practical. Do not hide the gap with page-local styling or change a Core default when the rule is context-specific.
-- When a binding rule in `docs/design-language.md` or `docs/product-interface-governance.md` is added or materially changed, stop ordinary migration until the already-migrated governed corpus has been scanned. Fix stale occurrences, document intentional exceptions and add source/runtime regression coverage where practical.
+- When a binding rule in `docs/design-language.md` or `docs/product-interface-governance.md` is added or materially changed, stop ordinary product work until the completed governed corpora have been scanned. Fix stale occurrences, document intentional exceptions and add source/runtime regression coverage where practical.
 - Ant Design and other mature systems are benchmarks during hardening, not automatic API authorities. Platform semantics, accessibility, Gouno API governance and real product evidence still decide the final contract.
 
 ## Showcase evidence rule
@@ -108,6 +110,7 @@ Example: `CodeBlock` remained Showcase-private under PD-009 until the real Blog 
 - Core keeps usage categories; other owners use semantic categories appropriate to them.
 - Only canonical APIs appear in Gouno UI.
 - Product workspaces show only genuinely migrated pages; no simulated placeholders.
+- Gosso Admin, Blog Admin and Blog are currently completed comparison corpora. None is the active page-by-page implementation line.
 - Patterns may visibly remain empty.
 - Normal product routes get one persistent page-local Tabs layer. If a second persistent Tab family is independently nameable/configurable/navigation-worthy, stop and apply PI-01 instead of nesting it. Editor view-state Tabs remain an explicit exception.
 
@@ -129,7 +132,7 @@ Example: `CodeBlock` remained Showcase-private under PD-009 until the real Blog 
 - One semantic collection/section should normally expose one dominant surface boundary. Do not wrap a self-surfaced Table/List in Card merely to obtain padding/alignment. Normal bordered surfaces align first/last primary content to the shared 24px edge inset while preserving denser internal Table columns (PD-023 / `docs/design-language.md`).
 - A landing/dashboard page may be structurally exceptional without using a different normal surface edge axis. In application-shell pages, `Card padding="lg"` or ad-hoc `p-5/p-8` must not be used as an accidental alignment substitute; any spacious exception must be semantic and documented.
 - Dense desktop Table row actions follow DL-09: use one compact structural action family, keep the cluster single-line, and let Core Table horizontal overflow absorb width pressure. Semantic danger changes color rather than button structure; excessive low-frequency actions move behind an overflow interaction instead of wrapping.
-- A design/interface hardening stage is incomplete until its corpus conformance pass has covered the completed comparison corpus and currently migrated pages in the active product line. Documentation-only adoption is not enough.
+- A design/interface hardening stage is incomplete until its corpus conformance pass has covered all completed comparison corpora relevant to the rule. Documentation-only adoption is not enough.
 - Visible elevation must use semantic roles (`shadow-raised`, `shadow-overlay`, `shadow-modal`). Raw size shadow aliases are compatibility-only and intentionally flat. Business surfaces remain ground by default; a box, border, white/neutral background or CSS positioning does not justify elevation. `sticky` does not imply overlay, and `BulkActionBar` is a sticky contextual ground surface by default. New raised product surfaces must be added to the explicit audit whitelist with a product-level reason.
 
 Current Tabs canonical high-level API follows PD-010: `activeKey`, `defaultActiveKey`, `items[].key`, `onChange`; pre-reset value-style names are temporary migration compatibility only. Tabs owns the TabBar↔TabPanel structural gap and keeps its active indicator inside the TabList scroll boundary.
