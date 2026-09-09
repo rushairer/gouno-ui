@@ -24,6 +24,21 @@ const BlogArticleDetailDemo = lazy(() =>
 const BlogDiscoveryIndexDemo = lazy(() =>
   import("../demos/products/blog-discovery-indexes").then((module) => ({ default: module.BlogDiscoveryIndexDemo })),
 );
+const BlogAboutDemo = lazy(() =>
+  import("../demos/products/blog-document-pages").then((module) => ({ default: module.BlogAboutDemo })),
+);
+const BlogCustomPageDemo = lazy(() =>
+  import("../demos/products/blog-document-pages").then((module) => ({ default: module.BlogCustomPageDemo })),
+);
+const BlogAccountNotificationsDemo = lazy(() =>
+  import("../demos/products/blog-account-pages").then((module) => ({ default: module.BlogAccountNotificationsDemo })),
+);
+const BlogAccountSettingsDemo = lazy(() =>
+  import("../demos/products/blog-account-pages").then((module) => ({ default: module.BlogAccountSettingsDemo })),
+);
+const BlogNotFoundDemo = lazy(() =>
+  import("../demos/products/blog-not-found").then((module) => ({ default: module.BlogNotFoundDemo })),
+);
 const BlogAdminDashboardDemo = lazy(() =>
   import("../demos/products/blog-admin-dashboard").then((module) => ({ default: module.BlogAdminDashboardDemo })),
 );
@@ -133,6 +148,16 @@ export function ShowcasePage({ page, workspace }: { page: string; workspace: Sho
       return <Suspense fallback={loading}><BlogDiscoveryIndexDemo page="tags" /></Suspense>;
     case "blog-archive":
       return <Suspense fallback={loading}><BlogDiscoveryIndexDemo page="archive" /></Suspense>;
+    case "blog-about":
+      return <Suspense fallback={loading}><BlogAboutDemo /></Suspense>;
+    case "blog-custom-page":
+      return <Suspense fallback={loading}><BlogCustomPageDemo /></Suspense>;
+    case "blog-account-notifications":
+      return <Suspense fallback={loading}><BlogAccountNotificationsDemo /></Suspense>;
+    case "blog-account-settings":
+      return <Suspense fallback={loading}><BlogAccountSettingsDemo /></Suspense>;
+    case "blog-not-found":
+      return <Suspense fallback={loading}><BlogNotFoundDemo /></Suspense>;
     case "blog-admin-dashboard":
       return <Suspense fallback={loading}><BlogAdminDashboardDemo /></Suspense>;
     case "blog-admin-ai-operations":
