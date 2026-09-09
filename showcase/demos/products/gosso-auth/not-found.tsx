@@ -4,7 +4,7 @@ import { Button, Card, Heading, Text } from "../../../../src/core";
 export function GossoNotFoundDemo() {
   return (
     <div className="flex min-h-[520px] items-center justify-center py-8">
-      <Card padding="lg" className="w-full max-w-lg text-center">
+      <Card padding="lg" variant="elevated" className="w-full max-w-lg text-center">
         <div className="mx-auto mb-5 flex size-14 items-center justify-center rounded-full bg-muted text-muted-foreground">
           <HelpCircle aria-hidden="true" className="size-7" />
         </div>
