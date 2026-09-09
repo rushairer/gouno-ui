@@ -1,35 +1,31 @@
-import { Plus, RefreshCw } from "lucide-react";
-import { Button, Heading, Tag, Text } from "../../src/core";
-import { PageHeader } from "../../src/gouno";
+import { Heading, Tag, Text } from "../../src/core";
 import { ApiTable, type ApiRow } from "../components/api-table";
 import { DemoSection } from "../components/demo-section";
-
-const exampleCode = `import { Plus, RefreshCw } from "lucide-react";
-import { Button } from "@gouno/ui/core";
-import { PageHeader } from "@gouno/ui/gouno";
-
-export function OAuthClientsHeader() {
-  return (
-    <PageHeader
-      title="OAuth2 客户端"
-      description="注册和维护身份平台客户端、回调地址与授权范围。"
-      actions={
-        <>
-          <Button icon={<RefreshCw />}>刷新</Button>
-          <Button variant="solid" color="primary" icon={<Plus />}>
-            注册客户端
-          </Button>
-        </>
-      }
-    />
-  );
-}`;
+import { canonicalExampleSource } from "./example-source";
+import GounoPageHeaderExample from "./examples/gouno-page-header";
+import GounoPageHeaderExampleSource from "./examples/gouno-page-header.tsx?raw";
 
 export const pageHeaderApi: ApiRow[] = [
-  { name: "title", type: "ReactNode", description: "页面主标题，渲染为唯一页面级 h1。" },
-  { name: "description", type: "ReactNode", description: "标题下方的页面级说明。" },
-  { name: "actions", type: "ReactNode", description: "页面级主次操作区域；内部统一换行和间距。" },
-  { name: "className", type: "string", description: "扩展页面标题布局，不应承担页面内容间距。" },
+  {
+    name: "title",
+    type: "ReactNode",
+    description: "页面主标题，渲染为唯一页面级 h1。",
+  },
+  {
+    name: "description",
+    type: "ReactNode",
+    description: "标题下方的页面级说明。",
+  },
+  {
+    name: "actions",
+    type: "ReactNode",
+    description: "页面级主次操作区域；内部统一换行和间距。",
+  },
+  {
+    name: "className",
+    type: "string",
+    description: "扩展页面标题布局，不应承担页面内容间距。",
+  },
 ];
 
 export function GounoPageHeaderDemo() {
@@ -50,21 +46,10 @@ export function GounoPageHeaderDemo() {
 
       <DemoSection
         title="基础用法"
-        description="Preview 与可复制的 @gouno/ui/gouno 代码保持在同一个示例单元。"
-        code={exampleCode}
+        description="Preview 直接渲染下面 Code 所读取的同一个 PageHeader 示例文件。"
+        code={canonicalExampleSource(GounoPageHeaderExampleSource)}
       >
-        <PageHeader
-          title="OAuth2 客户端"
-          description="注册和维护身份平台客户端、回调地址与授权范围。"
-          actions={
-            <>
-              <Button icon={<RefreshCw />}>刷新</Button>
-              <Button variant="solid" color="primary" icon={<Plus />}>
-                注册客户端
-              </Button>
-            </>
-          }
-        />
+        <GounoPageHeaderExample />
       </DemoSection>
 
       <section className="space-y-4">

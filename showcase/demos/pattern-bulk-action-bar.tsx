@@ -1,49 +1,52 @@
-import { useState } from "react";
-import { Archive, Sparkles, Trash2 } from "lucide-react";
-import { Button, Heading, Tag, Text } from "../../src/core";
-import { BulkActionBar } from "../../src/patterns";
+import { Heading, Tag, Text } from "../../src/core";
+import { ApiTable, type ApiRow } from "../components/api-table";
 import { DemoSection } from "../components/demo-section";
+import { canonicalExampleSource } from "./example-source";
+import BulkActionBarExample from "./examples/pattern-bulk-action-bar";
+import BulkActionBarExampleSource from "./examples/pattern-bulk-action-bar.tsx?raw";
 
-const exampleCode = `import { useState } from "react";
-import { Button } from "@gouno/ui/core";
-import { BulkActionBar } from "@gouno/ui/patterns";
-
-export function BatchActions() {
-  const [selected, setSelected] = useState(["a", "b", "c"]);
-
-  return selected.length > 0 ? (
-    <BulkActionBar
-      selectionLabel={"已选择 " + selected.length + " 项"}
-      onCancel={() => setSelected([])}
-    >
-      <Button size="small">归档</Button>
-      <Button size="small" color="error">删除</Button>
-    </BulkActionBar>
-  ) : null;
-}`;
-
-const api = [
-  ["selectionLabel", "ReactNode", "当前选择上下文，例如“已选择 3 项”。"],
-  ["onCancel", "() => void", "取消当前选择；Pattern 固定提供取消入口。"],
-  ["cancelLabel", "ReactNode", "取消入口文案，默认“取消”。"],
-  ["children", "ReactNode", "任意产品级批量动作；Pattern 不认识 AI、发布、删除等业务。"],
-  ["aria-label", "string", "标准 toolbar accessible name，默认“批量操作”。"],
-  ["className", "string", "扩展外层 sticky toolbar surface。"],
-] as const;
+const api: ApiRow[] = [
+  {
+    name: "selectionLabel",
+    type: "ReactNode",
+    description: "当前选择上下文，例如“已选择 3 项”。",
+  },
+  {
+    name: "onCancel",
+    type: "() => void",
+    description: "取消当前选择；Pattern 固定提供取消入口。",
+  },
+  {
+    name: "cancelLabel",
+    type: "ReactNode",
+    description: "取消入口文案。",
+    defaultValue: '"取消"',
+  },
+  {
+    name: "children",
+    type: "ReactNode",
+    description: "任意产品级批量动作；Pattern 不认识 AI、发布、删除等业务。",
+  },
+  {
+    name: "aria-label",
+    type: "string",
+    description: "标准 toolbar accessible name。",
+    defaultValue: '"批量操作"',
+  },
+  {
+    name: "className",
+    type: "string",
+    description: "扩展外层 sticky toolbar surface。",
+  },
+];
 
 export function PatternBulkActionBarDemo() {
-  const [selected, setSelected] = useState(["a", "b", "c"]);
-  const [message, setMessage] = useState("选择三项以显示批量操作。 ");
-
-  const reset = () => {
-    setSelected(["a", "b", "c"]);
-    setMessage("已恢复 3 项选择。 ");
-  };
-
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
-        <div className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">Pattern · @gouno/ui/patterns</div>
+        <div className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+          Pattern · @gouno/ui/patterns
+        </div>
         <div className="flex flex-wrap items-center gap-3">
           <Heading level={1}>BulkActionBar 批量操作栏</Heading>
           <Tag color="success">Admitted</Tag>
@@ -55,53 +58,16 @@ export function PatternBulkActionBarDemo() {
 
       <DemoSection
         title="批量选择与操作"
-        description="Preview 展示交互状态，Code 给出同一 Pattern 的 canonical 消费方式。"
-        code={exampleCode}
+        description="Preview 直接渲染下面 Code 所读取的同一份示例源码；选择资源、消息状态以及三个动作都不会再出现两套实现。"
+        code={canonicalExampleSource(BulkActionBarExampleSource)}
       >
-        <div className="flex min-h-64 flex-col gap-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <Text size="sm" tone="muted">{message}</Text>
-            {selected.length === 0 ? <Button size="small" onClick={reset}>恢复选择</Button> : null}
-          </div>
-          <div className="grid gap-3 sm:grid-cols-3">
-            {["文章 A", "文章 B", "文章 C"].map((item, index) => (
-              <button
-                key={item}
-                type="button"
-                aria-pressed={selected.includes(String.fromCharCode(97 + index))}
-                onClick={() => {
-                  const key = String.fromCharCode(97 + index);
-                  setSelected((current) => current.includes(key) ? current.filter((value) => value !== key) : [...current, key]);
-                }}
-                className="rounded-lg border bg-card px-4 py-5 text-left text-sm transition-colors hover:bg-muted aria-pressed:border-primary/40 aria-pressed:bg-accent/30"
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-          {selected.length > 0 ? (
-            <BulkActionBar selectionLabel={`已选择 ${selected.length} 项`} onCancel={() => setSelected([])}>
-              <Button size="small" icon={<Sparkles />} onClick={() => setMessage(`对 ${selected.length} 项执行辅助动作。`)}>辅助</Button>
-              <Button size="small" icon={<Archive />} onClick={() => setMessage(`已归档 ${selected.length} 项。`)}>归档</Button>
-              <Button size="small" color="error" icon={<Trash2 />} onClick={() => setMessage(`请求删除 ${selected.length} 项。`)}>删除</Button>
-            </BulkActionBar>
-          ) : null}
-        </div>
+        <BulkActionBarExample />
       </DemoSection>
 
-      <div>
+      <section className="space-y-4">
         <Heading level={3}>Public API</Heading>
-        <div className="mt-3 overflow-x-auto rounded-lg border">
-          <table className="w-full min-w-[760px] text-left text-sm">
-            <thead className="bg-muted/50 text-xs text-muted-foreground"><tr><th className="px-4 py-3 font-medium">API</th><th className="px-4 py-3 font-medium">Type</th><th className="px-4 py-3 font-medium">职责</th></tr></thead>
-            <tbody className="divide-y">
-              {api.map(([name, type, description]) => (
-                <tr key={name}><td className="px-4 py-3 font-mono text-xs text-primary">{name}</td><td className="px-4 py-3 font-mono text-xs text-muted-foreground">{type}</td><td className="px-4 py-3 text-muted-foreground">{description}</td></tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+        <ApiTable rows={api} />
+      </section>
     </div>
   );
 }
