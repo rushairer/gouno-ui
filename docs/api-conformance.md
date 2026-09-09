@@ -39,6 +39,7 @@
 | API-019 | `NavigationGroup` 拥有侧栏导航 section 的组内与组间节奏；`label` 可选。带 label 的组渲染可见标题，无 label 的组用于概览等独立一级入口并保持相同 section spacing，产品不得复制 `mb-*` 修补组间距。 | NavigationGroup focused test / AppShell Showcase / Gosso Admin |
 | API-020 | Core `CodeBlock` 使用 `code` 作为唯一权威源码；拥有只读代码框、横向滚动、可选语言标识与复制成功反馈。`renderCode(code)` 仅是呈现钩子并接收同一 `code`，语法高亮/解析引擎继续由调用方拥有，不把 Prism、rehype 等第三方类型或依赖固化进公共 API。 | Core CodeBlock docs/focused tests / PD-038 |
 | API-021 | Core `Anchor` 保持真实 `<a href="#...">` 章节链接与标准 `aria-label`/HTML 属性；默认 `offset=0` 不劫持原生 hash 导航。调用方显式设置 `offset` 时，滚动目标必须按 `scrollY + target.top - offset` 计算，而不是把 offset 本身当绝对滚动位置。Sticky header 优先由目标 heading 的 `scroll-margin-top` 拥有。 | Core Anchor same-source demo/focused tests / PD-039 |
+| API-022 | Core `Empty` 只拥有 caller-owned `title/description/icon/action` 与标准 div/ARIA 扩展；不提供默认业务文案、不制造 Card-like border/shadow/radius，也不默认声明 live region。Surface 和动态播报策略由调用方按真实语义拥有。 | Core Empty same-source demos/API docs/focused tests + Gosso Admin/Blog Admin/Blog public corpus / PD-046 |
 
 ## 当前破坏式迁移说明
 
@@ -86,6 +87,8 @@ Alert 的 canonical `variant` 只表示 `outlined|filled` 视觉形态。当前 
 Core `CodeBlock` 的复制源与显示源不拆成两套属性。`code` 是唯一权威字符串；`renderCode` 只能消费该字符串做 token/高亮呈现，不能提供另一个 source/value/children 写入口。语法引擎属于调用方，所以 Showcase 的 Prism 适配和 Blog 的 Markdown/rehype 组合可以共存而不污染 Core 依赖边界。
 
 Core `Anchor` 的默认路径保持原生 hash 链接语义，不用组件 JS 重写浏览器滚动。真实阅读页的固定头部遮挡通过 heading `scroll-margin-top` 解决，因此键盘激活、复制链接和直接访问 hash 共用同一位置规则。只有调用方不能控制目标样式而显式传 `offset` 时，Anchor 才拦截本地 hash 点击并按目标真实位置减去偏移量平滑滚动；外部链接和缺失目标不被拦截。
+
+Core `Empty` 不再把业务文案、Surface 或 live-region 策略当作默认组件行为。调用方必须显式提供需要展示的 `title/description`；需要边界时由真实 Card/Table/List/route surface 拥有；需要动态播报时通过标准 `role` / `aria-live` 显式声明。旧 `"No data"`、dashed border/radius 和自动 `role="status"` 都不是 canonical contract，也不通过兼容 alias 保留。
 
 ## Core 继续验证原则
 
