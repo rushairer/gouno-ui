@@ -44,6 +44,7 @@ export const coreRuntimeFamilyCoverage = {
   Heading: { familyId: "core-typography", review: "covered" },
   Text: { familyId: "core-typography", review: "covered" },
   Typography: { familyId: "core-typography", review: "covered" },
+  CodeBlock: { familyId: "core-code-block", review: "covered" },
   Input: { familyId: "core-input", review: "covered" },
   SearchField: {
     familyId: "core-input",
