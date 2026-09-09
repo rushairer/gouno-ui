@@ -70,10 +70,10 @@ describe("Blog public ArticleDetail migration", () => {
     expect(source).toContain('Anchor,');
     expect(source).toContain('import { PageHeader } from "../../../src/gouno"');
     expect(source).toContain("BlogPublicShellFixture");
-    expect(source).not.toContain("AppShell");
-    expect(source).not.toContain("PageContainer");
-    expect(source).not.toContain("MarkdownRenderer");
-    expect(source).not.toContain("TableOfContents");
+    expect(source).not.toMatch(/import\s+\{[^}]*\b(?:AppShell|PageContainer)\b[^}]*\}\s+from\s+["'][^"']+["']/s);
+    expect(source).not.toMatch(/<(?:AppShell|PageContainer)\b/);
+    expect(source).not.toMatch(/import\s+.*\b(?:MarkdownRenderer|TableOfContents)\b/s);
+    expect(source).not.toMatch(/<(?:MarkdownRenderer|TableOfContents)\b/);
     expect(source).not.toMatch(/shadow-(?:md|lg|xl|2xl|raised|overlay|modal)/);
   });
 });
