@@ -77,7 +77,7 @@ describe("Blog public account page migrations", () => {
     expect(screen.getByText("paw@example.test")).toBeTruthy();
     expect(screen.getByText(/密码、MFA、Passkey 与会话由 GOSSO/)).toBeTruthy();
 
-    const name = screen.getByLabelText("显示名称");
+    const name = screen.getByLabelText(/^显示名称/);
     fireEvent.change(name, { target: { value: "Paw Studio" } });
     expect(screen.getByText("有未保存的 Blog-local 修改")).toBeTruthy();
 
@@ -94,7 +94,7 @@ describe("Blog public account page migrations", () => {
   it("retains edited values when Blog-local save fails", () => {
     renderSettings("save-error");
 
-    const name = screen.getByLabelText("显示名称") as HTMLInputElement;
+    const name = screen.getByLabelText(/^显示名称/) as HTMLInputElement;
     fireEvent.change(name, { target: { value: "Paw Draft" } });
     fireEvent.click(screen.getByRole("button", { name: "保存设置" }));
 
