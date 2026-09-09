@@ -24,13 +24,15 @@ See [`docs/architecture.md`](docs/architecture.md) and [`docs/product-driven-dev
 ## Public entry points
 
 ```ts
-import { Button, Pagination, Table, Tabs } from "@gouno/ui/core";
+import { Button, CodeBlock, Pagination, Table, Tabs } from "@gouno/ui/core";
 import { ThemeProvider, ThemeToggle, useTheme } from "@gouno/ui/theme";
 import { BulkActionBar } from "@gouno/ui/patterns";
 import { AppShell, PageContainer, PageHeader } from "@gouno/ui/gouno";
 ```
 
 `BulkActionBar` is the first admitted Pattern. It was extracted only after three independently rebuilt Blog Admin workflows (Posts, Comments and Categories) converged on the same selection-aware toolbar interaction. Its API intentionally excludes resource-specific or AI-specific shortcuts.
+
+`CodeBlock` was admitted to Core only after the real Blog article renderer independently proved the same read-only code frame, horizontal overflow and copy-feedback contract that Showcase had previously exercised privately. Core deliberately does not own a syntax highlighter; consumers may inject token rendering through `renderCode(code)` while `code` remains the sole display/copy source.
 
 The root `@gouno/ui` is an external compatibility umbrella, not a fifth owner. Repository implementation and Showcase import canonical formal layers instead. Source wildcard paths and Legacy paths are not public API.
 
@@ -47,7 +49,7 @@ The root `@gouno/ui` is an external compatibility umbrella, not a fifth owner. R
 - Durable decisions live in [`docs/abstraction-register.md`](docs/abstraction-register.md).
 - Public naming/state/composition rules live in [`docs/api-specification.md`](docs/api-specification.md).
 
-Current admitted abstractions demonstrate the process rather than a fixed catalog: `AppShell`/`PageContainer` were the initial shell baseline; `PageHeader` was re-admitted only after real page evidence; `BulkActionBar` became the first Pattern only after three different migrated collection workflows proved a smaller shared interaction than the surrounding page structures.
+Current admitted abstractions demonstrate the process rather than a fixed catalog: `AppShell`/`PageContainer` were the initial shell baseline; `PageHeader` was re-admitted only after real page evidence; `BulkActionBar` became the first Pattern only after three different migrated collection workflows proved a smaller shared interaction than the surrounding page structures; `CodeBlock` moved from Showcase-private tooling into Core only when the public Blog reading path supplied independent product demand.
 
 ## Showcase role
 
@@ -58,7 +60,7 @@ Showcase separates product workspace from design-system ownership:
 - **Blog Admin** — completed second-product comparison corpus.
 - **Blog** — active public-site migration workspace; only genuinely migrated public pages appear here.
 
-Showcase dogfoods admitted canonical APIs, but documentation tooling such as `CodeBlock`, API tables, demo framing and viewport simulation may stay private. Showcase-only repetition is supporting evidence, not sufficient reason to create a public abstraction. If a real product independently needs the same capability, the normal admission process decides whether it moves into Core/Pattern/Gouno.
+Showcase dogfoods admitted canonical APIs. `CodeBlock` is now a canonical Core component, while Showcase's Prism renderer remains a private adapter layered on top of it. API tables, demo framing, viewport simulation and similar documentation tooling remain private; Showcase-only repetition is supporting evidence and cannot create another public abstraction by itself.
 
 ## Tabs
 
