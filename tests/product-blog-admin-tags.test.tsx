@@ -27,7 +27,7 @@ describe("Blog Admin Tags product migration fixture", () => {
     expect(screen.getByRole("button", { name: "删除标签 React" })).toBeTruthy();
   });
 
-  it("validates BulkActionBar in a Card Grid without expanding the Pattern API", () => {
+  it("restores the real taxonomy WorkflowLauncher resource and Run semantics", () => {
     render(<BlogAdminTagsDemo />);
 
     fireEvent.click(screen.getByRole("checkbox", { name: "选择标签 React" }));
@@ -35,12 +35,28 @@ describe("Blog Admin Tags product migration fixture", () => {
     expect(toolbar.getAttribute("data-slot")).toBe("bulk-action-bar");
     expect(screen.getByText("已选择 1 个标签")).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("button", { name: "交给 AI" }));
-    const dialog = screen.getByRole("dialog");
-    expect(within(dialog).getByText("将所选标签交给 AI")).toBeTruthy();
+    fireEvent.click(within(toolbar).getByRole("button", { name: "交给 AI" }));
+    const dialog = screen.getByRole("dialog", { name: "将所选标签交给 AI" });
+    expect((within(dialog).getByRole("combobox", { name: "Workflow" }) as HTMLButtonElement).textContent).toContain("分类与标签整理");
+    expect(within(dialog).getByText("联合分析手选分类与标签的结构质量。")).toBeTruthy();
     expect(within(dialog).getByText("React")).toBeTruthy();
-    fireEvent.click(within(dialog).getByRole("button", { name: "启动工作流" }));
-    expect(screen.getByText("已将 1 个标签交给 AI 工作流（Showcase 模拟）。")).toBeTruthy();
+    expect(within(dialog).getByText("34 篇文章")).toBeTruthy();
+
+    fireEvent.click(within(dialog).getByRole("button", { name: "运行" }));
+    expect(within(dialog).getByText("Workflow 已提交（Run #260）。范围已锁定到本次选择的 1 项资源。")).toBeTruthy();
+    fireEvent.click(within(dialog).getByRole("button", { name: "打开运行中心" }));
+    expect(screen.getByText("将进入 /admin/ai-ops?tab=records&record=workflow&workflow=77&run=260（Showcase 模拟）。")).toBeTruthy();
+  });
+
+  it("allows the taxonomy resource input to remove a preselected tag", () => {
+    render(<BlogAdminTagsDemo />);
+    fireEvent.click(screen.getByRole("checkbox", { name: "选择标签 React" }));
+    fireEvent.click(screen.getByRole("button", { name: "交给 AI" }));
+
+    const dialog = screen.getByRole("dialog", { name: "将所选标签交给 AI" });
+    fireEvent.click(within(dialog).getByRole("button", { name: "移除" }));
+    expect(within(dialog).getByText("至少保留 1 个标签资源才能运行。")).toBeTruthy();
+    expect((within(dialog).getByRole("button", { name: "运行" }) as HTMLButtonElement).disabled).toBe(true);
   });
 
   it("preserves rename and merge semantics inside the product workflow", () => {

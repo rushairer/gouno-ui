@@ -17,6 +17,7 @@ import {
 import { PageHeader } from "../../../src/gouno";
 import { BulkActionBar } from "../../../src/patterns";
 import { FixtureDock } from "../../components/fixture-dock";
+import { BlogAdminWorkflowLauncherFixture } from "./blog-admin-workflow-launcher-fixture";
 
 type FixtureScenario = "data" | "loading" | "empty" | "error" | "partial-failure";
 type TagEdit = { name: string; mode: "rename" | "merge" } | null;
@@ -42,6 +43,14 @@ const scenarioOptions = [
   { value: "empty", label: "空状态" },
   { value: "error", label: "错误" },
   { value: "partial-failure", label: "批量部分失败" },
+] as const;
+
+const taxonomyWorkflows = [
+  {
+    id: 77,
+    name: "分类与标签整理",
+    description: "联合分析手选分类与标签的结构质量。",
+  },
 ] as const;
 
 function LoadingTags() {
@@ -79,7 +88,7 @@ export function BlogAdminTagsDemo() {
   const [editValue, setEditValue] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
   const [aiOpen, setAIOpen] = useState(false);
-  const [notice, setNotice] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [notice, setNotice] = useState<{ type: "success" | "info" | "error"; text: string } | null>(null);
 
   const visibleTags = scenario === "empty" ? [] : tags;
   const selectedTags = useMemo(
@@ -95,7 +104,7 @@ export function BlogAdminTagsDemo() {
       : current.filter((item) => item !== name));
   };
 
-  const openEdit = (tag: TagFixture, mode: TagEdit extends infer _T ? "rename" | "merge" : never) => {
+  const openEdit = (tag: TagFixture, mode: "rename" | "merge") => {
     setTagEdit({ name: tag.name, mode });
     setEditValue("");
     setNotice(null);
@@ -161,12 +170,6 @@ export function BlogAdminTagsDemo() {
     setDeleteTarget(null);
   };
 
-  const launchAI = () => {
-    const count = selected.length;
-    setAIOpen(false);
-    setNotice({ type: "success", text: `已将 ${count} 个标签交给 AI 工作流（Showcase 模拟）。` });
-  };
-
   const deleteDescription: ReactNode = deleteTarget?.kind === "batch"
     ? `确认删除选中的 ${selected.length} 个标签？这些标签会从文章中移除。`
     : deleteTarget?.kind === "single"
@@ -177,7 +180,7 @@ export function BlogAdminTagsDemo() {
     <div className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/tags"
-        note="保留真实标签卡片网格、重命名/合并、批量清洗、部分失败保留选择与 AI Workflow 语义；Fixture 不请求真实 Blog API。"
+        note="保留真实标签卡片网格、重命名/合并、批量清洗、部分失败保留选择，以及 tag resource 的真实 WorkflowLauncher 资源输入与 Run 反馈；Fixture 不请求真实 Blog/AI API。"
         controls={(
           <Segmented<FixtureScenario>
             aria-label="标签页 Fixture 状态"
@@ -211,17 +214,9 @@ export function BlogAdminTagsDemo() {
       ) : null}
 
       {selected.length > 0 ? (
-        <BulkActionBar
-          selectionLabel={`已选择 ${selected.length} 个标签`}
-          onCancel={clearSelection}
-        >
+        <BulkActionBar selectionLabel={`已选择 ${selected.length} 个标签`} onCancel={clearSelection}>
           <Button size="small" icon={<Bot />} onClick={() => setAIOpen(true)}>交给 AI</Button>
-          <Button
-            size="small"
-            color="error"
-            icon={<Trash2 />}
-            onClick={() => setDeleteTarget({ kind: "batch" })}
-          >
+          <Button size="small" color="error" icon={<Trash2 />} onClick={() => setDeleteTarget({ kind: "batch" })}>
             删除
           </Button>
         </BulkActionBar>
@@ -239,10 +234,7 @@ export function BlogAdminTagsDemo() {
         <LoadingTags />
       ) : visibleTags.length === 0 ? (
         <Card padding="lg">
-          <Empty
-            title="文章添加标签后会自动在这里汇总。"
-            description="标签来自文章内容，无需在这里提前创建。"
-          />
+          <Empty title="文章添加标签后会自动在这里汇总。" description="标签来自文章内容，无需在这里提前创建。" />
         </Card>
       ) : (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -264,10 +256,7 @@ export function BlogAdminTagsDemo() {
                 </div>
                 <Tag color="default" className="shrink-0 font-mono">{tag.postCount} 篇</Tag>
               </div>
-              <div
-                className="mt-4 flex flex-wrap items-center justify-end gap-1 border-t pt-3"
-                aria-label={`标签 ${tag.name} 操作`}
-              >
+              <div className="mt-4 flex flex-wrap items-center justify-end gap-1 border-t pt-3" aria-label={`标签 ${tag.name} 操作`}>
                 <Button
                   size="small"
                   variant="text"
@@ -339,22 +328,24 @@ export function BlogAdminTagsDemo() {
         <Text size="sm" tone="muted">删除只移除标签关联，不删除文章。</Text>
       </Modal>
 
-      <Modal
+      <BlogAdminWorkflowLauncherFixture
         open={aiOpen}
         title="将所选标签交给 AI"
-        description="真实产品会以 tag resource keys 启动 WorkflowLauncher。"
+        description="只显示 input schema 声明 tag resource 的已启用 Workflow，并把本次手选标签写入资源字段。"
+        resourceLabel="标签"
+        resources={selectedTags.map((tag) => ({
+          key: tag.name,
+          label: tag.name,
+          detail: `${tag.postCount} 篇文章`,
+        }))}
+        workflows={taxonomyWorkflows}
+        runIdBase={260}
         onClose={() => setAIOpen(false)}
-        onOk={launchAI}
-        okText="启动工作流"
-        okButtonProps={{ variant: "solid", color: "primary" }}
-      >
-        <div className="flex flex-col gap-3">
-          <Text size="sm" tone="muted">本次将处理 {selectedTags.length} 个标签：</Text>
-          <div className="flex flex-wrap gap-2">
-            {selectedTags.map((tag) => <Tag key={tag.name}>{tag.name}</Tag>)}
-          </div>
-        </div>
-      </Modal>
+        onNavigate={(route) => {
+          setAIOpen(false);
+          setNotice({ type: "info", text: `将进入 ${route}（Showcase 模拟）。` });
+        }}
+      />
     </div>
   );
 }
