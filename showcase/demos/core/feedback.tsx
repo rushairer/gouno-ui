@@ -32,9 +32,6 @@ import {
   Modal,
   NotificationProvider,
   Popconfirm,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Progress,
   Result,
   Skeleton,
@@ -42,10 +39,6 @@ import {
   Spin,
   Spinner,
   Text,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
   Tour,
   useMessage,
   useNotification,
@@ -452,41 +445,15 @@ export const feedbackDocuments: Record<string, ComponentDocument> = {
     ],
     api: drawerApi,
   },
-  popover: {
-    title: "Popover 气泡卡片",
-    description: "由触发器打开的轻量内容面板。",
-    code: "<Popover><PopoverTrigger>打开</PopoverTrigger><PopoverContent>内容</PopoverContent></Popover>",
-    render: () => (
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button>打开 Popover</Button>
-        </PopoverTrigger>
-        <PopoverContent>可放置说明和操作。</PopoverContent>
-      </Popover>
-    ),
-  },
-  tooltip: {
-    title: "Tooltip 文字提示",
-    description: "悬停或聚焦时解释控件。",
-    code: "<TooltipProvider><Tooltip><TooltipTrigger asChild><Button>聚焦或悬停</Button></TooltipTrigger><TooltipContent>补充说明</TooltipContent></Tooltip></TooltipProvider>",
-    render: () => (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button>聚焦或悬停</Button>
-          </TooltipTrigger>
-          <TooltipContent>补充说明</TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    ),
-  },
   popconfirm: {
     title: "Popconfirm 气泡确认",
     description: "在危险或不可逆操作前请求确认。",
     code: '<Popconfirm title="确认删除？"><Button>删除</Button></Popconfirm>',
     render: () => (
       <Popconfirm title="确认删除？" description="删除后无法恢复。" danger>
-        <Button variant="solid" color="error">删除</Button>
+        <Button variant="solid" color="error">
+          删除
+        </Button>
       </Popconfirm>
     ),
   },
