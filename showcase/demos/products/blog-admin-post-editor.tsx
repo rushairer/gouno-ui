@@ -391,7 +391,7 @@ export function BlogAdminPostEditorDemo({
         <Alert type="error" showIcon title={error} closable={{ onClose: () => setError(null) }} />
       ) : null}
 
-      <Card padding="none" className="gap-0 overflow-clip shadow-sm" aria-label="文章编辑器">
+      <Card padding="none" className="gap-0 overflow-clip" aria-label="文章编辑器">
         <header className="flex flex-col gap-3 border-b px-6 py-4 lg:flex-row lg:items-center">
           <Button variant="text" icon={<ArrowLeft />} onClick={() => dirty ? setExitOpen(true) : setNotice("将返回 /admin/posts（Showcase 模拟）。") }>
             返回文章列表
