@@ -218,7 +218,7 @@ function App() {
       data-showcase-nav-item
       aria-current={page === item.id ? "page" : undefined}
       aria-label={item.progress < 100 ? `${item.label}，API 与示例阶段性完成度约 ${item.progress}%` : item.label}
-      className={`${navigationItemClass} ${page === item.id ? "active" : ""}`}
+      className={navigationItemClass}
       onClick={(event) => {
         event.preventDefault();
         window.location.hash = item.id;
@@ -273,7 +273,7 @@ function App() {
     <ThemeProvider brand={brand} storageKey="gouno-ui-showcase:theme">
       {!embedded ? (
         <div className="h-dvh overflow-hidden bg-background text-foreground">
-          <header className="flex h-12 items-center justify-between gap-3 border-b border-primary/20 bg-sidebar px-3 text-sidebar-foreground shadow-sm lg:px-4">
+          <header className="flex h-12 items-center justify-between gap-3 border-b border-primary/20 bg-sidebar px-3 text-sidebar-foreground lg:px-4">
             <div className="flex items-center gap-2 text-xs font-semibold tracking-wide text-primary"><span className="size-2 rounded-full bg-primary" />Gouno UI Showcase</div>
             <div className="flex flex-wrap items-center gap-2">{workspaceControl}{viewportControl}</div>
           </header>
@@ -283,7 +283,7 @@ function App() {
               key={`${workspace}-${brand}-${previewWidth}`}
               title={`${current?.label ?? workspaceLabel} ${previewWidth} 视口预览`}
               src={iframeSrc}
-              className={previewWidth === "full" ? "block h-full w-full border-0 bg-background" : "mx-auto block rounded-lg border bg-background shadow-sm"}
+              className={previewWidth === "full" ? "block h-full w-full border-0 bg-background" : "mx-auto block rounded-lg border bg-background"}
               style={{
                 boxSizing: previewWidth === "full" ? "border-box" : "content-box",
                 width: previewWidth === "full" ? "100%" : previewWidth === "desktop" ? 1024 : previewWidth === "tablet" ? 768 : 390,
