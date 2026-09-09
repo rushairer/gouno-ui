@@ -48,15 +48,15 @@ describe("Blog Admin Tags product migration fixture", () => {
     expect(screen.getByText("将进入 /admin/ai-ops?tab=records&record=workflow&workflow=77&run=260（Showcase 模拟）。")).toBeTruthy();
   });
 
-  it("allows the taxonomy resource input to remove a preselected tag", () => {
+  it("keeps Workflow scope fixed to the source-page selection", () => {
     render(<BlogAdminTagsDemo />);
     fireEvent.click(screen.getByRole("checkbox", { name: "选择标签 React" }));
     fireEvent.click(screen.getByRole("button", { name: "交给 AI" }));
 
     const dialog = screen.getByRole("dialog", { name: "将所选标签交给 AI" });
-    fireEvent.click(within(dialog).getByRole("button", { name: "移除" }));
-    expect(within(dialog).getByText("至少保留 1 个标签资源才能运行。")).toBeTruthy();
-    expect((within(dialog).getByRole("button", { name: "运行" }) as HTMLButtonElement).disabled).toBe(true);
+    expect(within(dialog).queryByRole("button", { name: "移除" })).toBeNull();
+    expect(within(dialog).getByText("范围来自当前页面选择，启动后不可在此修改")).toBeTruthy();
+    expect((within(dialog).getByRole("button", { name: "运行" }) as HTMLButtonElement).disabled).toBe(false);
   });
 
   it("preserves rename and merge semantics inside the product workflow", () => {

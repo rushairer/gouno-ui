@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, Button, FormField, Modal, Select, Text } from "../../../src/core";
 
 export type BlogAdminWorkflowResourceFixture = {
@@ -29,6 +29,10 @@ type BlogAdminWorkflowLauncherFixtureProps = {
  * Showcase-only mirror of the real Blog WorkflowLauncher interaction contract.
  * Resource schemas and run semantics remain product-local and must not become a
  * public Gouno UI Pattern API without independent product evidence.
+ *
+ * The selected resource scope is intentionally immutable inside the launcher.
+ * The real product seeds Workflow input from the selection made on the source
+ * page and does not expose a second, conflicting resource-removal interaction.
  */
 export function BlogAdminWorkflowLauncherFixture({
   open,
@@ -43,30 +47,24 @@ export function BlogAdminWorkflowLauncherFixture({
 }: BlogAdminWorkflowLauncherFixtureProps) {
   const workflowSignature = workflows.map((workflow) => `${workflow.id}:${workflow.name}`).join("|");
   const [workflowID, setWorkflowID] = useState(() => String(workflows[0]?.id ?? ""));
-  const [removedKeys, setRemovedKeys] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<{ runID: number; text: string } | null>(null);
   const [nextRunID, setNextRunID] = useState(runIdBase);
 
   useEffect(() => {
     if (!open) return;
     setWorkflowID(String(workflows[0]?.id ?? ""));
-    setRemovedKeys([]);
     setFeedback(null);
   }, [open, workflowSignature]);
 
-  const activeResources = useMemo(
-    () => resources.filter((resource) => !removedKeys.includes(String(resource.key))),
-    [removedKeys, resources],
-  );
   const activeWorkflow = workflows.find((workflow) => String(workflow.id) === workflowID) ?? null;
 
   const run = () => {
-    if (!activeWorkflow || activeResources.length === 0) return;
+    if (!activeWorkflow || resources.length === 0) return;
     const runID = nextRunID;
     setNextRunID((current) => current + 1);
     setFeedback({
       runID,
-      text: `Workflow 已提交（Run #${runID}）。范围已锁定到本次选择的 ${activeResources.length} 项资源。`,
+      text: `Workflow 已提交（Run #${runID}）。范围已锁定到本次选择的 ${resources.length} 项资源。`,
     });
   };
 
@@ -82,7 +80,7 @@ export function BlogAdminWorkflowLauncherFixture({
       okButtonProps={{
         variant: "solid",
         color: "primary",
-        disabled: !activeWorkflow || activeResources.length === 0,
+        disabled: !activeWorkflow || resources.length === 0,
       }}
     >
       <div className="flex flex-col gap-4">
@@ -113,30 +111,21 @@ export function BlogAdminWorkflowLauncherFixture({
         {activeWorkflow ? <Text size="xs" tone="muted">{activeWorkflow.description}</Text> : null}
 
         <div className="flex flex-col gap-2">
-          <Text size="sm" className="font-medium">{resourceLabel}</Text>
-          {activeResources.length > 0 ? (
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <Text size="sm" className="font-medium">{resourceLabel}</Text>
+            <Text size="xs" tone="muted">范围来自当前页面选择，启动后不可在此修改</Text>
+          </div>
+          {resources.length > 0 ? (
             <div className="flex flex-col gap-2 rounded-lg border p-3">
-              {activeResources.map((resource) => (
-                <div key={String(resource.key)} className="flex items-center justify-between gap-3">
-                  <div className="min-w-0">
-                    <Text size="sm" className="truncate">{resource.label}</Text>
-                    {resource.detail ? <Text size="xs" tone="muted">{resource.detail}</Text> : null}
-                  </div>
-                  <Button
-                    size="small"
-                    variant="text"
-                    onClick={() => {
-                      setRemovedKeys((current) => [...current, String(resource.key)]);
-                      setFeedback(null);
-                    }}
-                  >
-                    移除
-                  </Button>
+              {resources.map((resource) => (
+                <div key={String(resource.key)} className="min-w-0">
+                  <Text size="sm" className="truncate">{resource.label}</Text>
+                  {resource.detail ? <Text size="xs" tone="muted">{resource.detail}</Text> : null}
                 </div>
               ))}
             </div>
           ) : (
-            <Alert type="warning" showIcon title={`至少保留 1 个${resourceLabel}资源才能运行。`} />
+            <Alert type="warning" showIcon title={`至少选择 1 个${resourceLabel}资源才能运行。`} />
           )}
         </div>
 
