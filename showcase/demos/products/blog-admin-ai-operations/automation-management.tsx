@@ -66,7 +66,7 @@ export function AutomationManagement({
                 <Text size="xs" tone="muted">{selected.schedule} · {selected.timezone}</Text>
               </div>
             </div>
-            <div className="flex min-w-max flex-wrap items-center gap-2">
+            <div className="flex w-full flex-wrap items-center gap-2 lg:w-auto lg:justify-end" data-slot="workflow-management-actions">
               <Button size="small" variant="outline" icon={<Edit2 />} onClick={() => setEditing(selected)}>编辑</Button>
               <Button size="small" variant="outline" icon={<Power />} onClick={() => onToggle(selected)}>{selected.enabled ? "停用" : "启用"}</Button>
               <Button size="small" variant="ghost" color="error" icon={<Trash2 />} onClick={() => setDeleteTarget(selected)}>删除</Button>
