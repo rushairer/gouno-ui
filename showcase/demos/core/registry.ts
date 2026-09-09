@@ -2,6 +2,7 @@ import type { ComponentDocument } from "../../components/component-page";
 import { alertDocuments } from "./alert";
 import { badgeDocuments } from "./badge";
 import { buttonDocuments } from "./button";
+import { codeBlockDocuments } from "./code-block";
 import { dataDisplayDocuments } from "./data-display";
 import { dataEntryDocuments } from "./data-entry";
 import { feedbackDocuments } from "./feedback";
@@ -20,6 +21,7 @@ export const coreDocuments: Record<string, ComponentDocument> = {
   ...buttonDocuments,
   ...generalDocuments,
   ...typographyDocuments,
+  ...codeBlockDocuments,
   ...badgeDocuments,
   ...tagDocuments,
   ...layoutDocuments,

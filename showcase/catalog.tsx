@@ -177,6 +177,7 @@ export const showcaseCatalog: ShowcaseGroup[] = [
     item("core-menu", "Menu", "导航菜单", 68, <Menu />),
   ]},
   { workspace: "gouno-ui", layer: "core", group: "Data Display 数据展示", items: [
+    item("core-code-block", "CodeBlock", "代码块", 100, <FileText />),
     item("core-list", "List", "列表", 70, <List />),
     item("core-descriptions", "Descriptions", "描述列表", 72, <Rows3 />),
     item("core-calendar", "Calendar", "日历", 68, <Calendar />),
