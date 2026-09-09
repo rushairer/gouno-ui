@@ -23,6 +23,8 @@ Gouno uses mature systems as evidence, not as an authority:
 - Carbon's documentation navigation guidance notes that a single page-specific tab set can be less discoverable than menu items when those destinations have durable page identity.
 - Atlassian Tabs describes Tabs as grouping similar information on the same page.
 - WAI-ARIA Tabs establishes that the active `tabpanel` is labelled by its owning `tab`, so a duplicate visible heading is not required merely to identify the panel.
+- Ant Design separates layout background from container surfaces and defines shadow levels by UI height rather than by ad-hoc component taste.
+- Atlassian Elevation pairs surface tone and shadow, limits raised/overlay depth to intentional hierarchy, and treats overflow shadows separately from object elevation.
 
 Reference pages:
 
@@ -30,6 +32,9 @@ Reference pages:
 - https://carbondesignsystem.com/components/UI-shell-left-panel/usage/
 - https://gatsby.carbondesignsystem.com/guides/navigation/tabs/
 - https://atlassian.design/components/tabs
+- https://ant.design/docs/spec/shadow/
+- https://ant.design/docs/react/customize-theme
+- https://atlassian.design/foundations/elevation
 
 ## PI-01 — Product navigation has a depth budget
 
@@ -125,23 +130,57 @@ A title that merely restates route/Tab identity belongs to navigation, not to th
 
 ## PI-04 — Visible elevation uses semantic roles only
 
-Visible depth is a semantic role, never a raw Tailwind shadow size and never an automatic consequence of CSS positioning.
+Product code does not choose shadow blur/alpha. It classifies the surface and lets the design system own the treatment.
 
-Canonical roles remain:
+The ladder is:
 
-- `shadow-raised`: deliberately promoted focal surface that is visually detached from peer page content;
-- `shadow-overlay`: temporary/floating UI that actually occupies a layer above other content;
-- `shadow-modal`: blocking high-depth overlay.
+- **canvas:** application layout backdrop; no ambient shadow;
+- **control:** tiny tactile depth for bounded Buttons/selected Segmented; this is not a page layer;
+- **surface:** persistent top-level bounded content such as default Card and bordered Table;
+- **raised:** focal/standalone task surface or an audited interaction transition;
+- **overlay:** temporary UI that actually occupies a layer above another UI;
+- **modal:** blocking high-depth UI;
+- **overflow:** directional clipping/scroll cue, not height.
 
-All raw size aliases (`shadow-xs`, `shadow-sm`, `shadow-md`, `shadow-lg`, `shadow-xl`, `shadow-2xl`) are compatibility-only and intentionally resolve to no visible shadow. New canonical/product code must not use them as design vocabulary.
+### Choosing `surface`
 
-`sticky`, `fixed` and `absolute` describe layout behavior; they do **not** by themselves establish elevation. A sticky region may remain part of its owning surface or normal page flow.
+Use a normal surface when the region is a persistent bounded peer on the application canvas. Examples: dashboard Cards, filter Cards, settings Cards, editor frames and bordered Tables.
 
-`BulkActionBar` is the current proof: it stays sticky for access during selection, but its normal product presentation is contextual ground. Border + opaque card surface separate it from the collection without manufacturing a floating layer. If a future product needs a genuinely detached toolbar that covers unrelated content, that behavior must be admitted explicitly instead of inheriting `shadow-overlay` from `position: sticky`.
+Do **not** add `shadow-surface` in page code when Core Card/Table already owns it. Product pages select semantics through the existing component/variant, not utility duplication.
 
-Normal Cards, tables, filters, dashboards, lists, form sections, editor frames, navigation, selected/unread states and in-flow feedback stay ground-level. A border, neutral/white box, rounded container or otherwise empty page does not justify a shadow.
+A manual bordered list nested inside an existing surface can remain border-only. A rectangle is not automatically another surface layer.
 
-The current business-product raised whitelist is deliberately small and is recorded in `docs/product-surface-elevation-audit.md`: the Gosso Overview focal hero and the standalone Gosso authentication card. New visible product elevation is a corpus-level design-language change, not a page-local styling choice.
+### Choosing `raised`
+
+Persistent raised depth is intentionally scarce. It is valid when the whole surface is the page's focal/standalone task or when explicit product hierarchy requires promotion.
+
+Current persistent raised whitelist:
+
+- Gosso Overview Hero;
+- Gosso standalone authentication surface;
+- Gosso standalone Not Found result surface.
+
+Gosso Overview Quick Links are not persistently raised: they rest at `surface` and move to `raised` on hover because the depth transition communicates interactivity among peer cards.
+
+Adding another persistent raised product surface requires a corpus-level review and update to `docs/product-surface-elevation-audit.md` plus conformance tests.
+
+### Choosing `control`
+
+A tiny control shadow is allowed for tangible bounded actions: primary/default, destructive, outline and secondary Buttons, plus selected Segmented items. Ghost/text/link actions stay flat. Inputs stay level 0 with border/focus-ring affordance.
+
+Do not use control depth to decorate labels, badges, navigation items or generic bordered boxes.
+
+### Positioning is not depth
+
+`sticky`, `fixed` and `absolute` describe layout behavior; they do **not** by themselves establish `overlay`.
+
+`BulkActionBar` remains the proof: it is sticky for access during selection but is still contextual ground. Border + opaque surface communicate selection context without manufacturing an ambient shadow. A future truly detached toolbar that covers unrelated content must be admitted explicitly.
+
+### Raw shadow utilities are forbidden in canonical/product vocabulary
+
+All raw size aliases (`shadow-xs`, `shadow-sm`, `shadow-md`, `shadow-lg`, `shadow-xl`, `shadow-2xl`) intentionally resolve to no visible shadow for compatibility. Canonical/product source must not use them as new vocabulary. Arbitrary box-shadow values and page-local shadow colors are also forbidden.
+
+Quarantined `src/legacy/**` is historical evidence, not current design precedent.
 
 ## PI-05 — New binding rules require a corpus pass, not screenshot patching
 
@@ -164,7 +203,9 @@ Current automated checks should cover at least:
 - PageHeader-before-Tabs ordering;
 - no immediate Tab-label heading echo in governed settings/management pages;
 - open panel leads outside Card boundaries where a lead is used;
-- semantic elevation ownership, the explicit raised-product whitelist and flat raw shadow aliases;
+- semantic canvas/control/surface/raised/overlay/modal ownership;
+- the explicit persistent raised-product whitelist and audited manual raised-hover exception;
+- flat raw shadow compatibility aliases and no raw/product-local shadow utilities;
 - sticky product surfaces remaining ground unless a real layer relationship is admitted;
 - dense Table action geometry;
 - surface edge/radius/padding ownership.
@@ -178,10 +219,13 @@ Before accepting a normal Admin page or route family, ask:
 3. Does the active Tab already say the same thing as the first visible heading?
 4. Is explanatory copy an open panel lead, or has it been trapped inside a Card only because the Card needed a header?
 5. Does every Card-local heading name a concept owned by that Card rather than the route/Tab?
-6. Does any normal in-flow surface have visible elevation without a semantic depth role?
-7. Is elevation being inferred merely from `sticky`/`fixed`/`absolute`, a border, a white box or an empty background? If yes, keep it ground unless an actual Z-axis relationship can be explained.
-8. If a semantic overlay has a shadow, does it actually cover or float above peer content rather than simply remaining visible while scrolling?
-9. Has the same rule been scanned across Gosso Admin + Blog Admin rather than fixed only where a screenshot exposed it?
-10. Is there a regression gate for the invariant, or a documented reason why only visual review can prove it?
+6. Is this region canvas, control, surface, raised, overlay/modal, or merely an overflow cue?
+7. If it is a top-level bounded peer on the application canvas, is Core already giving it the normal surface treatment?
+8. If it is nested inside another surface, can border/divider/subtle tone communicate the grouping without another shadow?
+9. If it is persistently raised, is it on the audited whitelist and genuinely focal/standalone rather than simply a Box someone wanted to emphasize?
+10. Is elevation being inferred merely from `sticky`/`fixed`/`absolute`? If yes, stop and classify the actual layer relationship.
+11. If a semantic overlay has a shadow, does it actually cover or float above peer content?
+12. Has the same rule been scanned across Gosso Admin + Blog Admin rather than fixed only where a screenshot exposed it?
+13. Is there a regression gate for the invariant, or a documented reason why only visual review can prove it?
 
 A page that passes component API tests but fails these questions is not interface-conformant.
