@@ -1,5 +1,6 @@
 import { Breadcrumb, Collapse, Menu, Steps } from "../../../src/core";
 import type { ComponentDocument } from "../../components/component-page";
+import { anchorDocument } from "./anchor";
 import { dropdownDocument } from "./dropdown";
 import { paginationDocument } from "./pagination";
 import { tabsDocument } from "./tabs";
@@ -35,16 +36,7 @@ export const navigationDocuments: Record<string, ComponentDocument> = {
       />
     ),
   },
-  anchor: {
-    title: "Anchor 锚点",
-    description: "页面内章节导航。",
-    code: '<Anchor items={[{ key: "api", title: "API" }]} />',
-    render: () => (
-      <div className="text-sm text-muted-foreground">
-        Anchor API 已提供，可用于文档右侧章节导航。
-      </div>
-    ),
-  },
+  anchor: anchorDocument,
   tabs: tabsDocument,
   collapse: {
     title: "Collapse 折叠面板",
@@ -71,7 +63,7 @@ export const navigationDocuments: Record<string, ComponentDocument> = {
         selectedKeys={["home"]}
         items={[
           { key: "home", label: "首页" },
-          { key: "components", label: "组件" },
+          { key: "components", label: "Core" },
           { key: "disabled", label: "禁用", disabled: true },
         ]}
       />
