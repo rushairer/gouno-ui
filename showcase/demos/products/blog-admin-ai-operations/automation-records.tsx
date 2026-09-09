@@ -101,6 +101,14 @@ export function AIOpsAutomationPanel({
         return;
       }
       const result = await onRun(workflow.id, dryRun, input);
+      if (result.status === "failed") {
+        setFeedback({
+          type: "error",
+          runId: result.id,
+          message: `${dryRun ? "Dry-run" : "运行"}失败（Run #${result.id}）。请修正后重试，步骤日志可在运行中心查看。`,
+        });
+        return;
+      }
       setFeedback({
         type: "success",
         runId: result.id,

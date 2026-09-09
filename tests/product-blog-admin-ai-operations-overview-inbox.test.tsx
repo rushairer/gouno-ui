@@ -1,5 +1,6 @@
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { BlogAdminAIOperationsDemo } from "../showcase/demos/products/blog-admin-ai-operations";
 import {
   AIOpsInboxPanel,
   AIOpsOverviewPanel,
@@ -76,6 +77,24 @@ describe("Blog Admin AI Operations overview/inbox migration modules", () => {
       expect.objectContaining({ id: 902, status: "failed" }),
       true,
     );
+  });
+
+  it("keeps a failed approval retry in Inbox until the same preserved proposal succeeds", () => {
+    render(<BlogAdminAIOperationsDemo initialRoute={{ tab: "inbox", record: "workflow" }} />);
+    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
+    fireEvent.click(screen.getByRole("radio", { name: "审批重试失败" }));
+    fireEvent.click(screen.getByRole("button", { name: /为文章 #103 准备标题候选/ }));
+
+    expect(screen.getByText("Kafka 高吞吐陷阱：并发并不总能换来 QPS")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "重试批准并执行" }));
+    expect(screen.getByText("审批 #902 执行失败；提案未丢失，仍可从待我处理重试。")).toBeTruthy();
+    expect(screen.getByText("下游执行失败；审批提案已保留，可修正后再次重试。")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "重试批准并执行" })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("radio", { name: "操作成功" }));
+    fireEvent.click(screen.getByRole("button", { name: "重试批准并执行" }));
+    expect(screen.getByText("审批 #902 已批准，后续执行仍受 Workflow 运行状态约束。")).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "重试批准并执行" })).toBeNull();
   });
 
   it("keeps rejection as a distinct human decision path", () => {

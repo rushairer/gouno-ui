@@ -74,6 +74,26 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
     expect(onOpenRecords).toHaveBeenCalledWith({ record: "workflow", workflow: 42, run: 246 });
   });
 
+  it("treats a failed returned Run as an error while preserving its evidence link", async () => {
+    const onOpenRecords = vi.fn<(target: AIOpsRecordsTarget) => void>();
+    render(
+      <AIOpsAutomationPanel
+        fixture={aiOpsAutomationRecordsFixture}
+        onPreflight={vi.fn().mockResolvedValue({ ready: true })}
+        onRun={vi.fn().mockResolvedValue({ id: 246, status: "failed" })}
+        onRollback={vi.fn()}
+        onOpenRecords={onOpenRecords}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "运行" }));
+    expect(await screen.findByText("运行失败（Run #246）。请修正后重试，步骤日志可在运行中心查看。")).toBeTruthy();
+    const alert = screen.getByRole("alert");
+    expect(alert.getAttribute("data-type")).toBe("error");
+    fireEvent.click(screen.getByRole("button", { name: "查看 Run #246" }));
+    expect(onOpenRecords).toHaveBeenCalledWith({ record: "workflow", workflow: 42, run: 246 });
+  });
+
   it("keeps rollback explicit and scoped to the selected workflow version", () => {
     const onRollback = vi.fn();
     render(
@@ -123,6 +143,21 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
     expect(await screen.findByRole("heading", { level: 3, name: "Run #246 · 旧文维护" })).toBeTruthy();
     expect(screen.getByText("验证 Workflow 配置")).toBeTruthy();
     expect(screen.getByText("No writes applied")).toBeTruthy();
+  });
+
+  it("keeps a failed live Run reachable with error, step and event evidence", async () => {
+    render(<BlogAdminAIOperationsDemo initialRoute={{ tab: "automation", record: "workflow" }} />);
+    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
+    fireEvent.click(screen.getByRole("radio", { name: "运行失败" }));
+
+    fireEvent.click(screen.getByRole("button", { name: "运行" }));
+    expect(await screen.findByText("运行失败（Run #246）。请修正后重试，步骤日志可在运行中心查看。")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "查看 Run #246" }));
+
+    expect(await screen.findByRole("heading", { level: 3, name: "Run #246 · 旧文维护" })).toBeTruthy();
+    expect(screen.getAllByText("query_events failed: column reference event_key is ambiguous").length).toBeGreaterThan(0);
+    expect(screen.getByText("读取运营事件")).toBeTruthy();
+    expect(screen.getByText("run_failed")).toBeTruthy();
   });
 
   it("preserves workflow run deep-link evidence across steps, resources, interactions and events", () => {

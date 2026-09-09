@@ -41,6 +41,8 @@ export type AIOpsRouteState = {
 };
 
 type FixtureScenario = "data" | "loading" | "error";
+type OperationScenario = "success" | "run-failure" | "approval-failure";
+type Notice = { type: "success" | "error"; text: string } | null;
 
 const validTabs = new Set<AIOpsTab>(["overview", "inbox", "automation", "records"]);
 const validRecordTypes = new Set<AIOpsRecordType>(["workflow", "agent"]);
@@ -157,14 +159,15 @@ export function BlogAdminAIOperationsDemo({
 }) {
   const [route, setRoute] = useState<AIOpsRouteState>(initialRoute);
   const [scenario, setScenario] = useState<FixtureScenario>("data");
+  const [operationScenario, setOperationScenario] = useState<OperationScenario>("success");
   const [decisionFixture, setDecisionFixture] = useState(cloneDecisionFixture);
   const [automationRecordsFixture, setAutomationRecordsFixture] = useState(cloneAutomationFixture);
   const [selectedApprovalId, setSelectedApprovalId] = useState<number | null>(decisionFixture.approvals[0]?.id ?? null);
-  const [notice, setNotice] = useState<string>("");
+  const [notice, setNotice] = useState<Notice>(null);
 
   const selectTab = (tab: AIOpsTab) => {
     setRoute((current) => ({ ...current, tab }));
-    setNotice("");
+    setNotice(null);
   };
 
   const openRecords = (target: AIOpsRecordsTarget) => {
@@ -189,13 +192,26 @@ export function BlogAdminAIOperationsDemo({
   };
 
   const reviewApproval = (id: number, approved: boolean) => {
+    if (approved && operationScenario === "approval-failure") {
+      setDecisionFixture((current) => ({
+        ...current,
+        approvals: current.approvals.map((item) =>
+          item.id === id
+            ? { ...item, status: "failed", reviewNote: "下游执行失败；审批提案已保留，可修正后再次重试。" }
+            : item,
+        ),
+      }));
+      setNotice({ type: "error", text: `审批 #${id} 执行失败；提案未丢失，仍可从待我处理重试。` });
+      return;
+    }
+
     setDecisionFixture((current) => ({
       ...current,
       approvals: current.approvals.map((item) =>
         item.id === id ? { ...item, status: approved ? "approved" : "rejected" } : item,
       ),
     }));
-    setNotice(approved ? `审批 #${id} 已批准，后续执行仍受 Workflow 运行状态约束。` : `审批 #${id} 已拒绝。`);
+    setNotice({ type: "success", text: approved ? `审批 #${id} 已批准，后续执行仍受 Workflow 运行状态约束。` : `审批 #${id} 已拒绝。` });
   };
 
   const saveWorkflow = (workflow: WorkflowFixture) => {
@@ -205,7 +221,7 @@ export function BlogAdminAIOperationsDemo({
         ? current.workflows.map((item) => item.id === workflow.id ? workflow : item)
         : [...current.workflows, workflow],
     }));
-    setNotice(`${workflow.name} 已保存，当前版本 v${workflow.currentVersion}。`);
+    setNotice({ type: "success", text: `${workflow.name} 已保存，当前版本 v${workflow.currentVersion}。` });
   };
 
   const deleteWorkflow = (workflow: WorkflowFixture) => {
@@ -215,7 +231,7 @@ export function BlogAdminAIOperationsDemo({
       workflowRuns: current.workflowRuns.filter((run) => run.workflowId !== workflow.id),
     }));
     setRoute((current) => current.workflow === workflow.id ? { ...current, workflow: undefined } : current);
-    setNotice(`${workflow.name} 已从静态 Fixture 删除。`);
+    setNotice({ type: "success", text: `${workflow.name} 已从静态 Fixture 删除。` });
   };
 
   const toggleWorkflow = (workflow: WorkflowFixture) => {
@@ -223,7 +239,7 @@ export function BlogAdminAIOperationsDemo({
       ...current,
       workflows: current.workflows.map((item) => item.id === workflow.id ? { ...item, enabled: !item.enabled, nextRunAt: item.enabled ? "—" : "待重新计算" } : item),
     }));
-    setNotice(`${workflow.name} 已${workflow.enabled ? "停用" : "启用"}。`);
+    setNotice({ type: "success", text: `${workflow.name} 已${workflow.enabled ? "停用" : "启用"}。` });
   };
 
   const rollbackWorkflow = (workflowId: number, version: number) => {
@@ -231,14 +247,16 @@ export function BlogAdminAIOperationsDemo({
       ...current,
       workflows: current.workflows.map((workflow) => workflow.id === workflowId ? { ...workflow, currentVersion: version } : workflow),
     }));
-    setNotice(`Workflow #${workflowId} 已回滚到 v${version}。`);
+    setNotice({ type: "success", text: `Workflow #${workflowId} 已回滚到 v${version}。` });
   };
 
   const runWorkflow = async (workflowId: number, dryRun: boolean): Promise<{ id: number; status: WorkflowRunFixture["status"] }> => {
     const workflow = automationRecordsFixture.workflows.find((item) => item.id === workflowId);
     if (!workflow) throw new Error("Workflow 不存在。");
     const id = automationRecordsFixture.workflowRuns.reduce((highest, run) => Math.max(highest, run.id), 0) + 1;
-    const status: WorkflowRunFixture["status"] = dryRun ? "succeeded" : "awaiting_approval";
+    const failed = operationScenario === "run-failure" && !dryRun;
+    const status: WorkflowRunFixture["status"] = failed ? "failed" : dryRun ? "succeeded" : "awaiting_approval";
+    const tokenUsage = failed ? 640 : dryRun ? 320 : 1180;
     const run: WorkflowRunFixture = {
       id,
       workflowId,
@@ -246,20 +264,28 @@ export function BlogAdminAIOperationsDemo({
       status,
       dryRun,
       startedAt: "刚刚",
-      finishedAt: dryRun ? "刚刚" : undefined,
-      tokenUsage: dryRun ? 320 : 1180,
+      finishedAt: failed || dryRun ? "刚刚" : undefined,
+      tokenUsage,
+      errorMessage: failed ? "query_events failed: column reference event_key is ambiguous" : undefined,
       steps: [{
-        id: dryRun ? "dry-run" : "candidate",
-        name: dryRun ? "验证 Workflow 配置" : "生成候选结果",
-        status: "succeeded",
-        durationMs: dryRun ? 260 : 840,
-        detail: dryRun ? "Preflight 与受控输入验证通过，未写入产品数据。" : "候选结果已生成，等待人工审批。",
+        id: failed ? "query-events" : dryRun ? "dry-run" : "candidate",
+        name: failed ? "读取运营事件" : dryRun ? "验证 Workflow 配置" : "生成候选结果",
+        status: failed ? "failed" : "succeeded",
+        durationMs: failed ? 410 : dryRun ? 260 : 840,
+        detail: failed
+          ? "query_events failed: column reference event_key is ambiguous"
+          : dryRun
+            ? "Preflight 与受控输入验证通过，未写入产品数据。"
+            : "候选结果已生成，等待人工审批。",
       }],
-      resources: dryRun ? [] : [{ type: "candidate", label: `${workflow.name} 候选结果` }],
-      interactions: dryRun ? [] : [{ type: "approval", label: "确认应用候选结果", status: "pending" }],
+      resources: failed || dryRun ? [] : [{ type: "candidate", label: `${workflow.name} 候选结果` }],
+      interactions: failed || dryRun ? [] : [{ type: "approval", label: "确认应用候选结果", status: "pending" }],
       events: [
         { type: "run_started", message: `${dryRun ? "Dry-run" : "Run"} requested from Showcase` },
-        { type: dryRun ? "run_succeeded" : "approval_created", message: dryRun ? "No writes applied" : "Approval fixture created" },
+        {
+          type: failed ? "run_failed" : dryRun ? "run_succeeded" : "approval_created",
+          message: failed ? "query_events failed before candidate generation" : dryRun ? "No writes applied" : "Approval fixture created",
+        },
       ],
       mediaCandidates: [],
     };
@@ -270,7 +296,7 @@ export function BlogAdminAIOperationsDemo({
         ...item,
         metrics: {
           runs: item.metrics.runs + 1,
-          failures: item.metrics.failures,
+          failures: item.metrics.failures + (failed ? 1 : 0),
           tokens: item.metrics.tokens + run.tokenUsage,
         },
       } : item),
@@ -317,9 +343,9 @@ export function BlogAdminAIOperationsDemo({
         onReviewApproval={(approval, approved) => reviewApproval(approval.id, approved)}
         onResolveInteraction={(task, response) => {
           setDecisionFixture((current) => ({ ...current, interactions: current.interactions.filter((item) => item.id !== task.id) }));
-          setNotice(`Run #${task.workflowRunId} 已收到交互响应：${JSON.stringify(response)}`);
+          setNotice({ type: "success", text: `Run #${task.workflowRunId} 已收到交互响应：${JSON.stringify(response)}` });
         }}
-        onOpenOperation={(kind, id) => setNotice(`已打开 ${kind} #${id} 的产品处理入口。`)}
+        onOpenOperation={(kind, id) => setNotice({ type: "success", text: `已打开 ${kind} #${id} 的产品处理入口。` })}
       />
     );
   } else if (route.tab === "automation") {
@@ -355,27 +381,39 @@ export function BlogAdminAIOperationsDemo({
     <div className="flex flex-col gap-6">
       <FixtureDock
         route={formatAIOpsRoute(route)}
-        note="AI 运营保留发现、决策、自动化与运行证据；稳定治理配置已拆分到独立 AI 设置路由。"
+        note="AI 运营保留发现、决策、自动化与运行证据；Fixture 可复现失败 Run 与审批重试失败，稳定治理配置已拆分到独立 AI 设置路由。"
         controls={(
-          <Segmented<FixtureScenario>
-            aria-label="AI Ops 场景"
-            options={[
-              { value: "data", label: "数据" },
-              { value: "loading", label: "加载" },
-              { value: "error", label: "错误" },
-            ]}
-            value={scenario}
-            onChange={setScenario}
-          />
+          <div className="flex flex-col gap-3">
+            <Segmented<FixtureScenario>
+              aria-label="AI Ops 场景"
+              options={[
+                { value: "data", label: "数据" },
+                { value: "loading", label: "加载" },
+                { value: "error", label: "错误" },
+              ]}
+              value={scenario}
+              onChange={setScenario}
+            />
+            <Segmented<OperationScenario>
+              aria-label="AI Ops 操作场景"
+              options={[
+                { value: "success", label: "操作成功" },
+                { value: "run-failure", label: "运行失败" },
+                { value: "approval-failure", label: "审批重试失败" },
+              ]}
+              value={operationScenario}
+              onChange={(value) => { setOperationScenario(value); setNotice(null); }}
+            />
+          </div>
         )}
       />
       <PageHeader
         title="AI 运营"
         description="从发现机会、人工决策、自动化执行到运行证据，保持完整的人机协作闭环。"
-        actions={<Button variant="outline" icon={<RefreshCw />} onClick={() => { setScenario("data"); setNotice("AI 运营数据已刷新。"); }}>刷新</Button>}
+        actions={<Button variant="outline" icon={<RefreshCw />} onClick={() => { setScenario("data"); setNotice({ type: "success", text: "AI 运营数据已刷新。" }); }}>刷新</Button>}
       />
       <Tabs<AIOpsTab> activeKey={route.tab} items={tabs} onChange={selectTab} ariaLabel="AI 运营工作区" />
-      {notice ? <Alert type="success" showIcon title={notice} /> : null}
+      {notice ? <Alert type={notice.type} showIcon title={notice.text} /> : null}
       {content}
     </div>
   );
