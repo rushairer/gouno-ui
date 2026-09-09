@@ -36,7 +36,7 @@ export function Form({
       {...props}
       noValidate
       className={cn(
-        "form-layout flex min-w-0 flex-col gap-6",
+        "flex min-w-0 flex-col gap-6",
         layout === "horizontal" && "form-layout--horizontal",
         layout === "inline" && "flex-row flex-wrap items-end gap-4",
         className,
@@ -90,7 +90,7 @@ export function FormLayout({
   return (
     <form
       {...props}
-      className={cn("form-layout flex min-w-0 flex-col gap-6", className)}
+      className={cn("flex min-w-0 flex-col gap-6", className)}
     />
   );
 }
