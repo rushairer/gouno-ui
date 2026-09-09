@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" fill="none" color="currentColor">
   <title>Gouno</title>
-  <path d="M94 20H48C32.536 20 20 32.536 20 48V80C20 95.464 32.536 108 48 108H80C95.464 108 108 95.464 108 80V66" stroke="#2563EB" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="64" cy="64" r="13" fill="#2563EB"/>
+  <path d="M94 20H48C32.536 20 20 32.536 20 48V80C20 95.464 32.536 108 48 108H80C95.464 108 108 95.464 108 80V66" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="64" cy="64" r="13" fill="currentColor"/>
 </svg>
