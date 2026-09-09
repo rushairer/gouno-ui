@@ -1,9 +1,9 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { BlogHomeDemo } from "../showcase/demos/products/blog-home";
 import { ThemeProvider } from "../src/theme";
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
 
 afterEach(cleanup);
 
@@ -19,9 +19,9 @@ describe("Blog public Home product migration fixture", () => {
   it("preserves the public shell and Home information hierarchy", () => {
     renderHome();
 
-    expect(screen.getByRole("link", { name: "跳到正文" }).getAttribute("href")).toBe("#blog-main");
+    expect(screen.getByRole("link", { name: "跳至正文" }).getAttribute("href")).toBe("#public-main");
     expect(screen.getByRole("navigation", { name: "主导航" })).toBeTruthy();
-    expect(screen.getByRole("main").getAttribute("id")).toBe("blog-main");
+    expect(screen.getByRole("main").getAttribute("id")).toBe("public-main");
     expect(
       screen.getByRole("heading", { level: 1, name: "把真实工程问题，写成可以长期复用的知识。" }),
     ).toBeTruthy();
@@ -42,15 +42,14 @@ describe("Blog public Home product migration fixture", () => {
   });
 
   it("keeps the public shell product-local instead of forcing AppShell", () => {
-    const source = readFileSync(
-      resolve(process.cwd(), "showcase/demos/products/blog-home.tsx"),
-      "utf8",
-    );
+    const homeSource = readFileSync(resolve(process.cwd(), "showcase/demos/products/blog-home.tsx"), "utf8");
+    const shellSource = readFileSync(resolve(process.cwd(), "showcase/demos/products/blog-public-shell.tsx"), "utf8");
+    const combined = `${homeSource}\n${shellSource}`;
 
-    expect(source).not.toContain('../../../src/gouno');
-    expect(source).not.toContain("AppShell");
-    expect(source).not.toContain("PageContainer");
-    expect(source).toContain('../../../src/core');
-    expect(source).toContain('../../../src/theme');
+    expect(combined).not.toContain('../../../src/gouno');
+    expect(combined).not.toContain("AppShell");
+    expect(combined).not.toContain("PageContainer");
+    expect(homeSource).toContain('../../../src/core');
+    expect(shellSource).toContain('../../../src/theme');
   });
 });
