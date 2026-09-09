@@ -118,3 +118,39 @@ Example: Showcase `CodeBlock` stays private. If a real Blog article page later i
 - `docs/product-interface-governance.md` is binding for product navigation depth, tab-panel lead placement, surface-local title semantics and corpus-level interface conformance.
 - `docs/product-surface-elevation-audit.md` is binding evidence for current business-page elevation classification and the raised-product whitelist.
 - Do not introduce undocumented aliases or duplicate semantic write paths.
+- API migrations require compatibility assessment and migration instructions.
+- Synchronize exported types, Showcase API/docs/examples, accessibility behavior and focused tests.
+- Prefer composition/explicit slots over speculative configuration bags.
+- Preserve controlled/uncontrolled semantics where meaningful and native interoperability where useful.
+- A Showcase Preview and displayed Code sample must represent the same implementation.
+- Completion percentages are audit evidence, not architecture scores.
+- A component is `100%` only for its proven Gouno scope after runtime API, exported types, representative demos, example code, accessibility behavior, focused tests and real product validation agree. It never means blindly copying another library's historical surface.
+- Compound components own structural spacing between their semantic slots; content regions own their own internal padding/rhythm. Do not fix canonical slot-spacing defects with page-local margins (PD-020).
+- One semantic collection/section should normally expose one dominant surface boundary. Do not wrap a self-surfaced Table/List in Card merely to obtain padding/alignment. Normal bordered surfaces align first/last primary content to the shared 24px edge inset while preserving denser internal Table columns (PD-023 / `docs/design-language.md`).
+- A landing/dashboard page may be structurally exceptional without using a different normal surface edge axis. In application-shell pages, `Card padding="lg"` or ad-hoc `p-5/p-8` must not be used as an accidental alignment substitute; any spacious exception must be semantic and documented.
+- Dense desktop Table row actions follow DL-09: use one compact structural action family, keep the cluster single-line, and let Core Table horizontal overflow absorb width pressure. Semantic danger changes color rather than button structure; excessive low-frequency actions move behind an overflow interaction instead of wrapping.
+- A design/interface hardening stage is incomplete until its corpus conformance pass has covered the completed comparison corpus and currently migrated pages in the active product line. Documentation-only adoption is not enough.
+- Visible elevation must use semantic roles (`shadow-raised`, `shadow-overlay`, `shadow-modal`). Raw size shadow aliases are compatibility-only and intentionally flat. Business surfaces remain ground by default; a box, border, white/neutral background or CSS positioning does not justify elevation. `sticky` does not imply overlay, and `BulkActionBar` is a sticky contextual ground surface by default. New raised product surfaces must be added to the explicit audit whitelist with a product-level reason.
+
+Current Tabs canonical high-level API follows PD-010: `activeKey`, `defaultActiveKey`, `items[].key`, `onChange`; pre-reset value-style names are temporary migration compatibility only. Tabs owns the TabBar↔TabPanel structural gap and keeps its active indicator inside the TabList scroll boundary.
+
+## Delivery
+
+At each coherent phase run/require:
+
+```bash
+npm run typecheck
+npm test -- --run
+npm run build
+npm run showcase:build
+```
+
+Main CI uses Node.js 24 and must pass the same gate before Pages publication. External Actions remain pinned to immutable SHAs.
+
+A pushed commit is not a completed phase. Do not claim CI/Showcase deployment success until the latest `main` workflow is `completed/success`. When Showcase output changed, also verify that the publish step succeeded and `gh-pages` contains a deploy commit for the expected `main` SHA. Pending, cancelled or failed runs are not completion.
+
+Prefer one reviewable commit per coherent migration/hardening stage when practical. If CI reveals a defect, fix it in a focused follow-up commit and keep checking until the latest `main` run is green.
+
+## Scope boundaries
+
+This package contains no authentication, API access, connector behavior or application session state. Showcase fixtures are static and never call real services. Do not modify the old vendored UI package from this repository.
