@@ -48,7 +48,7 @@ describe("Blog Admin Pages product migration fixture", () => {
     expect(screen.queryByText("友情链接")).toBeNull();
   });
 
-  it("restores the page-specific Workflow launcher and resource input semantics", () => {
+  it("uses the shared Workflow launcher with immutable page resource scope", () => {
     render(<BlogAdminPagesDemo />);
 
     fireEvent.click(screen.getAllByLabelText("选择单页 关于我")[0]);
@@ -56,29 +56,19 @@ describe("Blog Admin Pages product migration fixture", () => {
     const toolbar = screen.getByRole("toolbar", { name: "批量操作" });
     expect(toolbar.getAttribute("data-slot")).toBe("bulk-action-bar");
 
-    fireEvent.click(screen.getByRole("button", { name: "交给 AI" }));
+    fireEvent.click(within(toolbar).getByRole("button", { name: "交给 AI" }));
     const dialog = screen.getByRole("dialog", { name: "将所选单页交给 AI" });
-    const workflowSelect = within(dialog).getByRole("combobox", { name: "Workflow" }) as HTMLButtonElement;
-    expect(workflowSelect.textContent).toContain("单页审校与优化（手选）");
-    expect(workflowSelect.disabled).toBe(true);
+    expect((within(dialog).getByRole("combobox", { name: "Workflow" }) as HTMLButtonElement).textContent).toContain("单页审校与优化（手选）");
+    expect(within(dialog).getByText("检查手选单页的内容质量、访问路径与导航元数据。")).toBeTruthy();
     expect(within(dialog).getByText("关于我")).toBeTruthy();
     expect(within(dialog).getByText("/about")).toBeTruthy();
+    expect(within(dialog).getByText("范围来自当前页面选择，启动后不可在此修改")).toBeTruthy();
+    expect(within(dialog).queryByRole("button", { name: "移除" })).toBeNull();
 
     fireEvent.click(within(dialog).getByRole("button", { name: "运行" }));
-    expect(within(dialog).getByText("Workflow 已提交（Run #251）。范围已固定为本次输入的 1 个单页。")).toBeTruthy();
+    expect(within(dialog).getByText("Workflow 已提交（Run #251）。范围已锁定到本次选择的 1 项资源。")).toBeTruthy();
     fireEvent.click(within(dialog).getByRole("button", { name: "打开运行中心" }));
-    expect(screen.getByText("将进入 /admin/ai-ops?tab=records&record=workflow&workflow=73（Showcase 模拟）。")).toBeTruthy();
-  });
-
-  it("allows the Workflow resource field to remove a preselected page", () => {
-    render(<BlogAdminPagesDemo />);
-    fireEvent.click(screen.getAllByLabelText("选择单页 关于我")[0]);
-    fireEvent.click(screen.getByRole("button", { name: "交给 AI" }));
-
-    const dialog = screen.getByRole("dialog", { name: "将所选单页交给 AI" });
-    fireEvent.click(within(dialog).getByRole("button", { name: "移除" }));
-    expect(within(dialog).getByText("至少保留 1 个单页资源才能运行。")).toBeTruthy();
-    expect((within(dialog).getByRole("button", { name: "运行" }) as HTMLButtonElement).disabled).toBe(true);
+    expect(screen.getByText("将进入 /admin/ai-ops?tab=records&record=workflow&workflow=73&run=251（Showcase 模拟）。")).toBeTruthy();
   });
 
   it("preserves single-page destructive confirmation", () => {
