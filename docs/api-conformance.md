@@ -40,6 +40,7 @@
 | API-020 | Core `CodeBlock` 使用 `code` 作为唯一权威源码；拥有只读代码框、横向滚动、可选语言标识与复制成功反馈。`renderCode(code)` 仅是呈现钩子并接收同一 `code`，语法高亮/解析引擎继续由调用方拥有，不把 Prism、rehype 等第三方类型或依赖固化进公共 API。 | Core CodeBlock docs/focused tests / PD-038 |
 | API-021 | Core `Anchor` 保持真实 `<a href="#...">` 章节链接与标准 `aria-label`/HTML 属性；默认 `offset=0` 不劫持原生 hash 导航。调用方显式设置 `offset` 时，滚动目标必须按 `scrollY + target.top - offset` 计算，而不是把 offset 本身当绝对滚动位置。Sticky header 优先由目标 heading 的 `scroll-margin-top` 拥有。 | Core Anchor same-source demo/focused tests / PD-039 |
 | API-022 | Core `Empty` 只拥有 caller-owned `title/description/icon/action` 与标准 div/ARIA 扩展；不提供默认业务文案、不制造 Card-like border/shadow/radius，也不默认声明 live region。Surface 和动态播报策略由调用方按真实语义拥有。 | Core Empty same-source demos/API docs/focused tests + Gosso Admin/Blog Admin/Blog public corpus / PD-046 |
+| API-023 | Core `Result` 使用 `status/title/description/extra/children/headingLevel` 与标准 section/ARIA 扩展；`description` 是唯一补充说明入口，`headingLevel` 默认 2、页面主结果显式使用 1。Result 不默认声明 live region，不拥有 Card/elevation，并由自身 `p-8` 结果节奏拥有内容 inset；包装 Card 仅作为边界/elevation 时使用 `padding="none"`。默认状态图标为 decorative。 | Core Result same-source demos/API docs/focused tests + Gosso/Blog public terminal-result corpus / PD-047 |
 
 ## 当前破坏式迁移说明
 
@@ -89,6 +90,8 @@ Core `CodeBlock` 的复制源与显示源不拆成两套属性。`code` 是唯�
 Core `Anchor` 的默认路径保持原生 hash 链接语义，不用组件 JS 重写浏览器滚动。真实阅读页的固定头部遮挡通过 heading `scroll-margin-top` 解决，因此键盘激活、复制链接和直接访问 hash 共用同一位置规则。只有调用方不能控制目标样式而显式传 `offset` 时，Anchor 才拦截本地 hash 点击并按目标真实位置减去偏移量平滑滚动；外部链接和缺失目标不被拦截。
 
 Core `Empty` 不再把业务文案、Surface 或 live-region 策略当作默认组件行为。调用方必须显式提供需要展示的 `title/description`；需要边界时由真实 Card/Table/List/route surface 拥有；需要动态播报时通过标准 `role` / `aria-live` 显式声明。旧 `"No data"`、dashed border/radius 和自动 `role="status"` 都不是 canonical contract，也不通过兼容 alias 保留。
+
+Core `Result` 不再暴露非 canonical `subTitle`，补充说明统一使用 `description`。Result 的标题默认是 H2；当它替代整页内容成为该路由主结果时，调用方显式使用 `headingLevel={1}`。静态 404/终态不被强制声明 `role="status"`，动态操作结果按需要显式选择标准 `role` / `aria-live`。Result 自己拥有结果内容节奏但不拥有 Card/surface/elevation；仅作为 Result 外壳的 Card 使用 `padding="none"`，避免父子重复 inset。旧固定 H2、自动 live-region 和 `subTitle` 都不通过兼容 alias 保留。
 
 ## Core 继续验证原则
 

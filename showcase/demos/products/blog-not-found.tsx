@@ -17,11 +17,12 @@ export function BlogNotFoundDemo() {
       <BlogPublicShellFixture currentPath="/missing-page" onNavigate={navigate}>
         {notice ? <Alert className="mb-6" type="info" description={notice} showIcon /> : null}
 
-        <Card variant="subtle" className="mx-auto max-w-[760px]">
+        <Card padding="none" variant="subtle" className="mx-auto max-w-[760px]">
           <Result
             status="info"
+            headingLevel={1}
             title="页面未找到"
-            subTitle="你访问的地址不存在、已经移动，或者当前内容不再公开。"
+            description="你访问的地址不存在、已经移动，或者当前内容不再公开。"
             extra={
               <div className="flex flex-wrap justify-center gap-2">
                 <Button variant="solid" color="primary" icon={<Home />} onClick={() => navigate("/")}>返回首页</Button>

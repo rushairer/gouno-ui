@@ -43,13 +43,13 @@ describe("Blog public document page migrations", () => {
     loading.unmount();
 
     const error = renderCustom("error");
-    expect(screen.getByText("页面载入失败")).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 1, name: "页面载入失败" })).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "重试" }));
     expect(screen.getByRole("heading", { level: 1, name: "Gouno UI 设计系统说明" })).toBeTruthy();
     error.unmount();
 
     renderCustom("not-found");
-    expect(screen.getByText("页面不存在或已下线")).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 1, name: "页面不存在或已下线" })).toBeTruthy();
   });
 
   it("keeps About as a fixed public document without inheriting CustomPage async state", () => {
@@ -73,6 +73,8 @@ describe("Blog public document page migrations", () => {
     expect(source).toContain("function BlogDocumentSurface");
     expect(source).toContain('import { PageHeader } from "../../../src/gouno"');
     expect(source).toContain("BlogPublicShellFixture");
+    expect(source).toContain('headingLevel={1}');
+    expect(source).not.toContain("subTitle=");
     expect(source).not.toContain('src/patterns');
     expect(source).not.toMatch(/import\s+\{[^}]*\b(?:AppShell|PageContainer)\b[^}]*\}\s+from\s+["'][^"']+["']/s);
     expect(source).not.toMatch(/<(?:AppShell|PageContainer)\b/);
