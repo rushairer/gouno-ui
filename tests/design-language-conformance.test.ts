@@ -65,10 +65,12 @@ describe("design-language conformance", () => {
     expect(source).not.toMatch(/(?:^|\s)p-(?:5|8)(?:\s|["'])/);
   });
 
-  it("keeps the Gosso overview quick-link surface aligned while reserving elevation for the focal hero", () => {
+  it("keeps the Gosso overview hierarchy explicit across surface and raised levels", () => {
     const overview = readFileSync(resolve(productsRoot, "gosso-overview.tsx"), "utf8");
     expect(overview).toContain("px-6 py-5");
     expect(overview).toContain('<Card padding="base" variant="elevated"');
+    expect(overview).toContain("shadow-surface");
+    expect(overview).toContain("hover:shadow-raised");
     expect(overview).not.toContain("shadow-sm");
     expect(overview).not.toContain("shadow-md");
   });
@@ -126,12 +128,16 @@ describe("design-language conformance", () => {
 
   it("owns visible elevation through semantic theme roles only", () => {
     const tokens = readFileSync(resolve(sourceRoot, "tokens.css"), "utf8");
+    expect(tokens).toContain("--color-canvas: var(--canvas)");
+    expect(tokens).toContain("--shadow-control: var(--elevation-shadow-control)");
+    expect(tokens).toContain("--shadow-surface: var(--elevation-shadow-surface)");
     expect(tokens).toContain("--shadow-raised: var(--elevation-shadow-raised)");
     expect(tokens).toContain("--shadow-overlay: var(--elevation-shadow-overlay)");
     expect(tokens).toContain("--shadow-modal: var(--elevation-shadow-modal)");
     for (const size of ["xs", "sm", "md", "lg", "xl", "2xl"]) {
       expect(tokens).toContain(`--shadow-${size}: 0 0 #0000`);
     }
+    expect(tokens).toContain("--canvas: #0f1319");
     expect(tokens).toContain("--raised: #1a222c");
   });
 
@@ -150,40 +156,57 @@ describe("design-language conformance", () => {
     }
   });
 
-  it("keeps normal table and navigation surfaces on ground elevation", () => {
+  it("keeps navigation ground-level while bordered tables use low surface separation", () => {
     const table = readFileSync(resolve(sourceRoot, "components/primitives/table.tsx"), "utf8");
     const shell = readFileSync(resolve(sourceRoot, "gouno/app-shell.tsx"), "utf8");
+    expect(table).toContain('bordered ? "border border-border/80 bg-card shadow-surface"');
     expect(table).not.toContain('bg-card shadow-sm');
     expect(shell).not.toContain("aria-[current=page]:shadow-sm");
+    expect(shell).not.toContain("aria-[current=page]:shadow-surface");
   });
 
-  it("prevents product fixtures from carrying raw or page-local elevation classes", () => {
+  it("prevents product fixtures from carrying raw, arbitrary, overlay or modal shadow utilities", () => {
     for (const file of allProductFiles) {
       const source = readFileSync(file, "utf8");
       expect(source).not.toMatch(rawShadowClass);
-      expect(source).not.toMatch(/shadow-(?:raised|overlay|modal|\[)/);
+      expect(source).not.toMatch(/shadow-(?:overlay|modal|\[)/);
     }
   });
 
-  it("reserves raised product elevation for the audited focal surface whitelist", () => {
+  it("reserves persistent raised Card variants for audited focal and standalone surfaces", () => {
     const elevatedFiles = allProductFiles
       .filter((file) => readFileSync(file, "utf8").includes('variant="elevated"'))
       .map((file) => relative(productsRoot, file).replaceAll("\\", "/"))
       .sort();
 
     expect(elevatedFiles).toEqual([
+      "gosso-auth/not-found.tsx",
       "gosso-auth/shared.tsx",
       "gosso-overview.tsx",
     ]);
   });
 
-  it("keeps BulkActionBar sticky but ground-level by default", () => {
+  it("allows manual raised elevation only as the audited hover state of overview peer cards", () => {
+    const manualRaisedFiles = allProductFiles
+      .filter((file) => readFileSync(file, "utf8").includes("shadow-raised"))
+      .map((file) => relative(productsRoot, file).replaceAll("\\", "/"))
+      .sort();
+
+    expect(manualRaisedFiles).toEqual(["gosso-overview.tsx"]);
+    const overview = readFileSync(resolve(productsRoot, "gosso-overview.tsx"), "utf8");
+    expect(overview).toContain("shadow-surface");
+    expect(overview).toContain("hover:shadow-raised");
+  });
+
+  it("keeps BulkActionBar sticky but contextual and ground-level by default", () => {
     const source = readFileSync(resolve(sourceRoot, "patterns/bulk-action-bar.tsx"), "utf8");
     expect(source).toContain("sticky bottom-4");
     expect(source).toContain("bg-card");
+    expect(source).not.toContain("shadow-surface");
+    expect(source).not.toContain("shadow-raised");
     expect(source).not.toContain("shadow-overlay");
     expect(source).not.toContain("backdrop-blur");
-    expect(source).not.toMatch(/shadow-(?:xs|sm|md|lg|xl|2xl|raised|overlay|modal|\[)/);
+    expect(source).not.toMatch(/shadow-(?:xs|sm|md|lg|xl|2xl|control|surface|raised|overlay|modal|\[)/);
   });
 
   it("keeps migration-only class hooks out of canonical and Showcase runtime", () => {
