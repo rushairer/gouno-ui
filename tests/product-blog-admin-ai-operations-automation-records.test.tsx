@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { BlogAdminAIOperationsDemo } from "../showcase/demos/products/blog-admin-ai-operations";
 import {
@@ -102,13 +102,15 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
     fireEvent.change(screen.getByLabelText(/Workflow 名称/), { target: { value: "内容巡检" } });
     fireEvent.click(screen.getByRole("button", { name: "保存 Workflow" }));
     expect(screen.getByText("内容巡检 已保存，当前版本 v1。")).toBeTruthy();
-    expect(screen.getByRole("option", { name: "内容巡检 · v1" })).toBeTruthy();
+    expect(screen.getByRole("combobox", { name: "选择要管理的 Workflow" }).textContent).toContain("内容巡检 · v1");
 
-    fireEvent.click(screen.getByRole("button", { name: "停用" }));
-    expect(screen.getByText("内容巡检 已停用。")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "启用" }));
+    expect(screen.getByText("内容巡检 已启用。")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "停用" })).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "删除" }));
-    expect(screen.getByRole("heading", { name: "确认删除 Workflow" })).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "删除" }));
+    const dialog = screen.getByRole("dialog");
+    expect(within(dialog).getByRole("heading", { name: "确认删除 Workflow" })).toBeTruthy();
+    fireEvent.click(within(dialog).getByRole("button", { name: "删除" }));
     expect(screen.getByText("内容巡检 已从静态 Fixture 删除。")).toBeTruthy();
   });
 
