@@ -12,27 +12,37 @@ import { UsersPanel } from "./users";
 export type SystemManagementTab = "clients" | "users" | "audit-logs" | "site-settings" | "system";
 
 const systemTabs = [
-  { key: "clients", label: "OAuth2 客户端", icon: <KeyRound aria-hidden="true" /> },
-  { key: "users", label: "用户管理", icon: <Users aria-hidden="true" /> },
-  { key: "audit-logs", label: "审计日志", icon: <FileText aria-hidden="true" /> },
-  { key: "site-settings", label: "站点设置", icon: <SlidersHorizontal aria-hidden="true" /> },
-  { key: "system", label: "系统状态", icon: <Shield aria-hidden="true" /> },
+  {
+    key: "clients",
+    label: "OAuth2 客户端",
+    icon: <KeyRound aria-hidden="true" />,
+    children: <ClientsPanel />,
+  },
+  {
+    key: "users",
+    label: "用户管理",
+    icon: <Users aria-hidden="true" />,
+    children: <UsersPanel />,
+  },
+  {
+    key: "audit-logs",
+    label: "审计日志",
+    icon: <FileText aria-hidden="true" />,
+    children: <AuditLogsPanel />,
+  },
+  {
+    key: "site-settings",
+    label: "站点设置",
+    icon: <SlidersHorizontal aria-hidden="true" />,
+    children: <SiteSettingsPanel />,
+  },
+  {
+    key: "system",
+    label: "系统状态",
+    icon: <Shield aria-hidden="true" />,
+    children: <SystemStatusPanel />,
+  },
 ] as const;
-
-function Panel({ tab }: { tab: SystemManagementTab }) {
-  switch (tab) {
-    case "clients":
-      return <ClientsPanel />;
-    case "users":
-      return <UsersPanel />;
-    case "audit-logs":
-      return <AuditLogsPanel />;
-    case "site-settings":
-      return <SiteSettingsPanel />;
-    case "system":
-      return <SystemStatusPanel />;
-  }
-}
 
 export function GossoSystemManagementDemo() {
   const [activeTab, setActiveTab] = useState<SystemManagementTab>("clients");
@@ -50,7 +60,6 @@ export function GossoSystemManagementDemo() {
         onChange={setActiveTab}
         ariaLabel="系统管理栏目"
       />
-      <Panel tab={activeTab} />
     </div>
   );
 }

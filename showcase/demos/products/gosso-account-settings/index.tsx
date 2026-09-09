@@ -11,22 +11,37 @@ import { PasskeysPanel, SessionsPanel } from "./security";
 export type AccountSettingsTab = "profile" | "password" | "mfa" | "passkeys" | "sessions";
 
 const accountTabs = [
-  { key: "profile", label: "个人资料", icon: <User aria-hidden="true" className="size-4" /> },
-  { key: "password", label: "修改密码", icon: <Lock aria-hidden="true" className="size-4" /> },
-  { key: "mfa", label: "多因素认证 (MFA)", icon: <Shield aria-hidden="true" className="size-4" /> },
-  { key: "passkeys", label: "通行密钥 (FIDO2)", icon: <Key aria-hidden="true" className="size-4" /> },
-  { key: "sessions", label: "活跃会话", icon: <Laptop aria-hidden="true" className="size-4" /> },
+  {
+    key: "profile",
+    label: "个人资料",
+    icon: <User aria-hidden="true" className="size-4" />,
+    children: <ProfilePanel />,
+  },
+  {
+    key: "password",
+    label: "修改密码",
+    icon: <Lock aria-hidden="true" className="size-4" />,
+    children: <PasswordPanel />,
+  },
+  {
+    key: "mfa",
+    label: "多因素认证 (MFA)",
+    icon: <Shield aria-hidden="true" className="size-4" />,
+    children: <MfaPanel />,
+  },
+  {
+    key: "passkeys",
+    label: "通行密钥 (FIDO2)",
+    icon: <Key aria-hidden="true" className="size-4" />,
+    children: <PasskeysPanel />,
+  },
+  {
+    key: "sessions",
+    label: "活跃会话",
+    icon: <Laptop aria-hidden="true" className="size-4" />,
+    children: <SessionsPanel />,
+  },
 ] as const;
-
-function AccountSettingsPanel({ tab }: { tab: AccountSettingsTab }) {
-  switch (tab) {
-    case "profile": return <ProfilePanel />;
-    case "password": return <PasswordPanel />;
-    case "mfa": return <MfaPanel />;
-    case "passkeys": return <PasskeysPanel />;
-    case "sessions": return <SessionsPanel />;
-  }
-}
 
 export function GossoAccountSettingsDemo() {
   const [activeTab, setActiveTab] = useState<AccountSettingsTab>("profile");
@@ -42,8 +57,12 @@ export function GossoAccountSettingsDemo() {
         title="账户设置"
         description="维护个人资料、登录凭据、多因素认证、通行密钥与活跃会话。"
       />
-      <Tabs<AccountSettingsTab> activeKey={activeTab} items={accountTabs} onChange={setActiveTab} ariaLabel="账户设置栏目" />
-      <AccountSettingsPanel tab={activeTab} />
+      <Tabs<AccountSettingsTab>
+        activeKey={activeTab}
+        items={accountTabs}
+        onChange={setActiveTab}
+        ariaLabel="账户设置栏目"
+      />
     </div>
   );
 }
