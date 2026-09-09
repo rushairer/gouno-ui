@@ -38,6 +38,7 @@
 | API-018 | 复合组件负责自身语义区域之间的 structural spacing；内容槽内部 padding/rhythm 由内容拥有者负责。Tabs 四个 `tabPosition` 保持同一 TabBar↔Panel 间距语义，active indicator 不得扩大 TabList 的滚动区域。 | Tabs docs/focused tests / PD-020 |
 | API-019 | `NavigationGroup` 拥有侧栏导航 section 的组内与组间节奏；`label` 可选。带 label 的组渲染可见标题，无 label 的组用于概览等独立一级入口并保持相同 section spacing，产品不得复制 `mb-*` 修补组间距。 | NavigationGroup focused test / AppShell Showcase / Gosso Admin |
 | API-020 | Core `CodeBlock` 使用 `code` 作为唯一权威源码；拥有只读代码框、横向滚动、可选语言标识与复制成功反馈。`renderCode(code)` 仅是呈现钩子并接收同一 `code`，语法高亮/解析引擎继续由调用方拥有，不把 Prism、rehype 等第三方类型或依赖固化进公共 API。 | Core CodeBlock docs/focused tests / PD-038 |
+| API-021 | Core `Anchor` 保持真实 `<a href="#...">` 章节链接与标准 `aria-label`/HTML 属性；默认 `offset=0` 不劫持原生 hash 导航。调用方显式设置 `offset` 时，滚动目标必须按 `scrollY + target.top - offset` 计算，而不是把 offset 本身当绝对滚动位置。Sticky header 优先由目标 heading 的 `scroll-margin-top` 拥有。 | Core Anchor same-source demo/focused tests / PD-039 |
 
 ## 当前破坏式迁移说明
 
@@ -83,6 +84,8 @@ variant="default"     → type="info"（或按真实语义选择 success/warning
 Alert 的 canonical `variant` 只表示 `outlined|filled` 视觉形态。当前 Ant Design 已弃用的 `message`、顶层 `onClose/afterClose/closeIcon/closeText` 不作为兼容别名进入 Gouno API；关闭生命周期统一放入 `closable` 对象。
 
 Core `CodeBlock` 的复制源与显示源不拆成两套属性。`code` 是唯一权威字符串；`renderCode` 只能消费该字符串做 token/高亮呈现，不能提供另一个 source/value/children 写入口。语法引擎属于调用方，所以 Showcase 的 Prism 适配和 Blog 的 Markdown/rehype 组合可以共存而不污染 Core 依赖边界。
+
+Core `Anchor` 的默认路径保持原生 hash 链接语义，不用组件 JS 重写浏览器滚动。真实阅读页的固定头部遮挡通过 heading `scroll-margin-top` 解决，因此键盘激活、复制链接和直接访问 hash 共用同一位置规则。只有调用方不能控制目标样式而显式传 `offset` 时，Anchor 才拦截本地 hash 点击并按目标真实位置减去偏移量平滑滚动；外部链接和缺失目标不被拦截。
 
 ## Core 继续验证原则
 
