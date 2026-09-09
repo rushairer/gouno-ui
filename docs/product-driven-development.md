@@ -17,14 +17,14 @@ Gouno UI has enough Core breadth for real product validation. This does **not** 
 
 Do not expand Core merely to reach parity with Ant Design, shadcn/ui, another catalog or an imagined future application. Add or extend Core when a real product page demonstrates a product-agnostic capability gap.
 
-The migration strategy has advanced to second-product validation:
+The migration strategy has advanced to third-product validation:
 
-- **Completed comparison corpus:** Gosso Admin, with route-level coverage and a product-language convergence pass.
-- **Active migration line:** Gouno Blog Admin, one real page/page-family at a time, beginning with `/admin/posts`.
-- **Additional cross-product evidence corpus:** relevant Gouno Blog public-site pages when their semantics overlap.
+- **Completed comparison corpora:** Gosso Admin, with route-level coverage and a product-language convergence pass; Blog Admin, with complete route coverage and behavior/detail fidelity hardening.
+- **Active migration line:** Gouno Blog public site, one real page/page-family at a time, beginning with `PublicShell` + `/` Home.
+- **Comparison evidence corpus:** completed Gosso Admin and Blog Admin pages remain mandatory prior art when Blog public pages expose abstraction questions.
 - **Execution model:** single-line implementation, multi-product validation. Do not migrate several product lines in parallel merely to manufacture abstraction evidence.
 
-During this phase, Core and Theme remain the baseline foundation. The minimum admitted Gouno product structure is `AppShell`, `PageContainer`, `NavigationGroup`, `navigationItemClass`, plus the later evidence-admitted `PageHeader`.
+During this phase, Core and Theme remain the baseline foundation. The admitted Gouno application-shell structure remains `AppShell`, `PageContainer`, `NavigationGroup`, `navigationItemClass`, plus the evidence-admitted `PageHeader`. Public content/document shells are not automatically instances of that grammar; keep them product-local until independent evidence proves a shared contract.
 
 Pre-validation Pattern/Gouno implementations are quarantined under `src/legacy`. They are available for prior-art review only and may not be imported into canonical code or Showcase.
 
@@ -36,7 +36,7 @@ When migrating a page into Showcase:
 
 1. Preserve the page's user intent, information hierarchy, important states, interactions, responsive behavior and accessibility semantics.
 2. Treat legacy product component names, file boundaries and wrapper hierarchy as implementation history, not as the target design system.
-3. Rebuild with Gouno UI Core, Theme, admitted Gouno structure, local JSX and local Tailwind composition first.
+3. Rebuild with Gouno UI Core, Theme, admitted Gouno structure where semantics match, local JSX and local Tailwind composition first.
 4. Do not copy a product-local or Legacy component into a canonical layer merely because it already exists.
 5. Accept small amounts of repeated JSX while the design is still being discovered.
 
@@ -90,8 +90,8 @@ Before introducing any new public Pattern, new public Gouno component or materia
 - canonical Gouno UI;
 - `src/legacy` for historical prior art;
 - completed Gosso Admin fixtures/source;
-- current Blog Admin source and migrated fixtures;
-- Gouno Blog when relevant to the public site.
+- completed Blog Admin source and migrated fixtures;
+- current Gouno Blog public-site source and migrated fixtures.
 
 The purpose is not to migrate all matching pages at once. It is to test whether the proposed semantics already exist elsewhere under another name/structure and whether another product provides a conflicting case.
 
@@ -159,13 +159,13 @@ Core APIs are stable enough to use but subject to evidence-driven correction. Pr
 Default sequence in the current phase:
 
 ```text
-Blog Admin real page
+Blog public real page/page-family
         ↓
-Rebuild in Showcase with Core + Theme + admitted Gouno structure
+Rebuild in Showcase with Core + Theme + admitted Gouno structure only where semantics match
         ↓
 A capability gap or repeated semantic block appears
         ↓
-Search canonical Gouno UI + Legacy + completed Gosso Admin + other Blog Admin pages + relevant Blog pages
+Search canonical Gouno UI + Legacy + completed Gosso Admin + completed Blog Admin + other relevant Blog pages
         ↓
 Compare semantics/state/interaction, ignoring legacy component names
         ↓
@@ -173,10 +173,10 @@ Keep local OR extend Core OR admit Pattern/Gouno abstraction
         ↓
 Record evidence and decision
         ↓
-Validate the decision on later migrated Blog Admin pages
+Validate the decision on later migrated Blog public pages and against completed corpora where relevant
 ```
 
-Do not restart Gosso and Blog Admin as parallel implementation lines. Gosso is now the completed first-product comparison corpus; Blog Admin is the active implementation line. Relevant public Blog pages remain comparison evidence until Blog itself becomes the active migration stage.
+Do not restart Gosso Admin or Blog Admin as parallel implementation lines. They are completed comparison corpora. Blog public is the active implementation line. Reopen an older fixture only when the active product exposes a genuine cross-product defect or missing fidelity evidence.
 
 An abstraction may shrink, move layers, merge or disappear when later product evidence disproves it.
 
@@ -199,9 +199,9 @@ This separation makes physical source organization reflect confidence: canonical
 
 Product workspaces are evidence of real migration, not catalogs of imagined pages.
 
-- Gosso Admin contains only pages actually migrated under this process and now acts as a completed comparison workspace.
-- Blog Admin shows only pages genuinely migrated in the active second-product phase.
-- Blog remains empty until its pages are genuinely migrated.
+- Gosso Admin contains only pages actually migrated under this process and acts as the completed first comparison workspace.
+- Blog Admin contains only pages genuinely migrated and fidelity-hardened under the second-product phase and acts as the completed second comparison workspace.
+- Blog is the active workspace and receives only public pages genuinely migrated from the real product, beginning with `PublicShell` + Home.
 - Old simulated product demos must not remain as if they were approved product pages.
 - Empty workspaces show an explicit empty state.
 
