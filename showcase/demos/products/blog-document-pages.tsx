@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { ArrowLeft, CalendarDays, ExternalLink, Github, Rss } from "lucide-react";
+import { ArrowLeft, CalendarDays, ExternalLink, GitBranch, Rss } from "lucide-react";
 import {
   Alert,
   Button,
@@ -202,7 +202,7 @@ export function BlogAboutDemo() {
           <section aria-labelledby="about-links" className="space-y-3">
             <h2 id="about-links" className="text-2xl font-semibold tracking-tight">继续了解</h2>
             <div className="flex flex-wrap gap-2">
-              <Button variant="outline" icon={<Github />} onClick={() => setNotice("将打开 GitHub（Showcase 模拟）。")}>GitHub</Button>
+              <Button variant="outline" icon={<GitBranch />} onClick={() => setNotice("将打开 GitHub（Showcase 模拟）。")}>GitHub</Button>
               <Button variant="outline" icon={<Rss />} onClick={() => setNotice("将打开 /rss.xml（Showcase 模拟）。")}>RSS</Button>
               <Button variant="text" icon={<ExternalLink />} onClick={() => setNotice("将进入 /articles（Showcase 模拟）。")}>浏览文章</Button>
             </div>
