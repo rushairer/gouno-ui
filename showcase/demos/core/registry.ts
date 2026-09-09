@@ -13,6 +13,7 @@ import { otherDocuments } from "./other";
 import { overlayDocuments } from "./overlay";
 import { segmentedDocuments } from "./segmented";
 import { selectionControlDocuments } from "./selection-controls";
+import { statusDocuments } from "./status";
 import { tagDocuments } from "./tag";
 import { typographyDocuments } from "./typography";
 
@@ -30,6 +31,7 @@ export const coreDocuments: Record<string, ComponentDocument> = {
   ...navigationDocuments,
   ...dataDisplayDocuments,
   ...feedbackDocuments,
+  ...statusDocuments,
   ...overlayDocuments,
   ...alertDocuments,
   ...otherDocuments,

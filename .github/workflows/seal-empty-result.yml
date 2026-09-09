@@ -1,0 +1,89 @@
+name: Seal Empty and Result source trust
+
+on:
+  push:
+    branches:
+      - showcase/empty-result-source-trust-20260909
+
+permissions:
+  contents: write
+
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Remove legacy Empty and Result docs and certify progress
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          feedback_path = Path("showcase/demos/core/feedback.tsx")
+          feedback = feedback_path.read_text()
+          old = '''  empty: {
+            title: "Empty 空状态",
+            description: "无数据时的说明和操作入口。",
+            code: '<Empty title="暂无数据" description="创建第一条记录" />',
+            render: () => (
+              <Empty
+                title="暂无数据"
+                description="创建第一条记录后会显示在这里。"
+                action={<Button variant="solid" color="primary">新建</Button>}
+              />
+            ),
+          },
+          result: {
+            title: "Result 结果",
+            description: "操作结果和下一步入口。",
+            code: '<Result status="success" title="操作成功" />',
+            render: () => (
+              <Result
+                status="success"
+                title="操作成功"
+                subTitle="数据已经保存"
+                extra={<Button>返回列表</Button>}
+              />
+            ),
+          },
+          '''
+          if old not in feedback:
+              raise SystemExit("legacy Empty/Result document block not found")
+          feedback = feedback.replace(old, "", 1)
+          feedback = feedback.replace("  Empty,\n", "", 1).replace("  Result,\n", "", 1)
+          feedback_path.write_text(feedback)
+
+          progress_path = Path("showcase/component-progress.ts")
+          progress = progress_path.read_text()
+          marker = '  "core-progress",\n'
+          insertion = '  "core-empty",\n  "core-result",\n  "core-progress",\n'
+          if marker not in progress:
+              raise SystemExit("component progress marker missing")
+          progress_path.write_text(progress.replace(marker, insertion, 1))
+          PY
+
+      - name: Verify sealed family
+        run: |
+          npm run typecheck
+          npm test -- --run
+          npm run build
+          npm run showcase:build
+
+      - name: Persist clean branch commit
+        run: |
+          git config user.name "Aben"
+          git config user.email "5195693+rushairer@users.noreply.github.com"
+          git rm .github/workflows/seal-empty-result.yml
+          git add showcase tests
+          git commit -m "test(core): certify Empty and Result source trust"
+          git push origin HEAD
