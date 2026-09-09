@@ -7,7 +7,7 @@ import {
   ListChecks,
   LockKeyhole,
 } from "lucide-react";
-import { Alert, Modal, Tabs, Text } from "../../../../src/core";
+import { Alert, Modal, Segmented, Tabs, Text } from "../../../../src/core";
 import { PageHeader } from "../../../../src/gouno";
 import { FixtureDock } from "../../../components/fixture-dock";
 import { AISettingsEditor, type AISettingsEditorResult, type AISettingsEditorState } from "./editors";
@@ -42,13 +42,21 @@ const tabs = [
   { key: "connectors", label: "Sandbox 连接器", icon: <LockKeyhole aria-hidden="true" className="size-4" /> },
 ] as const;
 
-type Notice = { type: "success" | "warning" | "info"; text: string } | null;
+type Notice = { type: "success" | "warning" | "info" | "error"; text: string } | null;
+type MutationScenario = "success" | "save-error" | "delete-error" | "connection-error";
 type DeleteTarget =
   | { kind: "agent"; value: AgentFixture }
   | { kind: "skill"; value: SkillFixture }
   | { kind: "provider"; value: ProviderFixture }
   | { kind: "embedding"; value: EmbeddingProfileFixture }
   | null;
+
+const mutationOptions = [
+  { value: "success", label: "操作成功" },
+  { value: "save-error", label: "保存失败" },
+  { value: "delete-error", label: "删除失败" },
+  { value: "connection-error", label: "连接测试失败" },
+] as const;
 
 export function parseAISettingsRoute(value: string): AISettingsSection {
   const query = value.includes("?") ? value.slice(value.indexOf("?") + 1) : value.replace(/^\?/, "");
@@ -85,8 +93,7 @@ function upsert<T extends { id: number }>(items: T[], item: T, existingId?: numb
 }
 
 function deleteName(target: DeleteTarget) {
-  if (!target) return "";
-  return target.value.name;
+  return target?.value.name ?? "";
 }
 
 export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initialSection?: AISettingsSection }) {
@@ -95,14 +102,24 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
   const [notice, setNotice] = useState<Notice>(null);
   const [editor, setEditor] = useState<AISettingsEditorState>(null);
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
+  const [mutationScenario, setMutationScenario] = useState<MutationScenario>("success");
 
   const changeSection = (next: AISettingsSection) => {
     setSection(next);
     setNotice(null);
     setEditor(null);
+    setDeleteTarget(null);
   };
 
   const saveEditor = (result: AISettingsEditorResult) => {
+    if (mutationScenario === "save-error") {
+      setNotice({
+        type: "error",
+        text: `${result.value.name} 保存失败；编辑内容与当前表单保持不变，可直接重试（Showcase 模拟）。`,
+      });
+      return;
+    }
+
     setFixture((current) => {
       switch (result.kind) {
         case "agent": {
@@ -134,6 +151,14 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
   const confirmDelete = () => {
     if (!deleteTarget) return;
     const name = deleteName(deleteTarget);
+    if (mutationScenario === "delete-error") {
+      setNotice({
+        type: "error",
+        text: `${name} 删除失败；当前对象与确认窗口保持不变，可直接重试（Showcase 模拟）。`,
+      });
+      return;
+    }
+
     setFixture((current) => {
       switch (deleteTarget.kind) {
         case "agent": return { ...current, agents: current.agents.filter((item) => item.id !== deleteTarget.value.id) };
@@ -209,6 +234,14 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
     setNotice({ type: "success", text: `Outbox #${item.id} 已更新为${nextStatus === "approved" ? "已批准" : nextStatus === "delivered" ? "已模拟投递" : nextStatus === "revoked" ? "已撤销" : "待审批"}。` });
   };
 
+  const testConnection = (name: string, kind: "provider" | "embedding") => {
+    if (mutationScenario === "connection-error") {
+      setNotice({ type: "error", text: `${name}：连接测试失败；请检查 Base URL、模型名与凭证后重试（Showcase 模拟）。` });
+      return;
+    }
+    setNotice({ type: "success", text: `${name}：${kind === "embedding" ? "Embedding " : ""}连接测试成功。` });
+  };
+
   const actions: AISettingsSectionActions = {
     onCreateAgent: () => {
       if (!fixture.providers.some((item) => item.enabled)) {
@@ -231,14 +264,14 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
     onRetryIndex: () => setNotice({ type: "success", text: "失败索引任务已重新排队。" }),
     onRebuildIndex: () => setNotice({ type: "warning", text: "已模拟通过近期 MFA 后请求全量重建知识索引。" }),
     onCreateEmbedding: () => setEditor({ kind: "embedding", value: "new" }),
-    onTestEmbedding: (profile) => setNotice({ type: "success", text: `${profile.name}：Embedding 连接测试成功。` }),
+    onTestEmbedding: (profile) => testConnection(profile.name, "embedding"),
     onEditEmbedding: (profile) => setEditor({ kind: "embedding", value: profile }),
     onDeleteEmbedding: (profile) => setDeleteTarget({ kind: "embedding", value: profile }),
     onExportProviders: () => setNotice({ type: "info", text: "已模拟通过近期 MFA 后导出模型连接配置；凭证保持掩码。" }),
     onImportProviders: importProviders,
     onCreateProvider: () => setEditor({ kind: "provider", value: "new" }),
     onSetDefaultProvider: setDefaultProvider,
-    onTestProvider: (provider) => setNotice({ type: "success", text: `${provider.name}：连接测试成功。` }),
+    onTestProvider: (provider) => testConnection(provider.name, "provider"),
     onEditProvider: (provider) => setEditor({ kind: "provider", value: provider }),
     onDeleteProvider: (provider) => setDeleteTarget({ kind: "provider", value: provider }),
     onCreateConnector: () => setEditor({ kind: "connector", value: "new" }),
@@ -250,7 +283,19 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
 
   return (
     <div className="flex flex-col gap-6">
-      <FixtureDock route={formatAISettingsRoute(section)} note="AI 设置是独立的管理路由族；Showcase 模拟 CRUD、MFA 后配置、OAuth 与 Outbox 状态，但不保存真实凭证或调用真实 Agent/Connector API。" />
+      <FixtureDock
+        route={formatAISettingsRoute(section)}
+        note="AI 设置是独立的管理路由族；Showcase 模拟 CRUD、保存/删除/连接失败、MFA 后配置、OAuth 与 Outbox 状态，但不保存真实凭证或调用真实 Agent/Connector API。"
+        controls={(
+          <Segmented<MutationScenario>
+            aria-label="AI 设置操作场景"
+            options={mutationOptions}
+            value={mutationScenario}
+            onChange={(value) => { setMutationScenario(value); setNotice(null); }}
+            block
+          />
+        )}
+      />
       <PageHeader title="AI 设置" description="管理 Agent、Skill、Tool、知识索引、模型连接与 Sandbox 连接器。" />
       <Tabs<AISettingsSection> activeKey={section} items={tabs} onChange={changeSection} ariaLabel="AI 设置栏目" />
       {notice ? <Alert type={notice.type} showIcon title={notice.text} /> : null}

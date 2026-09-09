@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   BlogAdminAISettingsDemo,
@@ -11,6 +11,11 @@ afterEach(cleanup);
 
 function openTab(name: string) {
   fireEvent.mouseDown(screen.getByRole("tab", { name }), { button: 0 });
+}
+
+function selectOperationScenario(name: "操作成功" | "保存失败" | "删除失败" | "连接测试失败") {
+  fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
+  fireEvent.click(screen.getByRole("radio", { name }));
 }
 
 describe("Blog Admin AI Settings route family", () => {
@@ -50,6 +55,20 @@ describe("Blog Admin AI Settings route family", () => {
     expect(screen.getByRole("button", { name: "删除 Research Review Agent" })).toBeTruthy();
   });
 
+  it("keeps an editor and its draft intact when a save fails", () => {
+    render(<BlogAdminAISettingsDemo />);
+    selectOperationScenario("保存失败");
+
+    fireEvent.click(screen.getByRole("button", { name: "创建 Agent" }));
+    const name = screen.getByLabelText(/Agent 名称/) as HTMLInputElement;
+    fireEvent.change(name, { target: { value: "Failure Preserved Agent" } });
+    fireEvent.click(screen.getByRole("button", { name: "保存 Agent" }));
+
+    expect(screen.getByRole("heading", { level: 2, name: "创建 Agent" })).toBeTruthy();
+    expect(name.value).toBe("Failure Preserved Agent");
+    expect(screen.getByText("Failure Preserved Agent 保存失败；编辑内容与当前表单保持不变，可直接重试（Showcase 模拟）。")).toBeTruthy();
+  });
+
   it("restores Skill import/create/export/copy/edit management actions", () => {
     render(<BlogAdminAISettingsDemo />);
     openTab("Skills");
@@ -81,6 +100,30 @@ describe("Blog Admin AI Settings route family", () => {
     expect(screen.getByText("OpenAI GPT-5.6：连接测试成功。")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "添加模型连接" }));
     expect(screen.getByRole("heading", { level: 2, name: "添加模型连接" })).toBeTruthy();
+  });
+
+  it("surfaces provider connection failures instead of reporting unconditional success", () => {
+    render(<BlogAdminAISettingsDemo />);
+    selectOperationScenario("连接测试失败");
+    openTab("模型连接");
+
+    fireEvent.click(screen.getAllByRole("button", { name: "测试连接" })[0]);
+    expect(screen.getByText("OpenAI GPT-5.6：连接测试失败；请检查 Base URL、模型名与凭证后重试（Showcase 模拟）。")).toBeTruthy();
+    expect(screen.getAllByRole("alert").some((alert) => alert.getAttribute("data-type") === "error")).toBe(true);
+  });
+
+  it("keeps the delete target and confirmation open when deletion fails", () => {
+    render(<BlogAdminAISettingsDemo />);
+    selectOperationScenario("删除失败");
+
+    fireEvent.click(screen.getByRole("button", { name: "删除 Hero Image Planner" }));
+    const dialog = screen.getByRole("dialog", { name: "确认删除" });
+    expect(within(dialog).getByText("确定删除「Hero Image Planner」吗？")).toBeTruthy();
+    fireEvent.click(within(dialog).getByRole("button", { name: "删除" }));
+
+    expect(screen.getByText("Hero Image Planner 删除失败；当前对象与确认窗口保持不变，可直接重试（Showcase 模拟）。")).toBeTruthy();
+    expect(screen.getByRole("dialog", { name: "确认删除" })).toBeTruthy();
+    expect(screen.getByText("Hero Image Planner", { selector: "strong" })).toBeTruthy();
   });
 
   it("restores Embedding creation, connection testing and protected rebuild actions", () => {
