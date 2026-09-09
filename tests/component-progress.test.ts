@@ -25,8 +25,15 @@ describe("audited batch completion", () => {
     }
   });
 
-  it("reports the completed same-source demo batch as complete", () => {
-    for (const id of ["core-space", "core-card", "core-typography", "core-progress"]) {
+  it("reports the completed same-source and reading-evidence Core batch as complete", () => {
+    for (const id of [
+      "core-space",
+      "core-card",
+      "core-typography",
+      "core-progress",
+      "core-code-block",
+      "core-anchor",
+    ]) {
       expect(componentProgress(id, 0), id).toBe(100);
     }
   });
