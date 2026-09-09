@@ -365,7 +365,7 @@ export function BlogAdminPageEditorDemo({
       {notice ? <Alert type="success" showIcon title={notice} closable={{ onClose: () => setNotice(null) }} /> : null}
       {error ? <Alert type="error" showIcon title={error} closable={{ onClose: () => setError(null) }} /> : null}
 
-      <Card padding="none" className="gap-0 overflow-clip shadow-sm" aria-label="单页编辑器">
+      <Card padding="none" className="gap-0 overflow-clip" aria-label="单页编辑器">
         <header className="flex flex-col gap-3 border-b px-6 py-4 lg:flex-row lg:items-center">
           <Button
             variant="text"
@@ -452,7 +452,7 @@ export function BlogAdminPageEditorDemo({
                     size="small"
                     variant="text"
                     icon={<Sparkles />}
-                    onClick={() => setSummaryCandidates(["介绍团队背景、技术方向、产品理念与长期目标。"])}
+                    onClick={() => setSummaryCandidates(["介绍团队背景、技术方向、产品理念与长期目标。"]) }
                   >
                     根据正文生成摘要
                   </Button>
