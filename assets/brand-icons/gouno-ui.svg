@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" fill="none">
+  <title>Gouno UI</title>
+  <path d="M94 20H48C32.536 20 20 32.536 20 48V80C20 95.464 32.536 108 48 108H80C95.464 108 108 95.464 108 80V66" stroke="#7C3AED" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="42.5" y="42.5" width="17" height="17" rx="5" fill="#7C3AED"/>
+  <rect x="68.5" y="42.5" width="17" height="17" rx="5" fill="#7C3AED"/>
+  <rect x="42.5" y="68.5" width="17" height="17" rx="5" fill="#7C3AED"/>
+  <rect x="68.5" y="68.5" width="17" height="17" rx="5" fill="#7C3AED"/>
+</svg>
