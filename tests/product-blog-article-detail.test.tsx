@@ -51,13 +51,13 @@ describe("Blog public ArticleDetail migration", () => {
     loading.unmount();
 
     const error = renderDetail("error");
-    expect(screen.getByText("文章载入失败")).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 1, name: "文章载入失败" })).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "重试" }));
     expect(screen.getByRole("heading", { level: 1, name: /从 OAuth2 BFF 到产品体验/ })).toBeTruthy();
     error.unmount();
 
     renderDetail("not-found");
-    expect(screen.getByText("文章不存在或已下线")).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 1, name: "文章不存在或已下线" })).toBeTruthy();
   });
 
   it("uses canonical reading primitives without promoting a public reading shell", () => {
@@ -70,6 +70,8 @@ describe("Blog public ArticleDetail migration", () => {
     expect(source).toContain('Anchor,');
     expect(source).toContain('import { PageHeader } from "../../../src/gouno"');
     expect(source).toContain("BlogPublicShellFixture");
+    expect(source).toContain('headingLevel={1}');
+    expect(source).not.toContain("subTitle=");
     expect(source).not.toMatch(/import\s+\{[^}]*\b(?:AppShell|PageContainer)\b[^}]*\}\s+from\s+["'][^"']+["']/s);
     expect(source).not.toMatch(/<(?:AppShell|PageContainer)\b/);
     expect(source).not.toMatch(/import\s+.*\b(?:MarkdownRenderer|TableOfContents)\b/s);
