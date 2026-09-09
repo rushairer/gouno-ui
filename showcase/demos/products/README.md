@@ -1,132 +1,138 @@
 # Product Page Migration Fixtures
 
-This directory contains only product pages genuinely migrated under the product-driven process.
+This directory contains product pages genuinely rebuilt under the product-driven migration process. Read `AGENTS.md`, `docs/product-driven-development.md`, `docs/design-language.md`, and `docs/product-interface-governance.md` before changing a migrated product surface.
 
-Follow `docs/product-driven-development.md` rather than copying historical abstractions. New migrated pages should begin with Core + Theme + admitted Gouno structure supplied by the Showcase shell, keep uncertain composition product-local, and record durable abstraction decisions in `docs/abstraction-register.md`.
+A Showcase file existing for a route proves **route-level coverage only**. It does not prove that every real-product action, state transition, permission branch, responsive presentation, failure mode, or management entry point has been migrated. Fidelity is accepted only after direct comparison with the current real product source.
 
-## Gosso Admin coverage
+## Current migration phase
 
-The Gosso Admin Showcase covers every user-facing route family with static fixtures:
+- **Gosso Admin:** completed first-product comparison corpus.
+- **Blog Admin:** route-level coverage is complete; **behavior/detail fidelity hardening remains active**.
+- **Blog public site:** not yet the active migration line.
 
-1. `gosso-overview.tsx` — Overview `/`.
-2. `gosso-account-settings.tsx` — Account Settings `/account-settings/:tab`.
-3. `gosso-system-management/` — System Management `/system-management/:tab`.
-4. `gosso-auth/` — Login, forgot/reset password and OAuth callback standalone identity routes.
-5. `gosso-auth/not-found.tsx` — application-family Not Found state.
+Do not call the Blog Admin migration globally “finished” merely because every route family appears in Showcase. A later real-page comparison may reopen an existing fixture when it exposes a missing behavior or a canonical design-system defect.
 
-Gosso Admin remains the completed first-product comparison corpus. Blog Admin now forms the completed second-product Admin validation corpus.
+## Blog Admin route coverage
 
-## Blog Admin coverage
+Current migrated route families:
 
-Blog Admin has route-level Showcase coverage across the current Admin product surface. The migrated pages are:
+1. `blog-admin-dashboard.tsx` — `/admin/dashboard`.
+2. `blog-admin-posts.tsx` — `/admin/posts`.
+3. `blog-admin-post-editor.tsx` — `/admin/posts/new`, `/admin/posts/:id/edit`.
+4. `blog-admin-pages.tsx` — `/admin/pages`.
+5. `blog-admin-page-editor.tsx` — `/admin/pages/new`, `/admin/pages/:id/edit`.
+6. `blog-admin-categories.tsx` — `/admin/categories`.
+7. `blog-admin-tags.tsx` — `/admin/tags`.
+8. `blog-admin-comments.tsx` — `/admin/comments`.
+9. `blog-admin-notifications.tsx` — `/admin/notifications`.
+10. `blog-admin-media-library.tsx` — `/admin/media`.
+11. `blog-admin-users.tsx` — `/admin/users`.
+12. `blog-admin-site-settings.tsx` — `/admin/settings`.
+13. `blog-admin-ai-operations/` — target `/admin/ai-ops` operations route family.
+14. `blog-admin-ai-settings/` — target `/admin/ai-settings` governance/configuration route family.
 
-1. `blog-admin-posts.tsx` — Posts `/admin/posts`, including filters, loading/error/empty states, desktop Table, mobile list presentation, selection/batch actions, pagination and destructive confirmation.
-2. `blog-admin-users.tsx` — Members & Roles `/admin/users`, including Blog-local membership/role semantics, desktop Table/mobile Cards, edit role/name, suspend/restore, ownership transfer and product-local Sudo/MFA security states.
-3. `blog-admin-site-settings.tsx` — Site Settings `/admin/settings`, including all five real settings groups, RSS validation, favicon/Hero upload semantics, dirty/save lifecycle, loading/error states and product-local Sudo/MFA protection.
-4. `blog-admin-comments.tsx` — Comments `/admin/comments`, including status/reported filters, moderation queue, selection/batch delete, AI workflow entry, destructive confirmation and loading/error/empty states.
-5. `blog-admin-categories.tsx` — Categories `/admin/categories`, including taxonomy Table, selection/batch workflows, create/edit Drawer, AI Slug assistance, destructive confirmation and loading/error/empty states.
-6. `blog-admin-tags.tsx` — Tags `/admin/tags`, including responsive Card Grid, rename/merge, selection/batch delete, partial batch failure with failed-item retention, AI workflow entry and loading/error/empty states.
-7. `blog-admin-pages.tsx` — Pages `/admin/pages`, including search/status filters, desktop Table/mobile list presentation, path/template/navigation metadata, pagination, single/batch deletion and AI workflow entry.
-8. `blog-admin-notifications.tsx` — Notifications `/admin/notifications`, including status/type filters, notification Card queue, unread/read state transitions, product-owned selected actions, global clear operations and loading/error/empty states.
-9. `blog-admin-media-library.tsx` — Media Library `/admin/media`, including media Card Grid, search/type filtering, SVG/ICO-compatible Upload, upload/AI/Alt Text Drawers, reference-aware deletion, partial batch failure and AI workflow entry.
-10. `blog-admin-dashboard.tsx` — Dashboard `/admin/dashboard`, including permission-aware KPI destinations, traffic trend, content-governance health, AI failure alerts and Top Posts.
-11. `blog-admin-ai-operations/` — AI Operations `/admin/ai-ops`, including Overview, Inbox, Automation, Workflow/Agent Records, Advanced governance surfaces and the real `tab`/`record`/`workflow`/`run` query contract.
-12. `blog-admin-post-editor.tsx` — PostEditor `/admin/posts/new` and `/admin/posts/:id/edit`, including command bar, outline/version history, Markdown/preview canvas, metadata inspector, dirty/save state, draft/publish/scheduled intent, 409 conflict retention, version restore, read-only ownership state and product-owned AI metadata/writing/image flows.
-13. `blog-admin-page-editor.tsx` — PageEditor `/admin/pages/new` and `/admin/pages/:id/edit`, including a two-column canvas/inspector workspace, title+Slug save validation, draft/published intent, preview-before-save behavior, 409 conflict retention, template selection, main-navigation visibility/sort order, Markdown/preview and product-owned AI metadata/writing/image flows.
+### AI Operations and AI Settings are intentionally separate
 
-The Posts migration was rechecked after PD-023/PD-024. Its normal application surfaces conform to the shared surface contract; the one spacious `Card padding="lg"` is intentionally limited to the contained `Empty` result surface and is not an application alignment precedent. `tests/design-language-conformance.test.ts` protects every currently migrated Blog Admin page from drifting back to accidental 20px/32px normal application insets.
+The current real `gouno-blog` application still mounts AI administration under `/admin/ai-ops`; the independent AI Settings route is the **target information architecture established during Gouno UI migration**, not a claim about the current production router.
 
-Posts and Members independently reuse admitted `PageHeader` without expanding its API. Comments, Categories, Tags, Pages, Notifications and Media Library continue validating the same route-header contract across moderation-list, taxonomy-table, Card-Grid, responsive collection, notification-queue and media-workflow surfaces. Resource-management mechanics repeat, but the surrounding presentations remain intentionally different; this continues to reject restoration of one broad Legacy `DataTable`, `ResponsiveList`, `FilterBar` or `AsyncState` feature bag.
+The target split is:
 
-Dashboard and AI Operations extend the validation corpus beyond resource collections. Dashboard remains Core-first without `MetricCard`/dashboard Pattern extraction. AI Operations proves that a heterogeneous five-tab route family—with approvals, workflow execution, run evidence and Advanced governance—can stay product-local on top of canonical Core + `PageHeader` without admitting an AI/workspace feature bag.
+- **AI Operations:** Overview, Inbox, Automation, Workflow/Agent Records; user work is discovery, decision, execution, and evidence review.
+- **AI Settings:** Agents, Skills, Tools, Knowledge/Embedding, Model Connections, Sandbox Connectors; user work is stable governance/configuration.
 
-PostEditor and PageEditor are intentional exceptions to the normal `PageHeader → content surfaces` task-page grammar. They independently prove an editor-family anatomy built around a command bar, Markdown/preview canvas and metadata inspector, but PD-036 does **not** promote that anatomy to a public Editor Pattern. PostEditor additionally owns outline/version history, scheduled publishing, other-author read-only behavior, version restore and article-specific taxonomy/cover metadata. PageEditor instead requires Slug before persistence, saves before frontsite preview, has only draft/published states and owns page-template/navigation/sort-order semantics. Their state machines and Inspector contracts therefore remain product-local even though their visual family is related.
+Do not restore the historical nested `Advanced` navigation merely to match old source structure. Migrate the capabilities into the correct target route family instead.
 
-Both editor fixtures preserve PD-020: Tabs owns Markdown/preview navigation and structural spacing; editor content owns canvas padding and horizontal overflow. Both also participate in DL-07 surface conformance. No binding cross-product editor rule is introduced from two same-product samples.
+The fidelity pass must preserve management entry points after this IA split. Current fixtures therefore cover, among other behavior:
 
-PostEditor exposed one genuine Core contract defect rather than an editor-specific need: description-only confirmation dialogs should not require meaningless `children={null}`. PD-035 therefore makes `ModalProps.children` optional and omits the body region when neither body content nor loading exists; PageEditor reuses the corrected Modal contract without further Core expansion.
+- Agent create/edit/delete, enable/disable and run entry points;
+- Skill create/import/export/copy/edit/delete;
+- model connection create/import/export/edit/delete/test and default text/image assignment;
+- Embedding profile create/edit/delete/test plus retry/rebuild index controls;
+- Connector profile create/edit and OAuth/Mock OAuth state;
+- Connector Outbox enqueue, approval, mock delivery, retry and revoke;
+- Workflow create/edit/enable/disable/delete as well as run/dry-run/rollback;
+- newly launched Workflow runs entering the current Run Center evidence fixture rather than linking to a nonexistent run.
 
-Do not collapse Gosso identity users and Blog members into one page/domain abstraction merely because both render a user-like table. Gosso manages identity-platform accounts; Blog Admin manages product membership, roles and high-privilege product actions. Shared abstractions must come from smaller stable presentation/interaction contracts, not from similar nouns or screenshots.
+All of these remain **static Showcase behavior**. No real API key, OAuth credential, Agent execution, Connector network call, or product mutation is permitted here.
 
-Dense desktop Table row actions are governed by DL-09: repeated row actions use one compact icon-action structural family, stay on one line and let Core Table horizontal overflow own width pressure. Danger changes semantic color rather than control structure. This rule is protected across Blog Posts/Categories/Pages/Members and Gosso Users/OAuth Clients; it deliberately does not create a public `RowActions`, `ActionGroup` or DataTable abstraction.
+## Fidelity acceptance rule
 
-Blog Admin Site Settings independently revalidates the Gosso Site Settings full-bleed sticky action anatomy: `Card padding="none"` owns border/radius/clipping while `CardContent` and `CardFooter` own their own insets. Cross-product repetition strengthens PD-024, but Core Card anatomy already expresses the stable structure, so there is still no evidence that a `StickyFormFooter` or `SaveBar` Pattern would add meaningful behavior rather than wrap class names.
+For each migrated Blog Admin route, compare the current real product source with the Showcase fixture across these dimensions before treating the route as fidelity-complete:
 
-Real Blog `SudoGate` prior art appears in multiple Blog-owned high-privilege areas, and Members plus Site Settings exercise two distinct real workflows in Showcase. The Rule-of-Three review threshold is satisfied, but public admission remains deferred: all evidence is still Blog-owned and tightly coupled to GOSSO recent-MFA/Sudo policy.
+1. route/page identity and product-navigation depth;
+2. primary and secondary action entry points;
+3. create/edit/delete/enable/disable or equivalent management lifecycle where present;
+4. filtering, search, pagination and selection semantics;
+5. destructive confirmation and partial-failure retention where the product supports it;
+6. loading, empty, fatal-error and non-fatal error states;
+7. permission and recent-MFA/Sudo branches;
+8. desktop and mobile/responsive presentations when they materially differ;
+9. deep links and evidence continuity between related screens;
+10. accessibility/keyboard/focus semantics that belong to the product interaction;
+11. displayed Showcase source matching the rendered implementation;
+12. current binding design-language and product-interface rules.
 
-### First admitted Pattern: BulkActionBar
+A catalog value of `100` means the **currently audited/proven route scope** is coherent. It is not a permanent parity certificate. If a real-page comparison finds an omitted behavior, fix the fixture and focused tests before relying on that value again.
 
-Posts, Comments and Categories are three independently rebuilt routes with different surrounding UI, yet all converge on the same selection-aware bulk interaction: selected-context label, accessible `role="toolbar"`, arbitrary product actions, explicit cancel-selection and sticky bottom visibility. This is the first repeated contract that is meaningfully more than layout classes, so PD-028 admits canonical `BulkActionBar` under `@gouno/ui/patterns`.
+## Product composition grammar
 
-The Pattern stays deliberately small. It owns toolbar semantics/presentation and cancel affordance; the product owns selection state and every business action. AI, publish, delete, resource type and workflow-launcher concepts remain children/product code. Legacy `onAIAssist` and non-standard `ariaLabel` are not restored.
+Normal application-shell task/settings pages use:
 
-Tags, Pages, Notifications and Media Library are later validation cases after admission. Tags proves the Pattern across a responsive Card Grid and partial batch failure; Pages proves it alongside responsive Table/mobile-list filtering and pagination; Notifications changes the selected action set to `标为已读` + `批量删除` inside a Card-based state machine; Media combines Upload/Drawer workflows, reference-aware deletion and partial batch failure. All fit the same canonical API unchanged. Domain failure state, workflow resource keys, read transitions, media references and upload/AI lifecycle remain product-owned.
+```text
+PageHeader (route-family H1)
+Tabs, when the route family needs one persistent page-local navigation layer
+Active panel lead, only when it adds context/actions
+Content surfaces
+```
 
-All current Blog Admin route families, including both editor families, are now represented in Showcase. This closes the Blog Admin route-level migration milestone. The completed Gosso Admin + Blog Admin corpora are now the evidence base for the next real product/page family; public editor extraction remains deferred until independently owned product evidence proves a stable interaction contract beyond shared layout anatomy.
+Binding consequences:
 
-A product-page catalog value of `100` means that the individual Showcase fixture is complete for the migrated route scope; it never means every future Blog Admin feature has been implemented or that every local composition deserves a public abstraction.
+- `PageHeader` appears before page-local Tabs.
+- The active Tab already labels its panel; do not immediately echo the same wording as an H2.
+- Panel-wide description/status/actions may use an open lead outside Card/Table/List boundaries.
+- A Card-local heading must name a real Card-local concept.
+- Normal surfaces share the current 24px edge axis; do not use `Card padding="lg"`, `p-5`, or `p-8` as an alignment repair.
+- One semantic collection normally owns one dominant surface boundary.
+- Visible elevation uses semantic roles only; product code does not choose raw shadow sizes.
 
-## Per-page acceptance guard
+Editor workspaces are an explicit exception. PostEditor and PageEditor use command-bar/editor grammar with Markdown/preview view-state Tabs rather than the normal task-page `PageHeader → Tabs → content` anatomy. Their state machines and inspectors remain product-local until independent product evidence proves a shared public contract.
 
-A new Showcase migration is not accepted merely because every individual Core/Gouno prop is valid. Before a page is marked complete, perform an explicit composition-level conformance pass against the current binding design language and the already-migrated comparison corpus.
+## Current cross-product evidence
 
-- Check every applicable rule in `docs/design-language.md`; a component API may permit several variants while the product corpus intentionally permits only one composition in a given context.
-- Compare the new page with already-migrated pages from the same surface family for spacing, action hierarchy, responsive behavior, feedback semantics and state presentation.
-- For dense desktop Table row actions, DL-09 is mandatory: one compact structural action family, no wrapping, and width pressure belongs to Core Table overflow.
-- Once a Pattern is admitted, use it on semantically matching later pages before re-inventing equivalent product-local composition; do not expand the Pattern just to avoid local product code.
-- If the new page exposes a missing design-language constraint, stop the line, update the binding rule, fix the governed corpus and add/extend conformance coverage before resuming migration.
-- If the difference is genuinely product-local, document or preserve it rather than weakening a shared rule to make the page match mechanically.
+### PageHeader
 
-This guard closes an important distinction exposed by the first Blog/Gosso row-action drift: **API-valid composition is necessary but not sufficient for design-language conformance.**
+Posts, Members, Comments, Categories, Tags, Pages, Notifications, Media, Site Settings and AI workspaces continue validating the admitted Gouno `PageHeader` contract without expanding it into product policy.
 
-## Showcase fixture tooling
+### BulkActionBar
 
-Fixture controls are development tooling, not product UI. Route labels, scenario switches and `静态 Fixture` markers must not consume normal product-layout space or be styled as if they belonged to the real application.
+Posts, Comments and Categories supplied the independent evidence that admitted canonical `BulkActionBar`. Later Tags, Pages, Notifications and Media validate the same small contract across different presentations. The Pattern owns toolbar semantics, selected-context presentation and cancel-selection; products own selection state and business actions.
 
-- Use the Showcase-private `FixtureDock` for route/state metadata and scenario controls that need to remain quickly accessible.
-- The dock is fixed outside normal document flow and defaults visually compact; its popover may temporarily overlay the preview when opened.
-- Do not reproduce route/status fixture banners inside `PageContainer`, Cards, forms or authentication surfaces.
-- Do not use `FixtureDock` as Pattern/Gouno evidence. It belongs to Showcase tooling under PD-009/PD-021.
-- Real product feedback still belongs in the product surface and uses canonical components such as `Alert`; only simulation metadata belongs in the dock.
+Do not recreate a broad Legacy `DataTable`, `ResponsiveList`, `FilterBar`, `AsyncState`, AI workspace, or editor feature bag simply because several pages contain similar markup. Compare user intent, state, lifecycle, accessibility, responsive behavior and failure semantics first.
 
-## Gosso Admin product-level design grammar
+### Sudo/MFA
 
-Gosso Admin intentionally has two surface families. They should be internally consistent, but they must not be forced into one layout merely for visual uniformity.
+Members and Site Settings exercise distinct Blog-owned recent-MFA/Sudo workflows. This remains product-local policy; it is not yet a public Gouno Pattern merely because several Blog pages use it.
 
-### Application-shell pages
+## Fixture tooling
 
-Application pages render inside canonical `AppShell` + `PageContainer`.
+`FixtureDock` is Showcase development tooling, never product UI.
 
-- Task/settings page families use the stable product grammar `route Tabs when needed → PageHeader → content surfaces`; Showcase fixture context floats outside that grammar in `FixtureDock`.
-- `PageHeader` owns route-level title, description and page actions. Cards own content grouping, not the route title. A contained result/error Card uses local `Heading`/`Text` instead of nesting `PageHeader`.
-- Overview is an intentional landing-page exception in **composition**, not in the normal horizontal content axis: its Hero and peer quick-link surfaces still use the shared 24px application-surface edge inset.
-- Normal application-shell `Card`, bordered `Table` and self-surfaced `List` content starts on the shared 24px edge axis. Do not introduce `padding="lg"`, `p-5` or `p-8` merely to make one page feel more prominent or to repair alignment.
-- A larger/spacious inset is allowed only for a semantic exception such as an intentionally spacious standalone/result/reading surface; document the exception where the page is defined rather than letting it become accidental precedent.
-- Not Found remains in the application page family, but its centered error Card is a contained result surface rather than a task-page header layout.
-- Persistent in-flow success/info/warning/error feedback uses canonical `Alert`; do not recreate Alert semantics with one-off subtle Cards.
-- Resource tables rely on Core `Table` for horizontal overflow. Do not add redundant responsive wrappers merely for product consistency.
-- `tests/design-language-conformance.test.ts` protects the completed Gosso application corpus from drifting back to 20px/32px normal surface insets. If an intentional exception is added, document its semantics instead of weakening the normal-axis rule globally.
+- Route labels, scenario switches and static-fixture markers stay outside normal product layout.
+- Product feedback stays in the product surface using canonical feedback components.
+- Fixture controls do not count as abstraction-admission evidence.
+- Static fixtures may model state transitions, but they must never call real services or retain real secrets.
 
-### Standalone identity pages
+## Conformance and delivery
 
-Login, password recovery/reset and OAuth callback preserve their real standalone route structure.
+When a fidelity pass changes a binding visual/composition rule, run the DL-07/PI-05 corpus pass rather than fixing only the triggering page. Keep focused product tests synchronized with the real behavior being claimed.
 
-- `AuthSurface` is a Gosso-product-local fixture helper, not a public Gouno abstraction.
-- Identity cards share the same width, H1 title hierarchy and surface treatment. Showcase route/scenario metadata is no longer embedded in the card.
-- Login/Callback scenario controls are exposed through the Showcase-private `FixtureDock`, keeping the authentication card visually equivalent to the real product surface.
-- Validation errors, informational transitions and successful authentication fixtures use the matching Alert semantic type instead of one generic feedback color.
-- `StandaloneNavigation` belongs only to Showcase tooling. It defaults expanded so standalone routes remain easy to navigate, but it does not change the real product surface contract.
+A migration/hardening phase is not complete merely because code was pushed. Exact `main` must pass:
 
-### Language and status policy
+```bash
+npm run typecheck
+npm test -- --run
+npm run build
+npm run showcase:build
+```
 
-- User-facing product state labels should use the product locale consistently (`正常`, `已暂停`, `异常`, etc.).
-- Protocol identifiers and standardized OAuth/OIDC vocabulary may remain in English where preserving the exact technical term improves comprehension (`Issuer`, `Grant Types`, `Scopes`, `Public`, `Confidential`).
-- Do not create decorative color alternation that implies hierarchy where none exists; repeated peer navigation cards use one icon treatment unless semantics differ.
-
-### Consistency review rule
-
-When a new Gosso page or state is added, compare it with its own surface family first: page grammar, heading hierarchy, content hierarchy, spacing, action prominence, surface/radius treatment, state controls, feedback semantics, terminology and responsive behavior. Fix same-product drift locally before using Gosso as evidence for Blog Admin or a public Pattern/Gouno abstraction.
-
-When a binding rule in `docs/design-language.md` changes, do not only fix the page that exposed it. Run the DL-07 corpus-conformance pass across every already-migrated governed Gosso application surface, fix stale call sites, document real exceptions and keep the automated conformance test synchronized.
-
-Gosso Admin and Blog Admin are now completed route-level validation corpora. Future product migration should challenge their proven abstractions rather than mechanically copying either product's local grammar. Blog public pages remain unmigrated until their own real surfaces are taken through the same product-driven process.
+When Showcase output changed, the corresponding GitHub Pages publication must also complete successfully for the expected `main` SHA.
