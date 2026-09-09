@@ -1,0 +1,84 @@
+name: Seal overlay family source trust
+
+on:
+  push:
+    branches:
+      - showcase/overlay-family-source-trust-20260909
+
+permissions:
+  contents: write
+
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Certify overlay family inventory
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          coverage_path = Path("showcase/core-family-coverage.ts")
+          coverage = coverage_path.read_text()
+          replacements = {
+              '  PopoverTrigger: { familyId: "core-popover", review: "needs-review" },': '  PopoverTrigger: { familyId: "core-popover", review: "covered" },',
+              '  PopoverContent: { familyId: "core-popover", review: "needs-review" },': '  PopoverContent: { familyId: "core-popover", review: "covered" },',
+              '  PopoverAnchor: { familyId: "core-popover", review: "needs-review" },': '  PopoverAnchor: { familyId: "core-popover", review: "covered" },',
+              '  TooltipTrigger: { familyId: "core-tooltip", review: "needs-review" },': '  TooltipTrigger: { familyId: "core-tooltip", review: "covered" },',
+              '  TooltipContent: { familyId: "core-tooltip", review: "needs-review" },': '  TooltipContent: { familyId: "core-tooltip", review: "covered" },',
+              '  TooltipProvider: { familyId: "core-tooltip", review: "needs-review" },': '  TooltipProvider: { familyId: "core-tooltip", review: "covered" },',
+              '  DropdownMenuTrigger: { familyId: "core-dropdown", review: "needs-review" },': '  DropdownMenuTrigger: { familyId: "core-dropdown", review: "covered" },',
+              '  DropdownMenuContent: { familyId: "core-dropdown", review: "needs-review" },': '  DropdownMenuContent: { familyId: "core-dropdown", review: "covered" },',
+              '  DropdownMenuItem: { familyId: "core-dropdown", review: "needs-review" },': '  DropdownMenuItem: { familyId: "core-dropdown", review: "covered" },',
+              '  DropdownMenuSeparator: { familyId: "core-dropdown", review: "needs-review" },': '  DropdownMenuSeparator: { familyId: "core-dropdown", review: "covered" },',
+              '  DropdownMenuLabel: { familyId: "core-dropdown", review: "needs-review" },': '  DropdownMenuLabel: { familyId: "core-dropdown", review: "covered" },',
+          }
+          for old, new in replacements.items():
+              if old not in coverage:
+                  raise SystemExit(f"missing expected coverage line: {old}")
+              coverage = coverage.replace(old, new, 1)
+          coverage_path.write_text(coverage)
+
+          progress_path = Path("showcase/component-progress.ts")
+          progress = progress_path.read_text()
+          marker = '  "core-progress",\n'
+          insertion = (
+              '  "core-progress",\n'
+              '  "core-popover",\n'
+              '  "core-tooltip",\n'
+              '  "core-dropdown",\n'
+          )
+          if marker not in progress:
+              raise SystemExit("component progress insertion marker missing")
+          progress_path.write_text(progress.replace(marker, insertion, 1))
+          PY
+
+      - name: Format changed source
+        run: npx prettier --write showcase/demos/core/feedback.tsx showcase/demos/core/navigation.tsx showcase/demos/core/overlay.tsx showcase/demos/core/dropdown.tsx showcase/demos/core/popover/popover-0.tsx showcase/demos/core/tooltip/tooltip-0.tsx showcase/demos/core/dropdown/dropdown-0.tsx showcase/demos/core/registry.ts showcase/core-family-coverage.ts showcase/component-progress.ts tests/core-overlay-family.test.tsx
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify sealed family
+        run: |
+          npm run typecheck
+          npm test -- --run
+          npm run build
+          npm run showcase:build
+
+      - name: Persist clean branch commit
+        run: |
+          git config user.name "Aben"
+          git config user.email "5195693+rushairer@users.noreply.github.com"
+          git rm .github/workflows/seal-overlay-family.yml
+          git add showcase tests
+          git commit -m "test(core): certify overlay and dropdown families"
+          git push origin HEAD

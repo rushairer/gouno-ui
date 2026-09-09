@@ -1,19 +1,20 @@
 import type { ComponentDocument } from "../../components/component-page";
-import { buttonDocuments } from "./button";
-import { generalDocuments } from "./general";
-import { typographyDocuments } from "./typography";
-import { badgeDocuments } from "./badge";
-import { tagDocuments } from "./tag";
-import { layoutDocuments } from "./layout";
-import { dataEntryDocuments } from "./data-entry";
-import { formDocuments } from "./form";
-import { selectionControlDocuments } from "./selection-controls";
-import { segmentedDocuments } from "./segmented";
-import { navigationDocuments } from "./navigation";
-import { dataDisplayDocuments } from "./data-display";
-import { feedbackDocuments } from "./feedback";
 import { alertDocuments } from "./alert";
+import { badgeDocuments } from "./badge";
+import { buttonDocuments } from "./button";
+import { dataDisplayDocuments } from "./data-display";
+import { dataEntryDocuments } from "./data-entry";
+import { feedbackDocuments } from "./feedback";
+import { formDocuments } from "./form";
+import { generalDocuments } from "./general";
+import { layoutDocuments } from "./layout";
+import { navigationDocuments } from "./navigation";
 import { otherDocuments } from "./other";
+import { overlayDocuments } from "./overlay";
+import { segmentedDocuments } from "./segmented";
+import { selectionControlDocuments } from "./selection-controls";
+import { tagDocuments } from "./tag";
+import { typographyDocuments } from "./typography";
 
 export const coreDocuments: Record<string, ComponentDocument> = {
   ...buttonDocuments,
@@ -29,6 +30,7 @@ export const coreDocuments: Record<string, ComponentDocument> = {
   ...navigationDocuments,
   ...dataDisplayDocuments,
   ...feedbackDocuments,
+  ...overlayDocuments,
   ...alertDocuments,
   ...otherDocuments,
 };
