@@ -17,6 +17,7 @@ describe("Blog Admin Notifications product migration fixture", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
     expect(screen.getByText("/admin/notifications")).toBeTruthy();
+    expect(screen.getByRole("radio", { name: "写操作成功" })).toBeTruthy();
   });
 
   it("preserves notification presentation, destinations and status/type filters", () => {
@@ -54,6 +55,22 @@ describe("Blog Admin Notifications product migration fixture", () => {
     expect(screen.getByText("已将选中的 2 条通知标为已读（Showcase 模拟）。")).toBeTruthy();
   });
 
+  it("preserves selection and unread state when batch mark-read fails", () => {
+    render(<BlogAdminNotificationsDemo />);
+    fireEvent.click(screen.getByRole("checkbox", { name: "选择通知 AI 工作流执行失败" }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "选择通知 新的评论回复" }));
+    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
+    fireEvent.click(screen.getByRole("radio", { name: "写操作失败" }));
+
+    const toolbar = screen.getByRole("toolbar", { name: "批量操作" });
+    fireEvent.click(within(toolbar).getByRole("button", { name: "标为已读" }));
+
+    const failure = screen.getByText("批量标记已读失败；通知状态与当前选择保持不变（Showcase 模拟）。");
+    expect(failure.closest('[role="alert"]')?.getAttribute("data-type")).toBe("error");
+    expect(screen.getByText("已选择 2 条通知")).toBeTruthy();
+    expect(screen.getAllByRole("button", { name: "标为已读" }).length).toBeGreaterThanOrEqual(3);
+  });
+
   it("preserves single notification read and destination behavior", () => {
     render(<BlogAdminNotificationsDemo />);
 
@@ -82,6 +99,23 @@ describe("Blog Admin Notifications product migration fixture", () => {
     fireEvent.click(within(dialog).getByRole("button", { name: "确认删除" }));
     expect(screen.queryByText("AI Agent 配额接近阈值")).toBeNull();
     expect(screen.getByText("已删除选中的 1 条通知（Showcase 模拟）。")).toBeTruthy();
+  });
+
+  it("closes delete confirmation but preserves rows and selection when delete fails", () => {
+    render(<BlogAdminNotificationsDemo />);
+    fireEvent.click(screen.getByRole("checkbox", { name: "选择通知 AI Agent 配额接近阈值" }));
+    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
+    fireEvent.click(screen.getByRole("radio", { name: "写操作失败" }));
+
+    const toolbar = screen.getByRole("toolbar", { name: "批量操作" });
+    fireEvent.click(within(toolbar).getByRole("button", { name: "批量删除" }));
+    const dialog = screen.getByRole("dialog");
+    fireEvent.click(within(dialog).getByRole("button", { name: "确认删除" }));
+
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.getByText("通知删除/清理失败；列表和当前选择保持不变，可重新发起操作（Showcase 模拟）。")).toBeTruthy();
+    expect(screen.getByText("AI Agent 配额接近阈值")).toBeTruthy();
+    expect(screen.getByText("已选择 1 条通知")).toBeTruthy();
   });
 
   it("preserves global clear-read confirmation without removing unread items", () => {

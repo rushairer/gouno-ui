@@ -19,6 +19,7 @@ import { cn } from "../../../src/lib/utils";
 import { FixtureDock } from "../../components/fixture-dock";
 
 type FixtureScenario = "data" | "loading" | "empty" | "error";
+type MutationScenario = "success" | "error";
 type NotificationStatus = "all" | "unread" | "read";
 type NotificationTypeFilter = "all" | "ai" | "comment";
 type NotificationKind = "ai_workflow_failed" | "ai_agent_warning" | "comment_reply" | "comment" | "system";
@@ -28,6 +29,7 @@ type DeleteAction =
   | { kind: "clear_read" }
   | { kind: "clear_all" }
   | null;
+type Notice = { type: "success" | "info" | "error"; message: string } | null;
 
 type NotificationFixture = {
   id: number;
@@ -98,6 +100,11 @@ const scenarioOptions = [
   { value: "error", label: "错误" },
 ] as const;
 
+const mutationOptions = [
+  { value: "success", label: "写操作成功" },
+  { value: "error", label: "写操作失败" },
+] as const;
+
 function resolvePresentation(item: NotificationFixture) {
   if (item.type === "ai_workflow_failed") {
     return {
@@ -156,11 +163,12 @@ function LoadingNotifications() {
 export function BlogAdminNotificationsDemo() {
   const [items, setItems] = useState<NotificationFixture[]>(() => [...initialNotifications]);
   const [scenario, setScenario] = useState<FixtureScenario>("data");
+  const [mutation, setMutation] = useState<MutationScenario>("success");
   const [selected, setSelected] = useState<number[]>([]);
   const [statusFilter, setStatusFilter] = useState<NotificationStatus>("all");
   const [typeFilter, setTypeFilter] = useState<NotificationTypeFilter>("all");
   const [deleteAction, setDeleteAction] = useState<DeleteAction>(null);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [notice, setNotice] = useState<Notice>(null);
 
   const sourceItems = scenario === "empty" ? [] : items;
   const filtered = useMemo(() => sourceItems.filter((item) => {
@@ -179,24 +187,36 @@ export function BlogAdminNotificationsDemo() {
   const hasFilters = statusFilter !== "all" || typeFilter !== "all";
 
   const markOneRead = (id: number) => {
+    if (mutation === "error") {
+      setNotice({ type: "error", message: "标记通知为已读失败；该通知仍保持未读，可稍后重试（Showcase 模拟）。" });
+      return;
+    }
     setItems((current) => current.map((item) => item.id === id && !item.readAt
       ? { ...item, readAt: "2026-09-08 10:31" }
       : item));
-    setNotice("通知已标记为已读（Showcase 模拟）。");
+    setNotice({ type: "success", message: "通知已标记为已读（Showcase 模拟）。" });
   };
 
   const markAllRead = () => {
+    if (mutation === "error") {
+      setNotice({ type: "error", message: "全部标为已读失败；通知读取状态保持不变（Showcase 模拟）。" });
+      return;
+    }
     setItems((current) => current.map((item) => ({ ...item, readAt: item.readAt || "2026-09-08 10:31" })));
-    setNotice("全部通知已标记为已读（Showcase 模拟）。");
+    setNotice({ type: "success", message: "全部通知已标记为已读（Showcase 模拟）。" });
   };
 
   const markSelectedRead = () => {
     const count = selected.length;
+    if (mutation === "error") {
+      setNotice({ type: "error", message: "批量标记已读失败；通知状态与当前选择保持不变（Showcase 模拟）。" });
+      return;
+    }
     setItems((current) => current.map((item) => selected.includes(item.id)
       ? { ...item, readAt: item.readAt || "2026-09-08 10:31" }
       : item));
     setSelected([]);
-    setNotice(`已将选中的 ${count} 条通知标为已读（Showcase 模拟）。`);
+    setNotice({ type: "success", message: `已将选中的 ${count} 条通知标为已读（Showcase 模拟）。` });
   };
 
   const toggleSelectAllFiltered = (checked: boolean) => {
@@ -209,23 +229,29 @@ export function BlogAdminNotificationsDemo() {
   const executeDelete = () => {
     if (!deleteAction) return;
 
+    if (mutation === "error") {
+      setNotice({ type: "error", message: "通知删除/清理失败；列表和当前选择保持不变，可重新发起操作（Showcase 模拟）。" });
+      setDeleteAction(null);
+      return;
+    }
+
     if (deleteAction.kind === "single") {
       setItems((current) => current.filter((item) => item.id !== deleteAction.id));
       setSelected((current) => current.filter((id) => id !== deleteAction.id));
-      setNotice("通知已删除（Showcase 模拟）。");
+      setNotice({ type: "success", message: "通知已删除（Showcase 模拟）。" });
     } else if (deleteAction.kind === "batch") {
       const ids = new Set(deleteAction.ids);
       setItems((current) => current.filter((item) => !ids.has(item.id)));
       setSelected([]);
-      setNotice(`已删除选中的 ${deleteAction.ids.length} 条通知（Showcase 模拟）。`);
+      setNotice({ type: "success", message: `已删除选中的 ${deleteAction.ids.length} 条通知（Showcase 模拟）。` });
     } else if (deleteAction.kind === "clear_read") {
       setItems((current) => current.filter((item) => !item.readAt));
       setSelected((current) => current.filter((id) => items.some((item) => item.id === id && !item.readAt)));
-      setNotice(`已清空 ${readCount} 条已读通知（Showcase 模拟）。`);
+      setNotice({ type: "success", message: `已清空 ${readCount} 条已读通知（Showcase 模拟）。` });
     } else {
       setItems([]);
       setSelected([]);
-      setNotice("已清空全部通知（Showcase 模拟）。");
+      setNotice({ type: "success", message: "已清空全部通知（Showcase 模拟）。" });
     }
 
     setDeleteAction(null);
@@ -251,20 +277,33 @@ export function BlogAdminNotificationsDemo() {
     <div className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/notifications"
-        note="保留真实通知筛选、已读状态机、批量管理、全局清理与 Card 队列语义；Fixture 不请求 notifications API。"
+        note="保留真实通知筛选、已读状态机、批量管理、全局清理及写操作失败后的状态保留语义；Fixture 不请求 notifications API。"
         controls={(
-          <Segmented<FixtureScenario>
-            aria-label="通知页 Fixture 状态"
-            options={scenarioOptions}
-            value={scenario}
-            onChange={(value) => {
-              setScenario(value);
-              setSelected([]);
-              setNotice(null);
-              setDeleteAction(null);
-            }}
-            block
-          />
+          <div className="flex flex-col gap-3">
+            <Segmented<FixtureScenario>
+              aria-label="通知页 Fixture 状态"
+              options={scenarioOptions}
+              value={scenario}
+              onChange={(value) => {
+                setScenario(value);
+                setSelected([]);
+                setNotice(null);
+                setDeleteAction(null);
+              }}
+              block
+            />
+            <Segmented<MutationScenario>
+              aria-label="通知写操作场景"
+              options={mutationOptions}
+              value={mutation}
+              onChange={(value) => {
+                setMutation(value);
+                setNotice(null);
+                setDeleteAction(null);
+              }}
+              block
+            />
+          </div>
         )}
       />
 
@@ -279,12 +318,7 @@ export function BlogAdminNotificationsDemo() {
             {readCount > 0 ? (
               <Button size="small" icon={<Trash2 />} onClick={() => setDeleteAction({ kind: "clear_read" })}>清空已读</Button>
             ) : null}
-            <Button
-              size="small"
-              color="error"
-              icon={<Trash2 />}
-              onClick={() => setDeleteAction({ kind: "clear_all" })}
-            >
+            <Button size="small" color="error" icon={<Trash2 />} onClick={() => setDeleteAction({ kind: "clear_all" })}>
               清空全部
             </Button>
           </div>
@@ -292,7 +326,7 @@ export function BlogAdminNotificationsDemo() {
       />
 
       {notice ? (
-        <Alert type="success" showIcon title={notice} closable={{ onClose: () => setNotice(null) }} />
+        <Alert type={notice.type} showIcon title={notice.message} closable={{ onClose: () => setNotice(null) }} />
       ) : null}
 
       <Card padding="base">
@@ -361,12 +395,7 @@ export function BlogAdminNotificationsDemo() {
       {selected.length > 0 ? (
         <BulkActionBar selectionLabel={`已选择 ${selected.length} 条通知`} onCancel={() => setSelected([])}>
           <Button size="small" icon={<Check />} onClick={markSelectedRead}>标为已读</Button>
-          <Button
-            size="small"
-            color="error"
-            icon={<Trash2 />}
-            onClick={() => setDeleteAction({ kind: "batch", ids: [...selected] })}
-          >
+          <Button size="small" color="error" icon={<Trash2 />} onClick={() => setDeleteAction({ kind: "batch", ids: [...selected] })}>
             批量删除
           </Button>
         </BulkActionBar>
@@ -389,12 +418,7 @@ export function BlogAdminNotificationsDemo() {
             title={hasFilters ? "暂无符合当前筛选条件的通知。" : "暂无相关通知记录。"}
             description={hasFilters ? "调整状态或类型筛选后重试。" : "系统告警、AI 异常和互动提醒会出现在这里。"}
             action={hasFilters ? (
-              <Button
-                onClick={() => {
-                  setStatusFilter("all");
-                  setTypeFilter("all");
-                }}
-              >
+              <Button onClick={() => { setStatusFilter("all"); setTypeFilter("all"); }}>
                 清除筛选
               </Button>
             ) : undefined}
@@ -437,16 +461,12 @@ export function BlogAdminNotificationsDemo() {
                         <time className="font-mono text-xs text-muted-foreground">{item.createdAt}</time>
                       </div>
                       <Text size="xs" tone="muted" className="mt-1 line-clamp-2 leading-relaxed">{item.body}</Text>
-                      {item.relatedTitle ? (
-                        <Text size="xs" tone="muted" className="mt-1">关联内容：{item.relatedTitle}</Text>
-                      ) : null}
+                      {item.relatedTitle ? <Text size="xs" tone="muted" className="mt-1">关联内容：{item.relatedTitle}</Text> : null}
                     </div>
                   </div>
 
                   <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
-                    {unread ? (
-                      <Button size="small" onClick={() => markOneRead(item.id)}>标为已读</Button>
-                    ) : null}
+                    {unread ? <Button size="small" onClick={() => markOneRead(item.id)}>标为已读</Button> : null}
                     <Button
                       size="small"
                       variant="text"
@@ -454,7 +474,7 @@ export function BlogAdminNotificationsDemo() {
                       iconPlacement="end"
                       onClick={() => {
                         if (unread) markOneRead(item.id);
-                        setNotice(`前往 ${item.destination}（Showcase 模拟）。`);
+                        setNotice({ type: "info", message: `前往 ${item.destination}（Showcase 模拟）。` });
                       }}
                     >
                       前往处理
