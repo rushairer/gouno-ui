@@ -52,12 +52,13 @@ Current operating model:
 
 - Gosso Admin has completed route-level migration plus product-language convergence and acts as the first comparison corpus.
 - Blog Admin has completed route-level migration plus behavior/detail fidelity hardening and acts as the second comparison corpus.
-- Blog public site is the active page-by-page validation line, beginning with its real `PublicShell` + Home surface.
-- Public Blog pages must challenge abstractions formed during the two admin products rather than mechanically inherit application-shell assumptions.
-- New pages start with Core + Theme + admitted Gouno structure only where semantics match, plus product-local composition.
+- Gouno Blog public has completed its standalone PublicShell/Home, discovery, reading, document, account and final NotFound route-family validation and acts as the third comparison corpus.
+- There is **no active fourth-product migration line selected**. Completed corpora remain live evidence; new page-by-page migration begins only when a real independently owned product/page family is selected.
+- A completed fixture may be reopened when a new real product or later audit exposes a genuine cross-product defect, missing fidelity evidence or canonical API problem. Reopening is evidence-driven, not a return to parallel migration.
+- New product pages still start with Core + Theme + admitted Gouno structure only where semantics match, plus product-local composition.
 - `AppShell`/`PageContainer` remain application-shell structure; a public document/content shell stays product-local until independent evidence proves a shared Gouno contract.
-- `PageHeader` remains admitted for route-level title/description/actions semantics; public Blog pages use it only when that semantic contract genuinely exists.
-- `BulkActionBar` is the first admitted Pattern, proven by independent Posts, Comments and Categories selection workflows; public Blog reading/discovery surfaces must not expand it by analogy.
+- `PageHeader` remains admitted for route-level title/description/actions semantics and is used only when that semantic contract genuinely exists.
+- `BulkActionBar` remains the first admitted Pattern, proven by independent Posts, Comments and Categories selection workflows and later validated across heterogeneous Blog Admin collections.
 - `CodeBlock` is an admitted Core display interaction only after the real Blog article renderer independently proved the same read-only code/highlight/copy need that Showcase had previously exercised privately. Core owns the frame/copy contract; syntax engines remain caller-owned.
 - The third semantically equivalent occurrence triggers review, not automatic extraction.
 
@@ -122,7 +123,7 @@ Showcase information architecture keeps product workspace and design-system owne
 - inside Gouno UI: `Core`, `Theme`, `Patterns`, `Gouno`;
 - only canonical APIs appear in Gouno UI;
 - only genuinely migrated pages appear in product workspaces;
-- completed product workspaces remain comparison corpora rather than active implementation lines;
+- Gosso Admin, Blog Admin and Blog currently all remain completed comparison corpora rather than active implementation lines;
 - empty workspaces show an empty state, not simulated pages.
 
 ## Delivery contract
