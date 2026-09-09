@@ -52,4 +52,11 @@ describe("Core layout and feedback", () => {
     fireEvent.keyDown(document, { key: "Escape" });
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
   });
+  it("keeps side Drawers inside the mobile viewport safe gutter", () => {
+    render(<Drawer open title="Drawer" width={480}>Content</Drawer>);
+    const dialog = screen.getByRole("dialog") as HTMLElement;
+    expect(dialog.style.width).toBe("480px");
+    expect(dialog.style.maxWidth).toBe("calc(100vw - 1rem)");
+    expect(dialog.className).toContain("max-w-[calc(100vw-1rem)]");
+  });
 });

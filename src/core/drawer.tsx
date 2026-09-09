@@ -94,8 +94,8 @@ export function Drawer({
   useEffect(() => {
     notifyOpenChange(visible);
   }, [visible]);
-  const dimensionStyle: CSSProperties =
-    placement === "left" || placement === "right" ? { width } : { height };
+  const sidePlacement = placement === "left" || placement === "right";
+  const dimensionStyle: CSSProperties = sidePlacement ? { width } : { height };
 
   return (
     <>
@@ -106,14 +106,12 @@ export function Drawer({
           showCloseButton={showCloseButton}
           className={cn(
             "flex flex-col gap-0",
-            placement === "left" || placement === "right"
-              ? "max-w-[calc(100vw-1rem)]"
-              : "max-w-none",
+            sidePlacement ? "max-w-[calc(100vw-1rem)]" : "max-w-none",
             className,
           )}
           style={{
             ...dimensionStyle,
-            maxWidth: "100vw",
+            maxWidth: sidePlacement ? "calc(100vw - 1rem)" : "100vw",
             maxHeight: "100dvh",
             zIndex,
             ...contentStyle,
