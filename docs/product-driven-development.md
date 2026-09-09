@@ -17,14 +17,14 @@ Gouno UI has enough Core breadth for real product validation. This does **not** 
 
 Do not expand Core merely to reach parity with Ant Design, shadcn/ui, another catalog or an imagined future application. Add or extend Core when a real product page demonstrates a product-agnostic capability gap.
 
-The migration strategy has advanced to third-product validation:
+The first three product-validation corpora are now complete:
 
-- **Completed comparison corpora:** Gosso Admin, with route-level coverage and a product-language convergence pass; Blog Admin, with complete route coverage and behavior/detail fidelity hardening.
-- **Active migration line:** Gouno Blog public site, one real page/page-family at a time, beginning with `PublicShell` + `/` Home.
-- **Comparison evidence corpus:** completed Gosso Admin and Blog Admin pages remain mandatory prior art when Blog public pages expose abstraction questions.
-- **Execution model:** single-line implementation, multi-product validation. Do not migrate several product lines in parallel merely to manufacture abstraction evidence.
+- **Completed comparison corpora:** Gosso Admin, with route-level coverage and a product-language convergence pass; Blog Admin, with complete route coverage and behavior/detail fidelity hardening; Gouno Blog public site, with PublicShell/Home, discovery, reading/community, document, account and final NotFound route-family validation.
+- **Active migration line:** none selected. Do not invent a fourth product/workspace merely to keep migration moving.
+- **Comparison evidence corpus:** all three completed corpora remain mandatory prior art when a new real product or a later audit exposes an abstraction question.
+- **Execution model:** single-line implementation, multi-product validation. When a real independently owned next product/page family is selected, migrate that one line and use the completed corpora as comparison evidence. A completed corpus may also be reopened when it exposes a genuine canonical defect or missing fidelity evidence.
 
-During this phase, Core and Theme remain the baseline foundation. The admitted Gouno application-shell structure remains `AppShell`, `PageContainer`, `NavigationGroup`, `navigationItemClass`, plus the evidence-admitted `PageHeader`. Public content/document shells are not automatically instances of that grammar; keep them product-local until independent evidence proves a shared contract.
+Core and Theme remain the baseline foundation. The admitted Gouno application-shell structure remains `AppShell`, `PageContainer`, `NavigationGroup`, `navigationItemClass`, plus the evidence-admitted `PageHeader`. Public content/document shells are not automatically instances of that grammar; keep them product-local until independent evidence proves a shared contract.
 
 Pre-validation Pattern/Gouno implementations are quarantined under `src/legacy`. They are available for prior-art review only and may not be imported into canonical code or Showcase.
 
@@ -91,7 +91,8 @@ Before introducing any new public Pattern, new public Gouno component or materia
 - `src/legacy` for historical prior art;
 - completed Gosso Admin fixtures/source;
 - completed Blog Admin source and migrated fixtures;
-- current Gouno Blog public-site source and migrated fixtures.
+- completed Gouno Blog public-site source and migrated fixtures;
+- the real next product/page family that created the new demand, when one has been selected.
 
 The purpose is not to migrate all matching pages at once. It is to test whether the proposed semantics already exist elsewhere under another name/structure and whether another product provides a conflicting case.
 
@@ -112,7 +113,7 @@ A new public component or material public API expansion must answer all of the f
 9. Which Showcase scenarios and focused tests prove the contract?
 10. Does the new abstraction make another canonical abstraction redundant, overlapping or incorrectly owned?
 
-If these questions cannot be answered from evidence, keep the code local and continue migration.
+If these questions cannot be answered from evidence, keep the code local and continue migration or audit work.
 
 ## 8. Ownership guide after admission
 
@@ -156,16 +157,16 @@ Core APIs are stable enough to use but subject to evidence-driven correction. Pr
 
 ## 10. Single migration line, multi-product validation
 
-Default sequence in the current phase:
+There is currently no active migration line. When the next real independently owned product/page family is selected, use this sequence:
 
 ```text
-Blog public real page/page-family
+next real product page/page-family
         ↓
 Rebuild in Showcase with Core + Theme + admitted Gouno structure only where semantics match
         ↓
 A capability gap or repeated semantic block appears
         ↓
-Search canonical Gouno UI + Legacy + completed Gosso Admin + completed Blog Admin + other relevant Blog pages
+Search canonical Gouno UI + Legacy + completed Gosso Admin + completed Blog Admin + completed Blog public corpus
         ↓
 Compare semantics/state/interaction, ignoring legacy component names
         ↓
@@ -173,10 +174,10 @@ Keep local OR extend Core OR admit Pattern/Gouno abstraction
         ↓
 Record evidence and decision
         ↓
-Validate the decision on later migrated Blog public pages and against completed corpora where relevant
+Validate the decision on later pages in the active line and against completed corpora where relevant
 ```
 
-Do not restart Gosso Admin or Blog Admin as parallel implementation lines. They are completed comparison corpora. Blog public is the active implementation line. Reopen an older fixture only when the active product exposes a genuine cross-product defect or missing fidelity evidence.
+Do not restart Gosso Admin, Blog Admin or Blog public as parallel implementation lines merely to manufacture evidence. They are completed comparison corpora. Reopen one only when a new real product or a later audit exposes a genuine cross-product defect, canonical API problem or missing fidelity evidence.
 
 An abstraction may shrink, move layers, merge or disappear when later product evidence disproves it.
 
@@ -201,7 +202,8 @@ Product workspaces are evidence of real migration, not catalogs of imagined page
 
 - Gosso Admin contains only pages actually migrated under this process and acts as the completed first comparison workspace.
 - Blog Admin contains only pages genuinely migrated and fidelity-hardened under the second-product phase and acts as the completed second comparison workspace.
-- Blog is the active workspace and receives only public pages genuinely migrated from the real product, beginning with `PublicShell` + Home.
+- Blog contains only public pages genuinely migrated from the real product and acts as the completed third comparison workspace.
+- No product workspace is currently the active page-by-page migration line.
 - Old simulated product demos must not remain as if they were approved product pages.
 - Empty workspaces show an explicit empty state.
 
@@ -235,12 +237,12 @@ Change this contract only as an explicit architecture/process decision. Do not w
 
 ## 15. Product Validation Loop
 
-Product migration and design-system hardening are one closed loop, not two separate projects.
+Product migration and design-system hardening are one closed loop, not two separate projects. The loop also applies when a completed-corpus audit, rather than a newly migrated page, exposes a real canonical defect.
 
 ```text
-real product page/page-family
+real product page/page-family or completed-corpus audit
         ↓
-rebuild with canonical UI + product-local composition
+rebuild/inspect with canonical UI + product-local composition
         ↓
 observe real API / visual / interaction / accessibility pressure
         ↓
@@ -250,16 +252,16 @@ keep local OR stop the line and harden the canonical component
         ↓
 update API + Showcase + examples + tests when canonical code changes
         ↓
-return to the same real page and validate the result
+return to the same real product evidence and validate the result
         ↓
-continue migration
+continue the selected product line or convergence audit
         ↓
-periodic page-family retrospective
+periodic retrospective
 ```
 
 ### 15.1 Stop-the-line conditions
 
-Pause further page migration and resolve the canonical component first when a real product page exposes any of the following:
+Pause further page migration or convergence work and resolve the canonical component first when real product evidence exposes any of the following:
 
 - a visible or behavioral defect in an admitted Core/Theme/Pattern/Gouno component;
 - an accessibility, keyboard, focus or semantic defect;
@@ -299,7 +301,7 @@ A component may be called complete for its **proven scope** only when the releva
 
 ### 15.4 Page-family retrospective cadence
 
-After a significant page family, or roughly two to four representative real pages, pause briefly and review:
+After a significant page family, roughly two to four representative real pages, or a coherent convergence batch, pause briefly and review:
 
 - which canonical components were stressed or corrected;
 - which product-local workarounds remain and whether any are spreading;
@@ -312,7 +314,7 @@ Only durable abstraction/API/process decisions belong in `docs/abstraction-regis
 
 ### 15.5 Delivery discipline
 
-Treat each coherent hardening or page-migration stage as its own reviewable commit when practical. A stage is not complete merely because code was pushed.
+Treat each coherent hardening, convergence or page-migration stage as its own reviewable commit when practical. A stage is not complete merely because code was pushed.
 
 Before declaring a stage complete:
 
