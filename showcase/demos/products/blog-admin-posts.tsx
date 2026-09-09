@@ -600,7 +600,7 @@ export function BlogAdminPostsDemo() {
       >
         <div className="flex flex-col gap-4">
           <FormField label="Workflow">
-            <Select aria-label="Workflow" value={workflowID} onChange={(value) => { setWorkflowID(Number(value)); setWorkflowFeedback(null); }}>
+            <Select aria-label="Workflow" value={String(workflowID)} onChange={(value) => { setWorkflowID(Number(value)); setWorkflowFeedback(null); }}>
               {compatibleWorkflows.map((workflow) => <option key={workflow.id} value={workflow.id}>{workflow.name}</option>)}
             </Select>
           </FormField>
