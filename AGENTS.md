@@ -97,7 +97,7 @@ Showcase-only repetition does **not** count as sufficient public-abstraction evi
 2. repeated semantically equivalent pages in one real product;
 3. Showcase/tests/tooling as supporting evidence only.
 
-Example: Showcase `CodeBlock` stays private. If a real Blog article page later independently requires the same read-only code/highlight/copy behavior, run the normal admission review; if accepted, create Core `CodeBlock` and migrate Showcase to it.
+Example: `CodeBlock` remained Showcase-private under PD-009 until the real Blog article renderer independently required the same read-only code/highlight/copy behavior. PD-038 admits the code-frame/copy contract to Core; Showcase now keeps only its Prism presentation adapter private, and that adapter remains zero abstraction-admission evidence.
 
 `FixtureDock` is likewise Showcase-private. Route labels, static-fixture markers and scenario controls stay outside normal product layout and never count toward Pattern/Gouno admission evidence.
 
