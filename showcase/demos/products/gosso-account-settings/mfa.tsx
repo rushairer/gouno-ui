@@ -64,8 +64,8 @@ export function MfaPanel() {
         {preview === "enrolling" ? (
           <div className="flex flex-col gap-6">
             <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:items-center">
-              <div className="mx-auto rounded-lg border bg-white p-4 shadow-sm">
-                <QRCode value="otpauth://totp/GOSSO:demo-user?secret=JBSWY3DPEHPK3PXP&issuer=GOSSO" size={180} ariaLabel="GOSSO MFA 配置二维码" />
+              <div className="mx-auto rounded-lg border bg-white p-4">
+                <QRCode value="gouno-showcase://mfa/demo-user" size={180} ariaLabel="GOSSO MFA 配置二维码" />
               </div>
               <div className="flex flex-col gap-4">
                 <div>
@@ -73,7 +73,7 @@ export function MfaPanel() {
                   <Text size="sm" tone="muted" className="mt-1 leading-relaxed">如果无法扫描，可以手动输入下面的密钥。真实产品中的密钥由服务端临时生成。</Text>
                 </div>
                 <div className="flex max-w-lg items-center justify-between gap-3 rounded-md border bg-muted/30 p-3">
-                  <code className="min-w-0 truncate font-mono text-xs">JBSWY3DPEHPK3PXP</code>
+                  <code className="min-w-0 truncate font-mono text-xs">SHOWCASE-DEMO-KEY</code>
                   <IconButton label="复制 MFA 密钥" icon={<Copy />} onClick={() => setStatus("MFA 密钥已复制（Showcase 模拟）。")} />
                 </div>
               </div>
