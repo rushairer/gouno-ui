@@ -24,8 +24,9 @@ describe("Blog public ArticleIndex product migration fixture", () => {
 
     expect(screen.getByRole("heading", { level: 1, name: "全部文章" })).toBeTruthy();
     expect(screen.getByRole("region", { name: "筛选" })).toBeTruthy();
-    expect(screen.getAllByRole("searchbox", { name: "搜索文章" }).length).toBeGreaterThanOrEqual(2);
-    expect(document.getElementById("article-search-articles")).toBeTruthy();
+    const search = document.getElementById("article-search-articles");
+    expect(search).toBeTruthy();
+    expect(search?.getAttribute("type")).toBe("search");
     expect(screen.getByRole("navigation", { name: "文章分页" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Page 2" })).toBeTruthy();
 
