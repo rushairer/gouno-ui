@@ -1,6 +1,10 @@
 import { StrictMode, useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Menu } from "lucide-react";
+import gounoLogo from "../assets/brand-icons/gouno.svg";
+import gounoBlogLogo from "../assets/brand-icons/gouno-blog.svg";
+import gounoUiLogo from "../assets/brand-icons/gouno-ui.svg";
+import gossoAdminLogo from "../assets/brand-icons/gosso-admin.svg";
 import { Badge, Select } from "../src/core";
 import {
   AppShell,
@@ -34,6 +38,12 @@ const workspaceLabels: Record<Workspace, string> = {
   blog: "Blog",
   "blog-admin": "Blog Admin",
   "gosso-admin": "Gosso Admin",
+};
+const workspaceLogos: Record<Workspace, string> = {
+  "gouno-ui": gounoUiLogo,
+  blog: gounoBlogLogo,
+  "blog-admin": gounoBlogLogo,
+  "gosso-admin": gossoAdminLogo,
 };
 
 function isWorkspace(value: string | null): value is Workspace {
@@ -210,6 +220,12 @@ function App() {
   ) : null;
 
   const shellControls = <div className="flex flex-wrap items-center gap-2">{themeColorControl}<ThemeToggle /></div>;
+  const workspaceBrand = (
+    <span className="inline-flex items-center gap-2">
+      <img src={workspaceLogos[workspace]} alt="" aria-hidden="true" className="size-6 shrink-0" />
+      <span className="font-semibold text-primary">{workspaceLabel}</span>
+    </span>
+  );
 
   const renderNavItem = (item: (typeof nav)[number]["items"][number], close: () => void) => (
     <a
@@ -274,7 +290,10 @@ function App() {
       {!embedded ? (
         <div className="h-dvh overflow-hidden bg-background text-foreground">
           <header className="flex h-12 items-center justify-between gap-3 border-b border-primary/20 bg-sidebar px-3 text-sidebar-foreground lg:px-4">
-            <div className="flex items-center gap-2 text-xs font-semibold tracking-wide text-primary"><span className="size-2 rounded-full bg-primary" />Gouno UI Showcase</div>
+            <div className="flex items-center gap-2 text-xs font-semibold tracking-wide text-primary">
+              <img src={gounoLogo} alt="" aria-hidden="true" className="size-5 shrink-0" />
+              Gouno UI Showcase
+            </div>
             <div className="flex flex-wrap items-center gap-2">{workspaceControl}{viewportControl}</div>
           </header>
           <main className={previewWidth === "full" ? "h-[calc(100dvh-48px)] min-w-0" : "h-[calc(100dvh-48px)] min-w-0 overflow-auto bg-muted/30 p-4 lg:p-6"}>
@@ -302,7 +321,7 @@ function App() {
           <ShowcasePage page={page} workspace={workspace} />
         </div>
       ) : (
-        <AppShell brand={<span className="font-semibold text-primary">{workspaceLabel}</span>} toolbar={shellControls} navigation={navigation}>
+        <AppShell brand={workspaceBrand} toolbar={shellControls} navigation={navigation}>
           <PageContainer>
             <div className="mb-2 flex items-center gap-2 text-sm text-muted-foreground"><Menu className="size-4" />{current ? `页面 Demo / ${current.label}` : `${workspaceLabel} / 暂无已迁移页面`} / 预览：{previewLabel}</div>
             <ShowcasePage page={page} workspace={workspace} />
