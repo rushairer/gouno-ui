@@ -85,7 +85,7 @@ export function PasskeysPanel() {
             action={<Button icon={<Plus />} onClick={openRegistration}>添加通行密钥</Button>}
           />
         ) : (
-          <ul className="divide-y overflow-hidden rounded-lg border border-border/80 bg-card shadow-sm" aria-label="已注册通行密钥">
+          <ul className="divide-y overflow-hidden rounded-lg border border-border/80 bg-card" aria-label="已注册通行密钥">
             {passkeys.map((passkey) => (
               <li key={passkey.id} className="flex flex-col gap-4 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex min-w-0 items-start gap-3">
