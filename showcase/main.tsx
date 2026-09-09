@@ -19,6 +19,7 @@ import {
   type ShowcaseWorkspace,
 } from "./catalog";
 import { ShowcasePage } from "./app/page-router";
+import { BrandMark } from "./components/brand-mark";
 import { StandaloneNavigation } from "./components/standalone-navigation";
 import "./showcase.css";
 
@@ -221,9 +222,9 @@ function App() {
 
   const shellControls = <div className="flex flex-wrap items-center gap-2">{themeColorControl}<ThemeToggle /></div>;
   const workspaceBrand = (
-    <span className="inline-flex items-center gap-2">
-      <img src={workspaceLogos[workspace]} alt="" aria-hidden="true" className="size-6 shrink-0" />
-      <span className="font-semibold text-primary">{workspaceLabel}</span>
+    <span className="inline-flex items-center gap-2 text-primary">
+      <BrandMark src={workspaceLogos[workspace]} className="size-6" />
+      <span className="font-semibold">{workspaceLabel}</span>
     </span>
   );
 
@@ -291,7 +292,7 @@ function App() {
         <div className="h-dvh overflow-hidden bg-background text-foreground">
           <header className="flex h-12 items-center justify-between gap-3 border-b border-primary/20 bg-sidebar px-3 text-sidebar-foreground lg:px-4">
             <div className="flex items-center gap-2 text-xs font-semibold tracking-wide text-primary">
-              <img src={gounoLogo} alt="" aria-hidden="true" className="size-5 shrink-0" />
+              <BrandMark src={gounoLogo} className="size-5" />
               Gouno UI Showcase
             </div>
             <div className="flex flex-wrap items-center gap-2">{workspaceControl}{viewportControl}</div>
