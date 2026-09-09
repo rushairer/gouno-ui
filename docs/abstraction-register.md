@@ -127,7 +127,7 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Status:** accepted
 - **Owner:** repository process / component governance
 - **Evidence:** Gosso migration repeatedly exposed issues that component-only review had not surfaced: Tabs visual/API drift, Alert primitive leakage, Account/System page-grammar divergence and mistaken Input affix naming. Resolving these immediately produced a cleaner canonical API than either “finish every page first” or “design the full library first”.
-- **Decision:** product migration and component hardening form one Product Validation Loop. Continue page migration until a real page exposes a canonical defect, accessibility issue, material product-agnostic API gap, duplicate semantic write path or Showcase/canonical mismatch; then stop the line, harden the component using standards + mature-library benchmarks + Gouno API rules + real product evidence, synchronize Showcase/examples/tests, validate back on the triggering page, and resume migration.
+- **Decision:** product migration and component hardening form one Product Validation Loop. Continue page migration until a real page exposes a canonical defect, accessibility issue, material product-agnostic API gap, duplicate semantic write path or Showcase/canonical mismatch; then stop the line, harden the component using standards + mature-library benchmarks + Gouno API rules + real product evidence, synchronize Showcase/docs/tests, validate it back on the triggering page, and resume migration.
 - **Benchmark rule:** Ant Design is an important high-level API/demo benchmark, not the authority. Do not copy deprecated aliases, compatibility baggage or APIs that conflict with Gouno naming/state/composition rules.
 - **Completion rule:** “100%” means coherent completion for the proven Gouno scope across runtime, public types, demos, example code, accessibility, focused tests and real product validation—not 100% parity with another library.
 - **Cadence:** after a significant page family or roughly 2–4 representative pages, run a short retrospective for Core defects, spreading local workarounds, abstraction candidates, challenged Gouno/Pattern assumptions, Showcase drift and API-governance gaps.
@@ -361,3 +361,43 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Fidelity scope:** this stage covers article identity, reading hierarchy, metadata, real heading IDs/deep links, representative paragraph/list/blockquote/table/code/figure content, related navigation, scroll-progress presentation, admin-preview banner, loading, fatal error/retry and not-found. Community behavior remains explicitly incomplete until the next Reading stage.
 - **Validation:** focused product tests assert H1/metadata, native TOC hrefs plus `scroll-mt-24`, canonical PageHeader/Anchor/CodeBlock usage, related navigation, preview/loading/error/not-found behavior, standalone catalog registration and the absence of AppShell/PageContainer/MarkdownRenderer/TableOfContents/elevation leakage. Acceptance still requires exact-main typecheck, complete tests, package build, Showcase build and Pages publication.
 - **Follow-up:** migrate the community tail independently: like state, comments, reply/report flows, comment form and report Modal. Use that state-machine evidence to decide whether any smaller interaction deserves extraction; default to product-local behavior rather than treating ArticleDetail layout similarity as admission evidence.
+
+### PD-041 — ArticleDetail community behavior stays product-local
+- **Status:** accepted validation / defer extraction
+- **Owner:** Product-local / Core validation
+- **Evidence:** the completed Blog public ArticleDetail community tail exercises optimistic like state, signed-in and guest comments, one-level replies, empty discussion, non-fatal interaction failure, report validation and canonical Modal lifecycle.
+- **Decision:** keep community orchestration product-local. Compose existing Core `Button`, `Badge`, `Card`, `Empty`, `Field`, `Input`, `Textarea`, `Alert` and `Modal`; the page owns identity mode, comment tree shape, like counts, reply policy, report payload and success/error state.
+- **API/abstraction impact:** none. Do not admit `CommentThread`, `CommentComposer`, `LikeButton`, `ReportDialog`, `CommunityPanel` or a generic Community/Reading Pattern from this single content product.
+- **Validation:** focused tests cover reversible `aria-pressed` like state, guest validation, first-comment empty-state transition, root-only replies, report reason validation, Modal close/success behavior and non-fatal community errors while reading remains available.
+
+### PD-042 — About and CustomPage validate document composition without a Document Pattern
+- **Status:** accepted validation / defer extraction
+- **Owner:** Product-local / Core + Gouno validation
+- **Evidence:** real Blog public `/about` is a fixed introduction page while dynamic `/:slug` CustomPage owns managed content plus loading/error/not-found lifecycle. Both are standalone document surfaces under the Blog public shell but their data/state responsibilities differ.
+- **Decision:** share only a Blog product-local document surface for route/document header plus readable content. Keep CustomPage async/resource lifecycle local and About static. Reuse existing `PageHeader` and `CodeBlock` where semantics match.
+- **API/abstraction impact:** none. Do not admit `DocumentPage`, `MarkdownPage`, `DocumentShell`, a public `MarkdownRenderer` or a generic Reading/Document Pattern from same-product document layout similarity.
+- **Design impact:** document content may own a spacious reading measure, but that remains a public-content semantic exception rather than application-shell spacing precedent.
+
+### PD-043 — Public account pages preserve the GOSSO identity boundary
+- **Status:** accepted validation / defer extraction
+- **Owner:** Product-local / security-boundary validation
+- **Evidence:** real Blog public `/account/notifications` and `/account/settings` require authenticated task surfaces. Notifications owns site interaction/reminder state; Settings owns Blog-local display name, public bio and notification preferences while identity credentials and high-assurance account operations belong to GOSSO.
+- **Decision:** Blog owns notification read/filter transitions and Blog-local profile/preference state only. Password, MFA, Passkey, identity session and login forms remain outside Blog and route to GOSSO account management. Compatibility `/notifications` and `/settings` remain redirects rather than duplicate page families.
+- **API/abstraction impact:** none. Do not admit `AccountShell`, `NotificationCenter`, `NotificationList`, `ProfileSettings`, `PreferencePanel` or an Account Pattern from these two related product pages.
+- **Security impact:** public Blog fixtures must not imply browser-owned token exchange/refresh/userinfo/revoke or a Blog-owned login form; static Showcase account scenarios make no real identity/API request.
+
+### PD-044 — Blog public reaches route-level Showcase coverage with a product-local NotFound
+- **Status:** accepted milestone
+- **Owner:** repository process / Product-local
+- **Evidence:** cross-checking the real public router yields Home, ArticleIndex, ArticleDetail, category/tag index and detail modes, Archive, About, Search, Account Notifications/Settings, compatibility redirects, dynamic CustomPage and a final unresolved-route fallback.
+- **Decision:** represent each canonical public page family exactly once in Showcase. Keep category/tag detail as ArticleIndex modes, keep compatibility paths as route policy, and keep the final NotFound as a `BlogPublicShellFixture` + Core `Result` recovery surface rather than a second document/application shell.
+- **API/abstraction impact:** none. Do not admit `NotFoundShell`, `ResultPage`, `PublicShell` or another public page wrapper from route closure.
+- **Validation:** the route-closure guard protects canonical standalone registrations, mode ownership, compatibility redirects, absence of AppShell/PageContainer and absence of real service calls in public fixtures.
+
+### PD-045 — Third-product validation corpus closes with no active fourth migration line
+- **Status:** accepted milestone / process transition
+- **Owner:** repository process
+- **Evidence:** Gosso Admin is the completed first comparison corpus, Blog Admin the completed second, and the real Gouno Blog public router plus its migrated Showcase fixtures now form the completed third corpus. The closure audit also corrected a prior bookkeeping drift where several completed Blog public fixtures existed in source/tests but had not been registered in Catalog/Router and process documents still called Blog the active line.
+- **Decision:** close Gouno Blog public as the third completed comparison corpus and select no fourth product migration line. Completed corpora remain live regression/prior-art evidence. Future page-by-page migration begins only after selecting a real independently owned next product/page family; completed fixtures may be reopened when later evidence exposes a genuine canonical defect or missing fidelity.
+- **API/abstraction impact:** none. Closure does not admit `PublicShell`, Reading, Community, Document, Account or NotFound feature-bag abstractions.
+- **Governance impact:** `AGENTS.md`, README, architecture, product-driven-development, fixture documentation, Catalog/Router and regression tests must all agree with this state before component convergence work is considered the next phase.
