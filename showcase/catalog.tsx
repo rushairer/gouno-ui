@@ -230,6 +230,11 @@ export const showcaseCatalog: ShowcaseGroup[] = [
     item("blog-categories", "Categories", "分类索引", 100, <ListTree />, "standalone"),
     item("blog-tags", "Tags", "标签索引", 100, <Tags />, "standalone"),
     item("blog-archive", "Archive", "文章归档", 100, <History />, "standalone"),
+    item("blog-about", "About", "关于", 100, <CircleHelp />, "standalone"),
+    item("blog-custom-page", "CustomPage", "自定义单页", 100, <FileText />, "standalone"),
+    item("blog-account-notifications", "Notifications", "账户通知", 100, <Bell />, "standalone"),
+    item("blog-account-settings", "Account Settings", "账户设置", 100, <UserCog />, "standalone"),
+    item("blog-not-found", "Not Found", "未找到", 100, <CircleHelp />, "standalone"),
   ]},
   { workspace: "blog-admin", group: "Content 内容管理", items: [
     item("blog-admin-dashboard", "Dashboard", "数据概览", 100, <ChartColumn />),
