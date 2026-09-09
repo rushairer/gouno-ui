@@ -27,7 +27,7 @@ import { PageHeader } from "../../../src/gouno";
 import { BulkActionBar } from "../../../src/patterns";
 import { FixtureDock } from "../../components/fixture-dock";
 
-type FixtureScenario = "data" | "loading" | "empty" | "error";
+type FixtureScenario = "data" | "loading" | "empty" | "error" | "partial-failure";
 type DeleteTarget = { kind: "single"; id: number } | { kind: "batch" } | null;
 type EditorState = { mode: "create" } | { mode: "edit"; id: number } | null;
 
@@ -89,6 +89,7 @@ const scenarioOptions = [
   { value: "loading", label: "加载中" },
   { value: "empty", label: "空状态" },
   { value: "error", label: "错误" },
+  { value: "partial-failure", label: "批量部分失败" },
 ] as const;
 
 const knownSlugCandidates: Record<string, string[]> = {
@@ -209,16 +210,33 @@ export function BlogAdminCategoriesDemo() {
 
   const confirmDelete = () => {
     if (!deleteTarget) return;
-    const ids = deleteTarget.kind === "batch" ? selected : [deleteTarget.id];
-    const count = ids.length;
-    setCategories((current) => current.filter((category) => !ids.includes(category.id)));
-    setSelected((current) => current.filter((id) => !ids.includes(id)));
+
+    if (deleteTarget.kind === "batch") {
+      const failed = scenario === "partial-failure" && selected.length > 1
+        ? [selected[selected.length - 1]]
+        : [];
+      const removed = selected.filter((id) => !failed.includes(id));
+      setCategories((current) => current.filter((category) => !removed.includes(category.id)));
+      setSelected(failed);
+      setDeleteTarget(null);
+      setNotice(failed.length > 0
+        ? {
+            type: "error",
+            text: `已删除 ${removed.length} 个分类；${failed.length} 个未删除：模拟 API 拒绝删除，失败项继续保持选中。`,
+          }
+        : {
+            type: "success",
+            text: `已删除 ${removed.length} 个分类，相关文章将进入未分类（Showcase 模拟）。`,
+          });
+      return;
+    }
+
+    setCategories((current) => current.filter((category) => category.id !== deleteTarget.id));
+    setSelected((current) => current.filter((id) => id !== deleteTarget.id));
     setDeleteTarget(null);
     setNotice({
       type: "success",
-      text: count > 1
-        ? `已删除 ${count} 个分类，相关文章将进入未分类（Showcase 模拟）。`
-        : "分类已删除，相关文章将进入未分类（Showcase 模拟）。",
+      text: "分类已删除，相关文章将进入未分类（Showcase 模拟）。",
     });
   };
 
@@ -238,7 +256,7 @@ export function BlogAdminCategoriesDemo() {
     <div className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/categories"
-        note="保留真实分类表格、批量工作流、Drawer 编辑与 AI Slug 辅助语义；Fixture 不请求真实 Blog API。"
+        note="保留真实分类表格、批量部分失败保留选择、Drawer 编辑与 AI Slug 辅助语义；Fixture 不请求真实 Blog API。"
         controls={(
           <Segmented<FixtureScenario>
             aria-label="分类页 Fixture 状态"

@@ -20,8 +20,9 @@ import { FixtureDock } from "../../components/fixture-dock";
 
 type CommentStatus = "pending" | "visible" | "hidden";
 type CommentFilter = CommentStatus | "all";
-type FixtureScenario = "data" | "loading" | "empty" | "error";
+type FixtureScenario = "data" | "loading" | "empty" | "error" | "partial-failure";
 type DeleteTarget = { kind: "single"; id: number } | { kind: "batch" } | null;
+type Notice = { type: "success" | "error"; text: string } | null;
 
 interface CommentFixture {
   id: number;
@@ -77,6 +78,7 @@ const scenarioOptions = [
   { value: "loading", label: "加载中" },
   { value: "empty", label: "空状态" },
   { value: "error", label: "错误" },
+  { value: "partial-failure", label: "批量部分失败" },
 ] as const;
 
 const statusLabels: Record<CommentStatus, string> = {
@@ -118,7 +120,7 @@ export function BlogAdminCommentsDemo() {
   const [selected, setSelected] = useState<number[]>([]);
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
   const [aiOpen, setAIOpen] = useState(false);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [notice, setNotice] = useState<Notice>(null);
 
   const filtered = useMemo(
     () => comments.filter((comment) => {
@@ -152,23 +154,39 @@ export function BlogAdminCommentsDemo() {
   const moderate = (comment: CommentFixture, next: "visible" | "hidden") => {
     setComments((current) => current.filter((item) => item.id !== comment.id));
     setSelected((current) => current.filter((id) => id !== comment.id));
-    setNotice(next === "visible" ? "评论已通过（Showcase 模拟）。" : "评论已隐藏（Showcase 模拟）。");
+    setNotice({ type: "success", text: next === "visible" ? "评论已通过（Showcase 模拟）。" : "评论已隐藏（Showcase 模拟）。" });
   };
 
   const confirmDelete = () => {
     if (!deleteTarget) return;
-    const ids = deleteTarget.kind === "batch" ? selected : [deleteTarget.id];
-    const count = ids.length;
-    setComments((current) => current.filter((comment) => !ids.includes(comment.id)));
-    setSelected((current) => current.filter((id) => !ids.includes(id)));
+
+    if (deleteTarget.kind === "batch") {
+      const failed = scenario === "partial-failure" && selected.length > 1
+        ? [selected[selected.length - 1]]
+        : [];
+      const removed = selected.filter((id) => !failed.includes(id));
+      setComments((current) => current.filter((comment) => !removed.includes(comment.id)));
+      setSelected(failed);
+      setDeleteTarget(null);
+      setNotice(failed.length > 0
+        ? {
+            type: "error",
+            text: `已删除 ${removed.length} 条评论；${failed.length} 条未删除：模拟 API 删除失败，失败项继续保持选中。`,
+          }
+        : { type: "success", text: `已删除 ${removed.length} 条评论（Showcase 模拟）。` });
+      return;
+    }
+
+    setComments((current) => current.filter((comment) => comment.id !== deleteTarget.id));
+    setSelected((current) => current.filter((id) => id !== deleteTarget.id));
     setDeleteTarget(null);
-    setNotice(count > 1 ? `已删除 ${count} 条评论（Showcase 模拟）。` : "评论已删除（Showcase 模拟）。");
+    setNotice({ type: "success", text: "评论已删除（Showcase 模拟）。" });
   };
 
   const launchAI = () => {
     const count = selected.length;
     setAIOpen(false);
-    setNotice(`已将 ${count} 条评论交给 AI 工作流（Showcase 模拟）。`);
+    setNotice({ type: "success", text: `已将 ${count} 条评论交给 AI 工作流（Showcase 模拟）。` });
   };
 
   const deleteDescription: ReactNode = deleteTarget?.kind === "batch"
@@ -179,7 +197,7 @@ export function BlogAdminCommentsDemo() {
     <div className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/comments"
-        note="保留真实审核队列、举报筛选、批量删除与 AI 工作流入口；Fixture 状态不请求真实 Blog API。"
+        note="保留真实审核队列、举报筛选、批量部分失败保留选择与 AI 工作流入口；Fixture 状态不请求真实 Blog API。"
         controls={(
           <Segmented<FixtureScenario>
             aria-label="评论页 Fixture 状态"
@@ -200,7 +218,7 @@ export function BlogAdminCommentsDemo() {
         description="审核讨论、处理举报，并维护高质量的交流空间。"
       />
 
-      {notice ? <Alert type="success" showIcon title={notice} closable={{ onClose: () => setNotice(null) }} /> : null}
+      {notice ? <Alert type={notice.type} showIcon title={notice.text} closable={{ onClose: () => setNotice(null) }} /> : null}
 
       <Card padding="base">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

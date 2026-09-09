@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { BlogAdminCommentsDemo } from "../showcase/demos/products/blog-admin-comments";
 
@@ -45,6 +45,24 @@ describe("Blog Admin Comments product migration fixture", () => {
     expect(screen.getByText("#1201 · Lina")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "启动工作流" }));
     expect(screen.getByText("已将 1 条评论交给 AI 工作流（Showcase 模拟）。")).toBeTruthy();
+  });
+
+  it("preserves real partial batch-delete failure and retains failed comments selected", () => {
+    render(<BlogAdminCommentsDemo />);
+    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
+    fireEvent.click(screen.getByRole("radio", { name: "批量部分失败" }));
+
+    fireEvent.click(screen.getByRole("checkbox", { name: "选择评论 1201" }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "选择评论 1202" }));
+    fireEvent.click(screen.getByRole("button", { name: "删除" }));
+    const dialog = screen.getByRole("dialog");
+    fireEvent.click(within(dialog).getByRole("button", { name: "永久删除" }));
+
+    expect(screen.queryByText("Lina")).toBeNull();
+    expect(screen.getByText("Kai")).toBeTruthy();
+    expect(screen.getByText("已选择 1 条评论")).toBeTruthy();
+    expect(screen.getByText("已删除 1 条评论；1 条未删除：模拟 API 删除失败，失败项继续保持选中。")).toBeTruthy();
+    expect(screen.getByRole("alert").getAttribute("data-type")).toBe("error");
   });
 
   it("preserves moderation and destructive confirmation semantics", () => {
