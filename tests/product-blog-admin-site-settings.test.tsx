@@ -16,6 +16,7 @@ describe("Blog Admin Site Settings product migration fixture", () => {
     expect(screen.getByText("/admin/settings")).toBeTruthy();
     expect(screen.getByRole("radio", { name: "已解锁" })).toBeTruthy();
     expect(screen.getByRole("radio", { name: "恢复暂存草稿" })).toBeTruthy();
+    expect(screen.getByRole("radio", { name: "上传失败" })).toBeTruthy();
   });
 
   it("preserves all five settings sections with one tablist and open panel leads", () => {
@@ -98,6 +99,39 @@ describe("Blog Admin Site Settings product migration fixture", () => {
     fireEvent.click(screen.getByRole("button", { name: "保存设置" }));
     expect(screen.getByText("站点设置已成功保存（Showcase 模拟）。")).toBeTruthy();
     expect(screen.getByText("当前设置已同步")).toBeTruthy();
+  });
+
+  it("uses the real image file accept contract for favicon and Hero uploads", () => {
+    render(<BlogAdminSiteSettingsDemo />);
+
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "网站图标" }), { button: 0 });
+    const faviconInput = screen.getByLabelText("Favicon 文件") as HTMLInputElement;
+    expect(faviconInput.accept).toBe("image/jpeg,image/png,image/webp,image/gif,image/svg+xml,image/x-icon,image/vnd.microsoft.icon,image/avif,image/bmp,.svg,.ico,.avif,.bmp");
+    fireEvent.change(faviconInput, { target: { files: [new File(["<svg />"], "brand.svg", { type: "image/svg+xml" })] } });
+    expect(screen.getByText("/media/brand.svg")).toBeTruthy();
+    expect(screen.getByText("站点图标已上传成功（Showcase 模拟）。")).toBeTruthy();
+
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "首页 Hero" }), { button: 0 });
+    const heroInput = screen.getByLabelText("Hero 插图文件") as HTMLInputElement;
+    expect(heroInput.accept).toContain("image/avif");
+    expect(heroInput.accept).toContain(".bmp");
+    fireEvent.change(heroInput, { target: { files: [new File(["hero"], "landing.webp", { type: "image/webp" })] } });
+    expect(screen.getByText("/media/landing.webp")).toBeTruthy();
+    expect(screen.getByText("Hero 插图已上传成功（Showcase 模拟）。")).toBeTruthy();
+  });
+
+  it("preserves the existing image URL when media upload fails", () => {
+    render(<BlogAdminSiteSettingsDemo />);
+    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
+    fireEvent.click(screen.getByRole("radio", { name: "上传失败" }));
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "网站图标" }), { button: 0 });
+
+    const url = screen.getByRole("textbox", { name: "Favicon 地址" }) as HTMLInputElement;
+    expect(url.value).toBe("/favicon.svg");
+    fireEvent.change(screen.getByLabelText("Favicon 文件"), { target: { files: [new File(["ico"], "broken.ico", { type: "image/x-icon" })] } });
+
+    expect(screen.getByText("图标上传失败（Showcase 模拟）。")).toBeTruthy();
+    expect(url.value).toBe("/favicon.svg");
   });
 
   it("preserves the real RSS validation and loading/error fixture states", () => {

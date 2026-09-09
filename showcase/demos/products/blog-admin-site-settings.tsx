@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import {
   FileText,
   Image as ImageIcon,
@@ -32,6 +32,7 @@ import { TabPanelLead } from "../../components/tab-panel-lead";
 type SettingsTab = "basic" | "appearance" | "hero" | "social" | "seo";
 type FixtureScenario = "data" | "loading" | "error";
 type SecurityState = "unlocked" | "locked" | "expire-on-save" | "restore-pending";
+type UploadScenario = "success" | "error";
 
 type SiteSettingsFixture = {
   site_title: string;
@@ -50,6 +51,8 @@ type SiteSettingsFixture = {
   hero_image_caption: string;
   favicon_url: string;
 };
+
+const commonImageAccept = "image/jpeg,image/png,image/webp,image/gif,image/svg+xml,image/x-icon,image/vnd.microsoft.icon,image/avif,image/bmp,.svg,.ico,.avif,.bmp";
 
 const defaultHero = {
   hero_title: "记录探索与思考，\n沉淀见解与价值。",
@@ -89,6 +92,11 @@ const securityOptions = [
   { value: "locked", label: "已锁定" },
   { value: "expire-on-save", label: "保存时过期" },
   { value: "restore-pending", label: "恢复暂存草稿" },
+] as const;
+
+const uploadOptions = [
+  { value: "success", label: "上传成功" },
+  { value: "error", label: "上传失败" },
 ] as const;
 
 function SettingsSurface({
@@ -172,9 +180,12 @@ function LoadingSettings() {
 }
 
 export function BlogAdminSiteSettingsDemo() {
+  const heroFileInputRef = useRef<HTMLInputElement>(null);
+  const faviconFileInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState<SettingsTab>("basic");
   const [scenario, setScenario] = useState<FixtureScenario>("data");
   const [security, setSecurity] = useState<SecurityState>("unlocked");
+  const [uploadScenario, setUploadScenario] = useState<UploadScenario>("success");
   const [settings, setSettings] = useState<SiteSettingsFixture>(initialSettings);
   const [baseline, setBaseline] = useState<SiteSettingsFixture>(initialSettings);
   const [pendingSettings, setPendingSettings] = useState<SiteSettingsFixture | null>(null);
@@ -238,14 +249,18 @@ export function BlogAdminSiteSettingsDemo() {
     setNotice({ type: "info", message: "已填充默认 Hero 标语与插图，保存后生效（Showcase 模拟）。" });
   };
 
-  const uploadHero = () => {
-    field("hero_image_url", "/media/hero-showcase.webp");
-    setNotice({ type: "success", message: "Hero 插图已上传成功（Showcase 模拟）。" });
-  };
-
-  const uploadFavicon = () => {
-    field("favicon_url", "/media/favicon-showcase.svg");
-    setNotice({ type: "success", message: "站点图标已上传成功（Showcase 模拟）。" });
+  const handleImageUpload = (kind: "hero" | "favicon", file?: File) => {
+    if (!file) return;
+    if (uploadScenario === "error") {
+      setNotice({ type: "error", message: kind === "hero" ? "图片上传失败（Showcase 模拟）。" : "图标上传失败（Showcase 模拟）。" });
+      return;
+    }
+    const nextUrl = `/media/${file.name}`;
+    setSettings((current) => ({
+      ...current,
+      [kind === "hero" ? "hero_image_url" : "favicon_url"]: nextUrl,
+    }));
+    setNotice({ type: "success", message: kind === "hero" ? "Hero 插图已上传成功（Showcase 模拟）。" : "站点图标已上传成功（Showcase 模拟）。" });
   };
 
   const content = (() => {
@@ -299,10 +314,21 @@ export function BlogAdminSiteSettingsDemo() {
               icon: <ImageIcon aria-hidden="true" className="size-4" />,
               children: (
                 <SettingsSurface description="设置浏览器标签页中显示的 Favicon。" dirty={dirty} onSave={save}>
-                  <FormField label="Favicon 地址" hint="支持站内路径或完整 http(s) URL；真实产品上传支持 SVG、ICO、AVIF、BMP 等常见网络图片格式。">
+                  <FormField label="Favicon 地址" hint="支持站内路径或完整 http(s) URL；上传支持 PNG、WebP、GIF、JPEG、SVG、ICO、AVIF 与 BMP。">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                       <Input className="min-w-0 flex-1" value={settings.favicon_url} onChange={(event) => field("favicon_url", event.target.value)} placeholder="/favicon.svg" />
-                      <Button icon={<Upload />} onClick={uploadFavicon}>上传图标</Button>
+                      <input
+                        ref={faviconFileInputRef}
+                        aria-label="Favicon 文件"
+                        type="file"
+                        accept={commonImageAccept}
+                        className="sr-only"
+                        onChange={(event) => {
+                          handleImageUpload("favicon", event.target.files?.[0]);
+                          event.currentTarget.value = "";
+                        }}
+                      />
+                      <Button icon={<Upload />} onClick={() => faviconFileInputRef.current?.click()}>上传图标</Button>
                     </div>
                   </FormField>
                   <div className="flex items-center gap-3 rounded-lg border bg-muted/30 p-4">
@@ -332,10 +358,21 @@ export function BlogAdminSiteSettingsDemo() {
                   <FormField label="Hero 副标题描述" hint="对网站主题、关注领域的补充说明。">
                     <Textarea rows={3} value={settings.hero_description} onChange={(event) => field("hero_description", event.target.value)} />
                   </FormField>
-                  <FormField label="右侧插图 URL" hint="可直接输入图片地址，或使用上传按钮模拟媒体库上传。">
+                  <FormField label="右侧插图 URL" hint="可直接输入图片地址，或点击上传按钮选择常见网络图片格式。">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                       <Input className="min-w-0 flex-1" value={settings.hero_image_url} onChange={(event) => field("hero_image_url", event.target.value)} placeholder="/editorial-system-map.png" />
-                      <Button icon={<Upload />} onClick={uploadHero}>上传插图</Button>
+                      <input
+                        ref={heroFileInputRef}
+                        aria-label="Hero 插图文件"
+                        type="file"
+                        accept={commonImageAccept}
+                        className="sr-only"
+                        onChange={(event) => {
+                          handleImageUpload("hero", event.target.files?.[0]);
+                          event.currentTarget.value = "";
+                        }}
+                      />
+                      <Button icon={<Upload />} onClick={() => heroFileInputRef.current?.click()}>上传插图</Button>
                     </div>
                   </FormField>
                   {settings.hero_image_url ? (
@@ -396,7 +433,7 @@ export function BlogAdminSiteSettingsDemo() {
     <div className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/settings"
-        note="真实 Blog Admin 站点设置页面；Fixture 保留五组配置、Sudo/MFA、保存时 Step-Up 草稿恢复、重新进入页面恢复 sessionStorage 暂存草稿、保存校验与上传状态，但不连接 Blog API 或媒体服务。"
+        note="真实 Blog Admin 站点设置页面；Fixture 保留五组配置、Sudo/MFA、保存时 Step-Up 草稿恢复、重新进入恢复暂存草稿、真实文件选择 accept 契约与上传失败态，但不连接 Blog API 或媒体服务。"
         controls={(
           <div className="flex flex-col gap-3">
             <Segmented<FixtureScenario>
@@ -411,6 +448,13 @@ export function BlogAdminSiteSettingsDemo() {
               options={securityOptions}
               value={security}
               onChange={applySecurityFixture}
+              block
+            />
+            <Segmented<UploadScenario>
+              aria-label="站点设置上传场景"
+              options={uploadOptions}
+              value={uploadScenario}
+              onChange={(value) => { setUploadScenario(value); setNotice(null); }}
               block
             />
           </div>
