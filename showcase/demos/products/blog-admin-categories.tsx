@@ -99,6 +99,23 @@ function LoadingCategories() {
   );
 }
 
+function CategoryActions({
+  category,
+  onEdit,
+  onDelete,
+}: {
+  category: CategoryFixture;
+  onEdit: (category: CategoryFixture) => void;
+  onDelete: (category: CategoryFixture) => void;
+}) {
+  return (
+    <div className="flex min-w-max flex-nowrap items-center justify-end gap-1">
+      <IconButton label={`编辑分类 ${category.name}`} icon={<Edit2 />} variant="ghost" onClick={() => onEdit(category)} />
+      <IconButton label={`删除分类 ${category.name}`} icon={<Trash2 />} variant="ghost" color="error" onClick={() => onDelete(category)} />
+    </div>
+  );
+}
+
 export function BlogAdminCategoriesDemo() {
   const [categories, setCategories] = useState<CategoryFixture[]>(() => [...initialCategories]);
   const [scenario, setScenario] = useState<FixtureScenario>("data");
@@ -204,7 +221,7 @@ export function BlogAdminCategoriesDemo() {
     <div className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/categories"
-        note="保留真实分类表格、批量部分失败保留选择、Drawer 编辑、AI Slug，以及 category resource 的真实 WorkflowLauncher 资源输入与 Run 反馈；Fixture 不请求真实 Blog/AI API。"
+        note="保留真实分类数据与操作语义，并用桌面 Table / 移动 Card 双呈现承载响应式布局；批量部分失败保留选择、Drawer 编辑、AI Slug 与 category WorkflowLauncher 均保持一致。Fixture 不请求真实 Blog/AI API。"
         controls={(
           <Segmented<FixtureScenario>
             aria-label="分类页 Fixture 状态"
@@ -245,51 +262,98 @@ export function BlogAdminCategoriesDemo() {
           <Empty title="还没有分类" description="创建第一个分类来组织长期主题。" action={<Button variant="solid" color="primary" icon={<Plus />} onClick={openCreate}>创建分类</Button>} />
         </Card>
       ) : (
-        <Table density="compact" bordered>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-12 text-center">
-                <Checkbox
-                  aria-label="选择全部分类"
-                  checked={allSelected}
-                  onChange={(event) => {
-                    const ids = visibleCategories.map((category) => category.id);
-                    setSelected((current) => event.target.checked ? [...new Set([...current, ...ids])] : current.filter((id) => !ids.includes(id)));
-                  }}
-                />
-              </TableHead>
-              <TableHead className="w-20">排序</TableHead>
-              <TableHead>分类名称与描述</TableHead>
-              <TableHead className="w-48">Slug 标识</TableHead>
-              <TableHead className="w-24 text-right">文章数</TableHead>
-              <TableHead className="w-28 text-right">操作</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+        <>
+          <div className="hidden md:block">
+            <Table density="compact" bordered>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-12 text-center">
+                    <Checkbox
+                      aria-label="选择全部分类"
+                      checked={allSelected}
+                      onChange={(event) => {
+                        const ids = visibleCategories.map((category) => category.id);
+                        setSelected((current) => event.target.checked ? [...new Set([...current, ...ids])] : current.filter((id) => !ids.includes(id)));
+                      }}
+                    />
+                  </TableHead>
+                  <TableHead className="w-20">排序</TableHead>
+                  <TableHead>分类名称与描述</TableHead>
+                  <TableHead className="w-48">Slug 标识</TableHead>
+                  <TableHead className="w-24 text-right">文章数</TableHead>
+                  <TableHead className="w-28 text-right">操作</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {visibleCategories.map((category) => (
+                  <TableRow key={category.id} data-state={selected.includes(category.id) ? "selected" : undefined}>
+                    <TableCell className="text-center">
+                      <Checkbox aria-label={`选择分类 ${category.name}`} checked={selected.includes(category.id)} onChange={(event) => setSelection(category.id, event.target.checked)} />
+                    </TableCell>
+                    <TableCell><span className="font-mono text-xs text-muted-foreground">{category.sortOrder}</span></TableCell>
+                    <TableCell className="min-w-72 whitespace-normal">
+                      <div className="flex flex-col gap-1">
+                        <strong className="text-sm font-semibold text-foreground">{category.name}</strong>
+                        <span className="text-xs leading-relaxed text-muted-foreground">{category.description}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell><code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-muted-foreground">{category.slug}</code></TableCell>
+                    <TableCell className="text-right font-mono text-xs text-muted-foreground">{category.postCount}</TableCell>
+                    <TableCell>
+                      <CategoryActions
+                        category={category}
+                        onEdit={openEdit}
+                        onDelete={(item) => setDeleteTarget({ kind: "single", id: item.id })}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          <div className="grid gap-3 md:hidden" role="list" aria-label="分类列表">
             {visibleCategories.map((category) => (
-              <TableRow key={category.id} data-state={selected.includes(category.id) ? "selected" : undefined}>
-                <TableCell className="text-center">
-                  <Checkbox aria-label={`选择分类 ${category.name}`} checked={selected.includes(category.id)} onChange={(event) => setSelection(category.id, event.target.checked)} />
-                </TableCell>
-                <TableCell><span className="font-mono text-xs text-muted-foreground">{category.sortOrder}</span></TableCell>
-                <TableCell className="min-w-72 whitespace-normal">
-                  <div className="flex flex-col gap-1">
-                    <strong className="text-sm font-semibold text-foreground">{category.name}</strong>
-                    <span className="text-xs leading-relaxed text-muted-foreground">{category.description}</span>
+              <Card
+                key={category.id}
+                padding="base"
+                role="listitem"
+                className={selected.includes(category.id) ? "border-primary/40 bg-accent/20" : undefined}
+              >
+                <div className="flex flex-col gap-4">
+                  <div className="flex min-w-0 items-start gap-3">
+                    <Checkbox aria-label={`选择分类 ${category.name}`} checked={selected.includes(category.id)} onChange={(event) => setSelection(category.id, event.target.checked)} />
+                    <div className="min-w-0 flex-1">
+                      <strong className="block text-sm font-semibold text-foreground">{category.name}</strong>
+                      <Text size="xs" tone="muted" className="mt-1 leading-relaxed">{category.description}</Text>
+                    </div>
                   </div>
-                </TableCell>
-                <TableCell><code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-muted-foreground">{category.slug}</code></TableCell>
-                <TableCell className="text-right font-mono text-xs text-muted-foreground">{category.postCount}</TableCell>
-                <TableCell>
-                  <div className="flex min-w-max flex-nowrap items-center justify-end gap-1">
-                    <IconButton label={`编辑分类 ${category.name}`} icon={<Edit2 />} variant="ghost" onClick={() => openEdit(category)} />
-                    <IconButton label={`删除分类 ${category.name}`} icon={<Trash2 />} variant="ghost" color="error" onClick={() => setDeleteTarget({ kind: "single", id: category.id })} />
+                  <div className="grid grid-cols-2 gap-3 rounded-md bg-muted/35 p-3 text-xs">
+                    <div>
+                      <Text as="div" size="xs" tone="muted">排序</Text>
+                      <span className="mt-1 block font-mono text-foreground">{category.sortOrder}</span>
+                    </div>
+                    <div>
+                      <Text as="div" size="xs" tone="muted">文章数</Text>
+                      <span className="mt-1 block font-mono text-foreground">{category.postCount}</span>
+                    </div>
+                    <div className="col-span-2 min-w-0">
+                      <Text as="div" size="xs" tone="muted">Slug 标识</Text>
+                      <code className="mt-1 block break-all font-mono text-xs text-foreground">{category.slug}</code>
+                    </div>
                   </div>
-                </TableCell>
-              </TableRow>
+                  <div className="flex justify-end border-t pt-3">
+                    <CategoryActions
+                      category={category}
+                      onEdit={openEdit}
+                      onDelete={(item) => setDeleteTarget({ kind: "single", id: item.id })}
+                    />
+                  </div>
+                </div>
+              </Card>
             ))}
-          </TableBody>
-        </Table>
+          </div>
+        </>
       )}
 
       <Drawer

@@ -14,13 +14,14 @@ describe("Blog Admin Categories product migration fixture", () => {
     expect(screen.getByText("/admin/categories")).toBeTruthy();
   });
 
-  it("preserves category table semantics and stable row actions", () => {
+  it("preserves desktop Table and mobile Card collection with stable actions", () => {
     render(<BlogAdminCategoriesDemo />);
     expect(screen.getByRole("table")).toBeTruthy();
-    expect(screen.getByText("工程实践")).toBeTruthy();
-    expect(screen.getByText("engineering-practice")).toBeTruthy();
-    expect(screen.getByRole("button", { name: "编辑分类 工程实践" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "删除分类 工程实践" })).toBeTruthy();
+    expect(screen.getByRole("list", { name: "分类列表" })).toBeTruthy();
+    expect(screen.getAllByText("工程实践").length).toBeGreaterThanOrEqual(2);
+    expect(screen.getAllByText("engineering-practice").length).toBeGreaterThanOrEqual(2);
+    expect(screen.getAllByRole("button", { name: "编辑分类 工程实践" }).length).toBeGreaterThanOrEqual(2);
+    expect(screen.getAllByRole("button", { name: "删除分类 工程实践" }).length).toBeGreaterThanOrEqual(2);
   });
 
   it("preserves create/edit Drawer and AI Slug assistance", () => {
@@ -32,16 +33,16 @@ describe("Blog Admin Categories product migration fixture", () => {
     fireEvent.click(screen.getByRole("button", { name: "design-system" }));
     fireEvent.click(screen.getByRole("button", { name: "创建分类" }));
     expect(screen.getByText("分类“Design System”已创建（Showcase 模拟）。")).toBeTruthy();
-    expect(screen.getByText("Design System")).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "编辑分类 Design System" }));
+    expect(screen.getAllByText("Design System").length).toBeGreaterThanOrEqual(2);
+    fireEvent.click(screen.getAllByRole("button", { name: "编辑分类 Design System" })[0]);
     fireEvent.change(screen.getByRole("textbox", { name: "分类描述" }), { target: { value: "验证分类编辑工作流。" } });
     fireEvent.click(screen.getByRole("button", { name: "保存修改" }));
-    expect(screen.getByText("验证分类编辑工作流。")).toBeTruthy();
+    expect(screen.getAllByText("验证分类编辑工作流。").length).toBeGreaterThanOrEqual(2);
   });
 
   it("reuses the product-local WorkflowLauncher for category resources", () => {
     render(<BlogAdminCategoriesDemo />);
-    fireEvent.click(screen.getByRole("checkbox", { name: "选择分类 工程实践" }));
+    fireEvent.click(screen.getAllByRole("checkbox", { name: "选择分类 工程实践" })[0]);
     const toolbar = screen.getByRole("toolbar", { name: "批量操作" });
     expect(toolbar.getAttribute("data-slot")).toBe("bulk-action-bar");
     expect(screen.getByText("已选择 1 个分类")).toBeTruthy();
@@ -59,13 +60,13 @@ describe("Blog Admin Categories product migration fixture", () => {
     render(<BlogAdminCategoriesDemo />);
     fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
     fireEvent.click(screen.getByRole("radio", { name: "批量部分失败" }));
-    fireEvent.click(screen.getByRole("checkbox", { name: "选择分类 工程实践" }));
-    fireEvent.click(screen.getByRole("checkbox", { name: "选择分类 身份安全" }));
+    fireEvent.click(screen.getAllByRole("checkbox", { name: "选择分类 工程实践" })[0]);
+    fireEvent.click(screen.getAllByRole("checkbox", { name: "选择分类 身份安全" })[0]);
     fireEvent.click(screen.getByRole("button", { name: "删除" }));
     const dialog = screen.getByRole("dialog");
     fireEvent.click(within(dialog).getByRole("button", { name: "确认删除" }));
     expect(screen.queryByText("工程实践")).toBeNull();
-    expect(screen.getByText("身份安全")).toBeTruthy();
+    expect(screen.getAllByText("身份安全").length).toBeGreaterThanOrEqual(2);
     expect(screen.getByText("已选择 1 个分类")).toBeTruthy();
     expect(screen.getByText("已删除 1 个分类；1 个未删除：模拟 API 拒绝删除，失败项继续保持选中。")).toBeTruthy();
     expect(screen.getByRole("alert").getAttribute("data-type")).toBe("error");
@@ -73,7 +74,7 @@ describe("Blog Admin Categories product migration fixture", () => {
 
   it("preserves destructive confirmation and loading/empty/error states", () => {
     render(<BlogAdminCategoriesDemo />);
-    fireEvent.click(screen.getByRole("button", { name: "删除分类 身份安全" }));
+    fireEvent.click(screen.getAllByRole("button", { name: "删除分类 身份安全" })[0]);
     expect(screen.getByText("删除分类“身份安全”？相关文章会移至未分类。")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "确认删除" }));
     expect(screen.queryByText("身份安全")).toBeNull();
