@@ -202,6 +202,7 @@ describe("audited target components", () => {
       "core-pagination",
       "core-tabs",
       "core-empty",
+      "core-result",
       "core-modal",
       "core-drawer",
     ]) {
@@ -221,6 +222,7 @@ describe("audited target components", () => {
       dataEntryDocuments.upload,
       dataDisplayDocuments.table,
       feedbackDocuments.empty,
+      feedbackDocuments.result,
       feedbackDocuments.modal,
       feedbackDocuments.drawer,
       paginationDocument,
