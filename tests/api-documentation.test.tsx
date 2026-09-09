@@ -40,6 +40,7 @@ const cases = [
   ["src/core/upload.tsx", "UploadProps", dataEntryDocuments.upload],
   ["src/core/form.tsx", "FormProps", formDocuments.form],
   ["src/core/tag.tsx", "TagProps", tagDocuments.tag],
+  ["src/core/empty.tsx", "EmptyProps", feedbackDocuments.empty],
   ["src/core/modal.tsx", "ModalProps", feedbackDocuments.modal],
   ["src/core/drawer.tsx", "DrawerProps", feedbackDocuments.drawer],
   ["src/core/pagination.tsx", "PaginationProps", paginationDocument],
