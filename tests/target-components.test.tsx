@@ -201,6 +201,7 @@ describe("audited target components", () => {
       "core-table",
       "core-pagination",
       "core-tabs",
+      "core-empty",
       "core-modal",
       "core-drawer",
     ]) {
@@ -219,6 +220,7 @@ describe("audited target components", () => {
       dataEntryDocuments["date-picker"],
       dataEntryDocuments.upload,
       dataDisplayDocuments.table,
+      feedbackDocuments.empty,
       feedbackDocuments.modal,
       feedbackDocuments.drawer,
       paginationDocument,
