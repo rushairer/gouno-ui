@@ -38,16 +38,16 @@ The root `@gouno/ui` is an external compatibility umbrella, not a fifth owner. R
 
 ## Product-driven evolution
 
-- Gosso Admin is the completed first-product comparison corpus.
-- Blog Admin is the completed second-product comparison corpus after route coverage and behavior/detail fidelity hardening.
-- Blog public site is the active migration line, starting with `PublicShell` + Home, followed by discovery, reading and account page families.
-- Pages start Core-first with Theme, admitted Gouno structure where semantics match, and local composition.
-- Public-site document/content shells are not forced into `AppShell` merely for visual consistency.
-- Small repetition is preferred over premature extraction.
-- The third semantically equivalent occurrence triggers review, not automatic extraction.
-- Before a Pattern/Gouno addition or material Core extension, compare canonical UI, Legacy and matching real product cases across Gosso Admin, Blog Admin and Blog.
-- Durable decisions live in [`docs/abstraction-register.md`](docs/abstraction-register.md).
-- Public naming/state/composition rules live in [`docs/api-specification.md`](docs/api-specification.md).
+Three real product corpora are now closed as comparison evidence:
+
+- **Gosso Admin** — completed first-product corpus after route coverage plus product-language convergence.
+- **Blog Admin** — completed second-product corpus after route coverage plus behavior/detail fidelity hardening.
+- **Gouno Blog public site** — completed third-product corpus after PublicShell/Home, discovery, reading, document, account and final NotFound route-family validation.
+- **No active fourth-product migration line is selected.** New product migration starts only when a real independently owned product/page family is chosen, or when a completed corpus exposes a genuine canonical defect that requires reopening a component or fixture.
+
+Pages still start Core-first with Theme, admitted Gouno structure where semantics match, and local composition. Public-site document/content shells are not forced into `AppShell` merely for visual consistency. Small repetition is preferred over premature extraction, and the third semantically equivalent occurrence still triggers review rather than automatic extraction.
+
+Before a Pattern/Gouno addition or material Core extension, compare canonical UI, Legacy and matching real product cases across all completed corpora. Durable decisions live in [`docs/abstraction-register.md`](docs/abstraction-register.md); public naming/state/composition rules live in [`docs/api-specification.md`](docs/api-specification.md).
 
 Current admitted abstractions demonstrate the process rather than a fixed catalog: `AppShell`/`PageContainer` were the initial shell baseline; `PageHeader` was re-admitted only after real page evidence; `BulkActionBar` became the first Pattern only after three different migrated collection workflows proved a smaller shared interaction than the surrounding page structures; `CodeBlock` moved from Showcase-private tooling into Core only when the public Blog reading path supplied independent product demand.
 
@@ -58,7 +58,9 @@ Showcase separates product workspace from design-system ownership:
 - **Gouno UI** — canonical `Core / Theme / Patterns / Gouno` documentation.
 - **Gosso Admin** — completed first-product comparison corpus.
 - **Blog Admin** — completed second-product comparison corpus.
-- **Blog** — active public-site migration workspace; only genuinely migrated public pages appear here.
+- **Blog** — completed third-product public-site comparison corpus.
+
+There is currently no active product workspace receiving page-by-page migration. Completed workspaces stay live as regression/comparison evidence and may be reopened only when a real new product or a discovered canonical defect creates demand.
 
 Showcase dogfoods admitted canonical APIs. `CodeBlock` is now a canonical Core component, while Showcase's Prism renderer remains a private adapter layered on top of it. API tables, demo framing, viewport simulation and similar documentation tooling remain private; Showcase-only repetition is supporting evidence and cannot create another public abstraction by itself.
 
