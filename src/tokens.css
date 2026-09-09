@@ -3,6 +3,7 @@
     "Inter Variable", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --color-background: var(--background);
+  --color-canvas: var(--canvas);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--foreground);
@@ -49,6 +50,8 @@
   --radius-md: 6px;
   --radius-lg: 10px;
   --radius-xl: 10px;
+  --shadow-control: var(--elevation-shadow-control);
+  --shadow-surface: var(--elevation-shadow-surface);
   --shadow-raised: var(--elevation-shadow-raised);
   --shadow-overlay: var(--elevation-shadow-overlay);
   --shadow-modal: var(--elevation-shadow-modal);
@@ -64,6 +67,7 @@
   :root,
   [data-theme="light"] {
     --background: #ffffff;
+    --canvas: #f6f7f9;
     --foreground: #18212e;
     --card: #ffffff;
     --raised: #ffffff;
@@ -85,7 +89,9 @@
     --info: #255bab;
     --info-subtle: #edf4ff;
     --overlay: #10182780;
-    --elevation-shadow-raised: 0 1px 2px #10182714, 0 2px 6px #1018270a;
+    --elevation-shadow-control: 0 1px 2px #10182712, 0 1px 1px #1018270a;
+    --elevation-shadow-surface: 0 1px 2px #10182712, 0 2px 8px #1018270a;
+    --elevation-shadow-raised: 0 4px 12px #10182717, 0 1px 3px #10182712;
     --elevation-shadow-overlay: 0 8px 24px #1018271f, 0 2px 8px #10182714;
     --elevation-shadow-modal: 0 20px 48px #10182729, 0 6px 16px #10182714;
     --code-keyword: #7944a0;
@@ -110,6 +116,7 @@
   }
   [data-theme="dark"] {
     --background: #11151b;
+    --canvas: #0f1319;
     --foreground: #edf1f7;
     --card: #171d25;
     --raised: #1a222c;
@@ -131,7 +138,9 @@
     --info: #a0c5ff;
     --info-subtle: #1c2c44;
     --overlay: #05080dba;
-    --elevation-shadow-raised: 0 2px 8px #00000038, 0 1px 2px #0000002e;
+    --elevation-shadow-control: 0 1px 2px #0000003d;
+    --elevation-shadow-surface: 0 2px 8px #0000002e, 0 1px 2px #00000024;
+    --elevation-shadow-raised: 0 6px 18px #0000004d, 0 2px 6px #00000038;
     --elevation-shadow-overlay: 0 12px 32px #00000052, 0 3px 10px #0000003d;
     --elevation-shadow-modal: 0 24px 56px #00000066, 0 8px 20px #0000004d;
     --code-keyword: #d3b1f2;

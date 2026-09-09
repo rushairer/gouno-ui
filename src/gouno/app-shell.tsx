@@ -37,7 +37,7 @@ export function AppShell({
   const navigationTrigger = useRef<HTMLButtonElement>(null);
 
   return (
-    <div data-slot="app-shell" className="min-h-dvh bg-background text-foreground">
+    <div data-slot="app-shell" className="min-h-dvh bg-canvas text-foreground">
       <a
         href="#app-shell-main"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-popover focus:p-3"

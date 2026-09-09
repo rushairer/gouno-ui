@@ -39,7 +39,7 @@ function Table({
       data-sticky-header={stickyHeader || undefined}
       className={cn(
         "relative w-full overflow-x-auto rounded-lg",
-        bordered ? "border border-border/80 bg-card" : "bg-card/40",
+        bordered ? "border border-border/80 bg-card shadow-surface" : "bg-card/40",
         containerClassName,
       )}
     >
