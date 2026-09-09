@@ -51,6 +51,8 @@ AdminPage  → PageContainer
 
 这不是兼容 alias。未来发布 package artifact 时应按 SemVer/迁移公告评估 breaking impact。当前使用旧 vendored archive 的产品可以在页面迁移前继续固定旧 artifact。
 
+`FormActions.surface` 也已从 canonical API 移除：该属性只产生没有任何样式定义或运行时语义的迁移期 class hook。需要特殊 action-surface 组合时应通过明确的父级 surface anatomy 或 `className` 表达，而不是恢复无效布尔属性。
+
 Tabs 迁移采用单一 canonical 命名：
 
 ```text
