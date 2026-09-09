@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -17,7 +17,6 @@ import {
   Input,
   Segmented,
   Skeleton,
-  Text,
 } from "../../../src/core";
 import { ThemeToggle } from "../../../src/theme";
 import { FixtureDock } from "../../components/fixture-dock";
@@ -32,7 +31,7 @@ type PostFixture = {
   publishedAt: string;
   readTime: number;
   tags: string[];
-  cover?: string;
+  cover?: boolean;
 };
 
 const scenarioOptions = [
@@ -51,7 +50,7 @@ const posts: PostFixture[] = [
     publishedAt: "2026-09-08",
     readTime: 8,
     tags: ["OAuth2", "BFF", "Architecture"],
-    cover: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=900&q=80",
+    cover: true,
   },
   {
     id: 2,
@@ -113,7 +112,7 @@ function ArticleTeaser({ post, featured = false, compact = false }: { post: Post
           <time dateTime={post.publishedAt}>{post.publishedAt}</time>
           <span>{post.readTime} 分钟阅读</span>
         </div>
-        <button type="button" className="inline-flex items-start gap-2 text-left" onClick={() => undefined}>
+        <button type="button" className="inline-flex items-start gap-2 text-left">
           <h2 className={`${featured ? "text-2xl md:text-3xl" : compact ? "text-base" : "text-xl"} break-words font-semibold leading-snug tracking-tight group-hover:text-primary`}>
             {post.title}
           </h2>
@@ -129,8 +128,8 @@ function ArticleTeaser({ post, featured = false, compact = false }: { post: Post
         </div>
       </div>
       {post.cover && !compact ? (
-        <div aria-hidden="true" className="self-center">
-          <img src={post.cover} alt="" loading="lazy" className="aspect-[4/3] w-full rounded-md object-cover" />
+        <div aria-hidden="true" className="aspect-[4/3] self-center overflow-hidden rounded-md border bg-gradient-to-br from-primary/15 via-muted to-background p-4">
+          <div className="grid h-full place-items-center rounded border border-dashed text-center text-[11px] text-muted-foreground">文章封面静态占位</div>
         </div>
       ) : null}
     </article>
@@ -150,7 +149,7 @@ function HomeLoading() {
   );
 }
 
-function PublicShellFixture({ children, onNavigate }: { children: React.ReactNode; onNavigate: (target: string) => void }) {
+function PublicShellFixture({ children, onNavigate }: { children: ReactNode; onNavigate: (target: string) => void }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [search, setSearch] = useState("");
 
