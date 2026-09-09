@@ -36,10 +36,8 @@ describe("product migration line", () => {
     }
   });
 
-  it("does not populate the Blog workspace before a real public page lands", () => {
+  it("starts the Blog workspace with the real Home migration", () => {
     const catalog = read("showcase/catalog.tsx");
-    expect(catalog).toContain(
-      '{ workspace: "blog", group: "Migrated Pages 已迁移页面", items: [] }',
-    );
+    expect(catalog).toContain('item("blog-home", "Home", "首页", 100, <Home />)');
   });
 });
