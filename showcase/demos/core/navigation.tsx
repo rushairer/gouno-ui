@@ -63,7 +63,7 @@ export const navigationDocuments: Record<string, ComponentDocument> = {
         selectedKeys={["home"]}
         items={[
           { key: "home", label: "首页" },
-          { key: "components", label: "Core" },
+          { key: "components", label: "组件" },
           { key: "disabled", label: "禁用", disabled: true },
         ]}
       />
