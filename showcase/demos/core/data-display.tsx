@@ -13,6 +13,7 @@ import {
   Calendar,
   Carousel,
   Descriptions,
+  Empty,
   Grid,
   Image,
   List,
@@ -65,15 +66,13 @@ export const dataDisplayDocuments: Record<string, ComponentDocument> = {
   image: {
     title: "Image 图片",
     description: "图片加载失败时提供可访问 fallback。",
-    code: '<Image src="/cover.png" fallback={<Empty />} />',
+    code: '<Image src="/cover.png" fallback={<Empty title="图片不可用" description="请稍后重试。" />} />',
     render: () => (
       <Image
         src="/missing.png"
         alt="示例图片"
         fallback={
-          <div className="rounded border p-10 text-center text-sm text-muted-foreground">
-            Fallback
-          </div>
+          <Empty title="图片不可用" description="请稍后重试。" />
         }
       />
     ),
