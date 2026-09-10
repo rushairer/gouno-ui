@@ -21,7 +21,7 @@ export default function CardExample() {
         ))}
       </Space>
       <Card variant={variant} className="max-w-xl">
-        <CardHeader title="Release 0.1.0" description="稳定版本已准备发布" action={<Text tone="success">Ready</Text>} />
+        <CardHeader title="Release 0.2.0" description="产品验证版本已准备发布" action={<Text tone="success">Ready</Text>} />
         <CardContent>
           <Text>卡片内容与 header/footer 保持一致的间距层级。</Text>
         </CardContent>

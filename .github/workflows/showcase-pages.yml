@@ -35,6 +35,19 @@ jobs:
           npm run build
           npm run showcase:build
 
+      - name: Pack verified package
+        run: |
+          mkdir -p package-artifacts
+          npm pack --pack-destination package-artifacts
+
+      - name: Upload verified package artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: gouno-ui-package-${{ github.sha }}
+          path: package-artifacts/*.tgz
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Publish static Showcase to gh-pages
         uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
         with:

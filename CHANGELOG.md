@@ -4,72 +4,47 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-10
+
+`0.2.0` is the first product-validated release after the initial standalone package. It intentionally contains pre-1.0 breaking API corrections. See [`docs/migration.md`](docs/migration.md) for consumer migration details.
+
 ### Added
 
-- Added a zero-whitelist TypeScript contract test requiring every formal public JSX component in Core, Theme, Patterns, and Gouno to export an exact named `ComponentNameProps` type.
-- Added a type-contract manifest regression test that keeps `src/core/public-props.ts` type-only and guarantees it exports zero runtime values.
-- Added an AST-level Showcase boundary test that rejects runtime imports from the package/root source umbrella and requires canonical layer consumption.
-- Added delivery-workflow hardening tests for immutable GitHub Action pins, the Node.js 24 verification baseline, and the complete pre-publish validation gate.
-- Added bilingual names and red, explicitly estimated API-plus-examples completion badges to incomplete Core component and product-scenario entries in the Showcase navigation; completed entries omit the badge.
-- Added separate Ant Design-style Badge and Tag APIs: Badge now covers counts, dots, overflow, zero visibility, statuses, colors, sizes, offsets, and dynamic values; Tag covers semantic and custom colors, icons, borders, closing, disabled behavior, and controlled or uncontrolled CheckableTag selection.
-- Added dedicated Badge and Tag Showcase pages with interaction-complete examples, matching source code, and full API tables.
-- Added theme-aware TSX syntax highlighting and an accessible copy action to every Showcase source-code block.
-- Added a reusable DataTable data-source mode with column definitions, sorting, filtering, pagination, row selection, loading, empty, and density states, plus a dedicated Showcase page.
-- Added a first-class Form wrapper with vertical/horizontal layouts, native FormData submission, disabled/loading fieldsets, and `onFinish` support.
-- Added Overlay behavior coverage for Modal and Drawer Escape handling, focus restoration, placement metadata, and responsive direction semantics.
-- Added keyboard navigation to AutoComplete and a typed, accessible TreeSelect API with controlled values, multiple selection, disabled nodes, and native form attributes.
-- Added architecture regression coverage for curated package exports, canonical symbol ownership including type-only exports, exact root-union compatibility, real TypeScript dependency direction, direct internal imports, product-policy leakage, catch-all implementation modules, theme ownership, and Gouno layout aliases.
-- Added `docs/architecture.md` as the executable ownership and dependency contract.
-- Added focused Toast tests covering one backend, nested-provider inheritance and the declarative bridge.
-- Added `AGENTS.md` with the Core, Theme, Patterns, Gouno, primitives, Showcase and dependency-DAG architecture rules.
+- Added the completed Gosso Admin, Blog Admin and Gouno Blog public Showcase corpora as live regression and abstraction evidence rather than simulated product demos.
+- Added canonical Core `CodeBlock` after independent Blog article and Showcase evidence converged on the same read-only code/copy contract; syntax highlighting remains caller-owned.
+- Added canonical Pattern `BulkActionBar` after multiple independent Blog Admin collection workflows proved one stable selection-toolbar interaction. It is the only currently admitted Pattern.
+- Added product-driven governance for abstraction admission, API conformance, design language, Core retention and runtime-family coverage.
+- Added a zero-pending Core runtime-family gate: every PascalCase Core runtime export must map to a visible Core Showcase family and cannot remain `needs-review` or `unassigned`.
+- Added focused behavior, accessibility, API-documentation, architecture, product-fixture and source-trust regression coverage across the validated component surface.
 
 ### Changed
 
-- Completed named Props coverage for all currently exported public JSX components; thin wrappers use type-only runtime-derived aliases so the formal contract cannot drift from implementation.
-- Curated package exports to the formal root, Core, Patterns, Gouno, and Theme entry points instead of exposing source directories through wildcard subpaths.
-- Converted all four formal layer entry points to explicit symbol manifests; the root remains the sole external compatibility umbrella and is verified as the exact layer union plus `cn`.
-- Migrated Showcase runtime imports to Core, Theme, Patterns and Gouno canonical owners instead of using `src/index.ts`; the Showcase now acts as a real integration consumer of the formal boundaries.
-- Upgraded the main verification/publish workflow to Node.js 24 and pinned `actions/checkout`, `actions/setup-node`, and `peaceiris/actions-gh-pages` to immutable commit SHAs corresponding to reviewed releases.
-- Enforced single component ownership: Core owns Tabs/Pagination/Form layout/TableDensity, Theme owns ThemeProvider/useTheme/ThemeToggle, and Patterns no longer reimplements or re-exports those APIs.
-- Split Pattern feedback responsibilities into focused Feedback, AsyncState and Toast modules.
-- Kept DataTable as one public Pattern while moving sorting/filtering/pagination/selection/expansion state and derivation to a private model module; DataTable no longer re-exports Core Table primitives or its internal types.
-- Unified ToastProvider, `useToast` and the declarative Toast bridge on one Sonner-backed orchestration path instead of maintaining a second local toast state/timer stack.
-- Added named public Props for Gouno navigation groups and page-template components.
-- Made `BulkActionBar` product-agnostic; product actions such as AI assistance are caller-composed children rather than dedicated Pattern props.
-- Split unrelated Core implementation catch-alls: Spinner, Progress, AspectRatio, Kbd, App, FloatButton, Anchor, Spin, DateRangePicker, TimePicker, ColorPicker, Statistic, and Timeline now have focused modules; generic Typography is grouped with the typography family.
-- Converted Gouno `layout.tsx` into a pure export barrel and split Panel, Page, DefinitionList, and ListStack families into focused modules.
-- Clarified the Core, Theme, Patterns and Gouno ownership boundaries while preserving the package root for active external consumers.
-- Standardized `TableCaption` and `DataTable` on `captionSide`; removed the former `captionPosition`, `position`, and `TableCaptionPosition` aliases.
-- Widened the desktop and mobile Showcase navigation surfaces and reserved flexible label space so progress badges never cover long component names.
-- Replaced status-pill uses of Badge in Showcase product scenarios and data examples with the semantically correct Tag component.
-- Expanded Showcase Data Display examples to cover DataTable behavior and selection state.
-- Expanded Showcase Form examples to cover validation, horizontal responsive layout, read-only, disabled, and loading states.
-- Rebuilt the Button Showcase page as the documentation reference with variant, size, icon, loading, disabled, shape, block, link semantics, per-demo source, and complete API examples.
-- Split Core Showcase documents into General, Layout, Data Entry, Navigation, Data Display, Feedback, and Other registries.
-- Split Blog, Blog Admin, and Gosso Admin scenarios into focused product demo modules.
-- Reduced `showcase/main.tsx` to application shell, routing, navigation, theme, and viewport responsibilities.
-- Lazy-load Core documentation to reduce the initial Showcase bundle.
+- Formalized the public dependency/ownership chain as `Core -> Theme -> Patterns -> Gouno`; the package root remains a compatibility umbrella rather than a fifth owner.
+- Curated package entry points and explicit symbol manifests; canonical implementation and Showcase consume formal layer entry points rather than source-directory wildcards or the root umbrella.
+- Quarantined `src/legacy` outside canonical builds, publication, Showcase and dependency flow. Legacy is prior art only, not a compatibility layer or naming precedent.
+- Re-admitted only evidence-backed Gouno structure: `AppShell`, `PageContainer`, `PageHeader`, `NavigationGroup` and `navigationItemClass`.
+- Hardened Tabs around one high-level state contract: `activeKey`, `defaultActiveKey`, `items[].key`, `onChange`. Primitive `Tab` / `TabPanel value` remains only the composition key. Standard `aria-label` / `aria-labelledby` is canonical; `ariaLabel` remains temporarily as an explicit deprecated bridge for atomic real-product artifact upgrades.
+- Hardened `Steps` and `Menu` around stable keys, explicit selection/expansion state, hierarchical navigation and keyboard/accessibility behavior without compatibility feature bags or injected English accessible copy.
+- Hardened `Empty`, `Result`, `Skeleton`, `QRCode`, `Statistic`, `Spin` and `Spinner` so product copy, live-region policy, surface/elevation and standard DOM/ARIA ownership stay explicit rather than being injected as hidden defaults.
+- Hardened `Segmented`, `Anchor`, `Alert`, `Modal`, `Card`, Table row-action composition and other Core families from real product pressure tests while keeping domain orchestration product-owned.
+- Standardized compound spacing and surface ownership: parents own structural spacing between semantic slots; content regions own internal padding/rhythm; Tabs indicators stay inside the TabList scroll boundary.
+- Standardized semantic elevation roles and product-surface rules, replacing ad-hoc page-level shadow-size decisions with governed `control`, `surface`, `raised`, `overlay` and `modal` responsibilities.
+- Assigned retained convenience/compound APIs to canonical families without deleting them merely for low usage: `SearchField -> Input`, `CheckboxField -> Checkbox`, `AvatarImage`/`AvatarFallback -> Avatar`, `Divider -> Separator`, `App`/`Container`/`AspectRatio -> Page Layout`, `Stack -> Flex`.
+- Upgraded the verification/publish baseline to Node.js 24 with immutable SHA-pinned GitHub Actions; main must pass typecheck, the complete test suite, package build and Showcase build before Pages publication.
 
-### Fixed
+### Removed / Breaking
 
-- Nested `ToastProvider` instances now inherit the existing provider instead of creating an invisible second notification state.
-- Restored a visible separator between `DataTable` captions and table content in both top and bottom positions.
-- Prevented vertical Space from stretching inline Badge and CheckableTag children to the full container width; `align="stretch"` remains available for intentional full-width layouts.
-- Kept code syntax colors synchronized with the active light, dark, system, and brand theme tokens instead of using a fixed editor theme.
-- Centered single-icon buttons by removing empty label spans and applying the shared icon wrapper geometry.
-- Made every Button Showcase demo interactive and aligned each displayed source block with its rendered example.
-- Updated the external ButtonLink example to the Gouno UI GitHub repository.
-- Keep the active Showcase navigation item visible after hash navigation and style selection from `aria-current="page"`.
+- Removed speculative public Pattern/Gouno surfaces that were not re-proven by real products, including the historical broad DataTable/Toast/Feedback/AsyncState/page-utility feature bags. Their Legacy snapshots remain non-public prior art only.
+- Removed inert global configuration APIs such as `ConfigProvider`, `useConfig` and `UIConfig` when no canonical component consumed their configuration.
+- Removed public source-directory wildcard subpaths and duplicate ownership/re-export paths.
+- Removed duplicate Pattern-level Tabs/Pagination implementations and `SubnavTabs`; Core is the single owner.
+- Removed high-level Tabs `value`, `defaultValue`, `items[].value` and `onValueChange` compatibility paths. Consumers must use the canonical keyed contract.
+- Removed or renamed non-canonical compatibility inputs as documented in the migration guide, including affected Alert, Empty, Result, QRCode, Steps and Menu contracts. No aliases are added merely to preserve historical Gouno/Legacy naming.
 
-### Removed
+### Delivery
 
-- Removed inert `ConfigProvider`, `useConfig`, and `UIConfig` APIs because no public component consumed their `componentSize` or `direction` values.
-- Removed source-directory wildcard public subpaths (`@gouno/ui/core/*`, `@gouno/ui/patterns/*`, `@gouno/ui/gouno/*`).
-- Removed duplicate Patterns Tabs/Pagination implementations and the `SubnavTabs` alias.
-- Removed dead, non-public feedback exports and the duplicate local ToastProvider state/timer implementation.
-- Removed Gouno `WorkspacePanel` and `AdminPageHeader` synonym aliases; use `Panel` and `PageHeader`.
-- Removed product-specific `onAIAssist`/`aiLabel` policy from `BulkActionBar`.
-- Removed obsolete overview, placeholder category, combined overlay, and superseded demo pages.
+- The three completed product corpora remain in Showcase as comparison/regression evidence; there is intentionally no fabricated fourth-product migration line.
+- Main validation now treats a phase as complete only after exact-head CI passes and the matching Showcase commit is published to `gh-pages`.
 
 ## [0.1.0] - 2026-09-05
 
