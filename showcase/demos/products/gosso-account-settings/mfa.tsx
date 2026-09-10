@@ -65,7 +65,7 @@ export function MfaPanel() {
           <div className="flex flex-col gap-6">
             <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:items-center">
               <div className="mx-auto rounded-lg border bg-white p-4">
-                <QRCode value="gouno-showcase://mfa/demo-user" size={180} ariaLabel="GOSSO MFA 配置二维码" />
+                <QRCode value="gouno-showcase://mfa/demo-user" size={180} aria-label="GOSSO MFA 配置二维码" />
               </div>
               <div className="flex flex-col gap-4">
                 <div>
