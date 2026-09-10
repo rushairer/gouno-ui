@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type Key } from "react";
 import { Boxes, Home, Settings } from "lucide-react";
 import { Menu, type MenuNode } from "../../../../src/core";
 
@@ -27,8 +27,8 @@ const items: readonly MenuNode[] = [
 ];
 
 export default function MenuControlledExample() {
-  const [selectedKeys, setSelectedKeys] = useState<React.Key[]>(["home"]);
-  const [openKeys, setOpenKeys] = useState<React.Key[]>(["workspace"]);
+  const [selectedKeys, setSelectedKeys] = useState<Key[]>(["home"]);
+  const [openKeys, setOpenKeys] = useState<Key[]>(["workspace"]);
 
   return (
     <Menu
