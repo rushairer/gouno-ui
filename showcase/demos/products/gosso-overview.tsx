@@ -43,21 +43,21 @@ const adminQuickLinks: readonly QuickLink[] = [
     icon: <Key className="size-5" />,
     title: "客户端注册",
     description: "注册和配置 OAuth2 客户端凭据、授权重定向 URI、范围及授权流程模式。",
-    showcasePage: "gosso-system-management",
+    showcasePage: "gosso-system-clients",
   },
   {
     href: "/system-management/users",
     icon: <UserCheck className="size-5" />,
     title: "用户管理",
     description: "审计活跃账户、更新账户状态、分配权限范围角色。",
-    showcasePage: "gosso-system-management",
+    showcasePage: "gosso-system-users",
   },
   {
     href: "/system-management/system",
     icon: <Settings className="size-5" />,
-    title: "系统状态与审计",
-    description: "查看系统运行指标、全局审计日志与站点公开品牌配置。",
-    showcasePage: "gosso-system-management",
+    title: "系统状态",
+    description: "查看系统运行指标、基础设施健康与 OpenID Connect 配置。",
+    showcasePage: "gosso-system-status",
   },
 ];
 
@@ -112,8 +112,8 @@ export function GossoOverviewDemo() {
   const isAdmin = role === "admin";
   const quickLinks = isAdmin ? adminQuickLinks : userQuickLinks;
   const userName = isAdmin ? "admin" : "demo-user";
-  const primaryTarget = isAdmin ? "/system-management" : "/account-settings/profile";
-  const primaryHref = isAdmin ? "#gosso-system-management" : "#gosso-account-settings";
+  const primaryTarget = isAdmin ? "/system-management/clients" : "/account-settings/profile";
+  const primaryHref = isAdmin ? "#gosso-system-clients" : "#gosso-account-settings";
 
   return (
     <div className="flex flex-col gap-6 lg:gap-8">

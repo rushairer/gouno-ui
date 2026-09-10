@@ -190,8 +190,16 @@ export function ShowcasePage({ page, workspace }: { page: string; workspace: Sho
       return <GossoOverviewDemo />;
     case "gosso-account-settings":
       return <Suspense fallback={loading}><GossoAccountSettingsDemo /></Suspense>;
-    case "gosso-system-management":
-      return <Suspense fallback={loading}><GossoSystemManagementDemo /></Suspense>;
+    case "gosso-system-clients":
+      return <Suspense fallback={loading}><GossoSystemManagementDemo section="clients" /></Suspense>;
+    case "gosso-system-users":
+      return <Suspense fallback={loading}><GossoSystemManagementDemo section="users" /></Suspense>;
+    case "gosso-system-audit-logs":
+      return <Suspense fallback={loading}><GossoSystemManagementDemo section="audit-logs" /></Suspense>;
+    case "gosso-system-site-settings":
+      return <Suspense fallback={loading}><GossoSystemManagementDemo section="site-settings" /></Suspense>;
+    case "gosso-system-status":
+      return <Suspense fallback={loading}><GossoSystemManagementDemo section="system" /></Suspense>;
     case "gosso-login":
       return <Suspense fallback={loading}><GossoLoginDemo /></Suspense>;
     case "gosso-forgot-password":

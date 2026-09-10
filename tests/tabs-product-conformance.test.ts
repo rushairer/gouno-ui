@@ -9,13 +9,17 @@ function source(path: string) {
 }
 
 describe("tabbed product layout conformance", () => {
-  it("keeps Gosso route-family panels inside Tabs structural ownership", () => {
+  it("keeps account-context Tabs while promoting durable system domains to sidebar navigation", () => {
     const account = source("gosso-account-settings/index.tsx");
     const system = source("gosso-system-management/index.tsx");
 
     expect(account.match(/children:\s*</g)).toHaveLength(5);
-    expect(system.match(/children:\s*</g)).toHaveLength(5);
     expect(account).not.toContain("<AccountSettingsPanel tab={activeTab} />");
-    expect(system).not.toContain("<Panel tab={activeTab} />");
+
+    expect(system).not.toContain('import { Tabs }');
+    expect(system.match(/children:\s*</g)).toBeNull();
+    expect(system).toContain("SystemManagementSection");
+    expect(system).toContain('route: "/system-management/clients"');
+    expect(system).toContain('route: "/system-management/system"');
   });
 });

@@ -259,8 +259,14 @@ export const showcaseCatalog: ShowcaseGroup[] = [
   { workspace: "gosso-admin", group: "Application Pages 应用页", items: [
     item("gosso-overview", "Overview", "概览", 100, <Home />),
     item("gosso-account-settings", "Account Settings", "账户设置", 100, <UserCog />),
-    item("gosso-system-management", "System Management", "系统管理", 100, <ShieldCheck />),
     item("gosso-not-found", "Not Found", "未找到", 100, <CircleHelp />),
+  ]},
+  { workspace: "gosso-admin", group: "System Management 系统管理", items: [
+    item("gosso-system-clients", "OAuth2 Clients", "OAuth2 客户端", 100, <KeyRound />),
+    item("gosso-system-users", "Users", "用户管理", 100, <CircleUserRound />),
+    item("gosso-system-audit-logs", "Audit Logs", "审计日志", 100, <FileText />),
+    item("gosso-system-site-settings", "Site Settings", "站点设置", 100, <SlidersHorizontal />),
+    item("gosso-system-status", "System Status", "系统状态", 100, <ShieldCheck />),
   ]},
   { workspace: "gosso-admin", group: "Authentication Pages 认证页", items: [
     item("gosso-login", "Login", "登录", 100, <LogIn />, "standalone"),
