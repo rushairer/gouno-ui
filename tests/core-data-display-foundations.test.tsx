@@ -102,7 +102,7 @@ describe("Core Data Display foundations", () => {
 
   it("opens Image preview and reports toolbar transforms", () => {
     const onTransform = vi.fn();
-    render(
+    const { container } = render(
       <Image
         src="/preview.png"
         alt="Preview asset"
@@ -114,7 +114,10 @@ describe("Core Data Display foundations", () => {
     fireEvent.load(thumbnail);
     fireEvent.click(screen.getByRole("button", { name: "Preview Preview asset" }));
 
-    expect(screen.getAllByRole("img", { name: "Preview asset" })).toHaveLength(2);
+    expect(screen.getByRole("img", { name: "Preview asset" }).getAttribute("data-slot")).toBe(
+      "image-preview-image",
+    );
+    expect(container.getAttribute("aria-hidden")).toBe("true");
     fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
     expect(onTransform).toHaveBeenLastCalledWith(
       expect.objectContaining({ action: "zoomIn" }),
