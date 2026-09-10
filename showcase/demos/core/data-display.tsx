@@ -15,7 +15,6 @@ import {
   Calendar,
   Carousel,
   Table,
-  Timeline,
   Tree,
 } from "../../../src/core";
 import type { ComponentDocument } from "../../components/component-page";
@@ -144,19 +143,6 @@ export const dataDisplayDocuments: Record<string, ComponentDocument> = {
       { name: "aria-label", description: "需要为整个指标组提供额外名称时使用的标准 ARIA 属性", type: "string" },
       { name: "ref", description: "真实根 div 引用", type: "Ref<HTMLDivElement>" },
     ],
-  },
-  timeline: {
-    title: "Timeline 时间轴",
-    description: "按顺序展示事件。",
-    code: '<Timeline items={[{ title: "创建" }]} />',
-    render: () => (
-      <Timeline
-        items={[
-          { title: "创建项目", description: "09:00" },
-          { title: "完成构建", description: "09:12" },
-        ]}
-      />
-    ),
   },
   tree: {
     title: "Tree 树",
