@@ -12,7 +12,7 @@ export default function LayoutFoundationsDemo() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <App className="rounded-lg border bg-background p-4">">
+    <App className="rounded-lg border bg-background p-4">
       <Container
         ref={containerRef}
         tabIndex={-1}
