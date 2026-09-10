@@ -5,6 +5,7 @@ import { buttonDocuments } from "./button";
 import { codeBlockDocuments } from "./code-block";
 import { dataDisplayDocuments } from "./data-display";
 import { advancedDataDisplayDocuments } from "./data-display-advanced";
+import { treeDocuments } from "./tree-document";
 import { dataEntryDocuments } from "./data-entry";
 import { feedbackDocuments } from "./feedback";
 import { formDocuments } from "./form";
@@ -33,6 +34,7 @@ export const coreDocuments: Record<string, ComponentDocument> = {
   ...navigationDocuments,
   ...dataDisplayDocuments,
   ...advancedDataDisplayDocuments,
+  ...treeDocuments,
   ...feedbackDocuments,
   ...overlayDocuments,
   ...alertDocuments,
