@@ -31,6 +31,8 @@ import ResultPageExample from "./result/result-1";
 import ResultPageExampleSource from "./result/result-1.tsx?raw";
 import ResultLiveRegionExample from "./result/result-2";
 import ResultLiveRegionExampleSource from "./result/result-2.tsx?raw";
+import SkeletonExample from "./skeleton/skeleton-0";
+import SkeletonExampleSource from "./skeleton/skeleton-0.tsx?raw";
 import { useState } from "react";
 import {
   Alert,
@@ -42,7 +44,6 @@ import {
   NotificationProvider,
   Popconfirm,
   Progress,
-  Skeleton,
   Space,
   Spin,
   Spinner,
@@ -388,14 +389,25 @@ export const feedbackDocuments: Record<string, ComponentDocument> = {
   },
   skeleton: {
     title: "Skeleton 骨架屏",
-    description: "内容加载前的结构占位。",
-    code: '<Skeleton className="h-8 w-full" />',
-    render: () => (
-      <Space orientation="vertical">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-24 w-full" />
-      </Space>
+    description: "结构内容加载前的视觉占位；单个 Skeleton 默认对辅助技术隐藏，加载状态与可访问名称由父级 region 拥有。",
+    code: SkeletonExampleSource.replaceAll(
+      "../../../../src/core",
+      "@gouno/ui/core",
     ),
+    render: () => <SkeletonExample />,
+    api: [
+      {
+        name: "aria-hidden",
+        description: "单个视觉占位默认从可访问性树隐藏；确有特殊语义时仍可通过标准属性显式覆盖",
+        type: 'boolean | "true" | "false"',
+        defaultValue: "true",
+      },
+      {
+        name: "className",
+        description: "尺寸、形状、间距等视觉结构由调用方组合",
+        type: "string",
+      },
+    ],
   },
   modal: {
     apiSections: modalApiSections,
