@@ -43,6 +43,7 @@
 | API-023 | Core `Result` 使用 `status/title/description/extra/children/headingLevel` 与标准 section/ARIA 扩展；`description` 是唯一补充说明入口，`headingLevel` 默认 2、页面主结果显式使用 1。Result 不默认声明 live region，不拥有 Card/elevation，并由自身 `p-8` 结果节奏拥有内容 inset；包装 Card 仅作为边界/elevation 时使用 `padding="none"`。默认状态图标为 decorative。 | Core Result same-source demos/API docs/focused tests + Gosso/Blog public terminal-result corpus / PD-047 |
 | API-024 | Core `Skeleton` 只表达视觉结构占位并默认 `aria-hidden=true`；父级 loading region 拥有 `role`、可访问名称与 live-region 策略。尺寸、形状、间距通过标准 `className`/div 属性组合，reduced-motion 继续由全局 `base.css` 统一负责。Skeleton 不扩展为 Loading/AsyncState 或 `size/shape/avatar/paragraph` feature bag。 | Core Skeleton same-source demo/focused tests + Blog public/Blog Admin loading corpus + Gosso Spinner counter-evidence / PD-048 |
 | API-025 | Core `QRCode` 使用标准 canvas/ARIA 属性与真实 canvas ref；`aria-label`/`aria-labelledby` 由调用方按用途提供，组件不注入英文默认可访问名称。`size` 是 width/height 的唯一公共尺寸入口，现有 `value/size/color/background/errorLevel` 保持单一职责；不保留 `ariaLabel` alias，也不扩展 status/refresh/icon/bordered/type feature bag。 | Core QRCode same-source demo/API docs/focused tests + Gosso MFA product validation / PD-049 |
+| API-026 | Core `Statistic` 保持 `title/value/prefix/suffix` 的窄指标展示合同，并把标准 div/ARIA/data/event 属性与 ref 交给真实根元素。指标值/单位/格式化、动态播报和 Card/elevation 继续由调用方拥有；不加入 precision/formatter/trend/valueStyle/card 等 feature-bag API。 | Core Statistic same-source demo/API docs/focused tests + Blog Admin Dashboard/AI Operations corpus / PD-050 |
 
 ## 当前破坏式迁移说明
 

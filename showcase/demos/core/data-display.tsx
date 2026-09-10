@@ -9,15 +9,15 @@ import Example2 from "./table/table-1";
 import Example2Source from "./table/table-1.tsx?raw";
 import Example3 from "./table/table-2";
 import Example3Source from "./table/table-2.tsx?raw";
+import StatisticExample from "./statistic/statistic-0";
+import StatisticExampleSource from "./statistic/statistic-0.tsx?raw";
 import {
   Calendar,
   Carousel,
   Descriptions,
   Empty,
-  Grid,
   Image,
   List,
-  Statistic,
   Table,
   Tag,
   Text,
@@ -175,14 +175,21 @@ export const dataDisplayDocuments: Record<string, ComponentDocument> = {
   },
   statistic: {
     title: "Statistic 统计数值",
-    description: "突出展示指标及单位。",
-    code: '<Statistic title="访问量" value="12,480" />',
-    render: () => (
-      <Grid columns={2}>
-        <Statistic title="访问量" value="12,480" />
-        <Statistic title="增长" value="18.6" suffix="%" />
-      </Grid>
+    description: "展示一个调用方拥有的指标标签与数值；组件只负责基础排版，不拥有 Card、趋势或格式化策略。",
+    code: StatisticExampleSource.replaceAll(
+      "../../../../src/core",
+      "@gouno/ui/core",
     ),
+    render: () => <StatisticExample />,
+    api: [
+      { name: "title", description: "指标标签", type: "ReactNode" },
+      { name: "value", description: "调用方提供的展示值", type: "ReactNode" },
+      { name: "prefix", description: "数值前缀", type: "ReactNode" },
+      { name: "suffix", description: "数值后缀或单位", type: "ReactNode" },
+      { name: "className", description: "根 div 附加类名", type: "string" },
+      { name: "aria-label", description: "需要为整个指标组提供额外名称时使用的标准 ARIA 属性", type: "string" },
+      { name: "ref", description: "真实根 div 引用", type: "Ref<HTMLDivElement>" },
+    ],
   },
   timeline: {
     title: "Timeline 时间轴",

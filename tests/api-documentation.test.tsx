@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import ts from "typescript";
 import { buttonDocuments } from "../showcase/demos/core/button";
+import { dataDisplayDocuments } from "../showcase/demos/core/data-display";
 import { dataEntryDocuments } from "../showcase/demos/core/data-entry";
 import { formDocuments } from "../showcase/demos/core/form";
 import { feedbackDocuments } from "../showcase/demos/core/feedback";
@@ -44,6 +45,7 @@ const cases = [
   ["src/core/empty.tsx", "EmptyProps", feedbackDocuments.empty],
   ["src/core/result.tsx", "ResultProps", feedbackDocuments.result],
   ["src/core/qrcode.tsx", "QRCodeProps", otherDocuments.qrcode],
+  ["src/core/statistic.tsx", "StatisticProps", dataDisplayDocuments.statistic],
   ["src/core/modal.tsx", "ModalProps", feedbackDocuments.modal],
   ["src/core/drawer.tsx", "DrawerProps", feedbackDocuments.drawer],
   ["src/core/pagination.tsx", "PaginationProps", paginationDocument],
