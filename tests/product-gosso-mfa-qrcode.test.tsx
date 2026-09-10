@@ -1,5 +1,5 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MfaPanel } from "../showcase/demos/products/gosso-account-settings/mfa";
 
 const { toCanvas } = vi.hoisted(() => ({
@@ -10,13 +10,22 @@ vi.mock("qrcode", () => ({
   default: { toCanvas },
 }));
 
+beforeEach(() => {
+  toCanvas.mockClear();
+});
+
+afterEach(() => {
+  cleanup();
+});
+
 describe("Gosso MFA QR code", () => {
   it("uses the canonical QRCode with a localized standard accessible name", async () => {
     render(<MfaPanel />);
 
-    fireEvent.click(screen.getByRole("radio", { name: "配置中" }));
+    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
+    fireEvent.click(await screen.findByRole("radio", { name: "配置中" }));
 
-    const qrCode = screen.getByRole("img", {
+    const qrCode = await screen.findByRole("img", {
       name: "GOSSO MFA 配置二维码",
     });
     expect(qrCode.tagName).toBe("CANVAS");
