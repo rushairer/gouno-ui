@@ -62,6 +62,69 @@ Pre-reset `value/defaultValue/items[].value` input is temporarily accepted only 
 
 For custom composition, use `Tabs` with `TabList`, `Tab`, `TabPanel`; do not create another active-state write path.
 
+## Steps and Menu navigation alignment
+
+Canonical `Steps` and `Menu` now use stable keyed item models and directly owned public types. They intentionally converge on the proven Gouno navigation requirements rather than copying every mature-library compatibility prop.
+
+`Steps` requires a stable `key` for every step and uses `content` for the main secondary body. `current` is the single current-position input and `onChange(index)` is the single interactive change callback. Disabled steps are rendered as non-interactive content rather than disabled buttons. `maxCount` may replace omitted ranges with a neutral ellipsis marker, but Core does not inject localized copy for that marker.
+
+```tsx
+<Steps
+  current={current}
+  onChange={setCurrent}
+  items={[
+    { key: "account", title: "Account", content: "Create the identity" },
+    { key: "security", title: "Security", content: "Configure MFA" },
+    { key: "finish", title: "Finish", disabled: true },
+  ]}
+/>
+```
+
+Migrate older Steps-shaped call sites as touched:
+
+```text
+items without key          → add stable items[].key
+items[].description        → items[].content
+index-derived React keys   → stable domain/component key
+clickable disabled step    → non-interactive disabled item
+```
+
+`Menu` separates selection from expansion. Use `selectedKeys/defaultSelectedKeys` for item selection and `openKeys/defaultOpenKeys` for submenu expansion. Hierarchy is represented directly in the item model with `item`, `submenu`, `group`, and `divider` nodes. Multiple selection uses `multiple`; `mode` is `vertical | horizontal | inline`; `inlineCollapsed` is an inline presentation state, not a second menu type.
+
+```tsx
+<Menu
+  aria-label="Application navigation"
+  mode="inline"
+  selectedKeys={[activeKey]}
+  openKeys={openKeys}
+  onOpenChange={setOpenKeys}
+  items={[
+    { key: "home", label: "Home" },
+    {
+      key: "system",
+      type: "submenu",
+      label: "System",
+      children: [
+        { key: "users", label: "Users" },
+        { key: "audit", label: "Audit" },
+      ],
+    },
+  ]}
+/>
+```
+
+Migrate older Menu-shaped call sites as follows:
+
+```text
+ariaLabel                → aria-label
+flat-only item list      → keyed item/submenu/group/divider hierarchy as needed
+danger on Menu item      → caller-owned destructive action/visual semantics
+theme on Menu            → Theme layer / normal design-token ownership
+implicit English name    → explicit product-local aria-label/aria-labelledby when needed
+```
+
+Do not add aliases for `ariaLabel`, `danger`, `theme`, locale strings, or a combined selection/open-state write path. Keyboard roving focus, submenu open/close behavior and horizontal menubar semantics are component behavior, while product route policy and destructive-operation policy remain caller-owned.
+
 ## Alert high-level API alignment
 
 Alert no longer exposes the underlying shadcn primitive contract as public API. Semantic status and visual form are separate:
@@ -259,7 +322,7 @@ System Management plus Blog Admin list-page prior art is enough to trigger DataT
 ## Curated subpaths
 
 ```ts
-import { Alert, Button, Table, Pagination, Tabs } from "@gouno/ui/core";
+import { Alert, Button, Menu, Pagination, Steps, Table, Tabs } from "@gouno/ui/core";
 import { ThemeProvider, ThemeToggle } from "@gouno/ui/theme";
 import { AppShell, PageContainer, PageHeader } from "@gouno/ui/gouno";
 ```
@@ -274,4 +337,4 @@ Standalone product fixtures may add Showcase-only navigation chrome around the r
 
 ## Compatibility assessment
 
-The product-validation reset and canonical renames are breaking changes for consumers that update to the next package artifact. Alert's primitive-to-high-level API correction is also breaking for consumers that used `variant="destructive|default"` as semantic colors. Empty hardening is behaviorally breaking for consumers that relied on its previous English default copy, implicit dashed surface or automatic `role="status"`. Result hardening is breaking for consumers that use `subTitle`, rely on its fixed H2 or automatic `role="status"`, or expect a padded parent Card to compose without a double inset. Skeleton hardening changes accessibility-tree behavior by hiding individual visual placeholders by default; parent loading regions should own any required status/name semantics. Spin/Spinner hardening changes accessibility-tree behavior by removing the implicit Spinner status/English name and moving busy state to `Spin`'s root `aria-busy`; callers that relied on those defaults must provide one explicit localized status region. QRCode hardening is breaking for consumers that use `ariaLabel` or rely on the previous English default accessible name; migrate to standard `aria-label`/`aria-labelledby` together with the updated package artifact. Migrate those responsibilities explicitly as described above. Treat publication accordingly under SemVer/release notes. Existing products fixed to older immutable vendored archives can migrate page-by-page rather than mechanically replacing old wrappers with new ones.
+The product-validation reset and canonical renames are breaking changes for consumers that update to the next package artifact. Alert's primitive-to-high-level API correction is also breaking for consumers that used `variant="destructive|default"` as semantic colors. Steps hardening is breaking for consumers that omit stable item keys, use the old `description` item field, or expect disabled steps to remain clickable elements. Menu hardening is breaking for consumers that use `ariaLabel`, `danger`, implicit English naming, or depend on the former flat-only/minimal menu surface; migrate to stable keyed hierarchy, standard ARIA and separate selected/open state. Empty hardening is behaviorally breaking for consumers that relied on its previous English default copy, implicit dashed surface or automatic `role="status"`. Result hardening is breaking for consumers that use `subTitle`, rely on its fixed H2 or automatic `role="status"`, or expect a padded parent Card to compose without a double inset. Skeleton hardening changes accessibility-tree behavior by hiding individual visual placeholders by default; parent loading regions should own any required status/name semantics. Spin/Spinner hardening changes accessibility-tree behavior by removing the implicit Spinner status/English name and moving busy state to `Spin`'s root `aria-busy`; callers that relied on those defaults must provide one explicit localized status region. QRCode hardening is breaking for consumers that use `ariaLabel` or rely on the previous English default accessible name; migrate to standard `aria-label`/`aria-labelledby` together with the updated package artifact. Migrate those responsibilities explicitly as described above. Treat publication accordingly under SemVer/release notes. Existing products fixed to older immutable vendored archives can migrate page-by-page rather than mechanically replacing old wrappers with new ones.
