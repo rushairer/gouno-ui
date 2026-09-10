@@ -6,7 +6,10 @@ import {
 import { cn } from "../lib/utils";
 
 export interface StatisticProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "children" | "title"> {
+  extends Omit<
+    HTMLAttributes<HTMLDivElement>,
+    "children" | "prefix" | "title"
+  > {
   /** Human-readable label for the metric. */
   title: ReactNode;
   /** Caller-owned displayed metric value. */
