@@ -1,4 +1,10 @@
-import { useId, type InputHTMLAttributes, type LabelHTMLAttributes, type ReactNode } from "react";
+import {
+  forwardRef,
+  useId,
+  type InputHTMLAttributes,
+  type LabelHTMLAttributes,
+  type ReactNode,
+} from "react";
 import { FieldGroup, FieldLegend, FieldSet } from "../components/primitives/field";
 import { cn } from "../lib/utils";
 
@@ -24,9 +30,21 @@ export function Switch({ label, id, className, ...props }: CheckProps) {
   </label>;
 }
 
-export function CheckboxField({ children, className, ...props }: LabelHTMLAttributes<HTMLLabelElement>) {
-  return <label {...props} className={cn("flex items-center gap-2", className)}>{children}</label>;
-}
+export const CheckboxField = forwardRef<
+  HTMLLabelElement,
+  LabelHTMLAttributes<HTMLLabelElement>
+>(function CheckboxField({ children, className, ...props }, ref) {
+  return (
+    <label
+      {...props}
+      ref={ref}
+      data-slot="checkbox-field"
+      className={cn("flex items-center gap-2", className)}
+    >
+      {children}
+    </label>
+  );
+});
 
 export function CheckboxGroup({ label, children }: { label: string; children: ReactNode }) {
   return <FieldSet><FieldLegend>{label}</FieldLegend><FieldGroup className="flex-row flex-wrap gap-4">{children}</FieldGroup></FieldSet>;
