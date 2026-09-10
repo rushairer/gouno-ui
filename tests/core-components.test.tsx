@@ -63,7 +63,10 @@ describe("core components", () => {
   it("exposes breadcrumb semantics", () => {
     render(
       <Breadcrumb
-        items={[{ label: "Home", href: "/" }, { label: "Current" }]}
+        items={[
+          { key: "home", title: "Home", href: "/" },
+          { key: "current", title: "Current" },
+        ]}
       />,
     );
     expect(screen.getByRole("navigation", { name: "Breadcrumb" })).toBeTruthy();
