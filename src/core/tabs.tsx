@@ -14,29 +14,22 @@ export interface TabItem<T extends string = string> {
   disabled?: boolean;
 }
 
-type LegacyTabItem<T extends string> = {
-  /** @deprecated Use key. Kept temporarily for pre-reset product fixtures. */
-  value: T;
-  label: ReactNode;
-  children?: ReactNode;
-  icon?: ReactNode;
-  disabled?: boolean;
-};
-
 type TabsRootProps = ComponentProps<typeof Primitive.Tabs>;
 
 export interface TabsProps<T extends string = string>
-  extends Omit<TabsRootProps, "onChange" | "onValueChange" | "orientation"> {
+  extends Omit<
+    TabsRootProps,
+    "defaultValue" | "onChange" | "onValueChange" | "orientation" | "value"
+  > {
   activeKey?: T;
   defaultActiveKey?: T;
-  items?: readonly (TabItem<T> | LegacyTabItem<T>)[];
+  items?: readonly TabItem<T>[];
   onChange?: (activeKey: T) => void;
   type?: TabsType;
   size?: ControlSize;
   tabPosition?: TabsPosition;
   centered?: boolean;
   tabBarExtraContent?: ReactNode;
-  ariaLabel?: string;
 }
 
 const gapBySize: Record<ControlSize, number> = {
@@ -50,10 +43,6 @@ const triggerSizeClass: Record<ControlSize, string> = {
   middle: "!h-10 px-2 !py-0 text-sm",
   large: "!h-11 px-2.5 !py-0 text-base",
 };
-
-function itemKey<T extends string>(item: TabItem<T> | LegacyTabItem<T>) {
-  return "key" in item ? item.key : item.value;
-}
 
 function orientationFor(position: TabsPosition) {
   return position === "left" || position === "right" ? "vertical" : "horizontal";
@@ -115,26 +104,22 @@ export function Tabs<T extends string = string>({
   tabPosition = "top",
   centered = false,
   tabBarExtraContent,
-  ariaLabel,
   className,
   children,
   style,
-  value: legacyValue,
-  defaultValue: legacyDefaultValue,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
   ...props
 }: TabsProps<T>) {
-  const firstEnabledKey = items?.find((item) => !item.disabled);
+  const firstEnabledKey = items?.find((item) => !item.disabled)?.key;
   const orientation = orientationFor(tabPosition);
-  const resolvedActiveKey = activeKey ?? (legacyValue as T | undefined);
   const resolvedDefaultKey =
-    defaultActiveKey ??
-    (legacyDefaultValue as T | undefined) ??
-    (resolvedActiveKey === undefined && firstEnabledKey ? itemKey(firstEnabledKey) : undefined);
+    defaultActiveKey ?? (activeKey === undefined ? firstEnabledKey : undefined);
 
   return (
     <Primitive.Tabs
       {...props}
-      value={resolvedActiveKey}
+      value={activeKey}
       defaultValue={resolvedDefaultKey}
       onValueChange={(next) => onChange?.(next as T)}
       orientation={orientation}
@@ -147,38 +132,35 @@ export function Tabs<T extends string = string>({
       {items ? (
         <TabList
           aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledBy}
           type={type}
           size={size}
           tabPosition={tabPosition}
           centered={centered}
           extra={tabBarExtraContent}
         >
-          {items.map((item) => {
-            const key = itemKey(item);
-            return (
-              <Tab
-                key={key}
-                value={key}
-                disabled={item.disabled}
-                size={size}
-                tabPosition={tabPosition}
-              >
-                {item.icon}
-                {item.label}
-              </Tab>
-            );
-          })}
+          {items.map((item) => (
+            <Tab
+              key={item.key}
+              value={item.key}
+              disabled={item.disabled}
+              size={size}
+              tabPosition={tabPosition}
+            >
+              {item.icon}
+              {item.label}
+            </Tab>
+          ))}
         </TabList>
       ) : null}
 
-      {items?.map((item) => {
-        const key = itemKey(item);
-        return item.children === undefined ? null : (
-          <TabPanel key={key} value={key}>
+      {items?.map((item) =>
+        item.children === undefined ? null : (
+          <TabPanel key={item.key} value={item.key}>
             {item.children}
           </TabPanel>
-        );
-      })}
+        ),
+      )}
       {children}
     </Primitive.Tabs>
   );
