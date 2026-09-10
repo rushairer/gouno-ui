@@ -21,6 +21,8 @@ const completedComponents = new Set([
   "core-pagination",
   "core-tabs",
   "core-anchor",
+  "core-breadcrumb",
+  "core-collapse",
   "core-code-block",
   "core-alert",
   "core-modal",
