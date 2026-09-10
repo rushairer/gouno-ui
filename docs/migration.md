@@ -307,6 +307,38 @@ Empty-state copy is no longer injected as English `"No data"`. Own the condition
 
 Do not recreate `data/renderItem/bordered/empty` as another generic collection wrapper. A future shared collection abstraction needs independent product evidence for behavior beyond native list semantics and the already-admitted Table/Card/Pattern composition.
 
+## Descriptions returns to native definition-list composition
+
+Core `Descriptions` / `DescriptionsProps` is no longer a canonical public API. The completed products already use semantic `<dl>/<dt>/<dd>` directly for account profile facts, audit details, system policy/status values and content/agent metadata. Those cases require different label widths, responsive grids, separators, value formatting and domain keys, while no real product consumed the old `items/columns/bordered` wrapper.
+
+For a definition list, keep the semantics explicit and let the owning product choose the layout:
+
+```tsx
+// before
+<Descriptions
+  columns={2}
+  bordered
+  items={facts.map((fact) => ({
+    label: fact.label,
+    children: fact.value,
+  }))}
+/>
+
+// after
+<dl className="grid gap-3 sm:grid-cols-[140px_minmax(0,1fr)]">
+  {facts.map((fact) => (
+    <div key={fact.id} className="contents">
+      <dt className="text-muted-foreground">{fact.label}</dt>
+      <dd>{fact.value}</dd>
+    </div>
+  ))}
+</dl>
+```
+
+Use a stable domain key when mapping definition rows. Border, dividers, Card ownership and responsive label/value geometry stay with the product surface that knows the information hierarchy; do not restore them as `bordered` or fixed `columns` convenience props.
+
+Do not recreate a generic Descriptions wrapper merely because another design system ships one. Re-admission requires independent product evidence for shared behavior beyond native definition-list semantics and normal Core composition.
+
 ## DataTable status
 
 System Management plus Blog Admin list-page prior art is enough to trigger DataTable review, but not enough to re-admit the historical feature-bag API. Current migrations use Core `Table`/`Pagination` plus product-local filter/action/state composition. See PD-012.
@@ -329,4 +361,4 @@ Standalone product fixtures may add Showcase-only navigation chrome around the r
 
 ## Compatibility assessment
 
-The product-validation reset and canonical renames are breaking changes for consumers that update to the next package artifact. Alert's primitive-to-high-level API correction is also breaking for consumers that used `variant="destructive|default"` as semantic colors. Empty hardening is behaviorally breaking for consumers that relied on its previous English default copy, implicit dashed surface or automatic `role="status"`. Result hardening is breaking for consumers that use `subTitle`, rely on its fixed H2 or automatic `role="status"`, or expect a padded parent Card to compose without a double inset. Skeleton hardening changes accessibility-tree behavior by hiding individual visual placeholders by default; parent loading regions should own any required status/name semantics. Spin/Spinner hardening changes accessibility-tree behavior by removing the implicit Spinner status/English name and moving busy state to `Spin`'s root `aria-busy`; callers that relied on those defaults must provide one explicit localized status region. QRCode hardening is breaking for consumers that use `ariaLabel` or rely on the previous English default accessible name; migrate to standard `aria-label`/`aria-labelledby` together with the updated package artifact. Core `Image`/`ImageProps` are removed from the canonical Core and root umbrella; consumers that used them must move to native `<img>` or own any real product-specific media interaction locally. Core `List`/`ListProps` are removed from the canonical Core and root umbrella; consumers must move to semantic native list markup or an admitted collection composition with stable product-owned keys. Migrate those responsibilities explicitly as described above. Treat publication accordingly under SemVer/release notes. Existing products fixed to older immutable vendored archives can migrate page-by-page rather than mechanically replacing old wrappers with new ones.
+The product-validation reset and canonical renames are breaking changes for consumers that update to the next package artifact. Alert's primitive-to-high-level API correction is also breaking for consumers that used `variant="destructive|default"` as semantic colors. Empty hardening is behaviorally breaking for consumers that relied on its previous English default copy, implicit dashed surface or automatic `role="status"`. Result hardening is breaking for consumers that use `subTitle`, rely on its fixed H2 or automatic `role="status"`, or expect a padded parent Card to compose without a double inset. Skeleton hardening changes accessibility-tree behavior by hiding individual visual placeholders by default; parent loading regions should own any required status/name semantics. Spin/Spinner hardening changes accessibility-tree behavior by removing the implicit Spinner status/English name and moving busy state to `Spin`'s root `aria-busy`; callers that relied on those defaults must provide one explicit localized status region. QRCode hardening is breaking for consumers that use `ariaLabel` or rely on the previous English default accessible name; migrate to standard `aria-label`/`aria-labelledby` together with the updated package artifact. Core `Image`/`ImageProps` are removed from the canonical Core and root umbrella; consumers that used them must move to native `<img>` or own any real product-specific media interaction locally. Core `List`/`ListProps` are removed from the canonical Core and root umbrella; consumers must move to semantic native list markup or an admitted collection composition with stable product-owned keys. Core `Descriptions`/`DescriptionsProps` are removed from the canonical Core and root umbrella; consumers must move to semantic `<dl>/<dt>/<dd>` markup with product-owned layout and stable domain keys. Migrate those responsibilities explicitly as described above. Treat publication accordingly under SemVer/release notes. Existing products fixed to older immutable vendored archives can migrate page-by-page rather than mechanically replacing old wrappers with new ones.
