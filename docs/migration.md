@@ -103,7 +103,7 @@ The current Ant Design aliases that are already deprecated there are deliberatel
 
 Canonical `Empty` is a ground-level empty-state content block, not a Card replacement or an automatic live region. Product evidence across Gosso Admin, Blog Admin and the public Blog converged on four stable slots only: caller-owned `title`, optional `description`, optional `icon` and optional `action`.
 
-The component therefore no longer invents the English `"No data"` message, a dashed/rounded border, or `role="status"`. Surface boundaries belong to the surrounding Card/Table/native-list/route composition. Standard div/ARIA attributes remain available when a particular product state needs them.
+The component therefore no longer invents the English `"No data"` message, a dashed/rounded border, or `role="status"`. Surface boundaries belong to the surrounding Card/Table/List/route composition. Standard div/ARIA attributes remain available when a particular product state needs them.
 
 ```tsx
 <Card padding="lg">
@@ -252,93 +252,6 @@ Do not add `ariaLabel` as a compatibility alias, and do not expand QRCode into s
 
 The real `gosso-admin` currently consumes `@gouno/ui` from `file:vendor/gouno-ui-0.1.0.tgz`. Its `MFAPanel` still uses `ariaLabel` because that immutable vendored artifact exposes the old type. Change the product call site to standard `aria-label` in the same change that refreshes the vendored Gouno UI artifact; changing only the product source first would intentionally create a type-incompatible half migration.
 
-## Image returns to native HTML ownership
-
-Core `Image` is no longer a canonical public component. Across the completed Blog public, Blog Admin and Gosso Admin evidence, real product surfaces consistently use native `<img>` and keep `alt`, lazy loading, object-fit/layout, error presentation and click/preview behavior with the product that owns the content.
-
-Migrate direct uses of the old wrapper to the platform element:
-
-```tsx
-// before
-<Image
-  src={asset.url}
-  alt={asset.alt}
-  loading="lazy"
-  className="h-40 w-full object-cover"
-/>
-
-// after
-<img
-  src={asset.url}
-  alt={asset.alt}
-  loading="lazy"
-  className="h-40 w-full object-cover"
-/>
-```
-
-If a product needs a failure UI, own that state and localized copy beside the resource lifecycle rather than relying on the old generic English `"Image unavailable"` fallback. The removed `preview` prop has no compatibility replacement: the previous Core implementation only changed the cursor and did not implement a lightbox, zoom lifecycle, focus management or any actual preview interaction.
-
-Do not introduce another generic `Image` wrapper merely to shorten `<img>` markup. A future shared preview/lightbox, progressive-loading or media-state abstraction requires new independent product evidence, a defined accessibility/interaction lifecycle and a fresh admission review.
-
-## List returns to native collection composition
-
-Core `List` / `ListProps` is no longer a canonical public API. The completed products did not consume its `data/renderItem/bordered/empty` wrapper; real collections use semantic native lists, Tables, Cards/grids and product-local responsive layouts.
-
-For a simple list, migrate to native markup with a stable domain key:
-
-```tsx
-// before
-<List
-  data={items}
-  renderItem={(item) => <Text>{item.label}</Text>}
-/>
-
-// after
-<ul className="divide-y">
-  {items.map((item) => (
-    <li key={item.id} className="py-3">
-      <Text>{item.label}</Text>
-    </li>
-  ))}
-</ul>
-```
-
-Empty-state copy is no longer injected as English `"No data"`. Own the condition explicitly and render Core `Empty` or product-local content when appropriate. Do not use array indexes as stable domain keys merely to mimic the old wrapper.
-
-Do not recreate `data/renderItem/bordered/empty` as another generic collection wrapper. A future shared collection abstraction needs independent product evidence for behavior beyond native list semantics and the already-admitted Table/Card/Pattern composition.
-
-## Descriptions returns to native definition-list composition
-
-Core `Descriptions` / `DescriptionsProps` is no longer a canonical public API. The completed products already use semantic `<dl>/<dt>/<dd>` directly for account profile facts, audit details, system policy/status values and content/agent metadata. Those cases require different label widths, responsive grids, separators, value formatting and domain keys, while no real product consumed the old `items/columns/bordered` wrapper.
-
-For a definition list, keep the semantics explicit and let the owning product choose the layout:
-
-```tsx
-// before
-<Descriptions
-  columns={2}
-  bordered
-  items={facts.map((fact) => ({
-    label: fact.label,
-    children: fact.value,
-  }))}
-/>
-
-// after
-<dl className="grid gap-3 sm:grid-cols-[140px_minmax(0,1fr)]">
-  {facts.map((fact) => (
-    <div key={fact.id} className="contents">
-      <dt className="text-muted-foreground">{fact.label}</dt>
-      <dd>{fact.value}</dd>
-    </div>
-  ))}
-</dl>
-```
-
-Use a stable domain key when mapping definition rows. Border, dividers, Card ownership and responsive label/value geometry stay with the product surface that knows the information hierarchy; do not restore them as `bordered` or fixed `columns` convenience props.
-
-Do not recreate a generic Descriptions wrapper merely because another design system ships one. Re-admission requires independent product evidence for shared behavior beyond native definition-list semantics and normal Core composition.
-
 ## DataTable status
 
 System Management plus Blog Admin list-page prior art is enough to trigger DataTable review, but not enough to re-admit the historical feature-bag API. Current migrations use Core `Table`/`Pagination` plus product-local filter/action/state composition. See PD-012.
@@ -361,4 +274,4 @@ Standalone product fixtures may add Showcase-only navigation chrome around the r
 
 ## Compatibility assessment
 
-The product-validation reset and canonical renames are breaking changes for consumers that update to the next package artifact. Alert's primitive-to-high-level API correction is also breaking for consumers that used `variant="destructive|default"` as semantic colors. Empty hardening is behaviorally breaking for consumers that relied on its previous English default copy, implicit dashed surface or automatic `role="status"`. Result hardening is breaking for consumers that use `subTitle`, rely on its fixed H2 or automatic `role="status"`, or expect a padded parent Card to compose without a double inset. Skeleton hardening changes accessibility-tree behavior by hiding individual visual placeholders by default; parent loading regions should own any required status/name semantics. Spin/Spinner hardening changes accessibility-tree behavior by removing the implicit Spinner status/English name and moving busy state to `Spin`'s root `aria-busy`; callers that relied on those defaults must provide one explicit localized status region. QRCode hardening is breaking for consumers that use `ariaLabel` or rely on the previous English default accessible name; migrate to standard `aria-label`/`aria-labelledby` together with the updated package artifact. Core `Image`/`ImageProps` are removed from the canonical Core and root umbrella; consumers that used them must move to native `<img>` or own any real product-specific media interaction locally. Core `List`/`ListProps` are removed from the canonical Core and root umbrella; consumers must move to semantic native list markup or an admitted collection composition with stable product-owned keys. Core `Descriptions`/`DescriptionsProps` are removed from the canonical Core and root umbrella; consumers must move to semantic `<dl>/<dt>/<dd>` markup with product-owned layout and stable domain keys. Migrate those responsibilities explicitly as described above. Treat publication accordingly under SemVer/release notes. Existing products fixed to older immutable vendored archives can migrate page-by-page rather than mechanically replacing old wrappers with new ones.
+The product-validation reset and canonical renames are breaking changes for consumers that update to the next package artifact. Alert's primitive-to-high-level API correction is also breaking for consumers that used `variant="destructive|default"` as semantic colors. Empty hardening is behaviorally breaking for consumers that relied on its previous English default copy, implicit dashed surface or automatic `role="status"`. Result hardening is breaking for consumers that use `subTitle`, rely on its fixed H2 or automatic `role="status"`, or expect a padded parent Card to compose without a double inset. Skeleton hardening changes accessibility-tree behavior by hiding individual visual placeholders by default; parent loading regions should own any required status/name semantics. Spin/Spinner hardening changes accessibility-tree behavior by removing the implicit Spinner status/English name and moving busy state to `Spin`'s root `aria-busy`; callers that relied on those defaults must provide one explicit localized status region. QRCode hardening is breaking for consumers that use `ariaLabel` or rely on the previous English default accessible name; migrate to standard `aria-label`/`aria-labelledby` together with the updated package artifact. Migrate those responsibilities explicitly as described above. Treat publication accordingly under SemVer/release notes. Existing products fixed to older immutable vendored archives can migrate page-by-page rather than mechanically replacing old wrappers with new ones.

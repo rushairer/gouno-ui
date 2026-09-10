@@ -14,13 +14,45 @@ import StatisticExampleSource from "./statistic/statistic-0.tsx?raw";
 import {
   Calendar,
   Carousel,
+  Descriptions,
+  Empty,
+  Image,
+  List,
   Table,
+  Tag,
+  Text,
   Timeline,
   Tree,
 } from "../../../src/core";
 import type { ComponentDocument } from "../../components/component-page";
 
 export const dataDisplayDocuments: Record<string, ComponentDocument> = {
+  list: {
+    title: "List 列表",
+    description: "基础分隔列表和自定义条目。",
+    code: "<List data={items} renderItem={item => <Text>{item}</Text>} />",
+    render: () => (
+      <List
+        data={["Button", "Input", "Table"]}
+        renderItem={(item) => <Text>{item}</Text>}
+      />
+    ),
+  },
+  descriptions: {
+    title: "Descriptions 描述列表",
+    description: "展示对象属性和详情信息。",
+    code: '<Descriptions columns={2} bordered items={[{ label: "版本", children: "0.2.0" }, { label: "状态", children: <Tag color="success">Stable</Tag> }]} />',
+    render: () => (
+      <Descriptions
+        columns={2}
+        bordered
+        items={[
+          { label: "版本", children: "0.2.0" },
+          { label: "状态", children: <Tag color="success">Stable</Tag> },
+        ]}
+      />
+    ),
+  },
   calendar: {
     title: "Calendar 日历",
     description: "日期网格、选中态和可选边界。",
@@ -29,6 +61,20 @@ export const dataDisplayDocuments: Record<string, ComponentDocument> = {
       <div className="max-w-md">
         <Calendar value={new Date(2026, 0, 15)} onChange={() => undefined} />
       </div>
+    ),
+  },
+  image: {
+    title: "Image 图片",
+    description: "图片加载失败时提供可访问 fallback。",
+    code: '<Image src="/cover.png" fallback={<Empty title="图片不可用" description="请稍后重试。" />} />',
+    render: () => (
+      <Image
+        src="/missing.png"
+        alt="示例图片"
+        fallback={
+          <Empty title="图片不可用" description="请稍后重试。" />
+        }
+      />
     ),
   },
   carousel: {

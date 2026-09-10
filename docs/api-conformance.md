@@ -45,9 +45,6 @@
 | API-025 | Core `QRCode` 使用标准 canvas/ARIA 属性与真实 canvas ref；`aria-label`/`aria-labelledby` 由调用方按用途提供，组件不注入英文默认可访问名称。`size` 是 width/height 的唯一公共尺寸入口，现有 `value/size/color/background/errorLevel` 保持单一职责；不保留 `ariaLabel` alias，也不扩展 status/refresh/icon/bordered/type feature bag。 | Core QRCode same-source demo/API docs/focused tests + Gosso MFA product validation / PD-049 |
 | API-026 | Core `Statistic` 保持 `title/value/prefix/suffix` 的窄指标展示合同，并把标准 div/ARIA/data/event 属性与 ref 交给真实根元素。指标值/单位/格式化、动态播报和 Card/elevation 继续由调用方拥有；不加入 precision/formatter/trend/valueStyle/card 等 feature-bag API。 | Core Statistic same-source demo/API docs/focused tests + Blog Admin Dashboard/AI Operations corpus / PD-050 |
 | API-027 | Core `Spin` 是已有内容区域的 busy-state wrapper：`spinning` 是唯一 busy 状态写入口并驱动根 `aria-busy`；根节点接受标准 div/ARIA/data/event 属性与真实 ref。Core `Spinner` 默认仅为 decorative 视觉指示器（`aria-hidden=true`），不自动创建 `role=status` 或英文 `Loading` 名称；独立语义场景只通过标准 ARIA 显式 opt-in。Spin/Spinner 不扩展 delay/fullscreen/custom-indicator/AsyncState feature bag。 | Core Spin/Spinner same-source demos + focused tests + Gosso OAuth callback product validation / PD-051 |
-| API-028 | Core `Image` / `ImageProps` 从 canonical 公共 API 移除。已完成的 Blog public、Blog Admin 与 Gosso Admin corpus 都直接使用原生 `<img>` 并由产品拥有 `alt`、loading、布局、错误呈现与点击/预览生命周期；没有真实产品消费 Core `Image`。旧 wrapper 的 `preview` 仅改变 cursor、没有真实预览行为，错误状态还会跨 `src` 更新锁存，并注入英文 `Image unavailable`。在出现独立跨产品、超出原生 `<img>` 的稳定行为证据前，不重新引入通用 Image wrapper。 | Core Image de-admission invariant + Blog/Gosso native-image corpus / PD-052 |
-| API-029 | Core `List` / `ListProps` 从 canonical 公共 API 移除。三个完成 product corpora 均未消费该 `data/renderItem` wrapper；真实 collection surfaces 使用语义原生 list、Table、Card/Grid 或 product-local responsive composition。旧 wrapper 还注入英文 `No data`、数组 index key、固定 row padding 与默认 bordered/divided surface。在新的独立跨产品证据证明 native list + 现有 Core composition 不足前，不重新引入 generic List feature bag。 | Core List de-admission invariant + completed Gosso/Blog collection corpus / PD-053 |
-| API-030 | Core `Descriptions` / `DescriptionsProps` 从 canonical 公共 API 移除。完成的 Gosso Admin 与 Blog 真实页面已经直接使用原生 `<dl>/<dt>/<dd>`，并按各自任务拥有响应式 label/value 网格、稳定 domain key、分隔与 surrounding surface；没有真实产品消费 Core `Descriptions`。旧 `items/columns/bordered` wrapper 使用数组 index key、固定列数与内建 border/padding，把 HTML definition-list 语义和视觉 surface 耦合。在出现独立跨产品、超出原生 definition-list composition 的稳定行为证据前，不重新引入 generic Descriptions wrapper。 | Core Descriptions de-admission invariant + completed Gosso/Blog definition-list corpus / PD-054 |
 
 ## 当前破坏式迁移说明
 
@@ -96,7 +93,7 @@ Core `CodeBlock` 的复制源与显示源不拆成两套属性。`code` 是唯�
 
 Core `Anchor` 的默认路径保持原生 hash 链接语义，不用组件 JS 重写浏览器滚动。真实阅读页的固定头部遮挡通过 heading `scroll-margin-top` 解决，因此键盘激活、复制链接和直接访问 hash 共用同一位置规则。只有调用方不能控制目标样式而显式传 `offset` 时，Anchor 才拦截本地 hash 点击并按目标真实位置减去偏移量平滑滚动；外部链接和缺失目标不被拦截。
 
-Core `Empty` 不再把业务文案、Surface 或 live-region 策略当作默认组件行为。调用方必须显式提供需要展示的 `title/description`；需要边界时由真实 Card/Table/native-list/route surface 拥有；需要动态播报时通过标准 `role` / `aria-live` 显式声明。旧 `"No data"`、dashed border/radius 和自动 `role="status"` 都不是 canonical contract，也不通过兼容 alias 保留。
+Core `Empty` 不再把业务文案、Surface 或 live-region 策略当作默认组件行为。调用方必须显式提供需要展示的 `title/description`；需要边界时由真实 Card/Table/List/route surface 拥有；需要动态播报时通过标准 `role` / `aria-live` 显式声明。旧 `"No data"`、dashed border/radius 和自动 `role="status"` 都不是 canonical contract，也不通过兼容 alias 保留。
 
 Core `Result` 不再暴露非 canonical `subTitle`，补充说明统一使用 `description`。Result 的标题默认是 H2；当它替代整页内容成为该路由主结果时，调用方显式使用 `headingLevel={1}`。静态 404/终态不被强制声明 `role="status"`，动态操作结果按需要显式选择标准 `role` / `aria-live`。Result 自己拥有结果内容节奏但不拥有 Card/surface/elevation；仅作为 Result 外壳的 Card 使用 `padding="none"`，避免父子重复 inset。旧固定 H2、自动 live-region 和 `subTitle` 都不通过兼容 alias 保留。
 
@@ -105,8 +102,6 @@ Core `Skeleton` 现在默认从辅助技术树中隐藏单个视觉占位块。�
 Core `QRCode` 不再暴露非标准 `ariaLabel`，也不再注入英文 `"QR code"` 作为默认可访问名称。调用方根据实际业务用途使用标准 `aria-label` 或 `aria-labelledby`；其余标准 canvas/ARIA/data/className/style 属性与真实 canvas ref 直接透传。`size` 继续作为二维码 width/height 的唯一公共尺寸入口，因此不同时开放原生 `width`/`height` 第二写路径。当前 real `gosso-admin` 仍固定 `file:vendor/gouno-ui-0.1.0.tgz`，其 `MFAPanel` 的 `ariaLabel → aria-label` 必须与下一次 vendored Gouno UI artifact 刷新原子完成，不能单独先改产品源码制造类型不兼容。
 
 Core `Spinner` 不再默认创建 `role="status"`，也不再注入英文 `"Loading"` 可访问名称；它默认 `aria-hidden=true`，仅负责旋转视觉。需要播报任务进度时，由能提供本地化状态文案的父级区域统一拥有 `role=status` / `aria-live`；确实独立使用 Spinner 且没有可见状态文字时，可显式设置 `aria-hidden={false}`、标准 `role` 与 `aria-label`。Core `Spin` 则用根 `aria-busy` 表达其已有内容区域正在忙，`tip` 与 overlay 不自动成为 live region。不要同时让父级和 Spinner 各自创建 status，避免重复播报。
-
-Core `Image` / `ImageProps` 已从 canonical Core 和 root compatibility umbrella 移除。当前 proven product scope 直接使用原生 `<img>`；旧 `preview` 没有真实 lightbox/zoom 行为，因此不提供兼容 alias 或替代 prop。需要 fallback、媒体预览、渐进加载等状态时先由产品本地拥有，直到新的独立跨产品证据证明一个稳定、可访问的共享交互合同。
 
 ## Core 继续验证原则
 
