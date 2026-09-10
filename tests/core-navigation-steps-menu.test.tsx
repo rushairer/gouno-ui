@@ -49,7 +49,7 @@ describe("Core Steps", () => {
     expect(document.querySelectorAll('[aria-current="step"]')).toHaveLength(1);
   });
 
-  it("collapses long workflows with explicit ellipsis slots while preserving the current window", () => {
+  it("collapses long workflows with language-neutral ellipsis slots while preserving the current window", () => {
     render(
       <Steps
         current={2}
@@ -68,6 +68,7 @@ describe("Core Steps", () => {
     expect(document.querySelectorAll('[data-ellipsis="true"]')).toHaveLength(2);
     expect(screen.getByText("Three")).toBeTruthy();
     expect(screen.queryByText("Six")).toBeNull();
+    expect(screen.queryByText("More steps")).toBeNull();
   });
 });
 
@@ -106,6 +107,7 @@ describe("Core Menu", () => {
       />,
     );
 
+    expect(screen.getByRole("navigation", { name: "Application navigation" })).toBeTruthy();
     fireEvent.click(screen.getByRole("menuitem", { name: "Members" }));
     expect(onClick).toHaveBeenCalledTimes(1);
     expect(onClick.mock.calls[0][0].keyPath).toEqual(["workspace", "members"]);
@@ -113,6 +115,11 @@ describe("Core Menu", () => {
     expect(screen.getByRole("menuitem", { name: "Members" }).getAttribute("aria-current")).toBe("page");
     expect(screen.getByRole("separator")).toBeTruthy();
     expect(screen.getByText("Administration")).toBeTruthy();
+  });
+
+  it("keeps accessible navigation naming caller-owned", () => {
+    render(<Menu items={nestedItems.slice(0, 1)} />);
+    expect(screen.getByRole("navigation").getAttribute("aria-label")).toBeNull();
   });
 
   it("keeps controlled open state caller-owned", () => {
