@@ -39,7 +39,7 @@ export default function TreeControlledExample() {
         blockNode
         onSelect={(keys) => setSelectedKeys(keys)}
         onCheck={(keys) =>
-          setCheckedKeys(Array.isArray(keys) ? [...keys] : [...keys.checked])
+          setCheckedKeys([...("checked" in keys ? keys.checked : keys)])
         }
       />
       <p className="text-xs text-muted-foreground">
