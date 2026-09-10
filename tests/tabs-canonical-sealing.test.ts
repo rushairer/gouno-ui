@@ -52,14 +52,15 @@ describe("Tabs canonical sealing", () => {
     expect(text).toContain("ariaLabel ?? legacyAriaLabel");
   });
 
-  it("shows only canonical state and standard ARIA in executable Core examples", () => {
-    const examples = [
+  it("shows only canonical state and standard ARIA in high-level Core examples", () => {
+    const highLevelExamples = [
       tabsDocument.code,
-      ...(tabsDocument.demos?.map((demo) => demo.code) ?? []),
+      ...(tabsDocument.demos
+        ?.filter((demo) => demo.title !== "Primitive composition")
+        .map((demo) => demo.code) ?? []),
     ];
-    const highLevelExamples = examples.filter((code) => code.includes("<Tabs"));
 
-    expect(highLevelExamples.length).toBeGreaterThan(0);
+    expect(highLevelExamples.length).toBe(4);
     for (const code of highLevelExamples) {
       expect(code).not.toContain("ariaLabel=");
       expect(code).not.toContain("defaultValue=");
