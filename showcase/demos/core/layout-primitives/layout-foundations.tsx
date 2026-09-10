@@ -12,8 +12,12 @@ export default function LayoutFoundationsDemo() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <App className="rounded-lg border bg-background p-4">
-      <Container ref={containerRef} className="max-w-2xl px-0">
+    <App className="rounded-lg border bg-background p-4">">
+      <Container
+        ref={containerRef}
+        tabIndex={-1}
+        className="max-w-2xl px-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
         <Space orientation="vertical" block>
           <AspectRatio ratio={16 / 9} className="overflow-hidden rounded-md border bg-muted">
             <div className="flex size-full items-center justify-center">
@@ -21,7 +25,7 @@ export default function LayoutFoundationsDemo() {
             </div>
           </AspectRatio>
           <Button size="small" onClick={() => containerRef.current?.focus()}>
-            Container ref 已连接
+            聚焦 Container
           </Button>
         </Space>
       </Container>
