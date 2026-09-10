@@ -11,8 +11,9 @@ import {
 } from "react";
 import { ChevronRight } from "lucide-react";
 import { cn } from "../lib/utils";
+import type { ControlSize } from "./control-types";
 
-export type CollapseSize = "small" | "middle" | "large";
+export type CollapseSize = ControlSize;
 export type CollapseCollapsible = "header" | "icon" | "disabled";
 export type CollapseExpandIconPlacement = "start" | "end";
 export type CollapseActiveKey = Key | readonly Key[];
@@ -71,11 +72,16 @@ export interface CollapseProps
   ref?: Ref<HTMLDivElement>;
 }
 
+function isKeyArray(value: CollapseActiveKey): value is readonly Key[] {
+  return Array.isArray(value);
+}
+
 function normalizeActiveKeys(
   value: CollapseActiveKey | undefined,
   accordion: boolean,
 ) {
-  const keys = value === undefined ? [] : Array.isArray(value) ? [...value] : [value];
+  const keys: Key[] =
+    value === undefined ? [] : isKeyArray(value) ? [...value] : [value];
   return accordion ? keys.slice(0, 1) : keys;
 }
 
