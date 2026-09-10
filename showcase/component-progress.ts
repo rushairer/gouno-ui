@@ -44,6 +44,7 @@ const completedComponents = new Set([
   "core-timeline",
   "core-calendar",
   "core-carousel",
+  "core-tree",
   "theme-system",
   "pattern-bulk-action-bar",
   "gouno-app-shell",
