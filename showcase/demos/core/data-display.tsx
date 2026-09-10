@@ -15,27 +15,14 @@ import {
   Calendar,
   Carousel,
   Descriptions,
-  List,
   Table,
   Tag,
-  Text,
   Timeline,
   Tree,
 } from "../../../src/core";
 import type { ComponentDocument } from "../../components/component-page";
 
 export const dataDisplayDocuments: Record<string, ComponentDocument> = {
-  list: {
-    title: "List 列表",
-    description: "基础分隔列表和自定义条目。",
-    code: "<List data={items} renderItem={item => <Text>{item}</Text>} />",
-    render: () => (
-      <List
-        data={["Button", "Input", "Table"]}
-        renderItem={(item) => <Text>{item}</Text>}
-      />
-    ),
-  },
   descriptions: {
     title: "Descriptions 描述列表",
     description: "展示对象属性和详情信息。",
