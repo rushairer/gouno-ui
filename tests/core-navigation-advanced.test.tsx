@@ -61,7 +61,7 @@ describe("Core Breadcrumb", () => {
             key: "projects",
             title: "Projects",
             menu: {
-              ariaLabel: "Choose project",
+              "aria-label": "Choose project",
               items: [{ key: "gouno", title: "Gouno UI", onClick: onChoose }],
             },
           },
