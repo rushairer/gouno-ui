@@ -216,10 +216,10 @@ export const tabsDocument: ComponentDocument = {
       description: "标签导航末端的补充操作或状态内容。",
     },
     {
-      name: "aria-label / aria-labelledby",
-      type: "AriaAttributes",
+      name: "aria-label",
+      type: "string",
       description:
-        "canonical 可访问命名入口；高层 Tabs 会把标准 ARIA 名称传给生成的 TabList。",
+        "canonical 可访问命名入口；也可使用标准 aria-labelledby，高层 Tabs 会把名称传给生成的 TabList。",
     },
     {
       name: "ariaLabel",
