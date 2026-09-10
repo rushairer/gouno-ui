@@ -1,2 +1,0 @@
-import type { ReactNode } from "react";
-export function List<T>({ data, renderItem, empty, bordered = true }: { data: T[]; renderItem: (item: T, index: number) => ReactNode; empty?: ReactNode; bordered?: boolean }) { if (!data.length) return empty || <div className="p-6 text-center text-sm text-muted-foreground">No data</div>; return <ul className={bordered ? "divide-y rounded-md border" : "divide-y"}>{data.map((item, i) => <li key={i} className="p-3">{renderItem(item, i)}</li>)}</ul>; }
