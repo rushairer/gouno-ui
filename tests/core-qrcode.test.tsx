@@ -1,6 +1,6 @@
 import { createRef } from "react";
-import { render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { cleanup, render, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { QRCode } from "../src/core/qrcode";
 
 const { toCanvas } = vi.hoisted(() => ({
@@ -15,11 +15,14 @@ beforeEach(() => {
   toCanvas.mockClear();
 });
 
+afterEach(() => {
+  cleanup();
+});
+
 describe("Core QRCode", () => {
   it("forwards standard canvas/ARIA props and the canvas ref", async () => {
     const ref = createRef<HTMLCanvasElement>();
-
-    render(
+    const view = render(
       <QRCode
         ref={ref}
         value="otpauth://totp/Gouno:demo?secret=SHOWCASEDEMO"
@@ -30,7 +33,7 @@ describe("Core QRCode", () => {
       />,
     );
 
-    const canvas = screen.getByRole("img", { name: "MFA 配置二维码" });
+    const canvas = view.getByRole("img", { name: "MFA 配置二维码" });
     expect(ref.current).toBe(canvas);
     expect(canvas.getAttribute("id")).toBe("mfa-qr");
     expect(canvas.getAttribute("data-state")).toBe("ready");
@@ -52,11 +55,11 @@ describe("Core QRCode", () => {
   });
 
   it("keeps the accessible name caller-owned and supports aria-labelledby", async () => {
-    const { rerender } = render(<QRCode value="https://gouno.example/one" />);
-    const unnamed = screen.getByRole("img");
+    const view = render(<QRCode value="https://gouno.example/one" />);
+    const unnamed = view.getByRole("img");
     expect(unnamed.getAttribute("aria-label")).toBeNull();
 
-    rerender(
+    view.rerender(
       <>
         <span id="qr-label">文档二维码</span>
         <QRCode
@@ -70,7 +73,7 @@ describe("Core QRCode", () => {
       </>,
     );
 
-    const canvas = screen.getByRole("img", { name: "文档二维码" });
+    const canvas = view.getByRole("img", { name: "文档二维码" });
     expect(canvas.getAttribute("width")).toBe("180");
     expect(canvas.getAttribute("height")).toBe("180");
 
@@ -88,13 +91,13 @@ describe("Core QRCode", () => {
   });
 
   it("redraws when the encoded value changes", async () => {
-    const { rerender } = render(
+    const view = render(
       <QRCode value="https://gouno.example/a" aria-label="链接二维码" />,
     );
 
     await waitFor(() => expect(toCanvas).toHaveBeenCalledTimes(1));
 
-    rerender(
+    view.rerender(
       <QRCode value="https://gouno.example/b" aria-label="链接二维码" />,
     );
 
