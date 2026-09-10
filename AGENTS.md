@@ -9,10 +9,11 @@ Before changing public components, product pages, ownership or API contracts, re
 3. `docs/design-language.md`;
 4. `docs/product-interface-governance.md`;
 5. `docs/product-surface-elevation-audit.md` when changing business surfaces, shadows or elevation;
-6. `docs/api-specification.md`;
-7. `docs/product-driven-development.md`;
-8. `docs/abstraction-register.md`;
-9. `docs/api-conformance.md` when an existing public contract changes.
+6. `docs/core-component-retention.md` before removing, de-admitting, renaming away or otherwise contracting an established Core runtime component;
+7. `docs/api-specification.md`;
+8. `docs/product-driven-development.md`;
+9. `docs/abstraction-register.md`;
+10. `docs/api-conformance.md` when an existing public contract changes.
 
 Repository contracts are the durable source of truth. Do not reconstruct decisions from chat history or legacy component names.
 
@@ -61,6 +62,8 @@ A layer may depend on itself or a lower layer, never a higher layer.
 - Internal implementation imports concrete modules, not package root/formal barrels.
 - Public providers exist only when canonical components consume them with documented precedence/tests.
 - Use semantic tokens and `cn`; product-specific styling/business semantics do not enter Core.
+- Core is a reusable component-library catalog, not merely the intersection of components used by the current product corpus. Lack of current product usage is never sufficient grounds to remove an established Core runtime component.
+- Removing, de-admitting, renaming away or otherwise eliminating an established Core runtime component requires explicit maintainer/user confirmation **before implementation**. An audit result, low completion percentage, native-HTML alternative or absence of imports does not constitute that confirmation. See `docs/core-component-retention.md`.
 
 ## Product-driven evolution
 
@@ -78,13 +81,13 @@ Gouno UI currently has **three completed real-product comparison corpora and no 
 - First semantic occurrence stays local; second similarity is noted; third semantically equivalent occurrence triggers review, not automatic extraction.
 - Compare intent, state, lifecycle, accessibility, responsive behavior and content/action policy—not old names or DOM similarity.
 - Before any Pattern/Gouno addition or material Core extension, search canonical Gouno UI, Legacy and all completed real-product corpora.
-- If evidence is insufficient, keep code product-local.
+- If evidence is insufficient for a **new** abstraction, keep code product-local. Do not apply this rule as a deletion test for an already-established Core component; retention follows `docs/core-component-retention.md`.
 - Record durable accept/reject/defer/merge/move/remove/API decisions in `docs/abstraction-register.md`.
 - Follow the Product Validation Loop in `docs/product-driven-development.md`: a real page or a completed-corpus audit may stop further work when it exposes a canonical component defect, accessibility problem, material API gap or semantic API split. Harden the component, synchronize Showcase/docs/tests, validate it back on the triggering product evidence, then continue.
 - **API-valid composition is necessary but not sufficient for page acceptance.** Before a migrated page is marked complete, run a composition-level conformance pass against every applicable binding rule in `docs/design-language.md` and `docs/product-interface-governance.md`, then compare the page with already-migrated members of the same surface family for spacing, action hierarchy, navigation depth, responsive behavior, feedback semantics and state presentation.
 - If that pass exposes a missing shared visual/composition/IA constraint, stop the line before migrating another page: add or refine the binding rule, scan/fix the governed migrated corpus, and add or extend conformance coverage where practical. Do not hide the gap with page-local styling or change a Core default when the rule is context-specific.
 - When a binding rule in `docs/design-language.md` or `docs/product-interface-governance.md` is added or materially changed, stop ordinary product work until the completed governed corpora have been scanned. Fix stale occurrences, document intentional exceptions and add source/runtime regression coverage where practical.
-- Ant Design and other mature systems are benchmarks during hardening, not automatic API authorities. Platform semantics, accessibility, Gouno API governance and real product evidence still decide the final contract.
+- Ant Design and other mature systems are benchmarks during hardening and legitimate prior art for established generic Core catalog breadth. They do not automatically authorize new APIs or historical compatibility baggage; platform semantics, accessibility, Gouno API governance and real product evidence still decide the final contract.
 
 ## Showcase evidence rule
 
@@ -120,6 +123,7 @@ Example: `CodeBlock` remained Showcase-private under PD-009 until the real Blog 
 - `docs/design-language.md` is binding for visual composition, surface boundaries, edge alignment, elevation and spacing ownership.
 - `docs/product-interface-governance.md` is binding for product navigation depth, tab-panel lead placement, surface-local title semantics and corpus-level interface conformance.
 - `docs/product-surface-elevation-audit.md` is binding evidence for current business-page elevation classification and the raised-product whitelist.
+- `docs/core-component-retention.md` is binding for established Core runtime retention and its explicit approval gate.
 - Do not introduce undocumented aliases or duplicate semantic write paths.
 - API migrations require compatibility assessment and migration instructions.
 - Synchronize exported types, Showcase API/docs/examples, accessibility behavior and focused tests.
@@ -127,7 +131,7 @@ Example: `CodeBlock` remained Showcase-private under PD-009 until the real Blog 
 - Preserve controlled/uncontrolled semantics where meaningful and native interoperability where useful.
 - A Showcase Preview and displayed Code sample must represent the same implementation.
 - Completion percentages are audit evidence, not architecture scores.
-- A component is `100%` only for its proven Gouno scope after runtime API, exported types, representative demos, example code, accessibility behavior, focused tests and real product validation agree. It never means blindly copying another library's historical surface.
+- A component is `100%` only for its proven Gouno scope after runtime API, exported types, representative demos, example code, accessibility behavior, focused tests and real product validation agree. It never means blindly copying another library's historical surface. A component below `100%` may still be an intentional retained Core component and must not be removed solely because it lacks current product validation.
 - Compound components own structural spacing between their semantic slots; content regions own their own internal padding/rhythm. Do not fix canonical slot-spacing defects with page-local margins (PD-020).
 - One semantic collection/section should normally expose one dominant surface boundary. Do not wrap a self-surfaced Table/List in Card merely to obtain padding/alignment. Normal bordered surfaces align first/last primary content to the shared 24px edge inset while preserving denser internal Table columns (PD-023 / `docs/design-language.md`).
 - A landing/dashboard page may be structurally exceptional without using a different normal surface edge axis. In application-shell pages, `Card padding="lg"` or ad-hoc `p-5/p-8` must not be used as an accidental alignment substitute; any spacious exception must be semantic and documented.
