@@ -1,6 +1,6 @@
 # Gouno UI API 合规清单
 
-核查基线：2026-09-09。目标依据：[公共 API 规范](api-specification.md)。
+核查基线：2026-09-10。目标依据：[公共 API 规范](api-specification.md)。
 
 本清单只描述当前 canonical 公共面。`src/legacy` 不参加 canonical API 合规认证，也不构成重新引入时的命名/结构先例。
 
@@ -45,6 +45,7 @@
 | API-025 | Core `QRCode` 使用标准 canvas/ARIA 属性与真实 canvas ref；`aria-label`/`aria-labelledby` 由调用方按用途提供，组件不注入英文默认可访问名称。`size` 是 width/height 的唯一公共尺寸入口，现有 `value/size/color/background/errorLevel` 保持单一职责；不保留 `ariaLabel` alias，也不扩展 status/refresh/icon/bordered/type feature bag。 | Core QRCode same-source demo/API docs/focused tests + Gosso MFA product validation / PD-049 |
 | API-026 | Core `Statistic` 保持 `title/value/prefix/suffix` 的窄指标展示合同，并把标准 div/ARIA/data/event 属性与 ref 交给真实根元素。指标值/单位/格式化、动态播报和 Card/elevation 继续由调用方拥有；不加入 precision/formatter/trend/valueStyle/card 等 feature-bag API。 | Core Statistic same-source demo/API docs/focused tests + Blog Admin Dashboard/AI Operations corpus / PD-050 |
 | API-027 | Core `Spin` 是已有内容区域的 busy-state wrapper：`spinning` 是唯一 busy 状态写入口并驱动根 `aria-busy`；根节点接受标准 div/ARIA/data/event 属性与真实 ref。Core `Spinner` 默认仅为 decorative 视觉指示器（`aria-hidden=true`），不自动创建 `role=status` 或英文 `Loading` 名称；独立语义场景只通过标准 ARIA 显式 opt-in。Spin/Spinner 不扩展 delay/fullscreen/custom-indicator/AsyncState feature bag。 | Core Spin/Spinner same-source demos + focused tests + Gosso OAuth callback product validation / PD-051 |
+| API-028 | Core `Steps` 与 `Menu` 均使用稳定 `items[].key`；Steps 以 `current/onChange` 表达单一流程位置并保持 disabled step 非交互，Menu 以 `selectedKeys/defaultSelectedKeys` 与 `openKeys/defaultOpenKeys` 分离选择和展开状态，并支持层级 item/submenu/group/divider、single/multiple、inline/horizontal/vertical 与键盘 roving focus。两者只使用标准 DOM/ARIA 命名，不保留 `ariaLabel`/`danger`/`theme` 兼容面，也不注入英文可访问文案；产品需要可访问名称时通过标准 `aria-label`/`aria-labelledby` 显式提供。 | Steps/Menu same-source demos + API AST/focused behavior tests + main run 279 / PD-052 |
 
 ## 当前破坏式迁移说明
 
@@ -102,6 +103,10 @@ Core `Skeleton` 现在默认从辅助技术树中隐藏单个视觉占位块。�
 Core `QRCode` 不再暴露非标准 `ariaLabel`，也不再注入英文 `"QR code"` 作为默认可访问名称。调用方根据实际业务用途使用标准 `aria-label` 或 `aria-labelledby`；其余标准 canvas/ARIA/data/className/style 属性与真实 canvas ref 直接透传。`size` 继续作为二维码 width/height 的唯一公共尺寸入口，因此不同时开放原生 `width`/`height` 第二写路径。当前 real `gosso-admin` 仍固定 `file:vendor/gouno-ui-0.1.0.tgz`，其 `MFAPanel` 的 `ariaLabel → aria-label` 必须与下一次 vendored Gouno UI artifact 刷新原子完成，不能单独先改产品源码制造类型不兼容。
 
 Core `Spinner` 不再默认创建 `role="status"`，也不再注入英文 `"Loading"` 可访问名称；它默认 `aria-hidden=true`，仅负责旋转视觉。需要播报任务进度时，由能提供本地化状态文案的父级区域统一拥有 `role=status` / `aria-live`；确实独立使用 Spinner 且没有可见状态文字时，可显式设置 `aria-hidden={false}`、标准 `role` 与 `aria-label`。Core `Spin` 则用根 `aria-busy` 表达其已有内容区域正在忙，`tip` 与 overlay 不自动成为 live region。不要同时让父级和 Spinner 各自创建 status，避免重复播报。
+
+Core `Steps` 不再接受缺少稳定 `key` 的流程项，也不使用 `description` 兼容旧的第二说明入口；流程项正文统一为 `content`，可选短补充使用 `subTitle`。当提供 `onChange` 时，仅非 disabled step 可交互；disabled step 保持非按钮内容并声明 `aria-disabled`。长流程的 `maxCount` 省略槽只呈现语言无关的省略标记，不注入英文屏幕阅读器文案。
+
+Core `Menu` 的层级节点使用稳定 `key`，选择状态和展开状态分别由 `selectedKeys/defaultSelectedKeys` 与 `openKeys/defaultOpenKeys` 管理；单选、multiple、inline collapse、submenu/group/divider 和 keyboard roving focus 不通过业务别名拆出第二套状态 API。旧 `ariaLabel` 改为标准 `aria-label`；旧 `danger` 不再作为通用导航项属性，危险动作的业务语义由调用方动作/视觉组合表达；Core 不提供 `theme` 或 locale feature bag。Menu 根导航不会自动注入英文可访问名称，需要名称时由产品显式提供标准 ARIA。
 
 ## Core 继续验证原则
 
