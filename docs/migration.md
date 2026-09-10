@@ -175,6 +175,23 @@ implicit role="status"               → explicit role/aria-live only when annou
 
 Do not add a `subTitle` alias, custom status-color aliases, `variant`, `size`, or a Result-owned Card/elevation API. Status icons are decorative; semantic meaning remains in the visible title/description and the caller-selected ARIA role when needed.
 
+## Skeleton structural loading semantics
+
+Canonical `Skeleton` is a visual structural placeholder, not a loading-state or async-state component. Repeated Blog public and Blog Admin loading screens use groups of skeleton blocks to preserve layout while the containing region owns the actual loading state and accessible name. Gosso callback flows independently use `Spinner` for indeterminate task execution, confirming that these are different feedback responsibilities.
+
+Individual Skeleton blocks are now decorative by default with `aria-hidden="true"`. Put `role="status"`, `aria-label`, `aria-live` or other state semantics on the parent region that can describe what is loading as one coherent unit:
+
+```tsx
+<div role="status" aria-label="文章列表加载中">
+  <Skeleton className="h-7 w-4/5" />
+  <Skeleton className="mt-3 h-4 w-full" />
+</div>
+```
+
+Touched call sites normally need no visual migration. If a previous consumer intentionally exposed an individual Skeleton to assistive technology, it can explicitly use the standard `aria-hidden={false}` override, but this should be exceptional. Dimensions, shape and spacing remain normal `className` composition rather than a new `size`, `shape`, `avatar`, `paragraph` or preset API.
+
+Reduced-motion behavior continues to be owned globally by `src/base.css`; do not duplicate a second Skeleton-specific motion policy.
+
 ## DataTable status
 
 System Management plus Blog Admin list-page prior art is enough to trigger DataTable review, but not enough to re-admit the historical feature-bag API. Current migrations use Core `Table`/`Pagination` plus product-local filter/action/state composition. See PD-012.
@@ -197,4 +214,4 @@ Standalone product fixtures may add Showcase-only navigation chrome around the r
 
 ## Compatibility assessment
 
-The product-validation reset and canonical renames are breaking changes for consumers that update to the next package artifact. Alert's primitive-to-high-level API correction is also breaking for consumers that used `variant="destructive|default"` as semantic colors. Empty hardening is behaviorally breaking for consumers that relied on its previous English default copy, implicit dashed surface or automatic `role="status"`. Result hardening is breaking for consumers that use `subTitle`, rely on its fixed H2 or automatic `role="status"`, or expect a padded parent Card to compose without a double inset. Migrate those responsibilities explicitly as described above. Treat publication accordingly under SemVer/release notes. Existing products fixed to older immutable vendored archives can migrate page-by-page rather than mechanically replacing old wrappers with new ones.
+The product-validation reset and canonical renames are breaking changes for consumers that update to the next package artifact. Alert's primitive-to-high-level API correction is also breaking for consumers that used `variant="destructive|default"` as semantic colors. Empty hardening is behaviorally breaking for consumers that relied on its previous English default copy, implicit dashed surface or automatic `role="status"`. Result hardening is breaking for consumers that use `subTitle`, rely on its fixed H2 or automatic `role="status"`, or expect a padded parent Card to compose without a double inset. Skeleton hardening changes accessibility-tree behavior by hiding individual visual placeholders by default; parent loading regions should own any required status/name semantics. Migrate those responsibilities explicitly as described above. Treat publication accordingly under SemVer/release notes. Existing products fixed to older immutable vendored archives can migrate page-by-page rather than mechanically replacing old wrappers with new ones.
