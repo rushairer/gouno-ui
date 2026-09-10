@@ -11,9 +11,8 @@ import {
 } from "react";
 import { ChevronRight } from "lucide-react";
 import { cn } from "../lib/utils";
-import type { ControlSize } from "./control-types";
 
-export type CollapseSize = ControlSize;
+export type CollapseSize = "small" | "middle" | "large";
 export type CollapseCollapsible = "header" | "icon" | "disabled";
 export type CollapseExpandIconPlacement = "start" | "end";
 export type CollapseActiveKey = Key | readonly Key[];
