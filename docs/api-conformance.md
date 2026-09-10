@@ -44,6 +44,7 @@
 | API-024 | Core `Skeleton` 只表达视觉结构占位并默认 `aria-hidden=true`；父级 loading region 拥有 `role`、可访问名称与 live-region 策略。尺寸、形状、间距通过标准 `className`/div 属性组合，reduced-motion 继续由全局 `base.css` 统一负责。Skeleton 不扩展为 Loading/AsyncState 或 `size/shape/avatar/paragraph` feature bag。 | Core Skeleton same-source demo/focused tests + Blog public/Blog Admin loading corpus + Gosso Spinner counter-evidence / PD-048 |
 | API-025 | Core `QRCode` 使用标准 canvas/ARIA 属性与真实 canvas ref；`aria-label`/`aria-labelledby` 由调用方按用途提供，组件不注入英文默认可访问名称。`size` 是 width/height 的唯一公共尺寸入口，现有 `value/size/color/background/errorLevel` 保持单一职责；不保留 `ariaLabel` alias，也不扩展 status/refresh/icon/bordered/type feature bag。 | Core QRCode same-source demo/API docs/focused tests + Gosso MFA product validation / PD-049 |
 | API-026 | Core `Statistic` 保持 `title/value/prefix/suffix` 的窄指标展示合同，并把标准 div/ARIA/data/event 属性与 ref 交给真实根元素。指标值/单位/格式化、动态播报和 Card/elevation 继续由调用方拥有；不加入 precision/formatter/trend/valueStyle/card 等 feature-bag API。 | Core Statistic same-source demo/API docs/focused tests + Blog Admin Dashboard/AI Operations corpus / PD-050 |
+| API-027 | Core `Spin` 是已有内容区域的 busy-state wrapper：`spinning` 是唯一 busy 状态写入口并驱动根 `aria-busy`；根节点接受标准 div/ARIA/data/event 属性与真实 ref。Core `Spinner` 默认仅为 decorative 视觉指示器（`aria-hidden=true`），不自动创建 `role=status` 或英文 `Loading` 名称；独立语义场景只通过标准 ARIA 显式 opt-in。Spin/Spinner 不扩展 delay/fullscreen/custom-indicator/AsyncState feature bag。 | Core Spin/Spinner same-source demos + focused tests + Gosso OAuth callback product validation / PD-051 |
 
 ## 当前破坏式迁移说明
 
@@ -99,6 +100,8 @@ Core `Result` 不再暴露非 canonical `subTitle`，补充说明统一使用 `d
 Core `Skeleton` 现在默认从辅助技术树中隐藏单个视觉占位块。业务如果需要播报“正在加载”，应把 `role="status"` / `aria-label` / `aria-live` 放在能描述整个 loading 区域的父容器，而不是让每个骨架块成为独立语义节点。显式 `aria-hidden={false}` 仍作为标准 DOM 覆盖存在，但不是常规推荐路径。尺寸和形状继续由 `className` 拥有；不添加 Skeleton-specific 业务状态或 presets。
 
 Core `QRCode` 不再暴露非标准 `ariaLabel`，也不再注入英文 `"QR code"` 作为默认可访问名称。调用方根据实际业务用途使用标准 `aria-label` 或 `aria-labelledby`；其余标准 canvas/ARIA/data/className/style 属性与真实 canvas ref 直接透传。`size` 继续作为二维码 width/height 的唯一公共尺寸入口，因此不同时开放原生 `width`/`height` 第二写路径。当前 real `gosso-admin` 仍固定 `file:vendor/gouno-ui-0.1.0.tgz`，其 `MFAPanel` 的 `ariaLabel → aria-label` 必须与下一次 vendored Gouno UI artifact 刷新原子完成，不能单独先改产品源码制造类型不兼容。
+
+Core `Spinner` 不再默认创建 `role="status"`，也不再注入英文 `"Loading"` 可访问名称；它默认 `aria-hidden=true`，仅负责旋转视觉。需要播报任务进度时，由能提供本地化状态文案的父级区域统一拥有 `role=status` / `aria-live`；确实独立使用 Spinner 且没有可见状态文字时，可显式设置 `aria-hidden={false}`、标准 `role` 与 `aria-label`。Core `Spin` 则用根 `aria-busy` 表达其已有内容区域正在忙，`tip` 与 overlay 不自动成为 live region。不要同时让父级和 Spinner 各自创建 status，避免重复播报。
 
 ## Core 继续验证原则
 
