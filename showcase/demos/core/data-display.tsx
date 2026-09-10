@@ -315,12 +315,12 @@ export const dataDisplayDocuments: Record<string, ComponentDocument> = {
   timeline: {
     title: "Timeline 时间轴",
     description: "按顺序展示事件。",
-    code: '<Timeline items={[{ title: "创建" }]} />',
+    code: '<Timeline items={[{ key: "created", title: "创建", content: "09:00" }]} />',
     render: () => (
       <Timeline
         items={[
-          { title: "创建项目", description: "09:00" },
-          { title: "完成构建", description: "09:12" },
+          { key: "created", title: "创建项目", content: "09:00" },
+          { key: "built", title: "完成构建", content: "09:12" },
         ]}
       />
     ),
