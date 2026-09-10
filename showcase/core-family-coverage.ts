@@ -126,7 +126,6 @@ export const coreRuntimeFamilyCoverage = {
   Result: { familyId: "core-result", review: "covered" },
   List: { familyId: "core-list", review: "covered" },
   Descriptions: { familyId: "core-descriptions", review: "covered" },
-  Image: { familyId: "core-image", review: "covered" },
   Calendar: { familyId: "core-calendar", review: "covered" },
   App: {
     familyId: null,
