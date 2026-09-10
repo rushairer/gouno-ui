@@ -111,7 +111,7 @@ describe("core components", () => {
 describe("core composite controls", () => {
   it("supports carousel button navigation with canonical tab state", () => {
     render(
-      <Carousel items={[<span key="a">A</span>, <span key="b">B</span>]} />,
+      <Carousel arrows items={[<span key="a">A</span>, <span key="b">B</span>]} />,
     );
     const dots = screen.getAllByRole("tab");
     expect(dots[0].getAttribute("aria-selected")).toBe("true");
