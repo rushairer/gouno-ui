@@ -61,7 +61,6 @@ import {
   QrCode,
   RefreshCw,
   Route,
-  Rows3,
   ScanLine,
   Search,
   ShieldCheck,
@@ -177,7 +176,6 @@ export const showcaseCatalog: ShowcaseGroup[] = [
   ]},
   { workspace: "gouno-ui", layer: "core", group: "Data Display 数据展示", items: [
     item("core-code-block", "CodeBlock", "代码块", 100, <FileText />),
-    item("core-descriptions", "Descriptions", "描述列表", 72, <Rows3 />),
     item("core-calendar", "Calendar", "日历", 68, <Calendar />),
     item("core-carousel", "Carousel", "走马灯", 68, <GalleryHorizontal />),
     item("core-table", "Table", "表格", 100, <Table2 />),
