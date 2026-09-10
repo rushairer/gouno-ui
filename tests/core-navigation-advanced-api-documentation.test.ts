@@ -11,6 +11,10 @@ const parsed = ts.parseJsonConfigFileContent(
 const program = ts.createProgram(parsed.fileNames, parsed.options);
 const checker = program.getTypeChecker();
 
+function sourceText(file: string) {
+  return program.getSourceFile(`${process.cwd()}/${file}`)?.getFullText() ?? "";
+}
+
 function libraryProps(file: string, interfaceName: string) {
   const source = program.getSourceFile(`${process.cwd()}/${file}`)!;
   const declaration = source.statements.find(
@@ -43,6 +47,7 @@ describe("Core advanced Navigation API documentation", () => {
 
   it("keeps Breadcrumb route/menu behavior in source-backed examples", () => {
     expect(advancedNavigationDocuments.breadcrumb.code).toContain("params={{ projectId");
+    expect(advancedNavigationDocuments.breadcrumb.code).toContain('"aria-label": "Choose project"');
     expect(advancedNavigationDocuments.breadcrumb.code).toContain("menu:");
     expect(advancedNavigationDocuments.breadcrumb.demos?.[0].code).toContain("itemRender=");
     expect(advancedNavigationDocuments.breadcrumb.demos?.[0].code).toContain('type: "separator"');
@@ -51,8 +56,19 @@ describe("Core advanced Navigation API documentation", () => {
   it("keeps Collapse state and lifecycle behavior in source-backed examples", () => {
     expect(advancedNavigationDocuments.collapse.code).toContain("activeKey={activeKey}");
     expect(advancedNavigationDocuments.collapse.code).toContain("accordion");
+    expect(advancedNavigationDocuments.collapse.code).toContain('size="middle"');
     expect(advancedNavigationDocuments.collapse.demos?.[0].code).toContain("destroyOnHidden");
     expect(advancedNavigationDocuments.collapse.demos?.[0].code).toContain('collapsible: "icon"');
     expect(advancedNavigationDocuments.collapse.demos?.[0].code).toContain("forceRender: true");
+  });
+
+  it("rejects non-canonical aliases in the hardened navigation surface", () => {
+    const breadcrumbSource = sourceText("src/core/breadcrumb.tsx");
+    const collapseSource = sourceText("src/core/collapse.tsx");
+
+    expect(breadcrumbSource).not.toContain("ariaLabel");
+    expect(breadcrumbSource).not.toMatch(/\bdanger\??:/);
+    expect(collapseSource).not.toContain('"medium"');
+    expect(collapseSource).toContain('"small" | "middle" | "large"');
   });
 });
