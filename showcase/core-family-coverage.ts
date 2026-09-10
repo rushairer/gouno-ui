@@ -124,7 +124,6 @@ export const coreRuntimeFamilyCoverage = {
   Steps: { familyId: "core-steps", review: "covered" },
   Empty: { familyId: "core-empty", review: "covered" },
   Result: { familyId: "core-result", review: "covered" },
-  List: { familyId: "core-list", review: "covered" },
   Descriptions: { familyId: "core-descriptions", review: "covered" },
   Calendar: { familyId: "core-calendar", review: "covered" },
   App: {
