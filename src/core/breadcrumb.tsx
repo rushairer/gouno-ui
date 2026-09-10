@@ -119,7 +119,16 @@ function menuItemNode(item: BreadcrumbMenuItem) {
   if (item.href) {
     return (
       <DropdownMenuItem key={item.key} asChild disabled={item.disabled}>
-        <a href={item.href} onClick={() => item.onClick?.()}>
+        <a
+          href={item.href}
+          onClick={(event) => {
+            if (item.disabled) {
+              event.preventDefault();
+              return;
+            }
+            item.onClick?.();
+          }}
+        >
           {content}
         </a>
       </DropdownMenuItem>
