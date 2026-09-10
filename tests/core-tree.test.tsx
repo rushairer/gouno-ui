@@ -17,6 +17,10 @@ function itemNamed(name: string) {
   return screen.getByText(name).closest('[role="treeitem"]') as HTMLElement;
 }
 
+function checkboxNamed(name: string) {
+  return screen.getByRole("checkbox", { name }) as HTMLInputElement;
+}
+
 describe("Core Tree", () => {
   it("expands, selects and exposes hierarchical ARIA metadata", () => {
     const onSelect = vi.fn();
@@ -56,17 +60,17 @@ describe("Core Tree", () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole("checkbox", { name: "Root" }));
+    fireEvent.click(checkboxNamed("Root"));
     const checked = onCheck.mock.calls.at(-1)?.[0] as string[];
     expect(checked).toEqual(["root", "alpha", "beta"]);
-    expect(screen.getByRole("checkbox", { name: "Root" })).toBeChecked();
-    expect(screen.getByRole("checkbox", { name: "Alpha" })).toBeChecked();
-    expect(screen.getByRole("checkbox", { name: "Beta" })).toBeChecked();
+    expect(checkboxNamed("Root").checked).toBe(true);
+    expect(checkboxNamed("Alpha").checked).toBe(true);
+    expect(checkboxNamed("Beta").checked).toBe(true);
 
-    fireEvent.click(screen.getByRole("checkbox", { name: "Alpha" }));
+    fireEvent.click(checkboxNamed("Alpha"));
 
     const root = itemNamed("Root");
-    const rootCheckbox = screen.getByRole("checkbox", { name: "Root" }) as HTMLInputElement;
+    const rootCheckbox = checkboxNamed("Root");
     expect(root.getAttribute("aria-checked")).toBe("mixed");
     expect(rootCheckbox.indeterminate).toBe(true);
     expect(onCheck.mock.calls.at(-1)?.[1]).toEqual(
@@ -87,10 +91,10 @@ describe("Core Tree", () => {
       />,
     );
 
-    expect(screen.getByRole("checkbox", { name: "Alpha" })).toBeChecked();
-    expect(screen.getByRole("checkbox", { name: "Root" })).not.toBeChecked();
+    expect(checkboxNamed("Alpha").checked).toBe(true);
+    expect(checkboxNamed("Root").checked).toBe(false);
 
-    fireEvent.click(screen.getByRole("checkbox", { name: "Beta" }));
+    fireEvent.click(checkboxNamed("Beta"));
     expect(onCheck).toHaveBeenLastCalledWith(
       { checked: ["alpha", "beta"], halfChecked: [] },
       expect.objectContaining({ checked: true, halfCheckedKeys: [] }),
@@ -112,7 +116,7 @@ describe("Core Tree", () => {
     expect(document.activeElement).toBe(itemNamed("Alpha"));
 
     fireEvent.keyDown(itemNamed("Alpha"), { key: " " });
-    expect(screen.getByRole("checkbox", { name: "Alpha" })).toBeChecked();
+    expect(checkboxNamed("Alpha").checked).toBe(true);
     expect(itemNamed("Root").getAttribute("aria-checked")).toBe("mixed");
 
     fireEvent.keyDown(itemNamed("Alpha"), { key: "ArrowLeft" });
@@ -133,7 +137,9 @@ describe("Core Tree", () => {
     fireEvent.click(screen.getByRole("button", { name: "Expand" }));
     expect(itemNamed("Remote").getAttribute("aria-busy")).toBe("true");
 
-    await waitFor(() => expect(onLoad).toHaveBeenCalledWith(["remote"], expect.anything()));
+    await waitFor(() =>
+      expect(onLoad).toHaveBeenCalledWith(["remote"], expect.anything()),
+    );
     expect(loadData).toHaveBeenCalledTimes(1);
     expect(itemNamed("Remote").getAttribute("aria-busy")).toBeNull();
 
