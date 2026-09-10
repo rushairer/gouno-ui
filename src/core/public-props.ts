@@ -59,7 +59,6 @@ import type { Transfer } from "./transfer";
 import type { Mentions } from "./mentions";
 import type { Tree } from "./tree";
 import type { Menu } from "./menu";
-import type { QRCode } from "./qrcode";
 import type { Watermark } from "./watermark";
 import type { Affix, BackTop } from "./affix";
 import type {
@@ -135,7 +134,6 @@ export type TransferProps = ComponentProps<typeof Transfer>;
 export type MentionsProps = ComponentProps<typeof Mentions>;
 export type TreeProps = ComponentProps<typeof Tree>;
 export type MenuProps = ComponentProps<typeof Menu>;
-export type QRCodeProps = ComponentProps<typeof QRCode>;
 export type WatermarkProps = ComponentProps<typeof Watermark>;
 export type AffixProps = ComponentProps<typeof Affix>;
 export type BackTopProps = ComponentProps<typeof BackTop>;

@@ -64,7 +64,7 @@ export { Transfer, type TransferItem } from "./transfer";
 export { Mentions } from "./mentions";
 export { Tree, type TreeNode } from "./tree";
 export { Menu, type MenuItem } from "./menu";
-export { QRCode } from "./qrcode";
+export { QRCode, type QRCodeProps, type QRCodeErrorLevel } from "./qrcode";
 export { Watermark } from "./watermark";
 export { Affix, BackTop } from "./affix";
 export { Splitter, type SplitterProps } from "./splitter";
@@ -124,7 +124,6 @@ export type {
   PopoverAnchorProps,
   PopoverProps,
   PopoverTriggerProps,
-  QRCodeProps,
   RadioProps,
   RateProps,
   SearchFieldProps,

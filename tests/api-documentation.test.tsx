@@ -4,6 +4,7 @@ import { buttonDocuments } from "../showcase/demos/core/button";
 import { dataEntryDocuments } from "../showcase/demos/core/data-entry";
 import { formDocuments } from "../showcase/demos/core/form";
 import { feedbackDocuments } from "../showcase/demos/core/feedback";
+import { otherDocuments } from "../showcase/demos/core/other";
 import { paginationDocument } from "../showcase/demos/core/pagination";
 import { selectionControlDocuments } from "../showcase/demos/core/selection-controls";
 import { tabsDocument } from "../showcase/demos/core/tabs";
@@ -42,6 +43,7 @@ const cases = [
   ["src/core/tag.tsx", "TagProps", tagDocuments.tag],
   ["src/core/empty.tsx", "EmptyProps", feedbackDocuments.empty],
   ["src/core/result.tsx", "ResultProps", feedbackDocuments.result],
+  ["src/core/qrcode.tsx", "QRCodeProps", otherDocuments.qrcode],
   ["src/core/modal.tsx", "ModalProps", feedbackDocuments.modal],
   ["src/core/drawer.tsx", "DrawerProps", feedbackDocuments.drawer],
   ["src/core/pagination.tsx", "PaginationProps", paginationDocument],
