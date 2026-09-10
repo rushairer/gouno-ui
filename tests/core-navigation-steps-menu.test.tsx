@@ -25,7 +25,9 @@ describe("Core Steps", () => {
     fireEvent.click(screen.getByRole("button", { name: /Two/ }));
     expect(onChange).toHaveBeenLastCalledWith(1);
 
-    fireEvent.click(screen.getByRole("button", { name: /Three/ }));
+    const disabledStep = screen.getByText("Three").closest('[aria-disabled="true"]');
+    expect(disabledStep).toBeTruthy();
+    expect(screen.queryByRole("button", { name: /Three/ })).toBeNull();
     expect(onChange).toHaveBeenCalledTimes(1);
   });
 
