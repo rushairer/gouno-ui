@@ -206,6 +206,7 @@ describe("audited target components", () => {
       "core-result",
       "core-skeleton",
       "core-qrcode",
+      "core-statistic",
       "core-modal",
       "core-drawer",
     ]) {
@@ -224,6 +225,7 @@ describe("audited target components", () => {
       dataEntryDocuments["date-picker"],
       dataEntryDocuments.upload,
       dataDisplayDocuments.table,
+      dataDisplayDocuments.statistic,
       feedbackDocuments.empty,
       feedbackDocuments.result,
       feedbackDocuments.skeleton,
