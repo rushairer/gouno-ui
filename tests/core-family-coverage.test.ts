@@ -40,7 +40,7 @@ describe("Core runtime Showcase family coverage", () => {
     );
   });
 
-  it("points every assigned runtime export at a visible Core Showcase family", () => {
+  it("points every runtime export at a visible Core Showcase family", () => {
     const visibleCoreFamilies = new Set(
       showcaseCatalog
         .filter(
@@ -52,15 +52,15 @@ describe("Core runtime Showcase family coverage", () => {
     );
 
     for (const [name, coverage] of Object.entries(coreRuntimeFamilyCoverage)) {
-      if (coverage.familyId === null) continue;
+      expect(coverage.familyId, `${name} must have a family`).not.toBeNull();
       expect(
-        visibleCoreFamilies.has(coverage.familyId),
+        visibleCoreFamilies.has(coverage.familyId!),
         `${name} -> ${coverage.familyId}`,
       ).toBe(true);
     }
   });
 
-  it("certifies product-proven Form and selection siblings in their canonical families", () => {
+  it("certifies reviewed sibling APIs in their canonical families", () => {
     for (const name of [
       "Field",
       "FormField",
@@ -78,34 +78,21 @@ describe("Core runtime Showcase family coverage", () => {
       "AvatarImage",
       "AvatarFallback",
       "Divider",
+      "App",
+      "AspectRatio",
+      "Container",
+      "Stack",
     ] as const) {
       expect(coreRuntimeFamilyCoverage[name].review, name).toBe("covered");
     }
   });
 
-  it("has no assigned runtime export still waiting for family review", () => {
-    const needsReview = Object.entries(coreRuntimeFamilyCoverage)
-      .filter(([, coverage]) => coverage.review === "needs-review")
+  it("has no runtime export waiting for family review or assignment", () => {
+    const pending = Object.entries(coreRuntimeFamilyCoverage)
+      .filter(([, coverage]) => coverage.review !== "covered")
       .map(([name]) => name)
       .sort();
 
-    expect(needsReview).toEqual([]);
-  });
-
-  it("keeps currently unassigned public runtime APIs explicit instead of hiding them", () => {
-    const unassigned = Object.entries(coreRuntimeFamilyCoverage)
-      .filter(([, coverage]) => coverage.review === "unassigned")
-      .map(([name]) => name)
-      .sort();
-
-    expect(unassigned).toEqual(["App", "AspectRatio", "Container", "Stack"]);
-  });
-
-  it("requires every unassigned export to explain why it remains public", () => {
-    for (const [name, coverage] of Object.entries(coreRuntimeFamilyCoverage)) {
-      if (coverage.review !== "unassigned") continue;
-      expect(coverage.familyId, name).toBeNull();
-      expect(coverage.note?.trim(), name).toBeTruthy();
-    }
+    expect(pending).toEqual([]);
   });
 });
