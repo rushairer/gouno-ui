@@ -70,9 +70,9 @@ describe("core components", () => {
       />,
     );
     expect(screen.getByRole("navigation", { name: "Breadcrumb" })).toBeTruthy();
-    expect(screen.getByText("Current").getAttribute("aria-current")).toBe(
-      "page",
-    );
+    expect(
+      screen.getByText("Current").closest('[aria-current="page"]')?.getAttribute("aria-current"),
+    ).toBe("page");
   });
   it("paginates with disabled boundaries", () => {
     const onChange = (page: number) => {
