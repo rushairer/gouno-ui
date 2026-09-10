@@ -252,6 +252,34 @@ Do not add `ariaLabel` as a compatibility alias, and do not expand QRCode into s
 
 The real `gosso-admin` currently consumes `@gouno/ui` from `file:vendor/gouno-ui-0.1.0.tgz`. Its `MFAPanel` still uses `ariaLabel` because that immutable vendored artifact exposes the old type. Change the product call site to standard `aria-label` in the same change that refreshes the vendored Gouno UI artifact; changing only the product source first would intentionally create a type-incompatible half migration.
 
+## Image returns to native HTML ownership
+
+Core `Image` is no longer a canonical public component. Across the completed Blog public, Blog Admin and Gosso Admin evidence, real product surfaces consistently use native `<img>` and keep `alt`, lazy loading, object-fit/layout, error presentation and click/preview behavior with the product that owns the content.
+
+Migrate direct uses of the old wrapper to the platform element:
+
+```tsx
+// before
+<Image
+  src={asset.url}
+  alt={asset.alt}
+  loading="lazy"
+  className="h-40 w-full object-cover"
+/>
+
+// after
+<img
+  src={asset.url}
+  alt={asset.alt}
+  loading="lazy"
+  className="h-40 w-full object-cover"
+/>
+```
+
+If a product needs a failure UI, own that state and localized copy beside the resource lifecycle rather than relying on the old generic English `"Image unavailable"` fallback. The removed `preview` prop has no compatibility replacement: the previous Core implementation only changed the cursor and did not implement a lightbox, zoom lifecycle, focus management or any actual preview interaction.
+
+Do not introduce another generic `Image` wrapper merely to shorten `<img>` markup. A future shared preview/lightbox, progressive-loading or media-state abstraction requires new independent product evidence, a defined accessibility/interaction lifecycle and a fresh admission review.
+
 ## DataTable status
 
 System Management plus Blog Admin list-page prior art is enough to trigger DataTable review, but not enough to re-admit the historical feature-bag API. Current migrations use Core `Table`/`Pagination` plus product-local filter/action/state composition. See PD-012.
@@ -274,4 +302,4 @@ Standalone product fixtures may add Showcase-only navigation chrome around the r
 
 ## Compatibility assessment
 
-The product-validation reset and canonical renames are breaking changes for consumers that update to the next package artifact. Alert's primitive-to-high-level API correction is also breaking for consumers that used `variant="destructive|default"` as semantic colors. Empty hardening is behaviorally breaking for consumers that relied on its previous English default copy, implicit dashed surface or automatic `role="status"`. Result hardening is breaking for consumers that use `subTitle`, rely on its fixed H2 or automatic `role="status"`, or expect a padded parent Card to compose without a double inset. Skeleton hardening changes accessibility-tree behavior by hiding individual visual placeholders by default; parent loading regions should own any required status/name semantics. Spin/Spinner hardening changes accessibility-tree behavior by removing the implicit Spinner status/English name and moving busy state to `Spin`'s root `aria-busy`; callers that relied on those defaults must provide one explicit localized status region. QRCode hardening is breaking for consumers that use `ariaLabel` or rely on the previous English default accessible name; migrate to standard `aria-label`/`aria-labelledby` together with the updated package artifact. Migrate those responsibilities explicitly as described above. Treat publication accordingly under SemVer/release notes. Existing products fixed to older immutable vendored archives can migrate page-by-page rather than mechanically replacing old wrappers with new ones.
+The product-validation reset and canonical renames are breaking changes for consumers that update to the next package artifact. Alert's primitive-to-high-level API correction is also breaking for consumers that used `variant="destructive|default"` as semantic colors. Empty hardening is behaviorally breaking for consumers that relied on its previous English default copy, implicit dashed surface or automatic `role="status"`. Result hardening is breaking for consumers that use `subTitle`, rely on its fixed H2 or automatic `role="status"`, or expect a padded parent Card to compose without a double inset. Skeleton hardening changes accessibility-tree behavior by hiding individual visual placeholders by default; parent loading regions should own any required status/name semantics. Spin/Spinner hardening changes accessibility-tree behavior by removing the implicit Spinner status/English name and moving busy state to `Spin`'s root `aria-busy`; callers that relied on those defaults must provide one explicit localized status region. QRCode hardening is breaking for consumers that use `ariaLabel` or rely on the previous English default accessible name; migrate to standard `aria-label`/`aria-labelledby` together with the updated package artifact. Core `Image`/`ImageProps` are removed from the canonical Core and root umbrella; consumers that used them must move to native `<img>` or own any real product-specific media interaction locally. Migrate those responsibilities explicitly as described above. Treat publication accordingly under SemVer/release notes. Existing products fixed to older immutable vendored archives can migrate page-by-page rather than mechanically replacing old wrappers with new ones.
