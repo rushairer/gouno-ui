@@ -1,3 +1,4 @@
+import type { ComponentType } from "react";
 import { PageHeader } from "../../../../src/gouno";
 import { AuditLogsPanel } from "./audit-logs";
 import { ClientsPanel } from "./clients";
@@ -11,45 +12,46 @@ export type SystemManagementSection = "clients" | "users" | "audit-logs" | "site
 type SystemManagementPage = {
   title: string;
   route: string;
-  panel: React.ReactNode;
+  panel: ComponentType;
 };
 
 const systemPages: Record<SystemManagementSection, SystemManagementPage> = {
   clients: {
     title: "OAuth2 客户端",
     route: "/system-management/clients",
-    panel: <ClientsPanel />,
+    panel: ClientsPanel,
   },
   users: {
     title: "用户管理",
     route: "/system-management/users",
-    panel: <UsersPanel />,
+    panel: UsersPanel,
   },
   "audit-logs": {
     title: "审计日志",
     route: "/system-management/audit-logs",
-    panel: <AuditLogsPanel />,
+    panel: AuditLogsPanel,
   },
   "site-settings": {
     title: "站点设置",
     route: "/system-management/site-settings",
-    panel: <SiteSettingsPanel />,
+    panel: SiteSettingsPanel,
   },
   system: {
     title: "系统状态",
     route: "/system-management/system",
-    panel: <SystemStatusPanel />,
+    panel: SystemStatusPanel,
   },
 };
 
 export function GossoSystemManagementDemo({ section = "clients" }: { section?: SystemManagementSection }) {
   const page = systemPages[section];
+  const Panel = page.panel;
 
   return (
     <div className="flex flex-col gap-6">
       <FixtureBanner route={page.route} />
       <PageHeader title={page.title} />
-      {page.panel}
+      <Panel />
     </div>
   );
 }
