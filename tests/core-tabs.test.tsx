@@ -5,11 +5,11 @@ import { Tabs, Tag } from "../src/core";
 afterEach(cleanup);
 
 describe("Core Tabs", () => {
-  it("uses Ant-style key semantics and selects the first enabled item by default", () => {
+  it("uses keyed high-level semantics and selects the first enabled item by default", () => {
     const onChange = vi.fn();
     render(
       <Tabs
-        ariaLabel="Sections"
+        aria-label="Sections"
         items={[
           { key: "disabled", label: "Disabled", disabled: true, children: "Disabled panel" },
           { key: "overview", label: "Overview", children: "Overview panel" },
@@ -31,7 +31,7 @@ describe("Core Tabs", () => {
     const onChange = vi.fn();
     const { container } = render(
       <Tabs
-        ariaLabel="Settings"
+        aria-label="Settings"
         activeKey="general"
         items={[
           { key: "general", label: "General", children: "General panel" },
@@ -63,7 +63,7 @@ describe("Core Tabs", () => {
   it("keeps line indicators inside the tab-list scroll boundary and leaves content padding to consumers", () => {
     const { container } = render(
       <Tabs
-        ariaLabel="Line tabs"
+        aria-label="Line tabs"
         items={[
           { key: "one", label: "One", children: "One panel" },
           { key: "two", label: "Two", children: "Two panel" },
@@ -85,7 +85,7 @@ describe("Core Tabs", () => {
   it("keeps tab block-size stable when labels contain badges or other metadata", () => {
     render(
       <Tabs
-        ariaLabel="Operations"
+        aria-label="Operations"
         items={[
           { key: "overview", label: "概览", children: "Overview" },
           {
@@ -107,20 +107,20 @@ describe("Core Tabs", () => {
 
   it("maps fixed heights across all public sizes", () => {
     const item = [{ key: "one", label: "One", children: "Panel" }] as const;
-    const { rerender } = render(<Tabs ariaLabel="Sized tabs" size="small" items={item} />);
+    const { rerender } = render(<Tabs aria-label="Sized tabs" size="small" items={item} />);
     expect(screen.getByRole("tab", { name: "One" }).className).toContain("!h-8");
 
-    rerender(<Tabs ariaLabel="Sized tabs" size="middle" items={item} />);
+    rerender(<Tabs aria-label="Sized tabs" size="middle" items={item} />);
     expect(screen.getByRole("tab", { name: "One" }).className).toContain("!h-10");
 
-    rerender(<Tabs ariaLabel="Sized tabs" size="large" items={item} />);
+    rerender(<Tabs aria-label="Sized tabs" size="large" items={item} />);
     expect(screen.getByRole("tab", { name: "One" }).className).toContain("!h-11");
   });
 
   it("maps bottom/right positions without pushing the indicator outside the list", () => {
     const { rerender } = render(
       <Tabs
-        ariaLabel="Bottom tabs"
+        aria-label="Bottom tabs"
         tabPosition="bottom"
         items={[{ key: "one", label: "One", children: "Panel" }]}
       />,
@@ -130,7 +130,7 @@ describe("Core Tabs", () => {
 
     rerender(
       <Tabs
-        ariaLabel="Right tabs"
+        aria-label="Right tabs"
         tabPosition="right"
         items={[{ key: "one", label: "One", children: "Panel" }]}
       />,
@@ -139,17 +139,17 @@ describe("Core Tabs", () => {
     expect(screen.getByRole("tablist", { name: "Right tabs" }).className).toContain("border-l");
   });
 
-  it("temporarily accepts the pre-reset value/item.value fixture shape", () => {
+  it("keeps ariaLabel only as a deprecated alias and lets standard aria-label win", () => {
     render(
       <Tabs
-        ariaLabel="Legacy fixture"
-        value="old-b"
-        items={[
-          { value: "old-a", label: "Old A" },
-          { value: "old-b", label: "Old B" },
-        ]}
+        aria-label="Canonical tabs"
+        ariaLabel="Legacy tabs"
+        defaultActiveKey="one"
+        items={[{ key: "one", label: "One", children: "Panel" }]}
       />,
     );
-    expect(screen.getByRole("tab", { name: "Old B" }).getAttribute("aria-selected")).toBe("true");
+
+    expect(screen.getByRole("tablist", { name: "Canonical tabs" })).toBeTruthy();
+    expect(screen.queryByRole("tablist", { name: "Legacy tabs" })).toBeNull();
   });
 });

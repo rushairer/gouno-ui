@@ -65,7 +65,7 @@ const tabApi: ApiRow[] = [
   {
     name: "value",
     type: "string",
-    description: "与对应 TabPanel 共享的稳定 key。",
+    description: "与对应 TabPanel 共享的稳定 key。该 primitive value 不等于高层 Tabs 的状态 API。",
   },
   {
     name: "disabled",
@@ -106,7 +106,7 @@ const tabPanelApi: ApiRow[] = [
   {
     name: "value",
     type: "string",
-    description: "与对应 Tab 的 value 一致。",
+    description: "与对应 Tab 的 primitive value 一致。",
   },
   {
     name: "children",
@@ -128,7 +128,7 @@ const tabPanelApi: ApiRow[] = [
 export const tabsDocument: ComponentDocument = {
   title: "Tabs 标签页",
   description:
-    "采用成熟的 activeKey / defaultActiveKey / items / onChange 高层语义，并保留 TabList / Tab / TabPanel 组合能力。默认 line 样式使用轻量指示条；TabBar 与内容面板之间的结构间距由 Tabs 统一负责。",
+    "采用 activeKey / defaultActiveKey / items[].key / onChange 的单一高层状态语义，并保留 TabList / Tab / TabPanel 组合能力。默认 line 样式使用轻量指示条；TabBar 与内容面板之间的结构间距由 Tabs 统一负责。",
   code: publicSource(BasicTabsSource),
   render: () => <BasicTabs />,
   demos: [
@@ -178,7 +178,7 @@ export const tabsDocument: ComponentDocument = {
       type: "readonly TabItem[]",
       defaultValue: "[]",
       description:
-        "标签项集合；每项使用 key、label，可选 icon、children 与 disabled。",
+        "标签项集合；每项必须使用稳定 key，并可提供 label、icon、children 与 disabled。高层 items[].value 已移除。",
     },
     {
       name: "onChange",
@@ -216,9 +216,16 @@ export const tabsDocument: ComponentDocument = {
       description: "标签导航末端的补充操作或状态内容。",
     },
     {
+      name: "aria-label / aria-labelledby",
+      type: "AriaAttributes",
+      description:
+        "canonical 可访问命名入口；高层 Tabs 会把标准 ARIA 名称传给生成的 TabList。",
+    },
+    {
       name: "ariaLabel",
       type: "string",
-      description: "标签列表的可访问名称。产品路由型 Tabs 应提供明确名称。",
+      description:
+        "已弃用迁移别名。标准 aria-label 优先；仅保留到真实产品 vendored artifact 原子升级。",
     },
   ],
   apiSections: [
@@ -239,13 +246,16 @@ export const tabsDocument: ComponentDocument = {
   notes: (
     <div className="flex flex-col gap-2 text-sm text-muted-foreground">
       <p>
-        高层 API 参考 Ant Design 的稳定语义；可访问性与组合结构建立在 Radix Tabs 上，不复制第三方内部实现。
+        高层 API 参考成熟组件库的稳定语义；可访问性与组合结构建立在 Radix Tabs 上，不复制第三方内部实现。
+      </p>
+      <p>
+        高层 Tabs 的 pre-reset value/defaultValue/items[].value 输入已移除；状态只通过 activeKey/defaultActiveKey/items[].key/onChange 表达。primitive Tab/TabPanel 的 value 是组合层内部 key，不是第二套高层状态 API。
       </p>
       <p>
         Tabs 只负责 TabBar 与 TabPanel 的结构关系，包括方向感知的间距和活动指示线。TabPanel 不默认注入业务内容 padding；Card、Form、Table 等内容应自行声明内部间距。
       </p>
       <p>
-        需要完全自定义标签结构时可使用同 owner 的 TabList、Tab、TabPanel；不要同时为同一状态传 activeKey 与另一套 value 写入口。
+        `ariaLabel` 仅作为旧产品 artifact 迁移期间的 deprecated alias 保留；新代码和 Showcase 示例使用标准 `aria-label` / `aria-labelledby`。
       </p>
     </div>
   ),

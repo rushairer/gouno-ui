@@ -16,7 +16,7 @@ export function TabsPlacement() {
   return (
     <div className="min-h-44 max-w-3xl">
       <Tabs
-        ariaLabel="设置栏目"
+        aria-label="设置栏目"
         defaultActiveKey="general"
         items={items}
         tabPosition="left"

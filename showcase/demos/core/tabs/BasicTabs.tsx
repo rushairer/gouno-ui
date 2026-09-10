@@ -25,7 +25,7 @@ const items = [
 export function BasicTabs() {
   return (
     <Tabs
-      ariaLabel="工作区栏目"
+      aria-label="工作区栏目"
       defaultActiveKey="overview"
       items={items}
     />
