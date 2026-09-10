@@ -82,7 +82,6 @@ export const coreRuntimeFamilyCoverage = {
   Alert: { familyId: "core-alert", review: "covered" },
   Skeleton: { familyId: "core-skeleton", review: "covered" },
   Statistic: { familyId: "core-statistic", review: "covered" },
-  Timeline: { familyId: "core-timeline", review: "covered" },
   Container: {
     familyId: null,
     review: "unassigned",
