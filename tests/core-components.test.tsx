@@ -109,12 +109,17 @@ describe("core components", () => {
 });
 
 describe("core composite controls", () => {
-  it("supports carousel keyboard-free button navigation", () => {
+  it("supports carousel button navigation with canonical tab state", () => {
     render(
       <Carousel items={[<span key="a">A</span>, <span key="b">B</span>]} />,
     );
-    expect(screen.getByText("1 / 2")).toBeTruthy();
+    const dots = screen.getAllByRole("tab");
+    expect(dots[0].getAttribute("aria-selected")).toBe("true");
+    expect(dots[1].getAttribute("aria-selected")).toBe("false");
+
     fireEvent.click(screen.getByRole("button", { name: "Next slide" }));
-    expect(screen.getByText("2 / 2")).toBeTruthy();
+
+    expect(dots[0].getAttribute("aria-selected")).toBe("false");
+    expect(dots[1].getAttribute("aria-selected")).toBe("true");
   });
 });
