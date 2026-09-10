@@ -1,6 +1,16 @@
-import { describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { Tree, type TreeNode } from "../src/core";
+
+afterEach(() => {
+  cleanup();
+});
 
 const treeData: TreeNode[] = [
   {
@@ -101,7 +111,7 @@ describe("Core Tree", () => {
     );
   });
 
-  it("supports roving keyboard navigation and keyboard checking", () => {
+  it("supports roving keyboard navigation and keyboard checking", async () => {
     render(
       <Tree
         treeData={treeData}
@@ -113,18 +123,24 @@ describe("Core Tree", () => {
     const root = itemNamed("Root");
     root.focus();
     fireEvent.keyDown(root, { key: "ArrowDown" });
-    expect(document.activeElement).toBe(itemNamed("Alpha"));
+    await waitFor(() => expect(document.activeElement).toBe(itemNamed("Alpha")));
 
     fireEvent.keyDown(itemNamed("Alpha"), { key: " " });
     expect(checkboxNamed("Alpha").checked).toBe(true);
     expect(itemNamed("Root").getAttribute("aria-checked")).toBe("mixed");
 
     fireEvent.keyDown(itemNamed("Alpha"), { key: "ArrowLeft" });
-    expect(document.activeElement).toBe(itemNamed("Root"));
+    await waitFor(() => expect(document.activeElement).toBe(itemNamed("Root")));
   });
 
   it("loads an asynchronous branch once and reports loadedKeys", async () => {
-    const loadData = vi.fn(async () => undefined);
+    let resolveLoad!: () => void;
+    const loadData = vi.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveLoad = resolve;
+        }),
+    );
     const onLoad = vi.fn();
     render(
       <Tree
@@ -137,6 +153,7 @@ describe("Core Tree", () => {
     fireEvent.click(screen.getByRole("button", { name: "Expand" }));
     expect(itemNamed("Remote").getAttribute("aria-busy")).toBe("true");
 
+    resolveLoad();
     await waitFor(() =>
       expect(onLoad).toHaveBeenCalledWith(["remote"], expect.anything()),
     );
