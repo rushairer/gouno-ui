@@ -192,6 +192,39 @@ Touched call sites normally need no visual migration. If a previous consumer int
 
 Reduced-motion behavior continues to be owned globally by `src/base.css`; do not duplicate a second Skeleton-specific motion policy.
 
+## Spin / Spinner busy-state and announcement semantics
+
+Canonical `Spinner` is a visual indeterminate-progress indicator, while `Spin` marks an existing content region as busy. Neither component owns product-local loading copy or an automatic live-region announcement.
+
+`Spinner` no longer creates `role="status"` or the English accessible name `"Loading"` by default. It is decorative with `aria-hidden={true}` when a nearby or parent region already owns the task status:
+
+```tsx
+<div role="status" aria-live="polite">
+  <Spinner />
+  <span>正在保存…</span>
+</div>
+```
+
+If a Spinner is genuinely standalone and has no visible text, opt into semantics through standard ARIA only:
+
+```tsx
+<Spinner
+  aria-hidden={false}
+  role="status"
+  aria-label="正在保存"
+/>
+```
+
+`Spin` keeps `spinning` as the single busy-state write path. The root receives `aria-busy="true"` while busy, but its overlay and optional `tip` do not become live regions automatically:
+
+```tsx
+<Spin spinning={loading} tip="正在刷新内容">
+  <Content />
+</Spin>
+```
+
+If the state transition itself needs announcement, put the appropriate `role`, `aria-live` and localized status text on the semantic region that owns that workflow. Do not create competing status regions on both the parent and the nested Spinner. Do not restore implicit English copy or add delay/fullscreen/custom-indicator/AsyncState compatibility APIs without new product evidence.
+
 ## QRCode canvas and accessible-name semantics
 
 Canonical `QRCode` renders a real canvas and now follows standard React/HTML accessibility and DOM-extension rules. The encoded value and renderer options remain the same narrow Core responsibility: `value`, `size`, `color`, `background` and `errorLevel`. `size` owns both canvas dimensions so consumers do not get a second `width`/`height` write path.
@@ -241,4 +274,4 @@ Standalone product fixtures may add Showcase-only navigation chrome around the r
 
 ## Compatibility assessment
 
-The product-validation reset and canonical renames are breaking changes for consumers that update to the next package artifact. Alert's primitive-to-high-level API correction is also breaking for consumers that used `variant="destructive|default"` as semantic colors. Empty hardening is behaviorally breaking for consumers that relied on its previous English default copy, implicit dashed surface or automatic `role="status"`. Result hardening is breaking for consumers that use `subTitle`, rely on its fixed H2 or automatic `role="status"`, or expect a padded parent Card to compose without a double inset. Skeleton hardening changes accessibility-tree behavior by hiding individual visual placeholders by default; parent loading regions should own any required status/name semantics. QRCode hardening is breaking for consumers that use `ariaLabel` or rely on the previous English default accessible name; migrate to standard `aria-label`/`aria-labelledby` together with the updated package artifact. Migrate those responsibilities explicitly as described above. Treat publication accordingly under SemVer/release notes. Existing products fixed to older immutable vendored archives can migrate page-by-page rather than mechanically replacing old wrappers with new ones.
+The product-validation reset and canonical renames are breaking changes for consumers that update to the next package artifact. Alert's primitive-to-high-level API correction is also breaking for consumers that used `variant="destructive|default"` as semantic colors. Empty hardening is behaviorally breaking for consumers that relied on its previous English default copy, implicit dashed surface or automatic `role="status"`. Result hardening is breaking for consumers that use `subTitle`, rely on its fixed H2 or automatic `role="status"`, or expect a padded parent Card to compose without a double inset. Skeleton hardening changes accessibility-tree behavior by hiding individual visual placeholders by default; parent loading regions should own any required status/name semantics. Spin/Spinner hardening changes accessibility-tree behavior by removing the implicit Spinner status/English name and moving busy state to `Spin`'s root `aria-busy`; callers that relied on those defaults must provide one explicit localized status region. QRCode hardening is breaking for consumers that use `ariaLabel` or rely on the previous English default accessible name; migrate to standard `aria-label`/`aria-labelledby` together with the updated package artifact. Migrate those responsibilities explicitly as described above. Treat publication accordingly under SemVer/release notes. Existing products fixed to older immutable vendored archives can migrate page-by-page rather than mechanically replacing old wrappers with new ones.
