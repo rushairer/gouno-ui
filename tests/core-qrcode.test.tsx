@@ -1,6 +1,6 @@
 import { createRef } from "react";
 import { render, screen, waitFor } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { QRCode } from "../src/core/qrcode";
 
 const { toCanvas } = vi.hoisted(() => ({
@@ -10,6 +10,10 @@ const { toCanvas } = vi.hoisted(() => ({
 vi.mock("qrcode", () => ({
   default: { toCanvas },
 }));
+
+beforeEach(() => {
+  toCanvas.mockClear();
+});
 
 describe("Core QRCode", () => {
   it("forwards standard canvas/ARIA props and the canvas ref", async () => {
