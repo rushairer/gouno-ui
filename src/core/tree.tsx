@@ -2,6 +2,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type ChangeEvent,
   type CSSProperties,
   type HTMLAttributes,
   type Key,
@@ -54,13 +55,15 @@ export interface TreeCheckInfo {
   checkedNodes: TreeNode[];
   halfCheckedKeys: Key[];
   node: TreeNode;
-  nativeEvent: MouseEvent<HTMLInputElement> | KeyboardEvent<HTMLDivElement>;
+  nativeEvent: ChangeEvent<HTMLInputElement> | KeyboardEvent<HTMLDivElement>;
 }
 
-export type TreeCheckedKeys = readonly Key[] | {
-  checked: readonly Key[];
-  halfChecked: readonly Key[];
-};
+export type TreeCheckedKeys =
+  | readonly Key[]
+  | {
+      checked: readonly Key[];
+      halfChecked: readonly Key[];
+    };
 
 export type TreeSemantic =
   | "root"
@@ -127,7 +130,6 @@ interface TreeEntry {
   parentKey?: Key;
   level: number;
   index: number;
-  count: number;
 }
 
 function keyToken(key: Key) {
@@ -138,9 +140,13 @@ function keyIncludes(keys: readonly Key[], key: Key) {
   return keys.some((candidate) => candidate === key);
 }
 
-function flattenAll(nodes: readonly TreeNode[], parentKey?: Key, level = 1): TreeEntry[] {
+function flattenAll(
+  nodes: readonly TreeNode[],
+  parentKey?: Key,
+  level = 1,
+): TreeEntry[] {
   return nodes.flatMap((node, index) => [
-    { node, parentKey, level, index, count: nodes.length },
+    { node, parentKey, level, index },
     ...flattenAll(node.children ?? [], node.key, level + 1),
   ]);
 }
@@ -152,7 +158,7 @@ function flattenVisible(
   level = 1,
 ): TreeEntry[] {
   return nodes.flatMap((node, index) => {
-    const entry = { node, parentKey, level, index, count: nodes.length };
+    const entry = { node, parentKey, level, index };
     return [
       entry,
       ...(keyIncludes(expanded, node.key)
@@ -172,9 +178,15 @@ function uniqueKeys(keys: readonly Key[]) {
   return Array.from(new Set(keys));
 }
 
+function isStrictCheckedKeys(
+  value: TreeCheckedKeys,
+): value is { checked: readonly Key[]; halfChecked: readonly Key[] } {
+  return !Array.isArray(value);
+}
+
 function rawCheckedKeys(value: TreeCheckedKeys | undefined) {
   if (!value) return [];
-  return Array.isArray(value) ? value : value.checked;
+  return isStrictCheckedKeys(value) ? value.checked : value;
 }
 
 function checkedNodesFor(keys: readonly Key[], entries: readonly TreeEntry[]) {
@@ -194,7 +206,16 @@ function resolveSwitcherIcon(
   info: TreeNodeRenderInfo,
 ) {
   if (source) return typeof source === "function" ? source(info) : source;
-  return info.expanded ? <ChevronDown aria-hidden="true" /> : <ChevronRight aria-hidden="true" />;
+  return info.expanded ? (
+    <ChevronDown aria-hidden="true" />
+  ) : (
+    <ChevronRight aria-hidden="true" />
+  );
+}
+
+function titleId(key: Key, level: number, index: number) {
+  const safeKey = keyToken(key).replace(/[^a-zA-Z0-9_-]/g, "-");
+  return `gouno-tree-title-${level}-${index}-${safeKey}`;
 }
 
 export function Tree({
@@ -244,7 +265,11 @@ export function Tree({
   );
 
   const [internalExpandedKeys, setInternalExpandedKeys] = useState<Key[]>(() =>
-    uniqueKeys(defaultExpandAll ? [...branchKeys(treeData), ...defaultExpandedKeys] : defaultExpandedKeys),
+    uniqueKeys(
+      defaultExpandAll
+        ? [...branchKeys(treeData), ...defaultExpandedKeys]
+        : defaultExpandedKeys,
+    ),
   );
   const activeExpandedKeys = expandedKeys ?? internalExpandedKeys;
 
@@ -256,7 +281,9 @@ export function Tree({
   const [internalCheckedKeys, setInternalCheckedKeys] = useState<Key[]>(() =>
     uniqueKeys(defaultCheckedKeys),
   );
-  const incomingCheckedKeys = checkedKeys ? rawCheckedKeys(checkedKeys) : internalCheckedKeys;
+  const incomingCheckedKeys = checkedKeys
+    ? rawCheckedKeys(checkedKeys)
+    : internalCheckedKeys;
 
   const [internalLoadedKeys, setInternalLoadedKeys] = useState<Key[]>([]);
   const activeLoadedKeys = loadedKeys ?? internalLoadedKeys;
@@ -275,7 +302,9 @@ export function Tree({
     const checked = new Set<Key>();
 
     const addDescendants = (node: TreeNode) => {
-      if (!node.disabled && !node.disableCheckbox && node.checkable !== false) checked.add(node.key);
+      if (!node.disabled && !node.disableCheckbox && node.checkable !== false) {
+        checked.add(node.key);
+      }
       for (const child of node.children ?? []) addDescendants(child);
     };
 
@@ -287,30 +316,45 @@ export function Tree({
     for (const { node } of [...allEntries].reverse()) {
       if (node.disabled || node.disableCheckbox || node.checkable === false) continue;
       const eligibleChildren = (node.children ?? []).filter(
-        (child) => !child.disabled && !child.disableCheckbox && child.checkable !== false,
+        (child) =>
+          !child.disabled && !child.disableCheckbox && child.checkable !== false,
       );
-      if (eligibleChildren.length && eligibleChildren.every((child) => checked.has(child.key))) {
+      if (
+        eligibleChildren.length &&
+        eligibleChildren.every((child) => checked.has(child.key))
+      ) {
         checked.add(node.key);
       }
     }
 
-    return allEntries.filter(({ node }) => checked.has(node.key)).map(({ node }) => node.key);
+    return allEntries
+      .filter(({ node }) => checked.has(node.key))
+      .map(({ node }) => node.key);
   }, [allEntries, checkStrictly, entryByKey, incomingCheckedKeys]);
 
   const halfCheckedKeys = useMemo(() => {
     if (checkStrictly) {
-      return checkedKeys && !Array.isArray(checkedKeys) ? [...checkedKeys.halfChecked] : [];
+      return checkedKeys && isStrictCheckedKeys(checkedKeys)
+        ? [...checkedKeys.halfChecked]
+        : [];
     }
     const checked = new Set(conductedCheckedKeys);
     const half = new Set<Key>();
     for (const { node } of [...allEntries].reverse()) {
       if (checked.has(node.key)) continue;
       const children = (node.children ?? []).filter(
-        (child) => !child.disabled && !child.disableCheckbox && child.checkable !== false,
+        (child) =>
+          !child.disabled && !child.disableCheckbox && child.checkable !== false,
       );
-      if (children.some((child) => checked.has(child.key) || half.has(child.key))) half.add(node.key);
+      if (
+        children.some((child) => checked.has(child.key) || half.has(child.key))
+      ) {
+        half.add(node.key);
+      }
     }
-    return allEntries.filter(({ node }) => half.has(node.key)).map(({ node }) => node.key);
+    return allEntries
+      .filter(({ node }) => half.has(node.key))
+      .map(({ node }) => node.key);
   }, [allEntries, checkStrictly, checkedKeys, conductedCheckedKeys]);
 
   const visibleEntries = useMemo(
@@ -318,8 +362,9 @@ export function Tree({
     [activeExpandedKeys, treeData],
   );
   const initialFocusKey =
-    activeSelectedKeys.find((key) => visibleEntries.some(({ node }) => node.key === key)) ??
-    visibleEntries[0]?.node.key;
+    activeSelectedKeys.find((key) =>
+      visibleEntries.some(({ node }) => node.key === key),
+    ) ?? visibleEntries[0]?.node.key;
   const [focusKey, setFocusKey] = useState<Key | undefined>(initialFocusKey);
 
   const setRootRef = (node: HTMLDivElement | null) => {
@@ -333,18 +378,28 @@ export function Tree({
     setFocusKey(key);
     queueMicrotask(() => {
       const token = keyToken(key);
-      const candidates = rootRef.current?.querySelectorAll<HTMLElement>("[data-tree-key]") ?? [];
-      Array.from(candidates).find((element) => element.dataset.treeKey === token)?.focus();
+      const candidates =
+        rootRef.current?.querySelectorAll<HTMLElement>("[data-tree-key]") ?? [];
+      Array.from(candidates)
+        .find((element) => element.dataset.treeKey === token)
+        ?.focus();
     });
   };
 
   const sortKeys = (keys: Iterable<Key>) =>
     Array.from(new Set(keys)).sort(
-      (a, b) => (orderByKey.get(a) ?? Number.MAX_SAFE_INTEGER) - (orderByKey.get(b) ?? Number.MAX_SAFE_INTEGER),
+      (a, b) =>
+        (orderByKey.get(a) ?? Number.MAX_SAFE_INTEGER) -
+        (orderByKey.get(b) ?? Number.MAX_SAFE_INTEGER),
     );
 
   const requestLoad = async (node: TreeNode) => {
-    if (!loadData || node.isLeaf === true || keyIncludes(activeLoadedKeys, node.key) || keyIncludes(loadingKeys, node.key)) {
+    if (
+      !loadData ||
+      node.isLeaf === true ||
+      keyIncludes(activeLoadedKeys, node.key) ||
+      keyIncludes(loadingKeys, node.key)
+    ) {
       return;
     }
     setLoadingKeys((keys) => uniqueKeys([...keys, node.key]));
@@ -376,13 +431,14 @@ export function Tree({
 
     const currentlySelected = keyIncludes(activeSelectedKeys, node.key);
     const additive = multiple && (event.metaKey || event.ctrlKey);
-    const nextKeys = !multiple || !additive
-      ? currentlySelected && multiple
-        ? []
-        : [node.key]
-      : currentlySelected
-        ? activeSelectedKeys.filter((key) => key !== node.key)
-        : sortKeys([...activeSelectedKeys, node.key]);
+    const nextKeys =
+      !multiple || !additive
+        ? currentlySelected && multiple
+          ? []
+          : [node.key]
+        : currentlySelected
+          ? activeSelectedKeys.filter((key) => key !== node.key)
+          : sortKeys([...activeSelectedKeys, node.key]);
 
     if (selectedKeys === undefined) setInternalSelectedKeys(nextKeys);
     onSelect?.(nextKeys, {
@@ -396,9 +452,10 @@ export function Tree({
   const setChecked = (
     node: TreeNode,
     nextChecked: boolean,
-    event: MouseEvent<HTMLInputElement> | KeyboardEvent<HTMLDivElement>,
+    event: ChangeEvent<HTMLInputElement> | KeyboardEvent<HTMLDivElement>,
   ) => {
-    const nodeDisabled = disabled || node.disabled || node.disableCheckbox || node.checkable === false;
+    const nodeDisabled =
+      disabled || node.disabled || node.disableCheckbox || node.checkable === false;
     if (nodeDisabled || !checkable) return;
 
     const current = new Set(conductedCheckedKeys);
@@ -408,7 +465,9 @@ export function Tree({
     } else {
       const descendants = flattenAll([node]).map(({ node: child }) => child);
       for (const child of descendants) {
-        if (child.disabled || child.disableCheckbox || child.checkable === false) continue;
+        if (child.disabled || child.disableCheckbox || child.checkable === false) {
+          continue;
+        }
         if (nextChecked) current.add(child.key);
         else current.delete(child.key);
       }
@@ -420,18 +479,27 @@ export function Tree({
       }
 
       for (const { node: candidate } of [...allEntries].reverse()) {
-        if (candidate.disabled || candidate.disableCheckbox || candidate.checkable === false) continue;
+        if (
+          candidate.disabled ||
+          candidate.disableCheckbox ||
+          candidate.checkable === false
+        ) {
+          continue;
+        }
         const children = (candidate.children ?? []).filter(
-          (child) => !child.disabled && !child.disableCheckbox && child.checkable !== false,
+          (child) =>
+            !child.disabled && !child.disableCheckbox && child.checkable !== false,
         );
-        if (children.length && children.every((child) => current.has(child.key))) current.add(candidate.key);
+        if (children.length && children.every((child) => current.has(child.key))) {
+          current.add(candidate.key);
+        }
       }
     }
 
     const nextKeys = sortKeys(current);
     if (checkedKeys === undefined) setInternalCheckedKeys(nextKeys);
     const nextHalfKeys = checkStrictly
-      ? checkedKeys && !Array.isArray(checkedKeys)
+      ? checkedKeys && isStrictCheckedKeys(checkedKeys)
         ? [...checkedKeys.halfChecked]
         : []
       : (() => {
@@ -440,9 +508,18 @@ export function Tree({
           for (const { node: candidate } of [...allEntries].reverse()) {
             if (checked.has(candidate.key)) continue;
             const children = (candidate.children ?? []).filter(
-              (child) => !child.disabled && !child.disableCheckbox && child.checkable !== false,
+              (child) =>
+                !child.disabled &&
+                !child.disableCheckbox &&
+                child.checkable !== false,
             );
-            if (children.some((child) => checked.has(child.key) || half.has(child.key))) half.add(candidate.key);
+            if (
+              children.some(
+                (child) => checked.has(child.key) || half.has(child.key),
+              )
+            ) {
+              half.add(candidate.key);
+            }
           }
           return sortKeys(half);
         })();
@@ -459,15 +536,24 @@ export function Tree({
     });
   };
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>, entry: TreeEntry) => {
+  const handleKeyDown = (
+    event: KeyboardEvent<HTMLDivElement>,
+    entry: TreeEntry,
+  ) => {
     const { node, parentKey } = entry;
-    const visibleIndex = visibleEntries.findIndex(({ node: visibleNode }) => visibleNode.key === node.key);
+    const visibleIndex = visibleEntries.findIndex(
+      ({ node: visibleNode }) => visibleNode.key === node.key,
+    );
     const expanded = keyIncludes(activeExpandedKeys, node.key);
-    const hasChildren = Boolean(node.children?.length) || (Boolean(loadData) && node.isLeaf !== true);
+    const hasChildren =
+      Boolean(node.children?.length) || (Boolean(loadData) && node.isLeaf !== true);
 
     if (event.key === "ArrowDown") {
       event.preventDefault();
-      focusNode(visibleEntries[Math.min(visibleEntries.length - 1, visibleIndex + 1)]?.node.key);
+      focusNode(
+        visibleEntries[Math.min(visibleEntries.length - 1, visibleIndex + 1)]
+          ?.node.key,
+      );
       return;
     }
     if (event.key === "ArrowUp") {
@@ -501,7 +587,12 @@ export function Tree({
       }
       return;
     }
-    if (event.key === " " && checkable && node.checkable !== false && !node.disableCheckbox) {
+    if (
+      event.key === " " &&
+      checkable &&
+      node.checkable !== false &&
+      !node.disableCheckbox
+    ) {
       event.preventDefault();
       setChecked(node, !keyIncludes(conductedCheckedKeys, node.key), event);
       return;
@@ -512,7 +603,11 @@ export function Tree({
     }
   };
 
-  const renderNodes = (nodes: readonly TreeNode[], parentKey?: Key, level = 1): ReactNode => (
+  const renderNodes = (
+    nodes: readonly TreeNode[],
+    parentKey?: Key,
+    level = 1,
+  ): ReactNode => (
     <ul
       role={level === 1 ? "none" : "group"}
       data-slot={level === 1 ? "tree-list" : "tree-group"}
@@ -524,14 +619,16 @@ export function Tree({
       style={level > 1 ? semanticStyles.group : undefined}
     >
       {nodes.map((node, index) => {
-        const entry: TreeEntry = { node, parentKey, level, index, count: nodes.length };
+        const entry: TreeEntry = { node, parentKey, level, index };
         const nodeDisabled = disabled || Boolean(node.disabled);
         const expanded = keyIncludes(activeExpandedKeys, node.key);
         const selected = keyIncludes(activeSelectedKeys, node.key);
         const checked = keyIncludes(conductedCheckedKeys, node.key);
         const halfChecked = keyIncludes(halfCheckedKeys, node.key);
         const loading = keyIncludes(loadingKeys, node.key);
-        const hasChildren = Boolean(node.children?.length) || (Boolean(loadData) && node.isLeaf !== true);
+        const hasChildren =
+          Boolean(node.children?.length) ||
+          (Boolean(loadData) && node.isLeaf !== true);
         const nodeInfo: TreeNodeRenderInfo = {
           node,
           expanded,
@@ -541,10 +638,14 @@ export function Tree({
           loading,
           disabled: nodeDisabled,
         };
-        const resolvedIcon = showIcon ? resolveNodeIcon(node.icon ?? icon, nodeInfo) : null;
+        const resolvedIcon = showIcon
+          ? resolveNodeIcon(node.icon ?? icon, nodeInfo)
+          : null;
         const title = titleRender ? titleRender(node) : node.title;
         const matched = Boolean(filterTreeNode?.(node));
-        const tabbable = focusKey === undefined ? node.key === initialFocusKey : node.key === focusKey;
+        const tabbable =
+          focusKey === undefined ? node.key === initialFocusKey : node.key === focusKey;
+        const nodeTitleId = titleId(node.key, level, index);
 
         return (
           <li key={node.key} role="none" className="min-w-0">
@@ -556,8 +657,16 @@ export function Tree({
               data-selected={selected || undefined}
               data-filter-match={matched || undefined}
               aria-expanded={hasChildren ? expanded : undefined}
-              aria-selected={selectable && node.selectable !== false ? selected : undefined}
-              aria-checked={checkable && node.checkable !== false ? (halfChecked ? "mixed" : checked) : undefined}
+              aria-selected={
+                selectable && node.selectable !== false ? selected : undefined
+              }
+              aria-checked={
+                checkable && node.checkable !== false
+                  ? halfChecked
+                    ? "mixed"
+                    : checked
+                  : undefined
+              }
               aria-disabled={nodeDisabled || undefined}
               aria-busy={loading || undefined}
               aria-level={level}
@@ -569,7 +678,8 @@ export function Tree({
               className={cn(
                 "flex min-w-0 items-center gap-1 rounded-md px-1 py-0.5 text-sm outline-none transition-colors",
                 blockNode ? "w-full" : "w-fit max-w-full",
-                !nodeDisabled && "hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring",
+                !nodeDisabled &&
+                  "hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring",
                 selected && "bg-accent text-accent-foreground",
                 matched && "font-medium",
                 nodeDisabled && "cursor-not-allowed opacity-50",
@@ -590,41 +700,49 @@ export function Tree({
                     event.stopPropagation();
                     setExpanded(node, !expanded);
                   }}
-                  className={cn("size-6 min-h-0 shrink-0 p-0", semanticClassNames.switcher)}
+                  className={cn(
+                    "size-6 min-h-0 shrink-0 p-0",
+                    semanticClassNames.switcher,
+                  )}
                   style={semanticStyles.switcher}
                 >
-                  {loading ? (
-                    switcherLoadingIcon ?? <Spinner />
-                  ) : (
-                    resolveSwitcherIcon(switcherIcon, nodeInfo)
-                  )}
+                  {loading
+                    ? switcherLoadingIcon ?? <Spinner />
+                    : resolveSwitcherIcon(switcherIcon, nodeInfo)}
                 </Button>
               ) : (
                 <span
                   aria-hidden="true"
                   data-slot="tree-switcher-placeholder"
-                  className={cn("size-6 shrink-0", semanticClassNames.switcher)}
+                  className={cn(
+                    "size-6 shrink-0",
+                    semanticClassNames.switcher,
+                  )}
                   style={semanticStyles.switcher}
                 />
               )}
 
               {checkable && node.checkable !== false ? (
                 <input
+                  ref={(input) => {
+                    if (input) input.indeterminate = halfChecked;
+                  }}
                   type="checkbox"
                   tabIndex={-1}
                   checked={checked}
                   disabled={nodeDisabled || node.disableCheckbox}
-                  aria-label={`Check ${String(node.title)}`}
+                  aria-labelledby={nodeTitleId}
                   aria-checked={halfChecked ? "mixed" : checked}
                   data-indeterminate={halfChecked || undefined}
                   onClick={(event) => event.stopPropagation()}
-                  onChange={() => undefined}
-                  onMouseDown={(event) => event.stopPropagation()}
-                  onClickCapture={(event) => {
+                  onChange={(event) => {
                     event.stopPropagation();
-                    setChecked(node, !checked, event as unknown as MouseEvent<HTMLInputElement>);
+                    setChecked(node, event.currentTarget.checked, event);
                   }}
-                  className={cn("size-4 shrink-0 accent-primary", semanticClassNames.checkbox)}
+                  className={cn(
+                    "size-4 shrink-0 accent-primary",
+                    semanticClassNames.checkbox,
+                  )}
                   style={semanticStyles.checkbox}
                 />
               ) : null}
@@ -633,7 +751,10 @@ export function Tree({
                 <span
                   data-slot="tree-icon"
                   aria-hidden="true"
-                  className={cn("flex size-5 shrink-0 items-center justify-center", semanticClassNames.icon)}
+                  className={cn(
+                    "flex size-5 shrink-0 items-center justify-center",
+                    semanticClassNames.icon,
+                  )}
                   style={semanticStyles.icon}
                 >
                   {resolvedIcon}
@@ -641,8 +762,12 @@ export function Tree({
               ) : null}
 
               <span
+                id={nodeTitleId}
                 data-slot="tree-title"
-                className={cn("min-w-0 break-words", semanticClassNames.title)}
+                className={cn(
+                  "min-w-0 break-words",
+                  semanticClassNames.title,
+                )}
                 style={semanticStyles.title}
               >
                 {title}
