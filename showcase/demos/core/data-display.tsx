@@ -107,7 +107,6 @@ export const dataDisplayDocuments: Record<string, ComponentDocument> = {
       },
       {
         title: "分组表头、合并单元格与汇总",
-        description: "分组表头、合并单元格与汇总仍使用原生 table 语义。",
         code: TableGroupedCode.replaceAll(
           "../../../../src/core",
           "@gouno/ui/core",
