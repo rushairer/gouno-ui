@@ -1,2 +1,0 @@
-import { useState, type ImgHTMLAttributes, type ReactNode } from "react";
-export function Image({ fallback, preview = false, className, alt = "", ...props }: ImgHTMLAttributes<HTMLImageElement> & { fallback?: ReactNode; preview?: boolean }) { const [error, setError] = useState(false); if (error) return <span role="img" aria-label={alt} className={className}>{fallback || "Image unavailable"}</span>; return <img {...props} alt={alt} className={`${preview ? "cursor-zoom-in" : ""} ${className || ""}`} onError={(e) => { setError(true); props.onError?.(e); }} />; }

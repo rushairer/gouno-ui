@@ -15,8 +15,6 @@ import {
   Calendar,
   Carousel,
   Descriptions,
-  Empty,
-  Image,
   List,
   Table,
   Tag,
@@ -61,20 +59,6 @@ export const dataDisplayDocuments: Record<string, ComponentDocument> = {
       <div className="max-w-md">
         <Calendar value={new Date(2026, 0, 15)} onChange={() => undefined} />
       </div>
-    ),
-  },
-  image: {
-    title: "Image 图片",
-    description: "图片加载失败时提供可访问 fallback。",
-    code: '<Image src="/cover.png" fallback={<Empty title="图片不可用" description="请稍后重试。" />} />',
-    render: () => (
-      <Image
-        src="/missing.png"
-        alt="示例图片"
-        fallback={
-          <Empty title="图片不可用" description="请稍后重试。" />
-        }
-      />
     ),
   },
   carousel: {

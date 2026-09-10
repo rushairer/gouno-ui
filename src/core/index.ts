@@ -43,7 +43,6 @@ export { Empty, type EmptyProps } from "./empty";
 export { Result, type ResultProps, type ResultStatus } from "./result";
 export { List } from "./list";
 export { Descriptions } from "./descriptions";
-export { Image } from "./image";
 export { Calendar } from "./calendar";
 export { App, type AppProps } from "./app";
 export { FloatButton, type FloatButtonProps } from "./float-button";
@@ -106,7 +105,6 @@ export type {
   GridProps,
   IconButtonLinkProps,
   IconProps,
-  ImageProps,
   InputOTPProps,
   LayoutContentProps,
   LayoutFooterProps,

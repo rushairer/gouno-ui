@@ -181,7 +181,6 @@ export const showcaseCatalog: ShowcaseGroup[] = [
     item("core-list", "List", "列表", 70, <List />),
     item("core-descriptions", "Descriptions", "描述列表", 72, <Rows3 />),
     item("core-calendar", "Calendar", "日历", 68, <Calendar />),
-    item("core-image", "Image", "图片", 72, <ImageIcon />),
     item("core-carousel", "Carousel", "走马灯", 68, <GalleryHorizontal />),
     item("core-table", "Table", "表格", 100, <Table2 />),
     item("core-statistic", "Statistic", "统计数值", 72, <ChartColumn />),
