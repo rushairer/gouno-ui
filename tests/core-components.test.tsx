@@ -90,7 +90,13 @@ describe("core components", () => {
   it("renders steps and calendar grid", () => {
     render(
       <>
-        <Steps current={1} items={[{ title: "One" }, { title: "Two" }]} />
+        <Steps
+          current={1}
+          items={[
+            { key: "one", title: "One" },
+            { key: "two", title: "Two" },
+          ]}
+        />
         <Calendar value={new Date(2026, 0, 15)} />
       </>,
     );
