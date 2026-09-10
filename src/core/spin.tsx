@@ -1,21 +1,44 @@
-import type { ReactNode } from "react";
+import {
+  forwardRef,
+  type HTMLAttributes,
+  type ReactNode,
+} from "react";
+import { cn } from "../lib/utils";
+import { Spinner } from "./spinner";
 
-export interface SpinProps {
+export interface SpinProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "aria-busy" | "children"> {
   spinning?: boolean;
   tip?: ReactNode;
   children?: ReactNode;
 }
 
-export function Spin({ spinning = true, tip, children }: SpinProps) {
+export const Spin = forwardRef<HTMLDivElement, SpinProps>(function Spin(
+  { spinning = true, tip, children, className, ...props },
+  ref,
+) {
   return (
-    <div className="relative">
+    <div
+      {...props}
+      ref={ref}
+      data-slot="spin"
+      aria-busy={spinning || undefined}
+      className={cn("relative", className)}
+    >
       {children}
       {spinning ? (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-background/70" role="status">
-          <span className="size-5 animate-spin rounded-full border-2 border-primary border-r-transparent" />
-          {tip ? <span className="text-sm text-muted-foreground">{tip}</span> : null}
+        <div
+          data-slot="spin-overlay"
+          className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-background/70"
+        >
+          <Spinner className="size-5 text-primary" />
+          {tip ? (
+            <span data-slot="spin-tip" className="text-sm text-muted-foreground">
+              {tip}
+            </span>
+          ) : null}
         </div>
       ) : null}
     </div>
   );
-}
+});

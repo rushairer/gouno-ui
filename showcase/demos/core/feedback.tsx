@@ -33,6 +33,10 @@ import ResultLiveRegionExample from "./result/result-2";
 import ResultLiveRegionExampleSource from "./result/result-2.tsx?raw";
 import SkeletonExample from "./skeleton/skeleton-0";
 import SkeletonExampleSource from "./skeleton/skeleton-0.tsx?raw";
+import SpinExample from "./spin/spin-0";
+import SpinExampleSource from "./spin/spin-0.tsx?raw";
+import SpinnerExample from "./spin/spin-1";
+import SpinnerExampleSource from "./spin/spin-1.tsx?raw";
 import { useState } from "react";
 import {
   Alert,
@@ -45,9 +49,6 @@ import {
   Popconfirm,
   Progress,
   Space,
-  Spin,
-  Spinner,
-  Text,
   Tour,
   useMessage,
   useNotification,
@@ -334,37 +335,41 @@ export const feedbackDocuments: Record<string, ComponentDocument> = {
   },
   spin: {
     title: "Spin 加载",
-    description: "Spin 用于局部内容加载遮罩；Spinner 用于按钮、行内状态等不需要遮罩的轻量等待反馈。",
-    code: '<Spin spinning tip="加载中"><Card /></Spin>',
-    render: () => (
-      <Spin spinning tip="加载中">
-        <div className="h-32 rounded border" />
-      </Spin>
+    description: "Spin 用于已有内容区域的忙碌遮罩并通过 aria-busy 表达状态；Spinner 只负责视觉旋转，状态播报由调用方拥有。",
+    code: SpinExampleSource.replaceAll(
+      "../../../../src/core",
+      "@gouno/ui/core",
     ),
+    render: () => <SpinExample />,
     demos: [
       {
-        title: "Spinner 行内指示器",
-        description: "Spinner 自带 role=status；业务应提供明确的 aria-label。",
-        code: '<Spinner aria-label="正在保存" />',
-        render: () => (
-          <Space>
-            <Spinner aria-label="正在保存" />
-            <Text>正在保存</Text>
-          </Space>
+        title: "Spinner 与父级状态区域",
+        description: "Spinner 默认是 decorative；需要播报任务进度时，由能提供本地化文本的父级 status region 统一负责。",
+        code: SpinnerExampleSource.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
         ),
+        render: () => <SpinnerExample />,
       },
     ],
     api: [
-      { name: "spinning", description: "是否显示加载遮罩", type: "boolean", defaultValue: "true" },
-      { name: "tip", description: "加载说明文字", type: "ReactNode" },
-      { name: "children", description: "被遮罩的内容", type: "ReactNode" },
+      { name: "spinning", description: "是否显示忙碌遮罩，并唯一驱动根 aria-busy", type: "boolean", defaultValue: "true" },
+      { name: "tip", description: "遮罩中的可见加载说明；不是自动 live-region", type: "ReactNode" },
+      { name: "children", description: "被遮罩但仍保留的已有内容", type: "ReactNode" },
+      { name: "className", description: "根 div 附加类名", type: "string" },
+      { name: "role", description: "标准 ARIA role；组件不提供默认值", type: "AriaRole" },
+      { name: "aria-live", description: "标准 live-region 策略；组件不提供默认值", type: '"off" | "assertive" | "polite"' },
+      { name: "ref", description: "真实根 div 引用", type: "Ref<HTMLDivElement>" },
     ],
     apiSections: [
       {
         title: "Spinner API",
         rows: [
-          { name: "aria-label", description: "可访问名称；未提供时为 Loading", type: "string", defaultValue: '"Loading"' },
+          { name: "aria-hidden", description: "视觉指示器默认从辅助技术树隐藏；独立语义化时可显式覆盖", type: "boolean", defaultValue: "true" },
+          { name: "role", description: "标准 ARIA role；仅在显式 aria-hidden=false 的独立语义场景按需提供", type: "AriaRole" },
+          { name: "aria-label", description: "标准可访问名称；组件不提供默认英文文案", type: "string" },
           { name: "className", description: "span 样式类", type: "string" },
+          { name: "ref", description: "真实 span 引用", type: "Ref<HTMLSpanElement>" },
         ],
       },
     ],
@@ -389,24 +394,15 @@ export const feedbackDocuments: Record<string, ComponentDocument> = {
   },
   skeleton: {
     title: "Skeleton 骨架屏",
-    description: "结构内容加载前的视觉占位；单个 Skeleton 默认对辅助技术隐藏，加载状态与可访问名称由父级 region 拥有。",
+    description: "内容加载前的结构占位；单个视觉块默认从辅助技术树隐藏，加载状态与可访问名称由父级区域拥有。",
     code: SkeletonExampleSource.replaceAll(
       "../../../../src/core",
       "@gouno/ui/core",
     ),
     render: () => <SkeletonExample />,
     api: [
-      {
-        name: "aria-hidden",
-        description: "单个视觉占位默认从可访问性树隐藏；确有特殊语义时仍可通过标准属性显式覆盖",
-        type: 'boolean | "true" | "false"',
-        defaultValue: "true",
-      },
-      {
-        name: "className",
-        description: "尺寸、形状、间距等视觉结构由调用方组合",
-        type: "string",
-      },
+      { name: "className", description: "尺寸、形状与间距等视觉组合", type: "string" },
+      { name: "aria-hidden", description: "默认隐藏单个视觉占位；异常场景可用标准 DOM 属性覆盖", type: "boolean", defaultValue: "true" },
     ],
   },
   modal: {
