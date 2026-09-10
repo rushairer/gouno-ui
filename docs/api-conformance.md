@@ -46,6 +46,8 @@
 | API-026 | Core `Statistic` 保持 `title/value/prefix/suffix` 的窄指标展示合同，并把标准 div/ARIA/data/event 属性与 ref 交给真实根元素。指标值/单位/格式化、动态播报和 Card/elevation 继续由调用方拥有；不加入 precision/formatter/trend/valueStyle/card 等 feature-bag API。 | Core Statistic same-source demo/API docs/focused tests + Blog Admin Dashboard/AI Operations corpus / PD-050 |
 | API-027 | Core `Spin` 是已有内容区域的 busy-state wrapper：`spinning` 是唯一 busy 状态写入口并驱动根 `aria-busy`；根节点接受标准 div/ARIA/data/event 属性与真实 ref。Core `Spinner` 默认仅为 decorative 视觉指示器（`aria-hidden=true`），不自动创建 `role=status` 或英文 `Loading` 名称；独立语义场景只通过标准 ARIA 显式 opt-in。Spin/Spinner 不扩展 delay/fullscreen/custom-indicator/AsyncState feature bag。 | Core Spin/Spinner same-source demos + focused tests + Gosso OAuth callback product validation / PD-051 |
 | API-028 | Core `Steps` 与 `Menu` 均使用稳定 `items[].key`；Steps 以 `current/onChange` 表达单一流程位置并保持 disabled step 非交互，Menu 以 `selectedKeys/defaultSelectedKeys` 与 `openKeys/defaultOpenKeys` 分离选择和展开状态，并支持层级 item/submenu/group/divider、single/multiple、inline/horizontal/vertical 与键盘 roving focus。两者只使用标准 DOM/ARIA 命名，不保留 `ariaLabel`/`danger`/`theme` 兼容面，也不注入英文可访问文案；产品需要可访问名称时通过标准 `aria-label`/`aria-labelledby` 显式提供。 | Steps/Menu same-source demos + API AST/focused behavior tests + main run 279 / PD-052 |
+| API-029 | 每个 PascalCase Core runtime export 都必须显式归入一个可见 Core Showcase family，且 sealing audit 不允许 `needs-review` 或 `unassigned` 残留。Established Core 遵守 retention policy：无当前产品调用不能单独构成删除理由。`SearchField`/`CheckboxField` 由真实 Blog 消费验证并归入 Input/Checkbox；`AvatarImage`/`AvatarFallback` 归入 Avatar compound family；`Divider` 保留为 deprecated Separator compatibility sibling；`App`/`Container`/`AspectRatio`/`Stack` 保留并归入 Layout/Flex family。 | core-family-coverage + 5A/5B focused tests + main runs 281/283 / PD-053 |
+| API-030 | 高层 `Tabs` 的 pre-reset `value/defaultValue/items[].value` 兼容输入在稳定包前已删除；唯一状态入口为 `activeKey/defaultActiveKey/items[].key/onChange`。Primitive `Tab`/`TabPanel value` 仅是组合层 key，不是第二套高层状态 API。标准 `aria-label`/`aria-labelledby` 是 canonical 可访问命名；`ariaLabel` 仅作为真实产品 vendored artifact 迁移期的 deprecated alias 暂留，且标准属性优先。 | Tabs type/source/docs gates + 548-test main run 285 / PD-054 |
 
 ## 当前破坏式迁移说明
 
@@ -74,7 +76,7 @@ items[].value → items[].key
 onValueChange → onChange
 ```
 
-旧值仅作为迁移期临时兼容输入，不是第二套文档 API，并应在下一个稳定 package release 前删除。
+上述高层兼容输入现已从 canonical `TabsProps`/`TabItem` 删除，下一 package artifact 只接受新的状态命名。`Tab` / `TabPanel` primitive 的 `value` 继续作为组合层稳定 key。`ariaLabel` 不属于 canonical API 命名，只因真实 Gosso/Showcase 产品仍锁定旧 vendored artifact 而暂时保留为 deprecated 迁移别名；新代码使用标准 `aria-label` / `aria-labelledby`，产品源码与 vendored artifact 在 0.2.0 升级阶段原子迁移后再移除别名。
 
 Tabs 布局还遵循 structural/content spacing 分离：Tabs 自己拥有 TabBar 与 TabPanel 的结构间距，`TabPanel` 不默认注入业务内容 padding；四个方向只改变轴向，不改变这条职责。活动指示线始终绘制在 TabList 可视/滚动边界内部，滚动只用于真实标签溢出。
 
@@ -107,6 +109,8 @@ Core `Spinner` 不再默认创建 `role="status"`，也不再注入英文 `"Load
 Core `Steps` 不再接受缺少稳定 `key` 的流程项，也不使用 `description` 兼容旧的第二说明入口；流程项正文统一为 `content`，可选短补充使用 `subTitle`。当提供 `onChange` 时，仅非 disabled step 可交互；disabled step 保持非按钮内容并声明 `aria-disabled`。长流程的 `maxCount` 省略槽只呈现语言无关的省略标记，不注入英文屏幕阅读器文案。
 
 Core `Menu` 的层级节点使用稳定 `key`，选择状态和展开状态分别由 `selectedKeys/defaultSelectedKeys` 与 `openKeys/defaultOpenKeys` 管理；单选、multiple、inline collapse、submenu/group/divider 和 keyboard roving focus 不通过业务别名拆出第二套状态 API。旧 `ariaLabel` 改为标准 `aria-label`；旧 `danger` 不再作为通用导航项属性，危险动作的业务语义由调用方动作/视觉组合表达；Core 不提供 `theme` 或 locale feature bag。Menu 根导航不会自动注入英文可访问名称，需要名称时由产品显式提供标准 ARIA。
+
+Core runtime family sealing 现在要求所有 PascalCase runtime export 都有明确可见 family owner。这个“清零”不等于按当前使用率裁剪 API：established Core 在没有明确 maintainer 删除批准时按 retention policy 保留。低层 wrapper/compound sibling 可以归入现有 family 并通过 ref、DOM 语义、同源示例和 focused tests 硬化，而不是为每个导出制造独立 Showcase 页面。
 
 ## Core 继续验证原则
 
