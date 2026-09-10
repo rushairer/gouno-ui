@@ -12,7 +12,7 @@ import {
 import { ChevronRight } from "lucide-react";
 import { cn } from "../lib/utils";
 
-export type CollapseSize = "small" | "medium" | "large";
+export type CollapseSize = "small" | "middle" | "large";
 export type CollapseCollapsible = "header" | "icon" | "disabled";
 export type CollapseExpandIconPlacement = "start" | "end";
 export type CollapseActiveKey = Key | readonly Key[];
@@ -99,7 +99,7 @@ const sizeClasses: Record<CollapseSize, { header: string; body: string }> = {
     header: "min-h-9 px-3 py-2 text-sm",
     body: "px-3 pb-3 text-sm",
   },
-  medium: {
+  middle: {
     header: "min-h-11 px-4 py-3 text-sm",
     body: "px-4 pb-4 text-sm",
   },
@@ -120,7 +120,7 @@ export function Collapse({
   expandIcon,
   expandIconPlacement = "start",
   ghost = false,
-  size = "medium",
+  size = "middle",
   onChange,
   classNames,
   styles,
