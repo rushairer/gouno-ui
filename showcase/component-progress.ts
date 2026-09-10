@@ -30,6 +30,7 @@ const completedComponents = new Set([
   "core-progress",
   "core-empty",
   "core-result",
+  "core-skeleton",
   "core-popover",
   "core-tooltip",
   "core-dropdown",
