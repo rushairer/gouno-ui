@@ -32,7 +32,7 @@
 | API-012 | `PageHeader` 重新准入后只有 `title/description/actions/className`；不恢复 `action/actions` 双入口。 | PageHeader tests / PD-011 |
 | API-013 | Pattern 层只保留经真实产品重新认证的窄职责抽象；当前准入 `BulkActionBar`。System Management 等表格证据继续只触发 DataTable review，不恢复 Legacy feature bag。 | BulkActionBar focused tests / product fixtures / PD-012 |
 | API-014 | Tabs canonical 高层 API 使用 `activeKey/defaultActiveKey/items[].key/onChange`，默认 line 视觉；Radix 保持行为/a11y。 | Tabs docs/tests / PD-010 |
-| API-015 | Showcase-local tooling重复仅算辅助证据，不能单独创建公共抽象。 | architecture / PD-009 |
+| API-015 | Showcase-local tooling 重复仅算辅助证据，不能单独创建公共抽象。 | architecture / PD-009 |
 | API-016 | Node.js 24 下 Pages 发布前必须通过 typecheck、tests、package build、Showcase build。 | workflow hardening |
 | API-017 | Alert 使用 `title/description/type/showIcon/icon/action/closable/banner/variant/classNames/styles` canonical API；语义 type 与视觉 variant 分离，并提供 `Alert.ErrorBoundary`。 | Alert docs/focused tests / PD-015 |
 | API-018 | 复合组件负责自身语义区域之间的 structural spacing；内容槽内部 padding/rhythm 由内容拥有者负责。Tabs 四个 `tabPosition` 保持同一 TabBar↔Panel 间距语义，active indicator 不得扩大 TabList 的滚动区域。 | Tabs docs/focused tests / PD-020 |
