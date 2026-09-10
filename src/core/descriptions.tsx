@@ -1,2 +1,0 @@
-import type { ReactNode } from "react";
-export function Descriptions({ items, columns = 1, bordered = false }: { items: { label: ReactNode; children: ReactNode }[]; columns?: 1|2|3; bordered?: boolean }) { return <dl className={`grid gap-x-6 gap-y-3 ${columns === 1 ? "grid-cols-1" : columns === 2 ? "sm:grid-cols-2" : "sm:grid-cols-3"} ${bordered ? "rounded-md border p-4" : ""}`}>{items.map((item, i) => <div key={i}><dt className="text-xs text-muted-foreground">{item.label}</dt><dd className="mt-1 text-sm">{item.children}</dd></div>)}</dl>; }
