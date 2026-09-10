@@ -41,9 +41,47 @@ export { Pagination, type PaginationProps } from "./pagination";
 export { Steps } from "./steps";
 export { Empty, type EmptyProps } from "./empty";
 export { Result, type ResultProps, type ResultStatus } from "./result";
-export { List } from "./list";
-export { Descriptions } from "./descriptions";
-export { Image } from "./image";
+export {
+  List,
+  type ListProps,
+  type ListSize,
+  type ListItemLayout,
+  type ListLocale,
+  type ListSemantic,
+  type ListSemanticInfo,
+  type ListClassNames,
+  type ListStyles,
+} from "./list";
+export {
+  Descriptions,
+  type DescriptionsProps,
+  type DescriptionsItem,
+  type DescriptionsSize,
+  type DescriptionsLayout,
+  type DescriptionsBreakpoint,
+  type DescriptionsColumnCount,
+  type DescriptionsColumn,
+  type DescriptionsSpanValue,
+  type DescriptionsSpan,
+  type DescriptionsSemantic,
+  type DescriptionsSemanticInfo,
+  type DescriptionsClassNames,
+  type DescriptionsStyles,
+} from "./descriptions";
+export {
+  Image,
+  type ImageProps,
+  type ImagePreviewConfig,
+  type ImagePreviewMaskConfig,
+  type ImageCoverConfig,
+  type ImageTransform,
+  type ImageTransformAction,
+  type ImageToolbarInfo,
+  type ImageSemantic,
+  type ImageSemanticInfo,
+  type ImageClassNames,
+  type ImageStyles,
+} from "./image";
 export { Calendar } from "./calendar";
 export { App, type AppProps } from "./app";
 export { FloatButton, type FloatButtonProps } from "./float-button";
@@ -87,7 +125,6 @@ export type {
   ChoiceButtonProps,
   CollapseProps,
   ContainerProps,
-  DescriptionsProps,
   DividerProps,
   DropdownMenuContentProps,
   DropdownMenuItemProps,
@@ -106,14 +143,12 @@ export type {
   GridProps,
   IconButtonLinkProps,
   IconProps,
-  ImageProps,
   InputOTPProps,
   LayoutContentProps,
   LayoutFooterProps,
   LayoutHeaderProps,
   LayoutProps,
   LayoutSiderProps,
-  ListProps,
   MentionsProps,
   MenuProps,
   MessageProviderProps,
