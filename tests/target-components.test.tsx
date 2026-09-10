@@ -239,7 +239,7 @@ describe("audited target components", () => {
     ];
     for (const document of documents) {
       for (const row of document.api ?? []) {
-        expect(row.name).not.toMatch(/\s \/\s/);
+        expect(row.name).not.toMatch(/\s\/\s/);
       }
       const examples = [document, ...(document.demos ?? [])];
       expect(new Set(examples.map((demo) => demo.code)).size).toBe(
