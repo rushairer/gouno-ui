@@ -30,6 +30,8 @@ export interface TabsProps<T extends string = string>
   tabPosition?: TabsPosition;
   centered?: boolean;
   tabBarExtraContent?: ReactNode;
+  /** @deprecated Use the standard `aria-label` attribute. Retained until product artifact migration. */
+  ariaLabel?: string;
 }
 
 const gapBySize: Record<ControlSize, number> = {
@@ -109,6 +111,7 @@ export function Tabs<T extends string = string>({
   style,
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledBy,
+  ariaLabel: legacyAriaLabel,
   ...props
 }: TabsProps<T>) {
   const firstEnabledKey = items?.find((item) => !item.disabled)?.key;
@@ -131,7 +134,7 @@ export function Tabs<T extends string = string>({
     >
       {items ? (
         <TabList
-          aria-label={ariaLabel}
+          aria-label={ariaLabel ?? legacyAriaLabel}
           aria-labelledby={ariaLabelledBy}
           type={type}
           size={size}
