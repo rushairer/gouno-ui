@@ -24,7 +24,6 @@ export { Drawer, type DrawerProps, type DrawerPlacement } from "./drawer";
 export { Alert, type AlertProps, type AlertType, type AlertVariant, type AlertClosableConfig, type AlertSemantic, type AlertClassNames, type AlertStyles, type AlertErrorBoundaryProps } from "./alert";
 export { Skeleton } from "./feedback";
 export { Statistic, type StatisticProps } from "./statistic";
-export { Timeline, type TimelineProps, type TimelineItem } from "./timeline";
 export { Container, Stack, type StackProps } from "./layout-primitives";
 export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption, type CaptionSide, type TableDensity, type TableProps, type TableHeaderProps, type TableBodyProps, type TableFooterProps, type TableRowProps, type TableHeadProps, type TableCellProps, type TableCaptionProps } from "../components/primitives/table";
 export { Separator, type SeparatorProps } from "./separator";
