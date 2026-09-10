@@ -208,7 +208,7 @@ export function Menu({
   className,
   style,
   onKeyDown,
-  "aria-label": ariaLabel = "Menu",
+  "aria-label": ariaLabel,
   ref,
   ...props
 }: MenuProps) {
