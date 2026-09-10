@@ -96,8 +96,8 @@ export const advancedNavigationDocuments: Record<string, ComponentDocument> = {
         title: "BreadcrumbMenu API",
         rows: [
           { name: "items", description: "菜单项列表；菜单项同样必须提供稳定 key", type: "readonly BreadcrumbMenuItem[]" },
-          { name: "ariaLabel", description: "菜单触发器可访问名称", type: "string" },
-          { name: "menu item", description: "title/href/disabled/danger/onClick", type: "BreadcrumbMenuItem" },
+          { name: "aria-label", description: "菜单触发器标准 ARIA 可访问名称", type: "string" },
+          { name: "menu item", description: "title/href/disabled/onClick；Breadcrumb 菜单保持导航语义，不混入 destructive intent", type: "BreadcrumbMenuItem" },
         ],
       },
       {
@@ -144,7 +144,7 @@ export const advancedNavigationDocuments: Record<string, ComponentDocument> = {
       { name: "expandIcon", description: "按 active/item 状态自定义箭头", type: "(info: CollapseExpandIconInfo) => ReactNode" },
       { name: "expandIconPlacement", description: "箭头位于标题前或后", type: '"start" | "end"', defaultValue: '"start"' },
       { name: "ghost", description: "移除背景、外框和可见面板分隔线", type: "boolean", defaultValue: "false" },
-      { name: "size", description: "标题和内容的密度规格", type: '"small" | "medium" | "large"', defaultValue: '"medium"' },
+      { name: "size", description: "标题和内容的常规控件尺寸", type: '"small" | "middle" | "large"', defaultValue: '"middle"' },
       { name: "onChange", description: "activeKey 变化回调；accordion 收空时返回 []", type: "(activeKey: Key | Key[]) => void" },
       { name: "classNames", description: "按稳定语义槽追加 className", type: "CollapseClassNames" },
       { name: "styles", description: "按稳定语义槽追加 style", type: "CollapseStyles" },
