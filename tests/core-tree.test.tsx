@@ -1,6 +1,16 @@
-import { describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { Tree, type TreeNode } from "../src/core";
+
+afterEach(() => {
+  cleanup();
+});
 
 const treeData: TreeNode[] = [
   {
