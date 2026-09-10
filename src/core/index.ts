@@ -62,7 +62,22 @@ export {
   type BreadcrumbStyles,
 } from "./breadcrumb";
 export { Pagination, type PaginationProps } from "./pagination";
-export { Steps } from "./steps";
+export {
+  Steps,
+  type StepsProps,
+  type StepItem,
+  type StepsStatus,
+  type StepsOrientation,
+  type StepsTitlePlacement,
+  type StepsType,
+  type StepsVariant,
+  type StepsSize,
+  type StepsIconRenderInfo,
+  type StepsSemantic,
+  type StepsSemanticInfo,
+  type StepsClassNames,
+  type StepsStyles,
+} from "./steps";
 export { Empty, type EmptyProps } from "./empty";
 export { Result, type ResultProps, type ResultStatus } from "./result";
 export {
@@ -171,7 +186,24 @@ export {
   type TreeClassNames,
   type TreeStyles,
 } from "./tree";
-export { Menu, type MenuItem } from "./menu";
+export {
+  Menu,
+  type MenuProps,
+  type MenuItem,
+  type MenuSubMenuItem,
+  type MenuItemGroup,
+  type MenuDividerItem,
+  type MenuNode,
+  type MenuMode,
+  type MenuTriggerSubMenuAction,
+  type MenuClickInfo,
+  type MenuSelectInfo,
+  type MenuExpandIconInfo,
+  type MenuSemantic,
+  type MenuSemanticInfo,
+  type MenuClassNames,
+  type MenuStyles,
+} from "./menu";
 export { QRCode, type QRCodeProps, type QRCodeErrorLevel } from "./qrcode";
 export { Watermark } from "./watermark";
 export { Affix, BackTop } from "./affix";
@@ -219,7 +251,6 @@ export type {
   LayoutProps,
   LayoutSiderProps,
   MentionsProps,
-  MenuProps,
   MessageProviderProps,
   NavigationProviderProps,
   NotificationProviderProps,
@@ -234,7 +265,6 @@ export type {
   SegmentedProps,
   SkeletonProps,
   SliderProps,
-  StepsProps,
   SwitchProps,
   TabListProps,
   TabPanelProps,
