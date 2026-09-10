@@ -48,7 +48,19 @@ export { DateRangePicker, type DateRangePickerProps } from "./date-range-picker"
 export { TimePicker, type TimePickerProps } from "./time-picker";
 export { ColorPicker, type ColorPickerProps } from "./color-picker";
 export { Upload, type UploadProps } from "./upload";
-export { Breadcrumb, type BreadcrumbItem } from "./breadcrumb";
+export {
+  Breadcrumb,
+  type BreadcrumbItem,
+  type BreadcrumbRouteItem,
+  type BreadcrumbSeparatorItem,
+  type BreadcrumbMenu,
+  type BreadcrumbMenuItem,
+  type BreadcrumbItemRenderInfo,
+  type BreadcrumbSemantic,
+  type BreadcrumbSemanticInfo,
+  type BreadcrumbClassNames,
+  type BreadcrumbStyles,
+} from "./breadcrumb";
 export { Pagination, type PaginationProps } from "./pagination";
 export { Steps } from "./steps";
 export { Empty, type EmptyProps } from "./empty";
@@ -126,7 +138,19 @@ export { Slider } from "./slider";
 export { Rate } from "./rate";
 export { Segmented } from "./segmented";
 export { AutoComplete, type AutoCompleteProps } from "./autocomplete";
-export { Collapse } from "./collapse";
+export {
+  Collapse,
+  type CollapseSize,
+  type CollapseCollapsible,
+  type CollapseExpandIconPlacement,
+  type CollapseActiveKey,
+  type CollapseItem,
+  type CollapseExpandIconInfo,
+  type CollapseSemantic,
+  type CollapseSemanticInfo,
+  type CollapseClassNames,
+  type CollapseStyles,
+} from "./collapse";
 export { Popover, PopoverTrigger, PopoverContent, PopoverAnchor, type OverlayPlacement, type PopoverContentProps } from "../components/primitives/popover";
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider, type TooltipContentProps } from "../components/primitives/tooltip";
 export { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel } from "../components/primitives/dropdown-menu";
@@ -134,7 +158,19 @@ export { Cascader, type CascaderOption } from "./cascader";
 export { TreeSelect, type TreeSelectProps, type TreeSelectNode } from "./tree-select";
 export { Transfer, type TransferItem } from "./transfer";
 export { Mentions } from "./mentions";
-export { Tree, type TreeNode } from "./tree";
+export {
+  Tree,
+  type TreeNode,
+  type TreeNodeRenderInfo,
+  type TreeExpandInfo,
+  type TreeSelectInfo,
+  type TreeCheckInfo,
+  type TreeCheckedKeys,
+  type TreeSemantic,
+  type TreeSemanticInfo,
+  type TreeClassNames,
+  type TreeStyles,
+} from "./tree";
 export { Menu, type MenuItem } from "./menu";
 export { QRCode, type QRCodeProps, type QRCodeErrorLevel } from "./qrcode";
 export { Watermark } from "./watermark";
