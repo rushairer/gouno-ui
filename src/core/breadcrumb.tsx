@@ -156,7 +156,7 @@ export function Breadcrumb({
   styles,
   className,
   style,
-  "aria-label": ariaLabel = "Breadcrumb",
+  "aria-label": breadcrumbLabel = "Breadcrumb",
   ref,
   ...props
 }: BreadcrumbProps) {
@@ -176,7 +176,7 @@ export function Breadcrumb({
     <nav
       {...props}
       ref={ref}
-      aria-label={ariaLabel}
+      aria-label={breadcrumbLabel}
       data-slot="breadcrumb"
       className={cn("min-w-0", semanticClassNames.root, className)}
       style={{ ...semanticStyles.root, ...style }}
@@ -232,11 +232,11 @@ export function Breadcrumb({
               <span
                 aria-current={isLast ? "page" : undefined}
                 className={cn(
-                  "inline-flex min-w-0 items-center gap-1",
+                  "inline-flex min-w-0 items-center gap-1 truncate",
                   isLast && "text-foreground",
                 )}
               >
-                <span className="min-w-0 truncate">{item.title}</span>
+                {item.title}
               </span>
             ));
 

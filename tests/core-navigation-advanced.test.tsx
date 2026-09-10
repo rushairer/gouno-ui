@@ -69,7 +69,10 @@ describe("Core Breadcrumb", () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Choose project" }));
+    fireEvent.pointerDown(screen.getByRole("button", { name: "Choose project" }), {
+      button: 0,
+      ctrlKey: false,
+    });
     fireEvent.click(screen.getByRole("menuitem", { name: "Gouno UI" }));
     expect(onChoose).toHaveBeenCalledTimes(1);
   });
