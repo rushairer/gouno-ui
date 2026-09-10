@@ -26,7 +26,7 @@ export function GossoCallbackDemo() {
       )}
     >
       {state === "loading" ? (
-        <div className="flex flex-col items-center gap-4 py-4">
+        <div role="status" className="flex flex-col items-center gap-4 py-4">
           <Spinner className="size-6" />
           <Text size="sm" tone="muted">正在验证 OAuth 2.0 Authorization Code + PKCE 回调…</Text>
         </div>
