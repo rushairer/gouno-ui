@@ -192,6 +192,33 @@ Touched call sites normally need no visual migration. If a previous consumer int
 
 Reduced-motion behavior continues to be owned globally by `src/base.css`; do not duplicate a second Skeleton-specific motion policy.
 
+## QRCode canvas and accessible-name semantics
+
+Canonical `QRCode` renders a real canvas and now follows standard React/HTML accessibility and DOM-extension rules. The encoded value and renderer options remain the same narrow Core responsibility: `value`, `size`, `color`, `background` and `errorLevel`. `size` owns both canvas dimensions so consumers do not get a second `width`/`height` write path.
+
+Accessible copy is product-owned and localized. Replace the historical non-standard prop with a standard ARIA naming path:
+
+```text
+ariaLabel="TOTP 设置二维码" → aria-label="TOTP 设置二维码"
+```
+
+`aria-labelledby` is equally valid when visible nearby text already names the image:
+
+```tsx
+<span id="mfa-qr-label">TOTP 设置二维码</span>
+<QRCode
+  value={otpauthUrl}
+  size={180}
+  aria-labelledby="mfa-qr-label"
+/>
+```
+
+`QRCode` no longer invents the English accessible name `"QR code"`. Standard canvas attributes such as `id`, `data-*`, `className`, `style` and ARIA attributes pass through to the canvas, and `ref` resolves to the actual `HTMLCanvasElement`.
+
+Do not add `ariaLabel` as a compatibility alias, and do not expand QRCode into status/refresh/icon/bordered/type workflows merely because mature QR libraries expose those features. Those capabilities require independent product evidence.
+
+The real `gosso-admin` currently consumes `@gouno/ui` from `file:vendor/gouno-ui-0.1.0.tgz`. Its `MFAPanel` still uses `ariaLabel` because that immutable vendored artifact exposes the old type. Change the product call site to standard `aria-label` in the same change that refreshes the vendored Gouno UI artifact; changing only the product source first would intentionally create a type-incompatible half migration.
+
 ## DataTable status
 
 System Management plus Blog Admin list-page prior art is enough to trigger DataTable review, but not enough to re-admit the historical feature-bag API. Current migrations use Core `Table`/`Pagination` plus product-local filter/action/state composition. See PD-012.
@@ -214,4 +241,4 @@ Standalone product fixtures may add Showcase-only navigation chrome around the r
 
 ## Compatibility assessment
 
-The product-validation reset and canonical renames are breaking changes for consumers that update to the next package artifact. Alert's primitive-to-high-level API correction is also breaking for consumers that used `variant="destructive|default"` as semantic colors. Empty hardening is behaviorally breaking for consumers that relied on its previous English default copy, implicit dashed surface or automatic `role="status"`. Result hardening is breaking for consumers that use `subTitle`, rely on its fixed H2 or automatic `role="status"`, or expect a padded parent Card to compose without a double inset. Skeleton hardening changes accessibility-tree behavior by hiding individual visual placeholders by default; parent loading regions should own any required status/name semantics. Migrate those responsibilities explicitly as described above. Treat publication accordingly under SemVer/release notes. Existing products fixed to older immutable vendored archives can migrate page-by-page rather than mechanically replacing old wrappers with new ones.
+The product-validation reset and canonical renames are breaking changes for consumers that update to the next package artifact. Alert's primitive-to-high-level API correction is also breaking for consumers that used `variant="destructive|default"` as semantic colors. Empty hardening is behaviorally breaking for consumers that relied on its previous English default copy, implicit dashed surface or automatic `role="status"`. Result hardening is breaking for consumers that use `subTitle`, rely on its fixed H2 or automatic `role="status"`, or expect a padded parent Card to compose without a double inset. Skeleton hardening changes accessibility-tree behavior by hiding individual visual placeholders by default; parent loading regions should own any required status/name semantics. QRCode hardening is breaking for consumers that use `ariaLabel` or rely on the previous English default accessible name; migrate to standard `aria-label`/`aria-labelledby` together with the updated package artifact. Migrate those responsibilities explicitly as described above. Treat publication accordingly under SemVer/release notes. Existing products fixed to older immutable vendored archives can migrate page-by-page rather than mechanically replacing old wrappers with new ones.
