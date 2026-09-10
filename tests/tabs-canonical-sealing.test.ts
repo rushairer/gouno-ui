@@ -73,7 +73,7 @@ describe("Tabs canonical sealing", () => {
         "defaultActiveKey",
         "items",
         "onChange",
-        "aria-label / aria-labelledby",
+        "aria-label",
         "ariaLabel",
       ]),
     );
