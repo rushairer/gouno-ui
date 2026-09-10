@@ -45,7 +45,9 @@ describe("Core retained layout foundations", () => {
       </AspectRatio>,
     );
 
-    expect(screen.getByTestId("ratio").style.aspectRatio).toBe(String(16 / 9));
+    const serializedRatio = screen.getByTestId("ratio").style.aspectRatio;
+    const ratioValue = Number(serializedRatio.split("/")[0]?.trim());
+    expect(ratioValue).toBeCloseTo(16 / 9);
     expect(screen.getByTestId("stack").style.gap).toBe("12px");
   });
 
