@@ -142,11 +142,20 @@ function uniqueKeys(keys: readonly Key[]) {
   return Array.from(new Set(keys));
 }
 
-function collectFocusableKeys(items: readonly MenuNode[]): Key[] {
+function collectVisibleFocusableKeys(
+  items: readonly MenuNode[],
+  openKeys: readonly Key[],
+): Key[] {
   return items.flatMap((item) => {
     if (isDivider(item)) return [];
-    if (isGroup(item)) return collectFocusableKeys(item.children);
-    return item.disabled ? [] : [item.key, ...(isSubMenu(item) ? collectFocusableKeys(item.children) : [])];
+    if (isGroup(item)) return collectVisibleFocusableKeys(item.children, openKeys);
+    if (item.disabled) return [];
+    return [
+      item.key,
+      ...(isSubMenu(item) && includesKey(openKeys, item.key)
+        ? collectVisibleFocusableKeys(item.children, openKeys)
+        : []),
+    ];
   });
 }
 
@@ -210,11 +219,18 @@ export function Menu({
   const [innerOpenKeys, setInnerOpenKeys] = useState<Key[]>(() => uniqueKeys(defaultOpenKeys));
   const actualSelectedKeys = selectedKeys ?? innerSelectedKeys;
   const actualOpenKeys = openKeys ?? innerOpenKeys;
-  const focusableKeys = useMemo(() => collectFocusableKeys(items), [items]);
+  const visibleFocusableKeys = useMemo(
+    () => collectVisibleFocusableKeys(items, actualOpenKeys),
+    [items, actualOpenKeys],
+  );
   const keyMap = useMemo(() => collectKeyMap(items), [items]);
   const [focusKey, setFocusKey] = useState<Key | null>(() =>
-    selectedKeys?.[0] ?? defaultSelectedKeys[0] ?? focusableKeys[0] ?? null,
+    defaultSelectedKeys[0] ?? null,
   );
+  const effectiveFocusKey =
+    focusKey !== null && includesKey(visibleFocusableKeys, focusKey)
+      ? focusKey
+      : (visibleFocusableKeys[0] ?? null);
   const normalizedInlineIndent = Number.isFinite(inlineIndent) ? Math.max(0, inlineIndent) : 24;
   const collapsedInline = mode === "inline" && inlineCollapsed;
   const semanticInfo: MenuSemanticInfo = {
@@ -274,9 +290,10 @@ export function Menu({
     const nextKey = keyMap.get(token);
     if (nextKey === undefined) return;
     setFocusKey(nextKey);
-    rootRef.current
-      ?.querySelector<HTMLElement>(`[data-menu-key="${CSS.escape(token)}"]`)
-      ?.focus();
+    const nextElement = Array.from(
+      rootRef.current?.querySelectorAll<HTMLElement>("[data-menu-key]") ?? [],
+    ).find((element) => element.dataset.menuKey === token && !hasHiddenAncestor(element));
+    nextElement?.focus();
   };
 
   const visibleFocusableElements = () =>
@@ -284,8 +301,11 @@ export function Menu({
       (element) => element.getAttribute("aria-disabled") !== "true" && !hasHiddenAncestor(element),
     );
 
-  const moveFocus = (target: HTMLElement, delta: number) => {
-    const elements = visibleFocusableElements();
+  const moveFocus = (target: HTMLElement, delta: number, sameDepth = false) => {
+    const targetDepth = target.dataset.menuDepth;
+    const elements = visibleFocusableElements().filter(
+      (element) => !sameDepth || element.dataset.menuDepth === targetDepth,
+    );
     const index = elements.indexOf(target);
     if (index < 0 || elements.length === 0) return;
     const next = elements[(index + delta + elements.length) % elements.length];
@@ -303,6 +323,7 @@ export function Menu({
     if (event.defaultPrevented) return;
     const target = event.target instanceof HTMLElement ? event.target : null;
     if (!target?.dataset.menuKey) return;
+    const isHorizontalRoot = mode === "horizontal" && target.dataset.menuDepth === "0";
 
     if (event.key === "Home" || event.key === "End") {
       event.preventDefault();
@@ -310,24 +331,18 @@ export function Menu({
       return;
     }
 
-    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-      event.preventDefault();
-      moveFocus(target, event.key === "ArrowDown" ? 1 : -1);
-      return;
-    }
-
     if (event.key === "ArrowRight") {
+      if (isHorizontalRoot) {
+        event.preventDefault();
+        moveFocus(target, 1, true);
+        return;
+      }
       if (target.dataset.menuSubmenu === "true") {
         const key = keyMap.get(target.dataset.menuKey);
         if (key !== undefined) {
           event.preventDefault();
           toggleOpen(key, true);
         }
-        return;
-      }
-      if (mode === "horizontal") {
-        event.preventDefault();
-        moveFocus(target, 1);
       }
       return;
     }
@@ -343,10 +358,30 @@ export function Menu({
         }
         return;
       }
-      if (mode === "horizontal") {
+      if (isHorizontalRoot) {
         event.preventDefault();
-        moveFocus(target, -1);
+        moveFocus(target, -1, true);
       }
+      return;
+    }
+
+    if (event.key === "ArrowDown") {
+      if (isHorizontalRoot && target.dataset.menuSubmenu === "true") {
+        const key = keyMap.get(target.dataset.menuKey);
+        if (key !== undefined) {
+          event.preventDefault();
+          toggleOpen(key, true);
+        }
+        return;
+      }
+      event.preventDefault();
+      moveFocus(target, 1);
+      return;
+    }
+
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
+      moveFocus(target, -1);
       return;
     }
 
@@ -410,7 +445,7 @@ export function Menu({
       const token = keyToken(node.key);
       const parentToken = parentKey === undefined ? undefined : keyToken(parentKey);
       const selected = includesKey(actualSelectedKeys, node.key);
-      const isFocused = focusKey === node.key || (focusKey === null && focusableKeys[0] === node.key);
+      const isFocused = effectiveFocusKey === node.key;
       const itemPadding =
         mode === "inline" && !collapsedInline
           ? { paddingInlineStart: `${12 + depth * normalizedInlineIndent}px` }
@@ -483,6 +518,7 @@ export function Menu({
               data-menu-key={token}
               data-menu-parent-key={parentToken}
               data-menu-submenu="true"
+              data-menu-depth={depth}
               tabIndex={isFocused ? 0 : -1}
               onFocus={() => setFocusKey(node.key)}
               onClick={() => {
@@ -549,6 +585,7 @@ export function Menu({
             aria-checked={multiple && selectable ? selected : undefined}
             data-menu-key={token}
             data-menu-parent-key={parentToken}
+            data-menu-depth={depth}
             tabIndex={isFocused ? 0 : -1}
             onFocus={() => setFocusKey(node.key)}
             onClick={(event) => activateItem(node, keyPath, event)}
@@ -583,7 +620,7 @@ export function Menu({
       style={{ ...semanticStyles.root, ...style }}
     >
       <ul
-        role="menu"
+        role={mode === "horizontal" ? "menubar" : "menu"}
         data-slot="menu-list"
         className={cn(
           "m-0 min-w-0 list-none p-0",
