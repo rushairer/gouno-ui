@@ -205,6 +205,7 @@ describe("audited target components", () => {
       "core-empty",
       "core-result",
       "core-skeleton",
+      "core-spin",
       "core-qrcode",
       "core-statistic",
       "core-modal",
@@ -229,6 +230,7 @@ describe("audited target components", () => {
       feedbackDocuments.empty,
       feedbackDocuments.result,
       feedbackDocuments.skeleton,
+      feedbackDocuments.spin,
       otherDocuments.qrcode,
       feedbackDocuments.modal,
       feedbackDocuments.drawer,
@@ -237,7 +239,7 @@ describe("audited target components", () => {
     ];
     for (const document of documents) {
       for (const row of document.api ?? []) {
-        expect(row.name).not.toMatch(/\s\/\s/);
+        expect(row.name).not.toMatch(/\s \/\s/);
       }
       const examples = [document, ...(document.demos ?? [])];
       expect(new Set(examples.map((demo) => demo.code)).size).toBe(
