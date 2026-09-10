@@ -41,7 +41,6 @@ export { Pagination, type PaginationProps } from "./pagination";
 export { Steps } from "./steps";
 export { Empty, type EmptyProps } from "./empty";
 export { Result, type ResultProps, type ResultStatus } from "./result";
-export { Descriptions } from "./descriptions";
 export { Calendar } from "./calendar";
 export { App, type AppProps } from "./app";
 export { FloatButton, type FloatButtonProps } from "./float-button";
@@ -85,7 +84,6 @@ export type {
   ChoiceButtonProps,
   CollapseProps,
   ContainerProps,
-  DescriptionsProps,
   DividerProps,
   DropdownMenuContentProps,
   DropdownMenuItemProps,

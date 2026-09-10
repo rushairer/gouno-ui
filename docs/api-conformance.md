@@ -47,6 +47,7 @@
 | API-027 | Core `Spin` 是已有内容区域的 busy-state wrapper：`spinning` 是唯一 busy 状态写入口并驱动根 `aria-busy`；根节点接受标准 div/ARIA/data/event 属性与真实 ref。Core `Spinner` 默认仅为 decorative 视觉指示器（`aria-hidden=true`），不自动创建 `role=status` 或英文 `Loading` 名称；独立语义场景只通过标准 ARIA 显式 opt-in。Spin/Spinner 不扩展 delay/fullscreen/custom-indicator/AsyncState feature bag。 | Core Spin/Spinner same-source demos + focused tests + Gosso OAuth callback product validation / PD-051 |
 | API-028 | Core `Image` / `ImageProps` 从 canonical 公共 API 移除。已完成的 Blog public、Blog Admin 与 Gosso Admin corpus 都直接使用原生 `<img>` 并由产品拥有 `alt`、loading、布局、错误呈现与点击/预览生命周期；没有真实产品消费 Core `Image`。旧 wrapper 的 `preview` 仅改变 cursor、没有真实预览行为，错误状态还会跨 `src` 更新锁存，并注入英文 `Image unavailable`。在出现独立跨产品、超出原生 `<img>` 的稳定行为证据前，不重新引入通用 Image wrapper。 | Core Image de-admission invariant + Blog/Gosso native-image corpus / PD-052 |
 | API-029 | Core `List` / `ListProps` 从 canonical 公共 API 移除。三个完成 product corpora 均未消费该 `data/renderItem` wrapper；真实 collection surfaces 使用语义原生 list、Table、Card/Grid 或 product-local responsive composition。旧 wrapper 还注入英文 `No data`、数组 index key、固定 row padding 与默认 bordered/divided surface。在新的独立跨产品证据证明 native list + 现有 Core composition 不足前，不重新引入 generic List feature bag。 | Core List de-admission invariant + completed Gosso/Blog collection corpus / PD-053 |
+| API-030 | Core `Descriptions` / `DescriptionsProps` 从 canonical 公共 API 移除。完成的 Gosso Admin 与 Blog 真实页面已经直接使用原生 `<dl>/<dt>/<dd>`，并按各自任务拥有响应式 label/value 网格、稳定 domain key、分隔与 surrounding surface；没有真实产品消费 Core `Descriptions`。旧 `items/columns/bordered` wrapper 使用数组 index key、固定列数与内建 border/padding，把 HTML definition-list 语义和视觉 surface 耦合。在出现独立跨产品、超出原生 definition-list composition 的稳定行为证据前，不重新引入 generic Descriptions wrapper。 | Core Descriptions de-admission invariant + completed Gosso/Blog definition-list corpus / PD-054 |
 
 ## 当前破坏式迁移说明
 
@@ -95,7 +96,7 @@ Core `CodeBlock` 的复制源与显示源不拆成两套属性。`code` 是唯�
 
 Core `Anchor` 的默认路径保持原生 hash 链接语义，不用组件 JS 重写浏览器滚动。真实阅读页的固定头部遮挡通过 heading `scroll-margin-top` 解决，因此键盘激活、复制链接和直接访问 hash 共用同一位置规则。只有调用方不能控制目标样式而显式传 `offset` 时，Anchor 才拦截本地 hash 点击并按目标真实位置减去偏移量平滑滚动；外部链接和缺失目标不被拦截。
 
-Core `Empty` 不再把业务文案、Surface 或 live-region 策略当作默认组件行为。调用方必须显式提供需要展示的 `title/description`；需要边界时由真实 Card/Table/List/route surface 拥有；需要动态播报时通过标准 `role` / `aria-live` 显式声明。旧 `"No data"`、dashed border/radius 和自动 `role="status"` 都不是 canonical contract，也不通过兼容 alias 保留。
+Core `Empty` 不再把业务文案、Surface 或 live-region 策略当作默认组件行为。调用方必须显式提供需要展示的 `title/description`；需要边界时由真实 Card/Table/native-list/route surface 拥有；需要动态播报时通过标准 `role` / `aria-live` 显式声明。旧 `"No data"`、dashed border/radius 和自动 `role="status"` 都不是 canonical contract，也不通过兼容 alias 保留。
 
 Core `Result` 不再暴露非 canonical `subTitle`，补充说明统一使用 `description`。Result 的标题默认是 H2；当它替代整页内容成为该路由主结果时，调用方显式使用 `headingLevel={1}`。静态 404/终态不被强制声明 `role="status"`，动态操作结果按需要显式选择标准 `role` / `aria-live`。Result 自己拥有结果内容节奏但不拥有 Card/surface/elevation；仅作为 Result 外壳的 Card 使用 `padding="none"`，避免父子重复 inset。旧固定 H2、自动 live-region 和 `subTitle` 都不通过兼容 alias 保留。
 

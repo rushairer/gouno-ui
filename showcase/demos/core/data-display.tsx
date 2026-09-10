@@ -14,30 +14,13 @@ import StatisticExampleSource from "./statistic/statistic-0.tsx?raw";
 import {
   Calendar,
   Carousel,
-  Descriptions,
   Table,
-  Tag,
   Timeline,
   Tree,
 } from "../../../src/core";
 import type { ComponentDocument } from "../../components/component-page";
 
 export const dataDisplayDocuments: Record<string, ComponentDocument> = {
-  descriptions: {
-    title: "Descriptions 描述列表",
-    description: "展示对象属性和详情信息。",
-    code: '<Descriptions columns={2} bordered items={[{ label: "版本", children: "0.2.0" }, { label: "状态", children: <Tag color="success">Stable</Tag> }]} />',
-    render: () => (
-      <Descriptions
-        columns={2}
-        bordered
-        items={[
-          { label: "版本", children: "0.2.0" },
-          { label: "状态", children: <Tag color="success">Stable</Tag> },
-        ]}
-      />
-    ),
-  },
   calendar: {
     title: "Calendar 日历",
     description: "日期网格、选中态和可选边界。",
