@@ -31,6 +31,7 @@ const completedComponents = new Set([
   "core-empty",
   "core-result",
   "core-skeleton",
+  "core-qrcode",
   "core-popover",
   "core-tooltip",
   "core-dropdown",
