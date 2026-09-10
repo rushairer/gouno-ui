@@ -120,13 +120,17 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   );
 });
 
-export function SearchField({ className, ...props }: InputProps) {
+export const SearchField = forwardRef<HTMLInputElement, InputProps>(function SearchField(
+  { className, ...props },
+  ref,
+) {
   return (
     <Input
       {...props}
+      ref={ref}
       type={props.type || "search"}
       prefix={<Search />}
       className={className}
     />
   );
-}
+});
