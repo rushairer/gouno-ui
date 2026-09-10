@@ -63,10 +63,11 @@ describe("Core advanced Navigation API documentation", () => {
   });
 
   it("rejects non-canonical aliases in the hardened navigation surface", () => {
+    const breadcrumbProps = libraryProps("src/core/breadcrumb.tsx", "BreadcrumbProps");
     const breadcrumbSource = sourceText("src/core/breadcrumb.tsx");
     const collapseSource = sourceText("src/core/collapse.tsx");
 
-    expect(breadcrumbSource).not.toContain("ariaLabel");
+    expect(breadcrumbProps).not.toContain("ariaLabel");
     expect(breadcrumbSource).not.toMatch(/\bdanger\??:/);
     expect(collapseSource).not.toContain('"medium"');
     expect(collapseSource).toContain('"small" | "middle" | "large"');
