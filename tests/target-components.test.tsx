@@ -23,6 +23,7 @@ import { componentProgress } from "../showcase/component-progress";
 import { dataEntryDocuments } from "../showcase/demos/core/data-entry";
 import { dataDisplayDocuments } from "../showcase/demos/core/data-display";
 import { feedbackDocuments } from "../showcase/demos/core/feedback";
+import { otherDocuments } from "../showcase/demos/core/other";
 import { paginationDocument } from "../showcase/demos/core/pagination";
 import { tabsDocument } from "../showcase/demos/core/tabs";
 
@@ -204,6 +205,7 @@ describe("audited target components", () => {
       "core-empty",
       "core-result",
       "core-skeleton",
+      "core-qrcode",
       "core-modal",
       "core-drawer",
     ]) {
@@ -225,6 +227,7 @@ describe("audited target components", () => {
       feedbackDocuments.empty,
       feedbackDocuments.result,
       feedbackDocuments.skeleton,
+      otherDocuments.qrcode,
       feedbackDocuments.modal,
       feedbackDocuments.drawer,
       paginationDocument,
