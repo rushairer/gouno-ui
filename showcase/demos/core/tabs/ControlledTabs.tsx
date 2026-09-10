@@ -13,7 +13,7 @@ export function ControlledTabs() {
   return (
     <div className="flex flex-col gap-4">
       <Tabs
-        ariaLabel="账户栏目"
+        aria-label="账户栏目"
         activeKey={activeKey}
         items={items}
         onChange={setActiveKey}
