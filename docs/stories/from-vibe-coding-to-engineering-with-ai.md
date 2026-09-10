@@ -1,10 +1,5 @@
 # 从 Vibe Coding 到 Engineering with AI：Gouno UI 是怎么被“逼”出来的
 
-> 作者：阿笨  
-> 日期：2026-09-10
-
-![从混乱原型到设计系统](./assets/gouno-ui-vibe-to-engineering/01-cover.webp)
-
 最近一段时间，我一直在折腾一个叫 **Gouno UI** 的项目。
 
 如果只看现在，它已经越来越像一个正常的工程级 UI System：有 Core、Theme、Patterns、Gouno 等明确层级，有公共 API 规范，有设计语言，有 Showcase，有真实产品页面的验证，也有针对抽象是否应该进入公共层的准入规则。
@@ -101,8 +96,6 @@ Agent E 为了修一个页面，又给它增加一个新的 variant。
 
 > **局部正确，并不会自动累积成全局正确。**
 
-![Vibe Coding 阶段：Agent 不断往项目里堆 UI 与代码](./assets/gouno-ui-vibe-to-engineering/02-vibe-coding-chaos.webp)
-
 ---
 
 ## 02. 功能稳定以后，我以为“规范化”只是一个清理工作
@@ -197,8 +190,6 @@ Token 消耗得很快，过程看起来也非常忙碌。
 
 如果方向没有定义好，它可以非常高效、非常自信地把一个错误方向实施得更加彻底。
 
-![规范化阶段：大量组件、规则和测试在运转，但系统仍未真正收敛](./assets/gouno-ui-vibe-to-engineering/03-standardization-loop.webp)
-
 ---
 
 ## 03. 第一次真正的认知转折：问题不是 CSS，而是谁说了算
@@ -275,8 +266,6 @@ Token 消耗得很快，过程看起来也非常忙碌。
 你会因为“以前就是这么写的”，把一些本来不应该进入设计系统的东西正式化。
 
 某种意义上，这就像试图从一栋已经盖歪的房子里，总结出一套新的建筑规范。
-
-![第一次分层：已经有了结构，但历史包袱让不同层之间充满交叉与牵连](./assets/gouno-ui-vibe-to-engineering/04-layered-abstraction.webp)
 
 ---
 
@@ -507,8 +496,6 @@ Legacy 不是第五层。
 因为从这里开始，目录结构表达的不再只是“代码放在哪里”，而开始表达：
 
 **我们对这个抽象到底有多大信心。**
-
-![工程化阶段：基础组件、真实 Showcase、规则与反馈循环开始形成一个完整系统](./assets/gouno-ui-vibe-to-engineering/05-engineering-system.webp)
 
 ---
 
