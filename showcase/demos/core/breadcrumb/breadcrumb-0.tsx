@@ -15,7 +15,7 @@ export default function BreadcrumbRouteExample() {
             title: "Projects",
             path: "projects",
             menu: {
-              ariaLabel: "Choose project",
+              "aria-label": "Choose project",
               items: [
                 {
                   key: "gouno-ui",
