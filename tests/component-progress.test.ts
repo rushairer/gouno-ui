@@ -33,6 +33,7 @@ describe("audited batch completion", () => {
       "core-progress",
       "core-code-block",
       "core-anchor",
+      "core-qrcode",
     ]) {
       expect(componentProgress(id, 0), id).toBe(100);
     }
