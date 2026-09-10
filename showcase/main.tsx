@@ -1,6 +1,5 @@
 import { StrictMode, useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { Menu } from "lucide-react";
 import gounoLogo from "../assets/brand-icons/gouno.svg";
 import gounoBlogLogo from "../assets/brand-icons/gouno-blog.svg";
 import gounoUiLogo from "../assets/brand-icons/gouno-ui.svg";
@@ -74,7 +73,6 @@ function isKnownPage(page: string) {
 function App() {
   const params = new URLSearchParams(window.location.search);
   const embedded = params.get("embedded") === "1";
-  const embeddedPreview = params.get("preview") as PreviewWidth | null;
   const hashCandidate = window.location.hash.slice(1);
   const requestedWorkspace = params.get("workspace");
   const initialWorkspace: Workspace = isWorkspace(requestedWorkspace)
@@ -284,16 +282,17 @@ function App() {
     ))}</>;
   };
 
-  const previewLabel = ({ full: "全宽", desktop: "1024px", tablet: "768px", mobile: "390px" } as const)[embeddedPreview || previewWidth];
-
   return (
     <ThemeProvider brand={brand} storageKey="gouno-ui-showcase:theme">
       {!embedded ? (
         <div className="h-dvh overflow-hidden bg-background text-foreground">
           <header className="flex h-12 items-center justify-between gap-3 border-b border-primary/20 bg-sidebar px-3 text-sidebar-foreground lg:px-4">
-            <div className="flex items-center gap-2 text-xs font-semibold tracking-wide text-primary">
-              <BrandMark src={gounoLogo} className="size-5" />
-              Gouno UI Showcase
+            <div className="flex min-w-0 items-center gap-2 text-xs font-semibold tracking-wide text-primary">
+              <BrandMark src={gounoLogo} className="size-5 shrink-0" />
+              <span className="shrink-0">Gouno UI Showcase</span>
+              <span className="hidden min-w-0 truncate font-normal tracking-normal text-sidebar-foreground/60 md:inline">
+                / {workspaceLabel}{current ? ` / ${current.label}` : ""}
+              </span>
             </div>
             <div className="flex flex-wrap items-center gap-2">{workspaceControl}{viewportControl}</div>
           </header>
@@ -324,7 +323,6 @@ function App() {
       ) : (
         <AppShell brand={workspaceBrand} toolbar={shellControls} navigation={navigation}>
           <PageContainer>
-            <div className="mb-2 flex items-center gap-2 text-sm text-muted-foreground"><Menu className="size-4" />{current ? `页面 Demo / ${current.label}` : `${workspaceLabel} / 暂无已迁移页面`} / 预览：{previewLabel}</div>
             <ShowcasePage page={page} workspace={workspace} />
           </PageContainer>
         </AppShell>

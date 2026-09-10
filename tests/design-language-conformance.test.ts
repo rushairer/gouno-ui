@@ -235,6 +235,8 @@ describe("design-language conformance", () => {
     expect(card).not.toContain("ui-card");
     expect(form).not.toContain('"form-layout flex');
     expect(showcaseMain).not.toContain('className={`${navigationItemClass} ${page === item.id ? "active" : ""}`}');
+    expect(showcaseMain).not.toContain("页面 Demo /");
+    expect(showcaseMain).not.toContain("previewLabel");
     expect(showcaseMain).not.toMatch(rawShadowClass);
     expect(demoBlock).not.toContain('className="demo-block ');
     expect(codeBlock).not.toContain('className="code-block ');
@@ -242,12 +244,11 @@ describe("design-language conformance", () => {
 
   it("uses one route-family PageHeader before Tabs on normal tabbed task pages", () => {
     const accountRoot = resolve(productsRoot, "gosso-account-settings/index.tsx");
-    const systemRoot = resolve(productsRoot, "gosso-system-management/index.tsx");
     const blogAI = resolve(productsRoot, "blog-admin-ai-operations/index.tsx");
     const blogAISettings = resolve(productsRoot, "blog-admin-ai-settings/index.tsx");
     const blogSettings = resolve(productsRoot, "blog-admin-site-settings.tsx");
 
-    for (const file of [accountRoot, systemRoot, blogAI, blogAISettings]) expectHeaderBeforeTabs(file);
+    for (const file of [accountRoot, blogAI, blogAISettings]) expectHeaderBeforeTabs(file);
 
     // Site Settings builds its Tabs value before the render return; assert rendered ordering
     // by checking the return tree: route PageHeader precedes the computed tabbed content slot.
@@ -269,17 +270,19 @@ describe("design-language conformance", () => {
   });
 
   it("enforces a one-persistent-Tabs navigation budget for normal route families", () => {
-    const routeFamilies = [
+    const tabbedRouteFamilies = [
       sourceFiles(resolve(productsRoot, "gosso-account-settings")),
-      sourceFiles(resolve(productsRoot, "gosso-system-management")),
       sourceFiles(resolve(productsRoot, "blog-admin-ai-operations")),
       sourceFiles(resolve(productsRoot, "blog-admin-ai-settings")),
       [resolve(productsRoot, "blog-admin-site-settings.tsx")],
     ];
 
-    for (const files of routeFamilies) {
+    for (const files of tabbedRouteFamilies) {
       expect(tabsCount(combined(files.filter((file) => /\.tsx$/.test(file))))).toBe(1);
     }
+
+    const systemManagement = combined(sourceFiles(resolve(productsRoot, "gosso-system-management")));
+    expect(tabsCount(systemManagement)).toBe(0);
 
     const aiOps = combined(sourceFiles(resolve(productsRoot, "blog-admin-ai-operations")));
     const aiSettingsRoot = readFileSync(resolve(productsRoot, "blog-admin-ai-settings/index.tsx"), "utf8");
@@ -297,7 +300,7 @@ describe("design-language conformance", () => {
     }
   });
 
-  it("does not echo tab labels as immediate panel headings", () => {
+  it("does not echo tab or route labels as immediate content headings", () => {
     const accountEchoes = [
       ["gosso-account-settings/profile.tsx", 'title="个人资料"'],
       ["gosso-account-settings/password.tsx", 'title="修改密码"'],
@@ -331,7 +334,7 @@ describe("design-language conformance", () => {
     expect(systemStatus).toContain('return <Card padding="base"><Heading level={2}');
   });
 
-  it("uses one open panel-lead grammar across governed tabbed settings pages", () => {
+  it("uses one open content-lead grammar across governed settings and management pages", () => {
     const lead = readFileSync(resolve(repoRoot, "showcase/components/tab-panel-lead.tsx"), "utf8");
     const account = readFileSync(resolve(productsRoot, "gosso-account-settings/shared.tsx"), "utf8");
     const system = readFileSync(resolve(productsRoot, "gosso-system-management/shared.tsx"), "utf8");
