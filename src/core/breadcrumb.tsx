@@ -21,7 +21,7 @@ export interface BreadcrumbMenuItem {
   href?: string;
   disabled?: boolean;
   danger?: boolean;
-  onClick?: (event: MouseEvent<HTMLElement>) => void;
+  onClick?: () => void;
 }
 
 export interface BreadcrumbMenu {
@@ -125,10 +125,7 @@ function menuItemNode(item: BreadcrumbMenuItem) {
         disabled={item.disabled}
         variant={item.danger ? "destructive" : "default"}
       >
-        <a
-          href={item.href}
-          onClick={(event) => item.onClick?.(event)}
-        >
+        <a href={item.href} onClick={() => item.onClick?.()}>
           {content}
         </a>
       </DropdownMenuItem>
@@ -140,7 +137,7 @@ function menuItemNode(item: BreadcrumbMenuItem) {
       key={item.key}
       disabled={item.disabled}
       variant={item.danger ? "destructive" : "default"}
-      onSelect={(event) => item.onClick?.(event as unknown as MouseEvent<HTMLElement>)}
+      onSelect={() => item.onClick?.()}
     >
       {content}
     </DropdownMenuItem>
@@ -228,7 +225,10 @@ export function Breadcrumb({
             ) : (
               <span
                 aria-current={isLast ? "page" : undefined}
-                className={cn("inline-flex min-w-0 items-center gap-1", isLast && "text-foreground")}
+                className={cn(
+                  "inline-flex min-w-0 items-center gap-1",
+                  isLast && "text-foreground",
+                )}
               >
                 <span className="min-w-0 truncate">{item.title}</span>
               </span>
