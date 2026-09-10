@@ -54,7 +54,10 @@ export type CalendarStyles =
   | ((info: CalendarSemanticInfo) => Partial<Record<CalendarSemantic, CSSProperties>>);
 
 export interface CalendarProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "children" | "onChange"> {
+  extends Omit<
+    HTMLAttributes<HTMLDivElement>,
+    "children" | "defaultValue" | "onChange"
+  > {
   value?: Date;
   defaultValue?: Date;
   mode?: CalendarMode;
@@ -120,6 +123,13 @@ function defaultLocale() {
   return typeof document !== "undefined" && document.documentElement.lang
     ? document.documentElement.lang
     : undefined;
+}
+
+function localizedLabel(en: string, zh: string) {
+  return typeof document !== "undefined" &&
+    document.documentElement.lang.startsWith("en")
+    ? en
+    : zh;
 }
 
 export function Calendar({
@@ -224,7 +234,10 @@ export function Calendar({
     event.preventDefault();
     const next = new Date(date.getFullYear(), date.getMonth(), date.getDate() + amount);
     const key = `${next.getFullYear()}-${next.getMonth()}-${next.getDate()}`;
-    document.querySelector<HTMLButtonElement>(`[data-calendar-date="${key}"]`)?.focus();
+    event.currentTarget
+      .closest<HTMLElement>('[data-slot="calendar"]')
+      ?.querySelector<HTMLButtonElement>(`[data-calendar-date="${key}"]`)
+      ?.focus();
   };
 
   const renderCell = (date: Date, originNode: ReactNode, cellMode: CalendarMode) => {
@@ -257,7 +270,11 @@ export function Calendar({
       <Button
         variant="text"
         onClick={() => changePanel(panelDate, activeMode === "month" ? "year" : "month")}
-        aria-label={activeMode === "month" ? "Switch to year view" : "Switch to month view"}
+        aria-label={
+          activeMode === "month"
+            ? localizedLabel("Switch to year view", "切换到年份视图")
+            : localizedLabel("Switch to month view", "切换到月份视图")
+        }
       >
         {format(
           panelDate,
@@ -435,23 +452,27 @@ export function Calendar({
           >
             {Array.from({ length: 12 }, (_, month) => {
               const date = new Date(panelDate.getFullYear(), month, 1);
-              const disabled =
-                Array.from(
-                  { length: new Date(date.getFullYear(), month + 1, 0).getDate() },
-                  (_, day) => new Date(date.getFullYear(), month, day + 1),
-                ).every(isDisabled);
+              const disabled = Array.from(
+                { length: new Date(date.getFullYear(), month + 1, 0).getDate() },
+                (_, day) => new Date(date.getFullYear(), month, day + 1),
+              ).every(isDisabled);
               const selected = sameMonth(date, selectedValue);
               const originNode = (
                 <button
                   type="button"
                   disabled={disabled}
                   aria-selected={selected}
+                  aria-label={format(date, { month: "long" })}
                   className={cn(
                     "min-h-20 w-full rounded-md border bg-background p-3 text-left outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40",
                     selected && "border-primary bg-primary/10",
                   )}
                   onClick={() => {
-                    const next = new Date(date.getFullYear(), date.getMonth(), selectedValue.getDate());
+                    const next = new Date(
+                      date.getFullYear(),
+                      date.getMonth(),
+                      selectedValue.getDate(),
+                    );
                     const normalized =
                       next.getMonth() === date.getMonth()
                         ? next

@@ -145,15 +145,15 @@ export function Carousel({
 
   const goTo = (target: number, dontAnimate = false) => {
     if (!count || (waitForAnimate && animating)) return;
-    const next = normalizeIndex(target, count, infinite);
-    if (next === current) return;
-    beforeChange?.(current, next);
-    if (!controlled) setInternalIndex(next);
-    onChange?.(next);
+    const nextIndex = normalizeIndex(target, count, infinite);
+    if (nextIndex === current) return;
+    beforeChange?.(current, nextIndex);
+    if (!controlled) setInternalIndex(nextIndex);
+    onChange?.(nextIndex);
 
     if (dontAnimate || speed <= 0) {
       setAnimating(false);
-      afterChange?.(next);
+      afterChange?.(nextIndex);
       return;
     }
 
@@ -161,7 +161,7 @@ export function Carousel({
     if (animationTimer.current) clearTimeout(animationTimer.current);
     animationTimer.current = setTimeout(() => {
       setAnimating(false);
-      afterChange?.(next);
+      afterChange?.(nextIndex);
     }, speed);
   };
 
@@ -174,7 +174,11 @@ export function Carousel({
     goTo(current - 1);
   };
 
-  useImperativeHandle(ref, () => ({ goTo, next, prev }), [current, count, infinite, animating]);
+  useImperativeHandle(
+    ref,
+    () => ({ goTo, next, prev }),
+    [current, count, infinite, animating],
+  );
 
   useEffect(() => {
     if (!autoplay || paused || count < 2) return;
@@ -209,7 +213,7 @@ export function Carousel({
       style={semanticStyles.arrows}
     >
       <IconButton
-        variant="secondary"
+        variant="outline"
         size="small"
         label={localizedLabel("Previous slide", "上一张")}
         icon={<ChevronLeft aria-hidden="true" />}
@@ -219,7 +223,7 @@ export function Carousel({
         style={semanticStyles.prevArrow}
       />
       <IconButton
-        variant="secondary"
+        variant="outline"
         size="small"
         label={localizedLabel("Next slide", "下一张")}
         icon={<ChevronRight aria-hidden="true" />}
@@ -387,7 +391,10 @@ export function Carousel({
                   effect === "scrollx" && "shrink-0",
                   effect === "fade" &&
                     "col-start-1 row-start-1 transition-opacity",
-                  effect === "fade" && (selected ? "z-10 opacity-100" : "pointer-events-none opacity-0"),
+                  effect === "fade" &&
+                    (selected
+                      ? "z-10 opacity-100"
+                      : "pointer-events-none opacity-0"),
                   semanticClassNames.slide,
                 )}
                 style={{
@@ -409,7 +416,7 @@ export function Carousel({
         {arrowNodes}
       </div>
       {dotPlacement === "bottom" ? dotNodes : null}
-      {(dotPlacement === "start" || dotPlacement === "end") ? dotNodes : null}
+      {dotPlacement === "start" || dotPlacement === "end" ? dotNodes : null}
     </div>
   );
 }
