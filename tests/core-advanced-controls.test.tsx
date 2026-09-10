@@ -40,7 +40,7 @@ describe("additional Core controls", () => {
     render(
       <>
         <Tree
-          data={[
+          treeData={[
             {
               key: "r",
               title: "Root",
