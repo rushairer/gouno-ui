@@ -1,6 +1,11 @@
 import { Fragment, forwardRef, type HTMLAttributes, type ReactNode } from "react";
 import { cn } from "../lib/utils";
-export function Divider({ orientation = "horizontal", className, ...props }: HTMLAttributes<HTMLDivElement> & { orientation?: "horizontal"|"vertical" }) { return <div role="separator" aria-orientation={orientation} {...props} className={cn(orientation === "vertical" ? "h-full w-px" : "h-px w-full", "shrink-0 bg-border", className)} />; }
+
+/** @deprecated Prefer canonical `Separator`; retained for established Core compatibility. */
+export const Divider = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement> & { orientation?: "horizontal" | "vertical" }>(function Divider({ orientation = "horizontal", className, ...props }, ref) {
+  return <div ref={ref} role="separator" aria-orientation={orientation} {...props} data-slot="divider" className={cn(orientation === "vertical" ? "h-full w-px" : "h-px w-full", "shrink-0 bg-border", className)} />;
+});
+
 export type SpaceAlign = "start" | "end" | "center" | "baseline" | "stretch";
 export interface SpaceProps extends HTMLAttributes<HTMLDivElement> {
   orientation?: "horizontal" | "vertical";
