@@ -24,7 +24,19 @@ export { Drawer, type DrawerProps, type DrawerPlacement } from "./drawer";
 export { Alert, type AlertProps, type AlertType, type AlertVariant, type AlertClosableConfig, type AlertSemantic, type AlertClassNames, type AlertStyles, type AlertErrorBoundaryProps } from "./alert";
 export { Skeleton } from "./feedback";
 export { Statistic, type StatisticProps } from "./statistic";
-export { Timeline, type TimelineProps, type TimelineItem } from "./timeline";
+export {
+  Timeline,
+  type TimelineProps,
+  type TimelineItem,
+  type TimelineMode,
+  type TimelineOrientation,
+  type TimelineVariant,
+  type TimelinePlacement,
+  type TimelineSemantic,
+  type TimelineSemanticInfo,
+  type TimelineClassNames,
+  type TimelineStyles,
+} from "./timeline";
 export { Container, Stack, type StackProps } from "./layout-primitives";
 export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption, type CaptionSide, type TableDensity, type TableProps, type TableHeaderProps, type TableBodyProps, type TableFooterProps, type TableRowProps, type TableHeadProps, type TableCellProps, type TableCaptionProps } from "../components/primitives/table";
 export { Separator, type SeparatorProps } from "./separator";
@@ -82,12 +94,34 @@ export {
   type ImageClassNames,
   type ImageStyles,
 } from "./image";
-export { Calendar } from "./calendar";
+export {
+  Calendar,
+  type CalendarProps,
+  type CalendarMode,
+  type CalendarSelectSource,
+  type CalendarCellInfo,
+  type CalendarHeaderRenderProps,
+  type CalendarSemantic,
+  type CalendarSemanticInfo,
+  type CalendarClassNames,
+  type CalendarStyles,
+} from "./calendar";
 export { App, type AppProps } from "./app";
 export { FloatButton, type FloatButtonProps } from "./float-button";
 export { Anchor, type AnchorProps, type AnchorItem } from "./anchor";
 export { Spin, type SpinProps } from "./spin";
-export { Carousel } from "./carousel";
+export {
+  Carousel,
+  type CarouselProps,
+  type CarouselRef,
+  type CarouselEffect,
+  type CarouselDotPlacement,
+  type CarouselAutoplayConfig,
+  type CarouselSemantic,
+  type CarouselSemanticInfo,
+  type CarouselClassNames,
+  type CarouselStyles,
+} from "./carousel";
 export { Slider } from "./slider";
 export { Rate } from "./rate";
 export { Segmented } from "./segmented";
@@ -117,7 +151,6 @@ export type {
   AffixProps,
   BackTopProps,
   BreadcrumbProps,
-  CalendarProps,
   CascaderProps,
   CheckboxFieldProps,
   CheckboxGroupProps,
@@ -177,5 +210,4 @@ export type {
   TransferProps,
   TreeProps,
   WatermarkProps,
-  CarouselProps,
 } from "./public-props";
