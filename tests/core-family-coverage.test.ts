@@ -73,9 +73,23 @@ describe("Core runtime Showcase family coverage", () => {
       "FormActions",
       "OverlayForm",
       "CheckboxGroup",
+      "CheckboxField",
+      "SearchField",
+      "AvatarImage",
+      "AvatarFallback",
+      "Divider",
     ] as const) {
       expect(coreRuntimeFamilyCoverage[name].review, name).toBe("covered");
     }
+  });
+
+  it("has no assigned runtime export still waiting for family review", () => {
+    const needsReview = Object.entries(coreRuntimeFamilyCoverage)
+      .filter(([, coverage]) => coverage.review === "needs-review")
+      .map(([name]) => name)
+      .sort();
+
+    expect(needsReview).toEqual([]);
   });
 
   it("keeps currently unassigned public runtime APIs explicit instead of hiding them", () => {
