@@ -1,8 +1,17 @@
-import type { HTMLAttributes } from "react";
+import type { HTMLAttributes, Ref } from "react";
 import { cn } from "../lib/utils";
 
-export type AppProps = HTMLAttributes<HTMLDivElement>;
+export interface AppProps extends HTMLAttributes<HTMLDivElement> {
+  ref?: Ref<HTMLDivElement>;
+}
 
-export function App({ className, ...props }: AppProps) {
-  return <div {...props} className={cn("min-h-full", className)} />;
+export function App({ className, ref, ...props }: AppProps) {
+  return (
+    <div
+      {...props}
+      ref={ref}
+      data-slot="app"
+      className={cn("min-h-full", className)}
+    />
+  );
 }

@@ -19,6 +19,7 @@ import { overlayDocuments } from "./overlay";
 import { segmentedDocuments } from "./segmented";
 import { selectionControlDocuments } from "./selection-controls";
 import { surfaceReviewDocuments } from "./surface-review-5a";
+import { surfaceReview5bDocuments } from "./surface-review-5b";
 import { tagDocuments } from "./tag";
 import { typographyDocuments } from "./typography";
 
@@ -47,4 +48,5 @@ export const coreDocuments: Record<string, ComponentDocument> = {
   // Review overlays extend existing families without duplicating their base
   // implementation or creating new Showcase family IDs.
   ...surfaceReviewDocuments,
+  ...surfaceReview5bDocuments,
 };
