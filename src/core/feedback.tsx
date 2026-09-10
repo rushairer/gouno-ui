@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react";
 import { Skeleton as PrimitiveSkeleton } from "../components/primitives/skeleton";
 
-export type SkeletonProps = ComponentProps<typeof PrimitiveSkeleton>;
+type SkeletonProps = ComponentProps<typeof PrimitiveSkeleton>;
 
 export function Skeleton({
   "aria-hidden": ariaHidden,
