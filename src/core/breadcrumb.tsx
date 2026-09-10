@@ -180,7 +180,7 @@ export function Breadcrumb({
       style={{ ...semanticStyles.root, ...style }}
     >
       <ol className="m-0 flex min-w-0 list-none flex-wrap items-center gap-x-2 gap-y-1 p-0 text-sm text-muted-foreground">
-        {items.map((item) => {
+        {items.map((item, itemIndex) => {
           if (isSeparatorItem(item)) {
             return (
               <li
@@ -199,9 +199,13 @@ export function Breadcrumb({
           }
 
           routeIndex += 1;
-          if (item.path) paths.push(interpolatePath(item.path, params));
-          const href = item.href ?? (item.path ? joinRoutePaths(paths) : undefined);
+          const hasPath = item.path !== undefined;
+          if (hasPath) paths.push(interpolatePath(item.path ?? "", params));
+          const href = item.href ?? (hasPath ? joinRoutePaths(paths) : undefined);
           const isLast = routeIndex === routes.length - 1;
+          const previousItem = items[itemIndex - 1];
+          const hasExplicitLeadingSeparator =
+            previousItem !== undefined && isSeparatorItem(previousItem);
           const rendered = itemRender?.({
             item,
             index: routeIndex,
@@ -245,7 +249,7 @@ export function Breadcrumb({
               )}
               style={{ ...semanticStyles.item, ...item.style }}
             >
-              {routeIndex > 0 ? (
+              {routeIndex > 0 && !hasExplicitLeadingSeparator ? (
                 <span
                   aria-hidden="true"
                   data-slot="breadcrumb-separator"
