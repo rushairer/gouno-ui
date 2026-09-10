@@ -17,11 +17,11 @@ export function TabsVariants() {
     <div className="grid gap-8 lg:grid-cols-2">
       <div className="flex flex-col gap-2">
         <Text size="sm" tone="muted">Line · 默认</Text>
-        <Tabs ariaLabel="线型标签页" defaultActiveKey="one" items={items} />
+        <Tabs aria-label="线型标签页" defaultActiveKey="one" items={items} />
       </div>
       <div className="flex flex-col gap-2">
         <Text size="sm" tone="muted">Card</Text>
-        <Tabs ariaLabel="卡片标签页" defaultActiveKey="one" items={items} type="card" />
+        <Tabs aria-label="卡片标签页" defaultActiveKey="one" items={items} type="card" />
       </div>
     </div>
   );
