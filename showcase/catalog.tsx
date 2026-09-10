@@ -180,7 +180,6 @@ export const showcaseCatalog: ShowcaseGroup[] = [
     item("core-carousel", "Carousel", "走马灯", 68, <GalleryHorizontal />),
     item("core-table", "Table", "表格", 100, <Table2 />),
     item("core-statistic", "Statistic", "统计数值", 72, <ChartColumn />),
-    item("core-timeline", "Timeline", "时间轴", 70, <History />),
     item("core-tree", "Tree", "树形控件", 78, <Network />),
   ]},
   { workspace: "gouno-ui", layer: "core", group: "Feedback 反馈", items: [
