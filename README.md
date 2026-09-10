@@ -64,12 +64,15 @@ There is currently no active product workspace receiving page-by-page migration.
 
 Showcase dogfoods admitted canonical APIs. `CodeBlock` is now a canonical Core component, while Showcase's Prism renderer remains a private adapter layered on top of it. API tables, demo framing, viewport simulation and similar documentation tooling remain private; Showcase-only repetition is supporting evidence and cannot create another public abstraction by itself.
 
+Every PascalCase Core runtime export is now assigned to a visible Core Showcase family. The coverage gate rejects `needs-review` and `unassigned` entries; established Core APIs follow the explicit retention policy rather than being removed solely because no current product calls them.
+
 ## Tabs
 
 Core Tabs uses a mature high-level contract while retaining Radix-backed accessibility/composition:
 
 ```tsx
 <Tabs
+  aria-label="Account sections"
   activeKey={activeKey}
   items={[
     { key: "profile", label: "Profile" },
@@ -79,7 +82,7 @@ Core Tabs uses a mature high-level contract while retaining Radix-backed accessi
 />
 ```
 
-Canonical state names are `activeKey`, `defaultActiveKey`, `items[].key`, `onChange`. The default `type="line"` uses a lightweight ink-bar style; `type="card"` is explicit. See [`docs/migration.md`](docs/migration.md) for temporary pre-reset compatibility names.
+Canonical state names are `activeKey`, `defaultActiveKey`, `items[].key`, `onChange`. The pre-reset high-level `value`, `defaultValue` and `items[].value` compatibility inputs have been removed. Primitive `Tab`/`TabPanel` still use `value` only as their composition key. Standard `aria-label` / `aria-labelledby` is canonical; `ariaLabel` remains temporarily as an explicitly deprecated real-product migration bridge until vendored artifacts are refreshed. The default `type="line"` uses a lightweight ink-bar style; `type="card"` is explicit. See [`docs/migration.md`](docs/migration.md) for the breaking migration details.
 
 ## Neutral application structure
 
