@@ -228,8 +228,7 @@ export function Steps({
               )}
               style={semanticStyles.item}
             >
-              <span aria-hidden="true">…</span>
-              <span className="sr-only">More steps</span>
+              <span>…</span>
             </li>
           );
         }
