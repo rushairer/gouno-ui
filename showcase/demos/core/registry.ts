@@ -13,6 +13,7 @@ import { generalDocuments } from "./general";
 import { layoutDocuments } from "./layout";
 import { navigationDocuments } from "./navigation";
 import { advancedNavigationDocuments } from "./navigation-advanced";
+import { stepsMenuDocuments } from "./steps-menu";
 import { otherDocuments } from "./other";
 import { overlayDocuments } from "./overlay";
 import { segmentedDocuments } from "./segmented";
@@ -34,6 +35,7 @@ export const coreDocuments: Record<string, ComponentDocument> = {
   ...segmentedDocuments,
   ...navigationDocuments,
   ...advancedNavigationDocuments,
+  ...stepsMenuDocuments,
   ...dataDisplayDocuments,
   ...advancedDataDisplayDocuments,
   ...treeDocuments,
