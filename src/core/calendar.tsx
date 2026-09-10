@@ -56,7 +56,7 @@ export type CalendarStyles =
 export interface CalendarProps
   extends Omit<
     HTMLAttributes<HTMLDivElement>,
-    "children" | "defaultValue" | "onChange"
+    "children" | "defaultValue" | "onChange" | "onSelect"
   > {
   value?: Date;
   defaultValue?: Date;
