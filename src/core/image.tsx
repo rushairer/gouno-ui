@@ -18,6 +18,7 @@ import {
   RefreshCcw,
   RotateCcw,
   RotateCw,
+  X,
   ZoomIn,
   ZoomOut,
 } from "lucide-react";
@@ -155,6 +156,15 @@ function clampScale(value: number, minScale: number, maxScale: number) {
   return Math.min(maxScale, Math.max(minScale, value));
 }
 
+function isImageCoverConfig(
+  value: ReactNode | ImageCoverConfig,
+): value is ImageCoverConfig {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return false;
+  }
+  return "coverNode" in value || "placement" in value;
+}
+
 export function Image({
   src,
   alt = "",
@@ -181,7 +191,13 @@ export function Image({
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
   const [transform, setTransform] = useState<ImageTransform>(initialTransform);
-  const dragRef = useRef<{ pointerId: number; x: number; y: number; originX: number; originY: number } | null>(null);
+  const dragRef = useRef<{
+    pointerId: number;
+    x: number;
+    y: number;
+    originX: number;
+    originY: number;
+  } | null>(null);
 
   const minScale = Math.max(0.1, previewConfig.minScale ?? 1);
   const maxScale = Math.max(minScale, previewConfig.maxScale ?? 50);
@@ -224,7 +240,10 @@ export function Image({
     previewConfig.onTransform?.({ transform: next, action });
   };
 
-  const zoomBy = (direction: 1 | -1, action: "zoomIn" | "zoomOut" | "wheel") => {
+  const zoomBy = (
+    direction: 1 | -1,
+    action: "zoomIn" | "zoomOut" | "wheel",
+  ) => {
     const factor = 1 + scaleStep;
     const scale = clampScale(
       direction > 0 ? transform.scale * factor : transform.scale / factor,
@@ -240,9 +259,15 @@ export function Image({
     onFlipY: () =>
       applyTransform("flipY", { ...transform, flipY: !transform.flipY }),
     onRotateLeft: () =>
-      applyTransform("rotateLeft", { ...transform, rotate: transform.rotate - 90 }),
+      applyTransform("rotateLeft", {
+        ...transform,
+        rotate: transform.rotate - 90,
+      }),
     onRotateRight: () =>
-      applyTransform("rotateRight", { ...transform, rotate: transform.rotate + 90 }),
+      applyTransform("rotateRight", {
+        ...transform,
+        rotate: transform.rotate + 90,
+      }),
     onZoomOut: () => zoomBy(-1, "zoomOut"),
     onZoomIn: () => zoomBy(1, "zoomIn"),
     onReset: () => applyTransform("reset", initialTransform),
@@ -259,13 +284,50 @@ export function Image({
       )}
       style={{ ...semanticStyles.toolbar, ...previewConfig.styles?.toolbar }}
     >
-      <IconButton variant="text" label={localizedLabel("Flip horizontal", "水平翻转")} icon={<FlipHorizontal aria-hidden="true" />} onClick={actions.onFlipX} />
-      <IconButton variant="text" label={localizedLabel("Flip vertical", "垂直翻转")} icon={<FlipVertical aria-hidden="true" />} onClick={actions.onFlipY} />
-      <IconButton variant="text" label={localizedLabel("Rotate left", "向左旋转")} icon={<RotateCcw aria-hidden="true" />} onClick={actions.onRotateLeft} />
-      <IconButton variant="text" label={localizedLabel("Rotate right", "向右旋转")} icon={<RotateCw aria-hidden="true" />} onClick={actions.onRotateRight} />
-      <IconButton variant="text" label={localizedLabel("Zoom out", "缩小")} icon={<ZoomOut aria-hidden="true" />} onClick={actions.onZoomOut} disabled={transform.scale <= minScale} />
-      <IconButton variant="text" label={localizedLabel("Zoom in", "放大")} icon={<ZoomIn aria-hidden="true" />} onClick={actions.onZoomIn} disabled={transform.scale >= maxScale} />
-      <IconButton variant="text" label={localizedLabel("Reset", "重置")} icon={<RefreshCcw aria-hidden="true" />} onClick={actions.onReset} />
+      <IconButton
+        variant="text"
+        label={localizedLabel("Flip horizontal", "水平翻转")}
+        icon={<FlipHorizontal aria-hidden="true" />}
+        onClick={actions.onFlipX}
+      />
+      <IconButton
+        variant="text"
+        label={localizedLabel("Flip vertical", "垂直翻转")}
+        icon={<FlipVertical aria-hidden="true" />}
+        onClick={actions.onFlipY}
+      />
+      <IconButton
+        variant="text"
+        label={localizedLabel("Rotate left", "向左旋转")}
+        icon={<RotateCcw aria-hidden="true" />}
+        onClick={actions.onRotateLeft}
+      />
+      <IconButton
+        variant="text"
+        label={localizedLabel("Rotate right", "向右旋转")}
+        icon={<RotateCw aria-hidden="true" />}
+        onClick={actions.onRotateRight}
+      />
+      <IconButton
+        variant="text"
+        label={localizedLabel("Zoom out", "缩小")}
+        icon={<ZoomOut aria-hidden="true" />}
+        onClick={actions.onZoomOut}
+        disabled={transform.scale <= minScale}
+      />
+      <IconButton
+        variant="text"
+        label={localizedLabel("Zoom in", "放大")}
+        icon={<ZoomIn aria-hidden="true" />}
+        onClick={actions.onZoomIn}
+        disabled={transform.scale >= maxScale}
+      />
+      <IconButton
+        variant="text"
+        label={localizedLabel("Reset", "重置")}
+        icon={<RefreshCcw aria-hidden="true" />}
+        onClick={actions.onReset}
+      />
     </div>
   );
 
@@ -288,9 +350,10 @@ export function Image({
         ...previewConfig.styles?.image,
       }}
       onDoubleClick={() => {
-        const nextScale = transform.scale === minScale
-          ? clampScale(minScale * (1 + scaleStep), minScale, maxScale)
-          : minScale;
+        const nextScale =
+          transform.scale === minScale
+            ? clampScale(minScale * (1 + scaleStep), minScale, maxScale)
+            : minScale;
         applyTransform("doubleClick", {
           ...transform,
           x: nextScale === minScale ? 0 : transform.x,
@@ -319,7 +382,9 @@ export function Image({
         });
       }}
       onPointerUp={(event: ReactPointerEvent<HTMLImageElement>) => {
-        if (dragRef.current?.pointerId === event.pointerId) dragRef.current = null;
+        if (dragRef.current?.pointerId === event.pointerId) {
+          dragRef.current = null;
+        }
       }}
       onPointerCancel={() => {
         dragRef.current = null;
@@ -342,16 +407,16 @@ export function Image({
     typeof previewConfig.mask === "object" ? previewConfig.mask : undefined;
   const maskEnabled = previewConfig.mask !== false && maskConfig?.enabled !== false;
   const maskClosable = maskConfig?.closable ?? true;
-  const coverConfig =
-    typeof previewConfig.cover === "object" &&
-    previewConfig.cover !== null &&
-    !Array.isArray(previewConfig.cover) &&
-    "coverNode" in previewConfig.cover
-      ? previewConfig.cover
-      : undefined;
-  const coverNode = coverConfig?.coverNode ??
-    (previewConfig.cover && !coverConfig ? previewConfig.cover : <Eye aria-hidden="true" />);
-  const coverPlacement = coverConfig?.placement ?? "center";
+
+  const rawCover = previewConfig.cover;
+  let coverNode: ReactNode = <Eye aria-hidden="true" />;
+  let coverPlacement: ImageCoverConfig["placement"] = "center";
+  if (isImageCoverConfig(rawCover)) {
+    coverNode = rawCover.coverNode ?? coverNode;
+    coverPlacement = rawCover.placement ?? coverPlacement;
+  } else if (rawCover !== undefined) {
+    coverNode = rawCover;
+  }
 
   const imageNode = failed ? (
     <span
@@ -491,7 +556,7 @@ export function Image({
               <IconButton
                 variant="text"
                 label={localizedLabel("Close", "关闭")}
-                icon={<ImageOff aria-hidden="true" />}
+                icon={<X aria-hidden="true" />}
                 onClick={actions.onClose}
               />
             </div>
