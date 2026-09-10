@@ -10,7 +10,7 @@ export default function CollapseControlledExample() {
         accordion
         activeKey={activeKey}
         onChange={setActiveKey}
-        size="medium"
+        size="middle"
         items={[
           {
             key: "api",
