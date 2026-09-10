@@ -4,6 +4,7 @@ import { badgeDocuments } from "./badge";
 import { buttonDocuments } from "./button";
 import { codeBlockDocuments } from "./code-block";
 import { dataDisplayDocuments } from "./data-display";
+import { advancedDataDisplayDocuments } from "./data-display-advanced";
 import { dataEntryDocuments } from "./data-entry";
 import { feedbackDocuments } from "./feedback";
 import { formDocuments } from "./form";
@@ -31,6 +32,7 @@ export const coreDocuments: Record<string, ComponentDocument> = {
   ...segmentedDocuments,
   ...navigationDocuments,
   ...dataDisplayDocuments,
+  ...advancedDataDisplayDocuments,
   ...feedbackDocuments,
   ...overlayDocuments,
   ...alertDocuments,
