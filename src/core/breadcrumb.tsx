@@ -20,13 +20,12 @@ export interface BreadcrumbMenuItem {
   title: ReactNode;
   href?: string;
   disabled?: boolean;
-  danger?: boolean;
   onClick?: () => void;
 }
 
 export interface BreadcrumbMenu {
   items: readonly BreadcrumbMenuItem[];
-  ariaLabel?: string;
+  "aria-label"?: string;
 }
 
 export interface BreadcrumbRouteItem {
@@ -119,12 +118,7 @@ function menuItemNode(item: BreadcrumbMenuItem) {
 
   if (item.href) {
     return (
-      <DropdownMenuItem
-        key={item.key}
-        asChild
-        disabled={item.disabled}
-        variant={item.danger ? "destructive" : "default"}
-      >
+      <DropdownMenuItem key={item.key} asChild disabled={item.disabled}>
         <a href={item.href} onClick={() => item.onClick?.()}>
           {content}
         </a>
@@ -136,7 +130,6 @@ function menuItemNode(item: BreadcrumbMenuItem) {
     <DropdownMenuItem
       key={item.key}
       disabled={item.disabled}
-      variant={item.danger ? "destructive" : "default"}
       onSelect={() => item.onClick?.()}
     >
       {content}
@@ -270,7 +263,7 @@ export function Breadcrumb({
                     <DropdownMenuTrigger asChild>
                       <button
                         type="button"
-                        aria-label={item.menu.ariaLabel ?? "Open breadcrumb menu"}
+                        aria-label={item.menu["aria-label"] ?? "Open breadcrumb menu"}
                         className="inline-flex size-6 shrink-0 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
                         <span className="flex size-4 items-center justify-center [&_svg]:size-3.5">
