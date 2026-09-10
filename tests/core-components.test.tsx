@@ -117,7 +117,9 @@ describe("core composite controls", () => {
     expect(dots[0].getAttribute("aria-selected")).toBe("true");
     expect(dots[1].getAttribute("aria-selected")).toBe("false");
 
-    fireEvent.click(screen.getByRole("button", { name: "Next slide" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: /^(Next slide|下一张)$/ }),
+    );
 
     expect(dots[0].getAttribute("aria-selected")).toBe("false");
     expect(dots[1].getAttribute("aria-selected")).toBe("true");
