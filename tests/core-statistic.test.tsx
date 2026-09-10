@@ -1,5 +1,5 @@
 import { createRef } from "react";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { Statistic } from "../src/core/statistic";
 
@@ -35,10 +35,16 @@ describe("Core Statistic", () => {
   });
 
   it("keeps zero values plus prefix and suffix caller-owned", () => {
-    render(<Statistic title="增长" value={0} prefix="+" suffix="%" />);
+    const { container } = render(
+      <Statistic title="增长" value={0} prefix="+" suffix="%" />,
+    );
 
-    expect(screen.getByText("增长")).toBeTruthy();
-    expect(screen.getByText("+0%")).toBeTruthy();
+    expect(
+      container.querySelector('[data-slot="statistic-title"]')?.textContent,
+    ).toBe("增长");
+    expect(
+      container.querySelector('[data-slot="statistic-value"]')?.textContent,
+    ).toBe("+0%");
   });
 
   it("does not invent live-region or surface semantics", () => {
