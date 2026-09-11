@@ -25,6 +25,8 @@ jobs:
         run: python3 .github/scripts/fix-core-splitter-6b2.py
       - name: Apply Splitter 6B2 integration patch
         run: python3 .github/scripts/apply-core-splitter-6b2.py
+      - name: Align Splitter tests with repository cleanup convention
+        run: python3 .github/scripts/fix-core-splitter-6b2-test.py
       - name: Verify Splitter 6B2
         run: |
           npm ci
@@ -35,6 +37,7 @@ jobs:
       - name: Commit verified implementation
         run: |
           rm .github/scripts/fix-core-splitter-6b2.py
+          rm .github/scripts/fix-core-splitter-6b2-test.py
           rm .github/scripts/apply-core-splitter-6b2.py
           rm .github/workflows/implement-core-splitter-6b2.yml
           git config user.name "Aben"
