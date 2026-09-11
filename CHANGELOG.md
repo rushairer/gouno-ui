@@ -4,6 +4,15 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- General/Layout 6A: hardened Core `Icon`, `Kbd`, `Flex` and `Separator` with ref-safe native contracts, standard ARIA, mature layout/line capabilities, semantic slots, same-source Showcase examples and focused certification tests.
+- Core reviewed-completion continues independently from runtime-family coverage; no established Core family is removed merely to raise completion percentages.
+
+### Breaking
+
+- `Icon.label` is replaced by the standard `aria-label` / `aria-labelledby` accessible-name path.
+
 ## [0.2.0] - 2026-09-10
 
 `0.2.0` is the first product-validated release after the initial standalone package. It intentionally contains pre-1.0 breaking API corrections. See [`docs/migration.md`](docs/migration.md) for consumer migration details.
