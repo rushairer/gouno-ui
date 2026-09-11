@@ -1,0 +1,41 @@
+name: Implement Core Splitter 6B2
+
+on:
+  push:
+    branches: [feat/core-splitter-6b2]
+    paths:
+      - .github/workflows/implement-core-splitter-6b2.yml
+
+permissions:
+  contents: write
+
+jobs:
+  implement:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/core-splitter-6b2
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+          cache: npm
+      - name: Apply Splitter 6B2 integration patch
+        run: python3 .github/scripts/apply-core-splitter-6b2.py
+      - name: Verify Splitter 6B2
+        run: |
+          npm ci
+          npm run typecheck
+          npm test -- --run
+          npm run build
+          npm run showcase:build
+      - name: Commit verified implementation
+        run: |
+          rm .github/scripts/apply-core-splitter-6b2.py
+          rm .github/workflows/implement-core-splitter-6b2.yml
+          git config user.name "Aben"
+          git config user.email "5195693+rushairer@users.noreply.github.com"
+          git add -A
+          git commit -m "feat(core): harden Splitter compound API"
+          git push origin HEAD:feat/core-splitter-6b2
