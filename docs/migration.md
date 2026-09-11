@@ -75,6 +75,52 @@ Avatar now uses the repository-wide canonical size vocabulary `small | middle | 
 
 The existing `Grid columns/gap` helper is retained unchanged in ownership and remains appropriate for simple CSS Grid composition. `Row` / `Col` are additive 24-column layout APIs for responsive spans, offsets, ordering and gutters. Do not migrate a working `Grid` call site merely to use Row/Col; choose the layer that matches the layout semantics.
 
+## Splitter 6B2 compound migration
+
+`Splitter` now has a canonical compound API for multiple resizable regions. Existing two-panel call sites remain valid during the 0.2.x compatibility window, so this is a recommended migration rather than a forced source rewrite.
+
+Legacy-compatible form:
+
+```tsx
+<Splitter
+  first={<Navigation />}
+  second={<Workspace />}
+  defaultSize={36}
+  min={20}
+  max={70}
+  onResize={(firstSize) => saveFirstSize(firstSize)}
+/>
+```
+
+Canonical form:
+
+```tsx
+<Splitter
+  defaultSizes={[36, 64]}
+  onSizesChange={(sizes) => saveLayout(sizes)}
+>
+  <Splitter.Panel min={20} max={70}>
+    <Navigation />
+  </Splitter.Panel>
+  <Splitter.Panel>
+    <Workspace />
+  </Splitter.Panel>
+</Splitter>
+```
+
+For three or more regions, add more `Splitter.Panel` children and manage the complete `sizes` / `defaultSizes` vector. A Panel with `resizable={false}` disables both adjacent handles. Resize handles are keyboard reachable and support Arrow keys plus Home/End; products should not add a second keyboard-resize implementation around the component.
+
+Migration mapping:
+
+```text
+first / second       → Splitter.Panel children
+defaultSize          → defaultSizes or Splitter.Panel.defaultSize
+min / max            → Splitter.Panel.min / Splitter.Panel.max
+onResize(number)     → onSizesChange(readonly number[])
+```
+
+The old names above are deprecated compatibility, not a second canonical model. `orientation="horizontal|vertical"` remains the single axis API; do not introduce a `layout` synonym in product wrappers. Persistence, collapse policy, editor state and product-specific panel identities remain caller-owned.
+
 ## Steps and Menu navigation alignment
 
 Canonical `Steps` and `Menu` now use stable keyed item models and directly owned public types. They intentionally converge on the proven Gouno navigation requirements rather than copying every mature-library compatibility prop.
