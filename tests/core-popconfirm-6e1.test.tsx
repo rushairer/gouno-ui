@@ -40,18 +40,25 @@ describe("Popconfirm 6E1", () => {
     expect(screen.queryByRole("button", { name: "Cancel" })).toBeNull();
   });
 
-  it("does not overwrite child click behavior and respects preventDefault", () => {
+  it("does not overwrite child click behavior and still composes the root event", () => {
     const childClick = vi.fn((event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
     });
+    const rootClick = vi.fn();
     render(
-      <Popconfirm title="确认？" okText="确认" cancelText="取消">
+      <Popconfirm
+        title="确认？"
+        okText="确认"
+        cancelText="取消"
+        onClick={rootClick}
+      >
         <button onClick={childClick}>触发</button>
       </Popconfirm>,
     );
 
     fireEvent.click(screen.getByRole("button", { name: "触发" }));
     expect(childClick).toHaveBeenCalledTimes(1);
+    expect(rootClick).toHaveBeenCalledTimes(1);
     expect(screen.queryByRole("alertdialog")).toBeNull();
   });
 

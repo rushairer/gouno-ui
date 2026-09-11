@@ -57,9 +57,9 @@ export const Popconfirm = forwardRef<HTMLSpanElement, PopconfirmProps>(
     };
 
     const handleTriggerClick = (event: MouseEvent<HTMLSpanElement>) => {
-      if (disabled || busy || event.defaultPrevented) return;
       onClick?.(event);
-      if (!event.defaultPrevented) setOpen(true);
+      if (disabled || busy || event.defaultPrevented) return;
+      setOpen(true);
     };
 
     const handleCancel = () => {
