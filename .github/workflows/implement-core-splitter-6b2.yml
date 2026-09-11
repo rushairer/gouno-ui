@@ -21,6 +21,8 @@ jobs:
         with:
           node-version: 24
           cache: npm
+      - name: Apply Splitter typing fix
+        run: python3 .github/scripts/fix-core-splitter-6b2.py
       - name: Apply Splitter 6B2 integration patch
         run: python3 .github/scripts/apply-core-splitter-6b2.py
       - name: Verify Splitter 6B2
@@ -32,6 +34,7 @@ jobs:
           npm run showcase:build
       - name: Commit verified implementation
         run: |
+          rm .github/scripts/fix-core-splitter-6b2.py
           rm .github/scripts/apply-core-splitter-6b2.py
           rm .github/workflows/implement-core-splitter-6b2.yml
           git config user.name "Aben"
