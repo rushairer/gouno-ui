@@ -1,0 +1,41 @@
+name: Implement Core Slider Rate 7A
+
+on:
+  push:
+    branches: [feat/core-slider-rate-7a]
+    paths:
+      - .github/workflows/implement-core-slider-rate-7a.yml
+
+permissions:
+  contents: write
+
+jobs:
+  implement:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/core-slider-rate-7a
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+          cache: npm
+      - name: Apply Slider Rate 7A integration
+        run: python3 .github/scripts/apply-core-slider-rate-7a.py
+      - name: Verify Slider Rate 7A
+        run: |
+          npm ci
+          npm run typecheck
+          npm test -- --run
+          npm run build
+          npm run showcase:build
+      - name: Commit verified implementation
+        run: |
+          rm .github/scripts/apply-core-slider-rate-7a.py
+          rm .github/workflows/implement-core-slider-rate-7a.yml
+          git config user.name "Aben"
+          git config user.email "5195693+rushairer@users.noreply.github.com"
+          git add -A
+          git commit -m "feat(core): harden Slider and Rate"
+          git push origin HEAD:feat/core-slider-rate-7a
