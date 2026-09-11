@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useRef,
   useState,
   type ReactNode,
   type Ref,
@@ -51,12 +52,21 @@ export function Tour({
   ref,
 }: TourProps) {
   const [innerCurrent, setInnerCurrent] = useState(0);
+  const restoreFocusRef = useRef<HTMLElement | null>(null);
   const controlled = current !== undefined;
   const index = normalizeIndex(controlled ? current : innerCurrent, steps.length);
   const step = steps[index];
 
   useEffect(() => {
-    if (!open && !controlled) setInnerCurrent(0);
+    if (open) {
+      const activeElement = document.activeElement;
+      restoreFocusRef.current =
+        activeElement instanceof HTMLElement && activeElement !== document.body
+          ? activeElement
+          : null;
+    } else if (!controlled) {
+      setInnerCurrent(0);
+    }
   }, [controlled, open]);
 
   const moveTo = (nextIndex: number) => {
@@ -85,6 +95,13 @@ export function Tour({
         data-slot="tour-content"
         data-step-index={index}
         onPointerDownOutside={(event) => event.preventDefault()}
+        onCloseAutoFocus={(event) => {
+          const restoreFocusTarget = restoreFocusRef.current;
+          restoreFocusRef.current = null;
+          if (!restoreFocusTarget?.isConnected) return;
+          event.preventDefault();
+          restoreFocusTarget.focus();
+        }}
         className={cn(
           "top-auto bottom-6 left-1/2 w-80 max-w-[calc(100vw-2rem)] -translate-x-1/2 translate-y-0 sm:max-w-[calc(100vw-2rem)]",
           className,
