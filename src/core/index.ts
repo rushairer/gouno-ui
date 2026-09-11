@@ -1,7 +1,7 @@
 /** Pure, product-agnostic component API. */
 export { Button, ButtonLink, IconButtonLink, ChoiceButton, NavigationProvider, type ButtonProps, type ButtonVariant, type ButtonColor, type ButtonSize, type ButtonShape, type ButtonIconPlacement, type ButtonLinkProps, type LinkAdapterProps } from "./button";
 export { IconButton, type IconButtonProps } from "./icon-button";
-export { Icon } from "./icon";
+export { Icon, type IconSize } from "./icon";
 export { Badge, type BadgeProps, type BadgeStatus, type BadgeSize } from "./badge";
 export { Tag, CheckableTag, type TagProps, type CheckableTagProps, type TagColor } from "./tag";
 export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, type CardProps, type CardHeaderProps, type CardTitleProps, type CardDescriptionProps, type CardContentProps, type CardFooterProps, type CardVariant, type CardPadding } from "./card";
@@ -39,9 +39,31 @@ export {
 } from "./timeline";
 export { Container, Stack, type StackProps } from "./layout-primitives";
 export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption, type CaptionSide, type TableDensity, type TableProps, type TableHeaderProps, type TableBodyProps, type TableFooterProps, type TableRowProps, type TableHeadProps, type TableCellProps, type TableCaptionProps } from "../components/primitives/table";
-export { Separator, type SeparatorProps } from "./separator";
+export {
+  Separator,
+  type SeparatorProps,
+  type SeparatorOrientation,
+  type SeparatorVariant,
+  type SeparatorTitlePlacement,
+  type SeparatorSemantic,
+  type SeparatorClassNames,
+  type SeparatorStyles,
+} from "./separator";
 export { Avatar, AvatarImage, AvatarFallback, type AvatarProps, type AvatarImageProps, type AvatarFallbackProps } from "./avatar";
-export { Divider, Space, Flex, Grid, type SpaceProps, type SpaceAlign, type FlexProps } from "./layout";
+export {
+  Divider,
+  Space,
+  Flex,
+  Grid,
+  type SpaceProps,
+  type SpaceAlign,
+  type FlexProps,
+  type FlexDirection,
+  type FlexAlign,
+  type FlexJustify,
+  type FlexGap,
+  type FlexWrap,
+} from "./layout";
 export { InputNumber, type InputNumberProps } from "./input-number";
 export { DatePicker, type DatePickerProps } from "./date-picker";
 export { DateRangePicker, type DateRangePickerProps } from "./date-range-picker";
