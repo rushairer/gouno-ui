@@ -48,6 +48,7 @@ const completedComponents = new Set([
   "core-modal",
   "core-drawer",
   "core-popconfirm",
+  "core-message",
   "core-card",
   "core-typography",
   "core-progress",
