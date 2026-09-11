@@ -144,7 +144,6 @@ export {
   Image,
   type ImageProps,
   type ImagePreviewConfig,
-  type ImagePreviewMaskConfig,
   type ImageCoverConfig,
   type ImageTransform,
   type ImageTransformAction,
@@ -205,7 +204,7 @@ export { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 export { Cascader, type CascaderOption } from "./cascader";
 export { TreeSelect, type TreeSelectProps, type TreeSelectNode } from "./tree-select";
 export { Transfer, type TransferItem } from "./transfer";
-export { Mentions } from "./mentions";
+export { Mentions, type MentionsProps } from "./mentions";
 export {
   Tree,
   type TreeNode,
@@ -283,7 +282,6 @@ export type {
   LayoutHeaderProps,
   LayoutProps,
   LayoutSiderProps,
-  MentionsProps,
   MessageProviderProps,
   NavigationProviderProps,
   NotificationProviderProps,
