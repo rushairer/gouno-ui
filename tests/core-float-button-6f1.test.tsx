@@ -1,11 +1,19 @@
 import * as React from "react";
 import { readFileSync } from "node:fs";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { FloatButton } from "../src/core";
 import { componentProgress } from "../showcase/component-progress";
 import { otherDocuments } from "../showcase/demos/core/other";
 
+class ResizeObserverStub {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+beforeAll(() => vi.stubGlobal("ResizeObserver", ResizeObserverStub));
+afterAll(() => vi.unstubAllGlobals());
 afterEach(cleanup);
 
 describe("FloatButton 6F1", () => {
