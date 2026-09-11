@@ -66,6 +66,15 @@ Standard `aria-label` / `aria-labelledby` is the canonical accessible-name path.
 
 For custom composition, use `Tabs` with `TabList`, `Tab`, `TabPanel`; do not create another active-state write path.
 
+
+## Avatar and Grid 6B1 compatibility
+
+Avatar now uses the repository-wide canonical size vocabulary `small | middle | large` and also accepts an explicit pixel number. Existing `sm | default | lg` values remain accepted as deprecated 0.2.x compatibility aliases and normalize to the canonical semantics; this batch does not require an immediate consumer rewrite. New code should use the canonical names.
+
+`AvatarImage` and `AvatarFallback` remain available, while `AvatarBadge`, `AvatarGroup` and `AvatarGroupCount` extend the same compound family. `AvatarGroup.max` is a visual overflow bound only; member data, localized overflow wording when customized, online/offline meaning and accessible names remain caller-owned.
+
+The existing `Grid columns/gap` helper is retained unchanged in ownership and remains appropriate for simple CSS Grid composition. `Row` / `Col` are additive 24-column layout APIs for responsive spans, offsets, ordering and gutters. Do not migrate a working `Grid` call site merely to use Row/Col; choose the layer that matches the layout semantics.
+
 ## Steps and Menu navigation alignment
 
 Canonical `Steps` and `Menu` now use stable keyed item models and directly owned public types. They intentionally converge on the proven Gouno navigation requirements rather than copying every mature-library compatibility prop.
