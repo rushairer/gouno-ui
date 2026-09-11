@@ -23,6 +23,7 @@ const completedComponents = new Set([
   "core-time-picker",
   "core-color-picker",
   "core-upload",
+  "core-autocomplete",
   "core-segmented",
   "core-checkbox",
   "core-radio",
