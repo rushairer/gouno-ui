@@ -18,7 +18,7 @@ export const Kbd = forwardRef<HTMLElement, KbdProps>(function Kbd(
       ref={ref}
       data-slot="kbd"
       className={cn(
-        "inline-flex min-h-5 items-center justify-center rounded border bg-muted px-1.5 py-0.5 font-mono text-xs leading-none text-foreground shadow-xs",
+        "inline-flex min-h-5 items-center justify-center rounded border bg-muted px-1.5 py-0.5 font-mono text-xs leading-none text-foreground",
         className,
       )}
     />
