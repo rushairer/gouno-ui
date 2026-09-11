@@ -16,6 +16,7 @@ import { transferReviewDocuments } from "./data-entry-review-6d5";
 import { cascaderReviewDocuments } from "./data-entry-review-6d6";
 import { treeSelectReviewDocuments } from "./data-entry-review-6d7";
 import { feedbackDocuments } from "./feedback";
+import { popconfirmReviewDocuments } from "./feedback-review-6e1";
 import { formDocuments } from "./form";
 import { generalDocuments } from "./general";
 import { layoutDocuments } from "./layout";
@@ -58,6 +59,7 @@ export const coreDocuments: Record<string, ComponentDocument> = {
   ...advancedDataDisplayDocuments,
   ...treeDocuments,
   ...feedbackDocuments,
+  ...popconfirmReviewDocuments,
   ...overlayDocuments,
   ...alertDocuments,
   ...otherDocuments,

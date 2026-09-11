@@ -47,6 +47,7 @@ const completedComponents = new Set([
   "core-alert",
   "core-modal",
   "core-drawer",
+  "core-popconfirm",
   "core-card",
   "core-typography",
   "core-progress",
