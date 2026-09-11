@@ -87,6 +87,9 @@ function TourDemo() {
       <Tour
         open={open}
         onClose={() => setOpen(false)}
+        previousText="上一步"
+        nextText="下一步"
+        finishText="完成"
         steps={[
           { title: "欢迎", description: "这是第一步。" },
           { title: "组件目录", description: "从左侧选择组件。" },
