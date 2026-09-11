@@ -7,6 +7,7 @@ import { dataDisplayDocuments } from "./data-display";
 import { advancedDataDisplayDocuments } from "./data-display-advanced";
 import { treeDocuments } from "./tree-document";
 import { dataEntryDocuments } from "./data-entry";
+import { nativePickerReviewDocuments } from "./data-entry-review-6c1";
 import { feedbackDocuments } from "./feedback";
 import { formDocuments } from "./form";
 import { generalDocuments } from "./general";
@@ -32,6 +33,7 @@ export const coreDocuments: Record<string, ComponentDocument> = {
   ...tagDocuments,
   ...layoutDocuments,
   ...dataEntryDocuments,
+  ...nativePickerReviewDocuments,
   ...formDocuments,
   ...selectionControlDocuments,
   ...segmentedDocuments,
