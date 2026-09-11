@@ -5,7 +5,7 @@ export default function FlexDemo() {
     <Card padding="sm">
       <Flex justify="space-between" align="center" gap="lg">
         <Flex direction="column" gap="xs">
-          <Text weight="semibold">Build status</Text>
+          <Text className="font-semibold">Build status</Text>
           <Text size="sm" tone="muted">All verification gates passed.</Text>
         </Flex>
         <Button size="small">Details</Button>
