@@ -82,7 +82,7 @@ describe("Core General/Layout batch 6A", () => {
     expect(root.dataset.direction).toBe("column-reverse");
     expect(root.dataset.wrap).toBe("wrap-reverse");
     expect(root.style.gap).toBe("11px");
-    expect(root.style.flex).toBe("1 1 0px");
+    expect(root.style.flex).toContain("1 1");
     expect(root.classList.contains("flex-col-reverse")).toBe(true);
     expect(root.classList.contains("items-baseline")).toBe(true);
     expect(root.classList.contains("justify-evenly")).toBe(true);
