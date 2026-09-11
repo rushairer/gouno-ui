@@ -6,6 +6,8 @@ describe("additional Core controls", () => {
   it("reveals the next cascader level", () => {
     render(
       <Cascader
+        aria-label="Location"
+        placeholder="Choose"
         options={[
           {
             value: "a",
@@ -15,10 +17,10 @@ describe("additional Core controls", () => {
         ]}
       />,
     );
-    fireEvent.change(screen.getByLabelText("Level 1"), {
+    fireEvent.change(screen.getByRole("combobox", { name: "1" }), {
       target: { value: "a" },
     });
-    expect(screen.getByLabelText("Level 2")).toBeTruthy();
+    expect(screen.getByRole("combobox", { name: "2" })).toBeTruthy();
   });
 
   it("moves selected transfer entries", () => {
