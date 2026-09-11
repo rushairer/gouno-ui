@@ -24,6 +24,8 @@ const completedComponents = new Set([
   "core-color-picker",
   "core-upload",
   "core-autocomplete",
+  "core-slider",
+  "core-rate",
   "core-segmented",
   "core-checkbox",
   "core-radio",
