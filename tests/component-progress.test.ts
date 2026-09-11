@@ -29,8 +29,10 @@ describe("audited batch completion", () => {
 
   it("reports the completed same-source and reading-evidence Core batch as complete", () => {
     for (const id of [
+      "core-avatar",
       "core-space",
       "core-flex",
+      "core-grid",
       "core-separator",
       "core-card",
       "core-typography",

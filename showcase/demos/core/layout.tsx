@@ -1,9 +1,13 @@
-import { Card, Grid, Space, Splitter } from "../../../src/core";
+import { Space, Splitter } from "../../../src/core";
 import type { ComponentDocument } from "../../components/component-page";
 import FlexDemo from "./flex/flex-0";
 import FlexDemoSource from "./flex/flex-0.tsx?raw";
 import FlexWrapDemo from "./flex/flex-1";
 import FlexWrapDemoSource from "./flex/flex-1.tsx?raw";
+import GridDemo from "./grid/grid-0";
+import GridDemoSource from "./grid/grid-0.tsx?raw";
+import ResponsiveGridDemo from "./grid/grid-1";
+import ResponsiveGridDemoSource from "./grid/grid-1.tsx?raw";
 import PageLayoutDemo from "./page-layout/page-layout-0";
 import PageLayoutDemoSource from "./page-layout/page-layout-0.tsx?raw";
 import SeparatorDemo from "./separator/separator-0";
@@ -158,17 +162,47 @@ export const layoutDocuments: Record<string, ComponentDocument> = {
   },
   grid: {
     title: "Grid 网格",
-    description: "固定列或自动适配的响应式网格。",
-    code: '<Grid columns={3}>{[1, 2, 3].map((item) => <Card key={item} padding="sm">Card {item}</Card>)}</Grid>',
-    render: () => (
-      <Grid columns={3}>
-        {[1, 2, 3].map((item) => (
-          <Card key={item} padding="sm">
-            Card {item}
-          </Card>
-        ))}
-      </Grid>
-    ),
+    description:
+      "同一 family 提供两层能力：Grid 是简单 CSS Grid helper；Row/Col 是 24 栅格布局。Row 拥有 gutter/对齐/换行，Col 拥有 span/offset/order/push/pull/flex 与 xs-sm-md-lg-xl-xxl 响应式覆盖。",
+    code: canonicalCoreSource(GridDemoSource),
+    render: () => <GridDemo />,
+    demos: [
+      {
+        title: "24 栅格与响应式 Col",
+        description:
+          "响应式断点沿用 Gouno/Tailwind 640/768/1024/1280/1536 体系；每个更大断点继承上一档未覆盖的字段。",
+        code: canonicalCoreSource(ResponsiveGridDemoSource),
+        render: () => <ResponsiveGridDemo />,
+      },
+    ],
+    api: [
+      { name: "columns", description: "Grid helper 的固定列数或 auto-fit。", type: '1 | 2 | 3 | 4 | "auto"', defaultValue: '"auto"' },
+      { name: "gap", description: "Grid helper 的间距 token 或像素值；数字通过 style 生效。", type: '"sm" | "md" | "lg" | number', defaultValue: '"md"' },
+      { name: "...div props", description: "Grid helper 透传标准 div 属性并支持真实 ref。", type: "HTMLAttributes<HTMLDivElement>" },
+    ],
+    apiSections: [
+      {
+        title: "Row API",
+        rows: [
+          { name: "gutter", description: "水平 gutter，或 [horizontal, vertical]；由 Row/Col 结构共同拥有。", type: "number | [number, number]", defaultValue: "0" },
+          { name: "align", description: "交叉轴对齐。", type: '"top" | "middle" | "bottom" | "stretch"', defaultValue: '"top"' },
+          { name: "justify", description: "主轴分布。", type: '"start" | "center" | "end" | "space-between" | "space-around" | "space-evenly"', defaultValue: '"start"' },
+          { name: "wrap", description: "是否允许 Col 换行。", type: "boolean", defaultValue: "true" },
+          { name: "ref", description: "指向真实 Row div。", type: "Ref<HTMLDivElement>" },
+        ],
+      },
+      {
+        title: "Col API",
+        rows: [
+          { name: "span", description: "占用 0-24 栅格；0 隐藏。", type: "GridSpan", defaultValue: "24" },
+          { name: "offset / push / pull", description: "0-24 栅格偏移与视觉位移。", type: "GridSpan", defaultValue: "0" },
+          { name: "order", description: "Flex order。", type: "number", defaultValue: "0" },
+          { name: "flex", description: "需要自由伸缩时覆盖固定 span 的 flex shorthand。", type: "CSSProperties['flex']" },
+          { name: "xs / sm / md / lg / xl / xxl", description: "响应式 span 数值或 ColSize；按断点逐级继承。", type: "GridSpan | ColSize" },
+          { name: "ref", description: "指向真实 Col div。", type: "Ref<HTMLDivElement>" },
+        ],
+      },
+    ],
   },
   separator: {
     title: "Separator 分隔线",

@@ -49,12 +49,14 @@ export {
   type SeparatorClassNames,
   type SeparatorStyles,
 } from "./separator";
-export { Avatar, AvatarImage, AvatarFallback, type AvatarProps, type AvatarImageProps, type AvatarFallbackProps } from "./avatar";
+export { Avatar, AvatarImage, AvatarFallback, AvatarBadge, AvatarGroup, AvatarGroupCount, type AvatarProps, type AvatarImageProps, type AvatarFallbackProps, type AvatarBadgeProps, type AvatarGroupProps, type AvatarGroupCountProps, type AvatarSize, type AvatarShape, type AvatarLegacySize } from "./avatar";
 export {
   Divider,
   Space,
   Flex,
   Grid,
+  Row,
+  Col,
   type SpaceProps,
   type SpaceAlign,
   type FlexProps,
@@ -63,6 +65,15 @@ export {
   type FlexJustify,
   type FlexGap,
   type FlexWrap,
+  type GridSpan,
+  type GridBreakpoint,
+  type RowProps,
+  type RowAlign,
+  type RowJustify,
+  type RowGutter,
+  type ColProps,
+  type ColSize,
+  type ColBreakpointValue,
 } from "./layout";
 export { InputNumber, type InputNumberProps } from "./input-number";
 export { DatePicker, type DatePickerProps } from "./date-picker";

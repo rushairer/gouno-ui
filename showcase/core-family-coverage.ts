@@ -113,6 +113,9 @@ export const coreRuntimeFamilyCoverage = {
     review: "covered",
     note: "Reviewed as required Avatar compound anatomy together with AvatarImage.",
   },
+  AvatarBadge: { familyId: "core-avatar", review: "covered" },
+  AvatarGroup: { familyId: "core-avatar", review: "covered" },
+  AvatarGroupCount: { familyId: "core-avatar", review: "covered" },
   Divider: {
     familyId: "core-separator",
     review: "covered",
@@ -121,6 +124,8 @@ export const coreRuntimeFamilyCoverage = {
   Space: { familyId: "core-space", review: "covered" },
   Flex: { familyId: "core-flex", review: "covered" },
   Grid: { familyId: "core-grid", review: "covered" },
+  Row: { familyId: "core-grid", review: "covered" },
+  Col: { familyId: "core-grid", review: "covered" },
   InputNumber: { familyId: "core-input-number", review: "covered" },
   DatePicker: { familyId: "core-date-picker", review: "covered" },
   DateRangePicker: { familyId: "core-date-range-picker", review: "covered" },
