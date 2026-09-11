@@ -8,7 +8,7 @@ import {
 import { cn } from "../lib/utils";
 
 export type IconSize = "small" | "middle" | "large" | number;
-type IconSvgProps = ComponentPropsWithRef<"svg">;
+type IconSvgProps = ComponentPropsWithRef<"svg"> & { "data-slot"?: string };
 
 export interface IconProps extends Omit<IconSvgProps, "children"> {
   /** SVG icon element to render. */
