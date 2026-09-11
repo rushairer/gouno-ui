@@ -651,3 +651,15 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Scope boundary:** no persistence, read/unread state, history, manual close/update/destroy keys, action routing, cross-root singleton, storage, permission policy or business notification center is admitted without independent product evidence.
 - **Validation:** 6E3 runtime, same-source Showcase, five focused regression tests, reviewed completion and direct type ownership passed the complete typecheck/test/build/pack/artifact/Pages gate at main run 352.
 - **Abstraction impact:** no Notification-oriented Pattern/Gouno abstraction is admitted; it remains a narrow Core transient-notice primitive.
+
+### PD-070 — Tour stays a modal walkthrough instead of claiming target-positioning behavior
+
+- **Status:** accepted / Core hardening
+- **Owner:** Core / Feedback family
+- **Evidence:** the established Core Tour already modeled a finite sequence of titled steps, but the old `TourStep.target` was never consumed by runtime while the implementation rendered a fixed modal with injected English `Product tour`, `Previous`, `Next`, and `Finish` copy. The completed product corpus does not provide evidence for a reusable target-highlighting/positioning engine.
+- **Decision:** retain Tour as a controlled modal walkthrough. `open` remains caller-owned; `current/onChange` form the optional controlled step-index path while an omitted `current` uses local state normalized to the current readonly step collection and resets after close. Reuse the canonical Dialog primitive for modal focus containment and Escape handling. Because Tour is opened by an external controlled action rather than a nested DialogTrigger, capture that active element before Dialog autofocus and restore it when the Tour closes. Use the visible current step title as the dialog accessible name.
+- **Content/accessibility impact:** navigation labels are explicit caller-owned `previousText`, `nextText`, and `finishText`; Core injects no English tour name or action copy. An empty step collection renders no Tour. No target DOM lookup, spotlight, anchor placement, scroll orchestration or route progression is implied by this contract.
+- **API impact:** `TourProps` and `TourStep` are implementation-owned and exported directly from Core. `TourStep.target` is removed because it was a non-functional promise rather than a compatibility contract; adding target positioning later requires independent evidence and a separately tested public design.
+- **Validation:** 6E4 same-source Showcase and six focused regression tests cover accessible naming/localized copy, controlled and uncontrolled index behavior, normalized callbacks, canonical Dialog Escape plus explicit external-trigger focus return, reset after close, real content ref, and removal of the fake target API. Exact-head main run 360 passed the complete typecheck/test/build/pack/artifact/Pages gate.
+- **Abstraction impact:** no Tour-oriented Pattern/Gouno onboarding abstraction is admitted; onboarding policy, target discovery, persistence, routing and business completion state remain product-owned.
+
