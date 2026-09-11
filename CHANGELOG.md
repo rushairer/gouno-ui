@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 ### Changed
 
+- General/Layout 6B1: hardened Core `Avatar` and `Grid`; Avatar now follows canonical `small/middle/large | number` sizing while retaining deprecated `sm/default/lg` compatibility, exposes Group/Badge/Count compound anatomy, and Grid retains its simple helper while adding responsive 24-column `Row`/`Col`.
 - General/Layout 6A: hardened Core `Icon`, `Kbd`, `Flex` and `Separator` with ref-safe native contracts, standard ARIA, mature layout/line capabilities, semantic slots, same-source Showcase examples and focused certification tests.
 - Core reviewed-completion continues independently from runtime-family coverage; no established Core family is removed merely to raise completion percentages.
 
