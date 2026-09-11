@@ -28,6 +28,7 @@ const completedComponents = new Set([
   "core-rate",
   "core-input-otp",
   "core-mentions",
+  "core-transfer",
   "core-segmented",
   "core-checkbox",
   "core-radio",

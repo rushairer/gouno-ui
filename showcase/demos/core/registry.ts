@@ -12,6 +12,7 @@ import { autoCompleteReviewDocuments } from "./data-entry-review-6d1";
 import { sliderRateReviewDocuments } from "./data-entry-review-6d2";
 import { inputOtpReviewDocuments } from "./data-entry-review-6d3";
 import { mentionsReviewDocuments } from "./data-entry-review-6d4";
+import { transferReviewDocuments } from "./data-entry-review-6d5";
 import { feedbackDocuments } from "./feedback";
 import { formDocuments } from "./form";
 import { generalDocuments } from "./general";
@@ -42,6 +43,7 @@ export const coreDocuments: Record<string, ComponentDocument> = {
   ...sliderRateReviewDocuments,
   ...inputOtpReviewDocuments,
   ...mentionsReviewDocuments,
+  ...transferReviewDocuments,
   ...formDocuments,
   ...selectionControlDocuments,
   ...segmentedDocuments,

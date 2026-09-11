@@ -51,7 +51,6 @@ import type {
   DropdownMenuTrigger,
 } from "../components/primitives/dropdown-menu";
 import type { Cascader } from "./cascader";
-import type { Transfer } from "./transfer";
 import type { Tree } from "./tree";
 import type { Watermark } from "./watermark";
 import type { Affix, BackTop } from "./affix";
@@ -120,7 +119,6 @@ export type DropdownMenuItemProps = ComponentProps<typeof DropdownMenuItem>;
 export type DropdownMenuSeparatorProps = ComponentProps<typeof DropdownMenuSeparator>;
 export type DropdownMenuLabelProps = ComponentProps<typeof DropdownMenuLabel>;
 export type CascaderProps = ComponentProps<typeof Cascader>;
-export type TransferProps = ComponentProps<typeof Transfer>;
 export type TreeProps = ComponentProps<typeof Tree>;
 export type WatermarkProps = ComponentProps<typeof Watermark>;
 export type AffixProps = ComponentProps<typeof Affix>;

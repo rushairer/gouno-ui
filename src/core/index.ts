@@ -203,7 +203,7 @@ export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider, type TooltipC
 export { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel } from "../components/primitives/dropdown-menu";
 export { Cascader, type CascaderOption } from "./cascader";
 export { TreeSelect, type TreeSelectProps, type TreeSelectNode } from "./tree-select";
-export { Transfer, type TransferItem } from "./transfer";
+export { Transfer, type TransferItem, type TransferProps } from "./transfer";
 export { Mentions, type MentionsProps } from "./mentions";
 export {
   Tree,
@@ -304,7 +304,6 @@ export type {
   TooltipProviderProps,
   TooltipTriggerProps,
   TourProps,
-  TransferProps,
   TreeProps,
   WatermarkProps,
 } from "./public-props";
