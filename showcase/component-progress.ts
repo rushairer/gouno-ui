@@ -19,6 +19,7 @@ const completedComponents = new Set([
   "core-select",
   "core-form",
   "core-date-picker",
+  "core-date-range-picker",
   "core-time-picker",
   "core-color-picker",
   "core-upload",
