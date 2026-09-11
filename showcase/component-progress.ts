@@ -30,6 +30,7 @@ const completedComponents = new Set([
   "core-mentions",
   "core-transfer",
   "core-cascader",
+  "core-tree-select",
   "core-segmented",
   "core-checkbox",
   "core-radio",

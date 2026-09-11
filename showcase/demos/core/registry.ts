@@ -14,6 +14,7 @@ import { inputOtpReviewDocuments } from "./data-entry-review-6d3";
 import { mentionsReviewDocuments } from "./data-entry-review-6d4";
 import { transferReviewDocuments } from "./data-entry-review-6d5";
 import { cascaderReviewDocuments } from "./data-entry-review-6d6";
+import { treeSelectReviewDocuments } from "./data-entry-review-6d7";
 import { feedbackDocuments } from "./feedback";
 import { formDocuments } from "./form";
 import { generalDocuments } from "./general";
@@ -46,6 +47,7 @@ export const coreDocuments: Record<string, ComponentDocument> = {
   ...mentionsReviewDocuments,
   ...transferReviewDocuments,
   ...cascaderReviewDocuments,
+  ...treeSelectReviewDocuments,
   ...formDocuments,
   ...selectionControlDocuments,
   ...segmentedDocuments,
