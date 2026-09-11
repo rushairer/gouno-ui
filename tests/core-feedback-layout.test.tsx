@@ -30,7 +30,7 @@ describe("Core layout and feedback", () => {
     expect(ref.current?.getAttribute("data-slot")).toBe("space");
     expect(ref.current?.className).toContain("[gap:12px]");
   });
-  it("supports OTP digit entry",()=>{render(<InputOTP length={4}/>);const first=screen.getByLabelText("Digit 1");fireEvent.change(first,{target:{value:"1"}});expect((first as HTMLInputElement).value).toBe("1");});
+  it("supports OTP digit entry",()=>{render(<InputOTP aria-label="One-time code" length={4}/>);const first=screen.getByLabelText("1");fireEvent.change(first,{target:{value:"1"}});expect((first as HTMLInputElement).value).toBe("1");});
   it("opens a confirmation dialog",()=>{render(<Popconfirm title="Delete item?"><button>Delete</button></Popconfirm>);fireEvent.click(screen.getByRole("button",{name:"Delete"}));expect(screen.getByRole("alertdialog")).toBeTruthy();});
   it("provides transient message API",()=>{function Probe(){const api=useMessage();return <button onClick={()=>api.success("Saved")}>Show</button>}render(<MessageProvider><Probe/></MessageProvider>);fireEvent.click(screen.getByRole("button",{name:"Show"}));expect(screen.getByText("Saved")).toBeTruthy();});
   it("closes Modal with Escape and restores the trigger focus", async () => {
