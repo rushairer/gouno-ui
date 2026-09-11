@@ -59,6 +59,7 @@ const completedComponents = new Set([
   "core-skeleton",
   "core-spin",
   "core-qrcode",
+  "core-float-button",
   "core-statistic",
   "core-popover",
   "core-tooltip",
