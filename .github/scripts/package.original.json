@@ -19,7 +19,6 @@
   "sideEffects": ["**/*.css"],
   "scripts": {
     "build": "node scripts/clean-dist.mjs && tsc -p tsconfig.build.json && node scripts/assets.mjs",
-    "pretypecheck": "node .github/scripts/apply-float-button-governance.mjs",
     "typecheck": "tsc -p tsconfig.build.json --noEmit && tsc -p showcase/tsconfig.json",
     "dev": "vite --host 127.0.0.1",
     "showcase:build": "vite build --config showcase/vite.config.ts",
