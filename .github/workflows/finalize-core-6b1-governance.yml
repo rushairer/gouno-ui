@@ -2,7 +2,8 @@ name: Finalize Core 6B1 governance
 
 on:
   push:
-    branches: [docs/core-avatar-grid-6b1-governance]
+    branches:
+      - docs/core-avatar-grid-6b1-governance
     paths:
       - .github/workflows/finalize-core-6b1-governance.yml
 
@@ -18,68 +19,11 @@ jobs:
           ref: docs/core-avatar-grid-6b1-governance
           fetch-depth: 0
       - name: Append verified governance records
-        shell: bash
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-
-          def replace_once(path: str, marker: str, replacement: str) -> None:
-              p = Path(path)
-              text = p.read_text(encoding="utf-8")
-              if marker not in text:
-                  raise SystemExit(f"missing marker in {path}: {marker[:100]!r}")
-              p.write_text(text.replace(marker, replacement, 1), encoding="utf-8")
-
-          api = Path("docs/api-conformance.md")
-          api_text = api.read_text(encoding="utf-8")
-          marker = "\n\n## 当前破坏式迁移说明"
-          row = "\n| API-032 | Core `Avatar` / `Grid` 完成 reviewed 100：Avatar 的 canonical `size` 使用 Gouno `small/middle/large | number`，`sm/default/lg` 仅保留为 deprecated 0.2.x 兼容桥；`shape` 使用 `circle/square`，Image/Fallback/Badge/Group/GroupCount 属于同一 compound family，Group `max` 只拥有可见槽位和溢出计数，业务状态与可访问名称继续由调用方拥有。现有简单 `Grid(columns/gap)` 必须保留，同 family 增量提供 24 栅格 `Row/Col`；Row 拥有 gutter/align/justify/wrap，Col 拥有 span/offset/order/push/pull/flex 与 xs/sm/md/lg/xl/xxl 逐级继承响应式覆盖。不得用 24 栅格替换或删除现有 Grid helper。 | same-source Showcase/API docs + `core-avatar-grid-6b1` focused tests + main run 293 / PD-056 |"
-          if "| API-032 |" not in api_text:
-              api.write_text(api_text.replace(marker, row + marker, 1), encoding="utf-8")
-
-          register = Path("docs/abstraction-register.md")
-          reg_text = register.read_text(encoding="utf-8").rstrip() + "\n"
-          pd = '''
-### PD-056 — Avatar and Grid 6B1 reach reviewed 100 by extending established families
-
-- **Status:** accepted / Core hardening
-- **Owner:** Core / General + Layout families
-- **Evidence:** Avatar and Grid are established generic Core families protected by the retention policy. The existing Avatar surface already exposed Root/Image/Fallback while the primitive layer contained Group/Badge/GroupCount; the existing Grid helper already served simple CSS Grid layouts. Mature design-system review confirms avatar grouping and 24-column responsive layout as durable component-library capabilities, but Gouno's existing `ControlSize`, DOM/ARIA and compatibility rules remain authoritative. Branch Node 24 verification passed typecheck, 559 tests, package build and Showcase build; exact-main run 293 then passed Verify, pack, artifact upload and Pages publication, and `gh-pages` deployed `10500d84917bab2e643824314a67ec85d8c1a876`.
-- **Decision:** certify `core-avatar` and `core-grid` at reviewed 100 for their deliberate Gouno scope. Avatar canonicalizes `small/middle/large | number`, adds `circle/square`, and exposes Image/Fallback/Badge/Group/GroupCount as one compound family. `AvatarGroup.max` owns only bounded visual slots and overflow count; localized member/business semantics and accessible naming stay caller-owned. Grid retains the established `Grid(columns, gap)` helper and adds `Row`/`Col` as the 24-column responsive layer rather than replacing the helper.
-- **Compatibility:** `Avatar size="sm|default|lg"` remains accepted as a deprecated bridge and normalizes to canonical size semantics; this batch does not delete it. Existing `Grid` call sites keep their component and props. Removal of either established compatibility surface would require a separate migration assessment and, where it means deleting an established Core capability, explicit maintainer approval under the retention rule.
-- **Responsive contract:** `Col` supports span/offset/order/push/pull/flex plus xs/sm/md/lg/xl/xxl overrides; unspecified fields inherit from the previous breakpoint. The breakpoints follow the existing Gouno/Tailwind 640/768/1024/1280/1536 system. Row owns horizontal/vertical gutter composition and alignment/wrapping; Col owns its grid sizing and responsive CSS-variable projection.
-- **Consequence:** reviewed completion continues family by family; reaching 100 for Avatar/Grid does not authorize pruning lower-priority Core families. The next Layout hardening target is Splitter, which must preserve the established Splitter family while resolving composition, controlled sizing, keyboard accessibility and compatibility before certification.
-'''
-          if "### PD-056 —" not in reg_text:
-              register.write_text(reg_text + pd, encoding="utf-8")
-
-          migration = Path("docs/migration.md")
-          mig_text = migration.read_text(encoding="utf-8")
-          mig_marker = "\n## Steps and Menu navigation alignment"
-          mig_section = '''
-
-## Avatar and Grid 6B1 compatibility
-
-Avatar now uses the repository-wide canonical size vocabulary `small | middle | large` and also accepts an explicit pixel number. Existing `sm | default | lg` values remain accepted as deprecated 0.2.x compatibility aliases and normalize to the canonical semantics; this batch does not require an immediate consumer rewrite. New code should use the canonical names.
-
-`AvatarImage` and `AvatarFallback` remain available, while `AvatarBadge`, `AvatarGroup` and `AvatarGroupCount` extend the same compound family. `AvatarGroup.max` is a visual overflow bound only; member data, localized overflow wording when customized, online/offline meaning and accessible names remain caller-owned.
-
-The existing `Grid columns/gap` helper is retained unchanged in ownership and remains appropriate for simple CSS Grid composition. `Row` / `Col` are additive 24-column layout APIs for responsive spans, offsets, ordering and gutters. Do not migrate a working `Grid` call site merely to use Row/Col; choose the layer that matches the layout semantics.
-'''
-          if "## Avatar and Grid 6B1 compatibility" not in mig_text:
-              migration.write_text(mig_text.replace(mig_marker, mig_section + mig_marker, 1), encoding="utf-8")
-
-          changelog = Path("CHANGELOG.md")
-          change_text = changelog.read_text(encoding="utf-8")
-          change_marker = "### Changed\n\n"
-          change_line = "- General/Layout 6B1: hardened Core `Avatar` and `Grid`; Avatar now follows canonical `small/middle/large | number` sizing while retaining deprecated `sm/default/lg` compatibility, exposes Group/Badge/Count compound anatomy, and Grid retains its simple helper while adding responsive 24-column `Row`/`Col`.\n"
-          if "General/Layout 6B1:" not in change_text:
-              changelog.write_text(change_text.replace(change_marker, change_marker + change_line, 1), encoding="utf-8")
-          PY
-      - name: Commit governance and remove one-time workflow
-        shell: bash
+        run: python3 .github/scripts/finalize-core-6b1-governance.py
+      - name: Commit governance and remove one-time helpers
         run: |
           rm .github/workflows/finalize-core-6b1-governance.yml
+          rm .github/scripts/finalize-core-6b1-governance.py
           git config user.name Aben
           git config user.email 5195693+rushairer@users.noreply.github.com
           git add -A
