@@ -23,6 +23,8 @@ jobs:
           cache: npm
       - name: Apply Slider Rate 7A integration
         run: python3 .github/scripts/apply-core-slider-rate-7a.py
+      - name: Align Rate smoke test with native radio semantics
+        run: python3 .github/scripts/fix-core-slider-rate-7a-smoke.py
       - name: Verify Slider Rate 7A
         run: |
           npm ci
@@ -32,6 +34,7 @@ jobs:
           npm run showcase:build
       - name: Commit verified implementation
         run: |
+          rm .github/scripts/fix-core-slider-rate-7a-smoke.py
           rm .github/scripts/apply-core-slider-rate-7a.py
           rm .github/workflows/implement-core-slider-rate-7a.yml
           git config user.name "Aben"
