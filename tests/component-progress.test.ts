@@ -5,6 +5,8 @@ describe("audited batch completion", () => {
   it("reports complete only for the reviewed Core component batch", () => {
     for (const id of [
       "core-button",
+      "core-icon",
+      "core-kbd",
       "core-tag",
       "core-input",
       "core-textarea",
@@ -28,6 +30,8 @@ describe("audited batch completion", () => {
   it("reports the completed same-source and reading-evidence Core batch as complete", () => {
     for (const id of [
       "core-space",
+      "core-flex",
+      "core-separator",
       "core-card",
       "core-typography",
       "core-progress",
