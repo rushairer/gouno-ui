@@ -1,4 +1,133 @@
-import { useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useState,
+  type ReactNode,
+  type Ref,
+} from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../components/primitives/dialog";
 import { Button } from "./button";
-export interface TourStep{title:ReactNode;description?:ReactNode;target?:()=>HTMLElement|null;}
-export function Tour({open,steps,current,onChange,onClose}:{open:boolean;steps:TourStep[];current?:number;onChange?:(current:number)=>void;onClose:()=>void}){const [inner,setInner]=useState(0);const index=current??inner;if(!open||!steps[index])return null;const step=steps[index];const next=(n:number)=>{if(current===undefined)setInner(n);onChange?.(n)};return <div role="dialog" aria-modal="true" aria-label="Product tour" className="fixed inset-0 z-[90] bg-black/35"><section className="absolute bottom-6 left-1/2 w-80 max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-lg border bg-popover p-4 shadow-modal"><strong>{step.title}</strong>{step.description&&<p className="mt-1 text-sm text-muted-foreground">{step.description}</p>}<div className="mt-4 flex items-center justify-between"><span className="text-xs text-muted-foreground">{index+1} / {steps.length}</span><div className="flex gap-2">{index>0&&<Button size="small" onClick={()=>next(index-1)}>Previous</Button>}{index<steps.length-1?<Button size="small" variant="solid" color="primary" onClick={()=>next(index+1)}>Next</Button>:<Button size="small" variant="solid" color="primary" onClick={onClose}>Finish</Button>}</div></div></section></div>}
+import { cn } from "../lib/utils";
+
+export interface TourStep {
+  title: ReactNode;
+  description?: ReactNode;
+}
+
+export interface TourProps {
+  open: boolean;
+  steps: readonly TourStep[];
+  current?: number;
+  onChange?: (current: number) => void;
+  onClose: () => void;
+  previousText: string;
+  nextText: string;
+  finishText: string;
+  className?: string;
+  ref?: Ref<HTMLDivElement>;
+}
+
+function normalizeIndex(index: number, length: number) {
+  if (length <= 0 || !Number.isFinite(index)) return 0;
+  return Math.min(Math.max(Math.trunc(index), 0), length - 1);
+}
+
+export function Tour({
+  open,
+  steps,
+  current,
+  onChange,
+  onClose,
+  previousText,
+  nextText,
+  finishText,
+  className,
+  ref,
+}: TourProps) {
+  const [innerCurrent, setInnerCurrent] = useState(0);
+  const controlled = current !== undefined;
+  const index = normalizeIndex(controlled ? current : innerCurrent, steps.length);
+  const step = steps[index];
+
+  useEffect(() => {
+    if (!open && !controlled) setInnerCurrent(0);
+  }, [controlled, open]);
+
+  const moveTo = (nextIndex: number) => {
+    const normalized = normalizeIndex(nextIndex, steps.length);
+    if (!controlled) setInnerCurrent(normalized);
+    onChange?.(normalized);
+  };
+
+  const finish = () => {
+    if (!controlled) setInnerCurrent(0);
+    onClose();
+  };
+
+  if (!open || !step) return null;
+
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) onClose();
+      }}
+    >
+      <DialogContent
+        ref={ref}
+        showCloseButton={false}
+        data-slot="tour-content"
+        data-step-index={index}
+        onPointerDownOutside={(event) => event.preventDefault()}
+        className={cn(
+          "top-auto bottom-6 left-1/2 w-80 max-w-[calc(100vw-2rem)] -translate-x-1/2 translate-y-0 sm:max-w-[calc(100vw-2rem)]",
+          className,
+        )}
+      >
+        <DialogHeader>
+          <DialogTitle>{step.title}</DialogTitle>
+          {step.description ? (
+            <DialogDescription>{step.description}</DialogDescription>
+          ) : null}
+        </DialogHeader>
+
+        <div className="text-xs text-muted-foreground" data-slot="tour-progress">
+          {index + 1} / {steps.length}
+        </div>
+
+        <DialogFooter>
+          {index > 0 ? (
+            <Button size="small" onClick={() => moveTo(index - 1)}>
+              {previousText}
+            </Button>
+          ) : null}
+          {index < steps.length - 1 ? (
+            <Button
+              size="small"
+              variant="solid"
+              color="primary"
+              onClick={() => moveTo(index + 1)}
+            >
+              {nextText}
+            </Button>
+          ) : (
+            <Button
+              size="small"
+              variant="solid"
+              color="primary"
+              onClick={finish}
+            >
+              {finishText}
+            </Button>
+          )}
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}

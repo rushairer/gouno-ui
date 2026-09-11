@@ -50,6 +50,7 @@ const completedComponents = new Set([
   "core-popconfirm",
   "core-message",
   "core-notification",
+  "core-tour",
   "core-card",
   "core-typography",
   "core-progress",
