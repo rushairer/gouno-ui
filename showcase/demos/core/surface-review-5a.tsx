@@ -1,6 +1,8 @@
 import type { ComponentDocument } from "../../components/component-page";
 import AvatarDemo from "./avatar/avatar-0";
 import AvatarDemoSource from "./avatar/avatar-0.tsx?raw";
+import AvatarGroupDemo from "./avatar/avatar-1";
+import AvatarGroupDemoSource from "./avatar/avatar-1.tsx?raw";
 import { dataEntryDocuments } from "./data-entry";
 import SearchFieldDemo from "./input/search-field";
 import SearchFieldDemoSource from "./input/search-field.tsx?raw";
@@ -97,52 +99,53 @@ export const surfaceReviewDocuments: Record<string, ComponentDocument> = {
   avatar: {
     ...generalDocuments.avatar,
     description:
-      "Avatar 是 compound root；AvatarImage 负责图片加载，AvatarFallback 在图片不可用时提供文字或图标回退。三个导出共同构成一个头像 family，而不是三个独立组件页面。",
+      "Avatar 使用 Gouno 统一 small/middle/large 尺寸语义，也接受显式像素尺寸；shape 控制圆形/方形。Image/Fallback/Badge/Group/GroupCount 组成同一 compound family，Group 的 max 只拥有可见槽位与溢出计数，不拥有业务成员逻辑。",
     code: canonicalCoreSource(AvatarDemoSource),
     render: () => <AvatarDemo />,
+    demos: [
+      {
+        title: "头像组、溢出与状态 Badge",
+        description:
+          "AvatarGroup.max 把最后一个可见槽位留给溢出计数；overflowRender 只定制计数内容。Badge 的业务语义与 accessible name 继续由调用方提供。",
+        code: canonicalCoreSource(AvatarGroupDemoSource),
+        render: () => <AvatarGroupDemo />,
+      },
+    ],
     api: [
-      {
-        name: "size",
-        description: "头像尺寸。",
-        type: '"sm" | "default" | "lg"',
-        defaultValue: '"default"',
-      },
-      {
-        name: "children",
-        description: "组合 AvatarImage / AvatarFallback。",
-        type: "ReactNode",
-      },
-      {
-        name: "className",
-        description: "扩展 Avatar root 样式。",
-        type: "string",
-      },
-      {
-        name: "...root props",
-        description: "透传 Radix Avatar root 支持的标准属性。",
-        type: "ComponentProps<typeof AvatarPrimitive.Root>",
-      },
+      { name: "size", description: "Gouno ControlSize 或显式像素；sm/default/lg 仅作为 0.2.x 兼容别名。", type: '"small" | "middle" | "large" | number | "sm" | "default" | "lg"', defaultValue: '"middle"' },
+      { name: "shape", description: "头像几何形态。", type: '"circle" | "square"', defaultValue: '"circle"' },
+      { name: "children", description: "组合 AvatarImage / AvatarFallback / AvatarBadge。", type: "ReactNode" },
+      { name: "className", description: "扩展 Avatar root 样式。", type: "string" },
+      { name: "ref", description: "指向真实 Avatar root。", type: "Ref<HTMLElement>" },
     ],
     apiSections: [
       {
+        title: "AvatarGroup API",
+        rows: [
+          { name: "max", description: "最多显示的槽位数；发生溢出时最后一格显示计数。", type: "number" },
+          { name: "overflowRender", description: "按 omittedCount 自定义溢出槽内容。", type: "(omittedCount: number) => ReactNode" },
+          { name: "children", description: "Avatar 子项。", type: "ReactNode" },
+          { name: "...div props", description: "透传标准 div/ARIA/data/event 属性。", type: "HTMLAttributes<HTMLDivElement>" },
+          { name: "ref", description: "指向真实 AvatarGroup div。", type: "Ref<HTMLDivElement>" },
+        ],
+      },
+      {
         title: "AvatarImage API",
         rows: [
-          { name: "src", description: "头像图片地址。", type: "string" },
-          { name: "alt", description: "图片替代文本。", type: "string" },
-          { name: "className", description: "扩展图片样式。", type: "string" },
-          {
-            name: "...image props",
-            description: "透传 Avatar Image 原生/primitive 属性。",
-            type: "ComponentProps<typeof AvatarPrimitive.Image>",
-          },
+          { name: "AvatarImage", description: "图片层；支持 src/alt 及标准 image primitive 属性，ref 指向真实 img。", type: "AvatarImageProps" },
         ],
       },
       {
         title: "AvatarFallback API",
         rows: [
-          { name: "children", description: "图片不可用时的回退内容。", type: "ReactNode" },
-          { name: "delayMs", description: "延迟显示回退内容。", type: "number" },
-          { name: "className", description: "扩展回退样式。", type: "string" },
+          { name: "AvatarFallback", description: "图片不可用时的文字/图标回退；支持 delayMs。", type: "AvatarFallbackProps" },
+        ],
+      },
+      {
+        title: "AvatarBadge / AvatarGroupCount API",
+        rows: [
+          { name: "AvatarBadge", description: "头像角标视觉槽；业务状态与可访问名称由调用方提供。", type: "AvatarBadgeProps" },
+          { name: "AvatarGroupCount", description: "手动组合头像组计数时使用；AvatarGroup.max 会自动使用同一视觉槽。", type: "AvatarGroupCountProps" },
         ],
       },
     ],

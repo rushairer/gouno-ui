@@ -198,3 +198,42 @@
     flex: 0 0 16px;
   }
 }
+
+@layer components {
+  /* Core 24-column Row/Col responsive contract. */
+  [data-slot="col"] {
+    box-sizing: border-box;
+    position: relative;
+    flex: 0 0 var(--gouno-col-basis);
+    max-width: var(--gouno-col-basis);
+    margin-inline-start: var(--gouno-col-offset);
+    inset-inline-start: var(--gouno-col-shift);
+    order: var(--gouno-col-order);
+  }
+  [data-slot="col"][data-span="0"] { display: none; }
+  @media (min-width: 640px) {
+    [data-slot="col"] { flex-basis: var(--gouno-col-sm-basis); max-width: var(--gouno-col-sm-basis); margin-inline-start: var(--gouno-col-sm-offset); inset-inline-start: var(--gouno-col-sm-shift); order: var(--gouno-col-sm-order); }
+    [data-slot="col"][data-sm-span="0"] { display: none; }
+    [data-slot="col"]:not([data-sm-span="0"]) { display: block; }
+  }
+  @media (min-width: 768px) {
+    [data-slot="col"] { flex-basis: var(--gouno-col-md-basis); max-width: var(--gouno-col-md-basis); margin-inline-start: var(--gouno-col-md-offset); inset-inline-start: var(--gouno-col-md-shift); order: var(--gouno-col-md-order); }
+    [data-slot="col"][data-md-span="0"] { display: none; }
+    [data-slot="col"]:not([data-md-span="0"]) { display: block; }
+  }
+  @media (min-width: 1024px) {
+    [data-slot="col"] { flex-basis: var(--gouno-col-lg-basis); max-width: var(--gouno-col-lg-basis); margin-inline-start: var(--gouno-col-lg-offset); inset-inline-start: var(--gouno-col-lg-shift); order: var(--gouno-col-lg-order); }
+    [data-slot="col"][data-lg-span="0"] { display: none; }
+    [data-slot="col"]:not([data-lg-span="0"]) { display: block; }
+  }
+  @media (min-width: 1280px) {
+    [data-slot="col"] { flex-basis: var(--gouno-col-xl-basis); max-width: var(--gouno-col-xl-basis); margin-inline-start: var(--gouno-col-xl-offset); inset-inline-start: var(--gouno-col-xl-shift); order: var(--gouno-col-xl-order); }
+    [data-slot="col"][data-xl-span="0"] { display: none; }
+    [data-slot="col"]:not([data-xl-span="0"]) { display: block; }
+  }
+  @media (min-width: 1536px) {
+    [data-slot="col"] { flex-basis: var(--gouno-col-xxl-basis); max-width: var(--gouno-col-xxl-basis); margin-inline-start: var(--gouno-col-xxl-offset); inset-inline-start: var(--gouno-col-xxl-shift); order: var(--gouno-col-xxl-order); }
+    [data-slot="col"][data-xxl-span="0"] { display: none; }
+    [data-slot="col"]:not([data-xxl-span="0"]) { display: block; }
+  }
+}
