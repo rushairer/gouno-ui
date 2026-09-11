@@ -244,7 +244,7 @@ export { Layout, LayoutHeader, LayoutSider, LayoutContent, LayoutFooter } from "
 export { InputOTP } from "./input-otp";
 export { Popconfirm, type PopconfirmProps } from "./popconfirm";
 export { MessageProvider, useMessage, type MessageProviderProps } from "./message";
-export { NotificationProvider, useNotification } from "./notification";
+export { NotificationProvider, useNotification, type NotificationProviderProps, type NotificationNotice } from "./notification";
 export { Tour, type TourStep } from "./tour";
 
 export type {
@@ -282,7 +282,6 @@ export type {
   LayoutProps,
   LayoutSiderProps,
   NavigationProviderProps,
-  NotificationProviderProps,
   OverlayFormProps,
   PopoverAnchorProps,
   PopoverProps,

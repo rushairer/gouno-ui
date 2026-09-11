@@ -61,7 +61,6 @@ import type {
   LayoutSider,
 } from "./page-layout";
 import type { InputOTP } from "./input-otp";
-import type { NotificationProvider } from "./notification";
 import type { Tour } from "./tour";
 
 /**
@@ -125,5 +124,4 @@ export type LayoutSiderProps = ComponentProps<typeof LayoutSider>;
 export type LayoutContentProps = ComponentProps<typeof LayoutContent>;
 export type LayoutFooterProps = ComponentProps<typeof LayoutFooter>;
 export type InputOTPProps = ComponentProps<typeof InputOTP>;
-export type NotificationProviderProps = ComponentProps<typeof NotificationProvider>;
 export type TourProps = ComponentProps<typeof Tour>;
