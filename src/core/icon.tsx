@@ -1,17 +1,18 @@
 import {
   cloneElement,
   forwardRef,
+  type ComponentPropsWithRef,
   type CSSProperties,
   type ReactElement,
-  type SVGProps,
 } from "react";
 import { cn } from "../lib/utils";
 
 export type IconSize = "small" | "middle" | "large" | number;
+type IconSvgProps = ComponentPropsWithRef<"svg">;
 
-export interface IconProps extends Omit<SVGProps<SVGSVGElement>, "children"> {
+export interface IconProps extends Omit<IconSvgProps, "children"> {
   /** SVG icon element to render. */
-  icon: ReactElement<SVGProps<SVGSVGElement>>;
+  icon: ReactElement<IconSvgProps>;
   /** Apply the canonical loading rotation animation. */
   spin?: boolean;
   /** Clockwise rotation in degrees. */
