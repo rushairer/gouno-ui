@@ -201,7 +201,7 @@ export {
 export { Popover, PopoverTrigger, PopoverContent, PopoverAnchor, type OverlayPlacement, type PopoverContentProps } from "../components/primitives/popover";
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider, type TooltipContentProps } from "../components/primitives/tooltip";
 export { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel } from "../components/primitives/dropdown-menu";
-export { Cascader, type CascaderOption } from "./cascader";
+export { Cascader, type CascaderOption, type CascaderProps } from "./cascader";
 export { TreeSelect, type TreeSelectProps, type TreeSelectNode } from "./tree-select";
 export { Transfer, type TransferItem, type TransferProps } from "./transfer";
 export { Mentions, type MentionsProps } from "./mentions";
@@ -251,7 +251,6 @@ export type {
   AffixProps,
   BackTopProps,
   BreadcrumbProps,
-  CascaderProps,
   CheckboxFieldProps,
   CheckboxGroupProps,
   CheckboxProps,
