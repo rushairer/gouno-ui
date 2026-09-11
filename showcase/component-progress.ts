@@ -29,6 +29,7 @@ const completedComponents = new Set([
   "core-input-otp",
   "core-mentions",
   "core-transfer",
+  "core-cascader",
   "core-segmented",
   "core-checkbox",
   "core-radio",
