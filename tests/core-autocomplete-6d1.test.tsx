@@ -1,9 +1,11 @@
 import { createRef } from "react";
-import { describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { AutoComplete } from "../src/core";
 import { componentProgress } from "../showcase/component-progress";
 import { autoCompleteReviewDocuments } from "../showcase/demos/core/data-entry-review-6d1";
+
+afterEach(cleanup);
 
 describe("Core AutoComplete 6D1", () => {
   it("forwards the real input ref and aligns size/status with other controls", () => {
