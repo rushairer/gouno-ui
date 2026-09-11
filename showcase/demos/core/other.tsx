@@ -1,10 +1,13 @@
+import AffixExample from "./affix/affix-0";
+import AffixExampleSource from "./affix/affix-0.tsx?raw";
+import BackTopExample from "./back-top/back-top-0";
+import BackTopExampleSource from "./back-top/back-top-0.tsx?raw";
 import FloatButtonExample from "./float-button/float-button-0";
 import FloatButtonExampleSource from "./float-button/float-button-0.tsx?raw";
 import QRCodeExample from "./qrcode/qrcode-0";
 import QRCodeExampleSource from "./qrcode/qrcode-0.tsx?raw";
 import WatermarkExample from "./watermark/watermark-0";
 import WatermarkExampleSource from "./watermark/watermark-0.tsx?raw";
-import { Affix, BackTop, Button } from "../../../src/core";
 import type { ComponentDocument } from "../../components/component-page";
 
 const canonicalCoreSource = (source: string) =>
@@ -74,6 +77,37 @@ export const otherDocuments: Record<string, ComponentDocument> = {
       { name: "ref", description: "真实根 div 引用。", type: "Ref<HTMLDivElement>" },
     ],
   },
-  affix: { title: "Affix 固钉", description: "通过 sticky 定位固定局部操作。", code: '<Affix offsetTop={16}><Button>固定操作</Button></Affix>', render: () => <Affix offsetTop={16}><Button>固定操作</Button></Affix> },
-  "back-top": { title: "BackTop 回到顶部", description: "平滑滚动到页面顶部。", code: '<BackTop />', render: () => <BackTop className="static" /> }
+  affix: {
+    title: "Affix 固钉",
+    description:
+      "在当前滚动祖先内提供 top-sticky 容器。offsetTop 负责 sticky top，非有限值回退 0；Core 不猜测自定义 scroll container，也不注入监听器。根 div 透传标准 DOM/ARIA/className/style/ref，其中 position: sticky 与 top 属于 Affix 自身布局合同。",
+    code: canonicalCoreSource(AffixExampleSource),
+    render: () => <AffixExample />,
+    api: [
+      { name: "offsetTop", description: "sticky top 偏移，单位 px；非有限值回退 0。", type: "number", defaultValue: "0" },
+      { name: "children", description: "需要固定的局部内容。", type: "ReactNode" },
+      { name: "aria-label", description: "需要为固定区域命名时使用标准 ARIA。", type: "string" },
+      { name: "className", description: "根 div 附加样式类。", type: "string" },
+      { name: "style", description: "根 div 标准 style；zIndex 可覆盖，position/top 由 Affix 合同拥有。", type: "CSSProperties" },
+      { name: "ref", description: "真实根 div 引用。", type: "Ref<HTMLDivElement>" },
+    ],
+  },
+  "back-top": {
+    title: "BackTop 回到顶部",
+    description:
+      "监听页面 window 滚动位置，在 scrollY 达到 visibilityHeight 后才渲染回顶按钮。点击默认平滑滚动到 top=0；调用方 onClick 若 preventDefault 可取消该默认动作。可访问名称由调用方通过标准 aria-label 本地化提供，Core 不再硬编码英文。",
+    code: canonicalCoreSource(BackTopExampleSource),
+    render: () => <BackTopExample />,
+    api: [
+      { name: "aria-label", description: "必填的标准可访问名称，由调用方本地化。", type: "string" },
+      { name: "visibilityHeight", description: "window.scrollY 达到该阈值后渲染；负值归一到 0，非有限值回退 200。", type: "number", defaultValue: "200" },
+      { name: "children", description: "自定义按钮内容；省略时使用装饰性 ArrowUp 图标。", type: "ReactNode" },
+      { name: "onClick", description: "标准按钮点击事件；preventDefault 可阻止默认 smooth scroll。", type: "MouseEventHandler<HTMLButtonElement>" },
+      { name: "disabled", description: "标准原生 button disabled。", type: "boolean" },
+      { name: "type", description: "标准 button type。", type: '"button" | "submit" | "reset"', defaultValue: '"button"' },
+      { name: "className", description: "根 button 附加样式类，可覆盖默认 fixed 定位。", type: "string" },
+      { name: "style", description: "根 button 标准内联样式。", type: "CSSProperties" },
+      { name: "ref", description: "真实 button 引用。", type: "Ref<HTMLButtonElement>" },
+    ],
+  },
 };

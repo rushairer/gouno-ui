@@ -61,6 +61,8 @@ const completedComponents = new Set([
   "core-qrcode",
   "core-float-button",
   "core-watermark",
+  "core-affix",
+  "core-back-top",
   "core-statistic",
   "core-popover",
   "core-tooltip",
