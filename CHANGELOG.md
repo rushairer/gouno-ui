@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 ### Changed
 
+- Other 6F1: hardened Core `FloatButton` as a generic icon-only floating action with caller-owned icon/accessibility copy, real button-or-anchor semantics, standard DOM/event/ref passthrough, working ReactNode Tooltip rendering, and explicit disabled-link behavior. The BackTop-style default arrow and string-only pseudo-tooltip bridge are removed from the generic action contract.
 - Feedback 6E4: hardened Core `Tour` as a controlled modal walkthrough with caller-owned navigation copy, a controlled/uncontrolled normalized step index, canonical Dialog focus containment/Escape close/focus return, and visible step titles as the dialog accessible name. The never-implemented `TourStep.target` hook and injected English `Product tour` / `Previous` / `Next` / `Finish` copy are removed; target highlighting/positioning and product onboarding orchestration remain outside Core.
 - Feedback 6E3: hardened Core `NotificationProvider` as a finite-lived local notification queue. Provider-local monotonic IDs replace time/random keys, removal timers are tracked and cleared on unmount, and each notice owns one atomic `status` region instead of nesting under an additional outer `aria-live`. `NotificationNotice` is now an explicit public type; notice duration accepts finite positive milliseconds and otherwise falls back to 4500ms, removing the old `duration=0` uncloseable-persistence sentinel. Persistent notification centers, read state, manual close/update/destroy, and cross-root singleton behavior remain product-owned.
 - Feedback 6E2: hardened Core `MessageProvider` as a local transient queue. Message IDs are now deterministic per Provider, removal timers are tracked and cleared on unmount, and each message owns its `status`/`alert` live-region semantics instead of stacking those roles under a second outer `aria-live`. The existing `open/info/success/warning/error` hook surface is retained, `duration` only controls automatic removal, and global singleton, manual key/update/destroy, Promise orchestration, and product notification-center behavior remain out of Core.
@@ -26,6 +27,7 @@ All notable changes to this project are documented here.
 
 ### Breaking
 
+- `FloatButton` now requires `icon` and no longer injects a default `↑` glyph. Accessible names should be supplied with standard `aria-label` / `aria-labelledby`; `tooltip` renders visual Tooltip content and is not an implicit naming API.
 - `TourStep.target` is removed because Core never implemented target positioning/highlighting. `Tour` now requires caller-owned `previousText`, `nextText`, and `finishText` instead of injecting English copy; the visible step title names the modal dialog.
 - `Icon.label` is replaced by the standard `aria-label` / `aria-labelledby` accessible-name path.
 - `TimePicker.size` and `ColorPicker.size` now mean canonical Gouno control size (`small | middle | large`) rather than the native numeric input `size` attribute; the native numeric attribute is not meaningful for these picker controls and is intentionally excluded from the public contract.
