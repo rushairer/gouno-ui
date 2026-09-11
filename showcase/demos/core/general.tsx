@@ -1,35 +1,91 @@
-import { LoaderCircle } from "lucide-react";
-import { Avatar, AvatarFallback, Icon, Kbd, Space } from "../../../src/core";
+import { Avatar, AvatarFallback } from "../../../src/core";
 import type { ComponentDocument } from "../../components/component-page";
 import CardExample from "./card/card-0";
 import CardExampleSource from "./card/card-0.tsx?raw";
+import IconDemo from "./icon/icon-0";
+import IconDemoSource from "./icon/icon-0.tsx?raw";
+import KbdDemo from "./kbd/kbd-0";
+import KbdDemoSource from "./kbd/kbd-0.tsx?raw";
+
+const canonicalCoreSource = (source: string) =>
+  source.replaceAll("../../../../src/core", "@gouno/ui/core").trim();
 
 export const generalDocuments: Record<string, ComponentDocument> = {
   icon: {
     title: "Icon 图标",
-    description: "统一图标尺寸、旋转、加载动画和无障碍标签。",
-    code: '<Icon icon={<LoaderCircle />} spin label="Loading" />',
-    render: () => (
-      <Space>
-        <Icon icon={<LoaderCircle />} />
-        <Icon icon={<LoaderCircle />} spin label="Loading" />
-        <Icon icon={<LoaderCircle />} rotate={45} />
-      </Space>
-    ),
+    description:
+      "统一 SVG 图标的语义尺寸、旋转、加载动画和标准 ARIA。未命名图标默认 decorative；提供 aria-label 或 aria-labelledby 后自动采用 img 语义。",
+    code: canonicalCoreSource(IconDemoSource),
+    render: () => <IconDemo />,
+    api: [
+      {
+        name: "icon",
+        description: "要渲染的 SVG React 元素；Icon 不拥有具体图标集合。",
+        type: "ReactElement<SVGProps<SVGSVGElement>>",
+      },
+      {
+        name: "size",
+        description: "语义尺寸或显式像素尺寸；数字会同时约束宽高。",
+        type: '"small" | "middle" | "large" | number',
+        defaultValue: '"middle"',
+      },
+      {
+        name: "spin",
+        description: "启用 canonical loading rotation animation。",
+        type: "boolean",
+        defaultValue: "false",
+      },
+      {
+        name: "rotate",
+        description: "顺时针旋转角度；与图标及调用方已有 transform 合并。",
+        type: "number",
+      },
+      {
+        name: "aria-label",
+        description: "为有独立含义的图标提供标准 accessible name；设置后默认 role=img。",
+        type: "string",
+      },
+      {
+        name: "aria-labelledby",
+        description: "通过外部可见文本为图标命名。",
+        type: "string",
+      },
+      {
+        name: "aria-hidden",
+        description: "未命名图标默认 true；调用方可显式覆盖标准 ARIA 属性。",
+        type: "boolean | 'true' | 'false'",
+      },
+      {
+        name: "...svg props",
+        description: "透传标准 SVG 属性、事件、data-* 与 ARIA 属性。",
+        type: "Omit<SVGProps<SVGSVGElement>, 'children'>",
+      },
+      {
+        name: "ref",
+        description: "指向最终 SVG 元素。",
+        type: "Ref<SVGSVGElement>",
+      },
+    ],
   },
   kbd: {
     title: "Kbd 键盘按键",
-    description: "表达键盘快捷键，宿主为原生 kbd。",
-    code: '<Space><Kbd>⌘</Kbd><Kbd>K</Kbd></Space>',
-    render: () => (
-      <Space>
-        <Kbd>⌘</Kbd>
-        <Kbd>K</Kbd>
-      </Space>
-    ),
+    description:
+      "原生 kbd 的轻量语义包装。组件只负责按键视觉和 DOM/ref 契约；快捷键组合、连接符和平台文案全部由调用方显式组合。",
+    code: canonicalCoreSource(KbdDemoSource),
+    render: () => <KbdDemo />,
     api: [
-      { name: "children", description: "按键标签", type: "ReactNode" },
-      { name: "className", description: "kbd 样式类", type: "string" },
+      { name: "children", description: "按键标签或组合内容。", type: "ReactNode" },
+      { name: "className", description: "扩展 kbd 样式。", type: "string" },
+      {
+        name: "...kbd props",
+        description: "透传原生 kbd 可用的 HTML/ARIA/data/event 属性。",
+        type: "HTMLAttributes<HTMLElement>",
+      },
+      {
+        name: "ref",
+        description: "指向真实 kbd 元素。",
+        type: "Ref<HTMLElement>",
+      },
     ],
   },
   card: {
