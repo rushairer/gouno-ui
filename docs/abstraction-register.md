@@ -629,3 +629,14 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Scope boundary:** no controlled `open/onOpenChange`, permission policy, MFA/step-up flow, mutation state machine, retry policy, business error rendering or global message orchestration is admitted without independent product evidence. Those concerns stay in product composition.
 - **Validation:** the 6E1 runtime, same-source Showcase, focused tests and reviewed completion passed the complete publish gate at main run 345. The final event-composition correction and direct Props ownership were then validated in the complete typecheck/test/build/pack/artifact/Pages gate at main run 346.
 - **Abstraction impact:** no Popconfirm-oriented Pattern/Gouno abstraction is admitted; it remains a narrow Core confirmation primitive.
+
+### PD-068 — Message remains a local transient queue, not a global feedback manager
+
+- **Status:** accepted / Core hardening
+- **Owner:** Core / Feedback family
+- **Evidence:** `MessageProvider/useMessage` is a retained Core feedback primitive with no current Gosso Admin, Blog Admin or Blog public product consumer requiring cross-root or persistent orchestration. The pre-6E2 implementation used `Date.now()+Math.random()` keys, left raw removal timers unmanaged on Provider teardown, and combined an outer `aria-live=polite` region with per-item `status/alert` roles, creating avoidable nondeterminism and overlapping live-region ownership.
+- **Decision:** keep the existing Provider-scoped `open/info/success/warning/error` API and one transient queue. IDs are monotonic inside each Provider; each scheduled removal is tracked and cleared when it fires or when the Provider unmounts. Each rendered message owns its own atomic live-region role: error uses alert, other tones use status. The outer positioning region is not a second live region.
+- **API impact:** `MessageProviderProps` is implementation-owned and exported directly from Core. `children` scopes the context and optional `duration` controls automatic removal, defaulting to 2500ms; content/tone continue to be caller-owned through `useMessage`. No new imperative global API is introduced.
+- **Scope boundary:** no singleton outside React context, cross-root manager, manual message key/update/destroy, promise-state helper, persistence, history, notification center or business retry/error policy is admitted without independent product evidence.
+- **Validation:** 6E2 runtime, same-source Showcase, five focused regression tests, reviewed completion and direct Props ownership passed the complete typecheck/test/build/pack/artifact/Pages gate at main run 349.
+- **Abstraction impact:** no Message-oriented Pattern/Gouno abstraction is admitted; it remains a narrow Core transient-feedback primitive.
