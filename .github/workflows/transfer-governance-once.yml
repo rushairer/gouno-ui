@@ -1,0 +1,86 @@
+name: Apply Transfer 6D5 governance once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/transfer-governance-once.yml
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Append Transfer governance records
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          changelog = Path("CHANGELOG.md")
+          changelog_text = changelog.read_text()
+          changed_entry = "- Data Entry 6D5: hardened Core `Transfer` around one target-key state contract with stable item keys, caller-owned list/operation labels, disabled-item protection, preserved opposite-side selection, grouped list semantics, standard root DOM/ARIA/ref ownership and same-source Showcase coverage. The documented canonical path always provides `titles`/`operations`; pre-6D5 omitted labels remain a narrow compatibility bridge that injects no English list copy. Search, pagination, remote data and business collection rules remain product-owned.\n"
+          if "- Data Entry 6D5:" not in changelog_text:
+              anchor = "### Changed\n\n"
+              if anchor not in changelog_text:
+                  raise SystemExit("CHANGELOG Changed anchor missing")
+              changelog_text = changelog_text.replace(anchor, anchor + changed_entry, 1)
+              changelog.write_text(changelog_text)
+
+          api = Path("docs/api-conformance.md")
+          api_text = api.read_text()
+          api_row = "| API-040 | Core `Transfer` 完成 reviewed 100：`dataSource[].key` 提供稳定条目标识，`targetKeys/defaultTargetKeys/onChange` 是唯一目标集合状态；canonical 调用由 caller-owned `titles` / `operations` 提供左右列表标题和可访问操作名，disabled 条目不可选择或移动，单向移动只清除实际 moved keys 并保留另一侧选择。根节点拥有标准 div/ARIA/data/event/ref，两侧在有标题时使用 `role=group` + `aria-labelledby`。pre-6D5 省略 `titles/operations` 仅作为窄 compatibility bridge 暂留，不注入英文 `Source/Target`，也不作为 Showcase canonical 写法。搜索、分页、远程数据与业务集合规则继续由产品拥有。 | same-source Showcase/API docs + `core-transfer-6d5` focused tests + main run 320 / PD-064 |\n"
+          if "| API-040 |" not in api_text:
+              lines = api_text.splitlines(keepends=True)
+              for index, line in enumerate(lines):
+                  if line.startswith("| API-039 |"):
+                      lines.insert(index + 1, api_row)
+                      break
+              else:
+                  raise SystemExit("API-039 anchor missing")
+              api.write_text("".join(lines))
+
+          register = Path("docs/abstraction-register.md")
+          register_text = register.read_text()
+          decision = r'''
+
+### PD-064 — Transfer keeps dual-list movement narrow and makes labels caller-owned
+
+- **Status:** accepted / Core hardening
+- **Owner:** Core / Data Entry family
+- **Evidence:** `Transfer` is an established retained Core control, but there are no current Gosso Admin, Blog Admin or Blog public product consumers that justify expanding it into a collection-management feature bag. The pre-6D5 implementation injected English `Source` / `Target` list titles, exposed arrow-only operations as the only action copy, did not expose a standard root DOM/ref contract and cleared selection too broadly after a one-direction move. Core retention policy requires correcting the established contract rather than deleting it merely because current product usage is absent.
+- **Decision:** keep Transfer as a bounded two-collection movement primitive. `dataSource[].key` is stable item identity; `targetKeys/defaultTargetKeys/onChange` is the single controlled/uncontrolled target-set contract. Core owns local checkbox selection, disabled-item protection and moving selected keys between the source and target views. Moving one direction clears only the keys that actually moved so selection on the opposite side remains intact. Canonical callers own both visible list titles and operation labels; titled lists expose `role="group"` associated through `aria-labelledby`.
+- **API impact:** `TransferProps` is owned directly by `transfer.tsx` and the root forwards standard div/ARIA/data/event attributes plus the real `HTMLDivElement` ref. Canonical Showcase/API documentation always supplies `titles` and `operations`. To avoid breaking pre-6D5 callers solely during this 0.x convergence line, those two properties remain optional as a narrow compatibility bridge: omitted titles render no injected English heading/group name, and omitted operations retain the historical symbol buttons. This bridge is not a second canonical API and must not be used as evidence for future feature expansion.
+- **Scope boundary:** no search field, filtering, pagination, remote loading, virtualisation, select-all policy, ordering, drag-and-drop, domain rendering or batch business rules are admitted. Those remain product-owned until independent product evidence proves a smaller stable contract.
+- **Validation:** the 6D5 runtime, direct Props ownership, same-source Showcase/API documentation, reviewed completion and focused regression coverage landed at `main@e29c214`. Exact-head run 319 correctly stopped at typecheck because one older Showcase base example still used the pre-6D5 unlabeled shape. The narrow compatibility correction landed at `main@47885e7`; exact-head run 320 then passed typecheck, the complete test suite, package build, Showcase build, package pack/artifact and Pages publication.
+- **Abstraction impact:** no Transfer-oriented Pattern/Gouno abstraction is admitted. Transfer remains Core infrastructure; resource search, assignment policy, permissions and collection workflows stay product-owned.
+'''
+          if "### PD-064 —" not in register_text:
+              register.write_text(register_text.rstrip() + decision + "\n")
+          PY
+
+      - name: Commit governance and remove one-time workflow
+        run: |
+          git config user.name "Aben"
+          git config user.email "5195693+rushairer@users.noreply.github.com"
+          git rm .github/workflows/transfer-governance-once.yml
+          git add CHANGELOG.md docs/api-conformance.md docs/abstraction-register.md
+          git commit -m "docs(core): record Transfer 6D5 decision"
+          git push origin HEAD:main
+
+      - name: Verify final main through the normal publish gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "/repos/${GITHUB_REPOSITORY}/actions/workflows/showcase-pages.yml/dispatches" \
+            -f ref=main
