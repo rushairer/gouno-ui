@@ -30,6 +30,7 @@ export interface AutoCompleteProps extends Omit<
   | "value"
   | "defaultValue"
   | "onChange"
+  | "onSelect"
   | "role"
   | "aria-expanded"
   | "aria-controls"
