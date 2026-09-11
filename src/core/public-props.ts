@@ -61,7 +61,6 @@ import type {
   LayoutSider,
 } from "./page-layout";
 import type { InputOTP } from "./input-otp";
-import type { Tour } from "./tour";
 
 /**
  * Exact, runtime-derived props for public components whose implementation is a
@@ -124,4 +123,3 @@ export type LayoutSiderProps = ComponentProps<typeof LayoutSider>;
 export type LayoutContentProps = ComponentProps<typeof LayoutContent>;
 export type LayoutFooterProps = ComponentProps<typeof LayoutFooter>;
 export type InputOTPProps = ComponentProps<typeof InputOTP>;
-export type TourProps = ComponentProps<typeof Tour>;

@@ -245,7 +245,7 @@ export { InputOTP } from "./input-otp";
 export { Popconfirm, type PopconfirmProps } from "./popconfirm";
 export { MessageProvider, useMessage, type MessageProviderProps } from "./message";
 export { NotificationProvider, useNotification, type NotificationProviderProps, type NotificationNotice } from "./notification";
-export { Tour, type TourStep } from "./tour";
+export { Tour, type TourProps, type TourStep } from "./tour";
 
 export type {
   AffixProps,
@@ -299,7 +299,6 @@ export type {
   TooltipProps,
   TooltipProviderProps,
   TooltipTriggerProps,
-  TourProps,
   TreeProps,
   WatermarkProps,
 } from "./public-props";
