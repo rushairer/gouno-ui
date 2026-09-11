@@ -9,9 +9,15 @@ import { otherDocuments } from "../showcase/demos/core/other";
 afterEach(cleanup);
 
 function decodedWatermark(root: HTMLElement) {
-  const match = root.style.backgroundImage.match(/data:image\/svg\+xml,([^"')]+)/);
-  if (!match) throw new Error("watermark data URL missing");
-  return decodeURIComponent(match[1]);
+  const value = root.style.backgroundImage;
+  const prefix = "data:image/svg+xml,";
+  const start = value.indexOf(prefix);
+  if (start < 0) throw new Error("watermark data URL missing");
+
+  let encoded = value.slice(start + prefix.length);
+  if (encoded.endsWith('\")')) encoded = encoded.slice(0, -2);
+  else if (encoded.endsWith(")")) encoded = encoded.slice(0, -1);
+  return decodeURIComponent(encoded);
 }
 
 describe("Watermark 6F2", () => {
