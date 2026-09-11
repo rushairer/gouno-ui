@@ -563,3 +563,14 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Scope boundary:** no half values, hover previews, tooltips, custom icon rendering, range marks, multi-thumb Slider or other mature-library parity features are admitted without independent evidence.
 - **Validation:** 6D2 runtime, same-source Showcase docs, reviewed completion and focused tests passed exact-main run 305 with package build, artifact and Pages publication.
 - **Abstraction impact:** no new Pattern/Gouno surface is admitted; the batch only completes established Core selection contracts.
+
+### PD-062 — InputOTP removes locale-owned accessibility copy and keeps OTP orchestration caller-owned
+
+- **Status:** accepted / Core hardening
+- **Owner:** Core / Data Entry family
+- **Evidence:** `InputOTP` is an established retained Core control, but its pre-6D3 implementation injected the English group name `One-time password` and per-cell `Digit N` labels, exposed a non-standard `ariaLabel` prop, had no root DOM/ref contract, and only supported the narrow change/backspace path. Those defaults made Core own locale copy while still leaving common OTP keyboard and paste mechanics to product code.
+- **Decision:** keep OTP entry as a bounded Core input primitive, not an authentication workflow. The caller owns the group accessible name through standard `aria-label` / `aria-labelledby`; cells use language-neutral numeric names inside that named group. `value/defaultValue/onChange` remains the single OTP value contract. Core owns numeric filtering, one-character cell distribution, multi-digit paste distribution, automatic forward focus, Backspace retreat and Arrow/Home/End focus movement while preserving disabled/mask/length semantics.
+- **API impact:** remove non-standard `ariaLabel`; expose standard root div/ARIA/data/event attributes and a real root ref. Add canonical `ControlSize` and `error/warning` status without creating a second value or validation-message API. Error status drives `aria-invalid` on OTP cells; localized validation copy remains caller-owned.
+- **Scope boundary:** no verification request/resend timer, async validation, SMS/email channel policy, WebOTP orchestration, separators/groups or product authentication state is admitted from this hardening pass.
+- **Validation:** 6D3 runtime, same-source Showcase/API documentation, reviewed completion and focused regression coverage landed at `main@ca89f06`; exact-main run 309 passed typecheck, the complete test suite, package build, Showcase build, package artifact and Pages publication. Changelog/API governance then landed through `main@83603b0`, whose run 311 also passed the complete publish gate.
+- **Abstraction impact:** no authentication Pattern/Gouno surface is admitted. MFA/TOTP/SMS enrollment and verification policy remain product-owned.
