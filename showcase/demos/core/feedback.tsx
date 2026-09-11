@@ -508,9 +508,9 @@ export const feedbackDocuments: Record<string, ComponentDocument> = {
   popconfirm: {
     title: "Popconfirm 气泡确认",
     description: "在危险或不可逆操作前请求确认。",
-    code: '<Popconfirm title="确认删除？"><Button>删除</Button></Popconfirm>',
+    code: '<Popconfirm title="确认删除？" okText="删除" cancelText="取消"><Button>删除</Button></Popconfirm>',
     render: () => (
-      <Popconfirm title="确认删除？" description="删除后无法恢复。" danger>
+      <Popconfirm title="确认删除？" description="删除后无法恢复。" okText="删除" cancelText="取消" danger>
         <Button variant="solid" color="error">
           删除
         </Button>

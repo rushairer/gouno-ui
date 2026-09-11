@@ -18,7 +18,6 @@
   },
   "sideEffects": ["**/*.css"],
   "scripts": {
-    "pretypecheck": "node .github/scripts/apply-popconfirm-6e1.mjs",
     "build": "node scripts/clean-dist.mjs && tsc -p tsconfig.build.json && node scripts/assets.mjs",
     "typecheck": "tsc -p tsconfig.build.json --noEmit && tsc -p showcase/tsconfig.json",
     "dev": "vite --host 127.0.0.1",
