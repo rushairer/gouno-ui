@@ -523,3 +523,43 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Scope boundary:** 6B2 does not copy every current Ant Design Splitter feature. Collapsible/lazy/destroy-on-hidden/animation configuration remains outside the certified scope until independently justified. Product orchestration and persistence of layout sizes remain caller-owned.
 - **Consequence:** Splitter can now serve general editor/admin/workbench layouts without product-specific wrappers. Its 100 score means runtime, public typing, same-source demos, API documentation, accessibility, focused behavior tests and exact-main publication are coherent for this scope—not parity with another library's entire historical surface.
 
+### PD-058 — Native TimePicker and ColorPicker keep platform behavior while joining the shared control contract
+
+- **Status:** accepted / Core hardening
+- **Owner:** Core / Data Entry family
+- **Evidence:** `TimePicker` and `ColorPicker` are established generic Core controls protected by retention policy, but their previous wrappers did not participate in the shared `ControlSize`/validation-state model and exposed no explicit semantic-element ref contract. Native time/color inputs already provide the correct platform interaction, value and form behavior, so replacing them with a custom feature surface would add complexity without product evidence.
+- **Decision:** retain native `input[type=time]` and `input[type=color]` as the behavior owners. Gouno adds canonical `small/middle/large` sizing, explicit `error/warning` status, standard DOM/ARIA passthrough, real input refs and stable `data-slot` anatomy. Error status drives `aria-invalid`; warning remains a visual validation state. Do not add picker panels, presets, locale/time-zone orchestration, format engines or duplicated value APIs merely for library parity.
+- **API impact:** native numeric input `size` is excluded because the public `size` name now has the same `ControlSize` meaning as the rest of Gouno controls. Existing native value/defaultValue/min/max/step/disabled/readOnly/required semantics remain platform-owned.
+- **Validation:** focused 6C1 tests, same-source Showcase examples and API tables passed exact-main run 297; subsequent main runs continue to contain the certified implementation.
+- **Abstraction impact:** no Pattern/Gouno abstraction is admitted; this is Core contract convergence around existing platform controls.
+
+### PD-059 — DateRangePicker separates root composition from two independent native-input identities
+
+- **Status:** accepted / Core correction
+- **Owner:** Core / Data Entry family
+- **Evidence:** the pre-6C2 implementation spread one top-level `InputHTMLAttributes` object onto both date inputs and injected `Start date` / `End date`. That duplicated `id`, `name`, form and event identity when supplied, prevented independent constraints/refs, and made Core own English accessible copy. The established useful state model was still only `start`, `end` and `onChange(range)`.
+- **Decision:** keep the established range state model but split structural and semantic ownership. The root div owns range layout, standard root DOM props, unified `size/status` and the range callback; `startInputProps` and `endInputProps` independently own each real `input[type=date]` identity, constraints, standard ARIA/events and optional ref. No default business/accessibility copy is injected.
+- **API impact:** top-level native input attributes are no longer broadcast to both inputs. Consumers migrate per-input `id/name/form/ARIA/min/max/step/events/ref` into the corresponding input-props object. This is an intentional pre-1.0 correction, not grounds for compatibility aliases that would recreate duplicate ownership.
+- **Validation:** focused 6C2 tests plus same-source Showcase/API documentation passed exact-main runs 299 and 300, including package artifact and Pages publication.
+- **Abstraction impact:** DateRangePicker remains one Core compound input; it does not justify a Form/field Pattern or date-domain orchestration layer.
+
+### PD-060 — AutoComplete removes locale defaults and composes consumer input behavior
+
+- **Status:** accepted / Core hardening
+- **Owner:** Core / Data Entry family
+- **Evidence:** the established AutoComplete already supplied useful filtered suggestions and keyboard selection, but the old implementation injected `No options`, used only string options, swallowed consumer focus/blur/key handlers, relied on a delayed blur workaround and exposed no real input ref or shared control sizing/status. These are canonical component defects even without a new product migration line because AutoComplete is an established retained Core family.
+- **Decision:** preserve `value/defaultValue/onChange` as the only text-value state. Keep string options as shorthand while admitting explicit `{ value, label, disabled }` metadata; `onSelect(value, option)` reports a confirmed suggestion and does not replace `onChange`. Empty content is caller-owned through optional `emptyText`; if there are no matches and no empty content, no empty popup is manufactured. Consumer focus/blur/key handlers compose with internal behavior, and `preventDefault` can stop internal keyboard handling. Arrow keys skip disabled options; Home/End/Enter/Escape follow the same combobox/listbox interaction model.
+- **API impact:** `size` adopts canonical `ControlSize`, `status` adopts `error/warning`, ref targets the real input and standard DOM/ARIA attributes are preserved except ARIA state owned by the combobox contract. React's native text-selection `onSelect` is omitted because the component-level `onSelect` name has one deliberate suggestion-selection meaning; no dual meaning is retained.
+- **Validation:** the initial 6D1 commit exposed the native `onSelect` type collision and the first focused test run exposed test-DOM residue; both were corrected without hiding the failures. Exact-main run 303 passed the full gate, and run 304 revalidated the Changelog-bearing head with Pages publication.
+- **Abstraction impact:** no search/typeahead Pattern is admitted. Product-specific remote loading, debouncing, resource lookup and business option rendering remain caller-owned until separately evidenced.
+
+### PD-061 — Slider and Rate harden the smallest native/discrete selection contracts
+
+- **Status:** accepted / Core hardening
+- **Owner:** Core / Data Entry family
+- **Evidence:** both are established retained Core controls. Slider was already correctly thin around native range behavior but lacked semantic-element ref/slot coverage. Rate had a more material accessibility/API defect: non-standard `label`, injected English `Rating` / `N stars` copy, every radio in the tab sequence and no radio-group arrow-key selection model.
+- **Decision:** keep Slider platform-first: native range owns min/max/step/value/form/keyboard/events while Core adds real input ref, stable slot and governed focus styling only. Keep Rate deliberately discrete rather than adding half-star/tooltip/custom-symbol feature bags. Rate owns `value/defaultValue/onChange`, count, disabled and click-to-clear; its root is a standard caller-named radiogroup, item accessible names are language-neutral numeric values within that context, and one roving-tabindex Arrow/Home/End model owns keyboard focus and selection. Keyboard movement selects deterministically and does not accidentally invoke click-to-clear semantics.
+- **API impact:** `Rate.label` is removed in favor of standard `aria-label` / `aria-labelledby`; injected `N stars` copy is removed. Root standard div/data attributes and ref are exposed. Existing rating value semantics and Slider native props remain otherwise intact.
+- **Scope boundary:** no half values, hover previews, tooltips, custom icon rendering, range marks, multi-thumb Slider or other mature-library parity features are admitted without independent evidence.
+- **Validation:** 6D2 runtime, same-source Showcase docs, reviewed completion and focused tests passed exact-main run 305 with package build, artifact and Pages publication.
+- **Abstraction impact:** no new Pattern/Gouno surface is admitted; the batch only completes established Core selection contracts.
