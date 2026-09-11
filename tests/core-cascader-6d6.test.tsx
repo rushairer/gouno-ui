@@ -66,18 +66,20 @@ describe("Cascader 6D6", () => {
 
   it("keeps controlled value caller-owned", () => {
     const onChange = vi.fn();
-    render(
+    const renderControlled = () => (
       <Cascader
         aria-label="地区"
         options={options}
         value={["china"]}
         placeholder="请选择"
         onChange={onChange}
-      />,
+      />
     );
+    const { rerender } = render(renderControlled());
 
-    const second = screen.getByRole("combobox", { name: "2" });
-    fireEvent.change(second, { target: { value: "beijing" } });
+    fireEvent.change(screen.getByRole("combobox", { name: "2" }), {
+      target: { value: "beijing" },
+    });
 
     expect(onChange).toHaveBeenCalledWith(
       ["china", "beijing"],
@@ -86,7 +88,10 @@ describe("Cascader 6D6", () => {
         expect.objectContaining({ value: "beijing" }),
       ],
     );
-    expect((second as HTMLSelectElement).value).toBe("");
+    rerender(renderControlled());
+    expect(
+      (screen.getByRole("combobox", { name: "2" }) as HTMLSelectElement).value,
+    ).toBe("");
   });
 
   it("preserves native disabled option and whole-control disabled semantics", () => {
@@ -109,7 +114,9 @@ describe("Cascader 6D6", () => {
         .getAllByRole("combobox")
         .every((node) => (node as HTMLSelectElement).disabled),
     ).toBe(true);
-    expect(screen.getByRole("group", { name: "地区" }).getAttribute("aria-disabled")).toBe("true");
+    expect(
+      screen.getByRole("group", { name: "地区" }).getAttribute("aria-disabled"),
+    ).toBe("true");
   });
 
   it("forwards the root ref and standard root DOM/ARIA props", () => {
