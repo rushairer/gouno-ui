@@ -640,3 +640,14 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Scope boundary:** no singleton outside React context, cross-root manager, manual message key/update/destroy, promise-state helper, persistence, history, notification center or business retry/error policy is admitted without independent product evidence.
 - **Validation:** 6E2 runtime, same-source Showcase, five focused regression tests, reviewed completion and direct Props ownership passed the complete typecheck/test/build/pack/artifact/Pages gate at main run 349.
 - **Abstraction impact:** no Message-oriented Pattern/Gouno abstraction is admitted; it remains a narrow Core transient-feedback primitive.
+
+### PD-069 — Notification stays finite-lived instead of pretending to be a persistent notification center
+
+- **Status:** accepted / Core hardening
+- **Owner:** Core / Feedback family
+- **Evidence:** `NotificationProvider/useNotification` is a retained Core notice primitive with no current Gosso Admin, Blog Admin or Blog public product consumer requiring persistence or notification-center behavior. The pre-6E3 implementation used time-plus-random keys, left removal timers unmanaged on teardown, wrapped notices in an outer `aria-live=polite`, and treated `duration=0` as permanent even though the API exposed no close/destroy operation. That last combination created an uncloseable state rather than a complete persistence contract.
+- **Decision:** keep one Provider-scoped transient queue. IDs are monotonic inside the Provider; removal timers are tracked and cleared on fire/unmount. Each notice owns one atomic status region and the outer positioning container is not another live region. A notice lifetime is always finite: a finite positive `duration` is honored, while omitted, non-finite or non-positive values fall back to 4500ms.
+- **API impact:** `NotificationProviderProps` and `NotificationNotice` are implementation-owned and exported directly from Core. `useNotification().open(notice)` remains the only runtime entry point, with title/description caller-owned and duration optional. The former zero-duration permanence sentinel is removed because Core has no matching close contract.
+- **Scope boundary:** no persistence, read/unread state, history, manual close/update/destroy keys, action routing, cross-root singleton, storage, permission policy or business notification center is admitted without independent product evidence.
+- **Validation:** 6E3 runtime, same-source Showcase, five focused regression tests, reviewed completion and direct type ownership passed the complete typecheck/test/build/pack/artifact/Pages gate at main run 352.
+- **Abstraction impact:** no Notification-oriented Pattern/Gouno abstraction is admitted; it remains a narrow Core transient-notice primitive.
