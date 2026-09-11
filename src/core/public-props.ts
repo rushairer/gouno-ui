@@ -51,7 +51,6 @@ import type {
   DropdownMenuTrigger,
 } from "../components/primitives/dropdown-menu";
 import type { Tree } from "./tree";
-import type { Affix, BackTop } from "./affix";
 import type {
   Layout,
   LayoutContent,
@@ -113,8 +112,6 @@ export type DropdownMenuItemProps = ComponentProps<typeof DropdownMenuItem>;
 export type DropdownMenuSeparatorProps = ComponentProps<typeof DropdownMenuSeparator>;
 export type DropdownMenuLabelProps = ComponentProps<typeof DropdownMenuLabel>;
 export type TreeProps = ComponentProps<typeof Tree>;
-export type AffixProps = ComponentProps<typeof Affix>;
-export type BackTopProps = ComponentProps<typeof BackTop>;
 export type LayoutProps = ComponentProps<typeof Layout>;
 export type LayoutHeaderProps = ComponentProps<typeof LayoutHeader>;
 export type LayoutSiderProps = ComponentProps<typeof LayoutSider>;

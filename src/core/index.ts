@@ -238,7 +238,7 @@ export {
 } from "./menu";
 export { QRCode, type QRCodeProps, type QRCodeErrorLevel } from "./qrcode";
 export { Watermark, type WatermarkProps } from "./watermark";
-export { Affix, BackTop } from "./affix";
+export { Affix, BackTop, type AffixProps, type BackTopProps } from "./affix";
 export { Splitter, type SplitterProps } from "./splitter";
 export { Layout, LayoutHeader, LayoutSider, LayoutContent, LayoutFooter } from "./page-layout";
 export { InputOTP } from "./input-otp";
@@ -248,8 +248,6 @@ export { NotificationProvider, useNotification, type NotificationProviderProps, 
 export { Tour, type TourProps, type TourStep } from "./tour";
 
 export type {
-  AffixProps,
-  BackTopProps,
   BreadcrumbProps,
   CheckboxFieldProps,
   CheckboxGroupProps,
