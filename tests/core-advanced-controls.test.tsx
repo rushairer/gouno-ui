@@ -28,9 +28,11 @@ describe("additional Core controls", () => {
     expect(screen.getByText("One")).toBeTruthy();
   });
 
-  it("shows mention suggestions", () => {
+  it("shows mention suggestions while the multiline textbox is focused", () => {
     render(<Mentions aria-label="Comment" options={["alice"]} />);
-    fireEvent.change(screen.getByLabelText("Comment"), {
+    const textbox = screen.getByLabelText("Comment");
+    fireEvent.focus(textbox);
+    fireEvent.change(textbox, {
       target: { value: "@a" },
     });
     expect(screen.getByRole("option", { name: "@alice" })).toBeTruthy();
