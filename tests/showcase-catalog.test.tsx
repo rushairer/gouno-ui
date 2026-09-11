@@ -21,8 +21,9 @@ describe("Showcase catalog metadata", () => {
     }
   });
 
-  it("has both completed entries and entries that still show estimated progress", () => {
-    expect(pages.some((page) => page.progress === 100)).toBe(true);
-    expect(pages.some((page) => page.progress < 100)).toBe(true);
+  it("reports the canonical catalog as fully reviewed", () => {
+    expect(pages.length).toBeGreaterThan(0);
+    expect(pages.every((page) => page.progress === 100)).toBe(true);
+    expect(pages.some((page) => page.progress < 100)).toBe(false);
   });
 });
