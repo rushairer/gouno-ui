@@ -22,7 +22,49 @@ jobs:
           node-version: 24
           cache: npm
       - name: Apply 6B1 hardening
-        run: python3 .github/scripts/apply-core-6b1.py
+        shell: bash
+        run: |
+          python3 .github/scripts/apply-core-6b1.py
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path("showcase/demos/core/surface-review-5a.tsx")
+          text = path.read_text(encoding="utf-8")
+          old = '''      {
+                title: "AvatarImage / AvatarFallback / AvatarBadge API",
+                rows: [
+                  { name: "AvatarImage", description: "图片层；支持 src/alt 及标准 image primitive 属性，ref 指向真实 img。", type: "AvatarImageProps" },
+                  { name: "AvatarFallback", description: "图片不可用时的文字/图标回退；支持 delayMs。", type: "AvatarFallbackProps" },
+                  { name: "AvatarBadge", description: "头像角标视觉槽；业务状态与可访问名称由调用方提供。", type: "AvatarBadgeProps" },
+                  { name: "AvatarGroupCount", description: "手动组合头像组计数时使用；AvatarGroup.max 会自动使用同一视觉槽。", type: "AvatarGroupCountProps" },
+                ],
+              },
+          '''
+          # Match the actual source indentation while preserving the older two section names.
+          old = old.replace("              ", "      ")
+          new = '''      {
+                title: "AvatarImage API",
+                rows: [
+                  { name: "AvatarImage", description: "图片层；支持 src/alt 及标准 image primitive 属性，ref 指向真实 img。", type: "AvatarImageProps" },
+                ],
+              },
+              {
+                title: "AvatarFallback API",
+                rows: [
+                  { name: "AvatarFallback", description: "图片不可用时的文字/图标回退；支持 delayMs。", type: "AvatarFallbackProps" },
+                ],
+              },
+              {
+                title: "AvatarBadge / AvatarGroupCount API",
+                rows: [
+                  { name: "AvatarBadge", description: "头像角标视觉槽；业务状态与可访问名称由调用方提供。", type: "AvatarBadgeProps" },
+                  { name: "AvatarGroupCount", description: "手动组合头像组计数时使用；AvatarGroup.max 会自动使用同一视觉槽。", type: "AvatarGroupCountProps" },
+                ],
+              },
+          '''.replace("              ", "      ")
+          if old not in text:
+              raise SystemExit("Avatar compound API section marker not found")
+          path.write_text(text.replace(old, new, 1), encoding="utf-8")
+          PY
       - name: Verify 6B1
         run: |
           npm ci
