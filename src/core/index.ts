@@ -237,7 +237,7 @@ export {
   type MenuStyles,
 } from "./menu";
 export { QRCode, type QRCodeProps, type QRCodeErrorLevel } from "./qrcode";
-export { Watermark } from "./watermark";
+export { Watermark, type WatermarkProps } from "./watermark";
 export { Affix, BackTop } from "./affix";
 export { Splitter, type SplitterProps } from "./splitter";
 export { Layout, LayoutHeader, LayoutSider, LayoutContent, LayoutFooter } from "./page-layout";
@@ -300,5 +300,4 @@ export type {
   TooltipProviderProps,
   TooltipTriggerProps,
   TreeProps,
-  WatermarkProps,
 } from "./public-props";
