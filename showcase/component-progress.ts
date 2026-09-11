@@ -12,6 +12,7 @@ const completedComponents = new Set([
   "core-flex",
   "core-grid",
   "core-separator",
+  "core-splitter",
   "core-input",
   "core-textarea",
   "core-input-number",

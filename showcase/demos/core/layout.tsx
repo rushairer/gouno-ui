@@ -1,4 +1,4 @@
-import { Space, Splitter } from "../../../src/core";
+import { Space } from "../../../src/core";
 import type { ComponentDocument } from "../../components/component-page";
 import FlexDemo from "./flex/flex-0";
 import FlexDemoSource from "./flex/flex-0.tsx?raw";
@@ -10,6 +10,10 @@ import ResponsiveGridDemo from "./grid/grid-1";
 import ResponsiveGridDemoSource from "./grid/grid-1.tsx?raw";
 import PageLayoutDemo from "./page-layout/page-layout-0";
 import PageLayoutDemoSource from "./page-layout/page-layout-0.tsx?raw";
+import SplitterBasicDemo from "./splitter/splitter-0";
+import SplitterBasicDemoSource from "./splitter/splitter-0.tsx?raw";
+import SplitterMultipleDemo from "./splitter/splitter-1";
+import SplitterMultipleDemoSource from "./splitter/splitter-1.tsx?raw";
 import SeparatorDemo from "./separator/separator-0";
 import SeparatorDemoSource from "./separator/separator-0.tsx?raw";
 import SeparatorVerticalDemo from "./separator/separator-1";
@@ -269,14 +273,45 @@ export const layoutDocuments: Record<string, ComponentDocument> = {
   },
   splitter: {
     title: "Splitter 分隔面板",
-    description: "通过拖动分隔条调整两个面板尺寸。",
-    code: '<Splitter first={<PanelA />} second={<PanelB />} />',
-    render: () => (
-      <Splitter
-        first={<div className="p-4">左侧面板</div>}
-        second={<div className="p-4">右侧面板</div>}
-      />
-    ),
+    description:
+      "可访问的可调面板容器。canonical API 使用 Splitter.Panel 组合多个区域；orientation 沿用 Gouno 轴向词汇，sizes/defaultSizes 管理完整尺寸向量，Panel 负责 min/max/resizable 约束。旧 first/second API 仅保留兼容。",
+    code: canonicalCoreSource(SplitterBasicDemoSource),
+    render: () => <SplitterBasicDemo />,
+    demos: [
+      {
+        title: "垂直多面板",
+        description:
+          "同一 Splitter 支持三个及以上 Panel；分隔条可拖动，也可聚焦后用方向键、Home/End 调整相邻面板。",
+        code: canonicalCoreSource(SplitterMultipleDemoSource),
+        render: () => <SplitterMultipleDemo />,
+      },
+    ],
+    api: [
+      { name: "children", description: "canonical 直接子项使用 Splitter.Panel。", type: "ReactNode" },
+      { name: "orientation", description: "面板排列轴向；水平排列对应垂直 separator。", type: '"horizontal" | "vertical"', defaultValue: '"horizontal"' },
+      { name: "sizes", description: "受控完整尺寸向量；数值按比例归一化为 100%。", type: "readonly number[]" },
+      { name: "defaultSizes", description: "非受控初始尺寸向量。", type: "readonly number[]" },
+      { name: "onSizesChange", description: "拖动或键盘调整后的完整尺寸向量。", type: "(sizes: readonly number[]) => void" },
+      { name: "onResizeStart / onResizeEnd", description: "一次调整开始/结束时的尺寸快照。", type: "(sizes: readonly number[]) => void" },
+      { name: "step", description: "键盘方向键每次调整的百分比；Shift 为五倍步长。", type: "number", defaultValue: "1" },
+      { name: "first / second", description: "兼容旧二面板 API；新代码使用 Splitter.Panel。", type: "ReactNode", defaultValue: "deprecated" },
+      { name: "defaultSize / min / max / onResize", description: "旧 first-panel 兼容契约；onResize 继续返回首面板 number。", type: "legacy compatibility", defaultValue: "deprecated" },
+      { name: "...div props", description: "透传根 div 的标准属性、事件、data-* 与 ARIA。", type: "HTMLAttributes<HTMLDivElement>" },
+      { name: "ref", description: "指向真实 Splitter 根 div。", type: "Ref<HTMLDivElement>" },
+    ],
+    apiSections: [
+      {
+        title: "Splitter.Panel API",
+        rows: [
+          { name: "defaultSize", description: "未提供 root defaultSizes 时的初始占比。", type: "number" },
+          { name: "min", description: "调整时允许的最小占比。", type: "number", defaultValue: "0" },
+          { name: "max", description: "调整时允许的最大占比。", type: "number", defaultValue: "100" },
+          { name: "resizable", description: "false 时禁用该 Panel 两侧相邻的 resize handle。", type: "boolean", defaultValue: "true" },
+          { name: "children", description: "Panel 内容。", type: "ReactNode" },
+          { name: "...div props", description: "透传真实 Panel div 属性并支持 ref。", type: "HTMLAttributes<HTMLDivElement>" },
+        ],
+      },
+    ],
   },
   "page-layout": {
     title: "Layout 页面布局",
