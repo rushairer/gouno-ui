@@ -6,6 +6,14 @@ import FormLayouts from "./form/layouts";
 import FormLayoutsCode from "./form/layouts.tsx?raw";
 import UploadStates from "./upload/states";
 import UploadStatesCode from "./upload/states.tsx?raw";
+import SliderBasicDemo from "./slider/slider-0";
+import SliderBasicDemoSource from "./slider/slider-0.tsx?raw";
+import SliderVerticalDemo from "./slider/slider-1";
+import SliderVerticalDemoSource from "./slider/slider-1.tsx?raw";
+import RateBasicDemo from "./rate/rate-0";
+import RateBasicDemoSource from "./rate/rate-0.tsx?raw";
+import RateCharacterDemo from "./rate/rate-1";
+import RateCharacterDemoSource from "./rate/rate-1.tsx?raw";
 import Example1 from "./input/input-0";
 import Example1Source from "./input/input-0.tsx?raw";
 import Example2 from "./input/input-1";
@@ -61,10 +69,8 @@ import {
   InputOTP,
   Mentions,
   Radio,
-  Rate,
   Segmented,
   Select,
-  Slider,
   Space,
   Switch,
   Text,
@@ -606,17 +612,73 @@ export const dataEntryDocuments: Record<string, ComponentDocument> = {
   },
   slider: {
     title: "Slider 滑动输入",
-    description: "范围、步长、禁用和键盘调整。",
-    code: '<Slider aria-label="音量" min={0} max={100} defaultValue={40} />',
-    render: () => (
-      <Slider aria-label="音量" min={0} max={100} defaultValue={40} />
+    description:
+      "保持原生 input[type=range] 作为唯一值/键盘/表单语义，补齐 root ref、horizontal/vertical 轴向和 pointer/keyboard 完成回调。7A 不用自绘双 thumb 替换原生单值 Slider。",
+    code: SliderBasicDemoSource.replaceAll(
+      "../../../../src/core",
+      "@gouno/ui/core",
     ),
+    render: () => <SliderBasicDemo />,
+    demos: [
+      {
+        title: "垂直方向",
+        description: "orientation 只改变轴向呈现；Arrow/Home/End 等键盘行为继续由原生 range 控件拥有。",
+        code: SliderVerticalDemoSource.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ),
+        render: () => <SliderVerticalDemo />,
+      },
+    ],
+    api: [
+      { name: "value", description: "受控原生 range 值。", type: "number | string" },
+      { name: "defaultValue", description: "非受控初始值。", type: "number | string" },
+      { name: "min / max", description: "原生范围边界。", type: "number | string", defaultValue: "0 / 100" },
+      { name: "step", description: "原生值步长。", type: "number | string", defaultValue: "1" },
+      { name: "orientation", description: "唯一轴向入口；vertical 使用同一个原生 range 元素。", type: '"horizontal" | "vertical"', defaultValue: '"horizontal"' },
+      { name: "disabled", description: "原生禁用状态。", type: "boolean" },
+      { name: "onChange", description: "标准原生 range change 事件；不另造第二个 value-change 写入口。", type: "ChangeEventHandler<HTMLInputElement>" },
+      { name: "onChangeComplete", description: "pointerup 或 keyup 完成一次调整后的数值回调。", type: "(value: number) => void" },
+      { name: "aria-* / input props", description: "透传标准 input、表单、data-* 与 ARIA 属性。", type: "InputHTMLAttributes<HTMLInputElement>" },
+      { name: "ref", description: "指向真实 input[type=range]。", type: "Ref<HTMLInputElement>" },
+    ],
   },
   rate: {
     title: "Rate 评分",
-    description: "受控或非受控星级评分。",
-    code: "<Rate defaultValue={3} />",
-    render: () => <Rate defaultValue={3} />,
+    description:
+      "使用同 name 的原生 radio 作为选择语义，支持受控/非受控、清除、尺寸和自定义字符。Rate 不再注入 Rating / n stars 英文文案；组名和需要本地化的每档名称由调用方通过标准 ARIA/getItemLabel 拥有。",
+    code: RateBasicDemoSource.replaceAll(
+      "../../../../src/core",
+      "@gouno/ui/core",
+    ),
+    render: () => <RateBasicDemo />,
+    demos: [
+      {
+        title: "尺寸与自定义字符",
+        description: "size 复用 small/middle/large；character 只改变视觉字符，不改 radio 语义。",
+        code: RateCharacterDemoSource.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ),
+        render: () => <RateCharacterDemo />,
+      },
+    ],
+    api: [
+      { name: "value", description: "受控评分；当前 certified scope 为整数档位。", type: "number" },
+      { name: "defaultValue", description: "非受控初始评分。", type: "number", defaultValue: "0" },
+      { name: "count", description: "评分档位数量。", type: "number", defaultValue: "5" },
+      { name: "allowClear", description: "再次点击已选档位时清为 0。", type: "boolean", defaultValue: "true" },
+      { name: "disabled", description: "禁用整个原生 radio group。", type: "boolean", defaultValue: "false" },
+      { name: "size", description: "复用 Gouno ControlSize。", type: '"small" | "middle" | "large"', defaultValue: '"middle"' },
+      { name: "name", description: "所有 radio 共用的原生 name；省略时自动生成。", type: "string" },
+      { name: "character", description: "视觉字符或按档位渲染字符；不承担 accessible name。", type: "ReactNode | ((value: number) => ReactNode)", defaultValue: '"★"' },
+      { name: "getItemLabel", description: "可选的每档本地化 accessible name；省略时使用纯数字。", type: "(value: number) => string" },
+      { name: "onChange", description: "评分变化回调。", type: "(value: number) => void" },
+      { name: "aria-label / aria-labelledby", description: "canonical 评分组可访问名称，由调用方本地化。", type: "standard ARIA" },
+      { name: "label", description: "仅为旧调用保留；新代码使用标准 ARIA。", type: "string", defaultValue: "deprecated" },
+      { name: "...div props", description: "透传根 radiogroup div 的标准属性、事件和 data-*。", type: "HTMLAttributes<HTMLDivElement>" },
+      { name: "ref", description: "指向真实 radiogroup 根 div。", type: "Ref<HTMLDivElement>" },
+    ],
   },
   autocomplete: {
     title: "AutoComplete 自动完成",

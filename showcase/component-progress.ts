@@ -24,6 +24,8 @@ const completedComponents = new Set([
   "core-checkbox",
   "core-radio",
   "core-switch",
+  "core-slider",
+  "core-rate",
   "core-table",
   "core-pagination",
   "core-tabs",

@@ -18,6 +18,8 @@ describe("audited batch completion", () => {
       "core-checkbox",
       "core-radio",
       "core-switch",
+      "core-slider",
+      "core-rate",
       "core-table",
       "core-pagination",
       "core-modal",
