@@ -58,15 +58,7 @@ export function Tour({
   const step = steps[index];
 
   useEffect(() => {
-    if (open) {
-      const activeElement = document.activeElement;
-      restoreFocusRef.current =
-        activeElement instanceof HTMLElement && activeElement !== document.body
-          ? activeElement
-          : null;
-    } else if (!controlled) {
-      setInnerCurrent(0);
-    }
+    if (!open && !controlled) setInnerCurrent(0);
   }, [controlled, open]);
 
   const moveTo = (nextIndex: number) => {
@@ -95,6 +87,13 @@ export function Tour({
         data-slot="tour-content"
         data-step-index={index}
         onPointerDownOutside={(event) => event.preventDefault()}
+        onOpenAutoFocus={() => {
+          const activeElement = document.activeElement;
+          restoreFocusRef.current =
+            activeElement instanceof HTMLElement && activeElement !== document.body
+              ? activeElement
+              : null;
+        }}
         onCloseAutoFocus={(event) => {
           const restoreFocusTarget = restoreFocusRef.current;
           restoreFocusRef.current = null;
