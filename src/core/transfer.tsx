@@ -23,10 +23,12 @@ export interface TransferProps extends Omit<
   targetKeys?: readonly string[];
   defaultTargetKeys?: readonly string[];
   onChange?: (keys: string[]) => void;
-  titles: readonly [ReactNode, ReactNode];
-  operations: readonly [string, string];
+  titles?: readonly [ReactNode, ReactNode];
+  operations?: readonly [string, string];
   disabled?: boolean;
 }
+
+const compatibilityOperations = ["→", "←"] as const;
 
 export const Transfer = forwardRef<HTMLDivElement, TransferProps>(
   function Transfer(
@@ -36,7 +38,7 @@ export const Transfer = forwardRef<HTMLDivElement, TransferProps>(
       defaultTargetKeys = [],
       onChange,
       titles,
-      operations,
+      operations = compatibilityOperations,
       disabled = false,
       className,
       ...props
@@ -86,44 +88,49 @@ export const Transfer = forwardRef<HTMLDivElement, TransferProps>(
       items: readonly TransferItem[],
       side: "source" | "target",
       labelId: string,
-      title: ReactNode,
-    ) => (
-      <div
-        role="group"
-        aria-labelledby={labelId}
-        data-slot={`transfer-${side}`}
-        className="min-w-0 rounded-md border bg-background"
-      >
+      title: ReactNode | undefined,
+    ) => {
+      const labelled = title !== undefined && title !== null;
+      return (
         <div
-          id={labelId}
-          data-slot="transfer-title"
-          className="border-b px-3 py-2 text-sm font-medium"
+          role={labelled ? "group" : undefined}
+          aria-labelledby={labelled ? labelId : undefined}
+          data-slot={`transfer-${side}`}
+          className="min-w-0 rounded-md border bg-background"
         >
-          {title}
-        </div>
-        <div data-slot="transfer-list" className="max-h-48 overflow-auto p-2">
-          {items.map((item) => (
-            <label
-              key={item.key}
-              data-slot="transfer-item"
-              className={cn(
-                "flex items-center gap-2 rounded p-1 text-sm",
-                !disabled && !item.disabled && "hover:bg-accent",
-                (disabled || item.disabled) && "opacity-50",
-              )}
+          {labelled ? (
+            <div
+              id={labelId}
+              data-slot="transfer-title"
+              className="border-b px-3 py-2 text-sm font-medium"
             >
-              <input
-                type="checkbox"
-                disabled={disabled || item.disabled}
-                checked={selected.includes(item.key)}
-                onChange={(event) => toggle(item.key, event.target.checked)}
-              />
-              <span>{item.title}</span>
-            </label>
-          ))}
+              {title}
+            </div>
+          ) : null}
+          <div data-slot="transfer-list" className="max-h-48 overflow-auto p-2">
+            {items.map((item) => (
+              <label
+                key={item.key}
+                data-slot="transfer-item"
+                className={cn(
+                  "flex items-center gap-2 rounded p-1 text-sm",
+                  !disabled && !item.disabled && "hover:bg-accent",
+                  (disabled || item.disabled) && "opacity-50",
+                )}
+              >
+                <input
+                  type="checkbox"
+                  disabled={disabled || item.disabled}
+                  checked={selected.includes(item.key)}
+                  onChange={(event) => toggle(item.key, event.target.checked)}
+                />
+                <span>{item.title}</span>
+              </label>
+            ))}
+          </div>
         </div>
-      </div>
-    );
+      );
+    };
 
     return (
       <div
@@ -137,7 +144,7 @@ export const Transfer = forwardRef<HTMLDivElement, TransferProps>(
           className,
         )}
       >
-        {renderList(sourceItems, "source", sourceLabelId, titles[0])}
+        {renderList(sourceItems, "source", sourceLabelId, titles?.[0])}
         <div
           data-slot="transfer-operations"
           className="flex justify-center gap-2 sm:flex-col"
@@ -170,7 +177,7 @@ export const Transfer = forwardRef<HTMLDivElement, TransferProps>(
             {operations[1]}
           </Button>
         </div>
-        {renderList(targetItems, "target", targetLabelId, titles[1])}
+        {renderList(targetItems, "target", targetLabelId, titles?.[1])}
       </div>
     );
   },
