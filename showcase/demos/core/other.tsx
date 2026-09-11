@@ -2,7 +2,9 @@ import FloatButtonExample from "./float-button/float-button-0";
 import FloatButtonExampleSource from "./float-button/float-button-0.tsx?raw";
 import QRCodeExample from "./qrcode/qrcode-0";
 import QRCodeExampleSource from "./qrcode/qrcode-0.tsx?raw";
-import { Affix, BackTop, Button, Watermark } from "../../../src/core";
+import WatermarkExample from "./watermark/watermark-0";
+import WatermarkExampleSource from "./watermark/watermark-0.tsx?raw";
+import { Affix, BackTop, Button } from "../../../src/core";
 import type { ComponentDocument } from "../../components/component-page";
 
 const canonicalCoreSource = (source: string) =>
@@ -54,7 +56,24 @@ export const otherDocuments: Record<string, ComponentDocument> = {
       { name: "ref", description: "真实 canvas 元素引用", type: "Ref<HTMLCanvasElement>" },
     ],
   },
-  watermark: { title: "Watermark 水印", description: "为内容区域增加重复文字水印。", code: '<Watermark content="Gouno"><Card /></Watermark>', render: () => <Watermark content="Gouno UI"><div className="h-48 rounded-md border p-6">受保护的内容区域</div></Watermark> },
+  watermark: {
+    title: "Watermark 水印",
+    description:
+      "为内容区域增加重复文字背景。content 由调用方显式提供，Core 不注入 Gouno 或任何产品品牌；文字会先作为 XML text 转义再编码进 SVG data URL。rotate / gap / opacity 对非有限值做稳定回退，gap 保证最小 tile，opacity 限定在 0~1。根节点保留普通 div 语义并透传标准 DOM/ARIA、style、className 与真实 ref。",
+    code: canonicalCoreSource(WatermarkExampleSource),
+    render: () => <WatermarkExample />,
+    api: [
+      { name: "content", description: "水印文字；由调用方显式提供。", type: "string" },
+      { name: "children", description: "被水印背景承载的内容。", type: "ReactNode" },
+      { name: "rotate", description: "水印文字旋转角度；非有限值回退默认。", type: "number", defaultValue: "-22" },
+      { name: "gap", description: "重复 SVG tile 边长，单位 px；最小规范化为 32。", type: "number", defaultValue: "120" },
+      { name: "opacity", description: "水印文字透明度；规范化到 0~1。", type: "number", defaultValue: "0.12" },
+      { name: "aria-label", description: "需要为内容区域命名时使用标准 ARIA。", type: "string" },
+      { name: "className", description: "根 div 附加样式类。", type: "string" },
+      { name: "style", description: "根 div 内联样式；调用方值可显式覆盖生成的 backgroundImage。", type: "CSSProperties" },
+      { name: "ref", description: "真实根 div 引用。", type: "Ref<HTMLDivElement>" },
+    ],
+  },
   affix: { title: "Affix 固钉", description: "通过 sticky 定位固定局部操作。", code: '<Affix offsetTop={16}><Button>固定操作</Button></Affix>', render: () => <Affix offsetTop={16}><Button>固定操作</Button></Affix> },
   "back-top": { title: "BackTop 回到顶部", description: "平滑滚动到页面顶部。", code: '<BackTop />', render: () => <BackTop className="static" /> }
 };

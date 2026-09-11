@@ -60,6 +60,7 @@ const completedComponents = new Set([
   "core-spin",
   "core-qrcode",
   "core-float-button",
+  "core-watermark",
   "core-statistic",
   "core-popover",
   "core-tooltip",
