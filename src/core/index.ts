@@ -242,7 +242,7 @@ export { Affix, BackTop } from "./affix";
 export { Splitter, type SplitterProps } from "./splitter";
 export { Layout, LayoutHeader, LayoutSider, LayoutContent, LayoutFooter } from "./page-layout";
 export { InputOTP } from "./input-otp";
-export { Popconfirm } from "./popconfirm";
+export { Popconfirm, type PopconfirmProps } from "./popconfirm";
 export { MessageProvider, useMessage } from "./message";
 export { NotificationProvider, useNotification } from "./notification";
 export { Tour, type TourStep } from "./tour";
@@ -285,7 +285,6 @@ export type {
   NavigationProviderProps,
   NotificationProviderProps,
   OverlayFormProps,
-  PopconfirmProps,
   PopoverAnchorProps,
   PopoverProps,
   PopoverTriggerProps,
