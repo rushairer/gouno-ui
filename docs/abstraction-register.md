@@ -674,3 +674,14 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Validation:** 6F1 same-source Preview/Code and six focused regression tests cover native button semantics/event/ref, anchor navigation attributes, disabled-link behavior, ReactNode Tooltip rendering, removal of the default arrow and reviewed completion. Exact-head main run 364 passed the complete typecheck/test/build/pack/artifact/Pages gate.
 - **Abstraction impact:** no FloatButton Group, speed-dial menu, product action policy or BackTop behavior is admitted; those require independent evidence.
 
+### PD-072 — Watermark keeps caller-owned content and decorative background semantics
+
+- **Status:** accepted / Core hardening
+- **Owner:** Core / Other family
+- **Evidence:** the established Core Watermark is retained by the Core baseline, but the previous implementation silently defaulted generic content to the Gouno brand, removed XML-significant characters instead of escaping text, accepted unsafe numeric values unchanged, and exposed no standard root DOM/ref contract. No product evidence justifies anti-tamper, observer-based or brand-policy behavior in Core.
+- **Decision:** keep Watermark as a passive repeated text background around ordinary content. `content` is caller-owned and required. Escape XML text before encoding the SVG data URL; normalize non-finite `rotate/gap/opacity`, enforce a minimum tile size and clamp opacity to 0..1. The root remains a normal div with standard DOM/ARIA/className/style props and a real ref. Caller style may intentionally override the generated background image.
+- **Content/accessibility impact:** the repeated watermark is decorative CSS background and is not announced as duplicate text. If the content region itself needs a name, callers use standard ARIA on the root. Core injects no Gouno/product brand and no locale copy.
+- **API impact:** `WatermarkProps` is implementation-owned and exported directly from Core. `content` becomes required; `children`, `rotate`, `gap`, `opacity`, standard div props and real root ref describe the actual contract.
+- **Validation:** 6F2 same-source Preview/Code and focused regression tests cover standard root props/ref, XML-safe text, finite/clamped numeric normalization, explicit caller style override, brand-default removal and reviewed completion. The exact-head certification after ownership must pass the complete typecheck/test/build/pack/artifact/Pages gate.
+- **Abstraction impact:** no anti-tamper overlay, ResizeObserver repair loop, document-wide watermark, product branding policy or export/security guarantee is admitted into Core.
+
