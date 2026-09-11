@@ -27,6 +27,7 @@ const completedComponents = new Set([
   "core-slider",
   "core-rate",
   "core-input-otp",
+  "core-mentions",
   "core-segmented",
   "core-checkbox",
   "core-radio",
