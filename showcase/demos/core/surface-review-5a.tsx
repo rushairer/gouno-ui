@@ -150,23 +150,9 @@ export const surfaceReviewDocuments: Record<string, ComponentDocument> = {
   separator: {
     ...layoutDocuments.separator,
     description:
-      "Separator 是 canonical 分隔原语，默认 decorative；历史 Divider 作为 established Core compatibility sibling 暂时保留，但新代码应使用 Separator。",
-    api: [
-      {
-        name: "orientation",
-        description: "分隔方向。",
-        type: '"horizontal" | "vertical"',
-        defaultValue: '"horizontal"',
-      },
-      {
-        name: "decorative",
-        description: "是否仅作为视觉分隔；canonical Separator 默认不进入无障碍语义树。",
-        type: "boolean",
-        defaultValue: "true",
-      },
-      { name: "className", description: "扩展分隔线样式。", type: "string" },
-    ],
+      "Separator 是 canonical 分隔组件；水平模式支持内容、位置和线型，垂直模式保持 line-only，默认 decorative。历史 Divider 作为 established Core compatibility sibling 暂时保留，但新代码应使用 Separator。",
     apiSections: [
+      ...(layoutDocuments.separator.apiSections ?? []),
       {
         title: "Divider compatibility API",
         rows: [
