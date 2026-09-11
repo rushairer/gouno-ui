@@ -685,3 +685,14 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Validation:** 6F2 same-source Preview/Code and focused regression tests cover standard root props/ref, XML-safe text, finite/clamped numeric normalization, explicit caller style override, brand-default removal and reviewed completion. The exact-head certification after ownership must pass the complete typecheck/test/build/pack/artifact/Pages gate.
 - **Abstraction impact:** no anti-tamper overlay, ResizeObserver repair loop, document-wide watermark, product branding policy or export/security guarantee is admitted into Core.
 
+### PD-073 — Affix owns sticky placement; BackTop owns the window scroll threshold
+
+- **Status:** accepted / Core hardening
+- **Owner:** Core / Other family
+- **Evidence:** the retained Core Affix already represented a small sticky wrapper, while BackTop exposed `visibilityHeight` only as an inert data attribute, rendered continuously, and injected the English accessible label `Back to top`. No Gosso/Blog evidence justifies custom scroll-container discovery, portal placement or product navigation policy in Core.
+- **Decision:** keep Affix as a top-sticky container in its current scroll ancestor; `offsetTop` owns sticky `top` placement and non-finite values normalize to zero. Keep BackTop scoped to `window`: observe `window.scrollY`, render only when the normalized threshold is reached, and smooth-scroll to top on activation. A caller `onClick` may call `preventDefault()` to cancel the default scroll action.
+- **Content/accessibility impact:** BackTop requires standard caller-owned `aria-label`, so Core injects no locale copy. Its default ArrowUp is decorative and belongs to the specific BackTop affordance. Affix remains an ordinary div and callers add ARIA only when the sticky region itself requires naming.
+- **API impact:** `AffixProps` and `BackTopProps` are implementation-owned and exported directly from Core. Both expose standard DOM props and real element refs; BackTop retains native button behavior and a safe default `type="button"`.
+- **Validation:** 6F3 same-source Preview/Code and focused regression tests cover sticky placement/ref, non-finite offset normalization, threshold hide/show, smooth-scroll activation/ref, preventDefault cancellation, locale leakage removal and reviewed completion. The exact-head certification after ownership must pass the complete typecheck/test/build/pack/artifact/Pages gate.
+- **Abstraction impact:** no custom scroll-container registry, portal/floating layout manager, navigation policy or product-level sticky pattern is admitted. Those require independent cross-product evidence.
+

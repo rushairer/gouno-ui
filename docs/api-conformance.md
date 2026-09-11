@@ -66,6 +66,7 @@
 | API-046 | Core `Tour` 完成 reviewed 100：保持受控 `open`，并以 `current/onChange` 支持可受控/非受控的规范化步骤索引；复用 canonical Dialog 的 modal/focus/Escape/focus-return 行为，当前可见 `title` 直接提供 dialog accessible name，`previousText/nextText/finishText` 全由 caller 本地化提供。旧 `TourStep.target` 从未被 runtime 实现，因此不作为虚假公共能力保留；目标定位/高亮、产品 onboarding 状态与跨路由编排继续由产品拥有。 | same-source Showcase/API docs + `core-tour-6e4` focused tests + main run 360 / PD-070 |
 | API-047 | Core `FloatButton` 完成 reviewed 100：通用悬浮操作要求 caller-owned `icon`，不再默认注入 BackTop 箭头；无 `href` 使用原生 button，有 `href` 使用真实 anchor，并透传标准 DOM/ARIA/事件/ref。`tooltip` 现在承载真实 ReactNode Tooltip；disabled link 映射 `aria-disabled`、移出 tab order 并阻止导航。可访问名称由标准 `aria-label` / `aria-labelledby` 提供。 | same-source Showcase/API docs + `core-float-button-6f1` focused tests + main run 364 / PD-071 |
 | API-048 | Core `Watermark` 完成 reviewed 100：`content` 改为 caller-owned 必填，Core 不再注入 Gouno 品牌；SVG text 在 data URL 编码前做 XML 转义，`gap/rotate/opacity` 对非有限/越界输入做稳定归一化。根 div 透传标准 DOM/ARIA/className/style/ref，`WatermarkProps` 由实现文件直接拥有。 | same-source Showcase/API docs + `core-watermark-6f2` focused tests + exact-head main certification / PD-072 |
+| API-049 | Core `Affix` / `BackTop` 完成 reviewed 100：`Affix` 保持当前滚动祖先内的 top-sticky 容器，透传标准 div DOM/ARIA/style/ref；`BackTop` 真正按 `window.scrollY/visibilityHeight` 控制渲染，`aria-label` 由 caller 本地化，默认 smooth scroll 可由 `onClick.preventDefault()` 取消，并透传标准 button DOM/事件/ref。两者 Props 由实现文件直接拥有。 | same-source Showcase/API docs + `core-affix-back-top-6f3` focused tests + exact-head main certification / PD-073 |
 
 ## 当前破坏式迁移说明
 

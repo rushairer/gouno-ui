@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 ### Changed
 
+- Other 6F3: hardened Core `Affix` as a standard top-sticky container and `BackTop` as a window-scroll threshold control with real visibility behavior, caller-owned accessible copy, cancellable smooth-scroll action, standard DOM/event/ref passthrough, same-source Showcase examples, and focused regressions.
 - Other 6F2: hardened Core `Watermark` with caller-owned required content, XML-safe SVG text encoding, normalized tile/rotation/opacity inputs, and standard div DOM/ARIA/style/ref passthrough. Core no longer injects the Gouno brand into generic watermarks.
 - Other 6F1: hardened Core `FloatButton` as a generic icon-only floating action with caller-owned icon/accessibility copy, real button-or-anchor semantics, standard DOM/event/ref passthrough, working ReactNode Tooltip rendering, and explicit disabled-link behavior. The BackTop-style default arrow and string-only pseudo-tooltip bridge are removed from the generic action contract.
 - Feedback 6E4: hardened Core `Tour` as a controlled modal walkthrough with caller-owned navigation copy, a controlled/uncontrolled normalized step index, canonical Dialog focus containment/Escape close/focus return, and visible step titles as the dialog accessible name. The never-implemented `TourStep.target` hook and injected English `Product tour` / `Previous` / `Next` / `Finish` copy are removed; target highlighting/positioning and product onboarding orchestration remain outside Core.
@@ -28,6 +29,7 @@ All notable changes to this project are documented here.
 
 ### Breaking
 
+- `BackTop` now requires caller-owned `aria-label` and actually remains unrendered until `window.scrollY` reaches `visibilityHeight`; Core no longer injects the English `Back to top` label.
 - `Watermark.content` is now required; Core no longer defaults generic watermarks to `Gouno`.
 - `FloatButton` now requires `icon` and no longer injects a default `↑` glyph. Accessible names should be supplied with standard `aria-label` / `aria-labelledby`; `tooltip` renders visual Tooltip content and is not an implicit naming API.
 - `TourStep.target` is removed because Core never implemented target positioning/highlighting. `Tour` now requires caller-owned `previousText`, `nextText`, and `finishText` instead of injecting English copy; the visible step title names the modal dialog.
