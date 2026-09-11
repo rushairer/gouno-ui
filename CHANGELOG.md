@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 ### Changed
 
+- Data Entry 6C2: hardened Core `DateRangePicker` as a two-native-input compound control. The root now owns only range composition/layout while `startInputProps` and `endInputProps` independently own each date input's native attributes, form identity, ARIA naming, constraints and optional ref; canonical `size/status`, root ref, stable slots and same-source Showcase/tests are included without changing the established controlled `start/end/onChange` state model.
 - Data Entry 6C1: hardened Core `TimePicker` and `ColorPicker` while preserving native `input[type=time]` / `input[type=color]` semantics; both now share canonical `small/middle/large` control sizing, explicit `error/warning` status, standard DOM/ARIA extension, real input refs, stable `data-slot` anatomy, same-source Showcase examples and focused certification tests.
 - Layout 6B2: hardened Core `Splitter` around canonical `Splitter.Panel` compound composition with multiple panels, controlled/uncontrolled size vectors, per-panel constraints, pointer/keyboard resizing, resize lifecycle and separator ARIA; the established two-panel `first/second/defaultSize/min/max/onResize(number)` path remains deprecated-compatible rather than removed.
 - General/Layout 6B1: hardened Core `Avatar` and `Grid`; Avatar now follows canonical `small/middle/large | number` sizing while retaining deprecated `sm/default/lg` compatibility, exposes Group/Badge/Count compound anatomy, and Grid retains its simple helper while adding responsive 24-column `Row`/`Col`.
@@ -16,6 +17,7 @@ All notable changes to this project are documented here.
 
 - `Icon.label` is replaced by the standard `aria-label` / `aria-labelledby` accessible-name path.
 - `TimePicker.size` and `ColorPicker.size` now mean canonical Gouno control size (`small | middle | large`) rather than the native numeric input `size` attribute; the native numeric attribute is not meaningful for these picker controls and is intentionally excluded from the public contract.
+- `DateRangePicker` no longer copies one top-level set of input attributes to both date inputs or injects English `Start date` / `End date` accessible names. Per-input `id`, `name`, ARIA, constraints, events and refs belong under `startInputProps` / `endInputProps`; the root accepts normal div attributes. Existing `start`, `end` and `onChange` remain the range state contract.
 
 ## [0.2.0] - 2026-09-10
 
