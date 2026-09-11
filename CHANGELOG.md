@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-12
+
 ### Changed
 
 - Other 6F3: hardened Core `Affix` as a standard top-sticky container and `BackTop` as a window-scroll threshold control with real visibility behavior, caller-owned accessible copy, cancellable smooth-scroll action, standard DOM/event/ref passthrough, same-source Showcase examples, and focused regressions.
