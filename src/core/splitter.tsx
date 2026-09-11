@@ -137,7 +137,7 @@ function initialPanelSizes(
   const declared = panels.map((panel) => panel.props.defaultSize);
   if (!declared.some((value) => value !== undefined)) return equalSizes(panels.length);
 
-  const specifiedTotal = declared.reduce(
+  const specifiedTotal = declared.reduce<number>(
     (sum, value) => sum + (value === undefined ? 0 : finitePercent(value, 0)),
     0,
   );
@@ -168,7 +168,7 @@ function assignRef<T>(ref: ForwardedRef<T>, value: T | null) {
   else if (ref) ref.current = value;
 }
 
-export const Splitter = forwardRef<HTMLDivElement, SplitterProps>(function Splitter(
+const SplitterRoot = forwardRef<HTMLDivElement, SplitterProps>(function Splitter(
   {
     children,
     orientation = "horizontal",
@@ -388,4 +388,8 @@ export const Splitter = forwardRef<HTMLDivElement, SplitterProps>(function Split
       })}
     </div>
   );
+});
+
+export const Splitter = Object.assign(SplitterRoot, {
+  Panel: SplitterPanel,
 });

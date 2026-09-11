@@ -139,7 +139,7 @@ export const showcaseCatalog: ShowcaseGroup[] = [
     item("core-grid", "Grid", "网格", 100, <Grid3X3 />),
     item("core-separator", "Separator", "分隔线", 90, <Minus />),
     item("core-card", "Card", "卡片", 100, <CreditCard />),
-    item("core-splitter", "Splitter", "分隔面板", 68, <Columns3 />),
+    item("core-splitter", "Splitter", "分隔面板", 100, <Columns3 />),
     item("core-page-layout", "Layout", "页面布局", 75, <LayoutTemplate />),
   ]},
   { workspace: "gouno-ui", layer: "core", group: "Data Entry 数据录入", items: [

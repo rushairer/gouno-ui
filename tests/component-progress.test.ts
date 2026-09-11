@@ -34,6 +34,7 @@ describe("audited batch completion", () => {
       "core-flex",
       "core-grid",
       "core-separator",
+      "core-splitter",
       "core-card",
       "core-typography",
       "core-progress",
