@@ -243,7 +243,7 @@ export { Splitter, type SplitterProps } from "./splitter";
 export { Layout, LayoutHeader, LayoutSider, LayoutContent, LayoutFooter } from "./page-layout";
 export { InputOTP } from "./input-otp";
 export { Popconfirm, type PopconfirmProps } from "./popconfirm";
-export { MessageProvider, useMessage } from "./message";
+export { MessageProvider, useMessage, type MessageProviderProps } from "./message";
 export { NotificationProvider, useNotification } from "./notification";
 export { Tour, type TourStep } from "./tour";
 
@@ -281,7 +281,6 @@ export type {
   LayoutHeaderProps,
   LayoutProps,
   LayoutSiderProps,
-  MessageProviderProps,
   NavigationProviderProps,
   NotificationProviderProps,
   OverlayFormProps,
