@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 ### Changed
 
+- Data Entry 6C1: hardened Core `TimePicker` and `ColorPicker` while preserving native `input[type=time]` / `input[type=color]` semantics; both now share canonical `small/middle/large` control sizing, explicit `error/warning` status, standard DOM/ARIA extension, real input refs, stable `data-slot` anatomy, same-source Showcase examples and focused certification tests.
 - Layout 6B2: hardened Core `Splitter` around canonical `Splitter.Panel` compound composition with multiple panels, controlled/uncontrolled size vectors, per-panel constraints, pointer/keyboard resizing, resize lifecycle and separator ARIA; the established two-panel `first/second/defaultSize/min/max/onResize(number)` path remains deprecated-compatible rather than removed.
 - General/Layout 6B1: hardened Core `Avatar` and `Grid`; Avatar now follows canonical `small/middle/large | number` sizing while retaining deprecated `sm/default/lg` compatibility, exposes Group/Badge/Count compound anatomy, and Grid retains its simple helper while adding responsive 24-column `Row`/`Col`.
 - General/Layout 6A: hardened Core `Icon`, `Kbd`, `Flex` and `Separator` with ref-safe native contracts, standard ARIA, mature layout/line capabilities, semantic slots, same-source Showcase examples and focused certification tests.
@@ -14,6 +15,7 @@ All notable changes to this project are documented here.
 ### Breaking
 
 - `Icon.label` is replaced by the standard `aria-label` / `aria-labelledby` accessible-name path.
+- `TimePicker.size` and `ColorPicker.size` now mean canonical Gouno control size (`small | middle | large`) rather than the native numeric input `size` attribute; the native numeric attribute is not meaningful for these picker controls and is intentionally excluded from the public contract.
 
 ## [0.2.0] - 2026-09-10
 
