@@ -1,6 +1,6 @@
 # Gouno UI API 合规清单
 
-核查基线：2026-09-10。目标依据：[公共 API 规范](api-specification.md)。
+核查基线：2026-09-11。目标依据：[公共 API 规范](api-specification.md)。
 
 本清单只描述当前 canonical 公共面。`src/legacy` 不参加 canonical API 合规认证，也不构成重新引入时的命名/结构先例。
 
@@ -51,6 +51,10 @@
 | API-031 | Core `Icon` / `Kbd` / `Flex` / `Separator` 完成 reviewed 100 封板：Icon 使用标准 SVG/ref/ARIA，未命名时 decorative、命名后采用 img 语义，并支持 `small/middle/large | number`、spin/rotate；Kbd 保持原生 `<kbd>` ground-level 语义；Flex 对齐 CSS direction/align/justify/wrap/flex 与 token/number gap 且不增加 child wrapper；Separator 统一 horizontal/vertical、decorative/semantic、solid/dashed/dotted、horizontal content/titlePlacement 与 semantic slots。不得恢复 `Icon.label` 或为这些基础组件注入产品文案/业务语义。 | same-source Showcase/API docs + `core-general-layout-6a` focused tests + main run 291 / PD-055 |
 | API-032 | Core `Avatar` / `Grid` 完成 reviewed 100：Avatar 的 canonical `size` 使用 Gouno `small/middle/large | number`，`sm/default/lg` 仅保留为 deprecated 0.2.x 兼容桥；`shape` 使用 `circle/square`，Image/Fallback/Badge/Group/GroupCount 属于同一 compound family，Group `max` 只拥有可见槽位和溢出计数，业务状态与可访问名称继续由调用方拥有。现有简单 `Grid(columns/gap)` 必须保留，同 family 增量提供 24 栅格 `Row/Col`；Row 拥有 gutter/align/justify/wrap，Col 拥有 span/offset/order/push/pull/flex 与 xs/sm/md/lg/xl/xxl 逐级继承响应式覆盖。不得用 24 栅格替换或删除现有 Grid helper。 | same-source Showcase/API docs + `core-avatar-grid-6b1` focused tests + main run 293 / PD-056 |
 | API-033 | Core `Splitter` 完成 reviewed 100：canonical 组合为 `Splitter` + `Splitter.Panel`，支持两个及以上 Panel、`sizes/defaultSizes` 完整尺寸向量、Panel `defaultSize/min/max/resizable` 约束、pointer 与 Arrow/Home/End 键盘调整，以及 `onSizesChange/onResizeStart/onResizeEnd` 生命周期。每个 resize handle 使用真实 `separator` 语义并公开 orientation/value ARIA；`resizable=false` 会禁用相邻 handle。既有 `first/second/defaultSize/min/max/onResize(number)` 二面板 API 继续作为 deprecated compatibility 保留，不得因 canonical compound API 成熟而直接删除；`orientation` 是唯一轴向命名，不再引入 `layout` 同义入口。 | same-source Showcase/API docs + `core-splitter-6b2` focused tests + main run 295 / PD-057 |
+| API-034 | Core `TimePicker` / `ColorPicker` 完成 reviewed 100：两者保留原生 `input[type=time|color]` 的值、表单与平台交互语义，同时统一 Gouno `ControlSize`、`error/warning` 状态、标准 DOM/ARIA 透传、真实 input ref 和稳定 slot。`size` 只表示 `small/middle/large` 控件尺寸，不再暴露无意义的原生数字 `size` 第二语义。 | same-source Showcase/API docs + `core-native-pickers-6c1` focused tests + main run 297 / PD-058 |
+| API-035 | Core `DateRangePicker` 完成 reviewed 100：root 只拥有日期范围组合、布局、`start/end/onChange` 状态与统一 `size/status`；两个真实 date input 的 `id/name/form/ARIA/min/max/step/events/ref` 分别由 `startInputProps` / `endInputProps` 拥有。组件不再把一组 input props 复制到两个输入，也不注入 `Start date` / `End date` 英文命名。 | same-source Showcase/API docs + `core-date-range-picker-6c2` focused tests + main runs 299/300 / PD-059 |
+| API-036 | Core `AutoComplete` 完成 reviewed 100：`value/defaultValue/onChange` 保持单一文本值状态；options 支持 string shorthand 或 `{ value,label,disabled }`，确认建议通过唯一语义 `onSelect(value, option)` 回调；空状态文案由 `emptyText` 调用方拥有且无默认英文。组件使用标准 combobox/listbox ARIA、disabled-option skipping、Arrow/Home/End/Enter/Escape 键盘模型、统一 `ControlSize/status`、组合消费者 focus/blur/key handlers 与真实 input ref。原生 input text-selection `onSelect` 不再作为第二同名语义入口。 | same-source Showcase/API docs + `core-autocomplete-6d1` focused tests + main runs 303/304 / PD-060 |
+| API-037 | Core `Slider` / `Rate` 完成 reviewed 100：Slider 保持薄封装原生 range input，平台拥有 min/max/step/value/form/keyboard 语义，Core 仅补真实 input ref、slot 与 governed focus。Rate 保持 `value/defaultValue/onChange` 单一评分状态和 click-to-clear，根节点使用 caller-owned 标准 `aria-label`/`aria-labelledby`，各 radio 使用语言无关数字名称，并通过 roving tabindex + Arrow/Home/End 实现标准 radio-group 键盘选择；`Rate.label` 与 `N stars` 英文文案不保留。 | same-source Showcase/API docs + `core-slider-rate-6d2` focused tests + main run 305 / PD-061 |
 
 ## 当前破坏式迁移说明
 
