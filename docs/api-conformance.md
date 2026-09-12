@@ -2,7 +2,7 @@
 
 核查基线：2026-09-11。目标依据：[公共 API 规范](api-specification.md)。
 
-本清单只描述当前 canonical 公共面。`src/legacy` 不参加 canonical API 合规认证，也不构成重新引入时的命名/结构先例。
+本清单只描述当前 canonical 公共面。`src/legacy` 已从当前源码树移除；历史 Legacy 实现只存在于 Git 历史中，不参加 canonical API 合规认证，也不构成重新引入时的命名/结构先例。
 
 ## 当前公共所有权
 
@@ -12,19 +12,19 @@
 | Theme | active | ThemeProvider、ThemeToggle、useTheme 及主题/品牌类型。 |
 | Patterns | active/minimal | 当前仅准入 `BulkActionBar`；继续要求跨真实产品证据，不恢复历史 feature bag。 |
 | Gouno | active/minimal | `AppShell`、`PageContainer`、`PageHeader`、`NavigationGroup`、`navigationItemClass`。 |
-| Legacy | non-public | 不编译、不发布、不展示、canonical/Showcase 禁止依赖。 |
+| Legacy | historical-only | 当前源码树不存在；仅可从 Git 历史查阅，canonical/Showcase 禁止恢复或依赖。 |
 
 ## 已验证治理项
 
 | ID | 当前约束 | 主要验证 |
 | --- | --- | --- |
-| API-001 | 正式所有权保持 `Core → Theme → Patterns → Gouno`；Legacy 在 DAG 外。 | architecture/dependency tests |
+| API-001 | 正式所有权保持 `Core → Theme → Patterns → Gouno`；当前源码树不存在 Legacy layer。 | architecture/dependency tests |
 | API-002 | 每个 canonical public symbol 只有一个 owner；根入口为四层精确并集 + `cn`。 | public-api ownership tests |
 | API-003 | 每个 PascalCase runtime public component 导出同 owner `ComponentNameProps`。 | public-component-props test |
 | API-004 | `src/core/public-props.ts` 为 type-only manifest。 | type-contract-manifest test |
 | API-005 | 正式入口使用显式 symbol manifest，不使用 layer-level `export *`。 | architecture tests |
 | API-006 | 不公开 `core/*`、`patterns/*`、`gouno/*`、`legacy/*` wildcard subpath。 | package/architecture tests |
-| API-007 | Legacy 从构建排除；canonical 与 Showcase 禁止 import Legacy。 | legacy-boundaries test |
+| API-007 | `src/legacy` 不存在；canonical 与 Showcase 禁止恢复或 import 历史 Legacy 路径。 | legacy-boundaries test |
 | API-008 | Showcase 运行时只消费 canonical layer，不消费 root/Legacy。 | Showcase boundary tests |
 | API-009 | `ConfigProvider/useConfig/UIConfig` 等无实际消费者的 speculative 全局配置不公开。 | architecture tests |
 | API-010 | Gouno UI Showcase 按 Core/Theme/Patterns/Gouno owner 展示；产品空间只显示真实迁移页面。 | Showcase catalog/router |

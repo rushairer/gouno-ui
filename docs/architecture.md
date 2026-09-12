@@ -26,17 +26,17 @@ A formal layer may depend on itself or a lower layer, never a higher layer.
 
 The dependency graph is verified from real TypeScript imports/exports by tests.
 
-## Legacy is outside the DAG
+## No Legacy source layer
 
-`src/legacy` is a non-compiled, non-published prior-art museum, not a fifth layer.
+`src/legacy` has been removed from the current source tree. Historical implementations live in Git history rather than a fifth source layer.
 
-- no package export;
-- no Showcase navigation;
-- no imports from Core/Theme/Patterns/Gouno/Showcase into Legacy;
-- no normal feature maintenance;
-- consulted only after a real product need creates an abstraction question.
+- no Legacy package export or source wildcard;
+- no Legacy Showcase navigation or dependency edge;
+- Core/Theme/Patterns/Gouno/Showcase never import historical Legacy paths;
+- do not recreate `src/legacy`, `src/candidates` or an incubator source layer;
+- consult historical implementations through Git history only after a real product need creates an abstraction question.
 
-Re-admission means designing a clean canonical implementation from current evidence. Moving an old file back is not admission.
+Re-admission means designing a clean canonical implementation from current evidence. Restoring an old source tree or moving an old file back is not admission.
 
 ## Public ownership
 
@@ -68,7 +68,7 @@ Current operating model:
 
 Selection-aware bulk-action interaction shared across otherwise different resource presentations. It owns the accessible `toolbar` surface, selected-context label, sticky action visibility and a canonical cancel-selection affordance. Product actions remain arbitrary `children`; the Pattern does not know about AI, publishing, deletion, resource types or selection state storage.
 
-Its public API intentionally stays smaller than Legacy prior art: `selectionLabel`, `onCancel`, optional `cancelLabel`, `children`, standard `aria-label` and normal HTML/className extension. Product-specific convenience props are not admitted.
+Its public API intentionally stays smaller than historical Legacy prior art: `selectionLabel`, `onCancel`, optional `cancelLabel`, `children`, standard `aria-label` and normal HTML/className extension. Product-specific convenience props are not admitted.
 
 ## Admitted Gouno structure
 

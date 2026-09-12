@@ -9,7 +9,7 @@ This document complements, rather than replaces, the other repository contracts:
 - `docs/api-specification.md` decides **how an admitted public API is named, typed, composed and behaved**.
 - `docs/abstraction-register.md` records the durable evidence and decisions produced while real products validate the system.
 
-No product task may use this document to bypass architecture or API governance. Existing product code and `src/legacy` are evidence, not authority.
+No product task may use this document to bypass architecture or API governance. Existing product code and historical Legacy implementations in Git history are evidence, not authority.
 
 ## 1. Current phase
 
@@ -26,7 +26,7 @@ The first three product-validation corpora are now complete:
 
 Core and Theme remain the baseline foundation. The admitted Gouno application-shell structure remains `AppShell`, `PageContainer`, `NavigationGroup`, `navigationItemClass`, plus the evidence-admitted `PageHeader`. Public content/document shells are not automatically instances of that grammar; keep them product-local until independent evidence proves a shared contract.
 
-Pre-validation Pattern/Gouno implementations are quarantined under `src/legacy`. They are available for prior-art review only and may not be imported into canonical code or Showcase.
+Pre-validation Pattern/Gouno implementations have been removed from the current source tree. Consult them through Git history for prior-art review only; do not restore or import historical Legacy paths into canonical code or Showcase.
 
 ## 2. Real pages are the source of demand
 
@@ -88,7 +88,7 @@ Do not let legacy product boundaries cause single-product overfitting.
 Before introducing any new public Pattern, new public Gouno component or material new Core capability, search the available evidence corpus:
 
 - canonical Gouno UI;
-- `src/legacy` for historical prior art;
+- relevant Git history for historical Legacy prior art;
 - completed Gosso Admin fixtures/source;
 - completed Blog Admin source and migrated fixtures;
 - completed Gouno Blog public-site source and migrated fixtures;
@@ -96,7 +96,7 @@ Before introducing any new public Pattern, new public Gouno component or materia
 
 The purpose is not to migrate all matching pages at once. It is to test whether the proposed semantics already exist elsewhere under another name/structure and whether another product provides a conflicting case.
 
-Never import Legacy to solve the page. Review it, then design from current evidence.
+Never restore or import historical Legacy source to solve the page. Review Git history when useful, then design from current evidence.
 
 ## 7. Public abstraction admission checklist
 

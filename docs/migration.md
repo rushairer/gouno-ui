@@ -1,6 +1,6 @@
 # Migration guide
 
-The package has four formal public owners: `@gouno/ui/core`, `@gouno/ui/theme`, `@gouno/ui/patterns`, `@gouno/ui/gouno`. `src/legacy` is not public API and has no import path.
+The package has four formal public owners: `@gouno/ui/core`, `@gouno/ui/theme`, `@gouno/ui/patterns`, `@gouno/ui/gouno`. `src/legacy` has been removed; historical Legacy implementations are not public API and have no import path.
 
 ## Root compatibility umbrella
 
@@ -8,9 +8,9 @@ The package has four formal public owners: `@gouno/ui/core`, `@gouno/ui/theme`, 
 
 ## Product-validation reset
 
-Pre-validation Pattern/Gouno implementations were removed from canonical public entries and preserved only as source snapshots under `src/legacy`. Do not import Legacy. When a real page needs similar behavior, rebuild Core-first and run `docs/product-driven-development.md` admission.
+Pre-validation Pattern/Gouno implementations were removed from canonical public entries and now live only in Git history. Do not restore or import historical Legacy source. When a real page needs similar behavior, rebuild Core-first and run `docs/product-driven-development.md` admission.
 
-Typical quarantined historical concepts include DataTable, Toast orchestration, Feedback/AsyncState, ConfirmDialog, BulkActionBar, SectionNav, Panel families, status tags and page templates.
+Typical historical concepts include DataTable, Toast orchestration, Feedback/AsyncState, ConfirmDialog, BulkActionBar, SectionNav, Panel families, status tags and page templates.
 
 ## Gouno structure migrations
 
