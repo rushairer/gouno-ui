@@ -125,6 +125,7 @@ const item = (
 
 export const showcaseCatalog: ShowcaseGroup[] = [
   { workspace: "gouno-ui", layer: "core", group: "General 通用", items: [
+    item("core-config-provider", "ConfigProvider", "组件语言", 100, <SlidersHorizontal />),
     item("core-button", "Button", "按钮", 100, <MousePointerClick />),
     item("core-icon", "Icon", "图标", 85, <Shapes />),
     item("core-typography", "Typography", "排版", 78, <Type />),

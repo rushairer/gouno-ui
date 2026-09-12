@@ -4,6 +4,19 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Added
+- Core locale-only ConfigProvider, English and Simplified Chinese packs, and typed local copy overrides for Input, DatePicker, InputNumber, Select, Upload and Pagination.
+
+### Fixed
+- Select clear and tag-removal keyboard actions, focus return, generated listbox IDs and searchable active-descendant ownership.
+- Input suffix/clear spacing and Pagination ReactNode navigation labels.
+- Showcase Fixture controls reserve tooling space instead of covering product actions; standalone page navigation starts collapsed.
+
+### Changed
+- Participating controls use English fallback consistently. Configure zhCN to retain Chinese defaults; existing explicit text remains authoritative. See [migration](docs/component-localization.md).
+- Review completion retains scope/evidence and can reopen after a defect instead of requiring every catalog entry to remain permanently at 100.
+
+
 ## [0.3.0] - 2026-09-12
 
 ### Changed

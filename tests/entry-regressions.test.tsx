@@ -98,7 +98,7 @@ it("prevents selecting, dropping and removing files in a read-only Upload", () =
   fireEvent.drop(screen.getByText("点击或拖放文件到这里"), {
     dataTransfer: { files: [file] },
   });
-  fireEvent.click(screen.getByRole("button", { name: "移除 hello.txt" }));
+  fireEvent.click(screen.getByRole("button", { name: "Remove hello.txt" }));
   expect(changed).not.toHaveBeenCalled();
   expect(removed).not.toHaveBeenCalled();
   expect(screen.getByText("hello.txt")).toBeTruthy();

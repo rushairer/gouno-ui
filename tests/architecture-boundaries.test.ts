@@ -88,10 +88,10 @@ describe("public layer architecture", () => {
     expect(typeof theme.ThemeToggle).toBe("function");
   });
 
-  it("does not expose inert global configuration surfaces", async () => {
-    expect(existsSync(resolve(sourceRoot, "core/config-provider.tsx"))).toBe(false);
+  it("exposes only the consumed locale configuration surface", async () => {
+    expect(existsSync(resolve(sourceRoot, "core/config-provider.tsx"))).toBe(true);
     const core = await import("../src/core/index");
-    expect("ConfigProvider" in core).toBe(false);
+    expect(typeof core.ConfigProvider).toBe("function");
     expect("useConfig" in core).toBe(false);
   });
 

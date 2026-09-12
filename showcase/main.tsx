@@ -4,7 +4,7 @@ import gounoLogo from "../assets/brand-icons/gouno.svg";
 import gounoBlogLogo from "../assets/brand-icons/gouno-blog.svg";
 import gounoUiLogo from "../assets/brand-icons/gouno-ui.svg";
 import gossoAdminLogo from "../assets/brand-icons/gosso-admin.svg";
-import { Badge, Select } from "../src/core";
+import { Badge, Select, ConfigProvider, enUS, zhCN } from "../src/core";
 import {
   AppShell,
   NavigationGroup,
@@ -18,6 +18,7 @@ import {
   type ShowcaseWorkspace,
 } from "./catalog";
 import { ShowcasePage } from "./app/page-router";
+import { FixtureTools } from "./components/fixture-tools";
 import { BrandMark } from "./components/brand-mark";
 import { StandaloneNavigation } from "./components/standalone-navigation";
 import "./styles/showcase.css";
@@ -311,21 +312,16 @@ function App() {
             />
           </main>
         </div>
-      ) : current?.presentation === "standalone" ? (
-        <div className="relative min-h-dvh">
-          <StandaloneNavigation
-            workspace={workspace}
-            currentPage={page}
-            onNavigate={navigateToPage}
-          />
-          <ShowcasePage page={page} workspace={workspace} />
-        </div>
       ) : (
-        <AppShell brand={workspaceBrand} toolbar={shellControls} navigation={navigation}>
-          <PageContainer>
-            <ShowcasePage page={page} workspace={workspace} />
-          </PageContainer>
-        </AppShell>
+        <ConfigProvider locale={workspace === "gouno-ui" ? enUS : zhCN}>
+          <FixtureTools navigation={current?.presentation === "standalone" ? <StandaloneNavigation workspace={workspace} currentPage={page} onNavigate={navigateToPage} /> : undefined}>
+            {current?.presentation === "standalone" ? <ShowcasePage page={page} workspace={workspace} /> : (
+              <AppShell brand={workspaceBrand} toolbar={shellControls} navigation={navigation}>
+                <PageContainer><ShowcasePage page={page} workspace={workspace} /></PageContainer>
+              </AppShell>
+            )}
+          </FixtureTools>
+        </ConfigProvider>
       )}
     </ThemeProvider>
   );

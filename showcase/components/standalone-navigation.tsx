@@ -16,7 +16,7 @@ export function StandaloneNavigation({
   currentPage,
   onNavigate,
 }: StandaloneNavigationProps) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const groups = showcaseCatalog.filter(
     (group) => group.workspace === workspace && group.items.length > 0,
   );
@@ -40,7 +40,7 @@ export function StandaloneNavigation({
   return (
     <nav
       aria-label="Standalone Showcase navigation"
-      className="fixed left-4 top-4 z-[100] flex max-w-[calc(100vw-2rem)] flex-col items-start gap-2"
+      className="relative z-[100] flex max-w-full flex-col items-start gap-2"
     >
       <div className="flex items-center gap-1 rounded-full border border-border/80 bg-popover/90 p-1 shadow-overlay backdrop-blur-xl">
         <button
@@ -71,7 +71,7 @@ export function StandaloneNavigation({
       {open ? (
         <div
           id="standalone-showcase-menu"
-          className="w-[min(19rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-border/80 bg-popover/94 p-2 shadow-overlay backdrop-blur-xl"
+          className="absolute left-0 top-full mt-2 max-h-[70dvh] overflow-y-auto w-[min(19rem,calc(100vw-2rem))] rounded-xl border border-border/80 bg-popover/94 p-2 shadow-overlay backdrop-blur-xl"
         >
           {groups.map((group) => (
             <div key={group.group} className="py-1 first:pt-0 last:pb-0">

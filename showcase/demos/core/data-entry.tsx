@@ -663,3 +663,7 @@ export const dataEntryDocuments: Record<string, ComponentDocument> = {
     render: () => <InputOTP length={6} />,
   },
 };
+
+for (const [id, type] of Object.entries({ input: "InputLocale", "date-picker": "DatePickerLocale", "input-number": "InputNumberLocale", select: "SelectLocale", upload: "UploadLocale" })) {
+  dataEntryDocuments[id].api = [...(dataEntryDocuments[id].api ?? []), { name: "locale", type: `Partial<${type}>`, description: "内部通用文案局部覆盖；优先于 ConfigProvider。完整字段和默认值见组件语言文档。", defaultValue: "Provider / enUS" }];
+}

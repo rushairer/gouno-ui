@@ -1,3 +1,5 @@
+import { createPortal } from "react-dom";
+import { useFixtureTarget } from "./fixture-tools";
 import type { ReactNode } from "react";
 import { FlaskConical } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger, Text } from "../../src/core";
@@ -9,20 +11,21 @@ export interface FixtureDockProps {
 }
 
 export function FixtureDock({ route, note, controls }: FixtureDockProps) {
-  return (
+  const target = useFixtureTarget();
+  const content = (
     <div
       data-showcase-fixture-dock
-      className="fixed right-0 top-1/2 z-[90] -translate-y-1/2 sm:right-4 sm:top-20 sm:translate-y-0"
+      className="relative flex min-h-10 shrink-0 items-center justify-end"
     >
       <Popover>
         <PopoverTrigger asChild>
           <button
             type="button"
             aria-label="打开 Fixture 控制"
-            className="inline-flex h-9 w-7 items-center justify-center rounded-l-full border border-r-0 border-border/70 bg-popover/90 text-xs font-medium text-muted-foreground shadow-overlay backdrop-blur-xl transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:h-auto sm:w-auto sm:gap-1.5 sm:rounded-full sm:border-r sm:px-2.5 sm:py-1.5"
+            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-full border px-3 border-border/70 bg-popover/90 text-xs font-medium text-muted-foreground shadow-overlay backdrop-blur-xl transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <FlaskConical aria-hidden="true" className="size-3.5" />
-            <span className="hidden sm:inline">Fixture</span>
+            <span className="inline">Fixture</span>
           </button>
         </PopoverTrigger>
         <PopoverContent placement="bottom-end" className="w-[min(20rem,calc(100vw-1.5rem))] p-3">
@@ -44,4 +47,5 @@ export function FixtureDock({ route, note, controls }: FixtureDockProps) {
       </Popover>
     </div>
   );
+  return target ? createPortal(content, target) : content;
 }

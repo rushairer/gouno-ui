@@ -2,6 +2,7 @@
 // list limited to canonical components whose API/examples/source/a11y/tests have
 // been reviewed together. Product pages use their migration status directly.
 const completedComponents = new Set([
+  "core-config-provider",
   "core-button",
   "core-icon",
   "core-kbd",
@@ -82,9 +83,38 @@ const completedComponents = new Set([
   "gouno-page-header",
 ]);
 
-const canonicalComponentId = /^(core|theme|pattern|gouno)-/;
+export interface ComponentReview {
+  status: "reviewed" | "reopened";
+  scope: string;
+  evidence: readonly string[];
+  baseline: string;
+}
 
+// Historic reviewed scope is retained; a later defect can reopen a family without
+// removing its catalog entry or pretending that its previous review never existed.
+export const componentReviews: Record<string, ComponentReview> = Object.fromEntries(
+  [...completedComponents].map((id) => [id, {
+    status: "reviewed",
+    scope: "Previously reviewed API, examples and focused product scope; not exhaustive compatibility certification.",
+    evidence: ["docs/abstraction-register.md", "docs/api-conformance.md"],
+    baseline: "0e6fecf",
+  }]),
+);
+for (const id of ["core-config-provider", "core-input", "core-select", "core-date-picker", "core-input-number", "core-upload", "core-pagination"]) {
+  componentReviews[id] = {
+    status: "reviewed",
+    scope: "PD-074: component localization and audited control interactions; product rendering matrix tracked separately.",
+    evidence: ["docs/component-localization.md", "tests/core-localization.test.tsx", "tests/core-select-interaction.test.tsx"],
+    baseline: "PD-074 / 2026-09-12",
+  };
+}
+
+export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
+  return review?.status === "reviewed" ? 100 : Math.min(fallback, 99);
+}
+
+const canonicalComponentId = /^(core|theme|pattern|gouno)-/;
 export function componentProgress(id: string, fallback: number) {
   if (!canonicalComponentId.test(id)) return fallback;
-  return completedComponents.has(id) ? 100 : Math.min(fallback, 99);
+  return reviewedProgress(componentReviews[id], fallback);
 }

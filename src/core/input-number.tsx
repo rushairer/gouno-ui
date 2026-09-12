@@ -1,3 +1,5 @@
+import { useComponentLocale } from "./config-provider";
+import type { InputNumberLocale } from "./locale";
 import { forwardRef, useState, type InputHTMLAttributes } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "../lib/utils";
@@ -7,6 +9,7 @@ export interface InputNumberProps extends Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "value" | "defaultValue" | "onChange" | "size" | "type"
 > {
+  locale?: Partial<InputNumberLocale>;
   value?: number | null;
   defaultValue?: number | null;
   min?: number;
@@ -48,6 +51,7 @@ function normalize(
 export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(
   function InputNumber(
     {
+      locale,
       value,
       defaultValue = null,
       min,
@@ -69,6 +73,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(
     },
     ref,
   ) {
+    const text = useComponentLocale("inputNumber", locale);
     const [inner, setInner] = useState<number | null>(() =>
       normalize(defaultValue, min, max, precision),
     );
@@ -157,7 +162,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(
             <button
               type="button"
               tabIndex={-1}
-              aria-label="Increase"
+              aria-label={text.increaseLabel}
               disabled={
                 disabled ||
                 readOnly ||
@@ -171,7 +176,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(
             <button
               type="button"
               tabIndex={-1}
-              aria-label="Decrease"
+              aria-label={text.decreaseLabel}
               disabled={
                 disabled ||
                 readOnly ||

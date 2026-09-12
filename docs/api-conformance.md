@@ -143,3 +143,6 @@ Core runtime family sealing 现在要求所有 PascalCase runtime export 都有�
 - 不创建 `src/candidates`；候选保留在产品局部代码 + `abstraction-register.md`。
 - 不因 Ant Design/shadcn/ui 存在某组件就自动扩 Core；成熟库只用于 API/行为参考。
 - 不把 Showcase tooling reuse 当成真实产品需求证据。
+## PD-074 — Localized control interactions
+
+ConfigProvider and six participating controls share the [component localization contract](component-localization.md). English fallback and zhCN are explicit; local overrides cannot duplicate existing text prop ownership. Select clear/removal buttons no longer nest interactive roles, generated IDs connect actual listbox/options, and focused search owns active-descendant. Input reserves measured suffix width. Focused tests and the browser evidence ledger are separate from catalog completion percentages.

@@ -1,3 +1,4 @@
+import { configProviderDocuments } from "./config-provider";
 import type { ComponentDocument } from "../../components/component-page";
 import { alertDocuments } from "./alert";
 import { badgeDocuments } from "./badge";
@@ -44,6 +45,7 @@ export const coreDocuments: Record<string, ComponentDocument> = {
   ...tagDocuments,
   ...layoutDocuments,
   ...dataEntryDocuments,
+  ...configProviderDocuments,
   ...nativePickerReviewDocuments,
   ...autoCompleteReviewDocuments,
   ...sliderRateReviewDocuments,

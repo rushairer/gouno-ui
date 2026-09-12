@@ -1,5 +1,8 @@
+import { useComponentLocale } from "./config-provider";
+import type { InputLocale } from "./locale";
 import {
   forwardRef,
+  useEffect,
   useState,
   useRef,
   useImperativeHandle,
@@ -15,6 +18,7 @@ export interface InputProps extends Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "size" | "prefix"
 > {
+  locale?: Partial<InputLocale>;
   size?: ControlSize;
   prefix?: ReactNode;
   suffix?: ReactNode;
@@ -25,6 +29,7 @@ export interface InputProps extends Omit<
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   {
+    locale,
     size = "middle",
     prefix,
     suffix,
@@ -41,6 +46,19 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   },
   ref,
 ) {
+  const text = useComponentLocale("input", locale);
+  const suffixRef = useRef<HTMLSpanElement>(null);
+  const [suffixWidth, setSuffixWidth] = useState(16);
+  useEffect(() => {
+    const element = suffixRef.current;
+    if (!element) return;
+    const measure = () => setSuffixWidth(element.getBoundingClientRect().width);
+    measure();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [suffix]);
   const inputRef = useRef<HTMLInputElement>(null);
   useImperativeHandle(ref, () => inputRef.current!);
   const [inner, setInner] = useState(() => defaultValue ?? "");
@@ -60,6 +78,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       }}
       aria-invalid={status === "error" || props["aria-invalid"] || undefined}
       data-status={status}
+      style={{ paddingRight: suffix ? suffixWidth + (clearable ? 44 : 24) : undefined, ...props.style }}
       className={cn(
         "bg-input text-foreground placeholder:text-muted-foreground",
         controlSizeClass(size),
@@ -85,7 +104,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       {clearable ? (
         <button
           type="button"
-          aria-label="Clear input"
+          aria-label={text.clearLabel}
           className="absolute right-2 top-1/2 z-10 flex size-6 -translate-y-1/2 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
           onMouseDown={(event) => event.preventDefault()}
           onClick={() => {
@@ -108,8 +127,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       ) : null}
       {suffix ? (
         <span
+          ref={suffixRef}
+          data-slot="input-suffix"
           className={cn(
-            "absolute top-1/2 z-10 -translate-y-1/2 text-muted-foreground [&_svg]:size-4",
+            "max-w-[40%] truncate absolute top-1/2 z-10 -translate-y-1/2 text-muted-foreground [&_svg]:size-4",
             clearable ? "right-9" : "right-3",
           )}
         >

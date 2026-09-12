@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { StandaloneNavigation } from "../showcase/components/standalone-navigation";
 
 describe("Standalone Showcase navigation", () => {
-  it("defaults open while keeping compact return and menu controls", () => {
+  it("defaults closed so the product remains visible and opens on request", () => {
     const onNavigate = vi.fn();
     render(
       <StandaloneNavigation
@@ -13,6 +13,7 @@ describe("Standalone Showcase navigation", () => {
       />,
     );
 
+    fireEvent.click(screen.getByRole("button", { name: "打开页面菜单" }));
     expect(screen.getByText("Authentication Pages 认证页")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Reset Password 重置密码" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "关闭页面菜单" })).toBeTruthy();

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { componentReviews, reviewedProgress } from "../showcase/catalog/component-progress";
 import { showcaseCatalog } from "../showcase/catalog";
 
 describe("Showcase catalog metadata", () => {
@@ -21,9 +22,9 @@ describe("Showcase catalog metadata", () => {
     }
   });
 
-  it("reports the canonical catalog as fully reviewed", () => {
-    expect(pages.length).toBeGreaterThan(0);
-    expect(pages.every((page) => page.progress === 100)).toBe(true);
-    expect(pages.some((page) => page.progress < 100)).toBe(false);
+  it("reports canonical progress from review evidence rather than a permanent 100 requirement", () => {
+    for (const page of pages.filter((item) => /^(core|theme|pattern|gouno)-/.test(item.id))) {
+      expect(page.progress).toBe(reviewedProgress(componentReviews[page.id], page.progress));
+    }
   });
 });

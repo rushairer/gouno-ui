@@ -21,7 +21,7 @@ describe("Core data entry controls", () => {
     const onChange = vi.fn();
     render(<Select aria-label="Topics" mode="multiple" showSearch defaultValue={["ui"]} onChange={onChange}><option value="ui">UI</option><option value="api">API</option></Select>);
     fireEvent.click(screen.getByRole("combobox", { name: "Topics" }));
-    fireEvent.change(screen.getByRole("textbox", { name: "Search options" }), { target: { value: "API" } });
+    fireEvent.change(screen.getByRole("combobox", { name: "Search options" }), { target: { value: "API" } });
     fireEvent.click(screen.getByRole("option", { name: "API" }));
     expect(screen.getByRole("button", { name: "Remove API" })).toBeTruthy();
     expect(onChange).toHaveBeenLastCalledWith(["ui", "api"], expect.any(Array));
@@ -31,8 +31,8 @@ describe("Core data entry controls", () => {
     render(<Select aria-label="Team" showSearch onChange={onChange}><option value="design">Design</option><option value="engineering">Engineering</option></Select>);
     const trigger = screen.getByRole("combobox", { name: "Team" });
     fireEvent.keyDown(trigger, { key: "ArrowDown" });
-    fireEvent.keyDown(screen.getByRole("textbox", { name: "Search options" }), { key: "ArrowDown" });
-    fireEvent.keyDown(screen.getByRole("textbox", { name: "Search options" }), { key: "Enter" });
+    fireEvent.keyDown(screen.getByRole("combobox", { name: "Search options" }), { key: "ArrowDown" });
+    fireEvent.keyDown(screen.getByRole("combobox", { name: "Search options" }), { key: "Enter" });
     expect(onChange).toHaveBeenLastCalledWith("engineering", { value: "engineering", label: "Engineering" });
   });
   it("expands collapse content and exposes slider semantics", () => { render(<><Collapse items={[{ key: "a", label: "Details", children: "Content" }]} /><Slider aria-label="Volume" defaultValue={25} /></>); fireEvent.click(screen.getByRole("button", { name: /Details/ })); expect(screen.getByText("Content")).toBeTruthy(); expect(screen.getByRole("slider", { name: "Volume" })).toBeTruthy(); });
@@ -45,7 +45,7 @@ describe("Core data entry controls", () => {
     expect(screen.getByText("small.txt")).toBeTruthy();
     expect(screen.queryByText("large.txt")).toBeNull();
     expect(onFiles).toHaveBeenLastCalledWith([small]);
-    fireEvent.click(screen.getByRole("button", { name: "移除 small.txt" }));
+    fireEvent.click(screen.getByRole("button", { name: "Remove small.txt" }));
     expect(onFiles).toHaveBeenLastCalledWith([]);
   });
   it("serializes Form values onFinish and supports disabled loading state", () => {

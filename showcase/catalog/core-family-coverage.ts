@@ -17,6 +17,7 @@ export type CoreRuntimeFamilyCoverage = {
  * reconsidered.
  */
 export const coreRuntimeFamilyCoverage = {
+  ConfigProvider: { familyId: "core-config-provider", review: "covered" },
   Button: { familyId: "core-button", review: "covered" },
   ButtonLink: { familyId: "core-button", review: "covered" },
   IconButton: { familyId: "core-button", review: "covered" },

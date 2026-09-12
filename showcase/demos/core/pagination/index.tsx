@@ -168,3 +168,5 @@ export const paginationDocument: ComponentDocument = {
     },
   ],
 };
+
+paginationDocument.api = [...(paginationDocument.api ?? []), { name: "locale", type: "Partial<PaginationLocale>", description: "分页内部通用文案局部覆盖；不重复 prevText、nextText、ariaLabel。", defaultValue: "Provider / enUS" }];

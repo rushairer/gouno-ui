@@ -696,3 +696,20 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Validation:** 6F3 same-source Preview/Code and focused regression tests cover sticky placement/ref, non-finite offset normalization, threshold hide/show, smooth-scroll activation/ref, preventDefault cancellation, locale leakage removal and reviewed completion. The exact-head certification after ownership must pass the complete typecheck/test/build/pack/artifact/Pages gate.
 - **Abstraction impact:** no custom scroll-container registry, portal/floating layout manager, navigation policy or product-level sticky pattern is admitted. Those require independent cross-product evidence.
 
+
+### PD-074 — Generic component localization and interaction repair
+
+- **Status:** accepted; user-authorized implementation.
+- **Owner:** Core.
+- **Evidence:** completed Gosso Admin, Blog Admin and Blog corpora expose the same unconfigurable control text across Chinese products; Select keyboard clearing reproduced an incorrect popup-open action. Real product language selection stays in existing application i18n. Ant Design/MUI provide default packs with global and local overrides; React Aria supports scoped locale. Canonical App and Theme own no generic copy configuration.
+- **Decision:** introduce a consumed, locale-only ConfigProvider in Core, enUS/zhCN and typed component copy. Preserve existing explicit copy APIs and value/event/ref semantics. Separate Select actions, repair focus/ID ownership and reserve Input suffix width. This supersedes any interpretation that generic translated defaults themselves violate product-agnostic Core ownership.
+- **API impact:** additive provider/locale types, configurable defaults; some old Chinese defaults become English outside a configured subtree. Other required labels remain required. See component-localization.md and migration.md.
+- **Validation:** focused runtime tests, same-source ConfigProvider examples and the browser ledger in ui-interaction-review.md. Historical reviewed completion can reopen while retaining prior evidence.
+
+### PD-075 — Panel lead remains private; Fixture tools reserve their own space
+
+- **Status:** retain/defer public extraction.
+- **Evidence:** shared Showcase TabPanelLead and real Gosso ManagementPanelLead repeat description/action layout; Blog SiteSettings still owns its settings-specific composition. No shared state or lifecycle requires a new public owner.
+- **Decision:** retain PI-02 and private composition. No new Pattern/Gouno API. Showcase-only repetition is supporting evidence, not automatic admission.
+- **Tooling correction:** FixtureTools reserves a toolbar outside the product scroll viewport; FixtureDock portals its entry there. Isolated fixtures fall back to normal flow. Standalone navigation starts collapsed in the same toolbar rather than obscuring public content.
+- **Validation:** fixture-tool interaction/ownership tests and all existing product-family browser entries; no Connector behavior or real service calls change.

@@ -299,3 +299,6 @@ export type {
   TooltipTriggerProps,
   TreeProps,
 } from "./public-props";
+
+export { ConfigProvider, type ConfigProviderProps } from "./config-provider";
+export { enUS, zhCN, type ComponentLocale, type InputLocale, type DatePickerLocale, type InputNumberLocale, type SelectLocale, type UploadLocale, type PaginationLocale } from "./locale";

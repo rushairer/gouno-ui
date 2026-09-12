@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { componentReviews, reviewedProgress } from "../showcase/catalog/component-progress";
 import { showcaseCatalog } from "../showcase/catalog";
 
 const canonicalId = /^(core|theme|pattern|gouno)-/;
@@ -12,25 +13,20 @@ describe("canonical reviewed-completion sealing", () => {
         .map((page) => page.id)
         .filter((id) => canonicalId.test(id)),
     );
-    const source = readFileSync("showcase/catalog/component-progress.ts", "utf8");
-    const block = source.match(/const completedComponents = new Set\(\[([\s\S]*?)\]\);/)?.[1];
-    if (!block) throw new Error("completedComponents block missing");
-    const completedIds = new Set(
-      [...block.matchAll(/"((?:core|theme|pattern|gouno)-[^"]+)"/g)].map(
-        (match) => match[1],
-      ),
-    );
-
-    expect([...completedIds].sort()).toEqual([...catalogIds].sort());
+    expect(Object.keys(componentReviews).sort()).toEqual([...catalogIds].sort());
+    for (const [id, review] of Object.entries(componentReviews)) {
+      expect(review.scope.trim(), id).not.toBe("");
+      expect(review.baseline.trim(), id).not.toBe("");
+      expect(review.evidence.length, id).toBeGreaterThan(0);
+      for (const path of review.evidence) expect(existsSync(path), `${id}: ${path}`).toBe(true);
+    }
   });
 
-  it("reports every canonical Showcase page as reviewed 100", () => {
-    const pages = showcaseCatalog
-      .flatMap((group) => group.items)
-      .filter((page) => canonicalId.test(page.id));
-
-    expect(pages.length).toBeGreaterThan(0);
-    expect(pages.every((page) => page.progress === 100)).toBe(true);
+  it("allows a reviewed family to reopen without losing its evidence or catalog entry", () => {
+    const previous = componentReviews["core-select"];
+    expect(reviewedProgress({ ...previous, status: "reopened" }, 100)).toBe(99);
+    expect(reviewedProgress(previous, 0)).toBe(100);
+    expect(showcaseCatalog.flatMap((group) => group.items).some((page) => page.id === "core-select")).toBe(true);
   });
 
   it("leaves no temporary pretypecheck governance hook in the certified tree", () => {

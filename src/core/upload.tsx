@@ -1,3 +1,5 @@
+import { useComponentLocale } from "./config-provider";
+import type { UploadLocale } from "./locale";
 import {
   useId,
   useState,
@@ -13,6 +15,7 @@ export interface UploadProps extends Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "type" | "onChange" | "multiple" | "accept" | "value" | "defaultValue"
 > {
+  locale?: Partial<UploadLocale>;
   children?: ReactNode;
   files?: File[];
   defaultFiles?: File[];
@@ -33,6 +36,7 @@ export interface UploadProps extends Omit<
 }
 
 export function Upload({
+  locale,
   children,
   files,
   defaultFiles = [],
@@ -53,6 +57,7 @@ export function Upload({
   className,
   ...props
 }: UploadProps) {
+  const text = useComponentLocale("upload", locale);
   const generatedId = useId();
   const inputId = id ?? generatedId;
   const [internalFiles, setInternalFiles] = useState<File[]>(defaultFiles);
@@ -156,7 +161,7 @@ export function Upload({
         {children ?? (drag ? "点击或拖放文件到这里" : "Choose file")}
       </label>
       {showFileList && currentFiles.length > 0 ? (
-        <ul className="space-y-1" aria-label="已选择文件">
+        <ul className="space-y-1" aria-label={text.fileListLabel}>
           {currentFiles.map((file, index) => (
             <li
               key={`${file.name}-${file.size}-${index}`}
@@ -166,7 +171,7 @@ export function Upload({
               <button
                 type="button"
                 className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
-                aria-label={`移除 ${file.name}`}
+                aria-label={text.removeLabel(file.name)}
                 disabled={disabled || readOnly}
                 onClick={() => remove(file)}
               >

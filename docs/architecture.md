@@ -140,3 +140,7 @@ Before Pages publication on main, Node.js 24 runs:
 Any change introducing or removing a public owner, layer edge, package path, public component, global provider, Legacy dependency, Showcase root import or delivery dependency must update the relevant invariant tests in the same change.
 
 Any product-driven accept/reject/merge/move/remove/material-API decision must update `docs/abstraction-register.md` so future sessions do not depend on chat history.
+
+## Component language ownership (PD-074)
+
+Core `ConfigProvider` owns only generic component copy and is consumed by Input, DatePicker, InputNumber, Select, Upload and Pagination. It is independent of Theme and the DOM-only App component. See [component localization](component-localization.md) for full API, precedence, default-language compatibility and evidence. Product language selection and business translation remain external.

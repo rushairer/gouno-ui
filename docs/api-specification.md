@@ -460,3 +460,7 @@ API 重命名、删除、默认值、事件参数和 ref 目标变化均须评�
 | S13 | [Ant Design Table](https://ant.design/components/table/) | 数据源、独立配置表和文档组织；Table 家族独立 JSX 表为 Gouno 的明确要求 |
 | S14 | [WAI-ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/patterns/) | 按组件模式确定键盘、角色与焦点，不能只加 role 便声称无障碍完成 |
 
+
+## Component localization contract (PD-074)
+
+Generic built-in operation labels may have translated defaults. Core ConfigProvider supplies a complete pack; component-specific locale overrides and existing explicit text props have documented, disjoint ownership. Business/field naming remains caller-owned. This does not relax previously required labels on other components. See [the binding field/precedence specification](component-localization.md).
