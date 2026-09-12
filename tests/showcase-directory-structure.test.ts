@@ -1,10 +1,27 @@
-import { readdirSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
-const showcaseRoot = resolve(process.cwd(), "showcase");
+const repoRoot = process.cwd();
+const showcaseRoot = resolve(repoRoot, "showcase");
 const demosRoot = resolve(showcaseRoot, "demos");
 const productsRoot = resolve(demosRoot, "products");
+
+const retiredFlatPaths = [
+  "showcase/catalog.tsx",
+  "showcase/component-progress.ts",
+  "showcase/core-family-coverage.ts",
+  "showcase/showcase.css",
+  "showcase/demos/core-components.tsx",
+  "showcase/demos/gouno-components.tsx",
+  "showcase/demos/gouno-page-header.tsx",
+  "showcase/demos/pattern-bulk-action-bar.tsx",
+  "showcase/demos/theme-system.tsx",
+  "showcase/demos/example-source.ts",
+  "showcase/demos/examples",
+  "showcase/demos/products/blog-admin-ai-operations",
+  "showcase/demos/products/blog-admin-ai-settings",
+] as const;
 
 describe("Showcase directory ownership", () => {
   it("keeps demo families out of the demos root", () => {
@@ -43,6 +60,12 @@ describe("Showcase directory ownership", () => {
       expect(filenames.filter((name) => forbiddenPrefix.test(name))).toEqual(
         [],
       );
+    }
+  });
+
+  it("does not reintroduce retired flat ownership paths", () => {
+    for (const path of retiredFlatPaths) {
+      expect(existsSync(resolve(repoRoot, path)), path).toBe(false);
     }
   });
 });
