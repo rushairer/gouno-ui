@@ -1,0 +1,114 @@
+name: Align Legacy Removal Docs
+
+on:
+  push:
+    branches:
+      - fix/legacy-source-removal-invariants
+
+permissions:
+  contents: write
+
+jobs:
+  align:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/legacy-source-removal-invariants
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Align stale Legacy source references
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const changes = {
+            'docs/product-driven-development.md': [
+              [
+                'No product task may use this document to bypass architecture or API governance. Existing product code and `src/legacy` are evidence, not authority.',
+                'No product task may use this document to bypass architecture or API governance. Existing product code and historical Legacy implementations in Git history are evidence, not authority.'
+              ],
+              [
+                'Pre-validation Pattern/Gouno implementations are quarantined under `src/legacy`. They are available for prior-art review only and may not be imported into canonical code or Showcase.',
+                'Pre-validation Pattern/Gouno implementations have been removed from the current source tree. Consult them through Git history for prior-art review only; do not restore or import historical Legacy paths into canonical code or Showcase.'
+              ],
+              [
+                '- `src/legacy` for historical prior art;',
+                '- relevant Git history for historical Legacy prior art;'
+              ],
+              [
+                'Never import Legacy to solve the page. Review it, then design from current evidence.',
+                'Never restore or import historical Legacy source to solve the page. Review Git history when useful, then design from current evidence.'
+              ]
+            ],
+            'docs/migration.md': [
+              [
+                'The package has four formal public owners: `@gouno/ui/core`, `@gouno/ui/theme`, `@gouno/ui/patterns`, `@gouno/ui/gouno`. `src/legacy` is not public API and has no import path.',
+                'The package has four formal public owners: `@gouno/ui/core`, `@gouno/ui/theme`, `@gouno/ui/patterns`, `@gouno/ui/gouno`. `src/legacy` has been removed; historical Legacy implementations are not public API and have no import path.'
+              ],
+              [
+                'Pre-validation Pattern/Gouno implementations were removed from canonical public entries and preserved only as source snapshots under `src/legacy`. Do not import Legacy. When a real page needs similar behavior, rebuild Core-first and run `docs/product-driven-development.md` admission.',
+                'Pre-validation Pattern/Gouno implementations were removed from canonical public entries and now live only in Git history. Do not restore or import historical Legacy source. When a real page needs similar behavior, rebuild Core-first and run `docs/product-driven-development.md` admission.'
+              ],
+              [
+                'Typical quarantined historical concepts include DataTable, Toast orchestration, Feedback/AsyncState, ConfirmDialog, BulkActionBar, SectionNav, Panel families, status tags and page templates.',
+                'Typical historical concepts include DataTable, Toast orchestration, Feedback/AsyncState, ConfirmDialog, BulkActionBar, SectionNav, Panel families, status tags and page templates.'
+              ]
+            ],
+            'docs/api-conformance.md': [
+              [
+                '本清单只描述当前 canonical 公共面。`src/legacy` 不参加 canonical API 合规认证，也不构成重新引入时的命名/结构先例。',
+                '本清单只描述当前 canonical 公共面。`src/legacy` 已从当前源码树移除；历史 Legacy 实现只存在于 Git 历史中，不参加 canonical API 合规认证，也不构成重新引入时的命名/结构先例。'
+              ],
+              [
+                '| Legacy | non-public | 不编译、不发布、不展示、canonical/Showcase 禁止依赖。 |',
+                '| Legacy | historical-only | 当前源码树不存在；仅可从 Git 历史查阅，canonical/Showcase 禁止恢复或依赖。 |'
+              ],
+              [
+                '| API-001 | 正式所有权保持 `Core → Theme → Patterns → Gouno`；Legacy 在 DAG 外。 | architecture/dependency tests |',
+                '| API-001 | 正式所有权保持 `Core → Theme → Patterns → Gouno`；当前源码树不存在 Legacy layer。 | architecture/dependency tests |'
+              ],
+              [
+                '| API-007 | Legacy 从构建排除；canonical 与 Showcase 禁止 import Legacy。 | legacy-boundaries test |',
+                '| API-007 | `src/legacy` 不存在；canonical 与 Showcase 禁止恢复或 import 历史 Legacy 路径。 | legacy-boundaries test |'
+              ]
+            ],
+            'docs/abstraction-register.md': [
+              [
+                '- **Decision:** pre-validation Pattern/Gouno implementations are quarantined under `src/legacy`, not compiled/published/shown/imported. Re-admission requires current product evidence and a clean implementation.',
+                '- **Decision:** pre-validation Pattern/Gouno implementations are removed from the current source tree and retained only in Git history. They are not compiled/published/shown/imported; re-admission requires current product evidence and a clean canonical implementation rather than restoring the old source layer.'
+              ]
+            ],
+            'docs/product-interface-governance.md': [
+              [
+                'Quarantined `src/legacy/**` is historical evidence, not current design precedent.',
+                'Historical Legacy implementations in Git history are evidence, not current design precedent; `src/legacy/**` no longer exists in the current source tree.'
+              ]
+            ],
+            'docs/product-surface-elevation-audit.md': [
+              [
+                'Quarantined `src/legacy/**` remains historical evidence and may contain old classes; it is not canonical runtime and must not be used as proof for current design decisions.',
+                'Historical Legacy implementations remain available through Git history and may contain old classes; `src/legacy/**` no longer exists in the current source tree and historical code must not be used as proof for current design decisions.'
+              ]
+            ]
+          };
+
+          for (const [file, replacements] of Object.entries(changes)) {
+            let text = fs.readFileSync(file, 'utf8');
+            for (const [from, to] of replacements) {
+              if (!text.includes(from)) throw new Error(`expected text not found in ${file}: ${from}`);
+              text = text.replace(from, to);
+            }
+            fs.writeFileSync(file, text);
+          }
+          NODE
+      - name: Commit aligned docs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs
+          git diff --cached --quiet && exit 0
+          git commit -m "docs: align governance with legacy source removal"
+          git push origin HEAD:fix/legacy-source-removal-invariants
