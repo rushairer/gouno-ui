@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { componentProgress } from "../showcase/component-progress";
+import { componentProgress } from "../showcase/catalog/component-progress";
 
 describe("audited batch completion", () => {
   it("reports complete only for the reviewed Core component batch", () => {

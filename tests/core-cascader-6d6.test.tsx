@@ -2,7 +2,7 @@ import * as React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { Cascader } from "../src/core";
-import { componentProgress } from "../showcase/component-progress";
+import { componentProgress } from "../showcase/catalog/component-progress";
 import { cascaderReviewDocuments } from "../showcase/demos/core/data-entry-review-6d6";
 
 const options = [

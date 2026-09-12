@@ -27,8 +27,8 @@ describe("brand logo theme integration", () => {
   it("renders Showcase marks from the active theme color", () => {
     const brandMark = read("showcase/components/brand-mark.tsx");
     const main = read("showcase/main.tsx");
-    const blogShell = read("showcase/demos/products/blog-public-shell.tsx");
-    const gossoAuth = read("showcase/demos/products/gosso-auth/shared.tsx");
+    const blogShell = read("showcase/demos/products/blog/public-shell.tsx");
+    const gossoAuth = read("showcase/demos/products/gosso-admin/auth/shared.tsx");
 
     expect(brandMark).toContain("bg-current");
     expect(brandMark).toContain("WebkitMask");

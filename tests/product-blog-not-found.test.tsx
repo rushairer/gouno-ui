@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { BlogNotFoundDemo } from "../showcase/demos/products/blog-not-found";
+import { BlogNotFoundDemo } from "../showcase/demos/products/blog/not-found";
 import { ThemeProvider } from "../src/theme";
 
 afterEach(cleanup);
@@ -33,7 +33,7 @@ describe("Blog public NotFound migration", () => {
 
   it("keeps 404 as a PublicShell result rather than a second document or application shell", () => {
     const source = readFileSync(
-      resolve(process.cwd(), "showcase/demos/products/blog-not-found.tsx"),
+      resolve(process.cwd(), "showcase/demos/products/blog/not-found.tsx"),
       "utf8",
     );
 

@@ -2,7 +2,7 @@ import { createRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { AutoComplete } from "../src/core";
-import { componentProgress } from "../showcase/component-progress";
+import { componentProgress } from "../showcase/catalog/component-progress";
 import { autoCompleteReviewDocuments } from "../showcase/demos/core/data-entry-review-6d1";
 
 afterEach(cleanup);

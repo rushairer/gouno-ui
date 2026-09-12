@@ -21,18 +21,18 @@ const canonicalPublicPages = [
 ] as const;
 
 const publicFixtureFiles = [
-  "showcase/demos/products/blog-home.tsx",
-  "showcase/demos/products/blog-article-index.tsx",
-  "showcase/demos/products/blog-article-detail.tsx",
-  "showcase/demos/products/blog-discovery-indexes.tsx",
-  "showcase/demos/products/blog-document-pages.tsx",
-  "showcase/demos/products/blog-account-pages.tsx",
-  "showcase/demos/products/blog-not-found.tsx",
+  "showcase/demos/products/blog/home.tsx",
+  "showcase/demos/products/blog/article-index.tsx",
+  "showcase/demos/products/blog/article-detail.tsx",
+  "showcase/demos/products/blog/discovery-indexes.tsx",
+  "showcase/demos/products/blog/document-pages.tsx",
+  "showcase/demos/products/blog/account-pages.tsx",
+  "showcase/demos/products/blog/not-found.tsx",
 ] as const;
 
 describe("Blog public route closure", () => {
   it("keeps every canonical public route family represented exactly once as standalone", () => {
-    const catalog = read("showcase/catalog.tsx");
+    const catalog = read("showcase/catalog/index.tsx");
 
     for (const [id, name] of canonicalPublicPages) {
       const idMatches = catalog.match(new RegExp(`item\\(\\"${id}\\"`, "g")) ?? [];
@@ -44,8 +44,8 @@ describe("Blog public route closure", () => {
   });
 
   it("keeps category/tag detail as ArticleIndex modes instead of duplicate page families", () => {
-    const source = read("showcase/demos/products/blog-article-index.tsx");
-    const catalog = read("showcase/catalog.tsx");
+    const source = read("showcase/demos/products/blog/article-index.tsx");
+    const catalog = read("showcase/catalog/index.tsx");
 
     expect(source).toContain('type ArticleIndexMode = "articles" | "search" | "tag" | "category"');
     expect(catalog).not.toContain("blog-category-detail");
@@ -53,7 +53,7 @@ describe("Blog public route closure", () => {
   });
 
   it("keeps compatibility redirects as route policy rather than duplicate Showcase surfaces", () => {
-    const catalog = read("showcase/catalog.tsx");
+    const catalog = read("showcase/catalog/index.tsx");
     const fixtureDocs = read("showcase/demos/products/README.md");
 
     expect(fixtureDocs).toContain("/notifications");
@@ -72,8 +72,8 @@ describe("Blog public route closure", () => {
   });
 
   it("keeps the public product corpus limited to known Blog fixture files", () => {
-    const productFiles = readdirSync(resolve(root, "showcase/demos/products"))
-      .filter((name) => name.startsWith("blog-") && name.endsWith(".tsx") && !name.startsWith("blog-admin-"));
+    const productFiles = readdirSync(resolve(root, "showcase/demos/products/blog"))
+      .filter((name) => name.endsWith(".tsx"));
 
     for (const expected of publicFixtureFiles) {
       expect(productFiles).toContain(expected.split("/").at(-1)!);

@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { MfaPanel } from "../showcase/demos/products/gosso-account-settings/mfa";
+import { MfaPanel } from "../showcase/demos/products/gosso-admin/account-settings/mfa";
 
 const { toCanvas } = vi.hoisted(() => ({
   toCanvas: vi.fn().mockResolvedValue(undefined),

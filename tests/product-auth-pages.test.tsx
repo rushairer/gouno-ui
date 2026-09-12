@@ -1,11 +1,11 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { showcaseCatalog } from "../showcase/catalog";
-import { GossoCallbackDemo } from "../showcase/demos/products/gosso-auth/callback";
-import { GossoForgotPasswordDemo } from "../showcase/demos/products/gosso-auth/forgot-password";
-import { GossoLoginDemo } from "../showcase/demos/products/gosso-auth/login";
-import { GossoNotFoundDemo } from "../showcase/demos/products/gosso-auth/not-found";
-import { GossoResetPasswordDemo } from "../showcase/demos/products/gosso-auth/reset-password";
+import { GossoCallbackDemo } from "../showcase/demos/products/gosso-admin/auth/callback";
+import { GossoForgotPasswordDemo } from "../showcase/demos/products/gosso-admin/auth/forgot-password";
+import { GossoLoginDemo } from "../showcase/demos/products/gosso-admin/auth/login";
+import { GossoNotFoundDemo } from "../showcase/demos/products/gosso-admin/auth/not-found";
+import { GossoResetPasswordDemo } from "../showcase/demos/products/gosso-admin/auth/reset-password";
 
 afterEach(cleanup);
 

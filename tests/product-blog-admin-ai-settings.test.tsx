@@ -5,7 +5,7 @@ import {
   aiSettingsFixture,
   formatAISettingsRoute,
   parseAISettingsRoute,
-} from "../showcase/demos/products/blog-admin-ai-settings";
+} from "../showcase/demos/products/blog-admin/ai/settings";
 
 afterEach(cleanup);
 

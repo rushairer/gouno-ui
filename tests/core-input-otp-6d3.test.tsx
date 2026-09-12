@@ -2,7 +2,7 @@ import { createRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { InputOTP } from "../src/core";
-import { componentProgress } from "../showcase/component-progress";
+import { componentProgress } from "../showcase/catalog/component-progress";
 import { inputOtpReviewDocuments } from "../showcase/demos/core/data-entry-review-6d3";
 
 afterEach(cleanup);

@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { BlogArticleDetailDemo } from "../showcase/demos/products/blog-article-detail";
+import { BlogArticleDetailDemo } from "../showcase/demos/products/blog/article-detail";
 import { ThemeProvider } from "../src/theme";
 
 afterEach(cleanup);
@@ -62,13 +62,13 @@ describe("Blog public ArticleDetail migration", () => {
 
   it("uses canonical reading primitives without promoting a public reading shell", () => {
     const source = readFileSync(
-      resolve(process.cwd(), "showcase/demos/products/blog-article-detail.tsx"),
+      resolve(process.cwd(), "showcase/demos/products/blog/article-detail.tsx"),
       "utf8",
     );
 
     expect(source).toContain('CodeBlock,');
     expect(source).toContain('Anchor,');
-    expect(source).toContain('import { PageHeader } from "../../../src/gouno"');
+    expect(source).toContain('import { PageHeader } from "../../../../src/gouno"');
     expect(source).toContain("BlogPublicShellFixture");
     expect(source).toContain('headingLevel={1}');
     expect(source).not.toContain("subTitle=");

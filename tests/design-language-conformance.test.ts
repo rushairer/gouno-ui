@@ -14,26 +14,26 @@ function sourceFiles(path: string): string[] {
 }
 
 const gossoApplicationFiles = [
-  resolve(productsRoot, "gosso-overview.tsx"),
-  ...sourceFiles(resolve(productsRoot, "gosso-account-settings")),
-  ...sourceFiles(resolve(productsRoot, "gosso-system-management")),
+  resolve(productsRoot, "gosso-admin/overview.tsx"),
+  ...sourceFiles(resolve(productsRoot, "gosso-admin/account-settings")),
+  ...sourceFiles(resolve(productsRoot, "gosso-admin/system-management")),
 ].filter((file) => /\.(tsx?|jsx?)$/.test(file));
 
 const blogAdminApplicationFiles = [
-  resolve(productsRoot, "blog-admin-dashboard.tsx"),
-  resolve(productsRoot, "blog-admin-posts.tsx"),
-  resolve(productsRoot, "blog-admin-post-editor.tsx"),
-  resolve(productsRoot, "blog-admin-categories.tsx"),
-  resolve(productsRoot, "blog-admin-tags.tsx"),
-  resolve(productsRoot, "blog-admin-pages.tsx"),
-  resolve(productsRoot, "blog-admin-page-editor.tsx"),
-  resolve(productsRoot, "blog-admin-comments.tsx"),
-  resolve(productsRoot, "blog-admin-notifications.tsx"),
-  resolve(productsRoot, "blog-admin-media-library.tsx"),
-  resolve(productsRoot, "blog-admin-users.tsx"),
-  resolve(productsRoot, "blog-admin-site-settings.tsx"),
-  ...sourceFiles(resolve(productsRoot, "blog-admin-ai-operations")),
-  ...sourceFiles(resolve(productsRoot, "blog-admin-ai-settings")),
+  resolve(productsRoot, "blog-admin/dashboard.tsx"),
+  resolve(productsRoot, "blog-admin/posts.tsx"),
+  resolve(productsRoot, "blog-admin/post-editor.tsx"),
+  resolve(productsRoot, "blog-admin/categories.tsx"),
+  resolve(productsRoot, "blog-admin/tags.tsx"),
+  resolve(productsRoot, "blog-admin/pages.tsx"),
+  resolve(productsRoot, "blog-admin/page-editor.tsx"),
+  resolve(productsRoot, "blog-admin/comments.tsx"),
+  resolve(productsRoot, "blog-admin/notifications.tsx"),
+  resolve(productsRoot, "blog-admin/media-library.tsx"),
+  resolve(productsRoot, "blog-admin/users.tsx"),
+  resolve(productsRoot, "blog-admin/site-settings.tsx"),
+  ...sourceFiles(resolve(productsRoot, "blog-admin/ai/operations")),
+  ...sourceFiles(resolve(productsRoot, "blog-admin/ai/settings")),
 ];
 
 const allProductFiles = sourceFiles(productsRoot).filter((file) => /\.(tsx?|jsx?)$/.test(file));
@@ -66,7 +66,7 @@ describe("design-language conformance", () => {
   });
 
   it("keeps the Gosso overview hierarchy explicit across surface and raised levels", () => {
-    const overview = readFileSync(resolve(productsRoot, "gosso-overview.tsx"), "utf8");
+    const overview = readFileSync(resolve(productsRoot, "gosso-admin/overview.tsx"), "utf8");
     expect(overview).toContain("px-6 py-5");
     expect(overview).toContain('<Card padding="base" variant="elevated"');
     expect(overview).toContain("shadow-surface");
@@ -77,8 +77,8 @@ describe("design-language conformance", () => {
 
   it("uses explicit Card anatomy for full-bleed sticky actions across products", () => {
     const siteSettingsFiles = [
-      resolve(productsRoot, "gosso-system-management/site-settings.tsx"),
-      resolve(productsRoot, "blog-admin-site-settings.tsx"),
+      resolve(productsRoot, "gosso-admin/system-management/site-settings.tsx"),
+      resolve(productsRoot, "blog-admin/site-settings.tsx"),
     ];
 
     for (const file of siteSettingsFiles) {
@@ -106,13 +106,13 @@ describe("design-language conformance", () => {
 
   it("keeps dense Table row actions single-line and structurally uniform", () => {
     const actionFiles = [
-      resolve(productsRoot, "blog-admin-dashboard.tsx"),
-      resolve(productsRoot, "blog-admin-posts.tsx"),
-      resolve(productsRoot, "blog-admin-categories.tsx"),
-      resolve(productsRoot, "blog-admin-pages.tsx"),
-      resolve(productsRoot, "blog-admin-users.tsx"),
-      resolve(productsRoot, "gosso-system-management/users.tsx"),
-      resolve(productsRoot, "gosso-system-management/clients.tsx"),
+      resolve(productsRoot, "blog-admin/dashboard.tsx"),
+      resolve(productsRoot, "blog-admin/posts.tsx"),
+      resolve(productsRoot, "blog-admin/categories.tsx"),
+      resolve(productsRoot, "blog-admin/pages.tsx"),
+      resolve(productsRoot, "blog-admin/users.tsx"),
+      resolve(productsRoot, "gosso-admin/system-management/users.tsx"),
+      resolve(productsRoot, "gosso-admin/system-management/clients.tsx"),
     ];
 
     for (const file of actionFiles) {
@@ -120,7 +120,7 @@ describe("design-language conformance", () => {
       expect(source).toContain("min-w-max flex-nowrap");
     }
 
-    const systemActions = readFileSync(resolve(productsRoot, "gosso-system-management/shared.tsx"), "utf8");
+    const systemActions = readFileSync(resolve(productsRoot, "gosso-admin/system-management/shared.tsx"), "utf8");
     expect(systemActions).toContain("<IconButton");
     expect(systemActions).toContain('variant="ghost"');
     expect(systemActions).not.toContain('<Button size="small" variant={color === "error" ? "solid" : "outline"}');
@@ -177,9 +177,9 @@ describe("design-language conformance", () => {
       .sort();
 
     expect(elevatedFiles).toEqual([
-      "gosso-auth/not-found.tsx",
-      "gosso-auth/shared.tsx",
-      "gosso-overview.tsx",
+      "gosso-admin/auth/not-found.tsx",
+      "gosso-admin/auth/shared.tsx",
+      "gosso-admin/overview.tsx",
     ]);
   });
 
@@ -189,8 +189,8 @@ describe("design-language conformance", () => {
       .map((file) => relative(productsRoot, file).replaceAll("\\", "/"))
       .sort();
 
-    expect(manualRaisedFiles).toEqual(["gosso-overview.tsx"]);
-    const overview = readFileSync(resolve(productsRoot, "gosso-overview.tsx"), "utf8");
+    expect(manualRaisedFiles).toEqual(["gosso-admin/overview.tsx"]);
+    const overview = readFileSync(resolve(productsRoot, "gosso-admin/overview.tsx"), "utf8");
     expect(overview).toContain("shadow-surface");
     expect(overview).toContain("hover:shadow-raised");
   });
@@ -208,7 +208,7 @@ describe("design-language conformance", () => {
 
   it("keeps migration-only class hooks out of canonical and Showcase runtime", () => {
     const base = readFileSync(resolve(sourceRoot, "base.css"), "utf8");
-    const showcaseCss = readFileSync(resolve(repoRoot, "showcase/showcase.css"), "utf8");
+    const showcaseCss = readFileSync(resolve(repoRoot, "showcase/styles/showcase.css"), "utf8");
     const button = readFileSync(resolve(sourceRoot, "core/button.tsx"), "utf8");
     const card = readFileSync(resolve(sourceRoot, "core/card.tsx"), "utf8");
     const form = readFileSync(resolve(sourceRoot, "core/form.tsx"), "utf8");
@@ -243,10 +243,10 @@ describe("design-language conformance", () => {
   });
 
   it("uses one route-family PageHeader before Tabs on normal tabbed task pages", () => {
-    const accountRoot = resolve(productsRoot, "gosso-account-settings/index.tsx");
-    const blogAI = resolve(productsRoot, "blog-admin-ai-operations/index.tsx");
-    const blogAISettings = resolve(productsRoot, "blog-admin-ai-settings/index.tsx");
-    const blogSettings = resolve(productsRoot, "blog-admin-site-settings.tsx");
+    const accountRoot = resolve(productsRoot, "gosso-admin/account-settings/index.tsx");
+    const blogAI = resolve(productsRoot, "blog-admin/ai/operations/index.tsx");
+    const blogAISettings = resolve(productsRoot, "blog-admin/ai/settings/index.tsx");
+    const blogSettings = resolve(productsRoot, "blog-admin/site-settings.tsx");
 
     for (const file of [accountRoot, blogAI, blogAISettings]) expectHeaderBeforeTabs(file);
 
@@ -260,8 +260,8 @@ describe("design-language conformance", () => {
     expect(header).toBeGreaterThanOrEqual(0);
     expect(content).toBeGreaterThan(header);
 
-    const accountShared = readFileSync(resolve(productsRoot, "gosso-account-settings/shared.tsx"), "utf8");
-    const managementFiles = sourceFiles(resolve(productsRoot, "gosso-system-management"))
+    const accountShared = readFileSync(resolve(productsRoot, "gosso-admin/account-settings/shared.tsx"), "utf8");
+    const managementFiles = sourceFiles(resolve(productsRoot, "gosso-admin/system-management"))
       .filter((file) => !file.endsWith("index.tsx") && /\.tsx$/.test(file));
     expect(accountShared).not.toContain("PageHeader");
     for (const file of managementFiles) {
@@ -271,29 +271,29 @@ describe("design-language conformance", () => {
 
   it("enforces a one-persistent-Tabs navigation budget for normal route families", () => {
     const tabbedRouteFamilies = [
-      sourceFiles(resolve(productsRoot, "gosso-account-settings")),
-      sourceFiles(resolve(productsRoot, "blog-admin-ai-operations")),
-      sourceFiles(resolve(productsRoot, "blog-admin-ai-settings")),
-      [resolve(productsRoot, "blog-admin-site-settings.tsx")],
+      sourceFiles(resolve(productsRoot, "gosso-admin/account-settings")),
+      sourceFiles(resolve(productsRoot, "blog-admin/ai/operations")),
+      sourceFiles(resolve(productsRoot, "blog-admin/ai/settings")),
+      [resolve(productsRoot, "blog-admin/site-settings.tsx")],
     ];
 
     for (const files of tabbedRouteFamilies) {
       expect(tabsCount(combined(files.filter((file) => /\.tsx$/.test(file))))).toBe(1);
     }
 
-    const systemManagement = combined(sourceFiles(resolve(productsRoot, "gosso-system-management")));
+    const systemManagement = combined(sourceFiles(resolve(productsRoot, "gosso-admin/system-management")));
     expect(tabsCount(systemManagement)).toBe(0);
 
-    const aiOps = combined(sourceFiles(resolve(productsRoot, "blog-admin-ai-operations")));
-    const aiSettingsRoot = readFileSync(resolve(productsRoot, "blog-admin-ai-settings/index.tsx"), "utf8");
-    const aiSettingsSections = readFileSync(resolve(productsRoot, "blog-admin-ai-settings/sections.tsx"), "utf8");
+    const aiOps = combined(sourceFiles(resolve(productsRoot, "blog-admin/ai/operations")));
+    const aiSettingsRoot = readFileSync(resolve(productsRoot, "blog-admin/ai/settings/index.tsx"), "utf8");
+    const aiSettingsSections = readFileSync(resolve(productsRoot, "blog-admin/ai/settings/sections.tsx"), "utf8");
     expect(aiOps).not.toContain("AIOpsAdvancedPanel");
     expect(aiOps).not.toContain('key: "advanced"');
     expect(aiSettingsRoot).toContain("<Tabs<AISettingsSection>");
     expect(aiSettingsSections).not.toContain("<Tabs");
 
     // Editor mode Tabs are view-state controls, not product-navigation tiers.
-    for (const editor of ["blog-admin-post-editor.tsx", "blog-admin-page-editor.tsx"]) {
+    for (const editor of ["blog-admin/post-editor.tsx", "blog-admin/page-editor.tsx"]) {
       const source = readFileSync(resolve(productsRoot, editor), "utf8");
       expect(source).toContain("<Tabs<EditorMode>");
       expect(source).not.toContain("<PageHeader");
@@ -302,44 +302,44 @@ describe("design-language conformance", () => {
 
   it("does not echo tab or route labels as immediate content headings", () => {
     const accountEchoes = [
-      ["gosso-account-settings/profile.tsx", 'title="个人资料"'],
-      ["gosso-account-settings/password.tsx", 'title="修改密码"'],
-      ["gosso-account-settings/mfa.tsx", 'title="多因素认证 (MFA)"'],
-      ["gosso-account-settings/security.tsx", 'title="通行密钥 (FIDO2)"'],
-      ["gosso-account-settings/security.tsx", 'title="活跃会话"'],
+      ["gosso-admin/account-settings/profile.tsx", 'title="个人资料"'],
+      ["gosso-admin/account-settings/password.tsx", 'title="修改密码"'],
+      ["gosso-admin/account-settings/mfa.tsx", 'title="多因素认证 (MFA)"'],
+      ["gosso-admin/account-settings/security.tsx", 'title="通行密钥 (FIDO2)"'],
+      ["gosso-admin/account-settings/security.tsx", 'title="活跃会话"'],
     ] as const;
     const managementEchoes = [
-      ["gosso-system-management/clients.tsx", 'title="OAuth2 客户端"'],
-      ["gosso-system-management/users.tsx", 'title="用户管理"'],
-      ["gosso-system-management/audit-logs.tsx", 'title="审计日志"'],
-      ["gosso-system-management/site-settings.tsx", 'title="站点设置"'],
-      ["gosso-system-management/system-status.tsx", 'title="系统状态"'],
+      ["gosso-admin/system-management/clients.tsx", 'title="OAuth2 客户端"'],
+      ["gosso-admin/system-management/users.tsx", 'title="用户管理"'],
+      ["gosso-admin/system-management/audit-logs.tsx", 'title="审计日志"'],
+      ["gosso-admin/system-management/site-settings.tsx", 'title="站点设置"'],
+      ["gosso-admin/system-management/system-status.tsx", 'title="系统状态"'],
     ] as const;
 
     for (const [path, echo] of [...accountEchoes, ...managementEchoes]) {
       expect(readFileSync(resolve(productsRoot, path), "utf8")).not.toContain(echo);
     }
 
-    const blogSettings = readFileSync(resolve(productsRoot, "blog-admin-site-settings.tsx"), "utf8");
+    const blogSettings = readFileSync(resolve(productsRoot, "blog-admin/site-settings.tsx"), "utf8");
     for (const title of ["基础信息", "网站图标", "首页 Hero 标语与插图", "公开联系方式", "默认 SEO"]) {
       expect(blogSettings).not.toContain(`title="${title}"`);
     }
 
-    const aiSettings = readFileSync(resolve(productsRoot, "blog-admin-ai-settings/sections.tsx"), "utf8");
+    const aiSettings = readFileSync(resolve(productsRoot, "blog-admin/ai/settings/sections.tsx"), "utf8");
     expect(aiSettings).not.toContain("<CardTitle>Agents</CardTitle>");
     expect(aiSettings).not.toContain("<CardTitle>Tools</CardTitle>");
 
-    const systemStatus = readFileSync(resolve(productsRoot, "gosso-system-management/system-status.tsx"), "utf8");
+    const systemStatus = readFileSync(resolve(productsRoot, "gosso-admin/system-management/system-status.tsx"), "utf8");
     expect(systemStatus).toContain('<Heading level={2} className="text-base">基础设施健康</Heading>');
     expect(systemStatus).toContain('return <Card padding="base"><Heading level={2}');
   });
 
   it("uses one open content-lead grammar across governed settings and management pages", () => {
     const lead = readFileSync(resolve(repoRoot, "showcase/components/tab-panel-lead.tsx"), "utf8");
-    const account = readFileSync(resolve(productsRoot, "gosso-account-settings/shared.tsx"), "utf8");
-    const system = readFileSync(resolve(productsRoot, "gosso-system-management/shared.tsx"), "utf8");
-    const blogSettings = readFileSync(resolve(productsRoot, "blog-admin-site-settings.tsx"), "utf8");
-    const aiSettings = readFileSync(resolve(productsRoot, "blog-admin-ai-settings/sections.tsx"), "utf8");
+    const account = readFileSync(resolve(productsRoot, "gosso-admin/account-settings/shared.tsx"), "utf8");
+    const system = readFileSync(resolve(productsRoot, "gosso-admin/system-management/shared.tsx"), "utf8");
+    const blogSettings = readFileSync(resolve(productsRoot, "blog-admin/site-settings.tsx"), "utf8");
+    const aiSettings = readFileSync(resolve(productsRoot, "blog-admin/ai/settings/sections.tsx"), "utf8");
 
     expect(lead).toContain('data-slot="showcase-tab-panel-lead"');
     expect(lead).not.toContain("<Card");

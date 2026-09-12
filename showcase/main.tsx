@@ -20,7 +20,7 @@ import {
 import { ShowcasePage } from "./app/page-router";
 import { BrandMark } from "./components/brand-mark";
 import { StandaloneNavigation } from "./components/standalone-navigation";
-import "./showcase.css";
+import "./styles/showcase.css";
 
 type Brand = "blog" | "blog-admin" | "gosso-admin";
 type Workspace = ShowcaseWorkspace;

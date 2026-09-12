@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { BlogHomeDemo } from "../showcase/demos/products/blog-home";
+import { BlogHomeDemo } from "../showcase/demos/products/blog/home";
 import { ThemeProvider } from "../src/theme";
 
 afterEach(cleanup);
@@ -42,8 +42,8 @@ describe("Blog public Home product migration fixture", () => {
   });
 
   it("keeps the public shell product-local instead of forcing AppShell", () => {
-    const homeSource = readFileSync(resolve(process.cwd(), "showcase/demos/products/blog-home.tsx"), "utf8");
-    const shellSource = readFileSync(resolve(process.cwd(), "showcase/demos/products/blog-public-shell.tsx"), "utf8");
+    const homeSource = readFileSync(resolve(process.cwd(), "showcase/demos/products/blog/home.tsx"), "utf8");
+    const shellSource = readFileSync(resolve(process.cwd(), "showcase/demos/products/blog/public-shell.tsx"), "utf8");
     const combined = `${homeSource}\n${shellSource}`;
 
     expect(combined).not.toContain('../../../src/gouno');

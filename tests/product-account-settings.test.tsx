@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { GossoAccountSettingsDemo } from "../showcase/demos/products/gosso-account-settings";
+import { GossoAccountSettingsDemo } from "../showcase/demos/products/gosso-admin/account-settings";
 
 afterEach(cleanup);
 

@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
   BlogArticleCommunity,
   type BlogArticleCommunityMode,
-} from "../showcase/demos/products/blog-article-community";
+} from "../showcase/demos/products/blog/article-community";
 import { ThemeProvider } from "../src/theme";
 
 afterEach(cleanup);
@@ -118,11 +118,11 @@ describe("Blog public ArticleDetail community migration", () => {
 
   it("keeps community orchestration product-local without a new Pattern or real service call", () => {
     const source = readFileSync(
-      resolve(process.cwd(), "showcase/demos/products/blog-article-community.tsx"),
+      resolve(process.cwd(), "showcase/demos/products/blog/article-community.tsx"),
       "utf8",
     );
 
-    expect(source).toContain('from "../../../src/core"');
+    expect(source).toContain('from "../../../../src/core"');
     expect(source).not.toContain('src/patterns');
     expect(source).not.toContain('src/gouno');
     expect(source).not.toMatch(/\b(?:CommentThread|CommentComposer|LikeButton|ReportDialog|CommunityPanel)\b/);

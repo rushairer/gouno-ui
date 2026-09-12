@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
   BlogAccountNotificationsDemo,
   BlogAccountSettingsDemo,
-} from "../showcase/demos/products/blog-account-pages";
+} from "../showcase/demos/products/blog/account-pages";
 import { ThemeProvider } from "../src/theme";
 
 afterEach(cleanup);
@@ -110,12 +110,12 @@ describe("Blog public account page migrations", () => {
     expect(screen.getByText(/https:\/\/sso\.example\.test\/account-settings/)).toBeTruthy();
 
     const source = readFileSync(
-      resolve(process.cwd(), "showcase/demos/products/blog-account-pages.tsx"),
+      resolve(process.cwd(), "showcase/demos/products/blog/account-pages.tsx"),
       "utf8",
     );
 
     expect(source).toContain("BlogPublicShellFixture");
-    expect(source).toContain('import { PageHeader } from "../../../src/gouno"');
+    expect(source).toContain('import { PageHeader } from "../../../../src/gouno"');
     expect(source).not.toContain('src/patterns');
     expect(source).not.toMatch(/<(?:AppShell|PageContainer)\b/);
     expect(source).not.toMatch(/\b(?:PasswordForm|MFAForm|PasskeyManager|LoginForm|AccountShell)\b/);

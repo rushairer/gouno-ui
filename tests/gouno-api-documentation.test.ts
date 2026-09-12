@@ -5,8 +5,8 @@ import {
   navigationGroupApi,
   navigationHelperApi,
   pageContainerApi,
-} from "../showcase/demos/gouno-components";
-import { pageHeaderApi } from "../showcase/demos/gouno-page-header";
+} from "../showcase/demos/gouno/components";
+import { pageHeaderApi } from "../showcase/demos/gouno/page-header";
 
 const configPath = ts.findConfigFile(process.cwd(), ts.sys.fileExists, "tsconfig.json")!;
 const parsed = ts.parseJsonConfigFileContent(

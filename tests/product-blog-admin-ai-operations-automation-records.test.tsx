@@ -1,12 +1,12 @@
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { BlogAdminAIOperationsDemo } from "../showcase/demos/products/blog-admin-ai-operations";
+import { BlogAdminAIOperationsDemo } from "../showcase/demos/products/blog-admin/ai/operations";
 import {
   AIOpsAutomationPanel,
   AIOpsRecordsPanel,
   type AIOpsRecordsTarget,
-} from "../showcase/demos/products/blog-admin-ai-operations/automation-records";
-import { aiOpsAutomationRecordsFixture } from "../showcase/demos/products/blog-admin-ai-operations/automation-records-fixtures";
+} from "../showcase/demos/products/blog-admin/ai/operations/automation-records";
+import { aiOpsAutomationRecordsFixture } from "../showcase/demos/products/blog-admin/ai/operations/automation-records-fixtures";
 
 afterEach(cleanup);
 

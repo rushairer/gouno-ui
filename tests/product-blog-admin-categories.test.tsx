@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { BlogAdminCategoriesDemo } from "../showcase/demos/products/blog-admin-categories";
+import { BlogAdminCategoriesDemo } from "../showcase/demos/products/blog-admin/categories";
 
 afterEach(cleanup);
 

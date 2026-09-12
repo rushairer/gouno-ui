@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { BlogArticleIndexDemo } from "../showcase/demos/products/blog-article-index";
+import { BlogArticleIndexDemo } from "../showcase/demos/products/blog/article-index";
 import { ThemeProvider } from "../src/theme";
 
 afterEach(cleanup);
@@ -66,7 +66,7 @@ describe("Blog public ArticleIndex product migration fixture", () => {
 
   it("keeps discovery composition product-local and mode-driven", () => {
     const source = readFileSync(
-      resolve(process.cwd(), "showcase/demos/products/blog-article-index.tsx"),
+      resolve(process.cwd(), "showcase/demos/products/blog/article-index.tsx"),
       "utf8",
     );
 

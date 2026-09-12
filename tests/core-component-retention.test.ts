@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import * as Core from "../src/core";
-import { coreRuntimeFamilyCoverage } from "../showcase/core-family-coverage";
+import { coreRuntimeFamilyCoverage } from "../showcase/catalog/core-family-coverage";
 
 // Established canonical Core runtime components as of 2026-09-10.
 //
