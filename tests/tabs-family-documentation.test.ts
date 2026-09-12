@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { coreRuntimeFamilyCoverage } from "../showcase/core-family-coverage";
+import { coreRuntimeFamilyCoverage } from "../showcase/catalog/core-family-coverage";
 import { tabsDocument } from "../showcase/demos/core/tabs";
 
 describe("Tabs family documentation", () => {

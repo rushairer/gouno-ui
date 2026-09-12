@@ -1,7 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { AutomationManagement } from "../showcase/demos/products/blog-admin-ai-operations/automation-management";
-import { aiOpsAutomationRecordsFixture } from "../showcase/demos/products/blog-admin-ai-operations/automation-records-fixtures";
+import { AutomationManagement } from "../showcase/demos/products/blog-admin/ai/operations/automation-management";
+import { aiOpsAutomationRecordsFixture } from "../showcase/demos/products/blog-admin/ai/operations/automation-records-fixtures";
 
 afterEach(cleanup);
 

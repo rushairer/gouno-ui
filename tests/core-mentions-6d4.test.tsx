@@ -7,7 +7,7 @@ import {
   screen,
 } from "@testing-library/react";
 import { Mentions } from "../src/core";
-import { componentProgress } from "../showcase/component-progress";
+import { componentProgress } from "../showcase/catalog/component-progress";
 import { mentionsReviewDocuments } from "../showcase/demos/core/data-entry-review-6d4";
 
 afterEach(cleanup);

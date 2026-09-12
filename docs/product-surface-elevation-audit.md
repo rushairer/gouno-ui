@@ -107,11 +107,11 @@ Product fixtures must not reproduce overlay/modal shadows locally.
 
 Persistent business-product `Card variant="elevated"` is intentionally scarce and currently limited to:
 
-1. `showcase/demos/products/gosso-overview.tsx` — one focal overview Hero;
-2. `showcase/demos/products/gosso-auth/shared.tsx` — standalone authentication shell;
-3. `showcase/demos/products/gosso-auth/not-found.tsx` — standalone Not Found result surface.
+1. `showcase/demos/products/gosso-admin/overview.tsx` — one focal overview Hero;
+2. `showcase/demos/products/gosso-admin/auth/shared.tsx` — standalone authentication shell;
+3. `showcase/demos/products/gosso-admin/auth/not-found.tsx` — standalone Not Found result surface.
 
-Manual `shadow-raised` in product fixtures is currently allowed only in `gosso-overview.tsx`, where a peer Quick Link transitions from `surface` to `raised` on hover.
+Manual `shadow-raised` in product fixtures is currently allowed only in `gosso-admin/overview.tsx`, where a peer Quick Link transitions from `surface` to `raised` on hover.
 
 Adding another persistent raised surface or page-local raised utility is a corpus-level design decision and must update this audit and automated conformance.
 

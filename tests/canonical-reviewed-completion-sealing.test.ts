@@ -12,7 +12,7 @@ describe("canonical reviewed-completion sealing", () => {
         .map((page) => page.id)
         .filter((id) => canonicalId.test(id)),
     );
-    const source = readFileSync("showcase/component-progress.ts", "utf8");
+    const source = readFileSync("showcase/catalog/component-progress.ts", "utf8");
     const block = source.match(/const completedComponents = new Set\(\[([\s\S]*?)\]\);/)?.[1];
     if (!block) throw new Error("completedComponents block missing");
     const completedIds = new Set(

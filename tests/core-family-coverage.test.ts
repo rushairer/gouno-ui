@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import ts from "typescript";
 import { showcaseCatalog } from "../showcase/catalog";
-import { coreRuntimeFamilyCoverage } from "../showcase/core-family-coverage";
+import { coreRuntimeFamilyCoverage } from "../showcase/catalog/core-family-coverage";
 
 const configPath = ts.findConfigFile(
   process.cwd(),

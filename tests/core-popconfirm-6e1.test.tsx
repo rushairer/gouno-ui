@@ -9,7 +9,7 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { Popconfirm } from "../src/core";
-import { componentProgress } from "../showcase/component-progress";
+import { componentProgress } from "../showcase/catalog/component-progress";
 import { popconfirmReviewDocuments } from "../showcase/demos/core/feedback-review-6e1";
 
 afterEach(cleanup);

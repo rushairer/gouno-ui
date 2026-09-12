@@ -1,6 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { GossoCallbackDemo } from "../showcase/demos/products/gosso-auth/callback";
+import { GossoCallbackDemo } from "../showcase/demos/products/gosso-admin/auth/callback";
 
 afterEach(() => {
   cleanup();

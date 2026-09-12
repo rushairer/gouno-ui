@@ -1,97 +1,97 @@
 import { lazy, Suspense } from "react";
 import { Card, Heading, Text } from "../../src/core";
 import type { ShowcaseWorkspace } from "../catalog";
-import { GounoComponentDemo } from "../demos/gouno-components";
-import { GounoPageHeaderDemo } from "../demos/gouno-page-header";
-import { GossoOverviewDemo } from "../demos/products/gosso-overview";
-import { ThemeSystemDemo } from "../demos/theme-system";
+import { GounoComponentDemo } from "../demos/gouno/components";
+import { GounoPageHeaderDemo } from "../demos/gouno/page-header";
+import { GossoOverviewDemo } from "../demos/products/gosso-admin/overview";
+import { ThemeSystemDemo } from "../demos/theme/system";
 
 const CoreComponentPage = lazy(() =>
-  import("../demos/core-components").then((module) => ({ default: module.CoreComponentPage })),
+  import("../demos/core").then((module) => ({ default: module.CoreComponentPage })),
 );
 const PatternBulkActionBarDemo = lazy(() =>
-  import("../demos/pattern-bulk-action-bar").then((module) => ({ default: module.PatternBulkActionBarDemo })),
+  import("../demos/patterns/bulk-action-bar").then((module) => ({ default: module.PatternBulkActionBarDemo })),
 );
 const BlogHomeDemo = lazy(() =>
-  import("../demos/products/blog-home").then((module) => ({ default: module.BlogHomeDemo })),
+  import("../demos/products/blog/home").then((module) => ({ default: module.BlogHomeDemo })),
 );
 const BlogArticleIndexDemo = lazy(() =>
-  import("../demos/products/blog-article-index").then((module) => ({ default: module.BlogArticleIndexDemo })),
+  import("../demos/products/blog/article-index").then((module) => ({ default: module.BlogArticleIndexDemo })),
 );
 const BlogArticleDetailDemo = lazy(() =>
-  import("../demos/products/blog-article-detail").then((module) => ({ default: module.BlogArticleDetailDemo })),
+  import("../demos/products/blog/article-detail").then((module) => ({ default: module.BlogArticleDetailDemo })),
 );
 const BlogDiscoveryIndexDemo = lazy(() =>
-  import("../demos/products/blog-discovery-indexes").then((module) => ({ default: module.BlogDiscoveryIndexDemo })),
+  import("../demos/products/blog/discovery-indexes").then((module) => ({ default: module.BlogDiscoveryIndexDemo })),
 );
 const BlogAboutDemo = lazy(() =>
-  import("../demos/products/blog-document-pages").then((module) => ({ default: module.BlogAboutDemo })),
+  import("../demos/products/blog/document-pages").then((module) => ({ default: module.BlogAboutDemo })),
 );
 const BlogCustomPageDemo = lazy(() =>
-  import("../demos/products/blog-document-pages").then((module) => ({ default: module.BlogCustomPageDemo })),
+  import("../demos/products/blog/document-pages").then((module) => ({ default: module.BlogCustomPageDemo })),
 );
 const BlogAccountNotificationsDemo = lazy(() =>
-  import("../demos/products/blog-account-pages").then((module) => ({ default: module.BlogAccountNotificationsDemo })),
+  import("../demos/products/blog/account-pages").then((module) => ({ default: module.BlogAccountNotificationsDemo })),
 );
 const BlogAccountSettingsDemo = lazy(() =>
-  import("../demos/products/blog-account-pages").then((module) => ({ default: module.BlogAccountSettingsDemo })),
+  import("../demos/products/blog/account-pages").then((module) => ({ default: module.BlogAccountSettingsDemo })),
 );
 const BlogNotFoundDemo = lazy(() =>
-  import("../demos/products/blog-not-found").then((module) => ({ default: module.BlogNotFoundDemo })),
+  import("../demos/products/blog/not-found").then((module) => ({ default: module.BlogNotFoundDemo })),
 );
 const BlogAdminDashboardDemo = lazy(() =>
-  import("../demos/products/blog-admin-dashboard").then((module) => ({ default: module.BlogAdminDashboardDemo })),
+  import("../demos/products/blog-admin/dashboard").then((module) => ({ default: module.BlogAdminDashboardDemo })),
 );
 const BlogAdminAIOperationsDemo = lazy(() =>
-  import("../demos/products/blog-admin-ai-operations").then((module) => ({ default: module.BlogAdminAIOperationsDemo })),
+  import("../demos/products/blog-admin/ai/operations").then((module) => ({ default: module.BlogAdminAIOperationsDemo })),
 );
 const BlogAdminAISettingsDemo = lazy(() =>
-  import("../demos/products/blog-admin-ai-settings").then((module) => ({ default: module.BlogAdminAISettingsDemo })),
+  import("../demos/products/blog-admin/ai/settings").then((module) => ({ default: module.BlogAdminAISettingsDemo })),
 );
 const BlogAdminPostsDemo = lazy(() =>
-  import("../demos/products/blog-admin-posts").then((module) => ({ default: module.BlogAdminPostsDemo })),
+  import("../demos/products/blog-admin/posts").then((module) => ({ default: module.BlogAdminPostsDemo })),
 );
 const BlogAdminPostEditorDemo = lazy(() =>
-  import("../demos/products/blog-admin-post-editor").then((module) => ({ default: module.BlogAdminPostEditorDemo })),
+  import("../demos/products/blog-admin/post-editor").then((module) => ({ default: module.BlogAdminPostEditorDemo })),
 );
 const BlogAdminCategoriesDemo = lazy(() =>
-  import("../demos/products/blog-admin-categories").then((module) => ({ default: module.BlogAdminCategoriesDemo })),
+  import("../demos/products/blog-admin/categories").then((module) => ({ default: module.BlogAdminCategoriesDemo })),
 );
 const BlogAdminTagsDemo = lazy(() =>
-  import("../demos/products/blog-admin-tags").then((module) => ({ default: module.BlogAdminTagsDemo })),
+  import("../demos/products/blog-admin/tags").then((module) => ({ default: module.BlogAdminTagsDemo })),
 );
 const BlogAdminPagesDemo = lazy(() =>
-  import("../demos/products/blog-admin-pages").then((module) => ({ default: module.BlogAdminPagesDemo })),
+  import("../demos/products/blog-admin/pages").then((module) => ({ default: module.BlogAdminPagesDemo })),
 );
 const BlogAdminPageEditorDemo = lazy(() =>
-  import("../demos/products/blog-admin-page-editor").then((module) => ({ default: module.BlogAdminPageEditorDemo })),
+  import("../demos/products/blog-admin/page-editor").then((module) => ({ default: module.BlogAdminPageEditorDemo })),
 );
 const BlogAdminCommentsDemo = lazy(() =>
-  import("../demos/products/blog-admin-comments").then((module) => ({ default: module.BlogAdminCommentsDemo })),
+  import("../demos/products/blog-admin/comments").then((module) => ({ default: module.BlogAdminCommentsDemo })),
 );
 const BlogAdminNotificationsDemo = lazy(() =>
-  import("../demos/products/blog-admin-notifications").then((module) => ({ default: module.BlogAdminNotificationsDemo })),
+  import("../demos/products/blog-admin/notifications").then((module) => ({ default: module.BlogAdminNotificationsDemo })),
 );
 const BlogAdminMediaLibraryDemo = lazy(() =>
-  import("../demos/products/blog-admin-media-library").then((module) => ({ default: module.BlogAdminMediaLibraryDemo })),
+  import("../demos/products/blog-admin/media-library").then((module) => ({ default: module.BlogAdminMediaLibraryDemo })),
 );
 const BlogAdminUsersDemo = lazy(() =>
-  import("../demos/products/blog-admin-users").then((module) => ({ default: module.BlogAdminUsersDemo })),
+  import("../demos/products/blog-admin/users").then((module) => ({ default: module.BlogAdminUsersDemo })),
 );
 const BlogAdminSiteSettingsDemo = lazy(() =>
-  import("../demos/products/blog-admin-site-settings").then((module) => ({ default: module.BlogAdminSiteSettingsDemo })),
+  import("../demos/products/blog-admin/site-settings").then((module) => ({ default: module.BlogAdminSiteSettingsDemo })),
 );
 const GossoAccountSettingsDemo = lazy(() =>
-  import("../demos/products/gosso-account-settings").then((module) => ({ default: module.GossoAccountSettingsDemo })),
+  import("../demos/products/gosso-admin/account-settings").then((module) => ({ default: module.GossoAccountSettingsDemo })),
 );
 const GossoSystemManagementDemo = lazy(() =>
-  import("../demos/products/gosso-system-management").then((module) => ({ default: module.GossoSystemManagementDemo })),
+  import("../demos/products/gosso-admin/system-management").then((module) => ({ default: module.GossoSystemManagementDemo })),
 );
-const GossoLoginDemo = lazy(() => import("../demos/products/gosso-auth/login").then((module) => ({ default: module.GossoLoginDemo })));
-const GossoForgotPasswordDemo = lazy(() => import("../demos/products/gosso-auth/forgot-password").then((module) => ({ default: module.GossoForgotPasswordDemo })));
-const GossoResetPasswordDemo = lazy(() => import("../demos/products/gosso-auth/reset-password").then((module) => ({ default: module.GossoResetPasswordDemo })));
-const GossoCallbackDemo = lazy(() => import("../demos/products/gosso-auth/callback").then((module) => ({ default: module.GossoCallbackDemo })));
-const GossoNotFoundDemo = lazy(() => import("../demos/products/gosso-auth/not-found").then((module) => ({ default: module.GossoNotFoundDemo })));
+const GossoLoginDemo = lazy(() => import("../demos/products/gosso-admin/auth/login").then((module) => ({ default: module.GossoLoginDemo })));
+const GossoForgotPasswordDemo = lazy(() => import("../demos/products/gosso-admin/auth/forgot-password").then((module) => ({ default: module.GossoForgotPasswordDemo })));
+const GossoResetPasswordDemo = lazy(() => import("../demos/products/gosso-admin/auth/reset-password").then((module) => ({ default: module.GossoResetPasswordDemo })));
+const GossoCallbackDemo = lazy(() => import("../demos/products/gosso-admin/auth/callback").then((module) => ({ default: module.GossoCallbackDemo })));
+const GossoNotFoundDemo = lazy(() => import("../demos/products/gosso-admin/auth/not-found").then((module) => ({ default: module.GossoNotFoundDemo })));
 
 const loading = <div className="p-8 text-sm text-muted-foreground">Loading component documentation…</div>;
 

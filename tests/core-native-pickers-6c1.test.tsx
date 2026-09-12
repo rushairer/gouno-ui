@@ -2,7 +2,7 @@ import { createRef } from "react";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ColorPicker, TimePicker } from "../src/core";
-import { componentProgress } from "../showcase/component-progress";
+import { componentProgress } from "../showcase/catalog/component-progress";
 import { coreDocuments } from "../showcase/demos/core/registry";
 
 afterEach(cleanup);

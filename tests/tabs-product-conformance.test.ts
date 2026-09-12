@@ -10,8 +10,8 @@ function source(path: string) {
 
 describe("tabbed product layout conformance", () => {
   it("keeps account-context Tabs while promoting durable system domains to sidebar navigation", () => {
-    const account = source("gosso-account-settings/index.tsx");
-    const system = source("gosso-system-management/index.tsx");
+    const account = source("gosso-admin/account-settings/index.tsx");
+    const system = source("gosso-admin/system-management/index.tsx");
 
     expect(account.match(/children:\s*</g)).toHaveLength(5);
     expect(account).not.toContain("<AccountSettingsPanel tab={activeTab} />");

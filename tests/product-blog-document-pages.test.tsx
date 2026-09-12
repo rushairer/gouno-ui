@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
   BlogAboutDemo,
   BlogCustomPageDemo,
-} from "../showcase/demos/products/blog-document-pages";
+} from "../showcase/demos/products/blog/document-pages";
 import { ThemeProvider } from "../src/theme";
 
 afterEach(cleanup);
@@ -66,12 +66,12 @@ describe("Blog public document page migrations", () => {
 
   it("shares only a product-local document frame and does not promote a document feature bag", () => {
     const source = readFileSync(
-      resolve(process.cwd(), "showcase/demos/products/blog-document-pages.tsx"),
+      resolve(process.cwd(), "showcase/demos/products/blog/document-pages.tsx"),
       "utf8",
     );
 
     expect(source).toContain("function BlogDocumentSurface");
-    expect(source).toContain('import { PageHeader } from "../../../src/gouno"');
+    expect(source).toContain('import { PageHeader } from "../../../../src/gouno"');
     expect(source).toContain("BlogPublicShellFixture");
     expect(source).toContain('headingLevel={1}');
     expect(source).not.toContain("subTitle=");

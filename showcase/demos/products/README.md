@@ -4,6 +4,16 @@ This directory contains product pages genuinely rebuilt under the product-driven
 
 A Showcase file existing for a route proves **route-level coverage only**. It does not by itself prove every real-product action, state transition, permission branch, responsive presentation, failure mode, management entry point or accessibility behavior. Fidelity is accepted only after direct comparison with the current real product source.
 
+## Directory ownership
+
+Product identity is a directory boundary, not a filename prefix:
+
+- `blog/` — Gouno Blog public/account fixtures; filenames describe the surface only.
+- `blog-admin/` — Blog Admin fixtures; AI subfamilies live under `blog-admin/ai/`.
+- `gosso-admin/` — GOSSO Admin fixtures, including `auth/`, `account-settings/` and `system-management/`.
+
+Do not add new `blog-*`, `blog-admin-*` or `gosso-*` TypeScript files directly under `products/`. A new product family must receive its own product directory.
+
 ## Current migration phase
 
 - **Gosso Admin:** completed first-product comparison corpus.
@@ -15,13 +25,13 @@ A Showcase file existing for a route proves **route-level coverage only**. It do
 
 Current completed public surfaces:
 
-1. `blog-home.tsx` — `/`, composed with the product-local `BlogPublicShellFixture` and `BlogArticleTeaser` grammar.
-2. `blog-article-index.tsx` — `/articles`, `/search`, plus category/tag detail modes used by `/categories/:slug` and `/tags/:slug`.
-3. `blog-discovery-indexes.tsx` — `/categories`, `/tags`, `/archive`.
-4. `blog-article-detail.tsx` — `/articles/:slug`; reading fidelity covers cover/title/summary, author/date/read/view metadata, native-hash TOC, representative rich content, Core `CodeBlock`, media, related reading, preview/loading/error/not-found and the attached product-local community state machine.
-5. `blog-document-pages.tsx` — fixed `/about` plus dynamic `/:slug` CustomPage document states; the two pages share only a Blog-local document surface while dynamic lifecycle remains page-owned.
-6. `blog-account-pages.tsx` — `/account/notifications` and `/account/settings`; notifications/read transitions and Blog-local profile/preference editing stay product-owned while password/MFA/Passkey/session policy stays in GOSSO.
-7. `blog-not-found.tsx` — final unresolved-route fallback under `BlogPublicShellFixture`.
+1. `blog/home.tsx` — `/`, composed with the product-local `BlogPublicShellFixture` and `BlogArticleTeaser` grammar.
+2. `blog/article-index.tsx` — `/articles`, `/search`, plus category/tag detail modes used by `/categories/:slug` and `/tags/:slug`.
+3. `blog/discovery-indexes.tsx` — `/categories`, `/tags`, `/archive`.
+4. `blog/article-detail.tsx` — `/articles/:slug`; reading fidelity covers cover/title/summary, author/date/read/view metadata, native-hash TOC, representative rich content, Core `CodeBlock`, media, related reading, preview/loading/error/not-found and the attached product-local community state machine.
+5. `blog/document-pages.tsx` — fixed `/about` plus dynamic `/:slug` CustomPage document states; the two pages share only a Blog-local document surface while dynamic lifecycle remains page-owned.
+6. `blog/account-pages.tsx` — `/account/notifications` and `/account/settings`; notifications/read transitions and Blog-local profile/preference editing stay product-owned while password/MFA/Passkey/session policy stays in GOSSO.
+7. `blog/not-found.tsx` — final unresolved-route fallback under `BlogPublicShellFixture`.
 
 Compatibility redirects `/notifications` → `/account/notifications` and `/settings` → `/account/settings` remain route policy only; they do not create duplicate Showcase pages.
 
@@ -48,20 +58,20 @@ A public reading page may use a more spacious internal article rhythm because th
 
 Completed migrated route families:
 
-1. `blog-admin-dashboard.tsx` — `/admin/dashboard`.
-2. `blog-admin-posts.tsx` — `/admin/posts`.
-3. `blog-admin-post-editor.tsx` — `/admin/posts/new`, `/admin/posts/:id/edit`.
-4. `blog-admin-pages.tsx` — `/admin/pages`.
-5. `blog-admin-page-editor.tsx` — `/admin/pages/new`, `/admin/pages/:id/edit`.
-6. `blog-admin-categories.tsx` — `/admin/categories`.
-7. `blog-admin-tags.tsx` — `/admin/tags`.
-8. `blog-admin-comments.tsx` — `/admin/comments`.
-9. `blog-admin-notifications.tsx` — `/admin/notifications`.
-10. `blog-admin-media-library.tsx` — `/admin/media`.
-11. `blog-admin-users.tsx` — `/admin/users`.
-12. `blog-admin-site-settings.tsx` — `/admin/settings`.
-13. `blog-admin-ai-operations/` — `/admin/ai-ops` operations route family.
-14. `blog-admin-ai-settings/` — `/admin/ai-settings` governance/configuration route family.
+1. `blog-admin/dashboard.tsx` — `/admin/dashboard`.
+2. `blog-admin/posts.tsx` — `/admin/posts`.
+3. `blog-admin/post-editor.tsx` — `/admin/posts/new`, `/admin/posts/:id/edit`.
+4. `blog-admin/pages.tsx` — `/admin/pages`.
+5. `blog-admin/page-editor.tsx` — `/admin/pages/new`, `/admin/pages/:id/edit`.
+6. `blog-admin/categories.tsx` — `/admin/categories`.
+7. `blog-admin/tags.tsx` — `/admin/tags`.
+8. `blog-admin/comments.tsx` — `/admin/comments`.
+9. `blog-admin/notifications.tsx` — `/admin/notifications`.
+10. `blog-admin/media-library.tsx` — `/admin/media`.
+11. `blog-admin/users.tsx` — `/admin/users`.
+12. `blog-admin/site-settings.tsx` — `/admin/settings`.
+13. `blog-admin/ai/operations/` — `/admin/ai-ops` operations route family.
+14. `blog-admin/ai/settings/` — `/admin/ai-settings` governance/configuration route family.
 
 ### AI Operations and AI Settings are intentionally separate
 

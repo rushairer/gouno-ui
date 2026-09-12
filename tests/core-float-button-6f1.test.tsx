@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { FloatButton } from "../src/core";
-import { componentProgress } from "../showcase/component-progress";
+import { componentProgress } from "../showcase/catalog/component-progress";
 import { otherDocuments } from "../showcase/demos/core/other";
 
 class ResizeObserverStub {

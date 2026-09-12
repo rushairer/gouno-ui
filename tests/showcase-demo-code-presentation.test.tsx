@@ -4,13 +4,13 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { DemoSection } from "../showcase/components/demo-section";
-import { canonicalExampleSource } from "../showcase/demos/example-source";
+import { canonicalExampleSource } from "../showcase/demos/shared/example-source";
 
 const pairedLayerDemoFiles = [
-  "showcase/demos/theme-system.tsx",
-  "showcase/demos/pattern-bulk-action-bar.tsx",
-  "showcase/demos/gouno-components.tsx",
-  "showcase/demos/gouno-page-header.tsx",
+  "showcase/demos/theme/system.tsx",
+  "showcase/demos/patterns/bulk-action-bar.tsx",
+  "showcase/demos/gouno/components.tsx",
+  "showcase/demos/gouno/page-header.tsx",
 ] as const;
 
 describe("Showcase Demo + Code presentation", () => {

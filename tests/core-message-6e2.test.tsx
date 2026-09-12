@@ -7,7 +7,7 @@ import {
   screen,
 } from "@testing-library/react";
 import { MessageProvider, useMessage } from "../src/core";
-import { componentProgress } from "../showcase/component-progress";
+import { componentProgress } from "../showcase/catalog/component-progress";
 import { messageReviewDocuments } from "../showcase/demos/core/feedback-review-6e2";
 
 function MessageProbe() {

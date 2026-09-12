@@ -30,7 +30,7 @@ describe("product migration line", () => {
   });
 
   it("keeps the completed Blog public surfaces standalone from the Showcase AppShell", () => {
-    const catalog = read("showcase/catalog.tsx");
+    const catalog = read("showcase/catalog/index.tsx");
     const expectedEntries = [
       'item("blog-home", "Home", "首页", 100, <Home />, "standalone")',
       'item("blog-articles", "ArticleIndex", "文章列表", 100, <FileText />, "standalone")',

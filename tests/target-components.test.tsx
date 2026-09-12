@@ -19,7 +19,7 @@ import {
   Textarea,
   Upload,
 } from "../src/core";
-import { componentProgress } from "../showcase/component-progress";
+import { componentProgress } from "../showcase/catalog/component-progress";
 import { dataEntryDocuments } from "../showcase/demos/core/data-entry";
 import { dataDisplayDocuments } from "../showcase/demos/core/data-display";
 import { feedbackDocuments } from "../showcase/demos/core/feedback";

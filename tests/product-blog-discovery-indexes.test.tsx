@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { BlogDiscoveryIndexDemo } from "../showcase/demos/products/blog-discovery-indexes";
+import { BlogDiscoveryIndexDemo } from "../showcase/demos/products/blog/discovery-indexes";
 import { ThemeProvider } from "../src/theme";
 
 afterEach(cleanup);
@@ -71,11 +71,11 @@ describe("Blog public discovery index migrations", () => {
 
   it("validates PageHeader on a standalone public-content family without expanding Gouno shell usage", () => {
     const source = readFileSync(
-      resolve(process.cwd(), "showcase/demos/products/blog-discovery-indexes.tsx"),
+      resolve(process.cwd(), "showcase/demos/products/blog/discovery-indexes.tsx"),
       "utf8",
     );
 
-    expect(source).toContain('import { PageHeader } from "../../../src/gouno"');
+    expect(source).toContain('import { PageHeader } from "../../../../src/gouno"');
     expect(source).toContain("BlogPublicShellFixture");
     expect(source).not.toContain("AppShell");
     expect(source).not.toContain("PageContainer");

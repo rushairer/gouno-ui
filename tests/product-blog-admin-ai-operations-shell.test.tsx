@@ -4,7 +4,7 @@ import {
   BlogAdminAIOperationsDemo,
   formatAIOpsRoute,
   parseAIOpsRoute,
-} from "../showcase/demos/products/blog-admin-ai-operations";
+} from "../showcase/demos/products/blog-admin/ai/operations";
 
 afterEach(cleanup);
 

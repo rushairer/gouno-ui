@@ -7,7 +7,7 @@ import {
   screen,
 } from "@testing-library/react";
 import { NotificationProvider, useNotification } from "../src/core";
-import { componentProgress } from "../showcase/component-progress";
+import { componentProgress } from "../showcase/catalog/component-progress";
 import { notificationReviewDocuments } from "../showcase/demos/core/feedback-review-6e3";
 
 function NotificationProbe() {
