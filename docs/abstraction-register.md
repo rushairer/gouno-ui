@@ -29,7 +29,7 @@ This register records why abstractions were accepted, rejected, deferred or chan
 ### PD-005 — Legacy is evidence, never precedent
 - **Status:** accepted
 - **Owner:** Pattern/Gouno governance
-- **Decision:** pre-validation Pattern/Gouno implementations are quarantined under `src/legacy`, not compiled/published/shown/imported. Re-admission requires current product evidence and a clean implementation.
+- **Decision:** pre-validation Pattern/Gouno implementations are removed from the current source tree and retained only in Git history. They are not compiled/published/shown/imported; re-admission requires current product evidence and a clean canonical implementation rather than restoring the old source layer.
 
 ## Migration evidence
 

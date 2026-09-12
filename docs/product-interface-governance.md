@@ -180,7 +180,7 @@ Do not use control depth to decorate labels, badges, navigation items or generic
 
 All raw size aliases (`shadow-xs`, `shadow-sm`, `shadow-md`, `shadow-lg`, `shadow-xl`, `shadow-2xl`) intentionally resolve to no visible shadow for compatibility. Canonical/product source must not use them as new vocabulary. Arbitrary box-shadow values and page-local shadow colors are also forbidden.
 
-Quarantined `src/legacy/**` is historical evidence, not current design precedent.
+Historical Legacy implementations in Git history are evidence, not current design precedent; `src/legacy/**` no longer exists in the current source tree.
 
 ## PI-05 — New binding rules require a corpus pass, not screenshot patching
 

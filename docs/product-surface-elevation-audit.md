@@ -143,7 +143,7 @@ A future toolbar that genuinely covers unrelated content may use an explicit flo
 
 Raw size aliases (`shadow-xs`, `shadow-sm`, `shadow-md`, `shadow-lg`, `shadow-xl`, `shadow-2xl`) intentionally resolve to zero in Theme for compatibility. The canonical runtime and Showcase product corpus must not carry them as design vocabulary.
 
-Quarantined `src/legacy/**` remains historical evidence and may contain old classes; it is not canonical runtime and must not be used as proof for current design decisions.
+Historical Legacy implementations remain available through Git history and may contain old classes; `src/legacy/**` no longer exists in the current source tree and historical code must not be used as proof for current design decisions.
 
 ## Acceptance rule
 
