@@ -101,9 +101,7 @@ describe("public layer architecture", () => {
     }
   });
 
-  it("keeps Legacy explicitly quarantined outside canonical ownership", () => {
-    expect(existsSync(resolve(sourceRoot, "legacy/README.md"))).toBe(true);
-    expect(existsSync(resolve(sourceRoot, "legacy/patterns"))).toBe(true);
-    expect(existsSync(resolve(sourceRoot, "legacy/gouno"))).toBe(true);
+  it("does not recreate the removed Legacy source layer", () => {
+    expect(existsSync(resolve(sourceRoot, "legacy"))).toBe(false);
   });
 });
