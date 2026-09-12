@@ -50,19 +50,9 @@ function moduleSpecifiers(file: string): string[] {
   return specifiers;
 }
 
-describe("Legacy quarantine", () => {
-  it("excludes Legacy from every TypeScript compilation surface", () => {
-    for (const filename of ["tsconfig.json", "tsconfig.build.json"]) {
-      const config = JSON.parse(readFileSync(resolve(root, filename), "utf8")) as {
-        exclude?: string[];
-      };
-      expect(config.exclude).toContain("src/legacy/**/*");
-    }
-
-    const showcaseConfig = JSON.parse(
-      readFileSync(resolve(root, "showcase/tsconfig.json"), "utf8"),
-    ) as { exclude?: string[] };
-    expect(showcaseConfig.exclude).toContain("../src/legacy/**/*");
+describe("source boundaries", () => {
+  it("does not keep a Legacy source tree", () => {
+    expect(existsSync(resolve(sourceRoot, "legacy"))).toBe(false);
   });
 
   it("does not publish a Legacy package path", () => {
@@ -72,12 +62,12 @@ describe("Legacy quarantine", () => {
     expect(Object.keys(packageJson.exports).some((key) => key.startsWith("./legacy"))).toBe(false);
   });
 
-  it("keeps canonical layers and Showcase from importing quarantined source", () => {
+  it("keeps canonical layers and Showcase free of Legacy imports", () => {
     const violations: string[] = [];
     for (const protectedRoot of protectedRoots) {
       for (const file of sourceFiles(protectedRoot)) {
         for (const specifier of moduleSpecifiers(file)) {
-          if (specifier.includes("legacy")) {
+          if (/(^|\/)legacy(?:\/|$)/i.test(specifier)) {
             violations.push(`${relative(root, file)} -> ${specifier}`);
           }
         }
@@ -86,9 +76,17 @@ describe("Legacy quarantine", () => {
     expect(violations.sort()).toEqual([]);
   });
 
-  it("keeps the quarantine documented and non-canonical", () => {
-    const readme = readFileSync(resolve(sourceRoot, "legacy/README.md"), "utf8");
-    expect(readme).toContain("not a fifth architectural layer");
-    expect(readme).toContain("no package export path");
+  it("does not carry obsolete Legacy TypeScript exclusions", () => {
+    for (const filename of ["tsconfig.json", "tsconfig.build.json"]) {
+      const config = JSON.parse(readFileSync(resolve(root, filename), "utf8")) as {
+        exclude?: string[];
+      };
+      expect(config.exclude ?? []).not.toContain("src/legacy/**/*");
+    }
+
+    const showcaseConfig = JSON.parse(
+      readFileSync(resolve(root, "showcase/tsconfig.json"), "utf8"),
+    ) as { exclude?: string[] };
+    expect(showcaseConfig.exclude ?? []).not.toContain("../src/legacy/**/*");
   });
 });

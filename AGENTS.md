@@ -38,19 +38,17 @@ A layer may depend on itself or a lower layer, never a higher layer.
 - `src/patterns`: only admitted reusable compound interactions; may be empty.
 - `src/gouno`: admitted Gouno product-family structure/policy. Current runtime surface: `AppShell`, `PageContainer`, `PageHeader`, `NavigationGroup`, `navigationItemClass`.
 - `src/components/primitives` and `src/lib`: internal foundations, not product domains.
-- `showcase`: canonical integration consumer + static-fixture validation laboratory; never imports Legacy or the root umbrella at runtime.
+- `showcase`: canonical integration consumer + static-fixture validation laboratory; never imports the root umbrella at runtime.
 
-## Legacy quarantine
+## No Legacy source layer
 
-`src/legacy` is prior-art source, not a fifth layer or compatibility API.
+`src/legacy` has been removed. Historical implementations live in Git history rather than the current source tree.
 
-- excluded from builds/publication;
-- no package export and no Showcase navigation;
-- canonical layers and Showcase never import it;
-- do not maintain/refactor/extend it during normal work;
-- consult it only after a real product need creates an abstraction question;
+- do not recreate `src/legacy`, `src/candidates` or any incubator source layer;
+- historical code is prior art only and may be consulted through Git history after a real product need creates an abstraction question;
 - re-create admitted ideas cleanly in the canonical layer after evidence review;
-- do not create `src/candidates`; candidates stay product-local plus decision evidence.
+- candidate abstractions stay product-local plus decision evidence until admitted;
+- historical compatibility names or source layouts never become canonical authority by themselves.
 
 ## Public ownership and source organization
 
@@ -77,10 +75,10 @@ Gouno UI currently has **three completed real-product comparison corpora and no 
 - New real product work still starts with Core + Theme + admitted Gouno structure + product-local JSX/Tailwind. Do not force public-site pages into `AppShell` when their semantics are a document/public-content shell.
 - Initial shell baseline remains `AppShell`, `PageContainer`, `NavigationGroup`, `navigationItemClass` for application-shell products only.
 - `PageHeader` is additionally admitted from cross-product page evidence (PD-011); public content pages may validate it where route semantics match, but must not use it merely for visual consistency.
-- Existing Legacy implementations are evidence, never automatic precedent.
+- Historical implementations are evidence, never automatic precedent.
 - First semantic occurrence stays local; second similarity is noted; third semantically equivalent occurrence triggers review, not automatic extraction.
 - Compare intent, state, lifecycle, accessibility, responsive behavior and content/action policy—not old names or DOM similarity.
-- Before any Pattern/Gouno addition or material Core extension, search canonical Gouno UI, Legacy and all completed real-product corpora.
+- Before any Pattern/Gouno addition or material Core extension, search canonical Gouno UI, relevant Git history when historical prior art is useful, and all completed real-product corpora.
 - If evidence is insufficient for a **new** abstraction, keep code product-local. Do not apply this rule as a deletion test for an already-established Core component; retention follows `docs/core-component-retention.md`.
 - Record durable accept/reject/defer/merge/move/remove/API decisions in `docs/abstraction-register.md`.
 - Follow the Product Validation Loop in `docs/product-driven-development.md`: a real page or a completed-corpus audit may stop further work when it exposes a canonical component defect, accessibility problem, material API gap or semantic API split. Harden the component, synchronize Showcase/docs/tests, validate it back on the triggering product evidence, then continue.

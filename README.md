@@ -17,7 +17,7 @@ Formal public owners:
 components/primitives + lib → Core → Theme → Patterns → Gouno
 ```
 
-`src/legacy` is a non-public prior-art museum: not compiled, not published, hidden from Showcase and forbidden as a canonical dependency.
+`src/legacy` has been removed from the current source tree. Historical implementations live in Git history; do not recreate a Legacy, Candidates or Incubator source layer.
 
 See [`docs/architecture.md`](docs/architecture.md) and [`docs/product-driven-development.md`](docs/product-driven-development.md).
 
@@ -34,7 +34,7 @@ import { AppShell, PageContainer, PageHeader } from "@gouno/ui/gouno";
 
 `CodeBlock` was admitted to Core only after the real Blog article renderer independently proved the same read-only code frame, horizontal overflow and copy-feedback contract that Showcase had previously exercised privately. Core deliberately does not own a syntax highlighter; consumers may inject token rendering through `renderCode(code)` while `code` remains the sole display/copy source.
 
-The root `@gouno/ui` is an external compatibility umbrella, not a fifth owner. Repository implementation and Showcase import canonical formal layers instead. Source wildcard paths and Legacy paths are not public API.
+The root `@gouno/ui` is an external compatibility umbrella, not a fifth owner. Repository implementation and Showcase import canonical formal layers instead. Source wildcard paths and historical Legacy package paths are not public API.
 
 ## Product-driven evolution
 
@@ -47,7 +47,7 @@ Three real product corpora are now closed as comparison evidence:
 
 Pages still start Core-first with Theme, admitted Gouno structure where semantics match, and local composition. Public-site document/content shells are not forced into `AppShell` merely for visual consistency. Small repetition is preferred over premature extraction, and the third semantically equivalent occurrence still triggers review rather than automatic extraction.
 
-Before a Pattern/Gouno addition or material Core extension, compare canonical UI, Legacy and matching real product cases across all completed corpora. Durable decisions live in [`docs/abstraction-register.md`](docs/abstraction-register.md); public naming/state/composition rules live in [`docs/api-specification.md`](docs/api-specification.md).
+Before a Pattern/Gouno addition or material Core extension, compare canonical UI, relevant Git history when historical prior art is useful, and matching real product cases across all completed corpora. Durable decisions live in [`docs/abstraction-register.md`](docs/abstraction-register.md); public naming/state/composition rules live in [`docs/api-specification.md`](docs/api-specification.md).
 
 Current admitted abstractions demonstrate the process rather than a fixed catalog: `AppShell`/`PageContainer` were the initial shell baseline; `PageHeader` was re-admitted only after real page evidence; `BulkActionBar` became the first Pattern only after three different migrated collection workflows proved a smaller shared interaction than the surrounding page structures; `CodeBlock` moved from Showcase-private tooling into Core only when the public Blog reading path supplied independent product demand.
 
