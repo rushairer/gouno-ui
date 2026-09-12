@@ -1,0 +1,1 @@
+import{m as e,u as t,x as n,y as r}from"./typography-CBSSDddg.js";var i=n(r(),1),a=t(),o=(0,i.forwardRef)(function({className:t,"aria-hidden":n=!0,...r},i){return(0,a.jsx)(`span`,{...r,ref:i,"aria-hidden":n,"data-slot":`spinner`,className:e(`inline-block size-4 animate-spin rounded-full border-2 border-current border-r-transparent`,t)})});export{o as t};

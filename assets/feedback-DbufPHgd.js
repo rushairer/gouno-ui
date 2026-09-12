@@ -1,0 +1,1 @@
+import{m as e,u as t}from"./typography-CBSSDddg.js";var n=t();function r({className:t,...r}){return(0,n.jsx)(`div`,{"data-slot":`skeleton`,className:e(`animate-pulse rounded-md bg-accent`,t),...r})}function i({"aria-hidden":e,...t}){return(0,n.jsx)(r,{...t,"aria-hidden":e??!0})}export{i as t};
