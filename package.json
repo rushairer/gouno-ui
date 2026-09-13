@@ -52,7 +52,8 @@
     "./tokens.css": "./dist/tokens.css",
     "./base.css": "./dist/base.css",
     "./bootstrap.js": "./dist/bootstrap.js",
-    "./fonts/*": "./dist/fonts/*"
+    "./fonts/*": "./dist/fonts/*",
+    "./brand-icons/*": "./dist/brand-icons/*"
   },
   "publishConfig": {
     "access": "public",
