@@ -1,0 +1,74 @@
+name: Prepare 0.3.5 once
+
+on:
+  push:
+    branches:
+      - release/0.3.5
+
+permissions:
+  contents: write
+
+concurrency:
+  group: prepare-035-once-v2
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout release branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: release/0.3.5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Bump package identity
+        run: npm version 0.3.5 --no-git-tag-version
+
+      - name: Record release changes
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('CHANGELOG.md')
+          s = p.read_text()
+          marker = '## [0.3.4] - 2026-09-13'
+          entry = '''## [0.3.5] - 2026-09-13
+
+### Added
+
+- Published the canonical Gouno family product marks through `@gouno/ui/brand-icons/*` so product shells and Showcase can share the exact same SVG assets.
+
+### Fixed
+
+- Normalized native Checkbox and Radio layout to a block formatting box so embedded selection controls no longer reserve inline baseline whitespace in cards and overlays.
+
+'''
+          if '## [0.3.5] - 2026-09-13' not in s:
+              s = s.replace(marker, entry + marker, 1)
+              p.write_text(s)
+          PY
+
+      - name: Remove one-shot workflow
+        run: rm .github/workflows/prepare-035-once.yml
+
+      - name: Verify release candidate
+        run: npm run release:check
+
+      - name: Commit release preparation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore(release): prepare @gouno/ui 0.3.5"
+          git push origin HEAD:release/0.3.5
