@@ -4,13 +4,19 @@ on:
   push:
     tags:
       - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing stable release tag to publish, for example v0.3.5
+        required: true
+        type: string
 
 permissions:
   contents: write
   id-token: write
 
 concurrency:
-  group: npm-release-${{ github.ref }}
+  group: npm-release-${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -19,9 +25,30 @@ jobs:
     runs-on: ubuntu-latest
     environment: npm
     steps:
+      - name: Resolve release tag
+        id: release
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_TAG: ${{ inputs.tag }}
+          PUSH_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            RELEASE_TAG="$INPUT_TAG"
+          else
+            RELEASE_TAG="$PUSH_TAG"
+          fi
+          if ! [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Only stable vX.Y.Z release tags are accepted (received $RELEASE_TAG)." >&2
+            exit 1
+          fi
+          echo "tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+
       - name: Check out release tag
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ steps.release.outputs.tag }}
           fetch-depth: 0
 
       - name: Set up Node.js and npm registry
@@ -36,18 +63,27 @@ jobs:
 
       - name: Verify release identity
         shell: bash
+        env:
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
         run: |
           set -euo pipefail
+          git fetch origin --tags
           PACKAGE_VERSION="$(node --input-type=module -e "import { readFile } from 'node:fs/promises'; const pkg = JSON.parse(await readFile('package.json', 'utf8')); process.stdout.write(pkg.version);")"
           LOCK_VERSION="$(node --input-type=module -e "import { readFile } from 'node:fs/promises'; const lock = JSON.parse(await readFile('package-lock.json', 'utf8')); process.stdout.write(lock.packages?.['']?.version || lock.version || '');")"
           EXPECTED_TAG="v${PACKAGE_VERSION}"
+          TAG_COMMIT="$(git rev-parse "${RELEASE_TAG}^{commit}")"
+          HEAD_COMMIT="$(git rev-parse HEAD)"
 
           if [[ "$PACKAGE_VERSION" == *-* ]]; then
             echo "The stable release workflow does not publish prerelease versions ($PACKAGE_VERSION)." >&2
             exit 1
           fi
-          if [ "$GITHUB_REF_NAME" != "$EXPECTED_TAG" ]; then
-            echo "Release tag $GITHUB_REF_NAME does not match package version $PACKAGE_VERSION (expected $EXPECTED_TAG)." >&2
+          if [ "$RELEASE_TAG" != "$EXPECTED_TAG" ]; then
+            echo "Release tag $RELEASE_TAG does not match package version $PACKAGE_VERSION (expected $EXPECTED_TAG)." >&2
+            exit 1
+          fi
+          if [ "$TAG_COMMIT" != "$HEAD_COMMIT" ]; then
+            echo "Checked-out commit $HEAD_COMMIT does not match release tag commit $TAG_COMMIT." >&2
             exit 1
           fi
           if [ "$LOCK_VERSION" != "$PACKAGE_VERSION" ]; then
@@ -79,7 +115,7 @@ jobs:
       - name: Upload release artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: gouno-ui-${{ github.ref_name }}
+          name: gouno-ui-${{ steps.release.outputs.tag }}
           path: ${{ steps.package.outputs.archive }}
           if-no-files-found: error
           retention-days: 90
@@ -93,8 +129,9 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
         run: |
-          gh release create "$GITHUB_REF_NAME" "${{ steps.package.outputs.archive }}" \
+          gh release create "$RELEASE_TAG" "${{ steps.package.outputs.archive }}" \
             --verify-tag \
-            --title "@gouno/ui ${GITHUB_REF_NAME#v}" \
+            --title "@gouno/ui ${RELEASE_TAG#v}" \
             --generate-notes

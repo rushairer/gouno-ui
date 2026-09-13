@@ -10,6 +10,7 @@
 4. Consumers should depend on a registry version such as `"@gouno/ui": "0.3.1"`; canonical distribution must not rely on committed `.tgz` vendor copies.
 5. `npm run release:check` must pass before a release tag is pushed.
 6. The npm archive is built from `dist`; source, Showcase, docs, scripts and workflow files are intentionally excluded from the package.
+7. Manual release dispatch is a recovery trigger only. It must reference an existing stable `vX.Y.Z` tag and executes the same checkout, identity, package, provenance and GitHub Release gates as the normal tag push path.
 
 ## Normal release flow
 
@@ -36,7 +37,7 @@ npm run release:check
 npm pack --dry-run
 ```
 
-Commit the version/changelog change, push `main`, wait for the `Publish Showcase to GitHub Pages` workflow on that exact `main` commit to succeed, then tag that commit:
+Commit the version/changelog change, push `main`, wait for the `Publish Showcase to GitHub Pages` workflow on that exact `main` tree to succeed, then tag that commit:
 
 ```bash
 git tag -a v0.3.1 -m "@gouno/ui 0.3.1"
@@ -44,6 +45,12 @@ git push origin v0.3.1
 ```
 
 The `Publish npm release` workflow validates that the tag, package version, lockfile version and changelog agree, rebuilds and checks the package, creates the exact `.tgz`, publishes it to the public npm registry with provenance, and creates a GitHub Release with the archive attached.
+
+### Recovery when a bot-created tag does not emit a tag-push workflow event
+
+GitHub intentionally prevents most events created with a repository `GITHUB_TOKEN` from recursively starting new workflows. If an audited automation has already created the correct tag but the tag-push release workflow was therefore not emitted, use the `Publish npm release` workflow's manual dispatch and provide that existing stable tag, for example `v0.3.5`.
+
+The manual path is not a branch publication path. It checks out the supplied existing tag, requires stable `vX.Y.Z`, verifies the tag resolves to the checked-out commit, requires package/lock/changelog identity to match, then runs the same `release:check`, pack, Trusted Publishing/provenance and GitHub Release steps as the normal tag event.
 
 ## npm authentication
 
@@ -63,7 +70,7 @@ Use SemVer prereleases rather than mutable development archives:
 0.4.0-canary.<identifier>
 ```
 
-Publish prereleases with an explicit npm dist-tag such as `next`; do not move `latest` until the stable release is ready. The current automated tag workflow is intended for stable `vX.Y.Z` releases. Prerelease publication should be performed deliberately until a dedicated prerelease workflow is added.
+Publish prereleases with an explicit npm dist-tag such as `next`; do not move `latest` until the stable release is ready. The current automated release workflow is intentionally restricted to stable `vX.Y.Z` releases. Prerelease publication should be performed deliberately until a dedicated prerelease workflow is added.
 
 ## Consumer upgrades
 
