@@ -27,17 +27,5 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Typecheck package and Showcase
-        run: npm run typecheck
-
-      - name: Run component and governance tests
-        run: npm test
-
-      - name: Build package
-        run: npm run build
-
-      - name: Build Showcase
-        run: npm run showcase:build
-
-      - name: Verify publication surface
-        run: npm run package:check
+      - name: Verify package, publication surface and Showcase
+        run: npm run release:check
