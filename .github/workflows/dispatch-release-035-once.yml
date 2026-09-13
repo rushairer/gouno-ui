@@ -37,4 +37,4 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh workflow run release.yml --ref main -f tag=v0.3.5
+        run: gh workflow run release.yml --ref v0.3.5 -f tag=v0.3.5
