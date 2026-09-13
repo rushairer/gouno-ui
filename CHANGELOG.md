@@ -16,6 +16,16 @@ All notable changes to this project are documented here.
 - Participating controls use English fallback consistently. Configure zhCN to retain Chinese defaults; existing explicit text remains authoritative. See [migration](docs/component-localization.md).
 - Review completion retains scope/evidence and can reopen after a defect instead of requiring every catalog entry to remain permanently at 100.
 
+## [0.3.5] - 2026-09-13
+
+### Added
+
+- Published the canonical Gouno family product marks through `@gouno/ui/brand-icons/*` so product shells and Showcase can share the exact same SVG assets.
+
+### Fixed
+
+- Normalized native Checkbox and Radio layout to a block formatting box so embedded selection controls no longer reserve inline baseline whitespace in cards and overlays.
+
 ## [0.3.4] - 2026-09-13
 
 ### Fixed
