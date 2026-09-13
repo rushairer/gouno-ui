@@ -4,6 +4,35 @@ Shared React UI system for the Gouno product family: product-agnostic Core, dedi
 
 **Live Showcase:** https://rushairer.github.io/gouno-ui/
 
+## Install
+
+```bash
+npm install @gouno/ui
+```
+
+`@gouno/ui` is published as an immutable public npm package. Gouno products should initially pin an exact version and upgrade it through a normal dependency PR rather than tracking mutable archives or repository branches.
+
+For Tailwind CSS v4 consumers, import Tailwind once, then the canonical tokens/base styles, and register the package dist directory as a Tailwind source:
+
+```css
+@import "tailwindcss";
+@import "@gouno/ui/tokens.css";
+@import "@gouno/ui/base.css";
+
+@source "../node_modules/@gouno/ui/dist";
+```
+
+Use the formal public entry points rather than source paths:
+
+```tsx
+import { Button, Card } from "@gouno/ui/core";
+import { ThemeProvider } from "@gouno/ui/theme";
+import { BulkActionBar } from "@gouno/ui/patterns";
+import { AppShell, PageContainer, PageHeader } from "@gouno/ui/gouno";
+```
+
+React and React DOM are peer dependencies. See [`docs/releasing.md`](docs/releasing.md) for the immutable npm release contract.
+
 ## Architecture
 
 Formal public owners:
@@ -105,14 +134,11 @@ Canonical state names are `activeKey`, `defaultActiveKey`, `items[].key`, `onCha
 
 ```bash
 npm ci
-npm run typecheck
-npm test -- --run
-npm run build
-npm run showcase:build
+npm run release:check
 ```
 
-Main CI runs the same Node.js 24 gate before publishing Showcase to `gh-pages`.
+`release:check` runs typecheck, the full test suite, package build, Showcase build and the publication-surface check. `npm run package:check` additionally verifies that formal entry points load from `dist` and that `npm pack --dry-run` contains the required public files without leaking source, Showcase, docs, scripts or workflow internals.
+
+Main CI uses the same Node.js 24 release gate before publishing Showcase to `gh-pages`. Pull requests run the same release-readiness check. Stable npm publication is tag-driven; see [`docs/releasing.md`](docs/releasing.md).
 
 Run `npm run showcase:dev` for local documentation/product scenarios. Showcase fixtures are static: they do not authenticate, read cookies, call APIs or mutate real application state.
-
-React and React DOM are peer dependencies. Existing products using older vendored archives can migrate page-by-page; see [`docs/migration.md`](docs/migration.md).

@@ -1,0 +1,103 @@
+name: Publish npm release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: npm-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'rushairer/gouno-ui'
+    runs-on: ubuntu-latest
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - name: Check out release tag
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify release identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          PACKAGE_VERSION="$(node --input-type=module -e "import { readFile } from 'node:fs/promises'; const pkg = JSON.parse(await readFile('package.json', 'utf8')); process.stdout.write(pkg.version);")"
+          LOCK_VERSION="$(node --input-type=module -e "import { readFile } from 'node:fs/promises'; const lock = JSON.parse(await readFile('package-lock.json', 'utf8')); process.stdout.write(lock.packages?.['']?.version || lock.version || '');")"
+          EXPECTED_TAG="v${PACKAGE_VERSION}"
+
+          if [[ "$PACKAGE_VERSION" == *-* ]]; then
+            echo "The stable release workflow does not publish prerelease versions ($PACKAGE_VERSION)." >&2
+            exit 1
+          fi
+          if [ "$GITHUB_REF_NAME" != "$EXPECTED_TAG" ]; then
+            echo "Release tag $GITHUB_REF_NAME does not match package version $PACKAGE_VERSION (expected $EXPECTED_TAG)." >&2
+            exit 1
+          fi
+          if [ "$LOCK_VERSION" != "$PACKAGE_VERSION" ]; then
+            echo "package-lock.json version $LOCK_VERSION does not match package.json version $PACKAGE_VERSION." >&2
+            exit 1
+          fi
+          if ! grep -Fq "## [$PACKAGE_VERSION]" CHANGELOG.md; then
+            echo "CHANGELOG.md is missing release heading ## [$PACKAGE_VERSION]." >&2
+            exit 1
+          fi
+
+      - name: Verify release candidate
+        run: npm run release:check
+
+      - name: Pack exact release artifact
+        id: package
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p package-artifacts
+          npm pack --pack-destination package-artifacts --ignore-scripts
+          ARCHIVE="$(find package-artifacts -maxdepth 1 -type f -name '*.tgz' -print -quit)"
+          if [ -z "$ARCHIVE" ]; then
+            echo "npm pack did not create a package archive." >&2
+            exit 1
+          fi
+          echo "archive=$ARCHIVE" >> "$GITHUB_OUTPUT"
+
+      - name: Upload release artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: gouno-ui-${{ github.ref_name }}
+          path: ${{ steps.package.outputs.archive }}
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Configure npm token fallback
+        if: env.NPM_TOKEN != ''
+        shell: bash
+        run: npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
+
+      - name: Publish to npm
+        run: npm publish "${{ steps.package.outputs.archive }}" --access public --provenance
+
+      - name: Create GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" "${{ steps.package.outputs.archive }}" \
+            --verify-tag \
+            --title "@gouno/ui ${GITHUB_REF_NAME#v}" \
+            --generate-notes

@@ -1,10 +1,28 @@
 {
   "name": "@gouno/ui",
   "version": "0.3.0",
-  "type": "module",
   "description": "Gouno product family UI, themes and administration template",
   "license": "MIT",
-  "files": ["dist", "README.md", "CHANGELOG.md"],
+  "homepage": "https://rushairer.github.io/gouno-ui/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rushairer/gouno-ui.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rushairer/gouno-ui/issues"
+  },
+  "keywords": [
+    "react",
+    "typescript",
+    "design-system",
+    "component-library",
+    "tailwindcss",
+    "radix-ui",
+    "admin"
+  ],
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "files": ["dist", "README.md", "CHANGELOG.md", "LICENSE"],
   "exports": {
     ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
     "./core": { "types": "./dist/core/index.d.ts", "import": "./dist/core/index.js" },
@@ -16,6 +34,10 @@
     "./bootstrap.js": "./dist/bootstrap.js",
     "./fonts/*": "./dist/fonts/*"
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "sideEffects": ["**/*.css"],
   "scripts": {
     "build": "node scripts/clean-dist.mjs && tsc -p tsconfig.build.json && node scripts/assets.mjs",
@@ -24,7 +46,11 @@
     "showcase:build": "vite build --config showcase/vite.config.ts",
     "showcase:dev": "vite --config showcase/vite.config.ts",
     "pack": "npm pack",
-    "test": "vitest run --environment jsdom"
+    "test": "vitest run --environment jsdom",
+    "verify": "npm run typecheck && npm test && npm run build && npm run showcase:build",
+    "package:check": "node scripts/package-check.mjs",
+    "release:check": "npm run verify && npm run package:check",
+    "prepublishOnly": "npm run release:check"
   },
   "peerDependencies": { "react": "^19.2.0", "react-dom": "^19.2.0" },
   "dependencies": {
