@@ -1,0 +1,40 @@
+name: Dispatch 0.3.5 release once
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/dispatch-release-035-once.yml
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  dispatch:
+    runs-on: macos-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Verify release recovery contract
+        shell: bash
+        env:
+          RELEASE_SHA: 7824d33610acf67db294703bd7ee1edd40232835
+          RELEASE_TAG: v0.3.5
+        run: |
+          set -euo pipefail
+          grep -Fq 'workflow_dispatch:' .github/workflows/release.yml
+          git fetch origin --tags
+          test "$(git rev-parse "${RELEASE_TAG}^{commit}")" = "$RELEASE_SHA"
+          git show "$RELEASE_SHA:package.json" | grep -F '"version": "0.3.5"'
+          git show "$RELEASE_SHA:CHANGELOG.md" | grep -F '## [0.3.5]'
+
+      - name: Dispatch canonical npm release workflow
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run release.yml --ref main -f tag=v0.3.5
