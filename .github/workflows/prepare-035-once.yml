@@ -41,17 +41,11 @@ jobs:
           p = Path('CHANGELOG.md')
           s = p.read_text()
           marker = '## [0.3.4] - 2026-09-13'
-          entry = '''## [0.3.5] - 2026-09-13
-
-### Added
-
-- Published the canonical Gouno family product marks through `@gouno/ui/brand-icons/*` so product shells and Showcase can share the exact same SVG assets.
-
-### Fixed
-
-- Normalized native Checkbox and Radio layout to a block formatting box so embedded selection controls no longer reserve inline baseline whitespace in cards and overlays.
-
-'''
+          entry = ('## [0.3.5] - 2026-09-13\n\n'
+                   '### Added\n\n'
+                   '- Published the canonical Gouno family product marks through `@gouno/ui/brand-icons/*` so product shells and Showcase can share the exact same SVG assets.\n\n'
+                   '### Fixed\n\n'
+                   '- Normalized native Checkbox and Radio layout to a block formatting box so embedded selection controls no longer reserve inline baseline whitespace in cards and overlays.\n\n')
           if '## [0.3.5] - 2026-09-13' not in s:
               s = s.replace(marker, entry + marker, 1)
               p.write_text(s)
