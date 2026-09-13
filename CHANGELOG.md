@@ -16,6 +16,12 @@ All notable changes to this project are documented here.
 - Participating controls use English fallback consistently. Configure zhCN to retain Chinese defaults; existing explicit text remains authoritative. See [migration](docs/component-localization.md).
 - Review completion retains scope/evidence and can reopen after a defect instead of requiring every catalog entry to remain permanently at 100.
 
+## [0.3.3] - 2026-09-13
+
+### Changed
+
+- Switched the release path to npm Trusted Publishing with GitHub Actions provenance after publisher configuration was completed.
+
 ## [0.3.2] - 2026-09-13
 
 ### Fixed
