@@ -2,15 +2,15 @@ name: Publish npm release
 
 on:
   push:
-    tags:
-      - "v*.*.*"
+    branches:
+      - ops/tag-ui-0.3.5
 
 permissions:
   contents: write
   id-token: write
 
 concurrency:
-  group: npm-release-${{ github.ref }}
+  group: npm-release-0.3.5-once
   cancel-in-progress: false
 
 jobs:
@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: npm
     steps:
-      - name: Check out release tag
+      - name: Check out one-shot release branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
@@ -34,30 +34,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Verify release identity
+      - name: Verify release identity and canonical main
         shell: bash
         run: |
           set -euo pipefail
+          git fetch origin main --tags
           PACKAGE_VERSION="$(node --input-type=module -e "import { readFile } from 'node:fs/promises'; const pkg = JSON.parse(await readFile('package.json', 'utf8')); process.stdout.write(pkg.version);")"
           LOCK_VERSION="$(node --input-type=module -e "import { readFile } from 'node:fs/promises'; const lock = JSON.parse(await readFile('package-lock.json', 'utf8')); process.stdout.write(lock.packages?.['']?.version || lock.version || '');")"
-          EXPECTED_TAG="v${PACKAGE_VERSION}"
+          MAIN_VERSION="$(git show origin/main:package.json | node --input-type=module -e "let s=''; for await (const c of process.stdin) s+=c; process.stdout.write(JSON.parse(s).version);")"
 
-          if [[ "$PACKAGE_VERSION" == *-* ]]; then
-            echo "The stable release workflow does not publish prerelease versions ($PACKAGE_VERSION)." >&2
-            exit 1
-          fi
-          if [ "$GITHUB_REF_NAME" != "$EXPECTED_TAG" ]; then
-            echo "Release tag $GITHUB_REF_NAME does not match package version $PACKAGE_VERSION (expected $EXPECTED_TAG)." >&2
-            exit 1
-          fi
-          if [ "$LOCK_VERSION" != "$PACKAGE_VERSION" ]; then
-            echo "package-lock.json version $LOCK_VERSION does not match package.json version $PACKAGE_VERSION." >&2
-            exit 1
-          fi
-          if ! grep -Fq "## [$PACKAGE_VERSION]" CHANGELOG.md; then
-            echo "CHANGELOG.md is missing release heading ## [$PACKAGE_VERSION]." >&2
-            exit 1
-          fi
+          test "$PACKAGE_VERSION" = "0.3.5"
+          test "$LOCK_VERSION" = "$PACKAGE_VERSION"
+          test "$MAIN_VERSION" = "$PACKAGE_VERSION"
+          grep -Fq "## [$PACKAGE_VERSION]" CHANGELOG.md
+          git diff --quiet origin/main -- package.json package-lock.json CHANGELOG.md src assets scripts README.md LICENSE
 
       - name: Verify release candidate
         run: npm run release:check
@@ -70,16 +60,13 @@ jobs:
           mkdir -p package-artifacts
           npm pack --pack-destination package-artifacts --ignore-scripts
           ARCHIVE="$(find package-artifacts -maxdepth 1 -type f -name '*.tgz' -print -quit)"
-          if [ -z "$ARCHIVE" ]; then
-            echo "npm pack did not create a package archive." >&2
-            exit 1
-          fi
+          test -n "$ARCHIVE"
           echo "archive=$ARCHIVE" >> "$GITHUB_OUTPUT"
 
       - name: Upload release artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: gouno-ui-${{ github.ref_name }}
+          name: gouno-ui-v0.3.5
           path: ${{ steps.package.outputs.archive }}
           if-no-files-found: error
           retention-days: 90
@@ -89,12 +76,27 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish "./${{ steps.package.outputs.archive }}" --access public --provenance
 
-      - name: Create GitHub Release
+      - name: Tag canonical main and create GitHub Release
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" "${{ steps.package.outputs.archive }}" \
+          set -euo pipefail
+          git fetch origin main --tags
+          MAIN_SHA="$(git rev-parse origin/main)"
+          if git rev-parse refs/tags/v0.3.5 >/dev/null 2>&1; then
+            test "$(git rev-list -n1 v0.3.5)" = "$MAIN_SHA"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag -a v0.3.5 "$MAIN_SHA" -m "@gouno/ui 0.3.5"
+            git push origin v0.3.5
+          fi
+          gh release create v0.3.5 "${{ steps.package.outputs.archive }}" \
             --verify-tag \
-            --title "@gouno/ui ${GITHUB_REF_NAME#v}" \
+            --title "@gouno/ui 0.3.5" \
             --generate-notes
+
+      - name: Remove one-shot trigger branch
+        if: success()
+        run: git push origin --delete ops/tag-ui-0.3.5
