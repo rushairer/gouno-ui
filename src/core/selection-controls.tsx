@@ -13,7 +13,7 @@ export type CheckProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & {
 function CheckControl({ label, id, kind, className, ...props }: CheckProps & { kind: "checkbox" | "radio" }) {
   const generated = useId();
   const controlId = id || generated;
-  const control = <input {...props} id={controlId} type={kind} className={cn("size-4 shrink-0 accent-primary disabled:opacity-50", className)} />;
+  const control = <input {...props} id={controlId} type={kind} className={cn("block size-4 shrink-0 accent-primary disabled:opacity-50", className)} />;
   return label ? <label htmlFor={controlId} className="flex items-center gap-2 text-sm">{control}<span>{label}</span></label> : control;
 }
 
