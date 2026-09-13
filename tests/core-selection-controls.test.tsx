@@ -27,7 +27,9 @@ describe("Core selection controls", () => {
     const checkbox = screen.getByRole("checkbox", {
       name: "接受条款",
     }) as HTMLInputElement;
-    expect(checkbox).toHaveClass("block", "size-4", "shrink-0");
+    expect(checkbox.classList.contains("block")).toBe(true);
+    expect(checkbox.classList.contains("size-4")).toBe(true);
+    expect(checkbox.classList.contains("shrink-0")).toBe(true);
     expect(checkbox.checked).toBe(false);
     fireEvent.click(checkbox);
     expect(checkbox.checked).toBe(true);
