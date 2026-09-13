@@ -16,6 +16,15 @@ All notable changes to this project are documented here.
 - Participating controls use English fallback consistently. Configure zhCN to retain Chinese defaults; existing explicit text remains authoritative. See [migration](docs/component-localization.md).
 - Review completion retains scope/evidence and can reopen after a defect instead of requiring every catalog entry to remain permanently at 100.
 
+## [0.3.1] - 2026-09-13
+
+### Added
+
+- Added standard public npm distribution metadata for `@gouno/ui`, including immutable registry release metadata and the MIT license.
+- Added package-surface validation through `package:check` and `release:check`, with CI release gates covering the published entry points and archive contents.
+- Added tag-driven npm publishing with npm provenance / Trusted Publishing support and GitHub Release artifact creation.
+- Added release documentation describing immutable versions, exact release identity, npm authentication and consumer upgrades.
+
 
 ## [0.3.0] - 2026-09-12
 
