@@ -35,6 +35,7 @@ const expectedExports = [
   "./base.css",
   "./bootstrap.js",
   "./fonts/*",
+  "./brand-icons/*",
 ];
 for (const key of expectedExports) {
   if (!(key in (pkg.exports ?? {}))) fail(`missing public export ${key}`);
@@ -59,6 +60,10 @@ const requiredBuiltFiles = [
   "dist/tokens.css",
   "dist/base.css",
   "dist/bootstrap.js",
+  "dist/brand-icons/gouno.svg",
+  "dist/brand-icons/gouno-ui.svg",
+  "dist/brand-icons/gouno-blog.svg",
+  "dist/brand-icons/gosso-admin.svg",
 ];
 for (const file of requiredBuiltFiles) {
   try {
