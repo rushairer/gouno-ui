@@ -1,8 +1,9 @@
 import { lazy, Suspense } from "react";
-import { Card, Heading, Text } from "../../src/core";
+import { Card, Heading, Spinner, Text } from "../../src/core";
 import type { ShowcaseWorkspace } from "../catalog";
 import { GounoComponentDemo } from "../demos/gouno/components";
 import { GounoPageHeaderDemo } from "../demos/gouno/page-header";
+import { GounoPageSkeletonDemo } from "../demos/gouno/page-skeleton";
 import { GossoOverviewDemo } from "../demos/products/gosso-admin/overview";
 import { ThemeSystemDemo } from "../demos/theme/system";
 
@@ -93,7 +94,20 @@ const GossoResetPasswordDemo = lazy(() => import("../demos/products/gosso-admin/
 const GossoCallbackDemo = lazy(() => import("../demos/products/gosso-admin/auth/callback").then((module) => ({ default: module.GossoCallbackDemo })));
 const GossoNotFoundDemo = lazy(() => import("../demos/products/gosso-admin/auth/not-found").then((module) => ({ default: module.GossoNotFoundDemo })));
 
-const loading = <div className="p-8 text-sm text-muted-foreground">Loading component documentation…</div>;
+function ShowcaseRouteFallback() {
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className="flex min-h-64 items-center justify-center gap-2 p-8"
+    >
+      <Spinner className="size-5 text-primary" />
+      <Text size="sm" tone="muted">正在加载页面…</Text>
+    </div>
+  );
+}
+
+const loading = <ShowcaseRouteFallback />;
 
 const workspaceNames: Record<ShowcaseWorkspace, string> = {
   "gouno-ui": "Gouno UI",
@@ -134,6 +148,8 @@ export function ShowcasePage({ page, workspace }: { page: string; workspace: Sho
       return <GounoComponentDemo component="page-container" />;
     case "gouno-page-header":
       return <GounoPageHeaderDemo />;
+    case "gouno-page-skeleton":
+      return <GounoPageSkeletonDemo />;
     case "blog-home":
       return <Suspense fallback={loading}><BlogHomeDemo /></Suspense>;
     case "blog-articles":
