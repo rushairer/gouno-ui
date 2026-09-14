@@ -81,6 +81,7 @@ const completedComponents = new Set([
   "gouno-app-shell",
   "gouno-page-container",
   "gouno-page-header",
+  "gouno-page-skeleton",
 ]);
 
 export interface ComponentReview {
@@ -108,6 +109,12 @@ for (const id of ["core-config-provider", "core-input", "core-select", "core-dat
     baseline: "PD-074 / 2026-09-12",
   };
 }
+componentReviews["gouno-page-skeleton"] = {
+  status: "reviewed",
+  scope: "PD-076: initial-loading page data-region skeleton layouts validated across completed Gosso Admin and Blog corpora.",
+  evidence: ["docs/page-skeleton.md", "tests/gouno-page-skeleton.test.tsx"],
+  baseline: "PD-076 / 2026-09-14",
+};
 
 export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
   return review?.status === "reviewed" ? 100 : Math.min(fallback, 99);

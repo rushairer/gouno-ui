@@ -56,7 +56,12 @@ describe("audited batch completion", () => {
   });
 
   it("reports admitted Gouno structure complete only after family API and behavior review", () => {
-    for (const id of ["gouno-app-shell", "gouno-page-container", "gouno-page-header"]) {
+    for (const id of [
+      "gouno-app-shell",
+      "gouno-page-container",
+      "gouno-page-header",
+      "gouno-page-skeleton",
+    ]) {
       expect(componentProgress(id, 0), id).toBe(100);
     }
   });
