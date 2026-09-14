@@ -18,28 +18,36 @@ function renderScenario(section: SystemManagementSection, scenario: string) {
 
 describe("Gosso Admin System Management migration fixture", () => {
   it("promotes durable management domains out of route-family Tabs", () => {
-    const { rerender } = render(<GossoSystemManagementDemo section="clients" />);
+    const clients = render(<GossoSystemManagementDemo section="clients" />);
     expect(screen.getByRole("heading", { level: 1, name: "OAuth2 客户端" })).toBeTruthy();
     expect(screen.queryByRole("tab")).toBeNull();
     openFixture();
     expect(screen.getByText("/system-management/clients")).toBeTruthy();
     expect(screen.getByText("注册与维护 OAuth 2.0 / OpenID Connect 客户端、回调地址、授权类型和访问范围。")).toBeTruthy();
+    clients.unmount();
 
-    rerender(<GossoSystemManagementDemo section="users" />);
+    const users = render(<GossoSystemManagementDemo section="users" />);
     expect(screen.getByRole("heading", { level: 1, name: "用户管理" })).toBeTruthy();
+    openFixture();
     expect(screen.getByText("/system-management/users")).toBeTruthy();
     expect(screen.getAllByText("正常").length).toBeGreaterThan(0);
+    users.unmount();
 
-    rerender(<GossoSystemManagementDemo section="audit-logs" />);
+    const audit = render(<GossoSystemManagementDemo section="audit-logs" />);
     expect(screen.getByRole("heading", { level: 1, name: "审计日志" })).toBeTruthy();
+    openFixture();
     expect(screen.getByText("/system-management/audit-logs")).toBeTruthy();
+    audit.unmount();
 
-    rerender(<GossoSystemManagementDemo section="site-settings" />);
+    const settings = render(<GossoSystemManagementDemo section="site-settings" />);
     expect(screen.getByRole("heading", { level: 1, name: "站点设置" })).toBeTruthy();
+    openFixture();
     expect(screen.getByText("/system-management/site-settings")).toBeTruthy();
+    settings.unmount();
 
-    rerender(<GossoSystemManagementDemo section="system" />);
+    render(<GossoSystemManagementDemo section="system" />);
     expect(screen.getByRole("heading", { level: 1, name: "系统状态" })).toBeTruthy();
+    openFixture();
     expect(screen.getByText("/system-management/system")).toBeTruthy();
     expect(screen.getByRole("heading", { level: 2, name: "基础设施健康" })).toBeTruthy();
     expect(screen.getByRole("heading", { level: 2, name: "OpenID Connect 配置" })).toBeTruthy();
@@ -51,24 +59,31 @@ describe("Gosso Admin System Management migration fixture", () => {
     let view = renderScenario("clients", "加载中");
     expect(screen.getByRole("status", { name: "OAuth2 客户端加载中" })).toBeTruthy();
     view.unmount();
-
     view = renderScenario("clients", "空状态");
     expect(screen.getByText("还没有 OAuth2 客户端")).toBeTruthy();
     view.unmount();
-
     renderScenario("clients", "错误");
     expect(screen.getByText("OAuth2 客户端加载失败")).toBeTruthy();
+  });
+
+  it("preserves user-directory loading, empty and error states", () => {
+    let view = renderScenario("users", "加载中");
+    expect(screen.getByRole("status", { name: "用户目录加载中" })).toBeTruthy();
+    view.unmount();
+    view = renderScenario("users", "空状态");
+    expect(screen.getByText("还没有用户")).toBeTruthy();
+    view.unmount();
+    renderScenario("users", "错误");
+    expect(screen.getByText("用户目录加载失败")).toBeTruthy();
   });
 
   it("preserves audit log loading, empty and error states", () => {
     let view = renderScenario("audit-logs", "加载中");
     expect(screen.getByRole("status", { name: "审计日志加载中" })).toBeTruthy();
     view.unmount();
-
     view = renderScenario("audit-logs", "空状态");
     expect(screen.getByText("暂无审计事件")).toBeTruthy();
     view.unmount();
-
     renderScenario("audit-logs", "错误");
     expect(screen.getByText("审计日志加载失败")).toBeTruthy();
   });
@@ -86,19 +101,20 @@ describe("Gosso Admin System Management migration fixture", () => {
     expect(screen.getByRole("status", { name: "站点设置加载中" })).toBeTruthy();
     expect(screen.queryByRole("button", { name: "保存设置" })).toBeNull();
     view.unmount();
-
     renderScenario("site-settings", "加载失败");
     expect(screen.getByText("站点设置加载失败")).toBeTruthy();
     expect(screen.queryByRole("button", { name: "保存设置" })).toBeNull();
   });
 
   it("moves system health scenarios into FixtureDock instead of product UI", () => {
-    const view = renderScenario("system", "部分异常");
+    let view = renderScenario("system", "检查中");
+    expect(screen.getByRole("status", { name: "系统状态检查中" })).toBeTruthy();
+    view.unmount();
+    view = renderScenario("system", "部分异常");
     expect(screen.getByText("Redis 探针异常")).toBeTruthy();
     expect(screen.getByText("异常")).toBeTruthy();
     expect(screen.queryByRole("button", { name: "切换故障 Fixture" })).toBeNull();
     view.unmount();
-
     renderScenario("system", "不可用");
     expect(screen.getByText("身份服务不可用")).toBeTruthy();
     expect(screen.getByText("503 Service Unavailable")).toBeTruthy();
