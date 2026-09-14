@@ -36,9 +36,9 @@ describe("PageSkeleton", () => {
       />,
     );
 
-    expect(screen.getByRole("columnheader", { name: "文章" })).toBeInTheDocument();
-    expect(screen.getByRole("columnheader", { name: "状态" })).toBeInTheDocument();
-    expect(screen.getByRole("columnheader", { name: "操作" })).toBeInTheDocument();
+    expect(screen.getByRole("columnheader", { name: "文章" })).toBeTruthy();
+    expect(screen.getByRole("columnheader", { name: "状态" })).toBeTruthy();
+    expect(screen.getByRole("columnheader", { name: "操作" })).toBeTruthy();
     expect(container.querySelector("tbody")?.getAttribute("aria-hidden")).toBe("true");
   });
 
