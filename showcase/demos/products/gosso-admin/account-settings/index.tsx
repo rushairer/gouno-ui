@@ -55,18 +55,16 @@ function LoadingAccountPanel({ label }: { label: string }) {
   );
 }
 
-function renderReadyPanel(tab: AccountSettingsTab) {
+function renderReadyPanel(tab: Exclude<AccountSettingsTab, "mfa">) {
   switch (tab) {
     case "profile": return <ProfilePanel />;
     case "password": return <PasswordPanel />;
-    case "mfa": return <MfaPanel />;
     case "passkeys": return <PasskeysPanel />;
     case "sessions": return <SessionsPanel />;
   }
 }
 
-function renderFixturePanel(tab: AccountSettingsTab, scenario: AccountFixtureScenario) {
-  if (tab === "mfa") return <MfaPanel />;
+function AccountFixturePanel({ tab, scenario }: { tab: Exclude<AccountSettingsTab, "mfa">; scenario: AccountFixtureScenario }) {
   const label = accountTabDefinitions.find((item) => item.key === tab)?.label ?? "账户设置";
 
   if (scenario === "loading") return <LoadingAccountPanel label={label} />;
@@ -99,10 +97,38 @@ export function GossoAccountSettingsDemo() {
       ? collectionOptions
       : commonReadOptions;
 
-  const items = accountTabDefinitions.map((item) => ({
-    ...item,
-    children: renderFixturePanel(item.key, item.key === activeTab ? scenario : "ready"),
-  }));
+  const items = [
+    {
+      key: "profile",
+      label: "个人资料",
+      icon: <User aria-hidden="true" className="size-4" />,
+      children: <AccountFixturePanel tab="profile" scenario={activeTab === "profile" ? scenario : "ready"} />,
+    },
+    {
+      key: "password",
+      label: "修改密码",
+      icon: <Lock aria-hidden="true" className="size-4" />,
+      children: <AccountFixturePanel tab="password" scenario={activeTab === "password" ? scenario : "ready"} />,
+    },
+    {
+      key: "mfa",
+      label: "多因素认证 (MFA)",
+      icon: <Shield aria-hidden="true" className="size-4" />,
+      children: <MfaPanel />,
+    },
+    {
+      key: "passkeys",
+      label: "通行密钥 (FIDO2)",
+      icon: <Key aria-hidden="true" className="size-4" />,
+      children: <AccountFixturePanel tab="passkeys" scenario={activeTab === "passkeys" ? scenario : "ready"} />,
+    },
+    {
+      key: "sessions",
+      label: "活跃会话",
+      icon: <Laptop aria-hidden="true" className="size-4" />,
+      children: <AccountFixturePanel tab="sessions" scenario={activeTab === "sessions" ? scenario : "ready"} />,
+    },
+  ] as const;
 
   return (
     <div className="flex flex-col gap-6">
