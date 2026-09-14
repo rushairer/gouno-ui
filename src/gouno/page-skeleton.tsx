@@ -173,7 +173,7 @@ function FormSkeleton({
 
   return (
     <LoadingRegion {...props} layout="form" label={ariaLabel} className={className}>
-      <Card padding="none" aria-hidden="true">
+      <Card padding="none" className="gap-0" aria-hidden="true">
         <div className="grid gap-5 p-6 sm:grid-cols-2">
           {Array.from({ length: fieldCount }, (_, index) => (
             <div key={index} className="flex min-w-0 flex-col gap-2">
