@@ -111,9 +111,11 @@ describe("Gosso Admin System Management migration fixture", () => {
     expect(screen.queryByRole("button", { name: "保存设置" })).toBeNull();
   });
 
-  it("moves system health scenarios into FixtureDock instead of product UI", () => {
+  it("dogfoods dashboard PageSkeleton for the unresolved system-status region", () => {
     let view = renderScenario("system", "检查中");
-    expect(screen.getByRole("status", { name: "系统状态检查中" })).toBeTruthy();
+    const loading = screen.getByRole("status", { name: "系统状态检查中" });
+    expect(loading.getAttribute("data-slot")).toBe("page-skeleton");
+    expect(loading.getAttribute("data-layout")).toBe("dashboard");
     view.unmount();
     view = renderScenario("system", "部分异常");
     expect(screen.getByText("Redis 探针异常")).toBeTruthy();
