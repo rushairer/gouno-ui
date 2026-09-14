@@ -73,9 +73,11 @@ Representative product fixtures validate the three layouts without teaching `Pag
 
 - **collection — Gosso Admin Audit Logs:** generic collection geometry.
 - **form — Gosso Admin Account Settings / Profile:** generic settings-form geometry.
-- **dashboard — Gosso Admin System Status:** generic dashboard geometry.
+- **dashboard — Gosso Admin System Status and Blog Admin Dashboard:** generic statistic-card and content-block geometry.
 
-Blog Admin collection/dashboard fixtures and Showcase route fallbacks should use the same presets where the visual family is clear. Specialized loaders remain local when the preset would be misleading.
+Showcase route fallbacks use the same presets whenever the destination page family is clear. Product fixtures should also reuse the preset when their unresolved state is genuinely one of these three common shapes.
+
+Local loaders remain correct for specialized anatomy such as editors, article/reading surfaces, media workspaces, AI workspaces, authentication flows, notification feeds, moderation queues, tag-card clouds and form-plus-live-preview settings. Adoption count is not a goal; semantic fit is.
 
 ## Scope boundary
 
