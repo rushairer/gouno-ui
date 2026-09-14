@@ -1,16 +1,27 @@
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { PageHeader } from "../src/gouno";
-import { GossoSystemManagementDemo } from "../showcase/demos/products/gosso-admin/system-management";
+import { GossoSystemManagementDemo, type SystemManagementSection } from "../showcase/demos/products/gosso-admin/system-management";
 
 afterEach(cleanup);
+
+function openFixture() {
+  fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
+}
+
+function renderScenario(section: SystemManagementSection, scenario: string) {
+  const view = render(<GossoSystemManagementDemo section={section} />);
+  openFixture();
+  fireEvent.click(screen.getByRole("radio", { name: scenario }));
+  return view;
+}
 
 describe("Gosso Admin System Management migration fixture", () => {
   it("promotes durable management domains out of route-family Tabs", () => {
     const { rerender } = render(<GossoSystemManagementDemo section="clients" />);
     expect(screen.getByRole("heading", { level: 1, name: "OAuth2 客户端" })).toBeTruthy();
     expect(screen.queryByRole("tab")).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
+    openFixture();
     expect(screen.getByText("/system-management/clients")).toBeTruthy();
     expect(screen.getByText("注册与维护 OAuth 2.0 / OpenID Connect 客户端、回调地址、授权类型和访问范围。")).toBeTruthy();
 
@@ -33,14 +44,64 @@ describe("Gosso Admin System Management migration fixture", () => {
     expect(screen.getByRole("heading", { level: 2, name: "基础设施健康" })).toBeTruthy();
     expect(screen.getByRole("heading", { level: 2, name: "OpenID Connect 配置" })).toBeTruthy();
     expect(screen.getAllByText("正常").length).toBeGreaterThan(0);
+    expect(screen.queryByRole("button", { name: "切换故障 Fixture" })).toBeNull();
   });
 
-  it("uses the Core Empty state when audit filters have no results", () => {
+  it("preserves OAuth client loading, empty and error states through Showcase-only controls", () => {
+    let view = renderScenario("clients", "加载中");
+    expect(screen.getByRole("status", { name: "OAuth2 客户端加载中" })).toBeTruthy();
+    view.unmount();
+
+    view = renderScenario("clients", "空状态");
+    expect(screen.getByText("还没有 OAuth2 客户端")).toBeTruthy();
+    view.unmount();
+
+    renderScenario("clients", "错误");
+    expect(screen.getByText("OAuth2 客户端加载失败")).toBeTruthy();
+  });
+
+  it("preserves audit log loading, empty and error states", () => {
+    let view = renderScenario("audit-logs", "加载中");
+    expect(screen.getByRole("status", { name: "审计日志加载中" })).toBeTruthy();
+    view.unmount();
+
+    view = renderScenario("audit-logs", "空状态");
+    expect(screen.getByText("暂无审计事件")).toBeTruthy();
+    view.unmount();
+
+    renderScenario("audit-logs", "错误");
+    expect(screen.getByText("审计日志加载失败")).toBeTruthy();
+  });
+
+  it("keeps filter-empty distinct from fixture-empty audit state", () => {
     render(<GossoSystemManagementDemo section="audit-logs" />);
     fireEvent.change(screen.getByLabelText("事件类型"), { target: { value: "no.such.event" } });
     fireEvent.click(screen.getByRole("button", { name: "查询" }));
     expect(screen.getByText("没有匹配的审计事件")).toBeTruthy();
     expect(screen.getByRole("button", { name: "清除筛选" })).toBeTruthy();
+  });
+
+  it("keeps site-settings loading and read failure outside the editable surface", () => {
+    let view = renderScenario("site-settings", "加载中");
+    expect(screen.getByRole("status", { name: "站点设置加载中" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "保存设置" })).toBeNull();
+    view.unmount();
+
+    renderScenario("site-settings", "加载失败");
+    expect(screen.getByText("站点设置加载失败")).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "保存设置" })).toBeNull();
+  });
+
+  it("moves system health scenarios into FixtureDock instead of product UI", () => {
+    const view = renderScenario("system", "部分异常");
+    expect(screen.getByText("Redis 探针异常")).toBeTruthy();
+    expect(screen.getByText("异常")).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "切换故障 Fixture" })).toBeNull();
+    view.unmount();
+
+    renderScenario("system", "不可用");
+    expect(screen.getByText("身份服务不可用")).toBeTruthy();
+    expect(screen.getByText("503 Service Unavailable")).toBeTruthy();
   });
 
   it("keeps OAuth client editing as page-local Core composition", () => {

@@ -3,11 +3,18 @@ import { Alert, IconButton, Modal, Text } from "../../../../../src/core";
 import { FixtureDock } from "../../../../components/fixture-dock";
 import { TabPanelLead } from "../../../../components/tab-panel-lead";
 
-export function FixtureBanner({ route }: { route: string }) {
+type FixtureBannerProps = {
+  route: string;
+  controls?: ReactNode;
+  note?: string;
+};
+
+export function FixtureBanner({ route, controls, note }: FixtureBannerProps) {
   return (
     <FixtureDock
       route={route}
-      note="Showcase 使用本地 fixture 表达真实交互状态；该工具层不会进入真实 GOSSO 页面。"
+      note={note ?? "Showcase 使用本地 fixture 表达真实交互状态；该工具层不会进入真实 GOSSO 页面。"}
+      controls={controls}
     />
   );
 }

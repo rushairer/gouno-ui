@@ -1,6 +1,7 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { Search, X } from "lucide-react";
 import {
+  Alert,
   Button,
   Card,
   Empty,
@@ -8,6 +9,8 @@ import {
   Input,
   Modal,
   Pagination,
+  Segmented,
+  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -15,9 +18,11 @@ import {
   TableHeader,
   TableRow,
   Tag,
+  Text,
 } from "../../../../../src/core";
-import { ManagementPanelLead } from "./shared";
+import { FixtureBanner, ManagementPanelLead } from "./shared";
 
+type FixtureScenario = "data" | "loading" | "empty" | "error";
 type AuditFixture = {
   id: string;
   time: string;
@@ -37,8 +42,30 @@ const logs: AuditFixture[] = [
   { id: "evt-1003", time: "2026-09-07 09:18:25", action: "login.success", actor: "editor", accountId: "usr-editor", ip: "192.0.2.22", details: "Password + TOTP authentication succeeded." },
 ];
 const pageSize = 4;
+const scenarioOptions = [
+  { value: "data", label: "有数据" },
+  { value: "loading", label: "加载中" },
+  { value: "empty", label: "空状态" },
+  { value: "error", label: "错误" },
+] as const;
+
+function LoadingAuditLogs() {
+  return (
+    <Card padding="base" role="status" aria-label="审计日志加载中">
+      <Text size="sm" tone="muted">正在加载审计事件…</Text>
+      <div className="mt-4 space-y-4">
+        {Array.from({ length: 4 }, (_, index) => (
+          <div key={index} className="grid gap-3 border-t pt-4 first:border-t-0 first:pt-0 md:grid-cols-[9rem_minmax(0,1fr)_8rem_8rem]">
+            <Skeleton className="h-4 w-28" /><Skeleton className="h-5 w-40" /><Skeleton className="h-4 w-20" /><Skeleton className="h-4 w-20" />
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
 
 export function AuditLogsPanel() {
+  const [scenario, setScenario] = useState<FixtureScenario>("data");
   const [eventType, setEventType] = useState("");
   const [accountId, setAccountId] = useState("");
   const [appliedEvent, setAppliedEvent] = useState("");
@@ -51,7 +78,7 @@ export function AuditLogsPanel() {
     const accountMatch = !appliedAccount || log.accountId.toLowerCase().includes(appliedAccount.toLowerCase());
     return eventMatch && accountMatch;
   }), [appliedAccount, appliedEvent]);
-  const visible = filtered.slice((page - 1) * pageSize, page * pageSize);
+  const visible = scenario === "empty" ? [] : filtered.slice((page - 1) * pageSize, page * pageSize);
 
   const search = (event: FormEvent) => {
     event.preventDefault();
@@ -66,9 +93,19 @@ export function AuditLogsPanel() {
     setAppliedAccount("");
     setPage(1);
   };
+  const changeScenario = (value: FixtureScenario) => {
+    setScenario(value);
+    setSelected(null);
+    setPage(1);
+  };
 
   return (
     <div className="flex flex-col gap-5">
+      <FixtureBanner
+        route="/system-management/audit-logs"
+        note="审计日志 Fixture 覆盖数据、加载、空态与读取失败；筛选无结果仍由真实页面筛选交互触发。"
+        controls={<Segmented<FixtureScenario> aria-label="审计日志 Fixture 状态" options={scenarioOptions} value={scenario} onChange={changeScenario} block />}
+      />
       <ManagementPanelLead description="按事件类型和目标账户查询身份平台安全审计事件，并查看事件上下文。" />
 
       <Card padding="sm">
@@ -86,7 +123,11 @@ export function AuditLogsPanel() {
         </form>
       </Card>
 
-      {visible.length ? (
+      {scenario === "error" ? (
+        <Alert type="error" showIcon title="审计日志加载失败" description="无法读取安全审计事件。真实产品会保留筛选条件并允许重新请求。" action={<Button size="small" onClick={() => changeScenario("data")}>重新载入</Button>} />
+      ) : scenario === "loading" ? (
+        <LoadingAuditLogs />
+      ) : visible.length ? (
         <>
           <Table bordered density="compact">
             <TableHeader><TableRow><TableHead>时间</TableHead><TableHead>事件</TableHead><TableHead>Actor</TableHead><TableHead>目标账户</TableHead><TableHead className="text-right">详情</TableHead></TableRow></TableHeader>
@@ -106,9 +147,9 @@ export function AuditLogsPanel() {
         </>
       ) : (
         <Empty
-          title="没有匹配的审计事件"
-          description="调整事件类型或目标账户筛选条件后重试。"
-          action={<Button size="small" icon={<X />} onClick={clear}>清除筛选</Button>}
+          title={scenario === "empty" ? "暂无审计事件" : "没有匹配的审计事件"}
+          description={scenario === "empty" ? "新的身份与安全操作会在这里形成审计记录。" : "调整事件类型或目标账户筛选条件后重试。"}
+          action={scenario === "empty" ? undefined : <Button size="small" icon={<X />} onClick={clear}>清除筛选</Button>}
         />
       )}
 
