@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Alert, Button, Segmented, Spinner, Text } from "../../../../../src/core";
 import { AuthSurface } from "./shared";
 
-type CallbackState = "loading" | "error";
+type CallbackState = "loading" | "success" | "error";
 const states = [
   { label: "处理中", value: "loading" },
+  { label: "成功", value: "success" },
   { label: "失败", value: "error" },
 ] as const;
 
@@ -14,21 +15,19 @@ export function GossoCallbackDemo() {
   return (
     <AuthSurface
       route="/callback?code=fixture&state=fixture"
-      title={state === "loading" ? "正在完成身份验证" : "身份验证失败"}
-      description={state === "loading" ? "正在交换授权码并恢复目标会话，请勿关闭页面。" : "授权回调参数无效或授权码交换失败。"}
-      fixtureControl={(
-        <Segmented<CallbackState>
-          value={state}
-          options={states}
-          onChange={setState}
-          aria-label="Callback 场景 Fixture"
-        />
-      )}
+      title={state === "loading" ? "正在完成身份验证" : state === "success" ? "身份验证完成" : "身份验证失败"}
+      description={state === "loading" ? "正在交换授权码并恢复目标会话，请勿关闭页面。" : state === "success" ? "授权码交换成功，目标会话已经恢复。" : "授权回调参数无效或授权码交换失败。"}
+      fixtureControl={<Segmented<CallbackState> value={state} options={states} onChange={setState} aria-label="Callback 场景 Fixture" />}
     >
       {state === "loading" ? (
         <div role="status" className="flex flex-col items-center gap-4 py-4">
           <Spinner className="size-6" />
           <Text size="sm" tone="muted">正在验证 OAuth 2.0 Authorization Code + PKCE 回调…</Text>
+        </div>
+      ) : state === "success" ? (
+        <div className="flex flex-col gap-4">
+          <Alert type="success" showIcon title="授权回调已完成" description="真实产品会安全恢复原始目标地址，而不是在浏览器中暴露令牌。" />
+          <Button variant="solid" color="primary" className="w-full">继续访问目标应用</Button>
         </div>
       ) : (
         <div className="flex flex-col gap-4">
