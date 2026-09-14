@@ -12,7 +12,6 @@ import {
   Input,
   Modal,
   Segmented,
-  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -22,6 +21,7 @@ import {
   Tag,
   Text,
 } from "../../../../../src/core";
+import { PageSkeleton } from "../../../../../src/gouno";
 import { ConfirmAction, FixtureBanner, ManagementPanelLead, StatusNotice } from "./shared";
 
 type FixtureScenario = "data" | "loading" | "empty" | "error";
@@ -49,23 +49,6 @@ const scenarioOptions = [
 ] as const;
 const grantOptions = ["authorization_code", "client_credentials", "refresh_token", "device_code"] as const;
 const scopeOptions = ["openid", "profile", "email", "admin"] as const;
-
-function LoadingClients() {
-  return (
-    <Card padding="base" role="status" aria-label="OAuth2 客户端加载中">
-      <div className="flex flex-col gap-4">
-        <Text size="sm" tone="muted">正在加载 OAuth2 客户端…</Text>
-        {Array.from({ length: 3 }, (_, index) => (
-          <div key={index} className="grid gap-3 border-t pt-4 first:border-t-0 first:pt-0 md:grid-cols-[minmax(0,1fr)_7rem_minmax(0,1.4fr)]">
-            <div className="space-y-2"><Skeleton className="h-4 w-40" /><Skeleton className="h-3 w-28" /></div>
-            <Skeleton className="h-6 w-20" />
-            <Skeleton className="h-8 w-full" />
-          </div>
-        ))}
-      </div>
-    </Card>
-  );
-}
 
 export function ClientsPanel() {
   const [clients, setClients] = useState<ClientFixture[]>(initialClients);
@@ -139,7 +122,7 @@ export function ClientsPanel() {
       {scenario === "error" ? (
         <Alert type="error" showIcon title="OAuth2 客户端加载失败" description="无法读取客户端目录。真实产品会保留当前页面并允许重新请求。" action={<Button size="small" onClick={() => changeScenario("data")}>重新载入</Button>} />
       ) : scenario === "loading" ? (
-        <LoadingClients />
+        <PageSkeleton layout="collection" aria-label="OAuth2 客户端加载中" />
       ) : scenario === "empty" ? (
         <Card padding="base"><Empty title="还没有 OAuth2 客户端" description="注册第一个客户端以接入授权流程。" action={<Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={() => openEditor()}>注册客户端</Button>} /></Card>
       ) : (

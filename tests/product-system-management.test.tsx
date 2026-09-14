@@ -57,7 +57,9 @@ describe("Gosso Admin System Management migration fixture", () => {
 
   it("preserves OAuth client loading, empty and error states through Showcase-only controls", () => {
     let view = renderScenario("clients", "加载中");
-    expect(screen.getByRole("status", { name: "OAuth2 客户端加载中" })).toBeTruthy();
+    const loading = screen.getByRole("status", { name: "OAuth2 客户端加载中" });
+    expect(loading.getAttribute("data-slot")).toBe("page-skeleton");
+    expect(loading.getAttribute("data-layout")).toBe("collection");
     view.unmount();
     view = renderScenario("clients", "空状态");
     expect(screen.getByText("还没有 OAuth2 客户端")).toBeTruthy();
@@ -68,7 +70,9 @@ describe("Gosso Admin System Management migration fixture", () => {
 
   it("preserves user-directory loading, empty and error states", () => {
     let view = renderScenario("users", "加载中");
-    expect(screen.getByRole("status", { name: "用户目录加载中" })).toBeTruthy();
+    const loading = screen.getByRole("status", { name: "用户目录加载中" });
+    expect(loading.getAttribute("data-slot")).toBe("page-skeleton");
+    expect(loading.getAttribute("data-layout")).toBe("collection");
     view.unmount();
     view = renderScenario("users", "空状态");
     expect(screen.getByText("还没有用户")).toBeTruthy();

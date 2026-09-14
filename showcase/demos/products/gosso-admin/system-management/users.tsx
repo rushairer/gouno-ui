@@ -13,7 +13,6 @@ import {
   Modal,
   Pagination,
   Segmented,
-  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -23,6 +22,7 @@ import {
   Tag,
   Text,
 } from "../../../../../src/core";
+import { PageSkeleton } from "../../../../../src/gouno";
 import { ConfirmAction, FixtureBanner, ManagementPanelLead, StatusNotice } from "./shared";
 
 type FixtureScenario = "data" | "loading" | "empty" | "error";
@@ -53,23 +53,6 @@ const scenarioOptions = [
 ] as const;
 const assignableRoles = ["admin", "auditor", "editor", "user"] as const;
 const pageSize = 3;
-
-function LoadingUsers() {
-  return (
-    <Card padding="base" role="status" aria-label="用户目录加载中">
-      <Text size="sm" tone="muted">正在加载用户目录…</Text>
-      <div className="mt-4 space-y-4">
-        {Array.from({ length: 3 }, (_, index) => (
-          <div key={index} className="grid gap-3 border-t pt-4 first:border-t-0 first:pt-0 md:grid-cols-[minmax(0,1fr)_7rem_12rem]">
-            <div className="space-y-2"><Skeleton className="h-4 w-36" /><Skeleton className="h-3 w-48" /></div>
-            <Skeleton className="h-6 w-16" />
-            <Skeleton className="h-6 w-32" />
-          </div>
-        ))}
-      </div>
-    </Card>
-  );
-}
 
 export function UsersPanel() {
   const [users, setUsers] = useState<UserFixture[]>(initialUsers);
@@ -158,7 +141,7 @@ export function UsersPanel() {
       {scenario === "error" ? (
         <Alert type="error" showIcon title="用户目录加载失败" description="无法读取身份平台账户。真实产品会保留页面上下文并允许重新请求。" action={<Button size="small" onClick={() => changeScenario("data")}>重新载入</Button>} />
       ) : scenario === "loading" ? (
-        <LoadingUsers />
+        <PageSkeleton layout="collection" aria-label="用户目录加载中" />
       ) : visibleUsers.length === 0 ? (
         <Card padding="base"><Empty title="还没有用户" description="创建第一个本地身份账户，或等待外部身份同步。" action={<Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={() => setCreateOpen(true)}>添加用户</Button>} /></Card>
       ) : (
