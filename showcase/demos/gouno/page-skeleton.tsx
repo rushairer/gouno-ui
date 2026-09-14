@@ -23,8 +23,8 @@ export const pageSkeletonApi: ApiRow[] = [
   },
   {
     name: "columns",
-    type: "number",
-    description: "collection 布局的桌面占位列数，默认 5。",
+    type: "number | readonly PageSkeletonColumn[]",
+    description: "collection 的列数，或请求前已知的稳定表头与占位几何。只描述呈现，不承载排序、筛选、选择或数据 schema。",
   },
   {
     name: "pagination",
@@ -72,7 +72,7 @@ export function GounoPageSkeletonDemo() {
         <Text tone="muted" className="max-w-3xl leading-relaxed">
           Gouno 产品家族的页面数据区初始加载呈现策略。它只表达 collection、form、dashboard
           三类已经跨真实产品收敛的结构，不拥有请求生命周期、错误/空状态、路由或业务数据。
-          稳定的 PageHeader、导航和已经可用的数据应继续保留。
+          稳定的 PageHeader、导航、集合表头和已经可用的数据应继续保留。
         </Text>
       </header>
 
