@@ -118,8 +118,9 @@ describe("Blog Admin Pages product migration fixture", () => {
     };
 
     renderScenario("加载中");
-    expect(screen.getByRole("status")).toBeTruthy();
-    expect(screen.getByText("正在加载单页…")).toBeTruthy();
+    const loading = screen.getByRole("status", { name: "单页加载中" });
+    expect(loading.getAttribute("data-slot")).toBe("page-skeleton");
+    expect(loading.getAttribute("data-layout")).toBe("collection");
     cleanup();
 
     renderScenario("空状态");

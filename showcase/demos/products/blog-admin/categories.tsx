@@ -13,7 +13,6 @@ import {
   InputNumber,
   Modal,
   Segmented,
-  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -23,7 +22,7 @@ import {
   Text,
   Textarea,
 } from "../../../../src/core";
-import { PageHeader } from "../../../../src/gouno";
+import { PageHeader, PageSkeleton } from "../../../../src/gouno";
 import { BulkActionBar } from "../../../../src/patterns";
 import { FixtureDock } from "../../../components/fixture-dock";
 import { BlogAdminWorkflowLauncherFixture } from "./workflow-launcher-fixture";
@@ -79,24 +78,6 @@ function slugify(value: string) {
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
-}
-
-function LoadingCategories() {
-  return (
-    <Card padding="base" aria-label="分类加载中">
-      <div className="flex flex-col gap-4" role="status" aria-live="polite">
-        <Text size="sm" tone="muted">正在加载分类…</Text>
-        {Array.from({ length: 4 }, (_, index) => (
-          <div key={index} className="grid gap-3 border-t pt-4 first:border-t-0 first:pt-0 md:grid-cols-[4rem_minmax(0,1fr)_10rem_6rem]">
-            <Skeleton className="h-4 w-10" />
-            <div className="space-y-2"><Skeleton className="h-4 w-40" /><Skeleton className="h-3 w-2/3" /></div>
-            <Skeleton className="h-6 w-28" />
-            <Skeleton className="h-4 w-12" />
-          </div>
-        ))}
-      </div>
-    </Card>
-  );
 }
 
 function CategoryActions({
@@ -256,7 +237,7 @@ export function BlogAdminCategoriesDemo() {
       {scenario === "error" ? (
         <Alert type="error" showIcon title="分类加载失败" description="无法读取分类列表。真实产品会保留当前页面并允许重新请求。" action={<Button size="small" onClick={() => setScenario("data")}>重新载入</Button>} />
       ) : scenario === "loading" ? (
-        <LoadingCategories />
+        <PageSkeleton layout="collection" aria-label="分类加载中" />
       ) : visibleCategories.length === 0 ? (
         <Card padding="lg">
           <Empty title="还没有分类" description="创建第一个分类来组织长期主题。" action={<Button variant="solid" color="primary" icon={<Plus />} onClick={openCreate}>创建分类</Button>} />

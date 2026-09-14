@@ -23,7 +23,6 @@ import {
   Pagination,
   Segmented,
   Select,
-  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -33,7 +32,7 @@ import {
   Tag,
   Text,
 } from "../../../../src/core";
-import { PageHeader } from "../../../../src/gouno";
+import { PageHeader, PageSkeleton } from "../../../../src/gouno";
 import { BulkActionBar } from "../../../../src/patterns";
 import { FixtureDock } from "../../../components/fixture-dock";
 
@@ -217,23 +216,6 @@ function RowActions({
         />
       ) : null}
     </div>
-  );
-}
-
-function LoadingPosts() {
-  return (
-    <Card padding="base" aria-label="文章加载中">
-      <div className="flex flex-col gap-4" role="status" aria-live="polite">
-        <Text size="sm" tone="muted">正在加载文章…</Text>
-        {Array.from({ length: 4 }, (_, index) => (
-          <div key={index} className="grid gap-3 border-t pt-4 first:border-t-0 first:pt-0 md:grid-cols-[minmax(0,1fr)_8rem_8rem]">
-            <div className="flex flex-col gap-2"><Skeleton className="h-4 w-3/4" /><Skeleton className="h-3 w-1/2" /></div>
-            <Skeleton className="h-6 w-16" />
-            <Skeleton className="h-4 w-20" />
-          </div>
-        ))}
-      </div>
-    </Card>
   );
 }
 
@@ -463,7 +445,7 @@ export function BlogAdminPostsDemo() {
           action={<Button size="small" onClick={() => setScenario("data")}>重新载入</Button>}
         />
       ) : scenario === "loading" ? (
-        <LoadingPosts />
+        <PageSkeleton layout="collection" aria-label="文章加载中" />
       ) : visiblePosts.length === 0 ? (
         <Card padding="lg">
           <Empty

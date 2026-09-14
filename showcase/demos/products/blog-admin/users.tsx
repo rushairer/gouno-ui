@@ -20,7 +20,6 @@ import {
   Modal,
   Segmented,
   Select,
-  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -30,7 +29,7 @@ import {
   Tag,
   Text,
 } from "../../../../src/core";
-import { PageHeader } from "../../../../src/gouno";
+import { PageHeader, PageSkeleton } from "../../../../src/gouno";
 import { FixtureDock } from "../../../components/fixture-dock";
 
 type FixtureScenario = "data" | "loading" | "empty" | "error";
@@ -141,23 +140,6 @@ function RoleTag({ role }: { role: MemberRole }) {
   if (role === "owner") return <Tag color="warning">{roleLabels[role]}</Tag>;
   if (role === "admin") return <Tag color="primary">{roleLabels[role]}</Tag>;
   return <Tag>{roleLabels[role]}</Tag>;
-}
-
-function LoadingMembers() {
-  return (
-    <Card padding="base" aria-label="成员加载中">
-      <div className="flex flex-col gap-4" role="status" aria-live="polite">
-        <Text size="sm" tone="muted">正在同步成员目录…</Text>
-        {Array.from({ length: 4 }, (_, index) => (
-          <div key={index} className="grid gap-3 border-t pt-4 first:border-t-0 first:pt-0 md:grid-cols-[minmax(0,1fr)_9rem_8rem]">
-            <div className="flex items-center gap-3"><Skeleton className="size-9 rounded-full" /><div className="flex flex-1 flex-col gap-2"><Skeleton className="h-4 w-40" /><Skeleton className="h-3 w-52" /></div></div>
-            <Skeleton className="h-6 w-20" />
-            <Skeleton className="h-8 w-24" />
-          </div>
-        ))}
-      </div>
-    </Card>
-  );
 }
 
 export function BlogAdminUsersDemo() {
@@ -311,7 +293,7 @@ export function BlogAdminUsersDemo() {
       );
     }
 
-    if (scenario === "loading") return <LoadingMembers />;
+    if (scenario === "loading") return <PageSkeleton layout="collection" aria-label="成员列表加载中" />;
 
     if (scenario === "empty") {
       return (

@@ -80,7 +80,9 @@ describe("Blog Admin Categories product migration fixture", () => {
     expect(screen.queryByText("身份安全")).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
     fireEvent.click(screen.getByRole("radio", { name: "加载中" }));
-    expect(screen.getByRole("status")).toBeTruthy();
+    const loading = screen.getByRole("status", { name: "分类加载中" });
+    expect(loading.getAttribute("data-slot")).toBe("page-skeleton");
+    expect(loading.getAttribute("data-layout")).toBe("collection");
     fireEvent.click(screen.getByRole("radio", { name: "空状态" }));
     expect(screen.getByText("还没有分类")).toBeTruthy();
     fireEvent.click(screen.getByRole("radio", { name: "错误" }));
