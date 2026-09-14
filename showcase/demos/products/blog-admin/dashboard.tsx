@@ -23,7 +23,6 @@ import {
   Empty,
   IconButton,
   Segmented,
-  Skeleton,
   Statistic,
   Table,
   TableBody,
@@ -34,7 +33,7 @@ import {
   Tag,
   Text,
 } from "../../../../src/core";
-import { PageHeader } from "../../../../src/gouno";
+import { PageHeader, PageSkeleton } from "../../../../src/gouno";
 import { FixtureDock } from "../../../components/fixture-dock";
 
 type FixtureScenario = "data" | "loading" | "empty" | "error";
@@ -191,29 +190,6 @@ function MetricCard({
   );
 }
 
-function DashboardLoading() {
-  return (
-    <div className="flex flex-col gap-6" role="status" aria-label="数据概览加载中" aria-live="polite">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {Array.from({ length: 4 }, (_, index) => (
-          <Card key={index} padding="base">
-            <div className="flex flex-col gap-4">
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-8 w-20" />
-              <Skeleton className="h-3 w-36" />
-            </div>
-          </Card>
-        ))}
-      </div>
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <Card padding="base" className="lg:col-span-2"><Skeleton className="h-64 w-full" /></Card>
-        <Card padding="base"><Skeleton className="h-64 w-full" /></Card>
-      </div>
-      <Card padding="base"><Skeleton className="h-56 w-full" /></Card>
-    </div>
-  );
-}
-
 export function BlogAdminDashboardDemo() {
   const [scenario, setScenario] = useState<FixtureScenario>("data");
   const [capability, setCapability] = useState<CapabilityScenario>("admin");
@@ -308,7 +284,7 @@ export function BlogAdminDashboardDemo() {
           action={<Button size="small" onClick={() => setScenario("data")}>重新载入</Button>}
         />
       ) : scenario === "loading" ? (
-        <DashboardLoading />
+        <PageSkeleton layout="dashboard" aria-label="数据概览加载中" statistics={4} sections={3} />
       ) : (
         <>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
