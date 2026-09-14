@@ -21,6 +21,8 @@ describe("Blog public Home product migration fixture", () => {
 
     expect(screen.getByRole("link", { name: "跳至正文" }).getAttribute("href")).toBe("#public-main");
     expect(screen.getByRole("navigation", { name: "主导航" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "进入内容后台" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: /提交.*搜索/ })).toBeNull();
     expect(screen.getByRole("main").getAttribute("id")).toBe("public-main");
     expect(
       screen.getByRole("heading", { level: 1, name: "把真实工程问题，写成可以长期复用的知识。" }),
