@@ -4,7 +4,10 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-09-14
+
 ### Added
+- `PageSkeleton`, a deliberately low-fidelity Gouno page-loading primitive with `collection`, `form` and `dashboard` layouts for ordinary product loading states.
 - Core locale-only ConfigProvider, English and Simplified Chinese packs, and typed local copy overrides for Input, DatePicker, InputNumber, Select, Upload and Pagination.
 
 ### Fixed
@@ -13,6 +16,7 @@ All notable changes to this project are documented here.
 - Showcase Fixture controls reserve tooling space instead of covering product actions; standalone page navigation starts collapsed.
 
 ### Changed
+- Showcase product routes and Fixtures now use the same loading anatomy: common administrative pages use `PageSkeleton`, while editorial, feed and other specialized pages retain product-local loaders.
 - Participating controls use English fallback consistently. Configure zhCN to retain Chinese defaults; existing explicit text remains authoritative. See [migration](docs/component-localization.md).
 - Review completion retains scope/evidence and can reopen after a defect instead of requiring every catalog entry to remain permanently at 100.
 
