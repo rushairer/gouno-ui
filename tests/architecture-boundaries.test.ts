@@ -47,7 +47,14 @@ describe("public layer architecture", () => {
   it("publishes only admitted Gouno product-family structure", async () => {
     const gouno = await import("../src/gouno/index");
     expect(Object.keys(gouno).sort()).toEqual(
-      ["AppShell", "NavigationGroup", "PageContainer", "PageHeader", "navigationItemClass"].sort(),
+      [
+        "AppShell",
+        "NavigationGroup",
+        "PageContainer",
+        "PageHeader",
+        "PageSkeleton",
+        "navigationItemClass",
+      ].sort(),
     );
     for (const legacyName of [
       "AdminShell",
