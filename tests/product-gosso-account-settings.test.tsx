@@ -1,6 +1,14 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { GossoAccountSettingsDemo } from "../showcase/demos/products/gosso-admin/account-settings";
+
+const { toCanvas } = vi.hoisted(() => ({
+  toCanvas: vi.fn().mockResolvedValue(undefined),
+}));
+
+vi.mock("qrcode", () => ({
+  default: { toCanvas },
+}));
 
 afterEach(cleanup);
 
