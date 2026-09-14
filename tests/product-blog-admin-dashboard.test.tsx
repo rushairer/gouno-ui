@@ -115,7 +115,9 @@ describe("Blog Admin Dashboard product migration fixture", () => {
     };
 
     renderScenario("加载中");
-    expect(screen.getByRole("status", { name: "数据概览加载中" })).toBeTruthy();
+    const loading = screen.getByRole("status", { name: "数据概览加载中" });
+    expect(loading.getAttribute("data-slot")).toBe("page-skeleton");
+    expect(loading.getAttribute("data-layout")).toBe("dashboard");
     cleanup();
 
     renderScenario("空数据");
