@@ -10,28 +10,34 @@ export type SystemManagementSection = "clients" | "users" | "audit-logs" | "site
 
 type SystemManagementPage = {
   title: string;
+  route: string;
   panel: ComponentType;
 };
 
 const systemPages: Record<SystemManagementSection, SystemManagementPage> = {
   clients: {
     title: "OAuth2 客户端",
+    route: "/system-management/clients",
     panel: ClientsPanel,
   },
   users: {
     title: "用户管理",
+    route: "/system-management/users",
     panel: UsersPanel,
   },
   "audit-logs": {
     title: "审计日志",
+    route: "/system-management/audit-logs",
     panel: AuditLogsPanel,
   },
   "site-settings": {
     title: "站点设置",
+    route: "/system-management/site-settings",
     panel: SiteSettingsPanel,
   },
   system: {
     title: "系统状态",
+    route: "/system-management/system",
     panel: SystemStatusPanel,
   },
 };
@@ -41,7 +47,7 @@ export function GossoSystemManagementDemo({ section = "clients" }: { section?: S
   const Panel = page.panel;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6" data-route={page.route}>
       <PageHeader title={page.title} />
       <Panel />
     </div>
