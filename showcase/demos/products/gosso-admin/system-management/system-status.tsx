@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Database, RefreshCw, Server, ShieldCheck } from "lucide-react";
-import { Alert, Button, Card, Heading, Segmented, Skeleton, Tag, Text } from "../../../../../src/core";
+import { Alert, Button, Card, Heading, Segmented, Tag, Text } from "../../../../../src/core";
+import { PageSkeleton } from "../../../../../src/gouno";
 import { FixtureBanner, ManagementPanelLead } from "./shared";
 
 type SystemScenario = "healthy" | "checking" | "degraded" | "unavailable";
@@ -16,16 +17,6 @@ const scenarioOptions = [
 
 function DefinitionCard({ title, rows }: { title: string; rows: readonly (readonly [string, string])[] }) {
   return <Card padding="base"><Heading level={2} className="mb-4 text-base">{title}</Heading><dl className="divide-y">{rows.map(([label, value]) => <div key={label} className="grid gap-1 py-3 first:pt-0 last:pb-0 sm:grid-cols-[190px_minmax(0,1fr)] sm:gap-5"><dt className="text-sm text-muted-foreground">{label}</dt><dd className="min-w-0 break-all font-mono text-sm">{value}</dd></div>)}</dl></Card>;
-}
-
-function CheckingStatus() {
-  return (
-    <Card padding="base" role="status" aria-label="系统状态检查中">
-      <Text size="sm" tone="muted">正在刷新健康探针…</Text>
-      <div className="mt-4 grid gap-4 md:grid-cols-3"><Skeleton className="h-20 w-full" /><Skeleton className="h-20 w-full" /><Skeleton className="h-20 w-full" /></div>
-      <div className="mt-5 grid gap-3 md:grid-cols-2"><Skeleton className="h-24 w-full" /><Skeleton className="h-24 w-full" /></div>
-    </Card>
-  );
 }
 
 export function SystemStatusPanel() {
@@ -44,7 +35,12 @@ export function SystemStatusPanel() {
       <ManagementPanelLead description="查看身份服务健康探针、关键依赖、OpenID Connect 发现信息和安全策略摘要。" actions={<Button icon={<RefreshCw />} onClick={() => setRefreshCount((count) => count + 1)}>刷新状态</Button>} />
 
       {scenario === "checking" ? (
-        <CheckingStatus />
+        <PageSkeleton
+          layout="dashboard"
+          aria-label="系统状态检查中"
+          statistics={3}
+          sections={3}
+        />
       ) : (
         <>
           {degraded ? <Alert type="warning" showIcon title="Redis 探针异常" description="身份服务仍可响应，但会话缓存与分布式锁处于降级状态。" /> : null}

@@ -10,7 +10,6 @@ import {
   Modal,
   Pagination,
   Segmented,
-  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -18,8 +17,8 @@ import {
   TableHeader,
   TableRow,
   Tag,
-  Text,
 } from "../../../../../src/core";
+import { PageSkeleton } from "../../../../../src/gouno";
 import { FixtureBanner, ManagementPanelLead } from "./shared";
 
 type FixtureScenario = "data" | "loading" | "empty" | "error";
@@ -49,20 +48,13 @@ const scenarioOptions = [
   { value: "error", label: "错误" },
 ] as const;
 
-function LoadingAuditLogs() {
-  return (
-    <Card padding="base" role="status" aria-label="审计日志加载中">
-      <Text size="sm" tone="muted">正在加载审计事件…</Text>
-      <div className="mt-4 space-y-4">
-        {Array.from({ length: 4 }, (_, index) => (
-          <div key={index} className="grid gap-3 border-t pt-4 first:border-t-0 first:pt-0 md:grid-cols-[9rem_minmax(0,1fr)_8rem_8rem]">
-            <Skeleton className="h-4 w-28" /><Skeleton className="h-5 w-40" /><Skeleton className="h-4 w-20" /><Skeleton className="h-4 w-20" />
-          </div>
-        ))}
-      </div>
-    </Card>
-  );
-}
+const auditLoadingColumns = [
+  { header: "时间", skeletonClassName: "w-28" },
+  { header: "事件", skeletonClassName: "w-40" },
+  { header: "Actor", skeletonClassName: "w-20" },
+  { header: "目标账户", skeletonClassName: "w-20" },
+  { header: "详情", headerClassName: "text-right", skeletonClassName: "ml-auto w-16" },
+] as const;
 
 export function AuditLogsPanel() {
   const [scenario, setScenario] = useState<FixtureScenario>("data");
@@ -126,7 +118,13 @@ export function AuditLogsPanel() {
       {scenario === "error" ? (
         <Alert type="error" showIcon title="审计日志加载失败" description="无法读取安全审计事件。真实产品会保留筛选条件并允许重新请求。" action={<Button size="small" onClick={() => changeScenario("data")}>重新载入</Button>} />
       ) : scenario === "loading" ? (
-        <LoadingAuditLogs />
+        <PageSkeleton
+          layout="collection"
+          aria-label="审计日志加载中"
+          rows={4}
+          columns={auditLoadingColumns}
+          pagination
+        />
       ) : visible.length ? (
         <>
           <Table bordered density="compact">

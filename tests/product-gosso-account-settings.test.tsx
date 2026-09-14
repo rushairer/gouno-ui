@@ -24,11 +24,16 @@ function selectTab(name: string | RegExp) {
 }
 
 describe("Gosso Admin account settings fixture fidelity", () => {
-  it("preserves profile loading and read-error states", () => {
+  it("dogfoods form PageSkeleton without hiding stable account navigation", () => {
     const view = render(<GossoAccountSettingsDemo />);
     openFixture();
     fireEvent.click(screen.getByRole("radio", { name: "加载中" }));
-    expect(screen.getByRole("status", { name: "个人资料加载中" })).toBeTruthy();
+    const loading = screen.getByRole("status", { name: "个人资料加载中" });
+    expect(loading.getAttribute("data-slot")).toBe("page-skeleton");
+    expect(loading.getAttribute("data-layout")).toBe("form");
+    expect(screen.getByRole("heading", { level: 1, name: "账户设置" })).toBeTruthy();
+    expect(screen.getByRole("tab", { name: /个人资料/ })).toBeTruthy();
+    expect(screen.getByRole("tab", { name: /活跃会话/ })).toBeTruthy();
     view.unmount();
 
     render(<GossoAccountSettingsDemo />);

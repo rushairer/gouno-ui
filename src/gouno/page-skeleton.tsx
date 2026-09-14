@@ -13,6 +13,15 @@ import { cn } from "../lib/utils";
 
 export type PageSkeletonLayout = "collection" | "form" | "dashboard";
 
+export interface PageSkeletonColumn {
+  /** Stable column heading known before the data request resolves. */
+  header?: ReactNode;
+  /** Product-owned heading geometry such as width or alignment. */
+  headerClassName?: string;
+  /** Product-owned placeholder geometry for this column. */
+  skeletonClassName?: string;
+}
+
 type PageSkeletonCommonProps = Omit<
   HTMLAttributes<HTMLDivElement>,
   "aria-busy" | "aria-label" | "aria-live" | "children" | "role"
@@ -26,8 +35,8 @@ export type PageSkeletonProps =
       layout: "collection";
       /** Number of placeholder rows. */
       rows?: number;
-      /** Number of visual columns in the desktop collection placeholder. */
-      columns?: number;
+      /** Column count or stable column presentation known before data resolves. */
+      columns?: number | readonly PageSkeletonColumn[];
       /** Whether to reserve pagination geometry. */
       pagination?: boolean;
     })
@@ -85,8 +94,11 @@ function CollectionSkeleton({
   ...props
 }: Extract<PageSkeletonProps, { layout: "collection" }>) {
   const rowCount = boundedCount(rows, 5, 12);
-  const columnCount = boundedCount(columns, 5, 8);
   const columnWidths = ["w-4/5", "w-20", "w-24", "w-16", "w-28", "w-14"];
+  const columnDefinitions: readonly PageSkeletonColumn[] = Array.isArray(columns)
+    ? columns.slice(0, 8)
+    : Array.from({ length: boundedCount(columns as number, 5, 8) }, () => ({}));
+  const hasStableHeaders = columnDefinitions.some((column) => column.header !== undefined);
 
   return (
     <LoadingRegion
@@ -95,30 +107,38 @@ function CollectionSkeleton({
       label={ariaLabel}
       className={className}
     >
-      <div className="hidden md:block" aria-hidden="true">
+      <div className="hidden md:block">
         <Table density="compact" bordered>
-          <TableHeader>
+          <TableHeader aria-hidden={hasStableHeaders ? undefined : "true"}>
             <TableRow>
-              {Array.from({ length: columnCount }, (_, columnIndex) => (
-                <TableHead key={columnIndex}>
-                  <Skeleton className={cn("h-4", columnWidths[columnIndex % columnWidths.length])} />
+              {columnDefinitions.map((column, columnIndex) => (
+                <TableHead key={columnIndex} className={column.headerClassName}>
+                  {column.header ?? (
+                    <Skeleton
+                      className={cn(
+                        "h-4",
+                        column.skeletonClassName ?? columnWidths[columnIndex % columnWidths.length],
+                      )}
+                    />
+                  )}
                 </TableHead>
               ))}
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody aria-hidden="true">
             {Array.from({ length: rowCount }, (_, rowIndex) => (
               <TableRow key={rowIndex}>
-                {Array.from({ length: columnCount }, (_, columnIndex) => (
+                {columnDefinitions.map((column, columnIndex) => (
                   <TableCell key={columnIndex}>
                     <Skeleton
                       className={cn(
                         "h-4",
-                        columnIndex === 0
-                          ? rowIndex % 2 === 0
-                            ? "w-4/5"
-                            : "w-2/3"
-                          : columnWidths[(columnIndex + rowIndex) % columnWidths.length],
+                        column.skeletonClassName ??
+                          (columnIndex === 0
+                            ? rowIndex % 2 === 0
+                              ? "w-4/5"
+                              : "w-2/3"
+                            : columnWidths[(columnIndex + rowIndex) % columnWidths.length]),
                       )}
                     />
                   </TableCell>

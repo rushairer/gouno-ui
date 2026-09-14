@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Key, Laptop, Lock, Shield, User } from "lucide-react";
 import { Alert, Card, Empty, Segmented, Skeleton, Tabs, Text } from "../../../../../src/core";
-import { PageHeader } from "../../../../../src/gouno";
+import { PageHeader, PageSkeleton } from "../../../../../src/gouno";
 import { FixtureDock } from "../../../../components/fixture-dock";
 import { MfaPanel } from "./mfa";
 import { PasswordPanel } from "./password";
@@ -67,7 +67,12 @@ function renderReadyPanel(tab: Exclude<AccountSettingsTab, "mfa">) {
 function AccountFixturePanel({ tab, scenario }: { tab: Exclude<AccountSettingsTab, "mfa">; scenario: AccountFixtureScenario }) {
   const label = accountTabDefinitions.find((item) => item.key === tab)?.label ?? "账户设置";
 
-  if (scenario === "loading") return <LoadingAccountPanel label={label} />;
+  if (scenario === "loading") {
+    if (tab === "profile") {
+      return <PageSkeleton layout="form" aria-label="个人资料加载中" fields={3} />;
+    }
+    return <LoadingAccountPanel label={label} />;
+  }
   if (scenario === "error") {
     return <Alert type="error" showIcon title={`${label}加载失败`} description="身份服务暂时无法返回该账户设置。真实产品会保留当前路由并提供重试。" />;
   }

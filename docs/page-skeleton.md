@@ -34,7 +34,25 @@ The admitted layouts are exactly:
 - `form` — ordinary settings/form field geometry and action footer.
 - `dashboard` — statistic cards plus larger read-dominant content sections.
 
-The first public API intentionally exposes only small geometry controls: `rows`, `columns`, `pagination`, `fields`, `statistics` and `sections`. These are presentation hints, not business schema.
+The public API intentionally exposes only small presentation controls: `rows`, `columns`, `pagination`, `fields`, `statistics` and `sections`. These are presentation hints, not business schema.
+
+`collection.columns` can remain a number when no stable headings need to be exposed. When the real page already knows its headings before data resolves, callers can provide `PageSkeletonColumn[]` with `header`, `headerClassName` and `skeletonClassName`:
+
+```tsx
+<PageSkeleton
+  layout="collection"
+  aria-label="审计日志加载中"
+  columns={[
+    { header: "时间", skeletonClassName: "w-28" },
+    { header: "事件", skeletonClassName: "w-40" },
+    { header: "Actor", skeletonClassName: "w-20" },
+    { header: "目标账户", skeletonClassName: "w-20" },
+    { header: "详情", headerClassName: "text-right", skeletonClassName: "ml-auto w-16" },
+  ]}
+/>
+```
+
+This does not make `PageSkeleton` a DataTable. The column descriptor contains no accessor, data key, sorter, filter, selection, action callback or data lifecycle. It only preserves stable presentation that should not disappear while rows are unresolved.
 
 ## Loading ownership
 
@@ -49,7 +67,7 @@ The first public API intentionally exposes only small geometry controls: `rows`,
 )}
 ```
 
-Stable route chrome, `PageHeader`, route-family Tabs and already-known structure remain visible outside the skeleton whenever the product already knows them.
+Stable route chrome, `PageHeader`, route-family Tabs, collection headings and other already-known structure remain visible whenever the product already knows them.
 
 If useful data is already rendered and a refresh starts, keep that data visible. Mark the affected region busy when appropriate and use the initiating control's loading/disabled state instead of replacing the page with `PageSkeleton`.
 
@@ -64,7 +82,19 @@ Independent data islands may still own smaller local structural skeletons. A das
 - `aria-busy="true"`
 - required localized `aria-label`
 
-The nested Core `Skeleton` blocks remain decorative and hidden from the accessibility tree. Callers cannot create a second `role` / `aria-live` / `aria-busy` write path through `PageSkeleton` props.
+The nested Core `Skeleton` blocks and placeholder rows remain decorative. Stable caller-provided collection headings stay available to assistive technology while unresolved row bodies are hidden. Callers cannot create a second `role` / `aria-live` / `aria-busy` write path through `PageSkeleton` props.
+
+## Product dogfooding
+
+All three admitted layouts now have representative product-fixture coverage without replacing stable page chrome:
+
+- **collection — Gosso Admin Audit Logs:** Fixture controls, management-panel lead and filter form remain visible. Only the unresolved collection region uses `PageSkeleton`, preserving the known audit column headings and pagination geometry.
+- **form — Gosso Admin Account Settings / Profile:** `PageHeader` and the account-setting Tabs remain visible while the unresolved profile panel uses `layout="form"`. Passkeys and Sessions keep their product-local collection loaders instead of being forced into the form layout.
+- **dashboard — Gosso Admin System Status:** Fixture controls and `ManagementPanelLead` remain visible while the unresolved health/status data region uses `layout="dashboard"` with the known statistic/section counts.
+
+The collection dogfood exposed and corrected the initial API's only material mismatch: a collection skeleton must not replace known headings with anonymous placeholder bars. The correction stayed presentation-only and did not broaden into resource-table behavior.
+
+Product-local loaders that encode materially different anatomy remain local. Gosso Site Settings keeps its form-plus-live-preview loading composition; card-only moderation queues, editor workspaces, reading pages and security-specific panels also remain local. Usage count is not an objective: semantic fit is.
 
 ## Scope boundary
 
