@@ -86,11 +86,15 @@ The nested Core `Skeleton` blocks and placeholder rows remain decorative. Stable
 
 ## Product dogfooding
 
-The first product-fixture dogfood is Gosso Admin Audit Logs. Its Fixture controls, management-panel lead and filter form remain product-owned and visible. Only the unresolved collection data region uses `PageSkeleton`, preserving the known audit column headings and pagination geometry.
+All three admitted layouts now have representative product-fixture coverage without replacing stable page chrome:
 
-This dogfood exposed and corrected the initial API's only material mismatch: a collection skeleton must not replace known headings with anonymous placeholder bars. The correction stayed presentation-only and did not broaden into resource-table behavior.
+- **collection — Gosso Admin Audit Logs:** Fixture controls, management-panel lead and filter form remain visible. Only the unresolved collection region uses `PageSkeleton`, preserving the known audit column headings and pagination geometry.
+- **form — Gosso Admin Account Settings / Profile:** `PageHeader` and the account-setting Tabs remain visible while the unresolved profile panel uses `layout="form"`. Passkeys and Sessions keep their product-local collection loaders instead of being forced into the form layout.
+- **dashboard — Gosso Admin System Status:** Fixture controls and `ManagementPanelLead` remain visible while the unresolved health/status data region uses `layout="dashboard"` with the known statistic/section counts.
 
-Product-local loaders that encode materially different anatomy remain local. In particular, card-only moderation queues, editor workspaces, reading pages and security-specific panels are not migrated merely to increase abstraction usage.
+The collection dogfood exposed and corrected the initial API's only material mismatch: a collection skeleton must not replace known headings with anonymous placeholder bars. The correction stayed presentation-only and did not broaden into resource-table behavior.
+
+Product-local loaders that encode materially different anatomy remain local. Gosso Site Settings keeps its form-plus-live-preview loading composition; card-only moderation queues, editor workspaces, reading pages and security-specific panels also remain local. Usage count is not an objective: semantic fit is.
 
 ## Scope boundary
 
