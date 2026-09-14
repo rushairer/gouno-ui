@@ -1,14 +1,19 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { KeyRound, Lock, Plus, Trash2, Unlock, UserRoundCog } from "lucide-react";
 import {
+  Alert,
   Button,
+  Card,
   Checkbox,
   CheckboxGroup,
+  Empty,
   FormField,
   IconButton,
   Input,
   Modal,
   Pagination,
+  Segmented,
+  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -18,8 +23,9 @@ import {
   Tag,
   Text,
 } from "../../../../../src/core";
-import { ConfirmAction, ManagementPanelLead, StatusNotice } from "./shared";
+import { ConfirmAction, FixtureBanner, ManagementPanelLead, StatusNotice } from "./shared";
 
+type FixtureScenario = "data" | "loading" | "empty" | "error";
 type UserStatus = "active" | "suspended";
 type UserFixture = {
   id: string;
@@ -39,11 +45,35 @@ const initialUsers: UserFixture[] = [
   { id: "usr-ops", username: "ops", displayName: "Operations", email: "ops@example.com", status: "active", roles: ["admin", "auditor"] },
 ];
 
+const scenarioOptions = [
+  { value: "data", label: "有数据" },
+  { value: "loading", label: "加载中" },
+  { value: "empty", label: "空状态" },
+  { value: "error", label: "错误" },
+] as const;
 const assignableRoles = ["admin", "auditor", "editor", "user"] as const;
 const pageSize = 3;
 
+function LoadingUsers() {
+  return (
+    <Card padding="base" role="status" aria-label="用户目录加载中">
+      <Text size="sm" tone="muted">正在加载用户目录…</Text>
+      <div className="mt-4 space-y-4">
+        {Array.from({ length: 3 }, (_, index) => (
+          <div key={index} className="grid gap-3 border-t pt-4 first:border-t-0 first:pt-0 md:grid-cols-[minmax(0,1fr)_7rem_12rem]">
+            <div className="space-y-2"><Skeleton className="h-4 w-36" /><Skeleton className="h-3 w-48" /></div>
+            <Skeleton className="h-6 w-16" />
+            <Skeleton className="h-6 w-32" />
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
 export function UsersPanel() {
   const [users, setUsers] = useState<UserFixture[]>(initialUsers);
+  const [scenario, setScenario] = useState<FixtureScenario>("data");
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
@@ -55,9 +85,10 @@ export function UsersPanel() {
   const [draftRoles, setDraftRoles] = useState<string[]>([]);
   const [password, setPassword] = useState("");
 
+  const visibleUsers = scenario === "empty" ? [] : users;
   const pageUsers = useMemo(
-    () => users.slice((page - 1) * pageSize, page * pageSize),
-    [page, users],
+    () => visibleUsers.slice((page - 1) * pageSize, page * pageSize),
+    [page, visibleUsers],
   );
 
   const createUser = (event: FormEvent) => {
@@ -102,109 +133,65 @@ export function UsersPanel() {
     setStatus(`${user.displayName} 已${nextStatus === "active" ? "启用" : "暂停"}（Showcase 模拟）。`);
   };
 
+  const changeScenario = (value: FixtureScenario) => {
+    setScenario(value);
+    setPage(1);
+    setStatus(null);
+    setCreateOpen(false);
+    setRoleTarget(null);
+    setPasswordTarget(null);
+  };
+
   return (
     <div className="flex flex-col gap-5">
+      <FixtureBanner
+        route="/system-management/users"
+        note="用户管理 Fixture 覆盖目录数据、加载、空态与读取失败；角色变更、密码重置、启停/删除的 Sudo 与写操作失败在业务态层独立建模。"
+        controls={<Segmented<FixtureScenario> aria-label="用户管理 Fixture 状态" options={scenarioOptions} value={scenario} onChange={changeScenario} block />}
+      />
       <ManagementPanelLead
         description="管理身份平台账户状态、角色、安全凭据与高风险管理操作。"
-        actions={
-          <Button variant="solid" color="primary" icon={<Plus />} onClick={() => setCreateOpen(true)}>
-            添加用户
-          </Button>
-        }
+        actions={<Button variant="solid" color="primary" icon={<Plus />} onClick={() => setCreateOpen(true)}>添加用户</Button>}
       />
       {status ? <StatusNotice>{status}</StatusNotice> : null}
 
-      <Table bordered>
-        <TableHeader>
-          <TableRow>
-            <TableHead>用户</TableHead>
-            <TableHead>状态</TableHead>
-            <TableHead>角色</TableHead>
-            <TableHead className="text-right">操作</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {pageUsers.map((user) => (
-            <TableRow key={user.id}>
-              <TableCell className="min-w-64 whitespace-normal">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-semibold">{user.displayName}</span>
-                  {user.current ? <Tag color="primary">当前管理员</Tag> : null}
-                </div>
-                <Text size="xs" tone="muted" className="mt-1 font-mono">
-                  {user.username} · {user.id}
-                </Text>
-                <Text size="xs" tone="muted">{user.email}</Text>
-              </TableCell>
-              <TableCell>
-                <Tag color={user.status === "active" ? "success" : "error"}>
-                  {user.status === "active" ? "正常" : "已暂停"}
-                </Tag>
-              </TableCell>
-              <TableCell className="min-w-48 whitespace-normal">
-                <div className="flex flex-wrap gap-1.5">
-                  {user.roles.length ? user.roles.map((role) => <Tag key={role} color={role === "admin" ? "warning" : "default"}>{role}</Tag>) : <Text size="sm" tone="muted">未分配角色</Text>}
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex min-w-max flex-nowrap items-center justify-end gap-1">
-                  <IconButton label={`管理 ${user.displayName} 角色`} variant="ghost" icon={<UserRoundCog />} onClick={() => openRoles(user)} />
-                  <IconButton
-                    label={`重置 ${user.displayName} 密码`}
-                    variant="ghost"
-                    icon={<KeyRound />}
-                    disabled={user.current}
-                    onClick={() => { setPassword(""); setPasswordTarget(user); }}
-                  />
-                  <ConfirmAction
-                    label={user.status === "active" ? "暂停" : "启用"}
-                    icon={user.status === "active" ? <Lock /> : <Unlock />}
-                    title={`${user.status === "active" ? "暂停" : "启用"}“${user.displayName}”？`}
-                    description={user.status === "active" ? "暂停后该账户不能继续登录。" : "启用后该账户可重新参与认证。"}
-                    confirmText={user.status === "active" ? "确认暂停" : "确认启用"}
-                    color={user.status === "active" ? "error" : "primary"}
-                    disabled={user.current}
-                    onConfirm={() => toggleStatus(user)}
-                  />
-                  <ConfirmAction
-                    label="删除"
-                    icon={<Trash2 />}
-                    title={`删除“${user.displayName}”？`}
-                    description="真实产品会要求 Sudo/强认证，并删除或解绑该账户的相关身份数据。"
-                    confirmText="确认删除"
-                    disabled={user.current}
-                    onConfirm={() => {
-                      setUsers((items) => items.filter((item) => item.id !== user.id));
-                      setStatus(`用户“${user.displayName}”已删除（Showcase 模拟）。`);
-                    }}
-                  />
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      {scenario === "error" ? (
+        <Alert type="error" showIcon title="用户目录加载失败" description="无法读取身份平台账户。真实产品会保留页面上下文并允许重新请求。" action={<Button size="small" onClick={() => changeScenario("data")}>重新载入</Button>} />
+      ) : scenario === "loading" ? (
+        <LoadingUsers />
+      ) : visibleUsers.length === 0 ? (
+        <Card padding="base"><Empty title="还没有用户" description="创建第一个本地身份账户，或等待外部身份同步。" action={<Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={() => setCreateOpen(true)}>添加用户</Button>} /></Card>
+      ) : (
+        <>
+          <Table bordered>
+            <TableHeader><TableRow><TableHead>用户</TableHead><TableHead>状态</TableHead><TableHead>角色</TableHead><TableHead className="text-right">操作</TableHead></TableRow></TableHeader>
+            <TableBody>
+              {pageUsers.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell className="min-w-64 whitespace-normal">
+                    <div className="flex flex-wrap items-center gap-2"><span className="font-semibold">{user.displayName}</span>{user.current ? <Tag color="primary">当前管理员</Tag> : null}</div>
+                    <Text size="xs" tone="muted" className="mt-1 font-mono">{user.username} · {user.id}</Text>
+                    <Text size="xs" tone="muted">{user.email}</Text>
+                  </TableCell>
+                  <TableCell><Tag color={user.status === "active" ? "success" : "error"}>{user.status === "active" ? "正常" : "已暂停"}</Tag></TableCell>
+                  <TableCell className="min-w-48 whitespace-normal"><div className="flex flex-wrap gap-1.5">{user.roles.length ? user.roles.map((role) => <Tag key={role} color={role === "admin" ? "warning" : "default"}>{role}</Tag>) : <Text size="sm" tone="muted">未分配角色</Text>}</div></TableCell>
+                  <TableCell>
+                    <div className="flex min-w-max flex-nowrap items-center justify-end gap-1">
+                      <IconButton label={`管理 ${user.displayName} 角色`} variant="ghost" icon={<UserRoundCog />} onClick={() => openRoles(user)} />
+                      <IconButton label={`重置 ${user.displayName} 密码`} variant="ghost" icon={<KeyRound />} disabled={user.current} onClick={() => { setPassword(""); setPasswordTarget(user); }} />
+                      <ConfirmAction label={user.status === "active" ? "暂停" : "启用"} icon={user.status === "active" ? <Lock /> : <Unlock />} title={`${user.status === "active" ? "暂停" : "启用"}“${user.displayName}”？`} description={user.status === "active" ? "暂停后该账户不能继续登录。" : "启用后该账户可重新参与认证。"} confirmText={user.status === "active" ? "确认暂停" : "确认启用"} color={user.status === "active" ? "error" : "primary"} disabled={user.current} onConfirm={() => toggleStatus(user)} />
+                      <ConfirmAction label="删除" icon={<Trash2 />} title={`删除“${user.displayName}”？`} description="真实产品会要求 Sudo/强认证，并删除或解绑该账户的相关身份数据。" confirmText="确认删除" disabled={user.current} onConfirm={() => { setUsers((items) => items.filter((item) => item.id !== user.id)); setStatus(`用户“${user.displayName}”已删除（Showcase 模拟）。`); }} />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <Pagination page={page} total={visibleUsers.length} pageSize={pageSize} onChange={setPage} showTotal={(total, range) => `${range[0]}-${range[1]} / ${total} 个用户`} />
+        </>
+      )}
 
-      <Pagination
-        page={page}
-        total={users.length}
-        pageSize={pageSize}
-        onChange={setPage}
-        showTotal={(total, range) => `${range[0]}-${range[1]} / ${total} 个用户`}
-      />
-
-      <Modal
-        open={createOpen}
-        title="添加用户"
-        description="创建新的本地身份账户。真实产品仍由服务端执行用户名、密码和权限校验。"
-        onOpenChange={setCreateOpen}
-        footer={
-          <>
-            <Button onClick={() => setCreateOpen(false)}>取消</Button>
-            <Button form="system-create-user" type="submit" variant="solid" color="primary">创建用户</Button>
-          </>
-        }
-      >
+      <Modal open={createOpen} title="添加用户" description="创建新的本地身份账户。真实产品仍由服务端执行用户名、密码和权限校验。" onOpenChange={setCreateOpen} footer={<><Button onClick={() => setCreateOpen(false)}>取消</Button><Button form="system-create-user" type="submit" variant="solid" color="primary">创建用户</Button></>}>
         <form id="system-create-user" className="flex flex-col gap-5" onSubmit={createUser}>
           <FormField label="用户名" required><Input value={username} onChange={(event) => setUsername(event.target.value)} /></FormField>
           <FormField label="显示名称"><Input value={displayName} onChange={(event) => setDisplayName(event.target.value)} /></FormField>
@@ -212,37 +199,12 @@ export function UsersPanel() {
         </form>
       </Modal>
 
-      <Modal
-        open={Boolean(roleTarget)}
-        title={roleTarget ? `管理 ${roleTarget.displayName} 的角色` : "管理角色"}
-        description="角色变更属于高权限操作；真实产品会要求 Sudo/强认证。"
-        onOpenChange={(next) => { if (!next) setRoleTarget(null); }}
-        onOk={saveRoles}
-        okText="保存角色"
-      >
-        <CheckboxGroup label="可分配角色">
-          {assignableRoles.map((role) => (
-            <Checkbox key={role} label={role} checked={draftRoles.includes(role)} onChange={() => toggleRole(role)} />
-          ))}
-        </CheckboxGroup>
+      <Modal open={Boolean(roleTarget)} title={roleTarget ? `管理 ${roleTarget.displayName} 的角色` : "管理角色"} description="角色变更属于高权限操作；真实产品会要求 Sudo/强认证。" onOpenChange={(next) => { if (!next) setRoleTarget(null); }} onOk={saveRoles} okText="保存角色">
+        <CheckboxGroup label="可分配角色">{assignableRoles.map((role) => <Checkbox key={role} label={role} checked={draftRoles.includes(role)} onChange={() => toggleRole(role)} />)}</CheckboxGroup>
       </Modal>
 
-      <Modal
-        open={Boolean(passwordTarget)}
-        title={passwordTarget ? `重置 ${passwordTarget.displayName} 的密码` : "重置密码"}
-        description="真实产品会要求 Sudo/强认证并应用完整密码策略。"
-        onOpenChange={(next) => { if (!next) setPasswordTarget(null); }}
-        onOk={() => {
-          if (!passwordTarget || password.length < 12) return;
-          setStatus(`已重置“${passwordTarget.displayName}”的密码（Showcase 模拟）。`);
-          setPasswordTarget(null);
-        }}
-        okText="确认重置"
-        okButtonProps={{ disabled: password.length < 12 }}
-      >
-        <FormField label="新密码" hint="至少 12 个字符" required>
-          <Input type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="new-password" />
-        </FormField>
+      <Modal open={Boolean(passwordTarget)} title={passwordTarget ? `重置 ${passwordTarget.displayName} 的密码` : "重置密码"} description="真实产品会要求 Sudo/强认证并应用完整密码策略。" onOpenChange={(next) => { if (!next) setPasswordTarget(null); }} onOk={() => { if (!passwordTarget || password.length < 12) return; setStatus(`已重置“${passwordTarget.displayName}”的密码（Showcase 模拟）。`); setPasswordTarget(null); }} okText="确认重置" okButtonProps={{ disabled: password.length < 12 }}>
+        <FormField label="新密码" hint="至少 12 个字符" required><Input type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="new-password" /></FormField>
       </Modal>
     </div>
   );
