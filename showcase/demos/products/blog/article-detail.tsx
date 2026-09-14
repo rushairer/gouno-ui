@@ -8,12 +8,12 @@ import {
   CodeBlock,
   Result,
   Segmented,
-  Skeleton,
 } from "../../../../src/core";
 import { PageHeader } from "../../../../src/gouno";
 import { FixtureDock } from "../../../components/fixture-dock";
 import { BlogArticleTeaser, blogPosts } from "./public-content";
 import { BlogPublicShellFixture } from "./public-shell";
+import { BlogArticleDetailLoading } from "./loading";
 
 type ArticleDetailScenario = "data" | "preview" | "loading" | "error" | "not-found";
 
@@ -59,35 +59,6 @@ function renderSyntaxPreview(source: string) {
     ) : (
       token
     ),
-  );
-}
-
-function ArticleDetailSkeleton() {
-  return (
-    <div role="status" aria-label="文章详情加载中" className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_15rem]">
-      <Card padding="none" className="overflow-hidden">
-        <Skeleton className="aspect-[16/7] w-full rounded-none" />
-        <div className="space-y-6 p-6 sm:p-8">
-          <Skeleton className="h-8 w-4/5" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-2/3" />
-          <div className="flex gap-3">
-            <Skeleton className="h-6 w-24" />
-            <Skeleton className="h-6 w-20" />
-            <Skeleton className="h-6 w-20" />
-          </div>
-          {Array.from({ length: 6 }, (_, index) => (
-            <Skeleton key={index} className={`h-4 ${index % 2 === 0 ? "w-full" : "w-5/6"}`} />
-          ))}
-        </div>
-      </Card>
-      <div className="space-y-3">
-        <Skeleton className="h-5 w-20" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-4/5" />
-        <Skeleton className="h-4 w-3/4" />
-      </div>
-    </div>
   );
 }
 
@@ -253,7 +224,7 @@ export function BlogArticleDetailDemo({
         <Button variant="text" icon={<ArrowLeft />} className="mb-6 px-0" onClick={() => navigate("/articles")}>返回文章列表</Button>
 
         {scenario === "loading" ? (
-          <ArticleDetailSkeleton />
+          <BlogArticleDetailLoading />
         ) : scenario === "error" ? (
           <Card padding="none" variant="subtle">
             <Result

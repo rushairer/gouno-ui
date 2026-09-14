@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
 import { ArrowRight } from "lucide-react";
-import { Card, Empty, Segmented, Skeleton } from "../../../../src/core";
+import { Card, Empty, Segmented } from "../../../../src/core";
 import { PageHeader } from "../../../../src/gouno";
 import { FixtureDock } from "../../../components/fixture-dock";
 import { blogCategories, blogPosts, blogTags } from "./public-content";
 import { BlogPublicShellFixture } from "./public-shell";
+import { BlogDiscoveryIndexLoading } from "./loading";
 
 type DiscoveryPage = "categories" | "tags" | "archive";
 type DiscoveryScenario = "data" | "loading" | "empty";
@@ -42,17 +43,6 @@ function PageDescription({ meta, children }: { meta: string; children: string })
       <span className="mr-2 text-xs font-medium uppercase tracking-wider text-primary">{meta}</span>
       {children}
     </span>
-  );
-}
-
-function IndexLoading({ page }: { page: DiscoveryPage }) {
-  const count = page === "archive" ? 3 : 6;
-  return (
-    <div role="status" aria-label={`${pageMeta[page].title}加载中`} className={page === "archive" ? "space-y-8" : "grid gap-3 sm:grid-cols-2 lg:grid-cols-3"}>
-      {Array.from({ length: count }, (_, index) => (
-        <Skeleton key={index} className={page === "archive" ? "h-24 w-full" : "h-36 w-full rounded-lg"} />
-      ))}
-    </div>
   );
 }
 
@@ -177,7 +167,7 @@ export function BlogDiscoveryIndexDemo({
           <PageHeader title={meta.title} description={<PageDescription meta={meta.meta}>{meta.subtitle}</PageDescription>} />
           <Card aria-label={`${meta.title}内容`}>
             {scenario === "loading" ? (
-              <IndexLoading page={page} />
+              <BlogDiscoveryIndexLoading page={page} />
             ) : scenario === "empty" ? (
               <Empty title={`暂无${meta.title}内容`} description="公开内容准备好后会出现在这里。" />
             ) : page === "categories" ? (

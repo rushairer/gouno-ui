@@ -7,11 +7,11 @@ import {
   CodeBlock,
   Result,
   Segmented,
-  Skeleton,
 } from "../../../../src/core";
 import { PageHeader } from "../../../../src/gouno";
 import { FixtureDock } from "../../../components/fixture-dock";
 import { BlogPublicShellFixture } from "./public-shell";
+import { BlogCustomPageLoading } from "./loading";
 
 type CustomPageScenario = "data" | "loading" | "error" | "not-found";
 
@@ -81,22 +81,6 @@ function CustomPageBody() {
   );
 }
 
-function CustomPageSkeleton() {
-  return (
-    <Card padding="none" className="mx-auto w-full max-w-[900px] overflow-hidden" role="status" aria-label="自定义单页加载中">
-      <div className="space-y-6 p-6 sm:p-8">
-        <Skeleton className="h-8 w-2/3" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-4/5" />
-        <Skeleton className="h-px w-full" />
-        {Array.from({ length: 7 }, (_, index) => (
-          <Skeleton key={index} className={`h-4 ${index % 3 === 0 ? "w-full" : "w-5/6"}`} />
-        ))}
-      </div>
-    </Card>
-  );
-}
-
 export function BlogCustomPageDemo({
   initialScenario = "data",
 }: {
@@ -128,7 +112,7 @@ export function BlogCustomPageDemo({
         <Button variant="text" icon={<ArrowLeft />} className="mb-6 px-0" onClick={() => setNotice("将进入 /（Showcase 模拟）。")}>返回首页</Button>
 
         {scenario === "loading" ? (
-          <CustomPageSkeleton />
+          <BlogCustomPageLoading />
         ) : scenario === "error" ? (
           <Card padding="none" variant="subtle" className="mx-auto max-w-[900px]">
             <Result

@@ -75,7 +75,7 @@ Representative product fixtures validate the three layouts without teaching `Pag
 - **form — Gosso Admin Account Settings / Profile:** generic settings-form geometry.
 - **dashboard — Gosso Admin System Status and Blog Admin Dashboard:** generic statistic-card and content-block geometry.
 
-Showcase route fallbacks use the same presets whenever the destination page family is clear. Product fixtures should also reuse the preset when their unresolved state is genuinely one of these three common shapes.
+Showcase route fallbacks use the same presets whenever the destination page family is clear. When a product fixture owns a local loading anatomy, its route fallback should reuse that anatomy rather than substitute a preset: code-split loading and Fixture loading should not imply different page shapes. Product fixtures should otherwise reuse the preset when their unresolved state is genuinely one of these three common shapes.
 
 Local loaders remain correct for specialized anatomy such as editors, article/reading surfaces, media workspaces, AI workspaces, authentication flows, notification feeds, moderation queues, tag-card clouds and form-plus-live-preview settings. Adoption count is not a goal; semantic fit is.
 

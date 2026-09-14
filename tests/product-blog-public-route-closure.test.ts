@@ -71,6 +71,19 @@ describe("Blog public route closure", () => {
     }
   });
 
+  it("reuses Blog-local loading anatomy for matching route fallbacks", () => {
+    const router = read("showcase/app/page-router.tsx");
+
+    expect(router).toContain('<BlogRouteFallback currentPath="/"><BlogHomeLoading /></BlogRouteFallback>');
+    expect(router).toContain('<BlogRouteFallback currentPath="/articles"><BlogArticleListLoading /></BlogRouteFallback>');
+    expect(router).toContain('<BlogRouteFallback currentPath="/articles/gouno-ui-product-driven"><BlogArticleDetailLoading /></BlogRouteFallback>');
+    expect(router).toContain('<BlogRouteFallback currentPath="/categories"><BlogDiscoveryIndexLoading page="categories" /></BlogRouteFallback>');
+    expect(router).toContain('<BlogRouteFallback currentPath="/design-system"><BlogCustomPageLoading /></BlogRouteFallback>');
+    expect(router).toContain('<BlogRouteFallback currentPath="/account/notifications"><BlogNotificationsLoading /></BlogRouteFallback>');
+    expect(router).not.toMatch(/fallback=\{collectionLoading\}><Blog(?!Admin)/);
+    expect(router).not.toMatch(/fallback=\{formLoading\}><Blog(?!Admin)/);
+  });
+
   it("keeps the public product corpus limited to known Blog fixture files", () => {
     const productFiles = readdirSync(resolve(root, "showcase/demos/products/blog"))
       .filter((name) => name.endsWith(".tsx"));

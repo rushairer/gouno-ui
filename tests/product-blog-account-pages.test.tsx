@@ -10,7 +10,7 @@ import { ThemeProvider } from "../src/theme";
 
 afterEach(cleanup);
 
-function renderNotifications(initialScenario: "data" | "empty" | "error" = "data") {
+function renderNotifications(initialScenario: "data" | "loading" | "empty" | "error" = "data") {
   return render(
     <ThemeProvider brand="blog" storageKey={`blog-account-notifications-${initialScenario}-theme`}>
       <BlogAccountNotificationsDemo initialScenario={initialScenario} />
@@ -59,7 +59,12 @@ describe("Blog public account page migrations", () => {
     expect(screen.getByText("1 条未读")).toBeTruthy();
   });
 
-  it("preserves notification empty and non-fatal loading-error states", () => {
+  it("uses the notification-local loading anatomy before empty and error states", () => {
+    const loading = renderNotifications("loading");
+    expect(screen.getByRole("status", { name: "通知加载中" })).toBeTruthy();
+    expect(screen.queryByRole("radio", { name: "全部" })).toBeNull();
+    loading.unmount();
+
     const empty = renderNotifications("empty");
     expect(screen.getByText("还没有通知")).toBeTruthy();
     empty.unmount();

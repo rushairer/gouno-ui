@@ -8,7 +8,6 @@ import {
   Pagination,
   SearchField,
   Segmented,
-  Skeleton,
 } from "../../../../src/core";
 import { FixtureDock } from "../../../components/fixture-dock";
 import {
@@ -18,6 +17,7 @@ import {
   blogTags,
 } from "./public-content";
 import { BlogPublicShellFixture } from "./public-shell";
+import { BlogArticleListLoading } from "./loading";
 
 type ArticleIndexMode = "articles" | "search" | "tag" | "category";
 type ArticleIndexScenario = "data" | "loading" | "empty" | "error";
@@ -35,21 +35,6 @@ const modeDefaults: Record<ArticleIndexMode, { route: string; query: string; tag
   tag: { route: "/tags/OAuth2", query: "", tag: "OAuth2", category: "" },
   category: { route: "/categories/engineering", query: "", tag: "", category: "工程实践" },
 };
-
-function ArticleListSkeleton() {
-  return (
-    <div role="status" aria-label="文章列表加载中" className="flex flex-col gap-6">
-      {Array.from({ length: 4 }, (_, index) => (
-        <div key={index} className="border-b pb-6">
-          <Skeleton className="h-3 w-32" />
-          <Skeleton className="mt-3 h-7 w-4/5" />
-          <Skeleton className="mt-3 h-4 w-full" />
-          <Skeleton className="mt-2 h-4 w-2/3" />
-        </div>
-      ))}
-    </div>
-  );
-}
 
 export function BlogArticleIndexDemo({
   mode = "articles",
@@ -165,7 +150,7 @@ export function BlogArticleIndexDemo({
 
           <section aria-live="polite" className="mx-auto w-full max-w-[900px]">
             {scenario === "loading" ? (
-              <ArticleListSkeleton />
+              <BlogArticleListLoading />
             ) : scenario === "error" ? (
               <div className="flex flex-col items-start gap-3">
                 <Alert type="error" title="文章载入失败" description="公开文章接口暂时不可用。" showIcon />

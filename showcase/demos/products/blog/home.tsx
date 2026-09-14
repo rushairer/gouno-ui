@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { ArrowRight, GitBranch, Mail, Rss } from "lucide-react";
-import { Alert, Button, Empty, Segmented, Skeleton } from "../../../../src/core";
+import { Alert, Button, Empty, Segmented } from "../../../../src/core";
 import { FixtureDock } from "../../../components/fixture-dock";
 import {
   BlogArticleTeaser,
@@ -9,6 +9,7 @@ import {
   blogTags,
 } from "./public-content";
 import { BlogPublicShellFixture } from "./public-shell";
+import { BlogHomeLoading } from "./loading";
 
 type Scenario = "data" | "loading" | "empty" | "error";
 
@@ -18,25 +19,6 @@ const scenarioOptions = [
   { value: "empty", label: "空数据" },
   { value: "error", label: "错误" },
 ] as const;
-
-function HomeLoading() {
-  return (
-    <div className="flex flex-col gap-10" role="status" aria-label="首页加载中">
-      <div className="grid gap-6 border-b pb-10 md:grid-cols-[minmax(0,1fr)_320px]">
-        <div className="space-y-4">
-          <Skeleton className="h-10 w-4/5" />
-          <Skeleton className="h-5 w-3/4" />
-        </div>
-        <Skeleton className="aspect-[4/3] w-full rounded-lg" />
-      </div>
-      <Skeleton className="h-52 w-full" />
-      <div className="grid gap-8 md:grid-cols-2">
-        <Skeleton className="h-40 w-full" />
-        <Skeleton className="h-40 w-full" />
-      </div>
-    </div>
-  );
-}
 
 export function BlogHomeDemo({ initialScenario = "data" }: { initialScenario?: Scenario }) {
   const [scenario, setScenario] = useState<Scenario>(initialScenario);
@@ -67,7 +49,7 @@ export function BlogHomeDemo({ initialScenario = "data" }: { initialScenario?: S
       <BlogPublicShellFixture currentPath="/" onNavigate={navigate}>
         {notice ? <Alert className="mb-8" type="info" description={notice} showIcon /> : null}
         {scenario === "loading" ? (
-          <HomeLoading />
+          <BlogHomeLoading />
         ) : (
           <div className="flex flex-col gap-12 md:gap-16">
             <section className="grid items-center gap-8 border-b pb-10 md:grid-cols-[minmax(0,1fr)_320px]">

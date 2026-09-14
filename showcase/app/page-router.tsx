@@ -1,10 +1,19 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, type ReactNode } from "react";
 import { Card, Heading, Spinner, Text } from "../../src/core";
 import { PageSkeleton, type PageSkeletonLayout } from "../../src/gouno";
 import type { ShowcaseWorkspace } from "../catalog";
 import { GounoComponentDemo } from "../demos/gouno/components";
 import { GounoPageHeaderDemo } from "../demos/gouno/page-header";
 import { GounoPageSkeletonDemo } from "../demos/gouno/page-skeleton";
+import {
+  BlogArticleDetailLoading,
+  BlogArticleListLoading,
+  BlogCustomPageLoading,
+  BlogDiscoveryIndexLoading,
+  BlogHomeLoading,
+  BlogNotificationsLoading,
+} from "../demos/products/blog/loading";
+import { BlogPublicShellFixture } from "../demos/products/blog/public-shell";
 import { GossoOverviewDemo } from "../demos/products/gosso-admin/overview";
 import { ThemeSystemDemo } from "../demos/theme/system";
 
@@ -118,6 +127,22 @@ function ProductRouteFallback({ layout }: { layout: PageSkeletonLayout }) {
   return <PageSkeleton layout="dashboard" aria-label="正在加载页面" />;
 }
 
+const ignoreBlogNavigation = () => {};
+
+function BlogRouteFallback({
+  currentPath,
+  children,
+}: {
+  currentPath: string;
+  children: ReactNode;
+}) {
+  return (
+    <BlogPublicShellFixture currentPath={currentPath} onNavigate={ignoreBlogNavigation}>
+      {children}
+    </BlogPublicShellFixture>
+  );
+}
+
 const loading = <ShowcaseRouteFallback />;
 const collectionLoading = <ProductRouteFallback layout="collection" />;
 const formLoading = <ProductRouteFallback layout="form" />;
@@ -165,27 +190,27 @@ export function ShowcasePage({ page, workspace }: { page: string; workspace: Sho
     case "gouno-page-skeleton":
       return <GounoPageSkeletonDemo />;
     case "blog-home":
-      return <Suspense fallback={collectionLoading}><BlogHomeDemo /></Suspense>;
+      return <Suspense fallback={<BlogRouteFallback currentPath="/"><BlogHomeLoading /></BlogRouteFallback>}><BlogHomeDemo /></Suspense>;
     case "blog-articles":
-      return <Suspense fallback={collectionLoading}><BlogArticleIndexDemo mode="articles" /></Suspense>;
+      return <Suspense fallback={<BlogRouteFallback currentPath="/articles"><BlogArticleListLoading /></BlogRouteFallback>}><BlogArticleIndexDemo mode="articles" /></Suspense>;
     case "blog-article-detail":
-      return <Suspense fallback={loading}><BlogArticleDetailDemo /></Suspense>;
+      return <Suspense fallback={<BlogRouteFallback currentPath="/articles/gouno-ui-product-driven"><BlogArticleDetailLoading /></BlogRouteFallback>}><BlogArticleDetailDemo /></Suspense>;
     case "blog-search":
-      return <Suspense fallback={collectionLoading}><BlogArticleIndexDemo mode="search" /></Suspense>;
+      return <Suspense fallback={<BlogRouteFallback currentPath="/search"><BlogArticleListLoading /></BlogRouteFallback>}><BlogArticleIndexDemo mode="search" /></Suspense>;
     case "blog-categories":
-      return <Suspense fallback={collectionLoading}><BlogDiscoveryIndexDemo page="categories" /></Suspense>;
+      return <Suspense fallback={<BlogRouteFallback currentPath="/categories"><BlogDiscoveryIndexLoading page="categories" /></BlogRouteFallback>}><BlogDiscoveryIndexDemo page="categories" /></Suspense>;
     case "blog-tags":
-      return <Suspense fallback={collectionLoading}><BlogDiscoveryIndexDemo page="tags" /></Suspense>;
+      return <Suspense fallback={<BlogRouteFallback currentPath="/tags"><BlogDiscoveryIndexLoading page="tags" /></BlogRouteFallback>}><BlogDiscoveryIndexDemo page="tags" /></Suspense>;
     case "blog-archive":
-      return <Suspense fallback={collectionLoading}><BlogDiscoveryIndexDemo page="archive" /></Suspense>;
+      return <Suspense fallback={<BlogRouteFallback currentPath="/archive"><BlogDiscoveryIndexLoading page="archive" /></BlogRouteFallback>}><BlogDiscoveryIndexDemo page="archive" /></Suspense>;
     case "blog-about":
       return <Suspense fallback={loading}><BlogAboutDemo /></Suspense>;
     case "blog-custom-page":
-      return <Suspense fallback={loading}><BlogCustomPageDemo /></Suspense>;
+      return <Suspense fallback={<BlogRouteFallback currentPath="/design-system"><BlogCustomPageLoading /></BlogRouteFallback>}><BlogCustomPageDemo /></Suspense>;
     case "blog-account-notifications":
-      return <Suspense fallback={collectionLoading}><BlogAccountNotificationsDemo /></Suspense>;
+      return <Suspense fallback={<BlogRouteFallback currentPath="/account/notifications"><BlogNotificationsLoading /></BlogRouteFallback>}><BlogAccountNotificationsDemo /></Suspense>;
     case "blog-account-settings":
-      return <Suspense fallback={formLoading}><BlogAccountSettingsDemo /></Suspense>;
+      return <Suspense fallback={loading}><BlogAccountSettingsDemo /></Suspense>;
     case "blog-not-found":
       return <Suspense fallback={loading}><BlogNotFoundDemo /></Suspense>;
     case "blog-admin-dashboard":

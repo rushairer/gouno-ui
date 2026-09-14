@@ -9,15 +9,15 @@ import {
   Field,
   Input,
   Segmented,
-  Skeleton,
   Textarea,
 } from "../../../../src/core";
 import { PageHeader } from "../../../../src/gouno";
 import { FixtureDock } from "../../../components/fixture-dock";
 import { BlogPublicShellFixture } from "./public-shell";
+import { BlogNotificationsLoading } from "./loading";
 
 type NotificationFilter = "all" | "unread";
-type NotificationsScenario = "data" | "empty" | "error";
+type NotificationsScenario = "data" | "loading" | "empty" | "error";
 type SettingsScenario = "data" | "save-error";
 
 type AccountNotification = {
@@ -37,6 +37,7 @@ const notificationFilterOptions = [
 
 const notificationScenarioOptions = [
   { value: "data", label: "正常" },
+  { value: "loading", label: "加载中" },
   { value: "empty", label: "空状态" },
   { value: "error", label: "加载失败" },
 ] as const;
@@ -80,22 +81,6 @@ function notificationIcon(type: AccountNotification["type"]) {
   if (type === "reply") return <MessageCircleReply aria-hidden="true" className="size-4" />;
   if (type === "mention") return <UserRound aria-hidden="true" className="size-4" />;
   return <Settings2 aria-hidden="true" className="size-4" />;
-}
-
-function AccountPageSkeleton({ label }: { label: string }) {
-  return (
-    <div role="status" aria-label={label} className="mx-auto w-full max-w-[900px] space-y-5">
-      <Skeleton className="h-8 w-56" />
-      <Skeleton className="h-4 w-4/5" />
-      {Array.from({ length: 4 }, (_, index) => (
-        <Card key={index} padding="sm">
-          <Skeleton className="h-4 w-2/3" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-1/3" />
-        </Card>
-      ))}
-    </div>
-  );
 }
 
 export function BlogAccountNotificationsDemo({
@@ -158,7 +143,9 @@ export function BlogAccountNotificationsDemo({
             }
           />
 
-          {scenario === "error" ? (
+          {scenario === "loading" ? (
+            <BlogNotificationsLoading />
+          ) : scenario === "error" ? (
             <Alert
               type="error"
               title="通知加载失败"
@@ -168,17 +155,19 @@ export function BlogAccountNotificationsDemo({
             />
           ) : null}
 
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b pb-4">
-            <Segmented<NotificationFilter>
-              aria-label="通知筛选"
-              options={notificationFilterOptions}
-              value={filter}
-              onChange={setFilter}
-            />
-            <span className="text-sm text-muted-foreground">{unreadCount} 条未读</span>
-          </div>
+          {scenario !== "loading" ? (
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b pb-4">
+              <Segmented<NotificationFilter>
+                aria-label="通知筛选"
+                options={notificationFilterOptions}
+                value={filter}
+                onChange={setFilter}
+              />
+              <span className="text-sm text-muted-foreground">{unreadCount} 条未读</span>
+            </div>
+          ) : null}
 
-          {scenario === "error" ? null : notifications.length === 0 ? (
+          {scenario === "loading" || scenario === "error" ? null : notifications.length === 0 ? (
             <Empty
               title={filter === "unread" ? "没有未读通知" : "还没有通知"}
               description={filter === "unread" ? "新的回复或提及出现后会显示在这里。" : "站内事件会按时间出现在这里。"}
