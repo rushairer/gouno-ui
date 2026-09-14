@@ -8,3 +8,8 @@ export {
 } from "./app-shell";
 export { PageContainer, type PageContainerProps } from "./page-container";
 export { PageHeader, type PageHeaderProps } from "./page-header";
+export {
+  PageSkeleton,
+  type PageSkeletonLayout,
+  type PageSkeletonProps,
+} from "./page-skeleton";
