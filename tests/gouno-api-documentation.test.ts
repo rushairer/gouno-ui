@@ -7,6 +7,7 @@ import {
   pageContainerApi,
 } from "../showcase/demos/gouno/components";
 import { pageHeaderApi } from "../showcase/demos/gouno/page-header";
+import { pageSkeletonApi } from "../showcase/demos/gouno/page-skeleton";
 
 const configPath = ts.findConfigFile(process.cwd(), ts.sys.fileExists, "tsconfig.json")!;
 const parsed = ts.parseJsonConfigFileContent(
@@ -50,6 +51,21 @@ describe("Gouno public API documentation", () => {
     expect(pageHeaderApi.map((row) => row.name).sort()).toEqual(
       interfacePropertyNames("src/gouno/page-header.tsx", "PageHeaderProps"),
     );
+  });
+
+  it("documents PageSkeleton's intentionally narrow layout contract", () => {
+    expect(pageSkeletonApi.map((row) => row.name)).toEqual([
+      "layout",
+      "aria-label",
+      "rows",
+      "columns",
+      "pagination",
+      "fields",
+      "statistics",
+      "sections",
+      "className",
+      "...div props",
+    ]);
   });
 
   it("documents PageContainer as the native div-prop boundary it actually exports", () => {
