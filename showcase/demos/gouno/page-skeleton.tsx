@@ -9,7 +9,7 @@ export const pageSkeletonApi: ApiRow[] = [
   {
     name: "layout",
     type: '"collection" | "form" | "dashboard"',
-    description: "选择已经由真实 Gouno 产品验证过的页面数据区骨架布局。",
+    description: "选择低保真的 collection、form 或 dashboard 页面骨架预设。",
   },
   {
     name: "aria-label",
@@ -19,37 +19,37 @@ export const pageSkeletonApi: ApiRow[] = [
   {
     name: "rows",
     type: "number",
-    description: "collection 布局的占位行数，默认 5。",
+    description: "collection 的粗略占位行数，默认 5。",
   },
   {
     name: "columns",
-    type: "number | readonly PageSkeletonColumn[]",
-    description: "collection 的列数，或请求前已知的稳定表头与占位几何。只描述呈现，不承载排序、筛选、选择或数据 schema。",
+    type: "number",
+    description: "collection 的粗略桌面占位列数，默认 5；不承载真实表头或业务列定义。",
   },
   {
     name: "pagination",
     type: "boolean",
-    description: "collection 是否保留分页几何，默认 true。",
+    description: "collection 是否保留分页轮廓，默认 true。",
   },
   {
     name: "fields",
     type: "number",
-    description: "form 布局的字段占位数量，默认 6。",
+    description: "form 的粗略字段占位数量，默认 6。",
   },
   {
     name: "statistics",
     type: "number",
-    description: "dashboard 布局的统计卡占位数量，默认 4。",
+    description: "dashboard 的统计卡占位数量，默认 4。",
   },
   {
     name: "sections",
     type: "number",
-    description: "dashboard 布局的大块内容区域数量，默认 2。",
+    description: "dashboard 的大块内容占位数量，默认 2。",
   },
   {
     name: "className",
     type: "string",
-    description: "扩展骨架数据区域布局；不用于复制产品业务语义。",
+    description: "扩展骨架区域布局；不用于复制产品业务语义。",
   },
   {
     name: "...div props",
@@ -70,15 +70,14 @@ export function GounoPageSkeletonDemo() {
           <Tag color="success">Canonical</Tag>
         </div>
         <Text tone="muted" className="max-w-3xl leading-relaxed">
-          Gouno 产品家族的页面数据区初始加载呈现策略。它只表达 collection、form、dashboard
-          三类已经跨真实产品收敛的结构，不拥有请求生命周期、错误/空状态、路由或业务数据。
-          稳定的 PageHeader、导航、集合表头和已经可用的数据应继续保留。
+          三个低保真的常见页面轮廓：collection、form、dashboard。它们用于建立加载中的页面形状，
+          不描述真实 Filter、Toolbar、表头、业务字段或请求生命周期。
         </Text>
       </header>
 
       <DemoSection
-        title="三类已准入布局"
-        description="Preview 与 Code 使用同一个示例文件。页面负责判断 initial loading；PageSkeleton 只负责结构化占位。"
+        title="三类页面轮廓"
+        description="Preview 与 Code 使用同一个示例文件。选择最接近目标页面的 preset 即可，不追求与真实页面逐字段一致。"
         code={canonicalExampleSource(GounoPageSkeletonExampleSource)}
       >
         <GounoPageSkeletonExample />

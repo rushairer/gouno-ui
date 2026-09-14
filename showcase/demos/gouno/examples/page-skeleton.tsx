@@ -9,12 +9,7 @@ export default function GounoPageSkeletonExample() {
           layout="collection"
           aria-label="资源列表加载中"
           rows={4}
-          columns={[
-            { header: "资源", skeletonClassName: "w-3/4" },
-            { header: "状态", headerClassName: "w-28", skeletonClassName: "w-16" },
-            { header: "更新时间", headerClassName: "w-32", skeletonClassName: "w-24" },
-            { header: "操作", headerClassName: "w-32 text-right", skeletonClassName: "w-20" },
-          ]}
+          columns={5}
           pagination
         />
       </section>

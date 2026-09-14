@@ -77,14 +77,12 @@ describe("Gosso Admin System Management migration fixture", () => {
     expect(screen.getByText("用户目录加载失败")).toBeTruthy();
   });
 
-  it("dogfoods the collection PageSkeleton while preserving stable audit headings", () => {
+  it("dogfoods the low-fidelity collection PageSkeleton for audit loading", () => {
     let view = renderScenario("audit-logs", "加载中");
     const loading = screen.getByRole("status", { name: "审计日志加载中" });
     expect(loading.getAttribute("data-slot")).toBe("page-skeleton");
     expect(loading.getAttribute("data-layout")).toBe("collection");
-    for (const heading of ["时间", "事件", "Actor", "目标账户", "详情"]) {
-      expect(screen.getByRole("columnheader", { name: heading })).toBeTruthy();
-    }
+    expect(screen.queryByRole("columnheader")).toBeNull();
     view.unmount();
     view = renderScenario("audit-logs", "空状态");
     expect(screen.getByText("暂无审计事件")).toBeTruthy();

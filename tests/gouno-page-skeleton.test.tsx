@@ -19,27 +19,8 @@ describe("PageSkeleton", () => {
     expect(region.getAttribute("aria-busy")).toBe("true");
     expect(region.getAttribute("data-layout")).toBe("collection");
     expect(container.querySelectorAll('[data-slot="skeleton"]').length).toBeGreaterThan(8);
-  });
-
-  it("keeps stable collection headings visible while placeholder rows stay decorative", () => {
-    const { container } = render(
-      <PageSkeleton
-        layout="collection"
-        aria-label="文章加载中"
-        rows={2}
-        columns={[
-          { header: "文章", skeletonClassName: "w-3/4" },
-          { header: "状态", headerClassName: "w-28", skeletonClassName: "w-16" },
-          { header: "操作", headerClassName: "w-32 text-right", skeletonClassName: "w-20" },
-        ]}
-        pagination={false}
-      />,
-    );
-
-    expect(screen.getByRole("columnheader", { name: "文章" })).toBeTruthy();
-    expect(screen.getByRole("columnheader", { name: "状态" })).toBeTruthy();
-    expect(screen.getByRole("columnheader", { name: "操作" })).toBeTruthy();
-    expect(container.querySelector("tbody")?.getAttribute("aria-hidden")).toBe("true");
+    expect(container.querySelectorAll("thead th")).toHaveLength(4);
+    expect(screen.queryByRole("columnheader")).toBeNull();
   });
 
   it("renders form geometry without owning form state or controls", () => {

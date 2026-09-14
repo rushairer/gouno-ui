@@ -48,14 +48,6 @@ const scenarioOptions = [
   { value: "error", label: "错误" },
 ] as const;
 
-const auditLoadingColumns = [
-  { header: "时间", skeletonClassName: "w-28" },
-  { header: "事件", skeletonClassName: "w-40" },
-  { header: "Actor", skeletonClassName: "w-20" },
-  { header: "目标账户", skeletonClassName: "w-20" },
-  { header: "详情", headerClassName: "text-right", skeletonClassName: "ml-auto w-16" },
-] as const;
-
 export function AuditLogsPanel() {
   const [scenario, setScenario] = useState<FixtureScenario>("data");
   const [eventType, setEventType] = useState("");
@@ -122,7 +114,7 @@ export function AuditLogsPanel() {
           layout="collection"
           aria-label="审计日志加载中"
           rows={4}
-          columns={auditLoadingColumns}
+          columns={5}
           pagination
         />
       ) : visible.length ? (
