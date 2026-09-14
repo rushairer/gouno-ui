@@ -222,6 +222,7 @@ export const showcaseCatalog: ShowcaseGroup[] = [
     item("gouno-app-shell", "AppShell", "应用框架", 90, <PanelsTopLeft />),
     item("gouno-page-container", "PageContainer", "页面容器", 90, <Frame />),
     item("gouno-page-header", "PageHeader", "页面标题", 100, <Heading1 />),
+    item("gouno-page-skeleton", "PageSkeleton", "页面骨架", 100, <ScanLine />),
   ]},
   { workspace: "blog", group: "Migrated Pages 已迁移页面", items: [
     item("blog-home", "Home", "首页", 100, <Home />, "standalone"),
