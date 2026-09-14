@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Card, Heading, Spinner, Text } from "../../src/core";
+import { PageSkeleton, type PageSkeletonLayout } from "../../src/gouno";
 import type { ShowcaseWorkspace } from "../catalog";
 import { GounoComponentDemo } from "../demos/gouno/components";
 import { GounoPageHeaderDemo } from "../demos/gouno/page-header";
@@ -107,7 +108,20 @@ function ShowcaseRouteFallback() {
   );
 }
 
+function ProductRouteFallback({ layout }: { layout: PageSkeletonLayout }) {
+  if (layout === "collection") {
+    return <PageSkeleton layout="collection" aria-label="正在加载页面" />;
+  }
+  if (layout === "form") {
+    return <PageSkeleton layout="form" aria-label="正在加载页面" />;
+  }
+  return <PageSkeleton layout="dashboard" aria-label="正在加载页面" />;
+}
+
 const loading = <ShowcaseRouteFallback />;
+const collectionLoading = <ProductRouteFallback layout="collection" />;
+const formLoading = <ProductRouteFallback layout="form" />;
+const dashboardLoading = <ProductRouteFallback layout="dashboard" />;
 
 const workspaceNames: Record<ShowcaseWorkspace, string> = {
   "gouno-ui": "Gouno UI",
@@ -151,71 +165,71 @@ export function ShowcasePage({ page, workspace }: { page: string; workspace: Sho
     case "gouno-page-skeleton":
       return <GounoPageSkeletonDemo />;
     case "blog-home":
-      return <Suspense fallback={loading}><BlogHomeDemo /></Suspense>;
+      return <Suspense fallback={collectionLoading}><BlogHomeDemo /></Suspense>;
     case "blog-articles":
-      return <Suspense fallback={loading}><BlogArticleIndexDemo mode="articles" /></Suspense>;
+      return <Suspense fallback={collectionLoading}><BlogArticleIndexDemo mode="articles" /></Suspense>;
     case "blog-article-detail":
       return <Suspense fallback={loading}><BlogArticleDetailDemo /></Suspense>;
     case "blog-search":
-      return <Suspense fallback={loading}><BlogArticleIndexDemo mode="search" /></Suspense>;
+      return <Suspense fallback={collectionLoading}><BlogArticleIndexDemo mode="search" /></Suspense>;
     case "blog-categories":
-      return <Suspense fallback={loading}><BlogDiscoveryIndexDemo page="categories" /></Suspense>;
+      return <Suspense fallback={collectionLoading}><BlogDiscoveryIndexDemo page="categories" /></Suspense>;
     case "blog-tags":
-      return <Suspense fallback={loading}><BlogDiscoveryIndexDemo page="tags" /></Suspense>;
+      return <Suspense fallback={collectionLoading}><BlogDiscoveryIndexDemo page="tags" /></Suspense>;
     case "blog-archive":
-      return <Suspense fallback={loading}><BlogDiscoveryIndexDemo page="archive" /></Suspense>;
+      return <Suspense fallback={collectionLoading}><BlogDiscoveryIndexDemo page="archive" /></Suspense>;
     case "blog-about":
       return <Suspense fallback={loading}><BlogAboutDemo /></Suspense>;
     case "blog-custom-page":
       return <Suspense fallback={loading}><BlogCustomPageDemo /></Suspense>;
     case "blog-account-notifications":
-      return <Suspense fallback={loading}><BlogAccountNotificationsDemo /></Suspense>;
+      return <Suspense fallback={collectionLoading}><BlogAccountNotificationsDemo /></Suspense>;
     case "blog-account-settings":
-      return <Suspense fallback={loading}><BlogAccountSettingsDemo /></Suspense>;
+      return <Suspense fallback={formLoading}><BlogAccountSettingsDemo /></Suspense>;
     case "blog-not-found":
       return <Suspense fallback={loading}><BlogNotFoundDemo /></Suspense>;
     case "blog-admin-dashboard":
-      return <Suspense fallback={loading}><BlogAdminDashboardDemo /></Suspense>;
+      return <Suspense fallback={dashboardLoading}><BlogAdminDashboardDemo /></Suspense>;
     case "blog-admin-ai-operations":
-      return <Suspense fallback={loading}><BlogAdminAIOperationsDemo /></Suspense>;
+      return <Suspense fallback={dashboardLoading}><BlogAdminAIOperationsDemo /></Suspense>;
     case "blog-admin-ai-settings":
-      return <Suspense fallback={loading}><BlogAdminAISettingsDemo /></Suspense>;
+      return <Suspense fallback={formLoading}><BlogAdminAISettingsDemo /></Suspense>;
     case "blog-admin-posts":
-      return <Suspense fallback={loading}><BlogAdminPostsDemo /></Suspense>;
+      return <Suspense fallback={collectionLoading}><BlogAdminPostsDemo /></Suspense>;
     case "blog-admin-post-editor":
       return <Suspense fallback={loading}><BlogAdminPostEditorDemo /></Suspense>;
     case "blog-admin-categories":
-      return <Suspense fallback={loading}><BlogAdminCategoriesDemo /></Suspense>;
+      return <Suspense fallback={collectionLoading}><BlogAdminCategoriesDemo /></Suspense>;
     case "blog-admin-tags":
-      return <Suspense fallback={loading}><BlogAdminTagsDemo /></Suspense>;
+      return <Suspense fallback={collectionLoading}><BlogAdminTagsDemo /></Suspense>;
     case "blog-admin-pages":
-      return <Suspense fallback={loading}><BlogAdminPagesDemo /></Suspense>;
+      return <Suspense fallback={collectionLoading}><BlogAdminPagesDemo /></Suspense>;
     case "blog-admin-page-editor":
       return <Suspense fallback={loading}><BlogAdminPageEditorDemo /></Suspense>;
     case "blog-admin-comments":
-      return <Suspense fallback={loading}><BlogAdminCommentsDemo /></Suspense>;
+      return <Suspense fallback={collectionLoading}><BlogAdminCommentsDemo /></Suspense>;
     case "blog-admin-notifications":
-      return <Suspense fallback={loading}><BlogAdminNotificationsDemo /></Suspense>;
+      return <Suspense fallback={collectionLoading}><BlogAdminNotificationsDemo /></Suspense>;
     case "blog-admin-media-library":
       return <Suspense fallback={loading}><BlogAdminMediaLibraryDemo /></Suspense>;
     case "blog-admin-users":
-      return <Suspense fallback={loading}><BlogAdminUsersDemo /></Suspense>;
+      return <Suspense fallback={collectionLoading}><BlogAdminUsersDemo /></Suspense>;
     case "blog-admin-site-settings":
-      return <Suspense fallback={loading}><BlogAdminSiteSettingsDemo /></Suspense>;
+      return <Suspense fallback={formLoading}><BlogAdminSiteSettingsDemo /></Suspense>;
     case "gosso-overview":
       return <GossoOverviewDemo />;
     case "gosso-account-settings":
-      return <Suspense fallback={loading}><GossoAccountSettingsDemo /></Suspense>;
+      return <Suspense fallback={formLoading}><GossoAccountSettingsDemo /></Suspense>;
     case "gosso-system-clients":
-      return <Suspense fallback={loading}><GossoSystemManagementDemo section="clients" /></Suspense>;
+      return <Suspense fallback={collectionLoading}><GossoSystemManagementDemo section="clients" /></Suspense>;
     case "gosso-system-users":
-      return <Suspense fallback={loading}><GossoSystemManagementDemo section="users" /></Suspense>;
+      return <Suspense fallback={collectionLoading}><GossoSystemManagementDemo section="users" /></Suspense>;
     case "gosso-system-audit-logs":
-      return <Suspense fallback={loading}><GossoSystemManagementDemo section="audit-logs" /></Suspense>;
+      return <Suspense fallback={collectionLoading}><GossoSystemManagementDemo section="audit-logs" /></Suspense>;
     case "gosso-system-site-settings":
-      return <Suspense fallback={loading}><GossoSystemManagementDemo section="site-settings" /></Suspense>;
+      return <Suspense fallback={formLoading}><GossoSystemManagementDemo section="site-settings" /></Suspense>;
     case "gosso-system-status":
-      return <Suspense fallback={loading}><GossoSystemManagementDemo section="system" /></Suspense>;
+      return <Suspense fallback={dashboardLoading}><GossoSystemManagementDemo section="system" /></Suspense>;
     case "gosso-login":
       return <Suspense fallback={loading}><GossoLoginDemo /></Suspense>;
     case "gosso-forgot-password":
