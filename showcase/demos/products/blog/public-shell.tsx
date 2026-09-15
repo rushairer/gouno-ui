@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useState, type FormEvent, type MouseEvent, type ReactNode } from "react";
 import { LayoutDashboard, Menu, Rss } from "lucide-react";
 import gounoBlogLogo from "../../../../assets/brand-icons/gouno-blog.svg";
 import { Drawer, IconButton, Input } from "../../../../src/core";
@@ -13,7 +13,12 @@ const navItems = [
 
 function activePath(currentPath: string, target: string) {
   if (target === "/articles") {
-    return currentPath === "/articles" || currentPath.startsWith("/search") || currentPath.startsWith("/tags/") || currentPath.startsWith("/categories/");
+    return (
+      currentPath === "/articles" ||
+      currentPath.startsWith("/search") ||
+      currentPath.startsWith("/tags/") ||
+      currentPath.startsWith("/categories/")
+    );
   }
   return currentPath === target;
 }
@@ -37,33 +42,48 @@ export function BlogPublicShellFixture({
     setOpen(false);
   };
 
+  const navigate = (
+    event: MouseEvent<HTMLAnchorElement>,
+    target: string,
+    closeDrawer = false,
+  ) => {
+    event.preventDefault();
+    onNavigate(target);
+    if (closeDrawer) setOpen(false);
+  };
+
   return (
     <div className="flex min-h-dvh flex-col bg-background text-foreground">
-      <a href="#public-main" className="sr-only focus:not-sr-only focus:bg-accent focus:p-3">
+      <a
+        href="#public-main"
+        className="sr-only focus:not-sr-only focus:bg-accent focus:p-3"
+      >
         跳至正文
       </a>
       <header className="sticky top-0 z-30 border-b bg-background">
         <div className="mx-auto flex min-h-16 w-full max-w-[1200px] items-center gap-6 px-4 md:px-6">
-          <button
-            type="button"
+          <a
+            href="/"
             aria-label="Gouno Blog 首页"
             className="mr-auto inline-flex min-w-0 items-center gap-2 text-lg font-semibold tracking-tight text-primary"
-            onClick={() => onNavigate("/")}
+            onClick={(event) => navigate(event, "/")}
           >
             <BrandMark src={gounoBlogLogo} className="size-8" />
             <span className="truncate">Gouno Blog</span>
-          </button>
+          </a>
           <nav aria-label="主导航" className="hidden items-center gap-6 md:flex">
             {navItems.map((item) => (
-              <button
+              <a
                 key={item.path}
-                type="button"
-                aria-current={activePath(currentPath, item.path) ? "page" : undefined}
+                href={item.path}
+                aria-current={
+                  activePath(currentPath, item.path) ? "page" : undefined
+                }
                 className="py-5 text-sm text-muted-foreground hover:text-primary aria-[current=page]:text-primary"
-                onClick={() => onNavigate(item.path)}
+                onClick={(event) => navigate(event, item.path)}
               >
                 {item.label}
-              </button>
+              </a>
             ))}
           </nav>
           <form role="search" onSubmit={search} className="hidden lg:block">
@@ -101,24 +121,49 @@ export function BlogPublicShellFixture({
       <footer className="mt-12 border-t">
         <div className="mx-auto grid w-full max-w-[1200px] gap-8 px-4 py-10 md:grid-cols-[1fr_1fr] md:px-6">
           <div>
-            <button type="button" className="inline-flex items-center gap-2 font-semibold" onClick={() => onNavigate("/")}>
-              <BrandMark src={gounoBlogLogo} className="size-7 text-primary" />
+            <a
+              href="/"
+              className="inline-flex items-center gap-2 font-semibold"
+              onClick={(event) => navigate(event, "/")}
+            >
+              <BrandMark
+                src={gounoBlogLogo}
+                className="size-7 text-primary"
+              />
               <span>Gouno Blog</span>
-            </button>
+            </a>
             <p className="mt-2 max-w-md text-sm text-muted-foreground">
               互联网技术分析、工程实践与长期思考。
             </p>
           </div>
-          <nav aria-label="页脚导航" className="flex flex-wrap items-start gap-5 text-sm text-muted-foreground">
+          <nav
+            aria-label="页脚导航"
+            className="flex flex-wrap items-start gap-5 text-sm text-muted-foreground"
+          >
             {navItems.map((item) => (
-              <button type="button" key={item.path} onClick={() => onNavigate(item.path)}>{item.label}</button>
+              <a
+                href={item.path}
+                key={item.path}
+                onClick={(event) => navigate(event, item.path)}
+              >
+                {item.label}
+              </a>
             ))}
-            <button type="button" onClick={() => onNavigate("/admin")}>管理后台</button>
-            <button type="button" className="inline-flex items-center gap-2" onClick={() => onNavigate("/feed.xml")}>
-              <Rss className="size-4" aria-hidden="true" />RSS
-            </button>
+            <a href="/admin" onClick={(event) => navigate(event, "/admin")}>
+              管理后台
+            </a>
+            <a
+              href="/feed.xml"
+              className="inline-flex items-center gap-2"
+              onClick={(event) => navigate(event, "/feed.xml")}
+            >
+              <Rss className="size-4" aria-hidden="true" />
+              RSS
+            </a>
           </nav>
-          <p className="text-xs text-muted-foreground md:col-span-2">© 2026 Gouno Blog</p>
+          <p className="text-xs text-muted-foreground md:col-span-2">
+            © 2026 Gouno Blog
+          </p>
         </div>
       </footer>
 
@@ -133,29 +178,25 @@ export function BlogPublicShellFixture({
         </form>
         <nav aria-label="移动导航" className="flex flex-col gap-2">
           {navItems.map((item) => (
-            <button
+            <a
               key={item.path}
-              type="button"
-              aria-current={activePath(currentPath, item.path) ? "page" : undefined}
+              href={item.path}
+              aria-current={
+                activePath(currentPath, item.path) ? "page" : undefined
+              }
               className="rounded-md px-3 py-3 text-left hover:bg-accent aria-[current=page]:bg-accent"
-              onClick={() => {
-                onNavigate(item.path);
-                setOpen(false);
-              }}
+              onClick={(event) => navigate(event, item.path, true)}
             >
               {item.label}
-            </button>
+            </a>
           ))}
-          <button
-            type="button"
+          <a
+            href="/admin"
             className="px-3 py-3 text-left"
-            onClick={() => {
-              onNavigate("/admin");
-              setOpen(false);
-            }}
+            onClick={(event) => navigate(event, "/admin", true)}
           >
             管理后台
-          </button>
+          </a>
         </nav>
       </Drawer>
     </div>

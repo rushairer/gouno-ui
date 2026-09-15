@@ -1,4 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
+import type { MouseEvent } from "react";
 
 export type BlogPostFixture = {
   id: number;
@@ -150,9 +151,27 @@ export const blogTags = [
 ] as const;
 
 export const blogCategories = [
-  { id: 1, name: "工程实践", slug: "engineering", description: "真实工程中的架构、性能与设计系统实践。", postCount: 6 },
-  { id: 2, name: "AI 与工具", slug: "ai-tools", description: "AI 编程、Agent 与自动化工作流的落地经验。", postCount: 3 },
-  { id: 3, name: "架构与安全", slug: "architecture-security", description: "身份、安全边界与分布式系统架构判断。", postCount: 3 },
+  {
+    id: 1,
+    name: "工程实践",
+    slug: "engineering",
+    description: "真实工程中的架构、性能与设计系统实践。",
+    postCount: 6,
+  },
+  {
+    id: 2,
+    name: "AI 与工具",
+    slug: "ai-tools",
+    description: "AI 编程、Agent 与自动化工作流的落地经验。",
+    postCount: 3,
+  },
+  {
+    id: 3,
+    name: "架构与安全",
+    slug: "architecture-security",
+    description: "身份、安全边界与分布式系统架构判断。",
+    postCount: 3,
+  },
 ] as const;
 
 export function BlogArticleTeaser({
@@ -166,36 +185,69 @@ export function BlogArticleTeaser({
   compact?: boolean;
   onNavigate: (target: string) => void;
 }) {
+  const navigate = (event: MouseEvent<HTMLAnchorElement>, target: string) => {
+    event.preventDefault();
+    onNavigate(target);
+  };
+  const articlePath = `/articles/${post.slug}`;
+
   return (
-    <article className={`group grid min-w-0 gap-5 border-b py-6 ${post.cover && !compact ? "sm:grid-cols-[minmax(0,1fr)_180px]" : ""}`}>
+    <article
+      className={`group grid min-w-0 gap-5 border-b py-6 ${post.cover && !compact ? "sm:grid-cols-[minmax(0,1fr)_180px]" : ""}`}
+    >
       <div className="min-w-0">
         <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
           <time dateTime={post.publishedAt}>{post.publishedAt}</time>
           <span>{post.readTime} 分钟阅读</span>
         </div>
-        <button type="button" className="inline-flex items-start gap-2 text-left" onClick={() => onNavigate(`/articles/${post.slug}`)}>
-          <h2 className={`${featured ? "text-2xl md:text-3xl" : compact ? "text-base" : "text-xl"} break-words font-semibold leading-snug tracking-tight group-hover:text-primary`}>
+        <a
+          href={articlePath}
+          className="inline-flex items-start gap-2 text-left"
+          onClick={(event) => navigate(event, articlePath)}
+        >
+          <h2
+            className={`${featured ? "text-2xl md:text-3xl" : compact ? "text-base" : "text-xl"} break-words font-semibold leading-snug tracking-tight group-hover:text-primary`}
+          >
             {post.title}
           </h2>
-          <ArrowUpRight aria-hidden="true" className="mt-1 size-4 shrink-0 text-muted-foreground" />
-        </button>
-        <p className={`mt-3 text-sm leading-7 text-muted-foreground ${compact ? "line-clamp-2" : "line-clamp-3"}`}>{post.summary}</p>
+          <ArrowUpRight
+            aria-hidden="true"
+            className="mt-1 size-4 shrink-0 text-muted-foreground"
+          />
+        </a>
+        <p
+          className={`mt-3 text-sm leading-7 text-muted-foreground ${compact ? "line-clamp-2" : "line-clamp-3"}`}
+        >
+          {post.summary}
+        </p>
         <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-primary">
-          {post.tags.slice(0, compact ? 3 : post.tags.length).map((tag) => (
-            <button type="button" key={tag} className="hover:underline" onClick={() => onNavigate(`/tags/${encodeURIComponent(tag)}`)}>{tag}</button>
-          ))}
+          {post.tags.slice(0, compact ? 3 : post.tags.length).map((tag) => {
+            const tagPath = `/tags/${encodeURIComponent(tag)}`;
+            return (
+              <a
+                href={tagPath}
+                key={tag}
+                className="hover:underline"
+                onClick={(event) => navigate(event, tagPath)}
+              >
+                {tag}
+              </a>
+            );
+          })}
         </div>
       </div>
       {post.cover && !compact ? (
-        <button
-          type="button"
+        <a
+          href={articlePath}
           tabIndex={-1}
           aria-hidden="true"
           className="aspect-[4/3] self-center overflow-hidden rounded-md border bg-gradient-to-br from-primary/15 via-muted to-background p-4"
-          onClick={() => onNavigate(`/articles/${post.slug}`)}
+          onClick={(event) => navigate(event, articlePath)}
         >
-          <span className="grid h-full place-items-center rounded border border-dashed text-center text-[11px] text-muted-foreground">文章封面静态占位</span>
-        </button>
+          <span className="grid h-full place-items-center rounded border border-dashed text-center text-[11px] text-muted-foreground">
+            文章封面静态占位
+          </span>
+        </a>
       ) : null}
     </article>
   );

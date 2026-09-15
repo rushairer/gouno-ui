@@ -7,7 +7,9 @@ import { ThemeProvider } from "../src/theme";
 
 afterEach(cleanup);
 
-function renderHome(initialScenario: "data" | "loading" | "empty" | "error" = "data") {
+function renderHome(
+  initialScenario: "data" | "loading" | "empty" | "error" = "data",
+) {
   return render(
     <ThemeProvider brand="blog" storageKey="blog-home-test-theme">
       <BlogHomeDemo initialScenario={initialScenario} />
@@ -19,18 +21,33 @@ describe("Blog public Home product migration fixture", () => {
   it("preserves the public shell and Home information hierarchy", () => {
     renderHome();
 
-    expect(screen.getByRole("link", { name: "跳至正文" }).getAttribute("href")).toBe("#public-main");
+    expect(
+      screen.getByRole("link", { name: "跳至正文" }).getAttribute("href"),
+    ).toBe("#public-main");
     expect(screen.getByRole("navigation", { name: "主导航" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "进入内容后台" })).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: "进入内容后台" }),
+    ).toBeTruthy();
     expect(screen.queryByRole("button", { name: /提交.*搜索/ })).toBeNull();
     expect(screen.getByRole("main").getAttribute("id")).toBe("public-main");
     expect(
-      screen.getByRole("heading", { level: 1, name: "把真实工程问题，写成可以长期复用的知识。" }),
+      screen.getByRole("heading", {
+        level: 1,
+        name: "把真实工程问题，写成可以长期复用的知识。",
+      }),
     ).toBeTruthy();
-    expect(screen.getByRole("heading", { level: 2, name: "精选文章" })).toBeTruthy();
-    expect(screen.getByRole("heading", { level: 2, name: "主题索引" })).toBeTruthy();
-    expect(screen.getByRole("heading", { level: 2, name: "最新文章" })).toBeTruthy();
-    expect(screen.getByRole("heading", { level: 2, name: "订阅更新" })).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { level: 2, name: "精选文章" }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { level: 2, name: "主题索引" }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { level: 2, name: "最新文章" }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { level: 2, name: "订阅更新" }),
+    ).toBeTruthy();
   });
 
   it("preserves empty and error states without a real Blog API", () => {
@@ -43,15 +60,32 @@ describe("Blog public Home product migration fixture", () => {
     expect(screen.getByRole("button", { name: "重试" })).toBeTruthy();
   });
 
-  it("keeps the public shell product-local instead of forcing AppShell", () => {
-    const homeSource = readFileSync(resolve(process.cwd(), "showcase/demos/products/blog/home.tsx"), "utf8");
-    const shellSource = readFileSync(resolve(process.cwd(), "showcase/demos/products/blog/public-shell.tsx"), "utf8");
-    const combined = `${homeSource}\n${shellSource}`;
+  it("keeps the public shell and editorial navigation product-local and semantic", () => {
+    const homeSource = readFileSync(
+      resolve(process.cwd(), "showcase/demos/products/blog/home.tsx"),
+      "utf8",
+    );
+    const shellSource = readFileSync(
+      resolve(process.cwd(), "showcase/demos/products/blog/public-shell.tsx"),
+      "utf8",
+    );
+    const contentSource = readFileSync(
+      resolve(process.cwd(), "showcase/demos/products/blog/public-content.tsx"),
+      "utf8",
+    );
+    const combined = `${homeSource}\n${shellSource}\n${contentSource}`;
 
     expect(combined).not.toContain('../../../src/gouno');
     expect(combined).not.toContain("AppShell");
     expect(combined).not.toContain("PageContainer");
     expect(homeSource).toContain('../../../src/core');
     expect(shellSource).toContain('../../../src/theme');
+    expect(shellSource).not.toMatch(/<button\b/);
+    expect(homeSource).not.toMatch(/<button\b/);
+    expect(contentSource).not.toMatch(/<button\b/);
+    expect(shellSource).toMatch(/<a\s+[\s\S]*?aria-label="Gouno Blog 首页"/);
+    expect(shellSource).toContain('aria-label="主导航"');
+    expect(shellSource).toContain('aria-label="移动导航"');
+    expect(contentSource).toContain("href={articlePath}");
   });
 });
