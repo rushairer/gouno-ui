@@ -1,6 +1,12 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { BlogArticleIndexDemo } from "../showcase/demos/products/blog/article-index";
 import { ThemeProvider } from "../src/theme";
@@ -28,7 +34,8 @@ describe("Blog public ArticleIndex product migration fixture", () => {
     expect(
       screen.getByRole("heading", { level: 1, name: "全部文章" }),
     ).toBeTruthy();
-    expect(screen.getByRole("region", { name: "筛选" })).toBeTruthy();
+    const filters = screen.getByRole("region", { name: "筛选" });
+    expect(filters).toBeTruthy();
     const search = document.getElementById("article-search-articles");
     expect(search).toBeTruthy();
     expect(search?.getAttribute("type")).toBe("search");
@@ -36,7 +43,7 @@ describe("Blog public ArticleIndex product migration fixture", () => {
       screen.getByRole("navigation", { name: "文章分页" }),
     ).toBeTruthy();
     expect(screen.getByRole("button", { name: "Page 2" })).toBeTruthy();
-    expect(screen.getByRole("link", { name: "OAuth2" })).toBeTruthy();
+    expect(within(filters).getByRole("link", { name: "OAuth2" })).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "Page 2" }));
     expect(

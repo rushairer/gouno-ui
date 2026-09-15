@@ -34,10 +34,10 @@ describe("Blog public ArticleDetail migration", () => {
   it("keeps reading navigation and related content product-local", () => {
     renderDetail();
 
-    fireEvent.click(screen.getByRole("button", { name: "OAuth2" }));
+    fireEvent.click(screen.getByRole("link", { name: "OAuth2" }));
     expect(screen.getByText(/\/tags\/OAuth2/)).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("button", { name: /Gouno UI：用真实产品反推设计系统/ }));
+    fireEvent.click(screen.getByRole("link", { name: /Gouno UI：用真实产品反推设计系统/ }));
     expect(screen.getByText(/\/articles\/gouno-ui-product-driven/)).toBeTruthy();
   });
 

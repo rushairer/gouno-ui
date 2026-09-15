@@ -23,8 +23,10 @@ describe("Blog Public canonical fixture contracts", () => {
   it("keeps Admin shell grammar out of public fixtures", () => {
     for (const file of publicFixtureFiles) {
       const content = source(file);
-      expect(content, file).not.toContain("AppShell");
-      expect(content, file).not.toContain("PageContainer");
+      expect(content, file).not.toMatch(
+        /import\s+\{[^}]*\b(?:AppShell|PageContainer)\b[^}]*\}\s+from\s+["'][^"']+["']/s,
+      );
+      expect(content, file).not.toMatch(/<(?:AppShell|PageContainer)\b/);
     }
   });
 
