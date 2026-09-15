@@ -2,13 +2,10 @@ import { useRef, useState, type ReactNode } from "react";
 import {
   FileText,
   Image as ImageIcon,
-  KeyRound,
-  Lock,
   Mail,
   RotateCcw,
   Save,
   Search,
-  ShieldCheck,
   Upload,
 } from "lucide-react";
 import {
@@ -29,6 +26,7 @@ import { PageHeader } from "../../../../src/gouno";
 import { FixtureDock } from "../../../components/fixture-dock";
 import { TabPanelLead } from "../../../components/tab-panel-lead";
 import { FixtureNotification } from "./fixture-notification";
+import { PrivilegedAccessGate } from "./privileged-access-gate";
 
 type SettingsTab = "basic" | "appearance" | "hero" | "social" | "seo";
 type FixtureScenario = "data" | "loading" | "error";
@@ -130,39 +128,23 @@ function SettingsSurface({
   );
 }
 
-function SiteSettingsSecurityGate({ locked, onUnlock, children }: {
+function SiteSettingsSecurityGate({ locked, onUnlock, onRelock, children }: {
   locked: boolean;
   onUnlock: () => void;
+  onRelock: () => void;
   children: ReactNode;
 }) {
-  if (locked) {
-    return (
-      <Card padding="base" className="border-primary/20 bg-accent/20">
-        <div className="mx-auto flex max-w-2xl flex-col items-center gap-4 py-8 text-center">
-          <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <Lock aria-hidden="true" className="size-6" />
-          </div>
-          <div className="flex flex-col gap-2">
-            <Text className="text-lg font-semibold">站点核心配置保护</Text>
-            <Text size="sm" tone="muted" className="leading-relaxed">
-              修改站点品牌、SEO、页脚或联系方式等敏感设置需要近期多因素身份认证。解锁后享有 10 分钟无打扰编辑期。
-            </Text>
-          </div>
-          <Button variant="solid" color="primary" icon={<KeyRound />} onClick={onUnlock}>解锁以修改设置</Button>
-          <Text size="xs" tone="muted">安全认证由统一身份中心提供；Showcase 仅模拟近期 MFA/Sudo 状态。</Text>
-        </div>
-      </Card>
-    );
-  }
-
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex w-fit items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground" role="status">
-        <ShieldCheck aria-hidden="true" className="size-3.5 text-[var(--status-success-text)]" />
-        <span>Sudo 已解锁 · 剩余约 10 分钟</span>
-      </div>
+    <PrivilegedAccessGate
+      state={locked ? "locked" : "unlocked"}
+      policyTitle="站点核心配置保护"
+      policyDescription="修改站点品牌、SEO、页脚或联系方式等敏感设置需要近期多因素身份认证。"
+      actionLabel="解锁以修改设置"
+      onUnlock={onUnlock}
+      onRelock={onRelock}
+    >
       {children}
-    </div>
+    </PrivilegedAccessGate>
   );
 }
 
@@ -279,7 +261,11 @@ export function BlogAdminSiteSettingsDemo() {
     }
 
     return (
-      <SiteSettingsSecurityGate locked={security === "locked"} onUnlock={unlock}>
+      <SiteSettingsSecurityGate
+        locked={security === "locked"}
+        onUnlock={unlock}
+        onRelock={() => setSecurity("locked")}
+      >
         <Tabs<SettingsTab>
           ariaLabel="站点设置"
           activeKey={activeTab}
