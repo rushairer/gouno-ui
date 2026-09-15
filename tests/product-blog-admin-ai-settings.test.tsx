@@ -89,7 +89,9 @@ describe("Blog Admin AI Settings route family", () => {
     render(<BlogAdminAISettingsDemo />);
     openTab("模型连接");
 
+    expect(screen.getByText("高权限操作已解锁")).toBeTruthy();
     expect(screen.getByText("模型连接与密钥保护")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "重新锁定" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "导出模型连接" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "导入模型连接" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "添加模型连接" })).toBeTruthy();
@@ -100,6 +102,18 @@ describe("Blog Admin AI Settings route family", () => {
     expect(screen.getByText("OpenAI GPT-5.6：连接测试成功。")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "添加模型连接" }));
     expect(screen.getByRole("heading", { level: 2, name: "添加模型连接" })).toBeTruthy();
+  });
+
+  it("supports the same locked/unlocked interaction in AI Settings as other privileged pages", () => {
+    render(<BlogAdminAISettingsDemo initialSection="providers" />);
+    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
+    fireEvent.click(screen.getByRole("radio", { name: "已锁定" }));
+
+    expect(screen.getByText("高权限操作需要身份验证")).toBeTruthy();
+    expect(screen.queryByRole("heading", { level: 2, name: "默认用途" })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "解锁以管理模型连接" }));
+    expect(screen.getByText("高权限操作已解锁")).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "默认用途" })).toBeTruthy();
   });
 
   it("surfaces provider connection failures instead of reporting unconditional success", () => {
@@ -130,7 +144,8 @@ describe("Blog Admin AI Settings route family", () => {
     render(<BlogAdminAISettingsDemo />);
     openTab("知识库");
 
-    expect(screen.getByText("敏感配置需要近期 MFA")).toBeTruthy();
+    expect(screen.getByText("高权限操作已解锁")).toBeTruthy();
+    expect(screen.getByText("知识库与向量模型保护")).toBeTruthy();
     expect(screen.getByRole("button", { name: "重试失败任务" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "全量重建" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "添加 Embedding 模型" })).toBeTruthy();
