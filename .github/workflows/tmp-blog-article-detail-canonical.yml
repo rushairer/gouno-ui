@@ -1,0 +1,68 @@
+name: Temporary Blog Article Detail Canonical Patch
+
+on:
+  push:
+    branches:
+      - hardening/blog-public-account-parity
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: hardening/blog-public-account-parity
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Patch canonical article detail fixture
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path("showcase/demos/products/blog/article-detail.tsx")
+          text = path.read_text()
+
+          replacements = [
+              (
+                  'import { BlogArticleDetailLoading } from "./loading";\n',
+                  'import { BlogArticleDetailLoading } from "./loading";\nimport { BlogArticleCommunity } from "./article-community";\n',
+              ),
+              (
+                  'note="真实 PostDetail 阅读骨架的静态迁移：保留文章层级、元信息、TOC 深链接、代码复制、媒体、相关阅读和主要加载/错误/未找到/管理员预览状态；点赞与评论/回复/举报状态机留到 Reading 下一阶段。"',
+                  'note="真实 PostDetail 阅读骨架的静态迁移：保留文章层级、元信息、TOC 深链接、代码复制、媒体、相关阅读、讨论区和主要加载/错误/未找到/管理员预览状态；社区交互保持 Blog-owned composition。"',
+              ),
+              (
+                  '''          <button\n            key={tag}\n            type="button"\n            className="rounded-md border px-2 py-1 text-xs text-foreground hover:border-primary hover:bg-accent"\n            onClick={() => onNavigate(`/tags/${encodeURIComponent(tag)}`)}\n          >\n            {tag}\n          </button>''',
+                  '''          <a\n            key={tag}\n            href={`/tags/${encodeURIComponent(tag)}`}\n            className="rounded-md border px-2 py-1 text-xs text-foreground hover:border-primary hover:bg-accent"\n            onClick={(event) => {\n              event.preventDefault();\n              onNavigate(`/tags/${encodeURIComponent(tag)}`);\n            }}\n          >\n            {tag}\n          </a>''',
+              ),
+              (
+                  '''            <section aria-labelledby="related-reading" className="mx-auto mt-12 w-full max-w-[900px]">\n              <div className="border-b pb-3">\n                <h2 id="related-reading" className="text-xl font-semibold tracking-tight">相关阅读</h2>\n                <p className="mt-1 text-sm text-muted-foreground">继续沿着架构与设计系统的阅读路径向下探索。</p>\n              </div>\n              {relatedPosts.map((post) => (\n                <BlogArticleTeaser key={post.id} post={post} compact onNavigate={navigate} />\n              ))}\n            </section>''',
+                  '''            <section aria-labelledby="related-reading" className="mx-auto mt-12 w-full max-w-[900px]">\n              <div className="border-b pb-3">\n                <h2 id="related-reading" className="text-xl font-semibold tracking-tight">相关阅读</h2>\n                <p className="mt-1 text-sm text-muted-foreground">继续沿着架构与设计系统的阅读路径向下探索。</p>\n              </div>\n              {relatedPosts.map((post) => (\n                <BlogArticleTeaser key={post.id} post={post} compact onNavigate={navigate} />\n              ))}\n            </section>\n\n            <BlogArticleCommunity />''',
+              ),
+          ]
+
+          for old, new in replacements:
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"expected exactly one match, found {count}: {old[:80]!r}")
+              text = text.replace(old, new)
+
+          path.write_text(text)
+          PY
+          npx prettier --write showcase/demos/products/blog/article-detail.tsx
+      - name: Commit patch and remove temporary workflow
+        run: |
+          rm .github/workflows/tmp-blog-article-detail-canonical.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add showcase/demos/products/blog/article-detail.tsx .github/workflows/tmp-blog-article-detail-canonical.yml
+          git commit -m "fix(showcase): complete Blog article reading contract"
+          git push origin HEAD:hardening/blog-public-account-parity
