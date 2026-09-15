@@ -24,6 +24,10 @@ import {
 } from "./fixtures";
 import { AISettingsSectionPanel, type AISettingsSectionActions } from "./sections";
 import { FixtureNotification } from "../../fixture-notification";
+import {
+  PrivilegedAccessGate,
+  type PrivilegedAccessState,
+} from "../../privileged-access-gate";
 
 const validSections = new Set<AISettingsSection>([
   "agents",
@@ -57,6 +61,12 @@ const mutationOptions = [
   { value: "save-error", label: "保存失败" },
   { value: "delete-error", label: "删除失败" },
   { value: "connection-error", label: "连接测试失败" },
+] as const;
+
+const securityOptions = [
+  { value: "unlocked", label: "已解锁" },
+  { value: "locked", label: "已锁定" },
+  { value: "expiring", label: "操作时过期" },
 ] as const;
 
 export function parseAISettingsRoute(value: string): AISettingsSection {
@@ -104,6 +114,7 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
   const [editor, setEditor] = useState<AISettingsEditorState>(null);
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
   const [mutationScenario, setMutationScenario] = useState<MutationScenario>("success");
+  const [security, setSecurity] = useState<PrivilegedAccessState>("unlocked");
 
   const changeSection = (next: AISettingsSection) => {
     setSection(next);
@@ -282,25 +293,63 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
     onOutboxAction: actOnOutbox,
   };
 
+  const privilegedPolicy = section === "providers"
+    ? {
+        title: "模型连接与密钥保护",
+        description: "添加、修改、导出或删除模型连接涉及敏感 API Key 凭据，需要近期多因素身份认证。",
+        actionLabel: "解锁以管理模型连接",
+      }
+    : section === "knowledge"
+      ? {
+          title: "知识库与向量模型保护",
+          description: "添加、编辑、删除 Embedding 配置或执行全量重建需要近期多因素身份认证。",
+          actionLabel: "解锁以管理知识库",
+        }
+      : null;
+
+  const sectionPanel = editor
+    ? <AISettingsEditor editor={editor} fixture={fixture} onSave={saveEditor} onCancel={() => setEditor(null)} />
+    : <AISettingsSectionPanel fixture={fixture} section={section} actions={actions} />;
+
   return (
     <div className="flex flex-col gap-6">
       <FixtureDock
         route={formatAISettingsRoute(section)}
         note="AI 设置是独立的管理路由族；Showcase 模拟 CRUD、保存/删除/连接失败、MFA 后配置、OAuth 与 Outbox 状态，但不保存真实凭证或调用真实 Agent/Connector API。"
         controls={(
-          <Segmented<MutationScenario>
-            aria-label="AI 设置操作场景"
-            options={mutationOptions}
-            value={mutationScenario}
-            onChange={(value) => { setMutationScenario(value); setNotice(null); }}
-            block
-          />
+          <div className="flex flex-col gap-3">
+            <Segmented<MutationScenario>
+              aria-label="AI 设置操作场景"
+              options={mutationOptions}
+              value={mutationScenario}
+              onChange={(value) => { setMutationScenario(value); setNotice(null); }}
+              block
+            />
+            <Segmented<PrivilegedAccessState>
+              aria-label="AI 设置高权限安全状态"
+              options={securityOptions}
+              value={security}
+              onChange={(value) => { setSecurity(value); setNotice(null); }}
+              block
+            />
+          </div>
         )}
       />
       <PageHeader title="AI 设置" description="管理 Agent、Skill、Tool、知识索引、模型连接与 Sandbox 连接器。" />
       <Tabs<AISettingsSection> activeKey={section} items={tabs} onChange={changeSection} ariaLabel="AI 设置栏目" />
       <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
-      {editor ? <AISettingsEditor editor={editor} fixture={fixture} onSave={saveEditor} onCancel={() => setEditor(null)} /> : <AISettingsSectionPanel fixture={fixture} section={section} actions={actions} />}
+      {privilegedPolicy && !editor ? (
+        <PrivilegedAccessGate
+          state={security}
+          policyTitle={privilegedPolicy.title}
+          policyDescription={privilegedPolicy.description}
+          actionLabel={privilegedPolicy.actionLabel}
+          onUnlock={() => setSecurity("unlocked")}
+          onRelock={() => setSecurity("locked")}
+        >
+          {sectionPanel}
+        </PrivilegedAccessGate>
+      ) : sectionPanel}
       <Modal
         open={Boolean(deleteTarget)}
         title="确认删除"
