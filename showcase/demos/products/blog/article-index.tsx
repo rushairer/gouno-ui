@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useMemo, useState, type FormEvent, type MouseEvent } from "react";
 import { Search } from "lucide-react";
 import {
   Alert,
@@ -29,11 +29,24 @@ const scenarioOptions = [
   { value: "error", label: "错误" },
 ] as const;
 
-const modeDefaults: Record<ArticleIndexMode, { route: string; query: string; tag: string; category: string }> = {
+const modeDefaults: Record<
+  ArticleIndexMode,
+  { route: string; query: string; tag: string; category: string }
+> = {
   articles: { route: "/articles", query: "", tag: "", category: "" },
-  search: { route: "/search?q=OAuth2", query: "OAuth2", tag: "", category: "" },
+  search: {
+    route: "/search?q=OAuth2",
+    query: "OAuth2",
+    tag: "",
+    category: "",
+  },
   tag: { route: "/tags/OAuth2", query: "", tag: "OAuth2", category: "" },
-  category: { route: "/categories/engineering", query: "", tag: "", category: "工程实践" },
+  category: {
+    route: "/categories/engineering",
+    query: "",
+    tag: "",
+    category: "工程实践",
+  },
 };
 
 export function BlogArticleIndexDemo({
@@ -44,7 +57,8 @@ export function BlogArticleIndexDemo({
   initialScenario?: ArticleIndexScenario;
 }) {
   const defaults = modeDefaults[mode];
-  const [scenario, setScenario] = useState<ArticleIndexScenario>(initialScenario);
+  const [scenario, setScenario] =
+    useState<ArticleIndexScenario>(initialScenario);
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState(defaults.query);
   const [submittedQuery, setSubmittedQuery] = useState(defaults.query);
@@ -64,27 +78,50 @@ export function BlogArticleIndexDemo({
   const filteredPosts = useMemo(() => {
     if (scenario === "empty") return [];
     return blogPosts.filter((post) => {
-      const matchesQuery = !submittedQuery || `${post.title} ${post.summary} ${post.tags.join(" ")}`.toLowerCase().includes(submittedQuery.toLowerCase());
+      const matchesQuery =
+        !submittedQuery ||
+        `${post.title} ${post.summary} ${post.tags.join(" ")}`
+          .toLowerCase()
+          .includes(submittedQuery.toLowerCase());
       const matchesTag = !defaults.tag || post.tags.includes(defaults.tag);
-      const matchesCategory = !defaults.category || post.category === defaults.category;
+      const matchesCategory =
+        !defaults.category || post.category === defaults.category;
       return matchesQuery && matchesTag && matchesCategory;
     });
   }, [defaults.category, defaults.tag, scenario, submittedQuery]);
 
   const pageSize = 10;
   const total = filteredPosts.length;
-  const visiblePosts = filteredPosts.slice((page - 1) * pageSize, page * pageSize);
-  const currentPath = mode === "search" ? `/search?q=${encodeURIComponent(submittedQuery)}` : defaults.route;
+  const visiblePosts = filteredPosts.slice(
+    (page - 1) * pageSize,
+    page * pageSize,
+  );
+  const currentPath =
+    mode === "search"
+      ? `/search?q=${encodeURIComponent(submittedQuery)}`
+      : defaults.route;
 
   const submitSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const value = query.trim();
     setSubmittedQuery(value);
     setPage(1);
-    setNotice(value ? `将进入 /search?q=${encodeURIComponent(value)}（Showcase 模拟）。` : "搜索关键词为空。 ");
+    setNotice(
+      value
+        ? `将进入 /search?q=${encodeURIComponent(value)}（Showcase 模拟）。`
+        : "搜索关键词为空。",
+    );
   };
 
-  const navigate = (target: string) => setNotice(`将进入 ${target}（Showcase 模拟）。`);
+  const navigate = (target: string) =>
+    setNotice(`将进入 ${target}（Showcase 模拟）。`);
+  const navigateLink = (
+    event: MouseEvent<HTMLAnchorElement>,
+    target: string,
+  ) => {
+    event.preventDefault();
+    navigate(target);
+  };
 
   return (
     <div className="relative">
@@ -105,14 +142,26 @@ export function BlogArticleIndexDemo({
         }
       />
       <BlogPublicShellFixture currentPath={currentPath} onNavigate={navigate}>
-        {notice ? <Alert className="mb-8" type="info" description={notice} showIcon /> : null}
+        {notice ? (
+          <Alert
+            className="mb-8"
+            type="info"
+            description={notice}
+            showIcon
+          />
+        ) : null}
         <div className="flex flex-col gap-8">
           <header>
             <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
-            <p className="mt-3 text-sm text-muted-foreground">{total} 篇文章，持续记录问题、选择与实现。</p>
+            <p className="mt-3 text-sm text-muted-foreground">
+              {total} 篇文章，持续记录问题、选择与实现。
+            </p>
           </header>
 
-          <section aria-label="筛选" className="flex flex-col gap-4 border-y py-5">
+          <section
+            aria-label="筛选"
+            className="flex flex-col gap-4 border-y py-5"
+          >
             <form className="flex max-w-xl gap-3" onSubmit={submitSearch}>
               <Field label="关键词" className="flex-1">
                 <SearchField
@@ -123,28 +172,33 @@ export function BlogArticleIndexDemo({
                   aria-label="搜索文章"
                 />
               </Field>
-              <Button type="submit" className="self-end" icon={<Search />}>搜索</Button>
+              <Button type="submit" className="self-end" icon={<Search />}>
+                搜索
+              </Button>
             </form>
             <div className="flex flex-wrap items-center gap-2">
               <span className="mr-2 text-sm text-muted-foreground">标签</span>
-              <button
-                type="button"
+              <a
+                href="/articles"
                 className="rounded-md border px-3 py-1 text-sm hover:bg-accent"
-                onClick={() => navigate("/articles")}
+                onClick={(event) => navigateLink(event, "/articles")}
               >
                 全部
-              </button>
-              {blogTags.map((tag) => (
-                <button
-                  type="button"
-                  key={tag}
-                  aria-current={tag === defaults.tag ? "page" : undefined}
-                  className="rounded-md border px-3 py-1 text-sm hover:bg-accent aria-[current=page]:border-primary aria-[current=page]:bg-accent"
-                  onClick={() => navigate(`/tags/${encodeURIComponent(tag)}`)}
-                >
-                  {tag}
-                </button>
-              ))}
+              </a>
+              {blogTags.map((tag) => {
+                const target = `/tags/${encodeURIComponent(tag)}`;
+                return (
+                  <a
+                    href={target}
+                    key={tag}
+                    aria-current={tag === defaults.tag ? "page" : undefined}
+                    className="rounded-md border px-3 py-1 text-sm hover:bg-accent aria-[current=page]:border-primary aria-[current=page]:bg-accent"
+                    onClick={(event) => navigateLink(event, target)}
+                  >
+                    {tag}
+                  </a>
+                );
+              })}
             </div>
           </section>
 
@@ -153,7 +207,12 @@ export function BlogArticleIndexDemo({
               <BlogArticleListLoading />
             ) : scenario === "error" ? (
               <div className="flex flex-col items-start gap-3">
-                <Alert type="error" title="文章载入失败" description="公开文章接口暂时不可用。" showIcon />
+                <Alert
+                  type="error"
+                  title="文章载入失败"
+                  description="公开文章接口暂时不可用。"
+                  showIcon
+                />
                 <Button onClick={() => setScenario("data")}>重试</Button>
               </div>
             ) : visiblePosts.length === 0 ? (
@@ -162,13 +221,23 @@ export function BlogArticleIndexDemo({
                 description="可以调整关键词或返回全部文章继续浏览。"
                 action={
                   <div className="flex flex-wrap justify-center gap-2">
-                    <Button onClick={() => navigate("/articles")}>浏览全部文章</Button>
-                    <Button onClick={() => navigate("/archive")}>浏览归档</Button>
+                    <Button onClick={() => navigate("/articles")}>
+                      浏览全部文章
+                    </Button>
+                    <Button onClick={() => navigate("/archive")}>
+                      浏览归档
+                    </Button>
                   </div>
                 }
               />
             ) : (
-              visiblePosts.map((post) => <BlogArticleTeaser key={post.id} post={post} onNavigate={navigate} />)
+              visiblePosts.map((post) => (
+                <BlogArticleTeaser
+                  key={post.id}
+                  post={post}
+                  onNavigate={navigate}
+                />
+              ))
             )}
 
             {scenario === "data" && total > pageSize ? (
@@ -184,7 +253,13 @@ export function BlogArticleIndexDemo({
           </section>
 
           {mode === "category" ? (
-            <span className="sr-only">{blogCategories.find((category) => category.name === defaults.category)?.slug}</span>
+            <span className="sr-only">
+              {
+                blogCategories.find(
+                  (category) => category.name === defaults.category,
+                )?.slug
+              }
+            </span>
           ) : null}
         </div>
       </BlogPublicShellFixture>
