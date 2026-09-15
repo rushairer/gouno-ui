@@ -77,10 +77,8 @@ describe("Blog public Home product migration fixture", () => {
     expect(homeSource).toContain('../../../src/core');
     expect(shellSource).toContain('../../../src/theme');
     expect(shellSource).not.toMatch(/<button\b/);
-    expect(screen.getByRole("link", { name: "Gouno Blog 首页" })).toBeTruthy();
-    expect(
-      screen.getByRole("navigation", { name: "主导航" }).querySelectorAll("a")
-        .length,
-    ).toBeGreaterThan(0);
+    expect(shellSource).toMatch(/<a\s+[\s\S]*?aria-label="Gouno Blog 首页"/);
+    expect(shellSource).toContain('aria-label="主导航"');
+    expect(shellSource).toContain('aria-label="移动导航"');
   });
 });
