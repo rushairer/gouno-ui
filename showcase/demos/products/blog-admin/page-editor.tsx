@@ -12,6 +12,7 @@ import {
   Alert,
   Button,
   Card,
+  ChoiceButton,
   Checkbox,
   Field,
   Input,
@@ -422,7 +423,7 @@ export function BlogAdminPageEditorDemo({
                   {titleCandidates.length ? (
                     <div className="flex flex-col gap-2" aria-label="标题候选">
                       {titleCandidates.map((candidate) => (
-                        <button
+                        <ChoiceButton
                           key={candidate}
                           type="button"
                           className="rounded-md border px-3 py-2 text-left text-sm hover:bg-muted"
@@ -432,7 +433,7 @@ export function BlogAdminPageEditorDemo({
                           }}
                         >
                           {candidate} <strong className="ml-1">应用</strong>
-                        </button>
+                        </ChoiceButton>
                       ))}
                     </div>
                   ) : null}
@@ -460,7 +461,7 @@ export function BlogAdminPageEditorDemo({
                   {summaryCandidates.length ? (
                     <div className="flex flex-col gap-2" aria-label="摘要候选">
                       {summaryCandidates.map((candidate) => (
-                        <button
+                        <ChoiceButton
                           key={candidate}
                           type="button"
                           className="rounded-md border px-3 py-2 text-left text-sm hover:bg-muted"
@@ -470,7 +471,7 @@ export function BlogAdminPageEditorDemo({
                           }}
                         >
                           {candidate} <strong className="ml-1">应用</strong>
-                        </button>
+                        </ChoiceButton>
                       ))}
                     </div>
                   ) : null}
@@ -697,7 +698,7 @@ export function BlogAdminPageEditorDemo({
                   {slugCandidates.length ? (
                     <div className="flex flex-col gap-2" aria-label="Slug 候选">
                       {slugCandidates.map((candidate) => (
-                        <button
+                        <ChoiceButton
                           key={candidate}
                           type="button"
                           className="rounded-md border px-3 py-2 text-left font-mono text-sm hover:bg-muted"
@@ -707,7 +708,7 @@ export function BlogAdminPageEditorDemo({
                           }}
                         >
                           {candidate} <strong className="ml-1 font-sans">应用</strong>
-                        </button>
+                        </ChoiceButton>
                       ))}
                     </div>
                   ) : null}
