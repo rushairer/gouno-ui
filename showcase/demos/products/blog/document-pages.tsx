@@ -154,7 +154,7 @@ export function BlogAboutDemo() {
     <div className="relative">
       <FixtureDock
         route="/about"
-        note="固定 About 页面迁移：它与动态 CustomPage 共享产品内文档阅读框架，但没有异步内容生命周期。"
+        note="About 与动态 CustomPage 共享 Blog-local 文档阅读框架。Showcase 只呈现 loaded canonical surface；真实 Product 仍由 CustomPageView 持有 CMS 加载、404 fallback、fatal error/retry 与草稿预览生命周期。"
       />
       <BlogPublicShellFixture currentPath="/about" onNavigate={(target) => setNotice(`将进入 ${target}（Showcase 模拟）。`)}>
         {notice ? <Alert className="mb-6" type="info" description={notice} showIcon /> : null}
