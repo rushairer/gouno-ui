@@ -18,6 +18,7 @@ import { PageHeader } from "../../../../src/gouno";
 import { BulkActionBar } from "../../../../src/patterns";
 import { FixtureDock } from "../../../components/fixture-dock";
 import { BlogAdminWorkflowLauncherFixture } from "./workflow-launcher-fixture";
+import { FixtureNotification } from "./fixture-notification";
 
 type FixtureScenario = "data" | "loading" | "empty" | "error" | "partial-failure";
 type TagEdit = { name: string; mode: "rename" | "merge" } | null;
@@ -204,14 +205,7 @@ export function BlogAdminTagsDemo() {
         description="整理文章中的具体技术与概念信号，支持批量清洗与合并。"
       />
 
-      {notice ? (
-        <Alert
-          type={notice.type}
-          showIcon
-          title={notice.text}
-          closable={{ onClose: () => setNotice(null) }}
-        />
-      ) : null}
+      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
 
       {selected.length > 0 ? (
         <BulkActionBar selectionLabel={`已选择 ${selected.length} 个标签`} onCancel={clearSelection}>

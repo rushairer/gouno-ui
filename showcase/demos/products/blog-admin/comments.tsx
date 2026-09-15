@@ -18,6 +18,7 @@ import { PageHeader } from "../../../../src/gouno";
 import { BulkActionBar } from "../../../../src/patterns";
 import { FixtureDock } from "../../../components/fixture-dock";
 import { BlogAdminWorkflowLauncherFixture } from "./workflow-launcher-fixture";
+import { FixtureNotification } from "./fixture-notification";
 
 type CommentStatus = "pending" | "visible" | "hidden";
 type CommentFilter = CommentStatus | "all";
@@ -162,7 +163,7 @@ export function BlogAdminCommentsDemo() {
       />
 
       <PageHeader title="评论" description="审核讨论、处理举报，并维护高质量的交流空间。" />
-      {notice ? <Alert type={notice.type} showIcon title={notice.text} closable={{ onClose: () => setNotice(null) }} /> : null}
+      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
 
       <Card padding="base">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

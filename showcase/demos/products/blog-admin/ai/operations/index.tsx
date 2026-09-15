@@ -31,6 +31,7 @@ import {
 } from "./automation-records-fixtures";
 import { aiOpsDecisionFixture, type AIOpsDecisionFixture, type AIOpsTab } from "./fixtures";
 import { AIOpsInboxPanel, AIOpsOverviewPanel } from "./overview-inbox";
+import { FixtureNotification } from "../../fixture-notification";
 
 export type AIOpsRecordType = "workflow" | "agent";
 export type AIOpsRouteState = {
@@ -413,7 +414,7 @@ export function BlogAdminAIOperationsDemo({
         actions={<Button variant="outline" icon={<RefreshCw />} onClick={() => { setScenario("data"); setNotice({ type: "success", text: "AI 运营数据已刷新。" }); }}>刷新</Button>}
       />
       <Tabs<AIOpsTab> activeKey={route.tab} items={tabs} onChange={selectTab} ariaLabel="AI 运营工作区" />
-      {notice ? <Alert type={notice.type} showIcon title={notice.text} /> : null}
+      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
       {content}
     </div>
   );

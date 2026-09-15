@@ -25,6 +25,7 @@ import { PageHeader, PageSkeleton } from "../../../../src/gouno";
 import { BulkActionBar } from "../../../../src/patterns";
 import { FixtureDock } from "../../../components/fixture-dock";
 import { BlogAdminWorkflowLauncherFixture } from "./workflow-launcher-fixture";
+import { FixtureNotification } from "./fixture-notification";
 
 type PageStatus = "published" | "draft";
 type FixtureScenario = "data" | "loading" | "empty" | "error";
@@ -242,7 +243,7 @@ export function BlogAdminPagesDemo() {
         )}
       />
 
-      {notice ? <Alert type={notice.type} showIcon title={notice.message} closable={{ onClose: () => setNotice(null) }} /> : null}
+      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
 
       <Card padding="base">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center">

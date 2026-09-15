@@ -17,6 +17,7 @@ import { PageHeader } from "../../../../src/gouno";
 import { BulkActionBar } from "../../../../src/patterns";
 import { cn } from "../../../../src/lib/utils";
 import { FixtureDock } from "../../../components/fixture-dock";
+import { FixtureNotification } from "./fixture-notification";
 
 type FixtureScenario = "data" | "loading" | "empty" | "error";
 type MutationScenario = "success" | "error";
@@ -325,9 +326,7 @@ export function BlogAdminNotificationsDemo() {
         ) : undefined}
       />
 
-      {notice ? (
-        <Alert type={notice.type} showIcon title={notice.message} closable={{ onClose: () => setNotice(null) }} />
-      ) : null}
+      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
 
       <Card padding="base">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

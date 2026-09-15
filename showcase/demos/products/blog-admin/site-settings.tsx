@@ -28,6 +28,7 @@ import {
 import { PageHeader } from "../../../../src/gouno";
 import { FixtureDock } from "../../../components/fixture-dock";
 import { TabPanelLead } from "../../../components/tab-panel-lead";
+import { FixtureNotification } from "./fixture-notification";
 
 type SettingsTab = "basic" | "appearance" | "hero" | "social" | "seo";
 type FixtureScenario = "data" | "loading" | "error";
@@ -463,9 +464,7 @@ export function BlogAdminSiteSettingsDemo() {
 
       <PageHeader title="站点设置" description="管理品牌信息、首页标语、社交入口和默认 SEO 元数据。" />
 
-      {notice ? (
-        <Alert type={notice.type} showIcon title={notice.message} closable={{ onClose: () => setNotice(null) }} />
-      ) : null}
+      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
 
       {content}
     </div>

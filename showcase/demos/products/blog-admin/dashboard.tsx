@@ -35,6 +35,7 @@ import {
 } from "../../../../src/core";
 import { PageHeader, PageSkeleton } from "../../../../src/gouno";
 import { FixtureDock } from "../../../components/fixture-dock";
+import { FixtureNotification } from "./fixture-notification";
 
 type FixtureScenario = "data" | "loading" | "empty" | "error";
 type CapabilityScenario = "admin" | "moderator" | "viewer";
@@ -273,7 +274,7 @@ export function BlogAdminDashboardDemo() {
         ) : null}
       />
 
-      {notice ? <Alert type={notice.type} showIcon title={notice.message} closable={{ onClose: () => setNotice(null) }} /> : null}
+      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
 
       {scenario === "error" ? (
         <Alert
