@@ -42,14 +42,16 @@ describe("Blog Admin Site Settings product migration fixture", () => {
     expect(screen.getByRole("textbox", { name: "RSS" })).toBeTruthy();
   });
 
-  it("keeps Blog Sudo/MFA protection product-local", () => {
+  it("keeps Blog Sudo/MFA protection product-local with the canonical privileged-access presentation", () => {
     render(<BlogAdminSiteSettingsDemo />);
     fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
     fireEvent.click(screen.getByRole("radio", { name: "已锁定" }));
 
+    expect(screen.getByText("高权限操作需要身份验证")).toBeTruthy();
     expect(screen.getByText("站点核心配置保护")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "解锁以修改设置" }));
-    expect(screen.getByText("Sudo 已解锁 · 剩余约 10 分钟")).toBeTruthy();
+    expect(screen.getByText("高权限操作已解锁")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "重新锁定" })).toBeTruthy();
     expect(screen.getByRole("tab", { name: "基础信息" })).toBeTruthy();
   });
 
