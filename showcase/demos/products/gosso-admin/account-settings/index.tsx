@@ -81,12 +81,10 @@ function AccountFixturePanel({ tab, scenario }: { tab: Exclude<AccountSettingsTa
   }
   if (scenario === "empty") {
     return (
-      <Card padding="base">
-        <Empty
-          title={tab === "passkeys" ? "还没有通行密钥" : "没有其他活跃会话"}
-          description={tab === "passkeys" ? "添加可信设备后，可使用 WebAuthn 完成抗钓鱼登录。" : "除当前浏览器外，身份服务没有返回其他登录会话。"}
-        />
-      </Card>
+      <Empty
+        title={tab === "passkeys" ? "还没有通行密钥" : "没有其他活跃会话"}
+        description={tab === "passkeys" ? "添加可信设备后，可使用 WebAuthn 完成抗钓鱼登录。" : "除当前浏览器外，身份服务没有返回其他登录会话。"}
+      />
     );
   }
   return renderReadyPanel(tab);
