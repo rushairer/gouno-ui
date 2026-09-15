@@ -36,6 +36,30 @@ function NotificationProbe() {
         Zero
       </button>
       <button onClick={() => notification.open({ title: "重复" })}>Repeat</button>
+      <button
+        onClick={() =>
+          notification.open({
+            type: "error",
+            title: "保存失败",
+            description: "请重试",
+            closable: { "aria-label": "关闭错误通知" },
+          })
+        }
+      >
+        Error
+      </button>
+      <button
+        onClick={() =>
+          notification.open({
+            type: "warning",
+            title: "需要确认",
+            persistent: true,
+            closable: { "aria-label": "关闭持久通知" },
+          })
+        }
+      >
+        Persistent
+      </button>
     </div>
   );
 }
@@ -47,7 +71,7 @@ afterEach(() => {
 });
 
 describe("Notification 6E3", () => {
-  it("lets each notification own one atomic status region without outer aria-live", () => {
+  it("lets each notification own one atomic live region without outer aria-live", () => {
     render(
       <NotificationProvider>
         <NotificationProbe />
@@ -61,6 +85,7 @@ describe("Notification 6E3", () => {
     const notice = screen.getByRole("status");
     expect(notice.getAttribute("aria-atomic")).toBe("true");
     expect(notice.getAttribute("data-slot")).toBe("notification");
+    expect(notice.getAttribute("data-type")).toBe("info");
     expect(screen.getByText("构建完成")).toBeTruthy();
     expect(screen.getByText("已发布")).toBeTruthy();
   });
@@ -94,7 +119,7 @@ describe("Notification 6E3", () => {
     expect(screen.queryByText("短通知")).toBeNull();
   });
 
-  it("does not turn duration zero into an uncloseable persistent notification", () => {
+  it("keeps non-positive transient duration on the finite default lifetime", () => {
     vi.useFakeTimers();
     render(
       <NotificationProvider>
@@ -107,6 +132,42 @@ describe("Notification 6E3", () => {
     expect(screen.getByText("非持久通知")).toBeTruthy();
     act(() => vi.advanceTimersByTime(1));
     expect(screen.queryByText("非持久通知")).toBeNull();
+  });
+
+  it("maps semantic severity to alert/status roles and keeps the overlay surface opaque", () => {
+    render(
+      <NotificationProvider>
+        <NotificationProbe />
+      </NotificationProvider>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Error" }));
+    const notice = screen.getByRole("alert");
+    expect(notice).toHaveAttribute("data-type", "error");
+    expect(notice).toHaveClass("bg-popover", "shadow-overlay");
+    expect(notice.querySelector('[data-slot="notification-icon"]')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "关闭错误通知" }));
+    expect(screen.queryByText("保存失败")).toBeNull();
+  });
+
+  it("supports explicit persistent notices only with a user close affordance", () => {
+    vi.useFakeTimers();
+    render(
+      <NotificationProvider>
+        <NotificationProbe />
+      </NotificationProvider>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Persistent" }));
+    act(() => vi.advanceTimersByTime(60_000));
+
+    const notice = screen.getByRole("alert");
+    expect(notice).toHaveAttribute("data-persistent", "true");
+    expect(screen.getByText("需要确认")).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "关闭持久通知" }));
+    expect(screen.queryByText("需要确认")).toBeNull();
   });
 
   it("clears pending timers on unmount and keeps the reviewed Showcase executable", () => {
@@ -124,6 +185,7 @@ describe("Notification 6E3", () => {
     const document = notificationReviewDocuments.notification;
     expect(document.code).toContain("<NotificationProvider");
     expect(document.code).toContain("useNotification");
+    expect(document.code).toContain('persistent: true');
     expect(componentProgress("core-notification", 75)).toBe(100);
   });
 });

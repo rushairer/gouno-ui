@@ -10,7 +10,7 @@ export const notificationReviewDocuments: Record<string, ComponentDocument> = {
   notification: {
     ...feedbackDocuments.notification,
     description:
-      "NotificationProvider 只拥有当前 React 子树内的 transient notification queue。每条通知自行使用 status + aria-atomic 语义，外层容器不重复创建 aria-live；队列 key 使用 Provider 内单调 ID，自动移除 timer 在 Provider 卸载时统一清理。notice.duration 只接受有限正毫秒；省略、非有限值或非正值都回到 4500ms，因此不再用 duration=0 偷渡无法关闭的永久通知。持久通知、通知中心、已读状态、手动 close/update/destroy 和跨 root singleton 都继续由产品拥有。",
+      "NotificationProvider 只拥有当前 React 子树内的通知浮层队列，不扩展为业务通知中心。通知通过 type 表达 info/success/warning/error 语义；warning/error 使用 alert，其余使用 status，每条通知自行声明 aria-atomic，外层容器不重复创建 aria-live。默认通知继续有限生命周期，duration 只接受有限正毫秒，其他值回到 4500ms；真实产品已经证明需要用户可关闭和持久提示，因此 closable 提供 caller-owned 可访问关闭名称，persistent=true 明确跳过自动移除且类型上要求 closable。队列 key 使用 Provider 内单调 ID，timer 在触发、手动关闭和 Provider 卸载时清理。Notification 只拥有 overlay 展示与生命周期，不拥有已读状态、历史记录、路由动作、存储、跨 root singleton 或业务通知中心。",
     code: canonicalCoreSource(NotificationDemoSource),
     render: () => <NotificationDemo />,
     api: [
@@ -26,7 +26,7 @@ export const notificationReviewDocuments: Record<string, ComponentDocument> = {
         rows: [
           {
             name: "open(notice)",
-            description: "显示一条有限生命周期通知。",
+            description: "显示一条当前 Provider 子树内的通知浮层。",
             type: "(notice: NotificationNotice) => void",
           },
           {
@@ -40,10 +40,27 @@ export const notificationReviewDocuments: Record<string, ComponentDocument> = {
             type: "ReactNode",
           },
           {
+            name: "notice.type",
+            description: "通知语义级别；同时决定状态图标和 status/alert 播报角色。",
+            type: '"info" | "success" | "warning" | "error"',
+            defaultValue: '"info"',
+          },
+          {
             name: "notice.duration",
-            description: "自动消失毫秒数；仅有限正值生效，其余回到 4500ms，不提供永久驻留 sentinel。",
+            description: "非持久通知的自动消失毫秒数；仅有限正值生效，其余回到 4500ms。",
             type: "number",
             defaultValue: "4500",
+          },
+          {
+            name: "notice.closable",
+            description: "启用手动关闭，并由调用方显式提供本地化 aria-label。",
+            type: '{ "aria-label": string }',
+          },
+          {
+            name: "notice.persistent",
+            description: "显式持久显示直到用户关闭；为 true 时必须同时提供 closable，且不接受 duration。",
+            type: "boolean",
+            defaultValue: "false",
           },
         ],
       },
