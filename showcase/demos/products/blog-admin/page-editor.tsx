@@ -24,6 +24,7 @@ import {
   Textarea,
 } from "../../../../src/core";
 import { FixtureDock } from "../../../components/fixture-dock";
+import { FixtureNotification } from "./fixture-notification";
 
 type EditorRoute = "edit" | "new";
 type FixtureScenario = "ready" | "loading" | "error" | "conflict";
@@ -362,7 +363,7 @@ export function BlogAdminPageEditorDemo({
         controls={fixtureControls}
       />
 
-      {notice ? <Alert type="success" showIcon title={notice} closable={{ onClose: () => setNotice(null) }} /> : null}
+      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
       {error ? <Alert type="error" showIcon title={error} closable={{ onClose: () => setError(null) }} /> : null}
 
       <Card padding="none" className="gap-0 overflow-clip" aria-label="单页编辑器">
