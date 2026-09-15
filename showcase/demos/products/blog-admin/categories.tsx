@@ -26,6 +26,7 @@ import { PageHeader, PageSkeleton } from "../../../../src/gouno";
 import { BulkActionBar } from "../../../../src/patterns";
 import { FixtureDock } from "../../../components/fixture-dock";
 import { BlogAdminWorkflowLauncherFixture } from "./workflow-launcher-fixture";
+import { FixtureNotification } from "./fixture-notification";
 
 type FixtureScenario = "data" | "loading" | "empty" | "error" | "partial-failure";
 type DeleteTarget = { kind: "single"; id: number } | { kind: "batch" } | null;
@@ -225,7 +226,7 @@ export function BlogAdminCategoriesDemo() {
         actions={<Button variant="solid" color="primary" icon={<Plus />} onClick={openCreate}>新建分类</Button>}
       />
 
-      {notice ? <Alert type={notice.type} showIcon title={notice.text} closable={{ onClose: () => setNotice(null) }} /> : null}
+      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
 
       {selected.length > 0 ? (
         <BulkActionBar selectionLabel={`已选择 ${selected.length} 个分类`} onCancel={clearSelection}>

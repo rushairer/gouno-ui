@@ -12,6 +12,7 @@ import {
   Alert,
   Button,
   Card,
+  ChoiceButton,
   Checkbox,
   Field,
   Input,
@@ -24,6 +25,7 @@ import {
   Textarea,
 } from "../../../../src/core";
 import { FixtureDock } from "../../../components/fixture-dock";
+import { FixtureNotification } from "./fixture-notification";
 
 type EditorRoute = "edit" | "new";
 type FixtureScenario = "ready" | "loading" | "error" | "conflict";
@@ -362,7 +364,7 @@ export function BlogAdminPageEditorDemo({
         controls={fixtureControls}
       />
 
-      {notice ? <Alert type="success" showIcon title={notice} closable={{ onClose: () => setNotice(null) }} /> : null}
+      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
       {error ? <Alert type="error" showIcon title={error} closable={{ onClose: () => setError(null) }} /> : null}
 
       <Card padding="none" className="gap-0 overflow-clip" aria-label="单页编辑器">
@@ -421,7 +423,7 @@ export function BlogAdminPageEditorDemo({
                   {titleCandidates.length ? (
                     <div className="flex flex-col gap-2" aria-label="标题候选">
                       {titleCandidates.map((candidate) => (
-                        <button
+                        <ChoiceButton
                           key={candidate}
                           type="button"
                           className="rounded-md border px-3 py-2 text-left text-sm hover:bg-muted"
@@ -431,7 +433,7 @@ export function BlogAdminPageEditorDemo({
                           }}
                         >
                           {candidate} <strong className="ml-1">应用</strong>
-                        </button>
+                        </ChoiceButton>
                       ))}
                     </div>
                   ) : null}
@@ -459,7 +461,7 @@ export function BlogAdminPageEditorDemo({
                   {summaryCandidates.length ? (
                     <div className="flex flex-col gap-2" aria-label="摘要候选">
                       {summaryCandidates.map((candidate) => (
-                        <button
+                        <ChoiceButton
                           key={candidate}
                           type="button"
                           className="rounded-md border px-3 py-2 text-left text-sm hover:bg-muted"
@@ -469,7 +471,7 @@ export function BlogAdminPageEditorDemo({
                           }}
                         >
                           {candidate} <strong className="ml-1">应用</strong>
-                        </button>
+                        </ChoiceButton>
                       ))}
                     </div>
                   ) : null}
@@ -696,7 +698,7 @@ export function BlogAdminPageEditorDemo({
                   {slugCandidates.length ? (
                     <div className="flex flex-col gap-2" aria-label="Slug 候选">
                       {slugCandidates.map((candidate) => (
-                        <button
+                        <ChoiceButton
                           key={candidate}
                           type="button"
                           className="rounded-md border px-3 py-2 text-left font-mono text-sm hover:bg-muted"
@@ -706,7 +708,7 @@ export function BlogAdminPageEditorDemo({
                           }}
                         >
                           {candidate} <strong className="ml-1 font-sans">应用</strong>
-                        </button>
+                        </ChoiceButton>
                       ))}
                     </div>
                   ) : null}

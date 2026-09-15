@@ -119,33 +119,45 @@ export function AIOpsOverviewPanel({
       </Card>
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-3" aria-label="当前待办">
-        <button type="button" className="text-left" onClick={() => onNavigate("inbox")}>
-          <Card padding="base" interactive className="h-full">
-            <div className="flex items-start justify-between gap-4">
-              <Statistic title="待审批变更" value={pendingApprovals} />
-              <ShieldCheck className="size-5 text-muted-foreground" />
-            </div>
-            <Text size="xs" tone="muted">项等待你的审批</Text>
-          </Card>
-        </button>
-        <button type="button" className="text-left" onClick={() => onNavigate("inbox")}>
-          <Card padding="base" interactive className="h-full">
-            <div className="flex items-start justify-between gap-4">
-              <Statistic title="内容建议" value={newSuggestions + pendingCandidates} />
-              <Lightbulb className="size-5 text-muted-foreground" />
-            </div>
-            <Text size="xs" tone="muted">条待处理建议与候选</Text>
-          </Card>
-        </button>
-        <button type="button" className="text-left" onClick={() => onNavigate("inbox")}>
-          <Card padding="base" interactive className="h-full">
-            <div className="flex items-start justify-between gap-4">
-              <Statistic title="图片任务" value={readyMedia} />
-              <Sparkles className="size-5 text-muted-foreground" />
-            </div>
-            <Text size="xs" tone="muted">个图片任务可继续生成</Text>
-          </Card>
-        </button>
+        <Card padding="base" interactive className="relative h-full">
+          <div className="flex items-start justify-between gap-4">
+            <Statistic title="待审批变更" value={pendingApprovals} />
+            <ShieldCheck className="size-5 text-muted-foreground" />
+          </div>
+          <Text size="xs" tone="muted">项等待你的审批</Text>
+          <Button
+            variant="ghost"
+            aria-label={`查看待审批变更：${pendingApprovals} 项`}
+            className="absolute inset-0 z-10 h-auto rounded-lg p-0 hover:bg-transparent"
+            onClick={() => onNavigate("inbox")}
+          />
+        </Card>
+        <Card padding="base" interactive className="relative h-full">
+          <div className="flex items-start justify-between gap-4">
+            <Statistic title="内容建议" value={newSuggestions + pendingCandidates} />
+            <Lightbulb className="size-5 text-muted-foreground" />
+          </div>
+          <Text size="xs" tone="muted">条待处理建议与候选</Text>
+          <Button
+            variant="ghost"
+            aria-label={`查看内容建议：${newSuggestions + pendingCandidates} 条`}
+            className="absolute inset-0 z-10 h-auto rounded-lg p-0 hover:bg-transparent"
+            onClick={() => onNavigate("inbox")}
+          />
+        </Card>
+        <Card padding="base" interactive className="relative h-full">
+          <div className="flex items-start justify-between gap-4">
+            <Statistic title="图片任务" value={readyMedia} />
+            <Sparkles className="size-5 text-muted-foreground" />
+          </div>
+          <Text size="xs" tone="muted">个图片任务可继续生成</Text>
+          <Button
+            variant="ghost"
+            aria-label={`查看图片任务：${readyMedia} 个可生成`}
+            className="absolute inset-0 z-10 h-auto rounded-lg p-0 hover:bg-transparent"
+            onClick={() => onNavigate("inbox")}
+          />
+        </Card>
       </section>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -256,7 +268,7 @@ function ApprovalQueue({
           <div className="grid min-h-96 grid-cols-1 lg:grid-cols-[minmax(15rem,0.8fr)_minmax(0,1.8fr)]">
             <div className="border-b lg:border-b-0 lg:border-r">
               {approvals.map((approval) => (
-                <button
+                <Button variant="ghost"
                   key={approval.id}
                   type="button"
                   className={`flex w-full items-start justify-between gap-3 border-b p-4 text-left transition-colors last:border-b-0 hover:bg-muted/40 ${selected?.id === approval.id ? "bg-muted/50" : ""}`}
@@ -269,7 +281,7 @@ function ApprovalQueue({
                   <Tag color={approval.status === "failed" ? "error" : approval.status === "pending" ? "warning" : "default"}>
                     {approval.status === "failed" ? "执行失败" : approval.status === "pending" ? "待审批" : approval.status === "approved" ? "已批准" : "已拒绝"}
                   </Tag>
-                </button>
+                </Button>
               ))}
             </div>
             <div className="min-w-0 p-6">
@@ -355,10 +367,10 @@ function OperationsReview({
           </CardHeader>
           <CardContent className="p-0">
             {group.items.length === 0 ? <div className="p-6"><Empty title={`暂无${group.title}`} /></div> : group.items.map((item) => (
-              <button key={item.id} type="button" className="flex w-full items-center justify-between gap-3 border-b p-4 text-left last:border-b-0 hover:bg-muted/40" onClick={() => onOpen(group.key, item.id)}>
+              <Button variant="ghost" key={item.id} type="button" className="flex w-full items-center justify-between gap-3 border-b p-4 text-left last:border-b-0 hover:bg-muted/40" onClick={() => onOpen(group.key, item.id)}>
                 <span className="min-w-0 truncate text-sm font-medium">{item.title}</span>
                 <Tag>{item.status}</Tag>
-              </button>
+              </Button>
             ))}
           </CardContent>
         </Card>

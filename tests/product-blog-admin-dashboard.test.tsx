@@ -30,7 +30,9 @@ describe("Blog Admin Dashboard product migration fixture", () => {
     expect(screen.getByText("1,268")).toBeTruthy();
     expect(screen.getByText("待审核 7 条")).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("button", { name: /文章总数/ }));
+    const postsLink = screen.getByRole("link", { name: /文章总数/ });
+    expect(postsLink.getAttribute("href")).toBe("/admin/posts");
+    fireEvent.click(postsLink);
     expect(screen.getByText("将进入 /admin/posts（Showcase 模拟）。")).toBeTruthy();
   });
 
@@ -53,7 +55,11 @@ describe("Blog Admin Dashboard product migration fixture", () => {
     expect(screen.getByText("AI 每日资讯")).toBeTruthy();
     expect(screen.getByText("文章 SEO Reviewer")).toBeTruthy();
 
-    fireEvent.click(screen.getByText("AI 每日资讯").closest("button")!);
+    const workflowAlertLink = screen.getByText("AI 每日资讯").closest("a");
+    expect(workflowAlertLink?.getAttribute("href")).toBe(
+      "/admin/ai-ops?tab=records&record=workflow&run=241",
+    );
+    fireEvent.click(workflowAlertLink!);
     expect(screen.getByText("将进入 /admin/ai-ops?tab=records&record=workflow&run=241（Showcase 模拟）。")).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "全部已读" }));
@@ -96,13 +102,13 @@ describe("Blog Admin Dashboard product migration fixture", () => {
     fireEvent.click(screen.getByRole("radio", { name: "审核员" }));
     expect(screen.queryByRole("button", { name: "新建文章" })).toBeNull();
     expect(screen.getByRole("button", { name: "审核评论" })).toBeTruthy();
-    expect(screen.queryByRole("button", { name: /文章总数/ })).toBeNull();
-    expect(screen.getByRole("button", { name: /评论互动/ })).toBeTruthy();
+    expect(screen.queryByRole("link", { name: /文章总数/ })).toBeNull();
+    expect(screen.getByRole("link", { name: /评论互动/ })).toBeTruthy();
     expect(screen.queryByText("AI 运营提醒")).toBeNull();
 
     fireEvent.click(screen.getByRole("radio", { name: "其他后台权限" }));
     expect(screen.queryByRole("button", { name: "审核评论" })).toBeNull();
-    expect(screen.queryByRole("button", { name: /评论互动/ })).toBeNull();
+    expect(screen.queryByRole("link", { name: /评论互动/ })).toBeNull();
     expect(screen.queryByRole("button", { name: "文章管理" })).toBeNull();
     expect(screen.queryByRole("button", { name: "查看全部文章" })).toBeNull();
   });

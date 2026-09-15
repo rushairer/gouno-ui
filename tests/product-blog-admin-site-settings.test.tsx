@@ -148,7 +148,7 @@ describe("Blog Admin Site Settings product migration fixture", () => {
     expect(screen.getByRole("status")).toBeTruthy();
 
     fireEvent.click(screen.getByRole("radio", { name: "错误" }));
-    expect(screen.getByRole("alert").getAttribute("data-type")).toBe("error");
-    expect(screen.getByText("站点设置加载失败")).toBeTruthy();
+    const pageFailure = screen.getByText("站点设置加载失败").closest('[data-slot="alert"]');
+    expect(pageFailure?.getAttribute("data-type")).toBe("error");
   });
 });

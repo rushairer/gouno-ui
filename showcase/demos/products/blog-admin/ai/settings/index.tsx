@@ -23,6 +23,7 @@ import {
   type SkillFixture,
 } from "./fixtures";
 import { AISettingsSectionPanel, type AISettingsSectionActions } from "./sections";
+import { FixtureNotification } from "../../fixture-notification";
 
 const validSections = new Set<AISettingsSection>([
   "agents",
@@ -298,7 +299,7 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
       />
       <PageHeader title="AI 设置" description="管理 Agent、Skill、Tool、知识索引、模型连接与 Sandbox 连接器。" />
       <Tabs<AISettingsSection> activeKey={section} items={tabs} onChange={changeSection} ariaLabel="AI 设置栏目" />
-      {notice ? <Alert type={notice.type} showIcon title={notice.text} /> : null}
+      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
       {editor ? <AISettingsEditor editor={editor} fixture={fixture} onSave={saveEditor} onCancel={() => setEditor(null)} /> : <AISettingsSectionPanel fixture={fixture} section={section} actions={actions} />}
       <Modal
         open={Boolean(deleteTarget)}

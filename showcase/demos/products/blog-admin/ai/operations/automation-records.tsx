@@ -163,7 +163,7 @@ export function AIOpsAutomationPanel({
           <CardContent className="divide-y p-0">
             {visible.length ? (
               visible.map((workflow) => (
-                <button
+                <Button variant="ghost"
                   key={workflow.id}
                   type="button"
                   aria-pressed={selected?.id === workflow.id}
@@ -175,7 +175,7 @@ export function AIOpsAutomationPanel({
                     <Text size="xs" tone="muted">v{workflow.currentVersion} · {workflow.schedule}</Text>
                   </div>
                   <WorkflowStatus enabled={workflow.enabled} />
-                </button>
+                </Button>
               ))
             ) : (
               <div className="p-6"><Text tone="muted">没有符合条件的 Workflow。</Text></div>
@@ -537,7 +537,7 @@ export function AIOpsRecordsPanel({
               <CardHeader className="border-b p-6"><CardTitle className="text-base">Workflow Runs</CardTitle></CardHeader>
               <CardContent className="divide-y p-0">
                 {workflowRuns.length ? workflowRuns.map((run) => (
-                  <button
+                  <Button variant="ghost"
                     key={run.id}
                     type="button"
                     aria-pressed={selectedWorkflowRun?.id === run.id}
@@ -552,7 +552,7 @@ export function AIOpsRecordsPanel({
                       <Text size="xs" tone="muted">{run.workflowName} · {run.startedAt}</Text>
                     </div>
                     <div className="flex flex-col items-end gap-1"><RunStatus status={run.status} />{run.dryRun ? <Tag>Dry-run</Tag> : null}</div>
-                  </button>
+                  </Button>
                 )) : <div className="p-6"><Text tone="muted">没有符合条件的 Workflow Run。</Text></div>}
               </CardContent>
             </Card>
@@ -565,7 +565,7 @@ export function AIOpsRecordsPanel({
             <CardHeader className="border-b p-6"><CardTitle className="text-base">Agent Runs</CardTitle></CardHeader>
             <CardContent className="divide-y p-0">
               {fixture.agentRuns.map((run) => (
-                <button
+                <Button variant="ghost"
                   key={run.id}
                   type="button"
                   aria-pressed={selectedAgentRun?.id === run.id}
@@ -577,7 +577,7 @@ export function AIOpsRecordsPanel({
                 >
                   <div><strong className="text-sm">Run #{run.id}</strong><Text size="xs" tone="muted">{run.agentName} · {run.startedAt}</Text></div>
                   <RunStatus status={run.status} />
-                </button>
+                </Button>
               ))}
             </CardContent>
           </Card>

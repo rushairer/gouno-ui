@@ -15,6 +15,7 @@ import {
   Alert,
   Button,
   Card,
+  ChoiceButton,
   Field,
   Input,
   Modal,
@@ -26,6 +27,7 @@ import {
   Textarea,
 } from "../../../../src/core";
 import { FixtureDock } from "../../../components/fixture-dock";
+import { FixtureNotification } from "./fixture-notification";
 
 type EditorRoute = "edit" | "new" | "readonly";
 type FixtureScenario = "ready" | "loading" | "error" | "conflict";
@@ -384,9 +386,7 @@ export function BlogAdminPostEditorDemo({
         controls={fixtureControls}
       />
 
-      {notice ? (
-        <Alert type="success" showIcon title={notice} closable={{ onClose: () => setNotice(null) }} />
-      ) : null}
+      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
       {error ? (
         <Alert type="error" showIcon title={error} closable={{ onClose: () => setError(null) }} />
       ) : null}
@@ -448,7 +448,7 @@ export function BlogAdminPostEditorDemo({
             <div className="mt-5 flex flex-col gap-2">
               {showVersions ? (
                 versions.map((version) => (
-                  <button
+                  <ChoiceButton
                     key={version.id}
                     type="button"
                     className="rounded-md border px-3 py-2 text-left text-sm transition-colors hover:bg-muted"
@@ -456,11 +456,11 @@ export function BlogAdminPostEditorDemo({
                   >
                     <span className="block font-medium">{version.title}</span>
                     <span className="mt-1 block text-xs text-muted-foreground">{version.createdAt} · 恢复</span>
-                  </button>
+                  </ChoiceButton>
                 ))
               ) : outline.length ? (
                 outline.map((item) => (
-                  <button
+                  <ChoiceButton
                     key={item.id}
                     type="button"
                     className="truncate text-left text-sm text-muted-foreground hover:text-foreground"
@@ -468,7 +468,7 @@ export function BlogAdminPostEditorDemo({
                     onClick={() => setEditorMode("preview")}
                   >
                     {item.text}
-                  </button>
+                  </ChoiceButton>
                 ))
               ) : (
                 <Text size="sm" tone="muted">在正文中添加 Markdown 标题后，大纲会自动生成。</Text>
@@ -504,7 +504,7 @@ export function BlogAdminPostEditorDemo({
                     {titleCandidates.length ? (
                       <div className="flex flex-col gap-2" aria-label="标题候选">
                         {titleCandidates.map((candidate) => (
-                          <button
+                          <ChoiceButton
                             key={candidate}
                             type="button"
                             className="rounded-md border px-3 py-2 text-left text-sm hover:bg-muted"
@@ -514,7 +514,7 @@ export function BlogAdminPostEditorDemo({
                             }}
                           >
                             {candidate} <strong className="ml-1">应用</strong>
-                          </button>
+                          </ChoiceButton>
                         ))}
                       </div>
                     ) : null}
@@ -544,7 +544,7 @@ export function BlogAdminPostEditorDemo({
                       根据正文生成摘要
                     </Button>
                     {summaryCandidate ? (
-                      <button
+                      <ChoiceButton
                         type="button"
                         className="rounded-md border px-3 py-2 text-left text-sm hover:bg-muted"
                         onClick={() => {
@@ -553,7 +553,7 @@ export function BlogAdminPostEditorDemo({
                         }}
                       >
                         {summaryCandidate} <strong className="ml-1">应用</strong>
-                      </button>
+                      </ChoiceButton>
                     ) : null}
                   </div>
                 ) : null}
@@ -792,7 +792,7 @@ export function BlogAdminPostEditorDemo({
                         {tagSuggestions.map((tag) => {
                           const added = post.tags.includes(tag);
                           return (
-                            <button
+                            <ChoiceButton
                               key={tag}
                               type="button"
                               className="rounded-full border px-2 py-1 text-xs disabled:opacity-50"
@@ -800,7 +800,7 @@ export function BlogAdminPostEditorDemo({
                               onClick={() => updatePost("tags", [...post.tags, tag])}
                             >
                               {added ? "✓" : "+"} {tag}
-                            </button>
+                            </ChoiceButton>
                           );
                         })}
                       </div>

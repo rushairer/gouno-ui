@@ -82,8 +82,8 @@ describe("Blog Admin Media Library product migration fixture", () => {
 
     expect(screen.getByText("oauth-bff-flow.svg")).toBeTruthy();
     expect(screen.getByText("该媒体仍被文章引用，移除引用后才能删除。")).toBeTruthy();
-    expect(screen.getByRole("button", { name: "OAuth 2.0 BFF 实践" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "浏览器 Session 边界" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "OAuth 2.0 BFF 实践" }).getAttribute("href")).toBe("/admin/posts/101/edit");
+    expect(screen.getByRole("link", { name: "浏览器 Session 边界" }).getAttribute("href")).toBe("/admin/posts/102/edit");
   });
 
   it("preserves Promise.allSettled-style partial batch deletion and failed selection", () => {

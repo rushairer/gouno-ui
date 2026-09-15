@@ -4,7 +4,14 @@ import gounoLogo from "../assets/brand-icons/gouno.svg";
 import gounoBlogLogo from "../assets/brand-icons/gouno-blog.svg";
 import gounoUiLogo from "../assets/brand-icons/gouno-ui.svg";
 import gossoAdminLogo from "../assets/brand-icons/gosso-admin.svg";
-import { Badge, Select, ConfigProvider, enUS, zhCN } from "../src/core";
+import {
+  Badge,
+  Select,
+  ConfigProvider,
+  NotificationProvider,
+  enUS,
+  zhCN,
+} from "../src/core";
 import {
   AppShell,
   NavigationGroup,
@@ -314,13 +321,15 @@ function App() {
         </div>
       ) : (
         <ConfigProvider locale={workspace === "gouno-ui" ? enUS : zhCN}>
-          <FixtureTools navigation={current?.presentation === "standalone" ? <StandaloneNavigation workspace={workspace} currentPage={page} onNavigate={navigateToPage} /> : undefined}>
-            {current?.presentation === "standalone" ? <ShowcasePage page={page} workspace={workspace} /> : (
-              <AppShell brand={workspaceBrand} toolbar={shellControls} navigation={navigation}>
-                <PageContainer><ShowcasePage page={page} workspace={workspace} /></PageContainer>
-              </AppShell>
-            )}
-          </FixtureTools>
+          <NotificationProvider>
+            <FixtureTools navigation={current?.presentation === "standalone" ? <StandaloneNavigation workspace={workspace} currentPage={page} onNavigate={navigateToPage} /> : undefined}>
+              {current?.presentation === "standalone" ? <ShowcasePage page={page} workspace={workspace} /> : (
+                <AppShell brand={workspaceBrand} toolbar={shellControls} navigation={navigation}>
+                  <PageContainer><ShowcasePage page={page} workspace={workspace} /></PageContainer>
+                </AppShell>
+              )}
+            </FixtureTools>
+          </NotificationProvider>
         </ConfigProvider>
       )}
     </ThemeProvider>

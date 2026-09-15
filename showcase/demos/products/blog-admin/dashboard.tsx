@@ -35,6 +35,7 @@ import {
 } from "../../../../src/core";
 import { PageHeader, PageSkeleton } from "../../../../src/gouno";
 import { FixtureDock } from "../../../components/fixture-dock";
+import { FixtureNotification } from "./fixture-notification";
 
 type FixtureScenario = "data" | "loading" | "empty" | "error";
 type CapabilityScenario = "admin" | "moderator" | "viewer";
@@ -184,9 +185,16 @@ function MetricCard({
 
   if (!route) return content;
   return (
-    <button type="button" className="block h-full w-full text-left" onClick={() => onNavigate(route)}>
+    <a
+      href={route}
+      className="block h-full w-full text-left"
+      onClick={(event) => {
+        event.preventDefault();
+        onNavigate(route);
+      }}
+    >
       {content}
-    </button>
+    </a>
   );
 }
 
@@ -273,7 +281,7 @@ export function BlogAdminDashboardDemo() {
         ) : null}
       />
 
-      {notice ? <Alert type={notice.type} showIcon title={notice.message} closable={{ onClose: () => setNotice(null) }} /> : null}
+      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
 
       {scenario === "error" ? (
         <Alert
@@ -410,11 +418,14 @@ export function BlogAdminDashboardDemo() {
                 {summary.aiAlerts.map((alert) => {
                   const workflow = alert.type === "workflow";
                   return (
-                    <button
+                    <a
                       key={alert.id}
-                      type="button"
+                      href={alert.destination}
                       className="flex w-full items-start justify-between gap-4 p-4 text-left transition-colors hover:bg-muted/40 sm:p-6"
-                      onClick={() => navigate(alert.destination)}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        navigate(alert.destination);
+                      }}
                     >
                       <div className="flex min-w-0 items-start gap-3">
                         <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border bg-muted/40 text-muted-foreground">
@@ -430,7 +441,7 @@ export function BlogAdminDashboardDemo() {
                         </div>
                       </div>
                       <span className="shrink-0 text-xs font-medium text-primary">查看失败详情</span>
-                    </button>
+                    </a>
                   );
                 })}
               </CardContent>

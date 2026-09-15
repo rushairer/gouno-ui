@@ -31,6 +31,7 @@ import {
 } from "../../../../src/core";
 import { PageHeader, PageSkeleton } from "../../../../src/gouno";
 import { FixtureDock } from "../../../components/fixture-dock";
+import { FixtureNotification } from "./fixture-notification";
 
 type FixtureScenario = "data" | "loading" | "empty" | "error";
 type SecurityState = "unlocked" | "locked" | "expire-on-action";
@@ -450,7 +451,7 @@ export function BlogAdminUsersDemo() {
         )}
       />
 
-      {notice ? <Alert type="success" showIcon title={notice} closable={{ onClose: () => setNotice(null) }} /> : null}
+      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
       {body}
 
       <Modal

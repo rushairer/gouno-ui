@@ -355,13 +355,16 @@ export function BlogAdminMediaLibraryDemo() {
             <ul className="mt-2 flex flex-col gap-1 text-sm">
               {blockedReferences.map((reference) => (
                 <li key={`${reference.postId}-${reference.title}`}>
-                  <button
-                    type="button"
-                    className="text-left font-medium text-primary underline-offset-4 hover:underline"
-                    onClick={() => setFeedback({ type: "info", text: `将进入 /admin/posts/${reference.postId}/edit（Showcase 模拟）。` })}
+                  <a
+                    href={`/admin/posts/${reference.postId}/edit`}
+                    className="font-medium text-primary underline-offset-4 hover:underline"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      setFeedback({ type: "info", text: `将进入 /admin/posts/${reference.postId}/edit（Showcase 模拟）。` });
+                    }}
                   >
                     {reference.title}
-                  </button>
+                  </a>
                 </li>
               ))}
             </ul>
