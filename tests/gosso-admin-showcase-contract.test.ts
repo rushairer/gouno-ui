@@ -41,9 +41,14 @@ describe("Gosso Admin Showcase canonical contract", () => {
     expect(preview).toBeGreaterThan(formClose);
   });
 
-  it("does not wrap account collection Empty states in an extra Card", () => {
-    const source = read("account-settings/index.tsx");
-    expect(source).not.toMatch(/<Card[^>]*>\s*<Empty/);
+  it("does not wrap canonical collection Empty states in an extra Card", () => {
+    for (const file of [
+      "account-settings/index.tsx",
+      "system-management/clients.tsx",
+      "system-management/users.tsx",
+    ]) {
+      expect(read(file), file).not.toMatch(/<Card[^>]*>\s*<Empty/);
+    }
   });
 
   it("keeps Auth surfaces standalone and outside the normal Admin page grammar", () => {
