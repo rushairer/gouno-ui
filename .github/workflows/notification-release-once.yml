@@ -21,7 +21,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          gh api --repo rushairer/gouno-ui repos/rushairer/gouno-ui/git/ref/tags/v0.4.1 >/dev/null
+          gh api repos/rushairer/gouno-ui/git/ref/tags/v0.4.1 >/dev/null
 
       - name: Dispatch release from the release tag ref
         shell: bash
