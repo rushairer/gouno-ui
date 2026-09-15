@@ -60,7 +60,7 @@ describe("Blog public Home product migration fixture", () => {
     expect(screen.getByRole("button", { name: "重试" })).toBeTruthy();
   });
 
-  it("keeps the public shell product-local and native navigation semantic", () => {
+  it("keeps the public shell and editorial navigation product-local and semantic", () => {
     const homeSource = readFileSync(
       resolve(process.cwd(), "showcase/demos/products/blog/home.tsx"),
       "utf8",
@@ -69,7 +69,11 @@ describe("Blog public Home product migration fixture", () => {
       resolve(process.cwd(), "showcase/demos/products/blog/public-shell.tsx"),
       "utf8",
     );
-    const combined = `${homeSource}\n${shellSource}`;
+    const contentSource = readFileSync(
+      resolve(process.cwd(), "showcase/demos/products/blog/public-content.tsx"),
+      "utf8",
+    );
+    const combined = `${homeSource}\n${shellSource}\n${contentSource}`;
 
     expect(combined).not.toContain('../../../src/gouno');
     expect(combined).not.toContain("AppShell");
@@ -77,8 +81,11 @@ describe("Blog public Home product migration fixture", () => {
     expect(homeSource).toContain('../../../src/core');
     expect(shellSource).toContain('../../../src/theme');
     expect(shellSource).not.toMatch(/<button\b/);
+    expect(homeSource).not.toMatch(/<button\b/);
+    expect(contentSource).not.toMatch(/<button\b/);
     expect(shellSource).toMatch(/<a\s+[\s\S]*?aria-label="Gouno Blog 首页"/);
     expect(shellSource).toContain('aria-label="主导航"');
     expect(shellSource).toContain('aria-label="移动导航"');
+    expect(contentSource).toContain("href={articlePath}");
   });
 });
