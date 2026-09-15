@@ -143,8 +143,9 @@ describe("Notification 6E3", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Error" }));
     const notice = screen.getByRole("alert");
-    expect(notice).toHaveAttribute("data-type", "error");
-    expect(notice).toHaveClass("bg-popover", "shadow-overlay");
+    expect(notice.getAttribute("data-type")).toBe("error");
+    expect(notice.classList.contains("bg-popover")).toBe(true);
+    expect(notice.classList.contains("shadow-overlay")).toBe(true);
     expect(notice.querySelector('[data-slot="notification-icon"]')).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "关闭错误通知" }));
@@ -163,7 +164,7 @@ describe("Notification 6E3", () => {
     act(() => vi.advanceTimersByTime(60_000));
 
     const notice = screen.getByRole("alert");
-    expect(notice).toHaveAttribute("data-persistent", "true");
+    expect(notice.getAttribute("data-persistent")).toBe("true");
     expect(screen.getByText("需要确认")).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "关闭持久通知" }));
