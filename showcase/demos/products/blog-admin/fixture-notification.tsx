@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import {
+  NotificationProvider,
   useNotification,
   type NotificationNotice,
 } from "../../../../src/core";
@@ -13,7 +14,7 @@ export type FixtureNotice =
     }
   | null;
 
-export function FixtureNotification({
+function FixtureNotificationEmitter({
   notice,
   onConsumed,
 }: {
@@ -36,4 +37,18 @@ export function FixtureNotification({
   }, [message, onConsumed, open, type]);
 
   return null;
+}
+
+export function FixtureNotification({
+  notice,
+  onConsumed,
+}: {
+  notice: FixtureNotice;
+  onConsumed: () => void;
+}) {
+  return (
+    <NotificationProvider>
+      <FixtureNotificationEmitter notice={notice} onConsumed={onConsumed} />
+    </NotificationProvider>
+  );
 }
