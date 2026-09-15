@@ -1,0 +1,72 @@
+name: Showcase Native Control Migration Once
+
+on:
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout hardening branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Migrate known native controls
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          dashboard = Path('showcase/demos/products/blog-admin/dashboard.tsx')
+          source = dashboard.read_text()
+          old = '''  return (\n    <button type="button" className="block h-full w-full text-left" onClick={() => onNavigate(route)}>\n      {content}\n    </button>\n  );'''
+          new = '''  return (\n    <a\n      href={route}\n      className="block h-full w-full text-left"\n      onClick={(event) => {\n        event.preventDefault();\n        onNavigate(route);\n      }}\n    >\n      {content}\n    </a>\n  );'''
+          if source.count(old) != 1:
+              raise SystemExit(f'dashboard: expected one interactive metric wrapper, found {source.count(old)}')
+          dashboard.write_text(source.replace(old, new, 1))
+
+          for name in ['post-editor.tsx', 'page-editor.tsx']:
+              path = Path('showcase/demos/products/blog-admin') / name
+              source = path.read_text()
+              if '  ChoiceButton,\n' not in source:
+                  anchor = '  Card,\n'
+                  if anchor not in source:
+                      raise SystemExit(f'{path}: Card import anchor missing')
+                  source = source.replace(anchor, anchor + '  ChoiceButton,\n', 1)
+              native_count = source.count('<button')
+              if native_count == 0:
+                  raise SystemExit(f'{path}: no native buttons found to migrate')
+              source = source.replace('<button', '<ChoiceButton').replace('</button>', '</ChoiceButton>')
+              path.write_text(source)
+              print(f'{path}: migrated {native_count} native buttons')
+          PY
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify parity contract and typecheck
+        run: npm test -- --environment jsdom tests/blog-admin-showcase-parity.test.ts && npm run typecheck
+
+      - name: Commit migration
+        run: |
+          if git diff --quiet; then
+            echo "No migration diff."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add showcase/demos/products/blog-admin/dashboard.tsx showcase/demos/products/blog-admin/post-editor.tsx showcase/demos/products/blog-admin/page-editor.tsx
+          git commit -m "fix(showcase): remove native Blog Admin controls"
+          git pull --rebase origin ${{ github.event.pull_request.head.ref }}
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
