@@ -31,9 +31,6 @@ jobs:
       - name: Migrate transient fixture notices
         run: node scripts/migrate-blog-admin-fixture-notifications.mjs
 
-      - name: Format migrated files
-        run: npx prettier --write showcase/demos/products/blog-admin
-
       - name: Commit migration
         run: |
           if git diff --quiet; then
