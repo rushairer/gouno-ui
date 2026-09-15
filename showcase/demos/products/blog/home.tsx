@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type MouseEvent } from "react";
 import { ArrowRight, GitBranch, Mail, Rss } from "lucide-react";
 import { Alert, Button, Empty, Segmented } from "../../../../src/core";
 import { FixtureDock } from "../../../components/fixture-dock";
@@ -20,14 +20,26 @@ const scenarioOptions = [
   { value: "error", label: "错误" },
 ] as const;
 
-export function BlogHomeDemo({ initialScenario = "data" }: { initialScenario?: Scenario }) {
+export function BlogHomeDemo({
+  initialScenario = "data",
+}: {
+  initialScenario?: Scenario;
+}) {
   const [scenario, setScenario] = useState<Scenario>(initialScenario);
   const [notice, setNotice] = useState("");
   const visiblePosts = scenario === "empty" ? [] : blogPosts;
   const featured = visiblePosts[0];
   const secondary = visiblePosts.slice(1, 5);
   const latest = useMemo(() => visiblePosts.slice(0, 4), [visiblePosts]);
-  const navigate = (target: string) => setNotice(`将进入 ${target}（Showcase 模拟）。`);
+  const navigate = (target: string) =>
+    setNotice(`将进入 ${target}（Showcase 模拟）。`);
+  const navigateLink = (
+    event: MouseEvent<HTMLAnchorElement>,
+    target: string,
+  ) => {
+    event.preventDefault();
+    navigate(target);
+  };
 
   return (
     <div className="relative">
@@ -47,7 +59,14 @@ export function BlogHomeDemo({ initialScenario = "data" }: { initialScenario?: S
         }
       />
       <BlogPublicShellFixture currentPath="/" onNavigate={navigate}>
-        {notice ? <Alert className="mb-8" type="info" description={notice} showIcon /> : null}
+        {notice ? (
+          <Alert
+            className="mb-8"
+            type="info"
+            description={notice}
+            showIcon
+          />
+        ) : null}
         {scenario === "loading" ? (
           <BlogHomeLoading />
         ) : (
@@ -58,7 +77,8 @@ export function BlogHomeDemo({ initialScenario = "data" }: { initialScenario?: S
                   把真实工程问题，写成可以长期复用的知识。
                 </h1>
                 <p className="mt-5 max-w-2xl text-base leading-8 text-muted-foreground">
-                  记录架构、安全、AI、Go 与产品设计中的真实判断、失败和复盘，而不是只整理漂亮答案。
+                  记录架构、安全、AI、Go
+                  与产品设计中的真实判断、失败和复盘，而不是只整理漂亮答案。
                 </p>
               </div>
               <div className="aspect-[4/3] overflow-hidden rounded-lg border bg-gradient-to-br from-muted via-background to-primary/10 p-5">
@@ -81,28 +101,40 @@ export function BlogHomeDemo({ initialScenario = "data" }: { initialScenario?: S
             ) : null}
 
             {scenario !== "error" && visiblePosts.length === 0 ? (
-              <Empty title="这里还没有文章" description="完成第一篇写作后，它会成为首页主角。" />
+              <Empty
+                title="这里还没有文章"
+                description="完成第一篇写作后，它会成为首页主角。"
+              />
             ) : null}
 
             {scenario !== "error" && featured ? (
               <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_240px]">
                 <div className="min-w-0">
-                  <BlogArticleTeaser post={featured} featured onNavigate={navigate} />
+                  <BlogArticleTeaser
+                    post={featured}
+                    featured
+                    onNavigate={navigate}
+                  />
                   {secondary.length ? (
                     <section className="mt-10">
                       <div className="mb-2 flex items-center justify-between gap-4">
                         <h2 className="text-lg font-semibold">精选文章</h2>
-                        <button
-                          type="button"
+                        <a
+                          href="/articles"
                           className="inline-flex items-center gap-2 text-sm text-primary"
-                          onClick={() => navigate("/articles")}
+                          onClick={(event) => navigateLink(event, "/articles")}
                         >
-                          查看全部<ArrowRight className="size-4" aria-hidden="true" />
-                        </button>
+                          查看全部
+                          <ArrowRight className="size-4" aria-hidden="true" />
+                        </a>
                       </div>
                       <div className="grid gap-x-8 md:grid-cols-2">
                         {secondary.map((post) => (
-                          <BlogArticleTeaser post={post} key={post.id} onNavigate={navigate} />
+                          <BlogArticleTeaser
+                            post={post}
+                            key={post.id}
+                            onNavigate={navigate}
+                          />
                         ))}
                       </div>
                     </section>
@@ -114,46 +146,69 @@ export function BlogHomeDemo({ initialScenario = "data" }: { initialScenario?: S
                     <h2 className="mb-5 text-sm font-semibold">主题索引</h2>
                     <div className="flex flex-col gap-3">
                       <h3 className="text-xs text-muted-foreground">核心分类</h3>
-                      {blogCategories.map((category) => (
-                        <button
-                          type="button"
-                          key={category.slug}
-                          className="flex items-center justify-between gap-3 text-sm hover:text-primary"
-                          onClick={() => navigate(`/categories/${category.slug}`)}
-                        >
-                          <span>{category.name}</span>
-                          <span className="text-xs tabular-nums text-muted-foreground">{category.postCount} 篇</span>
-                        </button>
-                      ))}
+                      {blogCategories.map((category) => {
+                        const target = `/categories/${category.slug}`;
+                        return (
+                          <a
+                            href={target}
+                            key={category.slug}
+                            className="flex items-center justify-between gap-3 text-sm hover:text-primary"
+                            onClick={(event) => navigateLink(event, target)}
+                          >
+                            <span>{category.name}</span>
+                            <span className="text-xs tabular-nums text-muted-foreground">
+                              {category.postCount} 篇
+                            </span>
+                          </a>
+                        );
+                      })}
                     </div>
                     <div className="mt-6">
-                      <h3 className="mb-3 text-xs text-muted-foreground">热门标签</h3>
+                      <h3 className="mb-3 text-xs text-muted-foreground">
+                        热门标签
+                      </h3>
                       <div className="flex flex-wrap gap-2">
-                        {blogTags.slice(0, 6).map((tag) => (
-                          <button
-                            type="button"
-                            key={tag}
-                            className="rounded-md bg-muted px-2 py-1 text-xs hover:bg-accent"
-                            onClick={() => navigate(`/tags/${encodeURIComponent(tag)}`)}
-                          >
-                            {tag}
-                          </button>
-                        ))}
+                        {blogTags.slice(0, 6).map((tag) => {
+                          const target = `/tags/${encodeURIComponent(tag)}`;
+                          return (
+                            <a
+                              href={target}
+                              key={tag}
+                              className="rounded-md bg-muted px-2 py-1 text-xs hover:bg-accent"
+                              onClick={(event) => navigateLink(event, target)}
+                            >
+                              {tag}
+                            </a>
+                          );
+                        })}
                       </div>
                     </div>
                   </section>
 
                   <section className="border-t pt-6">
-                    <span className="mb-4 flex size-10 items-center justify-center rounded-md bg-accent font-semibold text-primary">PW</span>
+                    <span className="mb-4 flex size-10 items-center justify-center rounded-md bg-accent font-semibold text-primary">
+                      PW
+                    </span>
                     <h2 className="font-semibold">Paw</h2>
                     <p className="mt-2 text-sm leading-7 text-muted-foreground">
-                      Full Stack Developer。关注工程、产品与 AI 在真实团队中的长期实践。
+                      Full Stack Developer。关注工程、产品与 AI
+                      在真实团队中的长期实践。
                     </p>
                     <div className="mt-4 flex gap-4 text-sm text-primary">
-                      <button type="button" onClick={() => navigate("/about")}>关于本站</button>
-                      <button type="button" className="inline-flex items-center gap-1" onClick={() => navigate("GitHub")}>
-                        <GitBranch className="size-4" aria-hidden="true" />GitHub
-                      </button>
+                      <a
+                        href="/about"
+                        onClick={(event) => navigateLink(event, "/about")}
+                      >
+                        关于本站
+                      </a>
+                      <a
+                        href="https://github.com"
+                        className="inline-flex items-center gap-1"
+                        onClick={(event) => navigateLink(event, "GitHub")}
+                      >
+                        <GitBranch className="size-4" aria-hidden="true" />
+                        GitHub
+                      </a>
                     </div>
                   </section>
                 </aside>
@@ -165,7 +220,12 @@ export function BlogHomeDemo({ initialScenario = "data" }: { initialScenario?: S
                 <h2 className="mb-2 text-lg font-semibold">最新文章</h2>
                 <div className="grid gap-x-10 md:grid-cols-2">
                   {latest.map((post) => (
-                    <BlogArticleTeaser key={post.id} post={post} compact onNavigate={navigate} />
+                    <BlogArticleTeaser
+                      key={post.id}
+                      post={post}
+                      compact
+                      onNavigate={navigate}
+                    />
                   ))}
                 </div>
               </section>
@@ -174,15 +234,29 @@ export function BlogHomeDemo({ initialScenario = "data" }: { initialScenario?: S
             <section className="flex flex-col justify-between gap-5 border-t pt-8 sm:flex-row sm:items-center">
               <div>
                 <h2 className="text-lg font-semibold">订阅更新</h2>
-                <p className="mt-2 text-sm text-muted-foreground">每当有新文章发布，都可以通过你熟悉的方式收到。</p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  每当有新文章发布，都可以通过你熟悉的方式收到。
+                </p>
               </div>
               <div className="flex gap-5 text-sm text-primary">
-                <button type="button" className="inline-flex items-center gap-2" onClick={() => navigate("/feed.xml")}>
-                  <Rss className="size-4" aria-hidden="true" />RSS
-                </button>
-                <button type="button" className="inline-flex items-center gap-2" onClick={() => navigate("mailto:hello@example.com")}>
-                  <Mail className="size-4" aria-hidden="true" />Email
-                </button>
+                <a
+                  href="/feed.xml"
+                  className="inline-flex items-center gap-2"
+                  onClick={(event) => navigateLink(event, "/feed.xml")}
+                >
+                  <Rss className="size-4" aria-hidden="true" />
+                  RSS
+                </a>
+                <a
+                  href="mailto:hello@example.com"
+                  className="inline-flex items-center gap-2"
+                  onClick={(event) =>
+                    navigateLink(event, "mailto:hello@example.com")
+                  }
+                >
+                  <Mail className="size-4" aria-hidden="true" />
+                  Email
+                </a>
               </div>
             </section>
           </div>
