@@ -4,11 +4,14 @@ import {
   type NotificationNotice,
 } from "../../../../src/core";
 
-export type FixtureNotice = {
-  type?: NotificationNotice["type"];
-  message?: string;
-  text?: string;
-} | null;
+export type FixtureNotice =
+  | string
+  | {
+      type?: NotificationNotice["type"];
+      message?: string;
+      text?: string;
+    }
+  | null;
 
 export function FixtureNotification({
   notice,
@@ -18,8 +21,9 @@ export function FixtureNotification({
   onConsumed: () => void;
 }) {
   const { open } = useNotification();
-  const message = notice?.message ?? notice?.text;
-  const type = notice?.type;
+  const message =
+    typeof notice === "string" ? notice : notice?.message ?? notice?.text;
+  const type = typeof notice === "string" ? "info" : notice?.type;
 
   useEffect(() => {
     if (!message) return;
