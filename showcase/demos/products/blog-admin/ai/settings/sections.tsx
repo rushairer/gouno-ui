@@ -191,7 +191,6 @@ function KnowledgePanel({ fixture, actions }: { fixture: AISettingsFixture["know
           </>
         )}
       />
-      <Alert type="info" showIcon title="敏感配置需要近期 MFA" description="真实产品中添加、编辑、删除 Embedding 配置和全量重建需要近期多因素认证；Showcase 仅展示解锁后的配置面。" />
       <div className="grid gap-4 sm:grid-cols-3">
         <Card padding="base"><Text size="xs" tone="muted">分段</Text><Heading level={2}>{fixture.index.chunks}</Heading></Card>
         <Card padding="base"><Text size="xs" tone="muted">队列</Text><Heading level={2}>{fixture.index.queued}</Heading></Card>
@@ -236,7 +235,6 @@ function ProviderList({ providers, actions }: { providers: ProviderFixture[]; ac
           </>
         )}
       />
-      <Alert type="info" showIcon title="模型连接与密钥保护" description="真实产品中添加、修改、导出或删除模型连接需要近期 MFA；真实 API Key 不进入 Showcase。" />
       <Card padding="base">
         <div className="flex flex-col gap-4">
           <div><Heading level={2} className="text-base">默认用途</Heading><Text size="sm" tone="muted">决定编辑器、运营分析与图片生成默认使用的模型。</Text></div>
