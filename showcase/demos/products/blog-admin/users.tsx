@@ -5,7 +5,6 @@ import {
   Crown,
   ExternalLink,
   KeyRound,
-  Lock,
   RefreshCw,
   RotateCcw,
 } from "lucide-react";
@@ -32,6 +31,7 @@ import {
 import { PageHeader, PageSkeleton } from "../../../../src/gouno";
 import { FixtureDock } from "../../../components/fixture-dock";
 import { FixtureNotification } from "./fixture-notification";
+import { PrivilegedAccessGate } from "./privileged-access-gate";
 
 type FixtureScenario = "data" | "loading" | "empty" | "error";
 type SecurityState = "unlocked" | "locked" | "expire-on-action";
@@ -281,6 +281,61 @@ export function BlogAdminUsersDemo() {
     </div>
   );
 
+  const memberDirectory = (
+    <>
+      <div className="hidden md:block">
+        <Table density="compact" bordered>
+          <TableHeader>
+            <TableRow>
+              <TableHead>成员</TableHead>
+              <TableHead className="w-40">账号 ID</TableHead>
+              <TableHead className="w-32">Blog 角色</TableHead>
+              <TableHead className="w-28">状态</TableHead>
+              <TableHead className="w-56 text-right">操作</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {members.map((member) => (
+              <TableRow key={member.id}>
+                <TableCell className="min-w-64 whitespace-normal">
+                  <div className="flex items-center gap-3">
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">{member.displayName.slice(0, 2).toUpperCase()}</div>
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2"><span className="font-semibold">{member.displayName}</span>{member.current ? <Tag color="primary">当前用户</Tag> : null}</div>
+                      <Text size="xs" tone="muted" className="break-all">{member.email}</Text>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell><code className="font-mono text-xs text-muted-foreground">{member.subject.slice(0, 8)}</code></TableCell>
+                <TableCell><RoleTag role={member.role} /></TableCell>
+                <TableCell><StatusTag status={member.status} /></TableCell>
+                <TableCell>{memberActions(member)}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      <div className="grid gap-3 md:hidden" role="list" aria-label="成员列表">
+        {members.map((member) => (
+          <Card key={member.id} padding="base" role="listitem">
+            <div className="flex flex-col gap-4">
+              <div className="flex items-start gap-3">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">{member.displayName.slice(0, 2).toUpperCase()}</div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-start justify-between gap-3"><span className="font-semibold">{member.displayName}</span><StatusTag status={member.status} /></div>
+                  <Text size="xs" tone="muted" className="mt-1 break-all">{member.email}</Text>
+                  <div className="mt-2"><RoleTag role={member.role} /></div>
+                </div>
+              </div>
+              {memberActions(member)}
+            </div>
+          </Card>
+        ))}
+      </div>
+    </>
+  );
+
   const body = (() => {
     if (scenario === "error") {
       return (
@@ -308,92 +363,17 @@ export function BlogAdminUsersDemo() {
       );
     }
 
-    if (security === "locked") {
-      return (
-        <Card padding="base" className="border-primary/20 bg-accent/20">
-          <div className="mx-auto flex max-w-2xl flex-col items-center gap-4 py-8 text-center">
-            <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary"><Lock aria-hidden="true" className="size-6" /></div>
-            <div className="flex flex-col gap-2">
-              <Text className="text-lg font-semibold">成员与权限安全保护</Text>
-              <Text size="sm" tone="muted" className="leading-relaxed">修改 Blog 成员角色、移交所有权或暂停成员资格需要近期多因素身份认证。解锁后享有 10 分钟无打扰操作期。</Text>
-            </div>
-            <Button variant="solid" color="primary" icon={<KeyRound />} onClick={() => setSecurity("unlocked")}>完成 MFA 并解锁</Button>
-            <Text size="xs" tone="muted">安全认证由统一身份中心提供；这里仅模拟产品交互状态。</Text>
-          </div>
-        </Card>
-      );
-    }
-
     return (
-      <>
-        {security === "expire-on-action" ? (
-          <Alert
-            type="warning"
-            showIcon
-            title="近期 MFA 将在下一次高权限写操作时过期"
-            description="用于复现真实产品在保存成员、暂停/恢复或移交所有权过程中收到 recent_mfa_required 后的 Step-Up 重试链路。"
-          />
-        ) : (
-          <Alert
-            type="success"
-            showIcon
-            title="高权限操作已解锁"
-            description="当前 Showcase 模拟近期 MFA 已完成；真实产品会在约 10 分钟后重新要求验证。"
-            action={<Button size="small" onClick={() => setSecurity("locked")}>重新锁定</Button>}
-          />
-        )}
-
-        <div className="hidden md:block">
-          <Table density="compact" bordered>
-            <TableHeader>
-              <TableRow>
-                <TableHead>成员</TableHead>
-                <TableHead className="w-40">账号 ID</TableHead>
-                <TableHead className="w-32">Blog 角色</TableHead>
-                <TableHead className="w-28">状态</TableHead>
-                <TableHead className="w-56 text-right">操作</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {members.map((member) => (
-                <TableRow key={member.id}>
-                  <TableCell className="min-w-64 whitespace-normal">
-                    <div className="flex items-center gap-3">
-                      <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">{member.displayName.slice(0, 2).toUpperCase()}</div>
-                      <div className="min-w-0">
-                        <div className="flex flex-wrap items-center gap-2"><span className="font-semibold">{member.displayName}</span>{member.current ? <Tag color="primary">当前用户</Tag> : null}</div>
-                        <Text size="xs" tone="muted" className="break-all">{member.email}</Text>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell><code className="font-mono text-xs text-muted-foreground">{member.subject.slice(0, 8)}</code></TableCell>
-                  <TableCell><RoleTag role={member.role} /></TableCell>
-                  <TableCell><StatusTag status={member.status} /></TableCell>
-                  <TableCell>{memberActions(member)}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-
-        <div className="grid gap-3 md:hidden" role="list" aria-label="成员列表">
-          {members.map((member) => (
-            <Card key={member.id} padding="base" role="listitem">
-              <div className="flex flex-col gap-4">
-                <div className="flex items-start gap-3">
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">{member.displayName.slice(0, 2).toUpperCase()}</div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-start justify-between gap-3"><span className="font-semibold">{member.displayName}</span><StatusTag status={member.status} /></div>
-                    <Text size="xs" tone="muted" className="mt-1 break-all">{member.email}</Text>
-                    <div className="mt-2"><RoleTag role={member.role} /></div>
-                  </div>
-                </div>
-                {memberActions(member)}
-              </div>
-            </Card>
-          ))}
-        </div>
-      </>
+      <PrivilegedAccessGate
+        state={security === "locked" ? "locked" : security === "expire-on-action" ? "expiring" : "unlocked"}
+        policyTitle="成员与权限安全保护"
+        policyDescription="修改 Blog 成员角色、移交所有权或暂停成员资格需要近期多因素身份认证。"
+        actionLabel="完成 MFA 并解锁"
+        onUnlock={() => setSecurity("unlocked")}
+        onRelock={() => setSecurity("locked")}
+      >
+        {memberDirectory}
+      </PrivilegedAccessGate>
     );
   })();
 
