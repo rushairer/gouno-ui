@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   stage-release:
-    if: github.repository == 'rushairer/gouno-ui' && github.event.head_commit.message == 'chore(release): stage notification 0.4.1'
+    if: "${{ github.repository == 'rushairer/gouno-ui' && github.event.head_commit.message == 'chore(release): stage notification 0.4.1' }}"
     runs-on: ubuntu-latest
     steps:
       - name: Check out exact staging commit
