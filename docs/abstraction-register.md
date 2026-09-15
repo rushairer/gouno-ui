@@ -713,3 +713,15 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Decision:** retain PI-02 and private composition. No new Pattern/Gouno API. Showcase-only repetition is supporting evidence, not automatic admission.
 - **Tooling correction:** FixtureTools reserves a toolbar outside the product scroll viewport; FixtureDock portals its entry there. Isolated fixtures fall back to normal flow. Standalone navigation starts collapsed in the same toolbar rather than obscuring public content.
 - **Validation:** fixture-tool interaction/ownership tests and all existing product-family browser entries; no Connector behavior or real service calls change.
+
+### PD-077 — Blog Admin feedback validates semantic, closable and persistent Notification
+
+- **Status:** accepted / Core hardening
+- **Owner:** Core / Feedback family
+- **Evidence:** real Blog Admin feedback independently requires success/info/warning/error presentation, user dismissal and explicitly persistent feedback. Its product-local `AppFeedbackProvider` had to reproduce the canonical top-right notification queue, lifecycle and overlay styling, which proves these UI concerns belong in Core rather than a second product-owned notification renderer.
+- **Decision:** extend Core `Notification` narrowly instead of restoring historical Toast/Feedback feature bags. `type` owns the four established semantic severities; warning/error use `role=alert`, info/success use `role=status`; the outer region remains positioning-only. The visual surface remains opaque `bg-popover` with `shadow-overlay`. Transient notices preserve the finite 4500ms fallback. `persistent: true` explicitly skips automatic expiry and is valid only with caller-owned `closable` accessible copy, avoiding the uncloseable duration-zero state rejected by PD-069.
+- **API impact:** `NotificationNotice` adds `type`, `closable` and a discriminated persistent branch. Persistent notices forbid `duration`; transient omitted/non-finite/non-positive `duration` still normalizes to 4500ms. `useNotification().open(notice)` remains the only runtime entry and does not expose a business notification identifier.
+- **Scope boundary:** no read/unread state, history, routing actions, update/destroy key API, storage, cross-root singleton, permission policy or business notification center is admitted. Blog may retain a thin compatibility hook for product call sites, but Core owns notification rendering and lifetime.
+- **Validation:** same-source Showcase and focused tests cover semantic roles, opaque overlay surface, accessible dismissal, explicit persistence, finite-duration fallback, duplicate queue identity and timer cleanup. The triggering Blog Admin migration must remove its duplicate queue/timer/rendering implementation and consume the released Core contract.
+- **Supersedes:** PD-069's rejection of persistence/manual close is superseded only for these independently proven UI capabilities; its rejection of notification-center/business orchestration remains binding.
+

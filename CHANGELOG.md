@@ -4,6 +4,15 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-09-15
+
+### Added
+- Core `Notification` now supports caller-owned `type` (`info` / `success` / `warning` / `error`), accessible manual dismissal through `closable`, and explicit `persistent: true` notices that must remain user-closeable.
+
+### Changed
+- Notification severity now owns its status icon and `status`/`alert` live-region role while retaining the opaque `bg-popover` + `shadow-overlay` surface. Transient notices keep the finite 4500ms fallback for omitted, invalid or non-positive duration values.
+
+
 ## [0.4.0] - 2026-09-14
 
 ### Added
