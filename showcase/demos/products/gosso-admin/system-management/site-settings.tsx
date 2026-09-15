@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Image, Save } from "lucide-react";
 import { Alert, Button, Card, CardContent, CardFooter, FormField, Input, Segmented, Skeleton, Text, Textarea } from "../../../../../src/core";
-import { FixtureBanner, ManagementPanelLead } from "./shared";
+import { FixtureBanner, FixtureMessage, ManagementPanelLead } from "./shared";
 
 type FixtureScenario = "data" | "loading" | "error";
 type Branding = {
@@ -68,28 +68,30 @@ export function SiteSettingsPanel() {
         controls={<Segmented<FixtureScenario> aria-label="站点设置 Fixture 状态" options={scenarioOptions} value={scenario} onChange={changeScenario} block />}
       />
       <ManagementPanelLead description="维护 GOSSO 登录入口的产品名称、品牌资源和登录页文案，并在保存前预览结果。" />
-      {saved ? <Alert type="success" showIcon title="站点设置已保存（Showcase 模拟）。" /> : null}
+      {saved ? <FixtureMessage>站点设置已保存（Showcase 模拟）。</FixtureMessage> : null}
 
       {scenario === "error" ? (
         <Alert type="error" showIcon title="站点设置加载失败" description="无法读取当前品牌与登录页配置。真实产品会提供重试入口而不渲染过期表单。" action={<Button size="small" onClick={() => changeScenario("data")}>重新载入</Button>} />
       ) : scenario === "loading" ? (
         <LoadingSiteSettings />
       ) : (
-        <form onSubmit={save} className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
-          <Card padding="none" className="gap-0 overflow-clip">
-            <CardContent className="flex flex-col gap-5 p-6">
-              <FormField label="产品名称" required><Input value={settings.productName} onChange={(event) => update("productName", event.target.value)} maxLength={120} /></FormField>
-              <FormField label="Logo URL"><Input value={settings.logoUrl} onChange={(event) => update("logoUrl", event.target.value)} placeholder="https://…/logo.svg" /></FormField>
-              <FormField label="Favicon URL"><Input value={settings.faviconUrl} onChange={(event) => update("faviconUrl", event.target.value)} placeholder="https://…/favicon.svg" /></FormField>
-              <FormField label="登录标题"><Input value={settings.loginTitle} onChange={(event) => update("loginTitle", event.target.value)} maxLength={160} /></FormField>
-              <FormField label="登录说明"><Textarea value={settings.loginDescription} onChange={(event) => update("loginDescription", event.target.value)} rows={3} maxLength={500} showCount /></FormField>
-              <FormField label="登录背景 URL / Base64" hint="真实产品支持常见网络图片 URL 和 Base64 图片源，保存前仍由服务端执行长度/类型校验。"><Textarea value={settings.loginBackground} onChange={(event) => update("loginBackground", event.target.value)} rows={5} spellCheck={false} /></FormField>
-            </CardContent>
-            <CardFooter className="sticky bottom-0 z-10 justify-between border-t bg-card/95 px-6 py-4 backdrop-blur">
-              <Text size="sm" tone="muted">{dirty ? "有未保存修改" : "所有修改已保存"}</Text>
-              <Button type="submit" variant="solid" color="primary" icon={<Save />} disabled={!dirty}>保存设置</Button>
-            </CardFooter>
-          </Card>
+        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
+          <form onSubmit={save} className="min-w-0">
+            <Card padding="none" className="gap-0 overflow-clip">
+              <CardContent className="flex flex-col gap-5 p-6">
+                <FormField label="产品名称" required><Input value={settings.productName} onChange={(event) => update("productName", event.target.value)} maxLength={120} /></FormField>
+                <FormField label="Logo URL"><Input value={settings.logoUrl} onChange={(event) => update("logoUrl", event.target.value)} placeholder="https://…/logo.svg" /></FormField>
+                <FormField label="Favicon URL"><Input value={settings.faviconUrl} onChange={(event) => update("faviconUrl", event.target.value)} placeholder="https://…/favicon.svg" /></FormField>
+                <FormField label="登录标题"><Input value={settings.loginTitle} onChange={(event) => update("loginTitle", event.target.value)} maxLength={160} /></FormField>
+                <FormField label="登录说明"><Textarea value={settings.loginDescription} onChange={(event) => update("loginDescription", event.target.value)} rows={3} maxLength={500} showCount /></FormField>
+                <FormField label="登录背景 URL / Base64" hint="真实产品支持常见网络图片 URL 和 Base64 图片源，保存前仍由服务端执行长度/类型校验。"><Textarea value={settings.loginBackground} onChange={(event) => update("loginBackground", event.target.value)} rows={5} spellCheck={false} /></FormField>
+              </CardContent>
+              <CardFooter className="sticky bottom-0 z-10 justify-between border-t bg-card/95 px-6 py-4 backdrop-blur">
+                <Text size="sm" tone="muted">{dirty ? "有未保存修改" : "所有修改已保存"}</Text>
+                <Button type="submit" variant="solid" color="primary" icon={<Save />} disabled={!dirty}>保存设置</Button>
+              </CardFooter>
+            </Card>
+          </form>
 
           <div className="xl:sticky xl:top-4 xl:self-start">
             <Card padding="base" className="overflow-hidden">
@@ -108,7 +110,7 @@ export function SiteSettingsPanel() {
               </div>
             </Card>
           </div>
-        </form>
+        </div>
       )}
     </div>
   );
