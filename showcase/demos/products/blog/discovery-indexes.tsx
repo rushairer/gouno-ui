@@ -1,4 +1,9 @@
-import { useMemo, useState, type MouseEvent } from "react";
+import {
+  useMemo,
+  useState,
+  type MouseEvent,
+  type ReactNode,
+} from "react";
 import { ArrowRight } from "lucide-react";
 import { Alert, Button, Card, Empty, Segmented } from "../../../../src/core";
 import { PageHeader } from "../../../../src/gouno";
@@ -61,7 +66,7 @@ function NavigationLink({
   target: string;
   onNavigate: (target: string) => void;
   className: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   const activate = (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
