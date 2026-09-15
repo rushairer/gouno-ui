@@ -1,5 +1,5 @@
-import { useState, type ReactNode } from "react";
-import { Alert, IconButton, Modal, Text } from "../../../../../src/core";
+import { useEffect, useState, type ReactNode } from "react";
+import { IconButton, MessageProvider, Modal, Text, useMessage } from "../../../../../src/core";
 import { FixtureDock } from "../../../../components/fixture-dock";
 import { TabPanelLead } from "../../../../components/tab-panel-lead";
 
@@ -21,8 +21,25 @@ export function FixtureBanner({ route, controls, note }: FixtureBannerProps) {
 
 export const ManagementPanelLead = TabPanelLead;
 
+function FixtureMessageContent({ children }: { children: ReactNode }) {
+  const message = useMessage();
+  useEffect(() => {
+    message.success(children);
+  }, [children, message]);
+  return null;
+}
+
+export function FixtureMessage({ children }: { children: ReactNode }) {
+  return (
+    <MessageProvider>
+      <FixtureMessageContent>{children}</FixtureMessageContent>
+    </MessageProvider>
+  );
+}
+
+// Compatibility name for existing fixtures; the presentation owner is Message, not Alert.
 export function StatusNotice({ children }: { children: ReactNode }) {
-  return <Alert type="success" showIcon title={children} />;
+  return <FixtureMessage>{children}</FixtureMessage>;
 }
 
 export function ConfirmAction({

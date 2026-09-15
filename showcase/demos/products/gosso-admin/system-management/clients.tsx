@@ -3,7 +3,6 @@ import { Copy, Edit2, KeyRound, Plus, RotateCcw, Trash2 } from "lucide-react";
 import {
   Alert,
   Button,
-  Card,
   Checkbox,
   CheckboxGroup,
   Empty,
@@ -124,7 +123,7 @@ export function ClientsPanel() {
       ) : scenario === "loading" ? (
         <PageSkeleton layout="collection" aria-label="OAuth2 客户端加载中" />
       ) : scenario === "empty" ? (
-        <Card padding="base"><Empty title="还没有 OAuth2 客户端" description="注册第一个客户端以接入授权流程。" action={<Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={() => openEditor()}>注册客户端</Button>} /></Card>
+        <Empty title="还没有 OAuth2 客户端" description="注册第一个客户端以接入授权流程。" action={<Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={() => openEditor()}>注册客户端</Button>} />
       ) : (
         <Table bordered>
           <TableHeader><TableRow><TableHead>客户端</TableHead><TableHead>类型</TableHead><TableHead>Redirect URI</TableHead><TableHead>Grant Types</TableHead><TableHead>Scopes</TableHead><TableHead className="text-right">操作</TableHead></TableRow></TableHeader>
@@ -141,7 +140,7 @@ export function ClientsPanel() {
         </Table>
       )}
 
-      <Modal open={editorOpen} title={editing ? "编辑 OAuth2 客户端" : "注册 OAuth2 客户端"} description="配置客户端身份、回调地址、授权类型与访问范围。" onOpenChange={setEditorOpen} footer={<><Button onClick={() => setEditorOpen(false)}>取消</Button><Button form="system-client-editor" type="submit" variant="solid" color="primary">{editing ? "保存修改" : "注册客户端"}</Button></>}>
+      <Modal open={editorOpen} maxWidth="620px" title={editing ? "编辑 OAuth2 客户端" : "注册 OAuth2 客户端"} description="配置客户端身份、回调地址、授权类型与访问范围。" onOpenChange={setEditorOpen} footer={<><Button onClick={() => setEditorOpen(false)}>取消</Button><Button form="system-client-editor" type="submit" variant="solid" color="primary">{editing ? "保存修改" : "注册客户端"}</Button></>}>
         <form id="system-client-editor" onSubmit={save} className="flex flex-col gap-5">
           <FormField label="客户端名称" required><Input value={name} onChange={(event) => setName(event.target.value)} placeholder="例如：Gouno Blog BFF" /></FormField>
           <FormField label="描述"><Input value={description} onChange={(event) => setDescription(event.target.value)} /></FormField>
