@@ -56,7 +56,7 @@ jobs:
         run: npm ci
 
       - name: Verify parity contract and typecheck
-        run: npm test -- --environment jsdom tests/blog-admin-showcase-parity.test.ts && npm run typecheck
+        run: npm test -- tests/blog-admin-showcase-parity.test.ts && npm run typecheck
 
       - name: Commit migration
         run: |
