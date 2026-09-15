@@ -29,7 +29,6 @@ jobs:
                   raise SystemExit(f'{path}: {label}: expected 1 match, found {count}')
               path.write_text(source.replace(old, new, 1))
 
-          # Dashboard: navigation is navigation, not a button action.
           dashboard = Path('showcase/demos/products/blog-admin/dashboard.tsx')
           replace_once(
               dashboard,
@@ -43,9 +42,13 @@ jobs:
               '''                    <a\n                      key={alert.id}\n                      href={alert.destination}\n                      className="flex w-full items-start justify-between gap-4 p-4 text-left transition-colors hover:bg-muted/40 sm:p-6"\n                      onClick={(event) => {\n                        event.preventDefault();\n                        navigate(alert.destination);\n                      }}\n                    >''',
               'AI alert navigation row open',
           )
-          replace_once(dashboard, '                    </button>\n                  );\n                })}', '                    </a>\n                  );\n                })}', 'AI alert navigation row close')
+          replace_once(
+              dashboard,
+              '                    </button>\n                  );\n                })}',
+              '                    </a>\n                  );\n                })}',
+              'AI alert navigation row close',
+          )
 
-          # Media blocked references are links to product routes.
           media = Path('showcase/demos/products/blog-admin/media-library.tsx')
           replace_once(
               media,
@@ -54,7 +57,6 @@ jobs:
               'blocked reference navigation',
           )
 
-          # Editors: selectable suggestions/history use the same ChoiceButton owner as Blog.
           for name in ['post-editor.tsx', 'page-editor.tsx']:
               path = Path('showcase/demos/products/blog-admin') / name
               source = path.read_text()
@@ -70,7 +72,6 @@ jobs:
               path.write_text(source)
               print(f'{path}: migrated {native_count} native buttons')
 
-          # Workflow/Agent master lists are selectable actions: canonical Button owns them.
           records = Path('showcase/demos/products/blog-admin/ai/operations/automation-records.tsx')
           source = records.read_text()
           native_count = source.count('<button')
@@ -79,47 +80,30 @@ jobs:
           source = source.replace('<button', '<Button variant="ghost"').replace('</button>', '</Button>')
           records.write_text(source)
 
-          # Overview task cards match the real product: Card owns the surface, Button owns the click target.
           overview = Path('showcase/demos/products/blog-admin/ai/operations/overview-inbox.tsx')
           source = overview.read_text()
-          card_cases = [
+          task_cards = [
               (
-                  '<button type="button" className="text-left" onClick={() => onNavigate("inbox")}>\n          <Card padding="base" interactive className="h-full">',
-                  '<Card padding="base" interactive className="relative h-full">',
-                  '待审批变更',
-                  'ShieldCheck',
+                  '''        <button type="button" className="text-left" onClick={() => onNavigate("inbox")}>\n          <Card padding="base" interactive className="h-full">\n            <div className="flex items-start justify-between gap-4">\n              <Statistic title="待审批变更" value={pendingApprovals} />\n              <ShieldCheck className="size-5 text-muted-foreground" />\n            </div>\n            <Text size="xs" tone="muted">项等待你的审批</Text>\n          </Card>\n        </button>''',
+                  '''        <Card padding="base" interactive className="relative h-full">\n          <div className="flex items-start justify-between gap-4">\n            <Statistic title="待审批变更" value={pendingApprovals} />\n            <ShieldCheck className="size-5 text-muted-foreground" />\n          </div>\n          <Text size="xs" tone="muted">项等待你的审批</Text>\n          <Button\n            variant="ghost"\n            aria-label={`查看待审批变更：${pendingApprovals} 项`}\n            className="absolute inset-0 z-10 h-auto rounded-lg p-0 hover:bg-transparent"\n            onClick={() => onNavigate("inbox")}\n          />\n        </Card>''',
+                  'pending task card',
               ),
               (
-                  '<button type="button" className="text-left" onClick={() => onNavigate("inbox")}>\n          <Card padding="base" interactive className="h-full">',
-                  '<Card padding="base" interactive className="relative h-full">',
-                  '内容建议',
-                  'Lightbulb',
+                  '''        <button type="button" className="text-left" onClick={() => onNavigate("inbox")}>\n          <Card padding="base" interactive className="h-full">\n            <div className="flex items-start justify-between gap-4">\n              <Statistic title="内容建议" value={newSuggestions + pendingCandidates} />\n              <Lightbulb className="size-5 text-muted-foreground" />\n            </div>\n            <Text size="xs" tone="muted">条待处理建议与候选</Text>\n          </Card>\n        </button>''',
+                  '''        <Card padding="base" interactive className="relative h-full">\n          <div className="flex items-start justify-between gap-4">\n            <Statistic title="内容建议" value={newSuggestions + pendingCandidates} />\n            <Lightbulb className="size-5 text-muted-foreground" />\n          </div>\n          <Text size="xs" tone="muted">条待处理建议与候选</Text>\n          <Button\n            variant="ghost"\n            aria-label={`查看内容建议：${newSuggestions + pendingCandidates} 条`}\n            className="absolute inset-0 z-10 h-auto rounded-lg p-0 hover:bg-transparent"\n            onClick={() => onNavigate("inbox")}\n          />\n        </Card>''',
+                  'suggestion task card',
               ),
               (
-                  '<button type="button" className="text-left" onClick={() => onNavigate("inbox")}>\n          <Card padding="base" interactive className="h-full">',
-                  '<Card padding="base" interactive className="relative h-full">',
-                  '图片任务',
-                  'Sparkles',
+                  '''        <button type="button" className="text-left" onClick={() => onNavigate("inbox")}>\n          <Card padding="base" interactive className="h-full">\n            <div className="flex items-start justify-between gap-4">\n              <Statistic title="图片任务" value={readyMedia} />\n              <Sparkles className="size-5 text-muted-foreground" />\n            </div>\n            <Text size="xs" tone="muted">个图片任务可继续生成</Text>\n          </Card>\n        </button>''',
+                  '''        <Card padding="base" interactive className="relative h-full">\n          <div className="flex items-start justify-between gap-4">\n            <Statistic title="图片任务" value={readyMedia} />\n            <Sparkles className="size-5 text-muted-foreground" />\n          </div>\n          <Text size="xs" tone="muted">个图片任务可继续生成</Text>\n          <Button\n            variant="ghost"\n            aria-label={`查看图片任务：${readyMedia} 个可生成`}\n            className="absolute inset-0 z-10 h-auto rounded-lg p-0 hover:bg-transparent"\n            onClick={() => onNavigate("inbox")}\n          />\n        </Card>''',
+                  'media task card',
               ),
           ]
-          # The three source openings are identical; migrate in document order and inject overlay buttons before Card close.
-          for _, new_open, label, _ in card_cases:
-              old_open = '<button type="button" className="text-left" onClick={() => onNavigate("inbox")}>\n          <Card padding="base" interactive className="h-full">'
-              if old_open not in source:
-                  raise SystemExit(f'{overview}: {label}: source wrapper missing')
-              source = source.replace(old_open, new_open, 1)
-              marker = '            <Text size="xs" tone="muted">'
-              start = source.find(new_open)
-              text_start = source.find(marker, start)
-              close = source.find('            </Text>\n          </Card>\n        </button>', text_start)
-              if close < 0:
-                  raise SystemExit(f'{overview}: {label}: close marker missing')
-              close += len('            </Text>')
-              overlay = f'''\n          <Button\n            variant="ghost"\n            aria-label="查看{label}"\n            className="absolute inset-0 z-10 h-auto rounded-lg p-0 hover:bg-transparent"\n            onClick={{() => onNavigate("inbox")}}\n          />'''
-              source = source[:close] + overlay + source[close:]
-              source = source.replace('          </Card>\n        </button>', '          </Card>', 1)
+          for old, new, label in task_cards:
+              if source.count(old) != 1:
+                  raise SystemExit(f'{overview}: {label}: expected 1 match, found {source.count(old)}')
+              source = source.replace(old, new, 1)
 
-          # Remaining selectors are non-navigation list choices/actions.
           native_count = source.count('<button')
           if native_count != 2:
               raise SystemExit(f'{overview}: expected 2 remaining native list buttons, found {native_count}')
