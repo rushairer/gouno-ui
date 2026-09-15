@@ -37,6 +37,11 @@ export function FixtureMessage({ children }: { children: ReactNode }) {
   );
 }
 
+// Compatibility name for existing fixtures; the presentation owner is Message, not Alert.
+export function StatusNotice({ children }: { children: ReactNode }) {
+  return <FixtureMessage>{children}</FixtureMessage>;
+}
+
 export function ConfirmAction({
   label,
   title,
