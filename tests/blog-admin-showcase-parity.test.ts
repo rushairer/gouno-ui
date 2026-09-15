@@ -183,4 +183,36 @@ describe("Blog Admin Showcase parity contract", () => {
     expect(adapter).not.toMatch(/\bz-\d+\b/);
     expect(adapter).not.toMatch(/shadow-(?:sm|md|lg|xl|2xl)/);
   });
+
+  it("uses one product-local privileged-access grammar across Members, Site Settings and AI Settings", () => {
+    const gate = readFileSync(
+      resolve(blogAdminRoot, "privileged-access-gate.tsx"),
+      "utf8",
+    );
+    const users = readFileSync(resolve(blogAdminRoot, "users.tsx"), "utf8");
+    const settings = readFileSync(
+      resolve(blogAdminRoot, "site-settings.tsx"),
+      "utf8",
+    );
+    const ai = readFileSync(
+      resolve(blogAdminRoot, "ai/settings/index.tsx"),
+      "utf8",
+    );
+    const aiSections = readFileSync(
+      resolve(blogAdminRoot, "ai/settings/sections.tsx"),
+      "utf8",
+    );
+
+    expect(gate).toContain('data-slot="blog-privileged-access-gate"');
+    expect(gate).toContain("高权限操作需要身份验证");
+    expect(gate).toContain("高权限操作已解锁");
+    expect(gate).toContain("重新锁定");
+    expect(users).toContain("<PrivilegedAccessGate");
+    expect(settings).toContain("<PrivilegedAccessGate");
+    expect(ai).toContain("<PrivilegedAccessGate");
+    expect(users).not.toContain("Sudo 已解锁");
+    expect(settings).not.toContain("Sudo 已解锁");
+    expect(aiSections).not.toContain("敏感配置需要近期 MFA");
+    expect(aiSections).not.toContain('title="模型连接与密钥保护"');
+  });
 });
