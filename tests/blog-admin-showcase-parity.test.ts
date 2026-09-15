@@ -1,5 +1,5 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
-import { resolve } from "node:path";
+import { relative, resolve } from "node:path";
 import ts from "typescript";
 import { describe, expect, it } from "vitest";
 
@@ -30,6 +30,33 @@ function sourceFile(file: string, source: string) {
 function jsxTag(node: ts.Node, file: ts.SourceFile) {
   if (ts.isJsxElement(node)) return node.openingElement.tagName.getText(file);
   if (ts.isJsxSelfClosingElement(node)) return node.tagName.getText(file);
+  return "";
+}
+
+function jsxAttributes(node: ts.JsxElement | ts.JsxSelfClosingElement) {
+  return ts.isJsxElement(node)
+    ? node.openingElement.attributes
+    : node.attributes;
+}
+
+function staticAttribute(
+  node: ts.JsxElement | ts.JsxSelfClosingElement,
+  name: string,
+) {
+  const attribute = jsxAttributes(node).properties.find(
+    (item) => ts.isJsxAttribute(item) && item.name.text === name,
+  );
+  if (!attribute || !ts.isJsxAttribute(attribute) || !attribute.initializer)
+    return "";
+  if (ts.isStringLiteral(attribute.initializer)) return attribute.initializer.text;
+  if (
+    ts.isJsxExpression(attribute.initializer) &&
+    attribute.initializer.expression &&
+    (ts.isStringLiteral(attribute.initializer.expression) ||
+      ts.isNoSubstitutionTemplateLiteral(attribute.initializer.expression))
+  ) {
+    return attribute.initializer.expression.text;
+  }
   return "";
 }
 
@@ -104,6 +131,44 @@ describe("Blog Admin Showcase parity contract", () => {
         expect(source).toContain("<FixtureNotification");
       }
     }
+  });
+
+  it("keeps product fixtures on canonical form and button primitives", () => {
+    const violations: string[] = [];
+
+    for (const filePath of applicationFiles) {
+      const source = readFileSync(filePath, "utf8");
+      const file = sourceFile(filePath, source);
+      const displayPath = relative(repoRoot, filePath).replaceAll("\\", "/");
+
+      function visit(node: ts.Node) {
+        if (ts.isJsxElement(node) || ts.isJsxSelfClosingElement(node)) {
+          const tag = jsxTag(node, file);
+          const line =
+            file.getLineAndCharacterOfPosition(node.getStart(file)).line + 1;
+          if (["button", "select", "textarea"].includes(tag)) {
+            violations.push(`${displayPath}:${line} native ${tag}`);
+          }
+          if (tag === "input") {
+            const type = staticAttribute(node, "type") || "text";
+            const classes = new Set(
+              staticAttribute(node, "className").split(/\s+/),
+            );
+            const hiddenFileBridge =
+              type === "file" &&
+              (classes.has("sr-only") || classes.has("hidden"));
+            if (type !== "hidden" && !hiddenFileBridge) {
+              violations.push(`${displayPath}:${line} visible native input`);
+            }
+          }
+        }
+        ts.forEachChild(node, visit);
+      }
+
+      visit(file);
+    }
+
+    expect(violations).toEqual([]);
   });
 
   it("routes fixture notifications through canonical Notification without recreating an overlay", () => {
