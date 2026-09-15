@@ -1,0 +1,86 @@
+name: Blog Consumer Parity
+
+on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "showcase/**"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
+      - "tsconfig*.json"
+      - ".github/workflows/blog-consumer-parity.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "showcase/**"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
+      - "tsconfig*.json"
+      - ".github/workflows/blog-consumer-parity.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: blog-consumer-parity-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout current Blog main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: rushairer/gouno-blog
+          ref: main
+          path: consumer-blog
+
+      - name: Checkout candidate Gouno UI
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: consumer-blog/upstream-gouno-ui
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            consumer-blog/blog-frontend/package-lock.json
+            consumer-blog/upstream-gouno-ui/package-lock.json
+
+      - name: Install Blog dependencies
+        working-directory: consumer-blog/blog-frontend
+        run: npm ci
+
+      - name: Install candidate Gouno UI dependencies
+        working-directory: consumer-blog/upstream-gouno-ui
+        run: npm ci
+
+      - name: Install isolated Playwright runtime
+        working-directory: consumer-blog/blog-frontend
+        run: |
+          PLAYWRIGHT_VERSION=1.55.0
+          npm install --no-save --ignore-scripts @playwright/test@${PLAYWRIGHT_VERSION}
+          npx playwright install --with-deps chromium
+
+      - name: Compare candidate Showcase with current Blog consumer
+        working-directory: consumer-blog/blog-frontend
+        run: npx playwright test --config=e2e/showcase-parity.config.mjs
+
+      - name: Upload paired consumer parity evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: gouno-ui-blog-consumer-parity-${{ github.run_id }}
+          path: |
+            consumer-blog/blog-frontend/playwright-report-showcase-parity
+            consumer-blog/blog-frontend/test-results/showcase-parity
+          if-no-files-found: ignore
+          retention-days: 14
