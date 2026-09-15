@@ -1,0 +1,147 @@
+name: Stage Notification 0.4.1 Release Once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/notification-release-once.yml
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  stage-release:
+    if: github.repository == 'rushairer/gouno-ui' && github.event.head_commit.message == 'chore(release): stage notification 0.4.1'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out exact staging commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Guard immutable release identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          CURRENT_VERSION="$(node --input-type=module -e "import { readFile } from 'node:fs/promises'; const pkg=JSON.parse(await readFile('package.json','utf8')); process.stdout.write(pkg.version)")"
+          if [ "$CURRENT_VERSION" != "0.4.0" ]; then
+            echo "Expected 0.4.0 staging baseline, found $CURRENT_VERSION" >&2
+            exit 1
+          fi
+          if npm view @gouno/ui@0.4.1 version >/dev/null 2>&1; then
+            echo "@gouno/ui 0.4.1 is already published; refusing to overwrite an immutable npm version." >&2
+            exit 1
+          fi
+          if git rev-parse -q --verify refs/tags/v0.4.1 >/dev/null; then
+            echo "v0.4.1 already exists; refusing to move an existing release tag." >&2
+            exit 1
+          fi
+
+      - name: Record Notification governance and changelog
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          from pathlib import Path
+
+          changelog = Path("CHANGELOG.md")
+          text = changelog.read_text()
+          if "## [0.4.1]" in text:
+              raise SystemExit("CHANGELOG already contains 0.4.1")
+          marker = "## [Unreleased]\n"
+          if marker not in text:
+              raise SystemExit("CHANGELOG Unreleased marker missing")
+          release = """
+          ## [0.4.1] - 2026-09-15
+
+          ### Added
+          - Core `Notification` now supports caller-owned `type` (`info` / `success` / `warning` / `error`), accessible manual dismissal through `closable`, and explicit `persistent: true` notices that must remain user-closeable.
+
+          ### Changed
+          - Notification severity now owns its status icon and `status`/`alert` live-region role while retaining the opaque `bg-popover` + `shadow-overlay` surface. Transient notices keep the finite 4500ms fallback for omitted, invalid or non-positive duration values.
+          """.strip("\n") + "\n\n"
+          changelog.write_text(text.replace(marker, marker + "\n" + release, 1))
+
+          register = Path("docs/abstraction-register.md")
+          text = register.read_text()
+          if "### PD-077 —" in text:
+              raise SystemExit("PD-077 already exists")
+          decision = """
+
+          ### PD-077 — Blog Admin feedback validates semantic, closable and persistent Notification
+
+          - **Status:** accepted / Core hardening
+          - **Owner:** Core / Feedback family
+          - **Evidence:** real Blog Admin feedback independently requires success/info/warning/error presentation, user dismissal and explicitly persistent feedback. Its product-local `AppFeedbackProvider` had to reproduce the canonical top-right notification queue, lifecycle and overlay styling, which proves these UI concerns belong in Core rather than a second product-owned notification renderer.
+          - **Decision:** extend Core `Notification` narrowly instead of restoring historical Toast/Feedback feature bags. `type` owns the four established semantic severities; warning/error use `role=alert`, info/success use `role=status`; the outer region remains positioning-only. The visual surface remains opaque `bg-popover` with `shadow-overlay`. Transient notices preserve the finite 4500ms fallback. `persistent: true` explicitly skips automatic expiry and is valid only with caller-owned `closable` accessible copy, avoiding the uncloseable duration-zero state rejected by PD-069.
+          - **API impact:** `NotificationNotice` adds `type`, `closable` and a discriminated persistent branch. Persistent notices forbid `duration`; transient omitted/non-finite/non-positive `duration` still normalizes to 4500ms. `useNotification().open(notice)` remains the only runtime entry and does not expose a business notification identifier.
+          - **Scope boundary:** no read/unread state, history, routing actions, update/destroy key API, storage, cross-root singleton, permission policy or business notification center is admitted. Blog may retain a thin compatibility hook for product call sites, but Core owns notification rendering and lifetime.
+          - **Validation:** same-source Showcase and focused tests cover semantic roles, opaque overlay surface, accessible dismissal, explicit persistence, finite-duration fallback, duplicate queue identity and timer cleanup. The triggering Blog Admin migration must remove its duplicate queue/timer/rendering implementation and consume the released Core contract.
+          - **Supersedes:** PD-069's rejection of persistence/manual close is superseded only for these independently proven UI capabilities; its rejection of notification-center/business orchestration remains binding.
+          """
+          register.write_text(text.rstrip() + decision + "\n")
+
+          conformance = Path("docs/api-conformance.md")
+          lines = conformance.read_text().splitlines()
+          replacement = "| API-045 | Core `Notification` remains a narrow Provider-local overlay queue, but real Blog Admin feedback now proves four product-agnostic UI capabilities: `type=info|success|warning|error`, caller-labelled `closable`, explicit `persistent=true`, and opaque popover elevation. `warning/error` own `role=alert`; `info/success` own `role=status`; every notice stays `aria-atomic` without an outer live region. Transient notices keep the finite positive `duration` contract with invalid/non-positive values normalized to 4500ms. `persistent=true` forbids `duration` and requires `closable`, so Core never creates an uncloseable permanent notice. `open(notice)` remains the only runtime entry: no update/destroy ID, read/history/routing/storage/singleton or business notification-center contract is admitted. | Core Notification same-source Showcase/API docs + focused lifecycle/a11y tests + Blog Admin AppFeedback evidence / PD-069, PD-077 |"
+          matches = [index for index, line in enumerate(lines) if line.startswith("| API-045 |")]
+          if len(matches) != 1:
+              raise SystemExit(f"Expected exactly one API-045 row, found {len(matches)}")
+          lines[matches[0]] = replacement
+          conformance.write_text("\n".join(lines) + "\n")
+          PY
+
+      - name: Prepare 0.4.1 package identity
+        shell: bash
+        run: npm version 0.4.1 --no-git-tag-version
+
+      - name: Verify exact release candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci
+          npm run release:check
+          npm pack --dry-run
+
+      - name: Commit and push reviewed release identity
+        id: release
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json CHANGELOG.md docs/abstraction-register.md docs/api-conformance.md
+          if git diff --cached --quiet; then
+            echo "Expected release identity changes but found none." >&2
+            exit 1
+          fi
+          git fetch origin main
+          ORIGIN_MAIN="$(git rev-parse origin/main)"
+          if [ "$ORIGIN_MAIN" != "$GITHUB_SHA" ]; then
+            echo "main moved from staging commit $GITHUB_SHA to $ORIGIN_MAIN; refusing to race another writer." >&2
+            exit 1
+          fi
+          git commit -m "chore(release): prepare 0.4.1"
+          RELEASE_SHA="$(git rev-parse HEAD)"
+          git push origin HEAD:main
+          git tag -a v0.4.1 -m "@gouno/ui 0.4.1" "$RELEASE_SHA"
+          git push origin v0.4.1
+          echo "sha=$RELEASE_SHA" >> "$GITHUB_OUTPUT"
+
+      - name: Dispatch exact release verification and publication
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh workflow run showcase-pages.yml --ref main
+          gh workflow run release.yml --ref main -f tag=v0.4.1
+          echo "Dispatched Showcase certification and npm release for ${{ steps.release.outputs.sha }}"
