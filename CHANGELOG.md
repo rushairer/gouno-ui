@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-09-16
+
 ### Fixed
 - Resolve `ButtonLink` and `IconButtonLink` visual classes before Radix `Slot` composition so semantic link buttons no longer retain conflicting base radius or color utilities; circular icon links now preserve the same canonical shape as `IconButton`.
 
