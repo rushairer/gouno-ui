@@ -30,6 +30,9 @@ jobs:
       - name: Verify Showcase microcopy and action grammar
         run: npm run lint:microcopy
 
+      - name: Verify reciprocal consumer parity maintenance contract
+        run: npm run lint:parity
+
       - name: Typecheck package and Showcase
         run: npm run typecheck
 
