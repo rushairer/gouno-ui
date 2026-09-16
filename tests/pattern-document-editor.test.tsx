@@ -76,9 +76,9 @@ describe("Document editor patterns", () => {
     const { container } = render(<Fixture />);
     editorRef.current?.setSelection(6, 11);
     expect(editorRef.current?.getSelection().text).toBe("world");
-    expect(container.querySelector('[data-slot="markdown-editor-actions"]')).toContainElement(
-      screen.getByRole("button", { name: "产品动作" }),
-    );
+    const actions = container.querySelector('[data-slot="markdown-editor-actions"]');
+    const productAction = screen.getByRole("button", { name: "产品动作" });
+    expect(actions?.contains(productAction)).toBe(true);
 
     act(() => editorRef.current?.insertText("Gouno"));
     expect((screen.getByLabelText("命令 Markdown") as HTMLTextAreaElement).value).toBe("hello Gouno");
