@@ -1,4 +1,3 @@
-# QA rerun for density-aware toolbarActions contract
 name: Temp Markdown Icon-only QA
 
 on:
@@ -13,27 +12,20 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Checkout candidate
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: markdown-editor-icon-only-fallback
-
-      - name: Set up Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: 24
           cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
+      - run: npm ci
       - name: Install isolated Playwright runtime
         run: |
           PLAYWRIGHT_VERSION=1.55.0
           npm install --no-save --ignore-scripts @playwright/test@${PLAYWRIGHT_VERSION}
           npx playwright install --with-deps chromium
-
-      - name: Run responsive icon-only QA
+      - name: Verify final responsive contract
         shell: bash
         run: |
           cat > .tmp-markdown-icon-only-qa.mjs <<'EOF'
@@ -42,124 +34,89 @@ jobs:
           import { mkdir } from 'node:fs/promises';
 
           const browser = await chromium.launch();
-          const page = await browser.newPage({ viewport: { width: 1280, height: 1200 } });
-          const relevantErrors = [];
-          const resource404s = [];
-          page.on('console', (message) => {
+          const page = await browser.newPage({ viewport: { width: 1280, height: 1100 } });
+          const errors = [];
+          page.on('pageerror', error => errors.push(String(error)));
+          page.on('console', message => {
             if (message.type() !== 'error') return;
             const text = message.text();
-            if (text.startsWith('Failed to load resource: the server responded with a status of 404')) return;
-            relevantErrors.push(`console: ${text}`);
+            if (!text.startsWith('Failed to load resource: the server responded with a status of 404')) errors.push(text);
           });
-          page.on('pageerror', (error) => relevantErrors.push(`pageerror: ${String(error)}`));
-          page.on('response', (response) => {
-            if (response.status() === 404) resource404s.push(response.url());
-            if (response.status() >= 500) relevantErrors.push(`http ${response.status()}: ${response.url()}`);
-          });
-
           await page.goto('http://127.0.0.1:4174/?embedded=1&workspace=gouno-ui&brand=blog-admin#pattern-markdown-editor');
           await page.waitForSelector('[data-slot="markdown-editor"]');
+
           const editor = page.locator('[data-slot="markdown-editor"]').first();
           const toolbar = editor.locator('[data-slot="markdown-editor-toolbar"]');
           const actions = editor.locator('[data-slot="markdown-editor-actions"]');
           const modes = editor.locator('[data-slot="markdown-editor-mode-switcher"]');
-
-          const setWidth = async (width) => {
-            await editor.evaluate((element, nextWidth) => {
-              element.style.width = `${nextWidth}px`;
-              element.style.maxWidth = `${nextWidth}px`;
+          const setWidth = async width => {
+            await editor.evaluate((el, w) => {
+              el.style.width = `${w}px`;
+              el.style.maxWidth = `${w}px`;
             }, width);
             await page.waitForTimeout(250);
           };
+          const state = async () => ({
+            density: await toolbar.getAttribute('data-adaptive-density'),
+            wrap: await toolbar.getAttribute('data-adaptive-wrap'),
+            primary: await editor.locator('[data-slot="markdown-editor-primary-command"]').count(),
+            height: (await toolbar.boundingBox())?.height,
+          });
 
-          const readState = async (width) => {
-            const toolbarBox = await toolbar.boundingBox();
-            const state = {
-              width,
-              density: await toolbar.getAttribute('data-adaptive-density'),
-              wrap: await toolbar.getAttribute('data-adaptive-wrap'),
-              primary: await editor.locator('[data-slot="markdown-editor-primary-command"]').count(),
-              toolbarHeight: toolbarBox?.height ?? null,
-            };
-            console.log('STATE', JSON.stringify(state));
-            return state;
-          };
+          await setWidth(900);
+          assert.deepEqual(await state(), { density: 'full', wrap: 'false', primary: 4, height: 44 });
 
-          const widths = [900, 700, 620, 580, 540, 520, 500, 480, 460, 440, 420, 400, 380, 360, 340, 320, 300, 280, 260, 240, 220, 200, 180];
-          const states = [];
-          for (const width of widths) {
+          for (const width of [700, 620, 580, 540, 520, 500, 480, 460]) {
             await setWidth(width);
-            states.push(await readState(width));
+            console.log(width, await state());
           }
-
-          const broad = states.find((state) => state.width === 900);
-          assert.equal(broad?.density, 'full');
-          assert.equal(broad?.wrap, 'false');
-          assert.equal(broad?.primary, 4);
-
-          const iconState = states.find((state) => state.density === 'icon' && state.wrap === 'false');
-          assert.ok(iconState, `expected an icon-only/no-wrap stage, got ${JSON.stringify(states)}`);
-          const wrapState = states.find((state) => state.density === 'icon' && state.wrap === 'true');
-          assert.ok(wrapState, `expected wrap only after icon-only stage, got ${JSON.stringify(states)}`);
-          assert.ok(iconState.width > wrapState.width, `expected icon stage before wrap stage: ${JSON.stringify({ iconState, wrapState })}`);
-          assert.equal(iconState.primary, 0);
-
-          await setWidth(iconState.width);
-          assert.equal(await toolbar.getAttribute('data-adaptive-density'), 'icon');
-          assert.equal(await toolbar.getAttribute('data-adaptive-wrap'), 'false');
+          const compact = await state();
+          assert.equal(compact.density, 'icon');
+          assert.equal(compact.wrap, 'false');
+          assert.equal(compact.primary, 0);
+          assert.ok((compact.height ?? 99) <= 52);
           assert.equal(await actions.getAttribute('data-icon-only'), 'true');
           assert.equal(await modes.getAttribute('data-icon-only'), 'true');
 
-          const aiButton = editor.getByRole('button', { name: 'AI 写作' });
-          const imageButton = editor.getByRole('button', { name: '插图' });
-          const editButton = editor.getByRole('button', { name: '编辑' });
-          const previewButton = editor.getByRole('button', { name: '预览' });
-          for (const button of [aiButton, imageButton, editButton, previewButton]) {
+          for (const name of ['AI 写作', '插图', '编辑', '预览']) {
+            const button = editor.getByRole('button', { name });
             const box = await button.boundingBox();
-            assert.ok(box && box.width >= 28 && box.width <= 36, `expected icon-only button width 28..36, got ${box?.width}`);
-          }
-
-          for (const actionButton of [aiButton, imageButton]) {
-            const icon = actionButton.locator('.btn__icon svg');
+            assert.ok(box && box.width >= 28 && box.width <= 36, `${name}: expected icon-only button, got ${box?.width}`);
+            assert.equal((await button.textContent())?.trim(), '', `${name}: compact text should be absent`);
+            const icon = button.locator('.btn__icon svg');
             const iconBox = await icon.boundingBox();
-            assert.ok(await icon.isVisible(), 'expected injected action icon to remain visible');
-            assert.ok(iconBox && iconBox.width >= 12 && iconBox.height >= 12, `expected visible injected action icon, got ${JSON.stringify(iconBox)}`);
-            assert.equal(await actionButton.locator('span:not(.btn__icon)').count(), 0, 'expected product action text to be absent in icon mode');
+            assert.ok(await icon.isVisible(), `${name}: icon should be visible`);
+            assert.ok(iconBox && iconBox.width >= 12 && iconBox.height >= 12, `${name}: icon should have visible geometry`);
           }
-
-          const iconToolbarBox = await toolbar.boundingBox();
-          assert.ok(iconToolbarBox && iconToolbarBox.height <= 52, `expected one-line icon toolbar, got ${iconToolbarBox?.height}`);
 
           await mkdir('/tmp/markdown-icon-only-evidence', { recursive: true });
-          await editor.screenshot({ path: `/tmp/markdown-icon-only-evidence/icon-only-${iconState.width}.png` });
+          await editor.screenshot({ path: '/tmp/markdown-icon-only-evidence/icon-only-460.png' });
 
-          await setWidth(wrapState.width);
-          assert.equal(await toolbar.getAttribute('data-adaptive-density'), 'icon');
-          assert.equal(await toolbar.getAttribute('data-adaptive-wrap'), 'true');
-          await editor.screenshot({ path: `/tmp/markdown-icon-only-evidence/wrap-${wrapState.width}.png` });
+          await setWidth(300);
+          const wrapped = await state();
+          assert.equal(wrapped.density, 'icon');
+          assert.equal(wrapped.wrap, 'true');
+          await editor.screenshot({ path: '/tmp/markdown-icon-only-evidence/wrap-300.png' });
 
           await setWidth(900);
-          assert.equal(await toolbar.getAttribute('data-adaptive-density'), 'full');
-          assert.equal(await toolbar.getAttribute('data-adaptive-wrap'), 'false');
-          assert.equal(await editor.locator('[data-slot="markdown-editor-primary-command"]').count(), 4);
-          assert.match(await aiButton.textContent(), /AI 写作/);
-          assert.match(await imageButton.textContent(), /插图/);
-
-          console.log('IGNORED_404_RESOURCES', JSON.stringify(resource404s));
-          assert.deepEqual(relevantErrors, []);
+          const restored = await state();
+          assert.equal(restored.density, 'full');
+          assert.equal(restored.wrap, 'false');
+          assert.equal(restored.primary, 4);
+          assert.match(await editor.getByRole('button', { name: 'AI 写作' }).textContent(), /AI 写作/);
+          assert.match(await editor.getByRole('button', { name: '插图' }).textContent(), /插图/);
+          assert.deepEqual(errors, []);
           await browser.close();
           EOF
           npm run showcase:dev -- --host 127.0.0.1 --port 4174 >/tmp/showcase.log 2>&1 &
           SERVER_PID=$!
           trap 'kill $SERVER_PID || true' EXIT
           for i in $(seq 1 60); do
-            if curl -fsS http://127.0.0.1:4174/ >/dev/null; then break; fi
+            curl -fsS http://127.0.0.1:4174/ >/dev/null && break
             sleep 1
           done
           node .tmp-markdown-icon-only-qa.mjs
-
-      - name: Upload QA evidence
-        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
+      - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
         with:
           name: markdown-icon-only-qa-${{ github.run_id }}
           path: /tmp/markdown-icon-only-evidence
