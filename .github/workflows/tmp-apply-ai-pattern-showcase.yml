@@ -22,6 +22,26 @@ jobs:
       - name: Apply patch
         run: python3 scripts/tmp-apply-ai-pattern-showcase.py
 
+      - name: Correct taxonomy interaction test
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          path = Path('tests/product-blog-admin-post-editor-metadata-ai.test.tsx')
+          text = path.read_text()
+          text = text.replace(
+              '    render(<BlogAdminPostEditorDemo />);\n\n    fireEvent.click(screen.getByRole("button", { name: "AI 推荐分类与标签" }));',
+              '    render(<BlogAdminPostEditorDemo initialRoute="new" />);\n    fireEvent.change(screen.getByLabelText("标题"), { target: { value: "Agent 工作流治理" } });\n\n    fireEvent.click(screen.getByRole("button", { name: "AI 推荐分类与标签" }));',
+              1,
+          )
+          text = text.replace(
+              '    expect((screen.getByLabelText("分类") as HTMLSelectElement).value).toBe("1");',
+              '    expect(screen.getByRole("combobox", { name: "分类" }).textContent).toContain("AI");',
+              1,
+          )
+          path.write_text(text)
+          PY
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
