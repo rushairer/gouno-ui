@@ -14,7 +14,7 @@ const propsApi: ApiRow[] = [
   { name: "onModeChange", type: "(mode) => void", description: "编辑 / 分屏 / 预览切换回调。" },
   { name: "onSelectionChange", type: "(selection) => void", description: "光标或选区变化回调；产品可据此决定 AI 的作用域。" },
   { name: "renderPreview", type: "(value: string) => ReactNode", description: "预览渲染器。MarkdownEditor 不绑定具体 Markdown parser；产品接入自己选定的 Markdown renderer。" },
-  { name: "toolbarActions", type: "ReactNode", description: "产品级工具扩展槽。AI、插入媒体等业务动作通过这里注入，不是 MarkdownEditor 内建能力。" },
+  { name: "toolbarActions", type: "ReactNode", description: "产品级工具扩展槽。AI 写作、插图、媒体库等业务动作通过这里注入，不是 MarkdownEditor 内建能力。" },
   { name: "placeholder", type: "string", description: "编辑区占位文本。" },
   { name: "readOnly", type: "boolean", description: "只读模式；隐藏格式工具并禁止写入。", defaultValue: "false" },
   { name: "textareaAriaLabel", type: "string", description: "编辑区 accessible name。", defaultValue: '"Markdown 正文"' },
@@ -42,13 +42,13 @@ export function PatternMarkdownEditorDemo() {
           <Tag color="success">Admitted</Tag>
         </div>
         <Text tone="muted" className="max-w-3xl leading-relaxed">
-          统一 Markdown 编辑、格式工具、编辑 / 分屏 / 预览视图，以及光标与选区控制。Pattern 不认识 Blog、AI 或媒体库；产品动作通过 toolbarActions 与 ref API 组合。
+          统一 Markdown 编辑、格式工具、编辑 / 分屏 / 预览视图，以及光标与选区控制。内建命令覆盖标题、加粗、斜体、删除线、引用、无序 / 有序 / 任务列表、行内代码、代码块、链接与分隔线；产品动作继续通过 toolbarActions 与 ref API 组合。
         </Text>
       </header>
 
       <DemoSection
-        title="编辑、分屏、预览与产品扩展"
-        description="格式按钮修改 Markdown 文本；预览通过 renderPreview 注入。当前 Demo 使用 Showcase 自己的 renderer 验证 Markdown 效果；复制示例到产品时替换为产品选定的 renderer。AI / 插入只是 toolbarActions 自定义动作。"
+        title="常用 Markdown、代码高亮与产品扩展"
+        description="格式按钮直接修改 Markdown 文本；Showcase renderer 额外演示 H1–H6、表格、任务列表、删除线、图片和带语言标记的 fenced code 高亮。MarkdownEditor 仍通过 renderPreview 保持 parser 解耦。示例中的 AI 写作 / 插图只是 toolbarActions 自定义动作。"
         code={canonicalExampleSource(MarkdownEditorExampleSource)}
       >
         <MarkdownEditorExample renderPreview={(markdown) => <MarkdownPreview value={markdown} />} />
