@@ -400,7 +400,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
         data-mode={activeMode}
       >
         <div
-          className="flex min-h-11 items-center gap-1 overflow-x-auto border-b bg-muted/20 px-2 py-1.5"
+          className="flex min-h-11 flex-wrap items-center gap-1 border-b bg-muted/20 px-2 py-1.5"
           role="toolbar"
           aria-label="Markdown 编辑工具栏"
           data-slot="markdown-editor-toolbar"
