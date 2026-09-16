@@ -34,7 +34,7 @@ jobs:
           npx playwright install --with-deps chromium
 
       - name: Refresh reviewed Post Editor golden
-        run: npx playwright test --config=showcase/e2e/canonical-visual-golden.config.mjs --grep '^blog-admin-post-editor-desktop-light$' --update-snapshots
+        run: npx playwright test --config=showcase/e2e/canonical-visual-golden.config.mjs --grep 'blog-admin-post-editor-desktop-light' --update-snapshots
 
       - name: Commit refreshed golden when changed
         shell: bash
