@@ -377,12 +377,10 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
       headingLevelAt(value, 0),
     );
     const [visiblePrimaryCount, setVisiblePrimaryCount] = useState(primaryCommands.length);
-    const [compactFixedActions, setCompactFixedActions] = useState(false);
     const [allowToolbarWrap, setAllowToolbarWrap] = useState(false);
     const [toolbarLayoutEpoch, setToolbarLayoutEpoch] = useState(0);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const toolbarRef = useRef<HTMLDivElement>(null);
-    const compactEnterWidthRef = useRef<number | null>(null);
     const headingTriggerRef = useRef<HTMLButtonElement>(null);
     const headingSelectionRef = useRef<MarkdownEditorSelection | null>(null);
     const overflowSelectionRef = useRef<MarkdownEditorSelection | null>(null);
@@ -473,10 +471,9 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
       applyTransform(transformHeading(value, selection.start, selection.end, level));
     };
 
-    // Three-stage degradation: built-in format commands collapse into More first; then
-    // product actions and the view switch become icon-only; wrapping is reserved for the
-    // final fallback when the compact toolbar still cannot fit. scrollWidth is not sufficient
-    // for every flex/browser combination, so also verify the rendered child bounds.
+    // Product actions and Edit/Split/Preview are deliberately icon-only at every width.
+    // Width adaptation is limited to one responsibility: progressively collapse lower-priority
+    // Markdown format commands into More, then wrap only if the icon toolbar still cannot fit.
     useLayoutEffect(() => {
       if (!showAuthoringTools || allowToolbarWrap) return;
       const toolbar = toolbarRef.current;
@@ -488,25 +485,9 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
         return;
       }
 
-      if (!compactFixedActions) {
-        compactEnterWidthRef.current = toolbar.clientWidth;
-        setCompactFixedActions(true);
-        return;
-      }
-
       setAllowToolbarWrap(true);
-    }, [
-      allowToolbarWrap,
-      compactFixedActions,
-      showAuthoringTools,
-      toolbarLayoutEpoch,
-      visiblePrimaryCount,
-    ]);
+    }, [allowToolbarWrap, showAuthoringTools, toolbarLayoutEpoch, visiblePrimaryCount]);
 
-    // Shrinking is monotonic: never re-expand controls while available width is decreasing.
-    // When growing, leave wrap mode first but keep icon density until the container clears
-    // the width where compact mode was entered. The small hysteresis prevents resize jitter
-    // around the boundary; larger growth restores the full toolbar and reruns compaction.
     useLayoutEffect(() => {
       const toolbar = toolbarRef.current;
       if (!toolbar || typeof ResizeObserver === "undefined") return;
@@ -520,24 +501,8 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
         if (Math.abs(delta) <= 0.5) return;
         previousWidth = nextWidth;
 
-        if (delta < 0) {
-          setToolbarLayoutEpoch((epoch) => epoch + 1);
-          return;
-        }
-
-        const compactEnterWidth = compactEnterWidthRef.current;
-        if (compactEnterWidth !== null && nextWidth <= compactEnterWidth + 8) {
-          setAllowToolbarWrap(false);
-          setCompactFixedActions(true);
-          setVisiblePrimaryCount(0);
-          setToolbarLayoutEpoch((epoch) => epoch + 1);
-          return;
-        }
-
-        compactEnterWidthRef.current = null;
         setAllowToolbarWrap(false);
-        setCompactFixedActions(false);
-        setVisiblePrimaryCount(primaryCommands.length);
+        if (delta > 0) setVisiblePrimaryCount(primaryCommands.length);
         setToolbarLayoutEpoch((epoch) => epoch + 1);
       });
 
@@ -547,9 +512,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
 
     useLayoutEffect(() => {
       if (!showAuthoringTools) return;
-      compactEnterWidthRef.current = null;
       setAllowToolbarWrap(false);
-      setCompactFixedActions(false);
       setVisiblePrimaryCount(primaryCommands.length);
       setToolbarLayoutEpoch((epoch) => epoch + 1);
     }, [showAuthoringTools]);
@@ -593,8 +556,8 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
     );
 
     const toolbarActionsContext: MarkdownEditorToolbarActionsContext = {
-      density: compactFixedActions ? "icon" : "full",
-      compact: compactFixedActions,
+      density: "icon",
+      compact: true,
     };
     const resolvedToolbarActions =
       typeof toolbarActions === "function"
@@ -617,7 +580,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
           role="toolbar"
           aria-label="Markdown 编辑工具栏"
           data-slot="markdown-editor-toolbar"
-          data-adaptive-density={compactFixedActions ? "icon" : "full"}
+          data-adaptive-density="icon"
           data-adaptive-wrap={allowToolbarWrap ? "true" : "false"}
         >
           {showAuthoringTools ? (
@@ -741,7 +704,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
             <div
               className="ml-1 flex shrink-0 items-center gap-1 border-l pl-2"
               data-slot="markdown-editor-actions"
-              data-icon-only={compactFixedActions ? "true" : "false"}
+              data-icon-only="true"
             >
               {resolvedToolbarActions}
             </div>
@@ -751,7 +714,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
             className="ml-auto flex shrink-0 items-center gap-0.5 rounded-md bg-muted/60 p-0.5"
             aria-label="编辑器视图"
             data-slot="markdown-editor-mode-switcher"
-            data-icon-only={compactFixedActions ? "true" : "false"}
+            data-icon-only="true"
           >
             {(["edit", "split", "preview"] as const).map((nextMode) => (
               <Button
@@ -760,18 +723,16 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
                 size="small"
                 variant={activeMode === nextMode ? "solid" : "text"}
                 color={activeMode === nextMode ? "primary" : undefined}
-                icon={compactFixedActions ? modeIcons[nextMode] : undefined}
+                icon={modeIcons[nextMode]}
                 className={cn(
+                  "size-8 px-0",
                   nextMode === "split" && "hidden md:inline-flex",
-                  compactFixedActions && "size-8 px-0",
                 )}
                 aria-label={modeLabels[nextMode]}
-                title={compactFixedActions ? modeLabels[nextMode] : undefined}
+                title={modeLabels[nextMode]}
                 aria-pressed={activeMode === nextMode}
                 onClick={() => changeMode(nextMode)}
-              >
-                {compactFixedActions ? null : modeLabels[nextMode]}
-              </Button>
+              />
             ))}
           </div>
         </div>

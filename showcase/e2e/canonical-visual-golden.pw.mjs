@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 const desktop = { width: 1440, height: 900 };
+const narrow = { width: 782, height: 900 };
 const mobile = { width: 390, height: 844 };
 
 const scenarios = [
@@ -134,38 +135,43 @@ for (const scenario of scenarios) {
   });
 }
 
-test("blog-admin-post-editor-narrow-preview-edit-roundtrip", async ({ page }) => {
-  await prepareLightFixture(page, {
-    workspace: "blog-admin",
-    brand: "blog-admin",
-    fixture: "blog-admin-post-editor",
-    viewport: desktop,
-    ready: '[data-slot="markdown-editor"]',
+for (const [name, viewport] of [
+  ["narrow", narrow],
+  ["mobile", mobile],
+]) {
+  test(`blog-admin-post-editor-${name}-preview-edit-roundtrip`, async ({ page }) => {
+    await prepareLightFixture(page, {
+      workspace: "blog-admin",
+      brand: "blog-admin",
+      fixture: "blog-admin-post-editor",
+      viewport: desktop,
+      ready: '[data-slot="markdown-editor"]',
+    });
+
+    const editor = page.locator('[data-slot="markdown-editor"]').first();
+    const toolbar = editor.locator('[data-slot="markdown-editor-toolbar"]');
+    const modeSwitcher = editor.locator('[data-slot="markdown-editor-mode-switcher"]');
+
+    await page.setViewportSize(viewport);
+    await page.waitForTimeout(100);
+
+    await modeSwitcher.getByRole("button", { name: "预览" }).click();
+    await expect(editor).toHaveAttribute("data-mode", "preview");
+    await modeSwitcher.getByRole("button", { name: "编辑" }).click();
+    await expect(editor).toHaveAttribute("data-mode", "edit");
+
+    await expect(toolbar).toHaveAttribute("data-adaptive-density", "icon");
+    await expect(toolbar).toHaveAttribute("data-adaptive-wrap", "false");
+
+    const [toolbarBox, modeBox] = await Promise.all([
+      toolbar.boundingBox(),
+      modeSwitcher.boundingBox(),
+    ]);
+    expect(toolbarBox).toBeTruthy();
+    expect(modeBox).toBeTruthy();
+    expect(modeBox.x + modeBox.width).toBeLessThanOrEqual(toolbarBox.x + toolbarBox.width + 1);
   });
-
-  const editor = page.locator('[data-slot="markdown-editor"]').first();
-  const toolbar = editor.locator('[data-slot="markdown-editor-toolbar"]');
-  const modeSwitcher = editor.locator('[data-slot="markdown-editor-mode-switcher"]');
-
-  await page.setViewportSize(mobile);
-  await page.waitForTimeout(100);
-
-  await modeSwitcher.getByRole("button", { name: "预览" }).click();
-  await expect(editor).toHaveAttribute("data-mode", "preview");
-  await modeSwitcher.getByRole("button", { name: "编辑" }).click();
-  await expect(editor).toHaveAttribute("data-mode", "edit");
-
-  await expect(toolbar).toHaveAttribute("data-adaptive-density", "icon");
-  await expect(toolbar).toHaveAttribute("data-adaptive-wrap", "false");
-
-  const [toolbarBox, modeBox] = await Promise.all([
-    toolbar.boundingBox(),
-    modeSwitcher.boundingBox(),
-  ]);
-  expect(toolbarBox).toBeTruthy();
-  expect(modeBox).toBeTruthy();
-  expect(modeBox.x + modeBox.width).toBeLessThanOrEqual(toolbarBox.x + toolbarBox.width + 1);
-});
+}
 
 test("gosso-account-settings-mfa-tab-interaction", async ({ page }) => {
   const scenario = scenarios.find(

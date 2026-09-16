@@ -59,8 +59,7 @@ function installToolbarGeometry(
   toolbar: HTMLElement,
   root: HTMLElement,
   getWidth: () => number,
-  fixedWidth = 320,
-  iconOnlyFixedWidth = 220,
+  fixedWidth = 220,
 ) {
   Object.defineProperty(toolbar, "clientWidth", {
     configurable: true,
@@ -70,15 +69,13 @@ function installToolbarGeometry(
     configurable: true,
     get: () => {
       const visiblePrimary = root.querySelectorAll('[data-slot="markdown-editor-primary-command"]').length;
-      const currentFixedWidth =
-        toolbar.getAttribute("data-adaptive-density") === "icon" ? iconOnlyFixedWidth : fixedWidth;
-      return currentFixedWidth + visiblePrimary * 48;
+      return fixedWidth + visiblePrimary * 48;
     },
   });
 }
 
 describe("MarkdownEditor adaptive toolbar", () => {
-  it("moves lower-priority built-in commands into More before product actions or view modes wrap", async () => {
+  it("keeps actions icon-only while moving lower-priority format commands into More", async () => {
     const resize = installResizeObserverMock();
     const editorRef = createRef<MarkdownEditorRef>();
 
@@ -89,12 +86,12 @@ describe("MarkdownEditor adaptive toolbar", () => {
           ref={editorRef}
           value={value}
           onChange={setValue}
-          toolbarActions={
+          toolbarActions={({ compact }) => (
             <>
-              <button type="button">AI 写作</button>
-              <button type="button">插图</button>
+              <button type="button" aria-label="AI 写作">{compact ? null : "AI 写作"}</button>
+              <button type="button" aria-label="插图">{compact ? null : "插图"}</button>
             </>
-          }
+          )}
           textareaAriaLabel="自适应 Markdown"
         />
       );
@@ -102,7 +99,7 @@ describe("MarkdownEditor adaptive toolbar", () => {
 
     const { container } = render(<Fixture />);
     const toolbar = container.querySelector('[data-slot="markdown-editor-toolbar"]') as HTMLElement;
-    let width = 425;
+    let width = 329;
     installToolbarGeometry(toolbar, container, () => width);
 
     await act(async () => {
@@ -118,10 +115,11 @@ describe("MarkdownEditor adaptive toolbar", () => {
     expect(screen.getByRole("button", { name: "斜体" })).toBeTruthy();
     expect(screen.queryByRole("button", { name: "插入链接" })).toBeNull();
     expect(screen.queryByRole("button", { name: "行内代码" })).toBeNull();
-    expect(screen.getByRole("button", { name: "AI 写作" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "插图" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "编辑" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "预览" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "AI 写作" }).textContent).toBe("");
+    expect(screen.getByRole("button", { name: "插图" }).textContent).toBe("");
+    expect(screen.getByRole("button", { name: "编辑" }).textContent).toBe("");
+    expect(screen.getByRole("button", { name: "预览" }).textContent).toBe("");
+    expect(toolbar.getAttribute("data-adaptive-density")).toBe("icon");
     expect(toolbar.getAttribute("data-adaptive-wrap")).toBe("false");
 
     editorRef.current?.setSelection(6, 10);
@@ -140,7 +138,7 @@ describe("MarkdownEditor adaptive toolbar", () => {
     );
     expect(editorRef.current?.getSelection().text).toBe("https://example.com");
 
-    width = 600;
+    width = 900;
     await act(async () => {
       resize.notify(toolbar, width);
       await Promise.resolve();
@@ -149,11 +147,14 @@ describe("MarkdownEditor adaptive toolbar", () => {
     await waitFor(() => {
       expect(container.querySelectorAll('[data-slot="markdown-editor-primary-command"]')).toHaveLength(4);
     });
+    expect(toolbar.getAttribute("data-adaptive-density")).toBe("icon");
+    expect(screen.getByRole("button", { name: "AI 写作" }).textContent).toBe("");
+    expect(screen.getByRole("button", { name: "编辑" }).textContent).toBe("");
     expect(screen.getByRole("button", { name: "插入链接" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "行内代码" })).toBeTruthy();
   });
 
-  it("switches product actions and view modes to icon density before wrapping", async () => {
+  it("never switches fixed actions or view modes back to text density", async () => {
     const resize = installResizeObserverMock();
     const { container } = render(
       <MarkdownEditor
@@ -167,55 +168,41 @@ describe("MarkdownEditor adaptive toolbar", () => {
     );
 
     const toolbar = container.querySelector('[data-slot="markdown-editor-toolbar"]') as HTMLElement;
-    let width = 280;
-    installToolbarGeometry(toolbar, container, () => width, 320, 220);
+    let width = 600;
+    installToolbarGeometry(toolbar, container, () => width);
 
-    await act(async () => {
-      resize.notify(toolbar, width);
-      await Promise.resolve();
-    });
-
-    await waitFor(() => {
-      expect(container.querySelectorAll('[data-slot="markdown-editor-primary-command"]')).toHaveLength(0);
+    const assertIconOnly = () => {
       expect(toolbar.getAttribute("data-adaptive-density")).toBe("icon");
-      expect(toolbar.getAttribute("data-adaptive-wrap")).toBe("false");
-    });
+      expect(screen.getByRole("button", { name: "产品动作" }).textContent).toBe("");
+      expect(screen.getByRole("button", { name: "编辑" }).textContent).toBe("");
+      expect(screen.getByRole("button", { name: "预览" }).textContent).toBe("");
+    };
 
-    const modeSwitcher = container.querySelector('[data-slot="markdown-editor-mode-switcher"]') as HTMLElement;
-    expect(modeSwitcher.getAttribute("data-icon-only")).toBe("true");
-    expect(screen.getByRole("button", { name: "产品动作" }).textContent).toBe("");
-    expect(screen.getByRole("button", { name: "编辑" }).textContent).toBe("");
-    expect(screen.getByRole("button", { name: "预览" }).textContent).toBe("");
-
-    width = 260;
     await act(async () => {
       resize.notify(toolbar, width);
       await Promise.resolve();
     });
-    expect(toolbar.getAttribute("data-adaptive-density")).toBe("icon");
-    expect(toolbar.getAttribute("data-adaptive-wrap")).toBe("false");
+    assertIconOnly();
 
-    width = 284;
-    await act(async () => {
-      resize.notify(toolbar, width);
-      await Promise.resolve();
-    });
-    expect(toolbar.getAttribute("data-adaptive-density")).toBe("icon");
-    expect(toolbar.getAttribute("data-adaptive-wrap")).toBe("false");
-
-    width = 600;
+    width = 900;
     await act(async () => {
       resize.notify(toolbar, width);
       await Promise.resolve();
     });
     await waitFor(() => {
-      expect(toolbar.getAttribute("data-adaptive-density")).toBe("full");
       expect(container.querySelectorAll('[data-slot="markdown-editor-primary-command"]')).toHaveLength(4);
     });
-    expect(screen.getByRole("button", { name: "产品动作" }).textContent).toBe("产品动作");
+    assertIconOnly();
+
+    width = 280;
+    await act(async () => {
+      resize.notify(toolbar, width);
+      await Promise.resolve();
+    });
+    assertIconOnly();
   });
 
-  it("uses wrapping only after icon-only fixed actions still cannot fit", async () => {
+  it("uses wrapping only after icon-only format actions still cannot fit", async () => {
     const resize = installResizeObserverMock();
     const { container } = render(
       <MarkdownEditor
@@ -230,7 +217,7 @@ describe("MarkdownEditor adaptive toolbar", () => {
 
     const toolbar = container.querySelector('[data-slot="markdown-editor-toolbar"]') as HTMLElement;
     const width = 180;
-    installToolbarGeometry(toolbar, container, () => width, 320, 220);
+    installToolbarGeometry(toolbar, container, () => width);
 
     await act(async () => {
       resize.notify(toolbar, width);
