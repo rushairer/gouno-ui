@@ -11,6 +11,7 @@ describe("Blog Admin Members product migration fixture", () => {
     const header = screen.getByRole("heading", { level: 1, name: "成员与权限" });
     expect(header.closest('[data-slot="page-header"]')).toBeTruthy();
     expect(screen.queryByText("/admin/users")).toBeNull();
+    expect(screen.getByRole("button", { name: "打开 GOSSO Admin" })).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
     expect(screen.getByText("/admin/users")).toBeTruthy();
@@ -30,17 +31,21 @@ describe("Blog Admin Members product migration fixture", () => {
 
   it("supports editing Blog-local member identity and role data", () => {
     render(<BlogAdminUsersDemo />);
-    const editButtons = screen.getAllByRole("button", { name: "编辑 内容编辑 成员与权限" });
+    const editButtons = screen.getAllByRole("button", {
+      name: "编辑 内容编辑 成员与权限",
+    });
     fireEvent.click(editButtons[0]);
 
-    const name = screen.getByRole("textbox", { name: /显示名称/ });
+    const name = screen.getByRole("textbox", { name: /成员显示昵称/ });
     fireEvent.change(name, { target: { value: "内容主编" } });
-    fireEvent.click(screen.getByRole("combobox", { name: "Blog 角色" }));
+    fireEvent.click(screen.getByRole("combobox", { name: "Blog 角色分配" }));
     fireEvent.click(screen.getByRole("option", { name: "管理员" }));
     expect(screen.getByText("管理后台成员、站点设置及全站内容")).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "保存成员" }));
+    fireEvent.click(screen.getByRole("button", { name: "保存设置" }));
 
-    expect(screen.getByText("成员“内容主编”的信息与权限已更新（Showcase 模拟）。")).toBeTruthy();
+    expect(
+      screen.getByText("成员“内容主编”的信息与权限已更新（Showcase 模拟）。"),
+    ).toBeTruthy();
     expect(screen.getAllByText("内容主编").length).toBeGreaterThanOrEqual(1);
   });
 
@@ -49,16 +54,30 @@ describe("Blog Admin Members product migration fixture", () => {
     fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
     fireEvent.click(screen.getByRole("radio", { name: "操作时过期" }));
 
-    fireEvent.click(screen.getAllByRole("button", { name: "编辑 内容编辑 成员与权限" })[0]);
-    fireEvent.change(screen.getByRole("textbox", { name: /显示名称/ }), { target: { value: "MFA 后保存" } });
-    fireEvent.click(screen.getByRole("button", { name: "保存成员" }));
+    fireEvent.click(
+      screen.getAllByRole("button", {
+        name: "编辑 内容编辑 成员与权限",
+      })[0],
+    );
+    fireEvent.change(screen.getByRole("textbox", { name: /成员显示昵称/ }), {
+      target: { value: "MFA 后保存" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "保存设置" }));
 
-    expect(screen.getByText("近期 MFA 已过期；待保存成员变更已保留，完成 Step-Up 后会自动继续。")).toBeTruthy();
+    expect(
+      screen.getByText(
+        "近期 MFA 已过期；待保存成员变更已保留，完成 Step-Up 后会自动继续。",
+      ),
+    ).toBeTruthy();
     expect(screen.getByText("Step-Up MFA")).toBeTruthy();
-    expect(screen.queryByText("成员“MFA 后保存”的信息与权限已更新（Showcase 模拟）。")).toBeNull();
+    expect(
+      screen.queryByText("成员“MFA 后保存”的信息与权限已更新（Showcase 模拟）。"),
+    ).toBeNull();
 
     fireEvent.click(screen.getByRole("button", { name: "完成 MFA 并继续" }));
-    expect(screen.getByText("成员“MFA 后保存”的信息与权限已更新（Showcase 模拟）。")).toBeTruthy();
+    expect(
+      screen.getByText("成员“MFA 后保存”的信息与权限已更新（Showcase 模拟）。"),
+    ).toBeTruthy();
     expect(screen.getAllByText("MFA 后保存").length).toBeGreaterThanOrEqual(1);
   });
 
@@ -70,12 +89,18 @@ describe("Blog Admin Members product migration fixture", () => {
     fireEvent.click(screen.getAllByRole("button", { name: "暂停 内容编辑" })[0]);
     fireEvent.click(screen.getByRole("button", { name: "确认暂停" }));
 
-    expect(screen.getByText("近期 MFA 已过期；高权限操作已保留，完成 Step-Up 后会自动继续。")).toBeTruthy();
+    expect(
+      screen.getByText(
+        "近期 MFA 已过期；高权限操作已保留，完成 Step-Up 后会自动继续。",
+      ),
+    ).toBeTruthy();
     expect(screen.getByText("Step-Up MFA")).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "完成 MFA 并继续" }));
     expect(screen.getByText("成员“内容编辑”已暂停（Showcase 模拟）。")).toBeTruthy();
-    expect(screen.getAllByRole("button", { name: "恢复 内容编辑" }).length).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.getAllByRole("button", { name: "恢复 内容编辑" }).length,
+    ).toBeGreaterThanOrEqual(1);
   });
 
   it("supports high-risk suspend confirmation without creating a shared Pattern", () => {
