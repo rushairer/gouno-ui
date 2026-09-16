@@ -38,6 +38,7 @@ import {
 } from "../../../../src/patterns";
 import { FixtureDock } from "../../../components/fixture-dock";
 import { FixtureNotification } from "./fixture-notification";
+import { MarkdownPreview } from "../../../components/markdown-preview";
 
 type EditorRoute = "edit" | "new";
 type FixtureScenario = "ready" | "loading" | "error" | "conflict";
@@ -166,38 +167,7 @@ function FieldActionHeader({
 }
 
 function renderPagePreview(value: string) {
-  const source = value.trim();
-  if (!source) {
-    return <Text tone="muted">开始写作后，预览会出现在这里。</Text>;
-  }
-
-  return (
-    <article className="mx-auto max-w-3xl space-y-4" data-slot="page-markdown-preview">
-      {source.split(/\n{2,}/).map((block, index) => {
-        const text = block.trim();
-        if (text.startsWith("### ")) {
-          return <h3 key={index} className="text-base font-semibold">{text.slice(4)}</h3>;
-        }
-        if (text.startsWith("## ")) {
-          return <h2 key={index} className="text-xl font-semibold tracking-tight">{text.slice(3)}</h2>;
-        }
-        if (text.startsWith("# ")) {
-          return <h1 key={index} className="text-2xl font-semibold tracking-tight">{text.slice(2)}</h1>;
-        }
-        if (text.startsWith("```") && text.endsWith("```")) {
-          return (
-            <pre key={index} className="overflow-x-auto rounded-md bg-muted p-4 text-xs leading-6">
-              {text.replace(/^```[^\n]*\n?/, "").replace(/```$/, "")}
-            </pre>
-          );
-        }
-        if (text.startsWith("> ")) {
-          return <blockquote key={index} className="border-l-2 pl-4 text-muted-foreground">{text.slice(2)}</blockquote>;
-        }
-        return <p key={index} className="whitespace-pre-wrap text-sm leading-7 text-muted-foreground">{text}</p>;
-      })}
-    </article>
-  );
+  return <MarkdownPreview value={value} data-slot="page-markdown-preview" />;
 }
 
 export function BlogAdminPageEditorDemo({
@@ -350,6 +320,7 @@ export function BlogAdminPageEditorDemo({
       const selectionStart = editorSelection.start;
       updatePage("content", next);
       setGeneratedContent(null);
+      setAIPanel(null);
       setNotice("已替换所选正文。");
       queueMicrotask(() => {
         setEditorMode("edit");
@@ -367,6 +338,7 @@ export function BlogAdminPageEditorDemo({
           : generatedContent,
     );
     setGeneratedContent(null);
+    setAIPanel(null);
     setNotice(mode === "replace" ? "已替换单页正文。" : "已将生成内容追加到单页正文末尾。");
   };
 
@@ -379,6 +351,7 @@ export function BlogAdminPageEditorDemo({
       } else {
         updatePage("content", `${page.content.trimEnd()}\n\n${markdown}\n`);
       }
+      setAIPanel(null);
       setNotice("已在编辑位置插入 AI 图片。");
     });
   };
@@ -806,104 +779,109 @@ export function BlogAdminPageEditorDemo({
             />
           </div>
 
-          {aiPanel === "writing" ? (
-            <Card variant="subtle" padding="base" aria-label="AI 写作助手">
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <div>
-                    <Text className="font-semibold">AI 写作助手</Text>
-                    <Text size="xs" tone="muted" className="mt-1 block">
-                      {editorSelection?.text ? `当前作用域：已选 ${editorSelection.text.length} 个字符` : "当前作用域：正文"}
-                    </Text>
-                  </div>
-                  <Button size="small" variant="text" onClick={() => setAIPanel(null)}>收起</Button>
-                </div>
-                <div className="flex flex-col gap-2 lg:flex-row">
-                  <Input
-                    aria-label="AI 写作提示词"
-                    value={writingPrompt}
-                    onChange={(event) => setWritingPrompt(event.target.value)}
-                    placeholder="输入写作或修改指令"
-                  />
-                  <Button
-                    variant="solid"
-                    color="primary"
-                    disabled={!writingPrompt.trim()}
-                    onClick={() => setGeneratedContent(
-                      "## 我们是谁\n\n我们关注工程实践、AI 产品与开放技术。\n\n## 我们相信什么\n\n长期主义、可验证的结果，以及把复杂系统讲清楚。",
-                    )}
-                  >
-                    生成 / 执行
-                  </Button>
-                </div>
-                {generatedContent ? (
-                  <div className="rounded-md border bg-background p-4">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <Text className="font-semibold">生成结果预览</Text>
-                      <div className="flex flex-wrap gap-2">
-                        {editorSelection?.text ? (
-                          <Button size="small" variant="solid" color="primary" onClick={() => applyGeneratedContent("replace-selection")}>替换所选</Button>
-                        ) : (
-                          <Button size="small" variant="solid" color="primary" onClick={() => applyGeneratedContent("replace")}>替换全文</Button>
-                        )}
-                        <Button size="small" onClick={() => applyGeneratedContent("append")}>追加到末尾</Button>
-                        <Button size="small" variant="text" onClick={() => setGeneratedContent(null)}>放弃</Button>
-                      </div>
-                    </div>
-                    <pre className="mt-3 max-h-56 overflow-auto whitespace-pre-wrap text-sm">{generatedContent}</pre>
-                  </div>
-                ) : null}
-              </div>
-            </Card>
-          ) : null}
-
-          {aiPanel === "image" ? (
-            <Card variant="subtle" padding="base" aria-label="AI 图片生成器">
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <div>
-                    <Text className="font-semibold">AI 生成图片</Text>
-                    <Text size="xs" tone="muted" className="mt-1 block">生成后插入当前编辑位置，不改变单页页面配置。</Text>
-                  </div>
-                  <Button size="small" variant="text" onClick={() => setAIPanel(null)}>收起</Button>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <Button size="small" onClick={() => setImagePrompt("Modern clean editorial illustration for an About page, engineering team and open technology")}>结合页面构思</Button>
-                  <Button size="small" onClick={() => setImagePrompt("Isometric architecture diagram for a modern technology team About page")}>架构图解</Button>
-                  <Button size="small" onClick={() => setImagePrompt("Minimal editorial vector illustration for a technology team About page")}>科技插画</Button>
-                </div>
+          <Modal
+            open={aiPanel === "writing"}
+            title="AI 写作助手"
+            description={editorSelection?.text ? `当前作用域：已选 ${editorSelection.text.length} 个字符` : "当前作用域：正文"}
+            size="lg"
+            onOpenChange={(open) => {
+              if (!open) {
+                setAIPanel(null);
+                setGeneratedContent(null);
+              }
+            }}
+            footer={null}
+          >
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-2 lg:flex-row">
                 <Input
-                  aria-label="生图提示词"
-                  value={imagePrompt}
-                  onChange={(event) => setImagePrompt(event.target.value)}
-                  placeholder="输入生图提示词"
+                  aria-label="AI 写作提示词"
+                  value={writingPrompt}
+                  onChange={(event) => setWritingPrompt(event.target.value)}
+                  placeholder="输入写作或修改指令"
                 />
-                <div className="flex flex-col gap-2 lg:flex-row">
-                  <Input
-                    aria-label="图片描述 Alt"
-                    value={imageAlt}
-                    onChange={(event) => setImageAlt(event.target.value)}
-                    placeholder="图片描述 (Alt)"
-                  />
-                  <Button variant="solid" color="primary" disabled={!imagePrompt.trim()} onClick={() => setGeneratedImage(true)}>开始生图</Button>
-                </div>
-                {generatedImage ? (
-                  <div className="grid gap-4 rounded-md border bg-background p-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
-                    <div className="flex min-h-40 items-center justify-center rounded-md border border-dashed bg-muted/30 text-center text-sm text-muted-foreground">
-                      AI 生成插图预览
-                    </div>
-                    <div className="flex min-w-0 flex-col gap-3">
-                      <code className="overflow-x-auto rounded bg-muted px-3 py-2 text-xs">![{imageAlt || "单页插图"}](/media/ai-generated-page.webp)</code>
-                      <div className="flex flex-wrap gap-2">
-                        <Button size="small" variant="solid" color="primary" onClick={insertGeneratedImageAtCursor}>插入光标位置</Button>
-                        <Button size="small" variant="text" onClick={() => setGeneratedImage(false)}>放弃</Button>
-                      </div>
+                <Button
+                  variant="solid"
+                  color="primary"
+                  disabled={!writingPrompt.trim()}
+                  onClick={() => setGeneratedContent(
+                    "## 我们是谁\n\n我们关注工程实践、AI 产品与开放技术。\n\n## 我们相信什么\n\n长期主义、可验证的结果，以及把复杂系统讲清楚。",
+                  )}
+                >
+                  生成 / 执行
+                </Button>
+              </div>
+              {generatedContent ? (
+                <div className="rounded-md border bg-background p-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <Text className="font-semibold">生成结果预览</Text>
+                    <div className="flex flex-wrap gap-2">
+                      {editorSelection?.text ? (
+                        <Button size="small" variant="solid" color="primary" onClick={() => applyGeneratedContent("replace-selection")}>替换所选</Button>
+                      ) : (
+                        <Button size="small" variant="solid" color="primary" onClick={() => applyGeneratedContent("replace")}>替换全文</Button>
+                      )}
+                      <Button size="small" onClick={() => applyGeneratedContent("append")}>追加到末尾</Button>
+                      <Button size="small" variant="text" onClick={() => setGeneratedContent(null)}>放弃</Button>
                     </div>
                   </div>
-                ) : null}
+                  <pre className="mt-3 max-h-56 overflow-auto whitespace-pre-wrap text-sm">{generatedContent}</pre>
+                </div>
+              ) : null}
+            </div>
+          </Modal>
+
+          <Modal
+            open={aiPanel === "image"}
+            title="AI 生成图片"
+            description="生成后插入当前编辑位置，不改变单页页面配置。"
+            size="lg"
+            onOpenChange={(open) => {
+              if (!open) {
+                setAIPanel(null);
+                setGeneratedImage(false);
+              }
+            }}
+            footer={null}
+          >
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-wrap gap-2">
+                <Button size="small" onClick={() => setImagePrompt("Modern clean editorial illustration for an About page, engineering team and open technology")}>结合页面构思</Button>
+                <Button size="small" onClick={() => setImagePrompt("Isometric architecture diagram for a modern technology team About page")}>架构图解</Button>
+                <Button size="small" onClick={() => setImagePrompt("Minimal editorial vector illustration for a technology team About page")}>科技插画</Button>
               </div>
-            </Card>
-          ) : null}
+              <Input
+                aria-label="生图提示词"
+                value={imagePrompt}
+                onChange={(event) => setImagePrompt(event.target.value)}
+                placeholder="输入生图提示词"
+              />
+              <div className="flex flex-col gap-2 lg:flex-row">
+                <Input
+                  aria-label="图片描述 Alt"
+                  value={imageAlt}
+                  onChange={(event) => setImageAlt(event.target.value)}
+                  placeholder="图片描述 (Alt)"
+                />
+                <Button variant="solid" color="primary" disabled={!imagePrompt.trim()} onClick={() => setGeneratedImage(true)}>开始生图</Button>
+              </div>
+              {generatedImage ? (
+                <div className="grid gap-4 rounded-md border bg-background p-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+                  <div className="flex min-h-40 items-center justify-center rounded-md border border-dashed bg-muted/30 text-center text-sm text-muted-foreground">
+                    AI 生成插图预览
+                  </div>
+                  <div className="flex min-w-0 flex-col gap-3">
+                    <code className="overflow-x-auto rounded bg-muted px-3 py-2 text-xs">![{imageAlt || "单页插图"}](/media/ai-generated-page.webp)</code>
+                    <div className="flex flex-wrap gap-2">
+                      <Button size="small" variant="solid" color="primary" onClick={insertGeneratedImageAtCursor}>插入光标位置</Button>
+                      <Button size="small" variant="text" onClick={() => setGeneratedImage(false)}>放弃</Button>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </Modal>
+
         </div>
       </DocumentEditorShell>
 

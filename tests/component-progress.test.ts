@@ -52,7 +52,9 @@ describe("audited batch completion", () => {
   });
 
   it("reports admitted Patterns complete only after focused review", () => {
-    expect(componentProgress("pattern-bulk-action-bar", 0)).toBe(100);
+    for (const id of ["pattern-bulk-action-bar", "pattern-markdown-editor"]) {
+      expect(componentProgress(id, 0), id).toBe(100);
+    }
   });
 
   it("reports admitted Gouno structure complete only after family API and behavior review", () => {

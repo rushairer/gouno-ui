@@ -1,19 +1,16 @@
-const importRewrites = [
-  ["../../../src/core", "@gouno/ui/core"],
-  ["../../../src/theme", "@gouno/ui/theme"],
-  ["../../../src/patterns", "@gouno/ui/patterns"],
-  ["../../../src/gouno", "@gouno/ui/gouno"],
-] as const;
+const publicLayerEntries = new Set(["core", "theme", "patterns", "gouno"]);
 
 /**
  * Preserve one example source for both Preview and Code. The only transformation
  * is replacing repository-relative imports with the public package entrypoints
- * consumers should copy.
+ * consumers should copy. Example modules can live at different directory depths,
+ * so normalize any ../ chain that targets src/<public-layer>.
  */
 export function canonicalExampleSource(source: string) {
-  let canonical = source;
-  for (const [from, to] of importRewrites) {
-    canonical = canonical.replaceAll(from, to);
-  }
-  return canonical.trim();
+  return source
+    .replace(/(?:\.\.\/)+src\/(core|theme|patterns|gouno)(?=["'])/g, (_, layer: string) => {
+      if (!publicLayerEntries.has(layer)) return _;
+      return `@gouno/ui/${layer}`;
+    })
+    .trim();
 }

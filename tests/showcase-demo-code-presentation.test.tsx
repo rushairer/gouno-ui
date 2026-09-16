@@ -9,6 +9,7 @@ import { canonicalExampleSource } from "../showcase/demos/shared/example-source"
 const pairedLayerDemoFiles = [
   "showcase/demos/theme/system.tsx",
   "showcase/demos/patterns/bulk-action-bar.tsx",
+  "showcase/demos/patterns/markdown-editor.tsx",
   "showcase/demos/gouno/components.tsx",
   "showcase/demos/gouno/page-header.tsx",
 ] as const;
@@ -36,12 +37,13 @@ describe("Showcase Demo + Code presentation", () => {
     expect(screen.getByRole("button", { name: "复制代码" })).toBeTruthy();
   });
 
-  it("rewrites only repository-relative example imports to public package entries", () => {
+  it("rewrites repository-relative example imports from any nested demo depth to public package entries", () => {
     const source = [
       'import { Button } from "../../../src/core";',
-      'import { ThemeToggle } from "../../../src/theme";',
-      'import { BulkActionBar } from "../../../src/patterns";',
+      'import { ThemeToggle } from "../../../../src/theme";',
+      'import { BulkActionBar } from "../../../../../src/patterns";',
       'import { PageHeader } from "../../../src/gouno";',
+      'import { InternalHelper } from "../../../showcase/helper";',
       "export default function Example() { return null; }",
     ].join("\n");
 
@@ -51,6 +53,7 @@ describe("Showcase Demo + Code presentation", () => {
         'import { ThemeToggle } from "@gouno/ui/theme";',
         'import { BulkActionBar } from "@gouno/ui/patterns";',
         'import { PageHeader } from "@gouno/ui/gouno";',
+        'import { InternalHelper } from "../../../showcase/helper";',
         "export default function Example() { return null; }",
       ].join("\n"),
     );

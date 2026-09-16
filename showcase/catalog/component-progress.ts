@@ -78,6 +78,7 @@ const completedComponents = new Set([
   "core-tree",
   "theme-system",
   "pattern-bulk-action-bar",
+  "pattern-markdown-editor",
   "gouno-app-shell",
   "gouno-page-container",
   "gouno-page-header",
@@ -114,6 +115,12 @@ componentReviews["gouno-page-skeleton"] = {
   scope: "PD-076: initial-loading page data-region skeleton layouts validated across completed Gosso Admin and Blog corpora.",
   evidence: ["docs/page-skeleton.md", "tests/gouno-page-skeleton.test.tsx"],
   baseline: "PD-076 / 2026-09-14",
+};
+componentReviews["pattern-markdown-editor"] = {
+  status: "reviewed",
+  scope: "Shared Markdown edit/split/preview, formatting commands, cursor/selection ref API, and product-owned toolbar extension slot.",
+  evidence: ["showcase/demos/patterns/markdown-editor.tsx", "tests/pattern-document-editor.test.tsx"],
+  baseline: "2026-09-16",
 };
 
 export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
