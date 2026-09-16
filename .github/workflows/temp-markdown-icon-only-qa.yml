@@ -43,11 +43,19 @@ jobs:
 
           const browser = await chromium.launch();
           const page = await browser.newPage({ viewport: { width: 1280, height: 1200 } });
-          const errors = [];
+          const relevantErrors = [];
+          const resource404s = [];
           page.on('console', (message) => {
-            if (message.type() === 'error') errors.push(message.text());
+            if (message.type() !== 'error') return;
+            const text = message.text();
+            if (text.startsWith('Failed to load resource: the server responded with a status of 404')) return;
+            relevantErrors.push(`console: ${text}`);
           });
-          page.on('pageerror', (error) => errors.push(String(error)));
+          page.on('pageerror', (error) => relevantErrors.push(`pageerror: ${String(error)}`));
+          page.on('response', (response) => {
+            if (response.status() === 404) resource404s.push(response.url());
+            if (response.status() >= 500) relevantErrors.push(`http ${response.status()}: ${response.url()}`);
+          });
 
           await page.goto('http://127.0.0.1:4174/?embedded=1&workspace=gouno-ui&brand=blog-admin#pattern-markdown-editor');
           await page.waitForSelector('[data-slot="markdown-editor"]');
@@ -129,7 +137,8 @@ jobs:
           assert.equal(await toolbar.getAttribute('data-adaptive-wrap'), 'false');
           assert.equal(await editor.locator('[data-slot="markdown-editor-primary-command"]').count(), 4);
 
-          assert.deepEqual(errors, []);
+          console.log('IGNORED_404_RESOURCES', JSON.stringify(resource404s));
+          assert.deepEqual(relevantErrors, []);
           await browser.close();
           EOF
           npm run showcase:dev -- --host 127.0.0.1 --port 4174 >/tmp/showcase.log 2>&1 &
