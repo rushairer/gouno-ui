@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 const desktop = { width: 1440, height: 900 };
 const mobile = { width: 390, height: 844 };
-const narrowTablet = { width: 724, height: 1360 };
+const narrowTablet = { width: 390, height: 844 };
 
 const scenarios = [
   {
