@@ -1,0 +1,51 @@
+name: Temporary Post Editor Golden Refresh
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    if: github.head_ref == 'post-editor-product-design'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout candidate branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install repository dependencies
+        run: npm ci
+
+      - name: Install isolated Playwright runtime
+        run: |
+          PLAYWRIGHT_VERSION=1.55.0
+          npm install --no-save --ignore-scripts @playwright/test@${PLAYWRIGHT_VERSION}
+          npx playwright install --with-deps chromium
+
+      - name: Refresh reviewed Post Editor golden
+        run: npx playwright test --config=showcase/e2e/canonical-visual-golden.config.mjs --grep '^blog-admin-post-editor-desktop-light$' --update-snapshots
+
+      - name: Commit refreshed golden when changed
+        shell: bash
+        run: |
+          SNAPSHOT=showcase/e2e/canonical-visual-golden.pw.mjs-snapshots/blog-admin-post-editor-desktop-light.png
+          if git diff --quiet -- "$SNAPSHOT"; then
+            echo "Post Editor golden already matches."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$SNAPSHOT"
+          git commit -m "test(showcase): accept redesigned post editor golden"
+          git push origin HEAD:${{ github.head_ref }}
