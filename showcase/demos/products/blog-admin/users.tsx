@@ -164,6 +164,10 @@ export function BlogAdminUsersDemo() {
     setDraftRole(member.role === "owner" ? "admin" : member.role);
   };
 
+  const copySubject = (member: MemberFixture) => {
+    setNotice(`已复制完整 Subject ID：${member.subject}（Showcase 模拟）。`);
+  };
+
   const applyMemberSave = (memberId: string, displayName: string, role: MemberRole) => {
     setMembers((current) => current.map((member) => member.id === memberId
       ? { ...member, displayName, role: member.role === "owner" ? "owner" : role }
@@ -242,12 +246,6 @@ export function BlogAdminUsersDemo() {
   const memberActions = (member: MemberFixture) => (
     <div className="flex min-w-max flex-nowrap items-center justify-end gap-1">
       <IconButton
-        label={`复制 ${member.displayName} Subject ID`}
-        icon={<Copy />}
-        variant="ghost"
-        onClick={() => setNotice(`已复制 Subject ID：${member.subject}（Showcase 模拟）。`)}
-      />
-      <IconButton
         label={`编辑 ${member.displayName} 成员与权限`}
         icon={<KeyRound />}
         variant="ghost"
@@ -281,6 +279,20 @@ export function BlogAdminUsersDemo() {
     </div>
   );
 
+  const subjectAction = (member: MemberFixture) => (
+    <Button
+      variant="ghost"
+      size="small"
+      className="font-mono text-xs"
+      title={`点击复制完整 Subject ID: ${member.subject}`}
+      aria-label={`复制 ${member.displayName} 完整 Subject ID`}
+      onClick={() => copySubject(member)}
+      icon={<Copy size={13} />}
+    >
+      {member.subject.slice(0, 8)}
+    </Button>
+  );
+
   const memberDirectory = (
     <>
       <div className="hidden md:block">
@@ -288,10 +300,10 @@ export function BlogAdminUsersDemo() {
           <TableHeader>
             <TableRow>
               <TableHead>成员</TableHead>
-              <TableHead className="w-40">账号 ID</TableHead>
-              <TableHead className="w-32">Blog 角色</TableHead>
+              <TableHead className="w-32">账号 ID</TableHead>
+              <TableHead className="w-48">Blog 角色</TableHead>
               <TableHead className="w-28">状态</TableHead>
-              <TableHead className="w-56 text-right">操作</TableHead>
+              <TableHead className="w-36 text-right">操作</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -306,7 +318,7 @@ export function BlogAdminUsersDemo() {
                     </div>
                   </div>
                 </TableCell>
-                <TableCell><code className="font-mono text-xs text-muted-foreground">{member.subject.slice(0, 8)}</code></TableCell>
+                <TableCell>{subjectAction(member)}</TableCell>
                 <TableCell><RoleTag role={member.role} /></TableCell>
                 <TableCell><StatusTag status={member.status} /></TableCell>
                 <TableCell>{memberActions(member)}</TableCell>
@@ -325,7 +337,7 @@ export function BlogAdminUsersDemo() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-3"><span className="font-semibold">{member.displayName}</span><StatusTag status={member.status} /></div>
                   <Text size="xs" tone="muted" className="mt-1 break-all">{member.email}</Text>
-                  <div className="mt-2"><RoleTag role={member.role} /></div>
+                  <div className="mt-2 flex flex-wrap items-center gap-2"><RoleTag role={member.role} />{subjectAction(member)}</div>
                 </div>
               </div>
               {memberActions(member)}
@@ -357,7 +369,7 @@ export function BlogAdminUsersDemo() {
           <Empty
             title="暂未同步到任何登录用户"
             description="成员目录会在用户首次登录 Blog 后建立产品侧成员关系。"
-            action={<Button onClick={() => setScenario("data")}>恢复示例成员</Button>}
+            action={<Button onClick={() => setScenario("data")}>刷新</Button>}
           />
         </Card>
       );
@@ -426,7 +438,7 @@ export function BlogAdminUsersDemo() {
         actions={(
           <>
             <Button icon={<RefreshCw />} onClick={() => { setScenario("data"); setNotice("成员目录已刷新（Showcase 模拟）。"); }}>刷新</Button>
-            <Button icon={<ExternalLink />} onClick={() => setNotice("将在新窗口打开 GOSSO 管理控制台（Showcase 模拟）。")}>前往 GOSSO 管理</Button>
+            <Button icon={<ExternalLink />} onClick={() => setNotice("将在新窗口打开 GOSSO Admin（Showcase 模拟）。")}>打开 GOSSO Admin</Button>
           </>
         )}
       />
@@ -440,15 +452,15 @@ export function BlogAdminUsersDemo() {
         description="Blog 角色决定产品内的内容和运营权限；账号密码与 MFA 仍由 GOSSO 管理。"
         onOpenChange={(open) => { if (!open) setEditingId(null); }}
         onOk={saveMember}
-        okText="保存成员"
+        okText="保存设置"
       >
         <div className="flex flex-col gap-5">
-          <FormField label="显示名称" required>
+          <FormField label="成员显示昵称 / 备注名" hint="用于在文章作者署名、操作审计日志及后台成员目录中展示。">
             <Input value={draftName} onChange={(event) => setDraftName(event.target.value)} />
           </FormField>
-          <FormField label="Blog 角色" hint={editing?.role === "owner" ? "当前所有者角色只能通过所有权移交流程变更。" : "每次只保留一个主角色；下方说明与真实产品的角色权限文案一致。"}>
+          <FormField label="Blog 角色分配（单选）" hint={editing?.role === "owner" ? "当前所有者角色只能通过所有权移交流程变更。" : "每次只保留一个主角色；下方说明与真实产品的角色权限文案一致。"}>
             <Select
-              aria-label="Blog 角色"
+              aria-label="Blog 角色分配"
               value={editing?.role === "owner" ? "owner" : draftRole}
               disabled={editing?.role === "owner"}
               onChange={(value) => setDraftRole(String(value) as MemberRole)}
