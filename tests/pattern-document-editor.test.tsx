@@ -105,6 +105,31 @@ describe("Document editor patterns", () => {
     expect(editorRef.current?.getSelection().text).toBe("beta");
   });
 
+  it("supports strikethrough, lists and fenced code as built-in authoring commands", async () => {
+    const editorRef = createRef<MarkdownEditorRef>();
+
+    function Fixture() {
+      const [value, setValue] = useState("alpha\nbeta");
+      return <MarkdownEditor ref={editorRef} value={value} onChange={setValue} textareaAriaLabel="扩展 Markdown" />;
+    }
+
+    render(<Fixture />);
+    editorRef.current?.setSelection(0, 5);
+    fireEvent.click(screen.getByRole("button", { name: "删除线" }));
+    await act(async () => Promise.resolve());
+    expect((screen.getByLabelText("扩展 Markdown") as HTMLTextAreaElement).value).toBe("~~alpha~~\nbeta");
+
+    editorRef.current?.setSelection(0, (screen.getByLabelText("扩展 Markdown") as HTMLTextAreaElement).value.length);
+    fireEvent.click(screen.getByRole("button", { name: "无序列表" }));
+    await act(async () => Promise.resolve());
+    expect((screen.getByLabelText("扩展 Markdown") as HTMLTextAreaElement).value).toBe("- ~~alpha~~\n- beta");
+
+    editorRef.current?.setSelection(2, 11);
+    fireEvent.click(screen.getByRole("button", { name: "代码块" }));
+    await act(async () => Promise.resolve());
+    expect((screen.getByLabelText("扩展 Markdown") as HTMLTextAreaElement).value).toContain("```text\n~~alpha~~\n```");
+  });
+
   it("inserts a complete Markdown link and selects the URL for immediate editing", async () => {
     const editorRef = createRef<MarkdownEditorRef>();
 
