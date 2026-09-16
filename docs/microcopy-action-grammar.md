@@ -16,11 +16,12 @@ This contract complements visual, structural and state parity. A page is not con
 1. **Visible labels stay short and task-oriented.** Dense action rows should prefer the shortest unambiguous label, for example `相对地址`, `Markdown`, `Alt Text`, `删除`.
 2. **Accessible names carry full intent and object context.** Icon or compact actions should expose the verb and target, for example `复制相对地址 hero.png` or `删除媒体 hero.png`.
 3. **Navigation uses an action plus a destination.** Prefer `返回首页`, `浏览文章`, `搜索内容`, `返回上一页` over noun-only destinations when the control is a CTA.
-4. **Dangerous / privileged confirmation is action-specific.** Generic confirmation labels such as `继续` are not acceptable when the action deletes, suspends, revokes, rotates, resets or otherwise changes security-sensitive state. Use `确认删除`, `确认暂停`, `轮换客户端密钥`, `重新生成备用代码`, etc.
-5. **Persistent load recovery and mutation retry are not silently conflated.** A product may choose `重新载入` for page/collection reload and `重试` for an operation retry; whichever vocabulary is chosen for a surface family must remain consistent within that family.
-6. **Cross-product handoff wording is stable.** The same handoff action should use the same product/task name across pages.
+4. **Dangerous / privileged confirmation is action-specific.** Generic confirmation labels such as `继续` are not acceptable when the action deletes, suspends, revokes, rotates, resets or otherwise changes security-sensitive state. Use `确认删除`, `确认暂停`, `确认轮换`, `重新生成`, etc.
+5. **Persistent load recovery and mutation retry are distinct.** For canonical page/document/collection load failures use `重新载入`; use `重试` for retrying a failed mutation or transient operation. Do not mix the two meanings on the same surface family.
+6. **Cross-product handoff wording is stable.** For a control that opens the GOSSO administration product, use `打开 GOSSO Admin`; supporting prose may still describe it as the identity management center.
 7. **Terminology is canonical.** Within the Gouno product family use `账户设置` for account settings. Product-specific domain nouns may remain richer than Showcase when they carry real business meaning.
 8. **Localized products must localize accessible names too.** Hard-coded English `label` / `aria-label` strings in otherwise localized Chinese product surfaces are parity defects unless the term is intentionally English product/domain vocabulary.
+9. **Business-domain wording may flow Product → Showcase.** When the real product has a more precise domain label (for example `成员显示昵称 / 备注名` instead of a generic `显示名称`), keep the richer Product language and update the Showcase fixture rather than flattening Product semantics.
 
 ## Guard expectations
 
@@ -43,12 +44,15 @@ Static guards should reject known ambiguous action patterns before browser tests
 
 - Media dense actions: `相对地址`, `Markdown`, `Alt Text`, `删除`
 - persistent collection load recovery: `重新载入`
-- GOSSO handoff: `前往 GOSSO 管理`
+- GOSSO handoff: `打开 GOSSO Admin`
+- member identity copy stays adjacent to the account ID; the dense operation column is reserved for member/permission mutations
+- member editor uses the product-accurate `成员显示昵称 / 备注名`, `Blog 角色分配（单选）`, and `保存设置` vocabulary
 
 ### GOSSO Admin
 
 - high-risk confirmations must name the action; `继续` is not canonical for destructive/privileged confirmation;
 - profile/password accessibility controls must follow the active locale;
+- persistent load recovery uses `重新载入`, while transient operation retry uses `重试`;
 - account terminology uses `账户设置`.
 
 The contract should grow only when a rule represents a reusable design-language decision, not to freeze every sentence of product prose.
