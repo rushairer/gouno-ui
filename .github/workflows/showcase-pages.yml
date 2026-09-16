@@ -30,6 +30,7 @@ jobs:
 
       - name: Verify package and Showcase
         run: |
+          npm run lint:microcopy
           npm run typecheck
           npm test -- --run
           npm run build
