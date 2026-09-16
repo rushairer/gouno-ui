@@ -213,7 +213,15 @@ export function TabList({
     >
       {children}
       {extra ? (
-        <span className={cn("shrink-0", vertical ? "mt-2" : "ml-auto pl-4")}>{extra}</span>
+        <span
+          data-slot="tabs-extra-content"
+          className={cn(
+            "shrink-0",
+            vertical ? "mt-2" : "ml-auto self-center pl-4",
+          )}
+        >
+          {extra}
+        </span>
       ) : null}
     </Primitive.TabsList>
   );

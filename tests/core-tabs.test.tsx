@@ -83,6 +83,38 @@ describe("Core Tabs", () => {
     expect(panel.className).toContain("min-w-0");
   });
 
+  it("centers horizontal tabBarExtraContent independently from line-tab edge alignment", () => {
+    const items = [{ key: "one", label: "One", children: "Panel" }] as const;
+    const { container, rerender } = render(
+      <Tabs
+        aria-label="Tabs with extra"
+        items={items}
+        tabBarExtraContent={<button type="button">Action</button>}
+      />,
+    );
+
+    let list = screen.getByRole("tablist", { name: "Tabs with extra" });
+    let extra = container.querySelector('[data-slot="tabs-extra-content"]') as HTMLElement;
+    expect(list.className).toContain("items-end");
+    expect(extra.className).toContain("self-center");
+    expect(extra.className).toContain("ml-auto");
+    expect(extra.className).toContain("pl-4");
+
+    rerender(
+      <Tabs
+        aria-label="Tabs with extra"
+        items={items}
+        tabPosition="bottom"
+        tabBarExtraContent={<button type="button">Action</button>}
+      />,
+    );
+
+    list = screen.getByRole("tablist", { name: "Tabs with extra" });
+    extra = container.querySelector('[data-slot="tabs-extra-content"]') as HTMLElement;
+    expect(list.className).toContain("items-start");
+    expect(extra.className).toContain("self-center");
+  });
+
   it("keeps tab block-size stable when labels contain badges or other metadata", () => {
     render(
       <Tabs
