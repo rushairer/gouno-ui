@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { BlogAdminPageEditorDemo } from "../showcase/demos/products/blog-admin/page-editor";
 
@@ -138,7 +138,7 @@ describe("Blog Admin PageEditor", () => {
     expect(navigation.checked).toBe(true);
   });
 
-  it("keeps writing and image generation inside MarkdownEditor tools", () => {
+  it("keeps writing and image generation inside MarkdownEditor tools", async () => {
     render(<BlogAdminPageEditorDemo />);
 
     fireEvent.pointerDown(screen.getByRole("button", { name: "AI 写作" }), {
@@ -163,7 +163,9 @@ describe("Blog Admin PageEditor", () => {
     fireEvent.click(screen.getByRole("button", { name: "开始生图" }));
     expect(screen.getByText("AI 生成插图预览")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "插入光标位置" }));
-    expect((screen.getByLabelText("单页正文 Markdown") as HTMLTextAreaElement).value).toContain("![团队与开放技术](/media/ai-generated-page.webp)");
+    await waitFor(() => {
+      expect((screen.getByLabelText("单页正文 Markdown") as HTMLTextAreaElement).value).toContain("![团队与开放技术](/media/ai-generated-page.webp)");
+    });
   });
 
   it("guards dirty navigation with the canonical description-only Modal", () => {
