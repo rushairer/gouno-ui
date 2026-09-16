@@ -69,9 +69,51 @@ The maintenance stack remains layered:
 4. bounding-box / geometry parity;
 5. responsive and no-horizontal-overflow checks;
 6. browser interaction acceptance;
-7. paired screenshots retained as review evidence.
+7. paired screenshots retained as review evidence;
+8. a deliberately small canonical visual-golden smoke gate for stable Showcase fixtures.
 
-Paired screenshots are evidence, not the primary assertion mechanism. A broad full-page pixel-baseline suite is intentionally not mandatory because font/browser/content churn would create high-noise failures. If a future deterministic visual-golden smoke suite is added, keep it small and limited to stable canonical surfaces rather than every route/state/theme combination.
+Paired product/Showcase screenshots remain diagnostic review evidence. Pixel goldens are a final drift detector, not a replacement for semantic, style, geometry, responsive or interaction assertions.
+
+## Canonical visual golden smoke
+
+`.github/workflows/canonical-visual-golden.yml` runs a read-only Playwright visual smoke against accepted Showcase fixtures. The suite intentionally contains exactly **12** light-theme PNG baselines:
+
+- Blog: Home, Article Detail, Search, Account Settings;
+- Blog Admin: Dashboard, Posts desktop, Posts mobile, Post Editor;
+- Gosso Admin: Overview, Clients, Site Settings, Account Settings.
+
+The suite also performs a Gosso Account Settings → MFA Tab interaction smoke without creating another pixel baseline. This keeps interaction health covered without multiplying image churn.
+
+The visual environment is intentionally deterministic and narrow:
+
+- GitHub Actions Ubuntu runner;
+- Node.js 24;
+- isolated `@playwright/test` 1.55.0;
+- pinned Chromium from that Playwright release;
+- `zh-CN` locale and `Asia/Shanghai` timezone;
+- device scale factor `1`;
+- desktop `1440×900` and one mobile `390×844` canonical viewport;
+- light theme only;
+- `maxDiffPixelRatio: 0.002`.
+
+Dark mode remains covered by the existing product ↔ Showcase computed-style / geometry parity matrix. Duplicating every golden in dark mode would add baseline cost without equivalent diagnostic value.
+
+### Baseline update rule
+
+Normal CI **must never** run `--update-snapshots` and keeps `contents: read`. A baseline update is an explicit review action after an intentional canonical visual change.
+
+Before accepting new PNGs:
+
+1. confirm the canonical change is intentional and belongs in Gouno UI / Showcase;
+2. review the visual diff rather than accepting changed pixels mechanically;
+3. require the normal static/type/unit/build/Showcase gates;
+4. require Blog and Gosso reciprocal consumer parity where applicable;
+5. regenerate only the affected accepted golden baselines using the pinned Playwright environment;
+6. commit the reviewed PNG changes together with the canonical change or a focused follow-up commit.
+
+On CI failure, the HTML report and `test-results/canonical-visual-golden` evidence are retained for 14 days. Product-only routing, authentication, authorization, persistence, API state and security policy are outside the golden contract.
+
+`scripts/check-parity-maintenance-contract.mjs` seals the permanent workflow semantics, deterministic runner markers, pixel tolerance, interaction proof, and the exact 12-file accepted PNG set so the visual gate cannot silently disappear or expand.
 
 ## Release and consumer upgrade rule
 
@@ -84,6 +126,7 @@ The expected sequence is:
 ```text
 Gouno UI candidate
   → reciprocal consumer parity
+  → canonical visual golden smoke
   → merge
   → release immutable npm version when package output changed
   → consumer exact-version upgrade
