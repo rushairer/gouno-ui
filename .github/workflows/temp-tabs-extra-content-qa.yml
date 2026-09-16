@@ -1,0 +1,97 @@
+name: Temp Tabs Extra Content QA
+
+on:
+  push:
+    branches: [tabs-extra-content-alignment]
+    paths:
+      - ".github/workflows/temp-tabs-extra-content-qa.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: tabs-extra-content-alignment
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install repository dependencies
+        run: npm ci
+
+      - name: Install isolated Playwright runtime
+        run: |
+          PLAYWRIGHT_VERSION=1.55.0
+          npm install --no-save --ignore-scripts @playwright/test@${PLAYWRIGHT_VERSION}
+          npx playwright install --with-deps chromium
+
+      - name: Verify extra-content geometry and interaction
+        run: |
+          cp showcase/e2e/canonical-visual-golden.pw.mjs /tmp/canonical-visual-golden.pw.mjs
+          cat > showcase/e2e/canonical-visual-golden.pw.mjs <<'EOF'
+          import { expect, test } from "@playwright/test";
+
+          test("tabs-extra-content-alignment", async ({ page }) => {
+            await page.setViewportSize({ width: 1440, height: 900 });
+            await page.addInitScript(() => localStorage.setItem("gouno-ui-showcase:theme", "dark"));
+            await page.goto("/?embedded=1&workspace=gouno-ui&brand=blog-admin#core-tabs", { waitUntil: "networkidle" });
+
+            const extraButton = page.getByRole("button", { name: "打开安全设置" });
+            await expect(extraButton).toBeVisible();
+            await extraButton.scrollIntoViewIfNeeded();
+
+            const extra = page.locator('[data-slot="tabs-extra-content"]').filter({ has: extraButton });
+            const tabList = extra.locator("xpath=..");
+            const profileTab = page.getByRole("tab", { name: "资料" });
+
+            const [listBox, extraBox, buttonBox, profileBox] = await Promise.all([
+              tabList.boundingBox(),
+              extra.boundingBox(),
+              extraButton.boundingBox(),
+              profileTab.boundingBox(),
+            ]);
+            expect(listBox).toBeTruthy();
+            expect(extraBox).toBeTruthy();
+            expect(buttonBox).toBeTruthy();
+            expect(profileBox).toBeTruthy();
+
+            const listCenter = listBox.y + listBox.height / 2;
+            const extraCenter = extraBox.y + extraBox.height / 2;
+            expect(Math.abs(extraCenter - listCenter)).toBeLessThanOrEqual(1);
+
+            const buttonBottomGap = listBox.y + listBox.height - (buttonBox.y + buttonBox.height);
+            expect(buttonBottomGap).toBeGreaterThanOrEqual(3);
+            expect(buttonBottomGap).toBeLessThanOrEqual(5);
+
+            const tabBottomGap = listBox.y + listBox.height - (profileBox.y + profileBox.height);
+            expect(Math.abs(tabBottomGap)).toBeLessThanOrEqual(1);
+
+            await page.screenshot({ path: "test-results/tabs-extra-content-aligned.png", fullPage: false });
+
+            await extraButton.click();
+            await expect(page.getByRole("tab", { name: "安全" })).toHaveAttribute("aria-selected", "true");
+            await page.screenshot({ path: "test-results/tabs-extra-content-interaction.png", fullPage: false });
+          });
+          EOF
+          npx playwright test --config=showcase/e2e/canonical-visual-golden.config.mjs
+          mv /tmp/canonical-visual-golden.pw.mjs showcase/e2e/canonical-visual-golden.pw.mjs
+
+      - name: Upload Tabs QA evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: tabs-extra-content-qa-${{ github.run_id }}
+          path: |
+            test-results/tabs-extra-content-aligned.png
+            test-results/tabs-extra-content-interaction.png
+          if-no-files-found: ignore
+          retention-days: 7
