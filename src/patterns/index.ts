@@ -15,4 +15,5 @@ export {
   type MarkdownEditorProps,
   type MarkdownEditorRef,
   type MarkdownEditorSelection,
+  type MarkdownHeadingLevel,
 } from "./markdown-editor";

@@ -15,6 +15,7 @@ const propsApi: ApiRow[] = [
   { name: "onSelectionChange", type: "(selection) => void", description: "光标或选区变化回调；产品可据此决定 AI 的作用域。" },
   { name: "renderPreview", type: "(value: string) => ReactNode", description: "预览渲染器。MarkdownEditor 不绑定具体 Markdown parser；产品接入自己选定的 Markdown renderer。" },
   { name: "toolbarActions", type: "ReactNode", description: "产品级工具扩展槽。AI 写作、插图、媒体库等业务动作通过这里注入，不是 MarkdownEditor 内建能力。" },
+  { name: "headingLevels", type: "readonly (1 | 2 | 3 | 4 | 5 | 6)[]", description: "段落 / 标题菜单可用的标题级别。正文编辑默认保留页面级 H1 给外部标题；独立 Markdown 文档可显式开启 H1。", defaultValue: "[2,3,4,5,6]" },
   { name: "placeholder", type: "string", description: "编辑区占位文本。" },
   { name: "readOnly", type: "boolean", description: "只读模式；隐藏格式工具并禁止写入。", defaultValue: "false" },
   { name: "textareaAriaLabel", type: "string", description: "编辑区 accessible name。", defaultValue: '"Markdown 正文"' },
@@ -42,13 +43,13 @@ export function PatternMarkdownEditorDemo() {
           <Tag color="success">Admitted</Tag>
         </div>
         <Text tone="muted" className="max-w-3xl leading-relaxed">
-          统一 Markdown 编辑、格式工具、编辑 / 分屏 / 预览视图，以及光标与选区控制。内建命令覆盖标题、加粗、斜体、删除线、引用、无序 / 有序 / 任务列表、行内代码、代码块、链接与分隔线；产品动作继续通过 toolbarActions 与 ref API 组合。
+          统一 Markdown 编辑、段落 / H1–H6 标题转换、格式工具、编辑 / 分屏 / 预览视图，以及光标与选区控制。正文型消费者可限制 headingLevels；产品动作继续通过 toolbarActions 与 ref API 组合。
         </Text>
       </header>
 
       <DemoSection
-        title="常用 Markdown、代码高亮与产品扩展"
-        description="格式按钮直接修改 Markdown 文本；Showcase renderer 额外演示 H1–H6、表格、任务列表、删除线、图片和带语言标记的 fenced code 高亮。MarkdownEditor 仍通过 renderPreview 保持 parser 解耦。示例中的 AI 写作 / 插图只是 toolbarActions 自定义动作。"
+        title="常用 Markdown、标题层级、代码高亮与产品扩展"
+        description="段落样式菜单会识别当前光标所在块，并在正文与 H1–H6 之间转换；示例显式开启完整标题范围。Showcase renderer 额外演示表格、任务列表、删除线、图片和带语言标记的 fenced code 高亮。MarkdownEditor 仍通过 renderPreview 保持 parser 解耦。示例中的 AI 写作 / 插图只是 toolbarActions 自定义动作。"
         code={canonicalExampleSource(MarkdownEditorExampleSource)}
       >
         <MarkdownEditorExample renderPreview={(markdown) => <MarkdownPreview value={markdown} />} />
