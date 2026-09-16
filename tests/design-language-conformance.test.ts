@@ -292,12 +292,19 @@ describe("design-language conformance", () => {
     expect(aiSettingsRoot).toContain("<Tabs<AISettingsSection>");
     expect(aiSettingsSections).not.toContain("<Tabs");
 
-    // Editor mode Tabs are view-state controls, not product-navigation tiers.
-    for (const editor of ["blog-admin/post-editor.tsx", "blog-admin/page-editor.tsx"]) {
-      const source = readFileSync(resolve(productsRoot, editor), "utf8");
-      expect(source).toContain("<Tabs<EditorMode>");
-      expect(source).not.toContain("<PageHeader");
-    }
+    // PostEditor owns one persistent document-navigation Tabs. Edit/split/preview is
+    // view state owned by the shared MarkdownEditor rather than a second navigation tier.
+    const postEditor = readFileSync(resolve(productsRoot, "blog-admin/post-editor.tsx"), "utf8");
+    expect(tabsCount(postEditor)).toBe(1);
+    expect(postEditor).toContain("<Tabs<NavigatorMode>");
+    expect(postEditor).toContain("<MarkdownEditor");
+    expect(postEditor).not.toContain("<Tabs<EditorMode>");
+    expect(postEditor).not.toContain("<PageHeader");
+
+    // PageEditor remains on its legacy view-state Tabs until its dedicated migration phase.
+    const pageEditor = readFileSync(resolve(productsRoot, "blog-admin/page-editor.tsx"), "utf8");
+    expect(pageEditor).toContain("<Tabs<EditorMode>");
+    expect(pageEditor).not.toContain("<PageHeader");
   });
 
   it("does not echo tab or route labels as immediate content headings", () => {
