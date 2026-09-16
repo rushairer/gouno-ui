@@ -2,7 +2,6 @@ import { expect, test } from "@playwright/test";
 
 const desktop = { width: 1440, height: 900 };
 const mobile = { width: 390, height: 844 };
-const narrowTablet = { width: 390, height: 844 };
 
 const scenarios = [
   {
@@ -148,35 +147,16 @@ test("blog-admin-post-editor-narrow-preview-edit-roundtrip", async ({ page }) =>
   const toolbar = editor.locator('[data-slot="markdown-editor-toolbar"]');
   const modeSwitcher = editor.locator('[data-slot="markdown-editor-mode-switcher"]');
 
-  await page.setViewportSize(narrowTablet);
+  await page.setViewportSize(mobile);
   await page.waitForTimeout(100);
 
   await modeSwitcher.getByRole("button", { name: "预览" }).click();
   await expect(editor).toHaveAttribute("data-mode", "preview");
   await modeSwitcher.getByRole("button", { name: "编辑" }).click();
   await expect(editor).toHaveAttribute("data-mode", "edit");
-  await page.waitForTimeout(100);
 
-  const geometry = await toolbar.evaluate((element) => {
-    const toolbarRect = element.getBoundingClientRect();
-    return {
-      clientWidth: element.clientWidth,
-      scrollWidth: element.scrollWidth,
-      density: element.getAttribute("data-adaptive-density"),
-      wrap: element.getAttribute("data-adaptive-wrap"),
-      toolbar: { left: toolbarRect.left, right: toolbarRect.right, width: toolbarRect.width },
-      children: Array.from(element.children).map((child) => {
-        const rect = child.getBoundingClientRect();
-        return {
-          slot: child.getAttribute("data-slot"),
-          left: rect.left,
-          right: rect.right,
-          width: rect.width,
-        };
-      }),
-    };
-  });
-  console.log("MARKDOWN_EDITOR_NARROW_GEOMETRY", JSON.stringify(geometry));
+  await expect(toolbar).toHaveAttribute("data-adaptive-density", "icon");
+  await expect(toolbar).toHaveAttribute("data-adaptive-wrap", "false");
 
   const [toolbarBox, modeBox] = await Promise.all([
     toolbar.boundingBox(),
