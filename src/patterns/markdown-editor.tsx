@@ -19,7 +19,6 @@ import {
   MoreHorizontal,
   Quote,
   Strikethrough,
-  Type,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -346,6 +345,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
     const overflowSelectionRef = useRef<MarkdownEditorSelection | null>(null);
     const activeMode = mode ?? internalMode;
     const activeBlockLabel = activeHeadingLevel ? `H${activeHeadingLevel}` : "正文";
+    const showAuthoringTools = !readOnly && activeMode !== "preview";
 
     const changeMode = (next: MarkdownEditorMode) => {
       if (mode === undefined) setInternalMode(next);
@@ -479,7 +479,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
           aria-label="Markdown 编辑工具栏"
           data-slot="markdown-editor-toolbar"
         >
-          {!readOnly && activeMode !== "preview" ? (
+          {showAuthoringTools ? (
             <div className="flex shrink-0 items-center gap-0.5" aria-label="Markdown 格式工具">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -487,7 +487,9 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
                     type="button"
                     size="small"
                     variant="text"
-                    icon={<Type />}
+                    icon={<ChevronDown aria-hidden="true" className="size-3.5 opacity-60" />}
+                    iconPlacement="end"
+                    className="gap-1 px-2"
                     aria-label={`段落样式：${activeBlockLabel}`}
                     title="段落与标题级别"
                     onPointerDown={() => {
@@ -495,7 +497,6 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
                     }}
                   >
                     {activeBlockLabel}
-                    <ChevronDown aria-hidden="true" className="size-3.5 opacity-60" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-40">
@@ -574,7 +575,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
             </div>
           ) : null}
 
-          {toolbarActions ? (
+          {toolbarActions && showAuthoringTools ? (
             <div
               className="ml-1 flex shrink-0 items-center gap-1 border-l pl-2"
               data-slot="markdown-editor-actions"
