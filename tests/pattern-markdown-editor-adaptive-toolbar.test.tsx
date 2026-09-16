@@ -165,7 +165,7 @@ describe("MarkdownEditor adaptive toolbar", () => {
     );
 
     const toolbar = container.querySelector('[data-slot="markdown-editor-toolbar"]') as HTMLElement;
-    const width = 280;
+    let width = 280;
     installToolbarGeometry(toolbar, container, () => width, 320, 220);
 
     await act(async () => {
@@ -183,6 +183,32 @@ describe("MarkdownEditor adaptive toolbar", () => {
     expect(modeSwitcher.getAttribute("data-icon-only")).toBe("true");
     expect(screen.getByRole("button", { name: "编辑" }).textContent).toBe("");
     expect(screen.getByRole("button", { name: "预览" }).textContent).toBe("");
+
+    width = 260;
+    await act(async () => {
+      resize.notify(toolbar, width);
+      await Promise.resolve();
+    });
+    expect(toolbar.getAttribute("data-adaptive-density")).toBe("icon");
+    expect(toolbar.getAttribute("data-adaptive-wrap")).toBe("false");
+
+    width = 284;
+    await act(async () => {
+      resize.notify(toolbar, width);
+      await Promise.resolve();
+    });
+    expect(toolbar.getAttribute("data-adaptive-density")).toBe("icon");
+    expect(toolbar.getAttribute("data-adaptive-wrap")).toBe("false");
+
+    width = 600;
+    await act(async () => {
+      resize.notify(toolbar, width);
+      await Promise.resolve();
+    });
+    await waitFor(() => {
+      expect(toolbar.getAttribute("data-adaptive-density")).toBe("full");
+      expect(container.querySelectorAll('[data-slot="markdown-editor-primary-command"]')).toHaveLength(4);
+    });
   });
 
   it("uses wrapping only after icon-only fixed actions still cannot fit", async () => {

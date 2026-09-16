@@ -359,6 +359,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
     const [toolbarLayoutEpoch, setToolbarLayoutEpoch] = useState(0);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const toolbarRef = useRef<HTMLDivElement>(null);
+    const compactEnterWidthRef = useRef<number | null>(null);
     const headingTriggerRef = useRef<HTMLButtonElement>(null);
     const headingSelectionRef = useRef<MarkdownEditorSelection | null>(null);
     const overflowSelectionRef = useRef<MarkdownEditorSelection | null>(null);
@@ -464,6 +465,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
       }
 
       if (!compactFixedActions) {
+        compactEnterWidthRef.current = toolbar.clientWidth;
         setCompactFixedActions(true);
         return;
       }
@@ -477,9 +479,10 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
       visiblePrimaryCount,
     ]);
 
-    // Re-expand first whenever the editor container itself changes width, then rerun the
-    // degradation sequence against the new geometry. Only observing the toolbar avoids a
-    // feedback loop when fixed actions intentionally shrink into icon-only mode.
+    // Shrinking is monotonic: never re-expand controls while available width is decreasing.
+    // When growing, leave wrap mode first but keep icon density until the container clears
+    // the width where compact mode was entered. The small hysteresis prevents resize jitter
+    // around the boundary; larger growth restores the full toolbar and reruns compaction.
     useLayoutEffect(() => {
       const toolbar = toolbarRef.current;
       if (!toolbar || typeof ResizeObserver === "undefined") return;
@@ -489,9 +492,25 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
         const entry = entries.find((candidate) => candidate.target === toolbar);
         if (!entry) return;
         const nextWidth = entry.contentRect.width;
-        if (Math.abs(previousWidth - nextWidth) <= 0.5) return;
+        const delta = nextWidth - previousWidth;
+        if (Math.abs(delta) <= 0.5) return;
         previousWidth = nextWidth;
 
+        if (delta < 0) {
+          setToolbarLayoutEpoch((epoch) => epoch + 1);
+          return;
+        }
+
+        const compactEnterWidth = compactEnterWidthRef.current;
+        if (compactEnterWidth !== null && nextWidth <= compactEnterWidth + 8) {
+          setAllowToolbarWrap(false);
+          setCompactFixedActions(true);
+          setVisiblePrimaryCount(0);
+          setToolbarLayoutEpoch((epoch) => epoch + 1);
+          return;
+        }
+
+        compactEnterWidthRef.current = null;
         setAllowToolbarWrap(false);
         setCompactFixedActions(false);
         setVisiblePrimaryCount(primaryCommands.length);
@@ -504,6 +523,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
 
     useLayoutEffect(() => {
       if (!showAuthoringTools) return;
+      compactEnterWidthRef.current = null;
       setAllowToolbarWrap(false);
       setCompactFixedActions(false);
       setVisiblePrimaryCount(primaryCommands.length);
