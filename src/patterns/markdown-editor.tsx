@@ -16,9 +16,16 @@ import {
   ListChecks,
   ListOrdered,
   Minus,
+  MoreHorizontal,
   Quote,
   Strikethrough,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../components/primitives/dropdown-menu";
 import { Button } from "../core/button";
 import { Textarea } from "../core/textarea";
 import { cn } from "../lib/utils";
@@ -79,29 +86,28 @@ const modeLabels: Record<MarkdownEditorMode, string> = {
   preview: "预览",
 };
 
-const commandGroups: readonly (readonly {
+type CommandItem = {
   command: MarkdownEditorCommand;
   label: string;
   icon: ReactNode;
-}[])[] = [
-  [
-    { command: "heading", label: "二级标题", icon: <Heading2 /> },
-    { command: "bold", label: "加粗", icon: <Bold /> },
-    { command: "italic", label: "斜体", icon: <Italic /> },
-    { command: "strikethrough", label: "删除线", icon: <Strikethrough /> },
-  ],
-  [
-    { command: "quote", label: "引用", icon: <Quote /> },
-    { command: "unordered-list", label: "无序列表", icon: <List /> },
-    { command: "ordered-list", label: "有序列表", icon: <ListOrdered /> },
-    { command: "task-list", label: "任务列表", icon: <ListChecks /> },
-  ],
-  [
-    { command: "code", label: "行内代码", icon: <Code2 /> },
-    { command: "code-block", label: "代码块", icon: <Code2 /> },
-    { command: "link", label: "插入链接", icon: <Link2 /> },
-    { command: "horizontal-rule", label: "分隔线", icon: <Minus /> },
-  ],
+};
+
+const primaryCommands: readonly CommandItem[] = [
+  { command: "heading", label: "二级标题", icon: <Heading2 /> },
+  { command: "bold", label: "加粗", icon: <Bold /> },
+  { command: "italic", label: "斜体", icon: <Italic /> },
+  { command: "link", label: "插入链接", icon: <Link2 /> },
+  { command: "code", label: "行内代码", icon: <Code2 /> },
+];
+
+const moreCommands: readonly CommandItem[] = [
+  { command: "strikethrough", label: "删除线", icon: <Strikethrough /> },
+  { command: "quote", label: "引用", icon: <Quote /> },
+  { command: "unordered-list", label: "无序列表", icon: <List /> },
+  { command: "ordered-list", label: "有序列表", icon: <ListOrdered /> },
+  { command: "task-list", label: "任务列表", icon: <ListChecks /> },
+  { command: "code-block", label: "代码块", icon: <Code2 /> },
+  { command: "horizontal-rule", label: "分隔线", icon: <Minus /> },
 ];
 
 type CommandTransform = {
@@ -288,6 +294,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
   ) {
     const [internalMode, setInternalMode] = useState<MarkdownEditorMode>(defaultMode);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const overflowSelectionRef = useRef<MarkdownEditorSelection | null>(null);
     const activeMode = mode ?? internalMode;
 
     const changeMode = (next: MarkdownEditorMode) => {
@@ -342,13 +349,12 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
       }),
     );
 
-    const runCommand = (command: MarkdownEditorCommand) => {
+    const runCommand = (command: MarkdownEditorCommand, savedSelection?: MarkdownEditorSelection | null) => {
       const textarea = textareaRef.current;
       if (!textarea || readOnly) return;
 
-      const start = textarea.selectionStart ?? 0;
-      const end = textarea.selectionEnd ?? start;
-      const transformed = transformCommand(command, value, start, end);
+      const selection = savedSelection ?? currentSelection();
+      const transformed = transformCommand(command, value, selection.start, selection.end);
       const next = `${value.slice(0, transformed.replaceStart)}${transformed.value}${value.slice(transformed.replaceEnd)}`;
       onChange(next);
 
@@ -394,48 +400,69 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
         data-mode={activeMode}
       >
         <div
-          className="flex min-h-11 flex-wrap items-center gap-1 border-b bg-muted/20 px-2 py-1.5"
+          className="flex min-h-11 items-center gap-1 overflow-x-auto border-b bg-muted/20 px-2 py-1.5"
           role="toolbar"
           aria-label="Markdown 编辑工具栏"
           data-slot="markdown-editor-toolbar"
         >
           {!readOnly && activeMode !== "preview" ? (
-            <div className="flex flex-wrap items-center gap-1" aria-label="Markdown 格式工具">
-              {commandGroups.map((group, groupIndex) => (
-                <div
-                  key={groupIndex}
-                  className={cn(
-                    "flex items-center gap-0.5",
-                    groupIndex > 0 && "border-l pl-1",
-                  )}
+            <div className="flex shrink-0 items-center gap-0.5" aria-label="Markdown 格式工具">
+              {primaryCommands.map((item) => (
+                <Button
+                  key={item.command}
+                  type="button"
+                  size="small"
+                  variant="text"
+                  icon={item.icon}
+                  aria-label={item.label}
+                  title={item.label}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => runCommand(item.command)}
                 >
-                  {group.map((item) => (
-                    <Button
-                      key={item.command}
-                      type="button"
-                      size="small"
-                      variant="text"
-                      icon={item.icon}
-                      aria-label={item.label}
-                      title={item.label}
-                      onMouseDown={(event) => event.preventDefault()}
-                      onClick={() => runCommand(item.command)}
-                    >
-                      <span className="sr-only">{item.label}</span>
-                    </Button>
-                  ))}
-                </div>
+                  <span className="sr-only">{item.label}</span>
+                </Button>
               ))}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    type="button"
+                    size="small"
+                    variant="text"
+                    icon={<MoreHorizontal />}
+                    aria-label="更多格式"
+                    title="更多格式"
+                    onPointerDown={() => {
+                      overflowSelectionRef.current = currentSelection();
+                    }}
+                  >
+                    <span className="sr-only">更多格式</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-40">
+                  {moreCommands.map((item) => (
+                    <DropdownMenuItem
+                      key={item.command}
+                      onSelect={() => {
+                        runCommand(item.command, overflowSelectionRef.current);
+                        overflowSelectionRef.current = null;
+                      }}
+                    >
+                      <span className="mr-2 inline-flex size-4 items-center justify-center">{item.icon}</span>
+                      {item.label}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           ) : null}
 
           {toolbarActions ? (
-            <div className="ml-1 flex flex-wrap items-center gap-1 border-l pl-2" data-slot="markdown-editor-actions">
+            <div className="ml-1 flex shrink-0 items-center gap-1 border-l pl-2" data-slot="markdown-editor-actions">
               {toolbarActions}
             </div>
           ) : null}
 
-          <div className="ml-auto flex items-center gap-0.5 rounded-md bg-muted/60 p-0.5" aria-label="编辑器视图">
+          <div className="ml-auto flex shrink-0 items-center gap-0.5 rounded-md bg-muted/60 p-0.5" aria-label="编辑器视图">
             {(["edit", "split", "preview"] as const).map((nextMode) => (
               <Button
                 key={nextMode}
