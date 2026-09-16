@@ -53,6 +53,7 @@ export default function MarkdownEditorExample({ renderPreview }: MarkdownEditorE
             size="small"
             variant="text"
             icon={<Sparkles />}
+            aria-label="AI 写作"
             onClick={() => editorRef.current?.insertText("AI 生成内容", { replaceSelection: true })}
           >
             AI 写作
@@ -62,6 +63,7 @@ export default function MarkdownEditorExample({ renderPreview }: MarkdownEditorE
             size="small"
             variant="text"
             icon={<ImageIcon />}
+            aria-label="插图"
             onClick={() => editorRef.current?.insertText("![插图](/image.webp)", { replaceSelection: false })}
           >
             插图
