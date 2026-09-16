@@ -19,7 +19,7 @@ jobs:
         with:
           ref: markdown-editor-icon-only-fallback
 
-      - name: Keep injected action icons visible in compact mode
+      - name: Make toolbarActions density-aware without DOM coupling
         shell: bash
         run: |
           python - <<'PY'
@@ -30,31 +30,138 @@ jobs:
                   raise SystemExit(f"missing replacement target: {label}")
               return text.replace(old, new, 1)
 
-          path = Path("src/patterns/markdown-editor.tsx")
-          text = path.read_text()
-          text = replace_once(
-              text,
-              '"[&_[data-slot=button]]:size-8 [&_[data-slot=button]]:px-0 [&_[data-slot=button]>span:not(.btn__icon)]:sr-only",',
-              '"[&_[data-slot=button]]:size-8 [&_[data-slot=button]]:px-0 [&_[data-slot=button]>span]:sr-only [&_[data-slot=button]>.btn__icon]:not-sr-only [&_[data-slot=button]>.btn__icon]:inline-flex",',
-              "compact action icon reset",
+          source_path = Path("src/patterns/markdown-editor.tsx")
+          source = source_path.read_text()
+          source = replace_once(
+              source,
+              '''export interface MarkdownEditorProps\n  extends Omit<HTMLAttributes<HTMLDivElement>, "children" | "onChange"> {''',
+              '''export interface MarkdownEditorToolbarActionsContext {\n  density: "full" | "icon";\n  compact: boolean;\n}\n\nexport type MarkdownEditorToolbarActions =\n  | ReactNode\n  | ((context: MarkdownEditorToolbarActionsContext) => ReactNode);\n\nexport interface MarkdownEditorProps\n  extends Omit<HTMLAttributes<HTMLDivElement>, "children" | "onChange"> {''',
+              "toolbar action context type",
           )
-          path.write_text(text)
+          source = replace_once(
+              source,
+              '''  toolbarActions?: ReactNode;''',
+              '''  toolbarActions?: MarkdownEditorToolbarActions;''',
+              "toolbar action prop type",
+          )
+          source = replace_once(
+              source,
+              '''    );\n\n    return (\n      <div\n        {...props}''',
+              '''    );\n\n    const toolbarActionsContext: MarkdownEditorToolbarActionsContext = {\n      density: compactFixedActions ? "icon" : "full",\n      compact: compactFixedActions,\n    };\n    const resolvedToolbarActions =\n      typeof toolbarActions === "function"\n        ? toolbarActions(toolbarActionsContext)\n        : toolbarActions;\n\n    return (\n      <div\n        {...props}''',
+              "resolve toolbar actions",
+          )
+          source = replace_once(
+              source,
+              '''          {toolbarActions && showAuthoringTools ? (\n            <div\n              className={cn(\n                "ml-1 flex shrink-0 items-center gap-1 border-l pl-2",\n                compactFixedActions &&\n                  "[&_[data-slot=button]]:size-8 [&_[data-slot=button]]:px-0 [&_[data-slot=button]>span]:sr-only [&_[data-slot=button]>.btn__icon]:not-sr-only [&_[data-slot=button]>.btn__icon]:inline-flex",\n              )}\n              data-slot="markdown-editor-actions"\n              data-icon-only={compactFixedActions ? "true" : "false"}\n            >\n              {toolbarActions}\n            </div>\n          ) : null}''',
+              '''          {resolvedToolbarActions && showAuthoringTools ? (\n            <div\n              className="ml-1 flex shrink-0 items-center gap-1 border-l pl-2"\n              data-slot="markdown-editor-actions"\n              data-icon-only={compactFixedActions ? "true" : "false"}\n            >\n              {resolvedToolbarActions}\n            </div>\n          ) : null}''',
+              "remove toolbar action DOM coupling",
+          )
+          source_path.write_text(source)
+
+          def make_product_density_aware(path_string: str, ternary: bool) -> None:
+              path = Path(path_string)
+              text = path.read_text()
+              text = replace_once(
+                  text,
+                  '''  type MarkdownEditorMode,\n  type MarkdownEditorRef,''',
+                  '''  type MarkdownEditorMode,\n  type MarkdownEditorRef,\n  type MarkdownEditorToolbarActionsContext,''',
+                  f"{path.name} toolbar context import",
+              )
+              if ternary:
+                  text = replace_once(
+                      text,
+                      '''  const aiToolbarActions = !readOnly ? (''',
+                      '''  const aiToolbarActions = !readOnly ? ({ compact }: MarkdownEditorToolbarActionsContext) => (''',
+                      f"{path.name} action renderer",
+                  )
+              else:
+                  text = replace_once(
+                      text,
+                      '''  const aiToolbarActions = (''',
+                      '''  const aiToolbarActions = ({ compact }: MarkdownEditorToolbarActionsContext) => (''',
+                      f"{path.name} action renderer",
+                  )
+
+              text = replace_once(
+                  text,
+                  '''            icon={<Sparkles />}\n            aria-label="AI 写作"\n          >\n            AI 写作\n          </Button>''',
+                  '''            icon={<Sparkles />}\n            aria-label="AI 写作"\n            title={compact ? "AI 写作" : undefined}\n            className={compact ? "size-8 px-0" : undefined}\n          >\n            {compact ? null : "AI 写作"}\n          </Button>''',
+                  f"{path.name} AI compact button",
+              )
+              text = replace_once(
+                  text,
+                  '''            icon={<ImageIcon />}\n            aria-label="插图"\n          >\n            插图\n          </Button>''',
+                  '''            icon={<ImageIcon />}\n            aria-label="插图"\n            title={compact ? "插图" : undefined}\n            className={compact ? "size-8 px-0" : undefined}\n          >\n            {compact ? null : "插图"}\n          </Button>''',
+                  f"{path.name} image compact button",
+              )
+              path.write_text(text)
+
+          make_product_density_aware("showcase/demos/products/blog-admin/post-editor.tsx", True)
+          make_product_density_aware("showcase/demos/products/blog-admin/page-editor.tsx", False)
 
           example_path = Path("showcase/demos/patterns/examples/markdown-editor.tsx")
           example = example_path.read_text()
           example = replace_once(
               example,
-              '''            icon={<Sparkles />}\n            onClick={() => editorRef.current?.insertText("AI 生成内容", { replaceSelection: true })}''',
-              '''            icon={<Sparkles />}\n            aria-label="AI 写作"\n            onClick={() => editorRef.current?.insertText("AI 生成内容", { replaceSelection: true })}''',
-              "AI action aria label",
+              '''  type MarkdownEditorRef,\n  type MarkdownHeadingLevel,''',
+              '''  type MarkdownEditorRef,\n  type MarkdownEditorToolbarActionsContext,\n  type MarkdownHeadingLevel,''',
+              "example toolbar context import",
           )
           example = replace_once(
               example,
-              '''            icon={<ImageIcon />}\n            onClick={() => editorRef.current?.insertText("![插图](/image.webp)", { replaceSelection: false })}''',
-              '''            icon={<ImageIcon />}\n            aria-label="插图"\n            onClick={() => editorRef.current?.insertText("![插图](/image.webp)", { replaceSelection: false })}''',
-              "image action aria label",
+              '''      toolbarActions={(\n        <>''',
+              '''      toolbarActions={({ compact }: MarkdownEditorToolbarActionsContext) => (\n        <>''',
+              "example density-aware renderer",
+          )
+          example = replace_once(
+              example,
+              '''            icon={<Sparkles />}\n            aria-label="AI 写作"\n            onClick={() => editorRef.current?.insertText("AI 生成内容", { replaceSelection: true })}\n          >\n            AI 写作\n          </Button>''',
+              '''            icon={<Sparkles />}\n            aria-label="AI 写作"\n            title={compact ? "AI 写作" : undefined}\n            className={compact ? "size-8 px-0" : undefined}\n            onClick={() => editorRef.current?.insertText("AI 生成内容", { replaceSelection: true })}\n          >\n            {compact ? null : "AI 写作"}\n          </Button>''',
+              "example AI compact button",
+          )
+          example = replace_once(
+              example,
+              '''            icon={<ImageIcon />}\n            aria-label="插图"\n            onClick={() => editorRef.current?.insertText("![插图](/image.webp)", { replaceSelection: false })}\n          >\n            插图\n          </Button>''',
+              '''            icon={<ImageIcon />}\n            aria-label="插图"\n            title={compact ? "插图" : undefined}\n            className={compact ? "size-8 px-0" : undefined}\n            onClick={() => editorRef.current?.insertText("![插图](/image.webp)", { replaceSelection: false })}\n          >\n            {compact ? null : "插图"}\n          </Button>''',
+              "example image compact button",
           )
           example_path.write_text(example)
+
+          test_path = Path("tests/pattern-markdown-editor-adaptive-toolbar.test.tsx")
+          test = test_path.read_text()
+          test = test.replace(
+              '''        toolbarActions={<button type="button">产品动作</button>}''',
+              '''        toolbarActions={({ compact }) => (\n          <button type="button" aria-label="产品动作">{compact ? null : "产品动作"}</button>\n        )}''',
+          )
+          test = replace_once(
+              test,
+              '''    expect(screen.getByRole("button", { name: "编辑" }).textContent).toBe("");\n    expect(screen.getByRole("button", { name: "预览" }).textContent).toBe("");''',
+              '''    expect(screen.getByRole("button", { name: "产品动作" }).textContent).toBe("");\n    expect(screen.getByRole("button", { name: "编辑" }).textContent).toBe("");\n    expect(screen.getByRole("button", { name: "预览" }).textContent).toBe("");''',
+              "compact product action assertion",
+          )
+          test = replace_once(
+              test,
+              '''      expect(toolbar.getAttribute("data-adaptive-density")).toBe("full");\n      expect(container.querySelectorAll('[data-slot="markdown-editor-primary-command"]')).toHaveLength(4);\n    });\n  });''',
+              '''      expect(toolbar.getAttribute("data-adaptive-density")).toBe("full");\n      expect(container.querySelectorAll('[data-slot="markdown-editor-primary-command"]')).toHaveLength(4);\n    });\n    expect(screen.getByRole("button", { name: "产品动作" }).textContent).toBe("产品动作");\n  });''',
+              "expanded product action assertion",
+          )
+          test_path.write_text(test)
+
+          docs_path = Path("showcase/demos/patterns/markdown-editor.tsx")
+          docs = docs_path.read_text()
+          docs = replace_once(
+              docs,
+              '''  { name: "toolbarActions", type: "ReactNode", description: "产品级工具扩展槽。AI 写作、插图、媒体库等业务动作通过这里注入，不是 MarkdownEditor 内建能力；响应式收缩时优先保留这些产品动作。" },''',
+              '''  { name: "toolbarActions", type: "ReactNode | ({ density, compact }) => ReactNode", description: "产品级工具扩展槽。需要参与紧凑态时使用 render callback，根据 compact / density 在文本按钮与 icon-only 之间切换；业务动作仍由产品拥有。" },''',
+              "toolbarActions API docs",
+          )
+          docs = replace_once(
+              docs,
+              '''产品注入的 toolbarActions 应为紧凑态提供可识别图标与 aria-label。''',
+              '''产品注入的 toolbarActions 应使用 density-aware render callback，为紧凑态显式提供可识别图标与 aria-label，而不是依赖 Pattern 猜测子节点 DOM。''',
+              "toolbar action contract docs",
+          )
+          docs_path.write_text(docs)
           PY
 
       - name: Commit implementation
@@ -63,6 +170,11 @@ jobs:
           git status --short
           git config user.name "Aben"
           git config user.email "5195693+rushairer@users.noreply.github.com"
-          git add src/patterns/markdown-editor.tsx showcase/demos/patterns/examples/markdown-editor.tsx
-          git commit -m "fix(patterns): keep compact toolbar action icons visible"
+          git add src/patterns/markdown-editor.tsx \
+            showcase/demos/patterns/markdown-editor.tsx \
+            showcase/demos/patterns/examples/markdown-editor.tsx \
+            showcase/demos/products/blog-admin/post-editor.tsx \
+            showcase/demos/products/blog-admin/page-editor.tsx \
+            tests/pattern-markdown-editor-adaptive-toolbar.test.tsx
+          git commit -m "refactor(patterns): make Markdown toolbar actions density-aware"
           git push origin HEAD:markdown-editor-icon-only-fallback
