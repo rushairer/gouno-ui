@@ -140,13 +140,16 @@ test("blog-admin-post-editor-narrow-preview-edit-roundtrip", async ({ page }) =>
     workspace: "blog-admin",
     brand: "blog-admin",
     fixture: "blog-admin-post-editor",
-    viewport: narrowTablet,
+    viewport: desktop,
     ready: '[data-slot="markdown-editor"]',
   });
 
   const editor = page.locator('[data-slot="markdown-editor"]').first();
   const toolbar = editor.locator('[data-slot="markdown-editor-toolbar"]');
   const modeSwitcher = editor.locator('[data-slot="markdown-editor-mode-switcher"]');
+
+  await page.setViewportSize(narrowTablet);
+  await page.waitForTimeout(100);
 
   await modeSwitcher.getByRole("button", { name: "预览" }).click();
   await expect(editor).toHaveAttribute("data-mode", "preview");
