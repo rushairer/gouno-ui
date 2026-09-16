@@ -131,10 +131,26 @@ export function ClientsPanel() {
             <TableRow key={client.id}>
               <TableCell className="min-w-56 whitespace-normal"><div className="font-semibold">{client.name}</div><code className="mt-1 block text-xs text-muted-foreground">{client.id}</code>{client.description ? <Text size="xs" tone="muted" className="mt-1">{client.description}</Text> : null}</TableCell>
               <TableCell><Tag color={client.confidential ? "warning" : "success"}>{client.confidential ? "Confidential" : "Public"}</Tag></TableCell>
-              <TableCell className="min-w-72 whitespace-normal"><div className="flex flex-col gap-2">{client.redirectUris.map((uri) => <div key={uri} className="flex items-center gap-2 rounded-md bg-muted/60 px-2 py-1.5"><code className="min-w-0 flex-1 truncate text-xs">{uri}</code><IconButton label={`复制 ${uri}`} size="small" icon={<Copy />} onClick={() => setStatus(`已复制 ${uri}（Showcase 模拟）。`)} /></div>)}</div></TableCell>
+              <TableCell className="min-w-72 whitespace-normal"><div className="flex flex-col gap-2">{client.redirectUris.map((uri) => <div key={uri} className="flex items-center gap-2 rounded-md bg-muted/60 px-2 py-1.5"><code className="min-w-0 flex-1 truncate text-xs">{uri}</code><IconButton label={`复制重定向 URI：${uri}`} size="small" icon={<Copy />} onClick={() => setStatus(`已复制 ${uri}（Showcase 模拟）。`)} /></div>)}</div></TableCell>
               <TableCell className="min-w-48 whitespace-normal"><div className="flex flex-wrap gap-1.5">{client.grants.map((grant) => <Tag key={grant}>{grant.replace("_", " ")}</Tag>)}</div></TableCell>
               <TableCell className="min-w-40 whitespace-normal"><div className="flex flex-wrap gap-1.5">{client.scopes.map((scope) => <Tag key={scope} color={scope === "admin" ? "warning" : "primary"}>{scope}</Tag>)}</div></TableCell>
-              <TableCell><div className="flex min-w-max flex-nowrap items-center justify-end gap-1"><IconButton label={`编辑 ${client.name}`} variant="ghost" icon={<Edit2 />} onClick={() => openEditor(client)} />{client.confidential ? <IconButton label={`轮换 ${client.name} 密钥`} variant="ghost" icon={<RotateCcw />} onClick={() => rotateSecret(client)} /> : null}<ConfirmAction label="删除" icon={<Trash2 />} title={`删除“${client.name}”？`} description="删除客户端会立即阻止新的授权流程；真实产品还会要求 Sudo/强认证。" confirmText="确认删除" onConfirm={() => { setClients((items) => items.filter((item) => item.id !== client.id)); setStatus(`客户端“${client.name}”已删除（Showcase 模拟）。`); }} /></div></TableCell>
+              <TableCell>
+                <div className="flex min-w-max flex-nowrap items-center justify-end gap-1">
+                  <IconButton label={`编辑 ${client.name}`} variant="ghost" icon={<Edit2 />} onClick={() => openEditor(client)} />
+                  {client.confidential ? (
+                    <ConfirmAction
+                      label="轮换密钥"
+                      icon={<RotateCcw />}
+                      title={`轮换“${client.name}”的客户端密钥？`}
+                      description="旧密钥将立即失效；真实产品会要求近期强认证，并只展示一次新密钥。"
+                      confirmText="确认轮换"
+                      color="primary"
+                      onConfirm={() => rotateSecret(client)}
+                    />
+                  ) : null}
+                  <ConfirmAction label="删除" icon={<Trash2 />} title={`删除“${client.name}”？`} description="删除客户端会立即阻止新的授权流程；真实产品还会要求 Sudo/强认证。" confirmText="确认删除" onConfirm={() => { setClients((items) => items.filter((item) => item.id !== client.id)); setStatus(`客户端“${client.name}”已删除（Showcase 模拟）。`); }} />
+                </div>
+              </TableCell>
             </TableRow>
           ))}</TableBody>
         </Table>
