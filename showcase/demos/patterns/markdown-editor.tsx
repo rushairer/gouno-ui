@@ -1,6 +1,7 @@
 import { Heading, Tag, Text } from "../../../src/core";
 import { ApiTable, type ApiRow } from "../../components/api-table";
 import { DemoSection } from "../../components/demo-section";
+import { MarkdownPreview } from "../../components/markdown-preview";
 import { canonicalExampleSource } from "../shared/example-source";
 import MarkdownEditorExample from "./examples/markdown-editor";
 import MarkdownEditorExampleSource from "./examples/markdown-editor.tsx?raw";
@@ -12,7 +13,7 @@ const propsApi: ApiRow[] = [
   { name: "defaultMode", type: '"edit" | "split" | "preview"', description: "非受控初始视图。", defaultValue: '"edit"' },
   { name: "onModeChange", type: "(mode) => void", description: "编辑 / 分屏 / 预览切换回调。" },
   { name: "onSelectionChange", type: "(selection) => void", description: "光标或选区变化回调；产品可据此决定 AI 的作用域。" },
-  { name: "renderPreview", type: "(value: string) => ReactNode", description: "预览渲染器。MarkdownEditor 不绑定具体 Markdown parser。" },
+  { name: "renderPreview", type: "(value: string) => ReactNode", description: "预览渲染器。MarkdownEditor 不绑定具体 Markdown parser；产品接入自己选定的 Markdown renderer。" },
   { name: "toolbarActions", type: "ReactNode", description: "产品级工具扩展槽。AI、插入媒体等业务动作通过这里注入，不是 MarkdownEditor 内建能力。" },
   { name: "placeholder", type: "string", description: "编辑区占位文本。" },
   { name: "readOnly", type: "boolean", description: "只读模式；隐藏格式工具并禁止写入。", defaultValue: "false" },
@@ -47,10 +48,10 @@ export function PatternMarkdownEditorDemo() {
 
       <DemoSection
         title="编辑、分屏、预览与产品扩展"
-        description="格式按钮修改 Markdown 文本；预览通过 renderPreview 注入。示例中的 AI / 插入只是 toolbarActions 自定义动作，用来展示产品如何扩展工具栏。"
+        description="格式按钮修改 Markdown 文本；预览通过 renderPreview 注入。当前 Demo 使用 Showcase 自己的 renderer 验证 Markdown 效果；复制示例到产品时替换为产品选定的 renderer。AI / 插入只是 toolbarActions 自定义动作。"
         code={canonicalExampleSource(MarkdownEditorExampleSource)}
       >
-        <MarkdownEditorExample />
+        <MarkdownEditorExample renderPreview={(markdown) => <MarkdownPreview value={markdown} />} />
       </DemoSection>
 
       <section className="space-y-4">
