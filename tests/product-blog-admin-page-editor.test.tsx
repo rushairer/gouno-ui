@@ -1,5 +1,5 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { BlogAdminPageEditorDemo } from "../showcase/demos/products/blog-admin/page-editor";
 
 afterEach(cleanup);
@@ -23,6 +23,8 @@ describe("Blog Admin PageEditor", () => {
     expect(screen.getByRole("button", { name: "编辑" }).getAttribute("aria-pressed")).toBe("true");
     expect(screen.getByRole("button", { name: "分屏" }).getAttribute("aria-pressed")).toBe("false");
     expect(screen.getByRole("button", { name: "预览" }).getAttribute("aria-pressed")).toBe("false");
+    expect(screen.getByRole("button", { name: "AI 写作" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "插图" })).toBeTruthy();
     expect(screen.queryByRole("option", { name: "定时发布" })).toBeNull();
     expect(screen.queryByText(/只读模式/)).toBeNull();
   });
@@ -139,30 +141,41 @@ describe("Blog Admin PageEditor", () => {
   });
 
   it("keeps writing and image generation inside MarkdownEditor tools", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText },
+    });
+
     render(<BlogAdminPageEditorDemo />);
 
     fireEvent.pointerDown(screen.getByRole("button", { name: "AI 写作" }), {
       button: 0,
       ctrlKey: false,
     });
+    expect(screen.queryByText("正文写作")).toBeNull();
     fireEvent.click(screen.getByRole("menuitem", { name: "继续写作" }));
-    expect(screen.getByRole("dialog", { name: "AI 写作助手" })).toBeTruthy();
+    expect(screen.getByRole("dialog", { name: "AI 写作" })).toBeTruthy();
     expect(document.querySelector('[data-slot="dialog-overlay"]')).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "生成 / 执行" }));
     expect(screen.getByText("生成结果预览")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "复制" }));
+    await waitFor(() => expect(writeText).toHaveBeenCalledWith(expect.stringContaining("我们相信什么")));
+    expect(screen.getByRole("dialog", { name: "AI 写作" })).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "追加到末尾" }));
     expect((screen.getByLabelText("单页正文 Markdown") as HTMLTextAreaElement).value).toContain("我们相信什么");
 
-    fireEvent.pointerDown(screen.getByRole("button", { name: "插入内容" }), {
+    fireEvent.pointerDown(screen.getByRole("button", { name: "插图" }), {
       button: 0,
       ctrlKey: false,
     });
-    fireEvent.click(screen.getByRole("menuitem", { name: "AI 生成图片" }));
-    expect(screen.getByRole("dialog", { name: "AI 生成图片" })).toBeTruthy();
+    expect(screen.queryByText("插入图片")).toBeNull();
+    fireEvent.click(screen.getByRole("menuitem", { name: "AI 生成配图" }));
+    expect(screen.getByRole("dialog", { name: "AI 配图" })).toBeTruthy();
     expect(document.querySelector('[data-slot="dialog-overlay"]')).toBeTruthy();
     fireEvent.change(screen.getByLabelText("生图提示词"), { target: { value: "Technology team illustration" } });
     fireEvent.change(screen.getByLabelText("图片描述 Alt"), { target: { value: "团队与开放技术" } });
-    fireEvent.click(screen.getByRole("button", { name: "开始生图" }));
+    fireEvent.click(screen.getByRole("button", { name: "生成图片" }));
     expect(screen.getByText("AI 生成插图预览")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "插入光标位置" }));
     await waitFor(() => {

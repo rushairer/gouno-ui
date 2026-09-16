@@ -105,6 +105,39 @@ describe("Document editor patterns", () => {
     expect(editorRef.current?.getSelection().text).toBe("beta");
   });
 
+  it("keeps lower-frequency Markdown commands in a compact overflow menu without losing selection", async () => {
+    const editorRef = createRef<MarkdownEditorRef>();
+
+    function Fixture() {
+      const [value, setValue] = useState("alpha\nbeta");
+      return <MarkdownEditor ref={editorRef} value={value} onChange={setValue} textareaAriaLabel="扩展 Markdown" />;
+    }
+
+    const runMoreCommand = async (name: string) => {
+      fireEvent.pointerDown(screen.getByRole("button", { name: "更多格式" }), {
+        button: 0,
+        ctrlKey: false,
+      });
+      fireEvent.click(screen.getByRole("menuitem", { name }));
+      await act(async () => Promise.resolve());
+    };
+
+    render(<Fixture />);
+    expect(screen.queryByRole("button", { name: "删除线" })).toBeNull();
+
+    editorRef.current?.setSelection(0, 5);
+    await runMoreCommand("删除线");
+    expect((screen.getByLabelText("扩展 Markdown") as HTMLTextAreaElement).value).toBe("~~alpha~~\nbeta");
+
+    editorRef.current?.setSelection(0, (screen.getByLabelText("扩展 Markdown") as HTMLTextAreaElement).value.length);
+    await runMoreCommand("无序列表");
+    expect((screen.getByLabelText("扩展 Markdown") as HTMLTextAreaElement).value).toBe("- ~~alpha~~\n- beta");
+
+    editorRef.current?.setSelection(2, 11);
+    await runMoreCommand("代码块");
+    expect((screen.getByLabelText("扩展 Markdown") as HTMLTextAreaElement).value).toContain("```text\n~~alpha~~\n```");
+  });
+
   it("inserts a complete Markdown link and selects the URL for immediate editing", async () => {
     const editorRef = createRef<MarkdownEditorRef>();
 
@@ -146,10 +179,12 @@ describe("Document editor patterns", () => {
     expect((screen.getByLabelText("块级 Markdown") as HTMLTextAreaElement).value).toBe("first line\n## second line");
 
     editorRef.current?.setSelection(13);
-    await act(async () => {
-      fireEvent.click(screen.getByRole("button", { name: "引用" }));
-      await Promise.resolve();
+    fireEvent.pointerDown(screen.getByRole("button", { name: "更多格式" }), {
+      button: 0,
+      ctrlKey: false,
     });
+    fireEvent.click(screen.getByRole("menuitem", { name: "引用" }));
+    await act(async () => Promise.resolve());
     expect((screen.getByLabelText("块级 Markdown") as HTMLTextAreaElement).value).toBe("first line\n> ## second line");
   });
 });

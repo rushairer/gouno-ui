@@ -6,13 +6,44 @@ import {
   type HTMLAttributes,
   type ReactNode,
 } from "react";
-import { Bold, Code2, Heading2, Italic, Link2, Quote } from "lucide-react";
+import {
+  Bold,
+  Code2,
+  Heading2,
+  Italic,
+  Link2,
+  List,
+  ListChecks,
+  ListOrdered,
+  Minus,
+  MoreHorizontal,
+  Quote,
+  Strikethrough,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../components/primitives/dropdown-menu";
 import { Button } from "../core/button";
 import { Textarea } from "../core/textarea";
 import { cn } from "../lib/utils";
 
 export type MarkdownEditorMode = "edit" | "split" | "preview";
-export type MarkdownEditorCommand = "heading" | "bold" | "italic" | "quote" | "code" | "link";
+export type MarkdownEditorCommand =
+  | "heading"
+  | "bold"
+  | "italic"
+  | "strikethrough"
+  | "quote"
+  | "unordered-list"
+  | "ordered-list"
+  | "task-list"
+  | "code"
+  | "code-block"
+  | "link"
+  | "horizontal-rule";
 
 export interface MarkdownEditorSelection {
   start: number;
@@ -55,17 +86,28 @@ const modeLabels: Record<MarkdownEditorMode, string> = {
   preview: "预览",
 };
 
-const commandMeta: readonly {
+type CommandItem = {
   command: MarkdownEditorCommand;
   label: string;
   icon: ReactNode;
-}[] = [
+};
+
+const primaryCommands: readonly CommandItem[] = [
   { command: "heading", label: "二级标题", icon: <Heading2 /> },
   { command: "bold", label: "加粗", icon: <Bold /> },
   { command: "italic", label: "斜体", icon: <Italic /> },
-  { command: "quote", label: "引用", icon: <Quote /> },
-  { command: "code", label: "行内代码", icon: <Code2 /> },
   { command: "link", label: "插入链接", icon: <Link2 /> },
+  { command: "code", label: "行内代码", icon: <Code2 /> },
+];
+
+const moreCommands: readonly CommandItem[] = [
+  { command: "strikethrough", label: "删除线", icon: <Strikethrough /> },
+  { command: "quote", label: "引用", icon: <Quote /> },
+  { command: "unordered-list", label: "无序列表", icon: <List /> },
+  { command: "ordered-list", label: "有序列表", icon: <ListOrdered /> },
+  { command: "task-list", label: "任务列表", icon: <ListChecks /> },
+  { command: "code-block", label: "代码块", icon: <Code2 /> },
+  { command: "horizontal-rule", label: "分隔线", icon: <Minus /> },
 ];
 
 type CommandTransform = {
@@ -93,6 +135,68 @@ function lineBounds(value: string, start: number, end: number) {
   return { replaceStart, replaceEnd };
 }
 
+function stripListPrefix(line: string) {
+  return line
+    .replace(/^\s*[-*+]\s+\[[ xX]\]\s+/, "")
+    .replace(/^\s*[-*+]\s+/, "")
+    .replace(/^\s*\d+[.)]\s+/, "");
+}
+
+function transformLineCommand(
+  command: "heading" | "quote" | "unordered-list" | "ordered-list" | "task-list",
+  value: string,
+  start: number,
+  end: number,
+): CommandTransform {
+  const { replaceStart, replaceEnd } = lineBounds(value, start, end);
+  const block = value.slice(replaceStart, replaceEnd);
+  const lines = block.split("\n");
+  let nextLines: string[];
+
+  if (command === "heading") {
+    nextLines = lines.map((line) => `## ${line.replace(/^#{1,6}\s+/, "") || "标题"}`);
+  } else if (command === "quote") {
+    nextLines = lines.every((line) => /^>\s?/.test(line))
+      ? lines.map((line) => line.replace(/^>\s?/, ""))
+      : lines.map((line) => `> ${line}`);
+  } else if (command === "unordered-list") {
+    nextLines = lines.every((line) => /^\s*[-*+]\s+/.test(line) && !/^\s*[-*+]\s+\[[ xX]\]\s+/.test(line))
+      ? lines.map((line) => line.replace(/^\s*[-*+]\s+/, ""))
+      : lines.map((line) => `- ${stripListPrefix(line) || "列表项"}`);
+  } else if (command === "ordered-list") {
+    nextLines = lines.every((line) => /^\s*\d+[.)]\s+/.test(line))
+      ? lines.map((line) => line.replace(/^\s*\d+[.)]\s+/, ""))
+      : lines.map((line, index) => `${index + 1}. ${stripListPrefix(line) || "列表项"}`);
+  } else {
+    nextLines = lines.every((line) => /^\s*[-*+]\s+\[[ xX]\]\s+/.test(line))
+      ? lines.map((line) => line.replace(/^\s*[-*+]\s+\[[ xX]\]\s+/, ""))
+      : lines.map((line) => `- [ ] ${stripListPrefix(line) || "任务项"}`);
+  }
+
+  const nextBlock = nextLines.join("\n");
+  const firstLine = nextLines[0] ?? "";
+  const firstPrefix =
+    command === "heading"
+      ? 3
+      : command === "quote"
+        ? firstLine.startsWith("> ")
+          ? 2
+          : 0
+        : command === "ordered-list"
+          ? firstLine.match(/^\d+[.)]\s+/)?.[0].length ?? 0
+          : command === "task-list"
+            ? firstLine.match(/^[-*+]\s+\[[ xX]\]\s+/)?.[0].length ?? 0
+            : firstLine.match(/^[-*+]\s+/)?.[0].length ?? 0;
+
+  return {
+    replaceStart,
+    replaceEnd,
+    value: nextBlock,
+    selectionStart: replaceStart + firstPrefix,
+    selectionEnd: replaceStart + nextBlock.length,
+  };
+}
+
 function transformCommand(
   command: MarkdownEditorCommand,
   value: string,
@@ -101,25 +205,14 @@ function transformCommand(
 ): CommandTransform {
   const selected = value.slice(start, end);
 
-  if (command === "heading" || command === "quote") {
-    const { replaceStart, replaceEnd } = lineBounds(value, start, end);
-    const block = value.slice(replaceStart, replaceEnd);
-    const lines = block.split("\n");
-    const nextLines = command === "heading"
-      ? lines.map((line) => `## ${line.replace(/^#{1,6}\s+/, "") || "标题"}`)
-      : lines.every((line) => line.startsWith("> "))
-        ? lines.map((line) => line.slice(2))
-        : lines.map((line) => `> ${line}`);
-    const nextBlock = nextLines.join("\n");
-    const firstPrefix = command === "heading" ? 3 : nextLines[0]?.startsWith("> ") ? 2 : 0;
-
-    return {
-      replaceStart,
-      replaceEnd,
-      value: nextBlock,
-      selectionStart: replaceStart + firstPrefix,
-      selectionEnd: replaceStart + nextBlock.length,
-    };
+  if (
+    command === "heading" ||
+    command === "quote" ||
+    command === "unordered-list" ||
+    command === "ordered-list" ||
+    command === "task-list"
+  ) {
+    return transformLineCommand(command, value, start, end);
   }
 
   if (command === "link") {
@@ -136,9 +229,34 @@ function transformCommand(
     };
   }
 
+  if (command === "code-block") {
+    const body = selected || "code";
+    const nextValue = `\`\`\`text\n${body}\n\`\`\``;
+    const bodyStart = start + 8;
+    return {
+      replaceStart: start,
+      replaceEnd: end,
+      value: nextValue,
+      selectionStart: bodyStart,
+      selectionEnd: bodyStart + body.length,
+    };
+  }
+
+  if (command === "horizontal-rule") {
+    const nextValue = "\n\n---\n\n";
+    return {
+      replaceStart: start,
+      replaceEnd: end,
+      value: nextValue,
+      selectionStart: start + nextValue.length,
+      selectionEnd: start + nextValue.length,
+    };
+  }
+
   const meta = {
     bold: { open: "**", close: "**", placeholder: "重点内容" },
     italic: { open: "*", close: "*", placeholder: "强调内容" },
+    strikethrough: { open: "~~", close: "~~", placeholder: "删除内容" },
     code: { open: "`", close: "`", placeholder: "code" },
   }[command];
   const body = selected || meta.placeholder;
@@ -176,6 +294,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
   ) {
     const [internalMode, setInternalMode] = useState<MarkdownEditorMode>(defaultMode);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const overflowSelectionRef = useRef<MarkdownEditorSelection | null>(null);
     const activeMode = mode ?? internalMode;
 
     const changeMode = (next: MarkdownEditorMode) => {
@@ -230,13 +349,12 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
       }),
     );
 
-    const runCommand = (command: MarkdownEditorCommand) => {
+    const runCommand = (command: MarkdownEditorCommand, savedSelection?: MarkdownEditorSelection | null) => {
       const textarea = textareaRef.current;
       if (!textarea || readOnly) return;
 
-      const start = textarea.selectionStart ?? 0;
-      const end = textarea.selectionEnd ?? start;
-      const transformed = transformCommand(command, value, start, end);
+      const selection = savedSelection ?? currentSelection();
+      const transformed = transformCommand(command, value, selection.start, selection.end);
       const next = `${value.slice(0, transformed.replaceStart)}${transformed.value}${value.slice(transformed.replaceEnd)}`;
       onChange(next);
 
@@ -288,8 +406,8 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
           data-slot="markdown-editor-toolbar"
         >
           {!readOnly && activeMode !== "preview" ? (
-            <div className="flex flex-wrap items-center gap-0.5" aria-label="Markdown 格式工具">
-              {commandMeta.map((item) => (
+            <div className="flex shrink-0 items-center gap-0.5" aria-label="Markdown 格式工具">
+              {primaryCommands.map((item) => (
                 <Button
                   key={item.command}
                   type="button"
@@ -304,16 +422,47 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
                   <span className="sr-only">{item.label}</span>
                 </Button>
               ))}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    type="button"
+                    size="small"
+                    variant="text"
+                    icon={<MoreHorizontal />}
+                    aria-label="更多格式"
+                    title="更多格式"
+                    onPointerDown={() => {
+                      overflowSelectionRef.current = currentSelection();
+                    }}
+                  >
+                    <span className="sr-only">更多格式</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-40">
+                  {moreCommands.map((item) => (
+                    <DropdownMenuItem
+                      key={item.command}
+                      onSelect={() => {
+                        runCommand(item.command, overflowSelectionRef.current);
+                        overflowSelectionRef.current = null;
+                      }}
+                    >
+                      <span className="mr-2 inline-flex size-4 items-center justify-center">{item.icon}</span>
+                      {item.label}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           ) : null}
 
           {toolbarActions ? (
-            <div className="ml-1 flex flex-wrap items-center gap-1 border-l pl-2" data-slot="markdown-editor-actions">
+            <div className="ml-1 flex shrink-0 items-center gap-1 border-l pl-2" data-slot="markdown-editor-actions">
               {toolbarActions}
             </div>
           ) : null}
 
-          <div className="ml-auto flex items-center gap-0.5 rounded-md bg-muted/60 p-0.5" aria-label="编辑器视图">
+          <div className="ml-auto flex shrink-0 items-center gap-0.5 rounded-md bg-muted/60 p-0.5" aria-label="编辑器视图">
             {(["edit", "split", "preview"] as const).map((nextMode) => (
               <Button
                 key={nextMode}
