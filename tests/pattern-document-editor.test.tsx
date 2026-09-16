@@ -57,6 +57,37 @@ describe("Document editor patterns", () => {
     expect(screen.getByLabelText("测试预览")).toBeTruthy();
   });
 
+  it("treats formatting and injected toolbar actions as authoring tools in edit and split only", () => {
+    const { container } = render(
+      <MarkdownEditor
+        value="## 标题\n\n正文"
+        onChange={() => undefined}
+        toolbarActions={<button type="button">产品动作</button>}
+        renderPreview={(markdown) => <article>{markdown}</article>}
+        textareaAriaLabel="工具状态 Markdown"
+        previewAriaLabel="工具状态预览"
+      />,
+    );
+
+    expect(screen.getByLabelText("Markdown 格式工具")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "产品动作" })).toBeTruthy();
+    expect(container.querySelector('[data-slot="markdown-editor-actions"]')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "分屏" }));
+    expect(screen.getByLabelText("Markdown 格式工具")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "产品动作" })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "预览" }));
+    expect(screen.queryByLabelText("Markdown 格式工具")).toBeNull();
+    expect(screen.queryByRole("button", { name: "产品动作" })).toBeNull();
+    expect(container.querySelector('[data-slot="markdown-editor-actions"]')).toBeNull();
+    expect(screen.getByLabelText("编辑器视图")).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "编辑" }));
+    expect(screen.getByLabelText("Markdown 格式工具")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "产品动作" })).toBeTruthy();
+  });
+
   it("exposes selection and insertion commands without owning product actions", () => {
     const editorRef = createRef<MarkdownEditorRef>();
 
@@ -186,6 +217,10 @@ describe("Document editor patterns", () => {
         ctrlKey: false,
       });
     };
+
+    const paragraphButton = screen.getByRole("button", { name: "段落样式：正文" });
+    expect(paragraphButton.querySelectorAll("svg")).toHaveLength(1);
+    expect(paragraphButton.getAttribute("data-size")).toBe("sm");
 
     openHeadingMenu("段落样式：正文");
     expect(screen.queryByRole("menuitem", { name: /一级标题/ })).toBeNull();
