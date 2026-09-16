@@ -1,6 +1,11 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { createRef, useState } from "react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { DocumentEditorShell, MarkdownEditor } from "../src/patterns";
+import {
+  DocumentEditorShell,
+  MarkdownEditor,
+  type MarkdownEditorRef,
+} from "../src/patterns";
 
 afterEach(cleanup);
 
@@ -50,5 +55,28 @@ describe("Document editor patterns", () => {
     fireEvent.click(screen.getByRole("button", { name: "预览" }));
     expect(screen.queryByLabelText("测试 Markdown")).toBeNull();
     expect(screen.getByLabelText("测试预览")).toBeTruthy();
+  });
+
+  it("exposes selection and insertion commands without owning product actions", () => {
+    const editorRef = createRef<MarkdownEditorRef>();
+
+    function Fixture() {
+      const [value, setValue] = useState("hello world");
+      return (
+        <MarkdownEditor
+          ref={editorRef}
+          value={value}
+          onChange={setValue}
+          textareaAriaLabel="命令 Markdown"
+        />
+      );
+    }
+
+    render(<Fixture />);
+    editorRef.current?.setSelection(6, 11);
+    expect(editorRef.current?.getSelection().text).toBe("world");
+
+    act(() => editorRef.current?.insertText("Gouno"));
+    expect((screen.getByLabelText("命令 Markdown") as HTMLTextAreaElement).value).toBe("hello Gouno");
   });
 });
