@@ -67,16 +67,89 @@ describe("Document editor patterns", () => {
           ref={editorRef}
           value={value}
           onChange={setValue}
+          toolbarActions={<button type="button">产品动作</button>}
           textareaAriaLabel="命令 Markdown"
         />
       );
     }
 
-    render(<Fixture />);
+    const { container } = render(<Fixture />);
     editorRef.current?.setSelection(6, 11);
     expect(editorRef.current?.getSelection().text).toBe("world");
+    expect(container.querySelector('[data-slot="markdown-editor-actions"]')).toContainElement(
+      screen.getByRole("button", { name: "产品动作" }),
+    );
 
     act(() => editorRef.current?.insertText("Gouno"));
     expect((screen.getByLabelText("命令 Markdown") as HTMLTextAreaElement).value).toBe("hello Gouno");
+  });
+
+  it("wraps the active selection in italic markers", async () => {
+    const editorRef = createRef<MarkdownEditorRef>();
+
+    function Fixture() {
+      const [value, setValue] = useState("alpha beta");
+      return <MarkdownEditor ref={editorRef} value={value} onChange={setValue} textareaAriaLabel="斜体 Markdown" />;
+    }
+
+    render(<Fixture />);
+    editorRef.current?.setSelection(6, 10);
+
+    await act(async () => {
+      fireEvent.mouseDown(screen.getByRole("button", { name: "斜体" }));
+      fireEvent.click(screen.getByRole("button", { name: "斜体" }));
+      await Promise.resolve();
+    });
+
+    expect((screen.getByLabelText("斜体 Markdown") as HTMLTextAreaElement).value).toBe("alpha *beta*");
+    expect(editorRef.current?.getSelection().text).toBe("beta");
+  });
+
+  it("inserts a complete Markdown link and selects the URL for immediate editing", async () => {
+    const editorRef = createRef<MarkdownEditorRef>();
+
+    function Fixture() {
+      const [value, setValue] = useState("alpha beta");
+      return <MarkdownEditor ref={editorRef} value={value} onChange={setValue} textareaAriaLabel="链接 Markdown" />;
+    }
+
+    render(<Fixture />);
+    editorRef.current?.setSelection(6, 10);
+
+    await act(async () => {
+      fireEvent.mouseDown(screen.getByRole("button", { name: "插入链接" }));
+      fireEvent.click(screen.getByRole("button", { name: "插入链接" }));
+      await Promise.resolve();
+    });
+
+    expect((screen.getByLabelText("链接 Markdown") as HTMLTextAreaElement).value).toBe(
+      "alpha [beta](https://example.com)",
+    );
+    expect(editorRef.current?.getSelection().text).toBe("https://example.com");
+  });
+
+  it("applies heading and quote commands to the current line instead of corrupting inline text", async () => {
+    const editorRef = createRef<MarkdownEditorRef>();
+
+    function Fixture() {
+      const [value, setValue] = useState("first line\nsecond line");
+      return <MarkdownEditor ref={editorRef} value={value} onChange={setValue} textareaAriaLabel="块级 Markdown" />;
+    }
+
+    render(<Fixture />);
+    editorRef.current?.setSelection(13);
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: "二级标题" }));
+      await Promise.resolve();
+    });
+    expect((screen.getByLabelText("块级 Markdown") as HTMLTextAreaElement).value).toBe("first line\n## second line");
+
+    editorRef.current?.setSelection(13);
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: "引用" }));
+      await Promise.resolve();
+    });
+    expect((screen.getByLabelText("块级 Markdown") as HTMLTextAreaElement).value).toBe("first line\n> ## second line");
   });
 });
