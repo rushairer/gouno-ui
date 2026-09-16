@@ -42,40 +42,23 @@ jobs:
           Path('/tmp/apply-editor-ai-ux.sh').write_text('\n'.join(shell) + '\n')
           PY
           bash /tmp/apply-editor-ai-ux.sh
+          sed -i 's/<TooltipContent side="right" className="max-w-80">/<TooltipContent className="max-w-80">/' showcase/demos/products/blog-admin/post-editor.tsx
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Capture verification diagnostics
+      - name: Verify source and tests
         run: |
-          set +e
-          : > /tmp/editor-ai-ux-verify.log
-          status=0
-          for command in \
-            "npm run lint:microcopy" \
-            "npm run lint:parity" \
-            "npm run typecheck" \
-            "npm test" \
-            "npm run build" \
-            "npm run showcase:build" \
-            "npm run package:check"
-          do
-            echo "===== $command =====" | tee -a /tmp/editor-ai-ux-verify.log
-            bash -lc "$command" 2>&1 | tee -a /tmp/editor-ai-ux-verify.log
-            code=${PIPESTATUS[0]}
-            echo "exit=$code" | tee -a /tmp/editor-ai-ux-verify.log
-            if [ "$code" -ne 0 ]; then
-              status=$code
-              break
-            fi
-          done
-          echo "FINAL_STATUS=$status" | tee -a /tmp/editor-ai-ux-verify.log
-          exit 0
+          npm run lint:microcopy
+          npm run lint:parity
+          npm run typecheck
+          npm test
+          npm run build
+          npm run showcase:build
+          npm run package:check
 
-      - name: Commit patched source and diagnostics for inspection
+      - name: Commit verified editor UX changes
         run: |
-          mkdir -p diagnostics
-          cp /tmp/editor-ai-ux-verify.log diagnostics/editor-ai-suggestion-ux.log
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add src/patterns/ai-suggestions.tsx src/patterns/index.ts \
@@ -84,7 +67,6 @@ jobs:
             tests/pattern-ai-suggestions.test.tsx \
             tests/product-blog-admin-post-editor.test.tsx \
             tests/product-blog-admin-page-editor.test.tsx \
-            docs/api-conformance.md docs/abstraction-register.md \
-            diagnostics/editor-ai-suggestion-ux.log
-          git commit -m "feat(blog-admin): stage unified AI suggestion UX"
+            docs/api-conformance.md docs/abstraction-register.md
+          git commit -m "feat(blog-admin): unify editor AI suggestion UX"
           git push origin HEAD:feat/editor-ai-suggestion-ux
