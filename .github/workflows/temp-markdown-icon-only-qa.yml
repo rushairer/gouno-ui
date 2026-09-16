@@ -1,4 +1,4 @@
-# QA rerun with explicit compact icon visibility assertions
+# QA rerun for density-aware toolbarActions contract
 name: Temp Markdown Icon-only QA
 
 on:
@@ -116,7 +116,7 @@ jobs:
           const previewButton = editor.getByRole('button', { name: '预览' });
           for (const button of [aiButton, imageButton, editButton, previewButton]) {
             const box = await button.boundingBox();
-            assert.ok(box && box.width <= 36, `expected icon-only button width <= 36, got ${box?.width}`);
+            assert.ok(box && box.width >= 28 && box.width <= 36, `expected icon-only button width 28..36, got ${box?.width}`);
           }
 
           for (const actionButton of [aiButton, imageButton]) {
@@ -124,10 +124,9 @@ jobs:
             const iconBox = await icon.boundingBox();
             assert.ok(await icon.isVisible(), 'expected injected action icon to remain visible');
             assert.ok(iconBox && iconBox.width >= 12 && iconBox.height >= 12, `expected visible injected action icon, got ${JSON.stringify(iconBox)}`);
+            assert.equal(await actionButton.locator('span:not(.btn__icon)').count(), 0, 'expected product action text to be absent in icon mode');
           }
 
-          const labelBox = await aiButton.locator('span:not(.btn__icon)').boundingBox();
-          assert.ok(labelBox && labelBox.width <= 2 && labelBox.height <= 2, `expected visually hidden AI label, got ${JSON.stringify(labelBox)}`);
           const iconToolbarBox = await toolbar.boundingBox();
           assert.ok(iconToolbarBox && iconToolbarBox.height <= 52, `expected one-line icon toolbar, got ${iconToolbarBox?.height}`);
 
@@ -143,6 +142,8 @@ jobs:
           assert.equal(await toolbar.getAttribute('data-adaptive-density'), 'full');
           assert.equal(await toolbar.getAttribute('data-adaptive-wrap'), 'false');
           assert.equal(await editor.locator('[data-slot="markdown-editor-primary-command"]').count(), 4);
+          assert.match(await aiButton.textContent(), /AI 写作/);
+          assert.match(await imageButton.textContent(), /插图/);
 
           console.log('IGNORED_404_RESOURCES', JSON.stringify(resource404s));
           assert.deepEqual(relevantErrors, []);
