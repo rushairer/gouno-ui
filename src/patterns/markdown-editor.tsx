@@ -465,12 +465,10 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
       const toolbar = toolbarRef.current;
       if (!toolbar || typeof ResizeObserver === "undefined") return;
 
-      const observed = [
-        toolbar,
-        toolbarActionsRef.current,
-        modeSwitcherRef.current,
-        headingTriggerRef.current,
-      ].filter((element): element is Element => Boolean(element));
+      const observed: Element[] = [toolbar];
+      if (toolbarActionsRef.current) observed.push(toolbarActionsRef.current);
+      if (modeSwitcherRef.current) observed.push(modeSwitcherRef.current);
+      if (headingTriggerRef.current) observed.push(headingTriggerRef.current);
       const widths = new Map<Element, number>();
       observed.forEach((element) => widths.set(element, element.getBoundingClientRect().width));
 
