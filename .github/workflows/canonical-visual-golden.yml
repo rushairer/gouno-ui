@@ -1,0 +1,65 @@
+name: Canonical Visual Golden Smoke
+
+on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "showcase/**"
+      - "scripts/check-parity-maintenance-contract.mjs"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/canonical-visual-golden.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "showcase/**"
+      - "scripts/check-parity-maintenance-contract.mjs"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/canonical-visual-golden.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: canonical-visual-golden-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  golden:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install repository dependencies
+        run: npm ci
+
+      - name: Install isolated Playwright runtime
+        run: |
+          PLAYWRIGHT_VERSION=1.55.0
+          npm install --no-save --ignore-scripts @playwright/test@${PLAYWRIGHT_VERSION}
+          npx playwright install --with-deps chromium
+
+      - name: Compare canonical fixtures with visual goldens
+        run: npx playwright test --config=showcase/e2e/canonical-visual-golden.config.mjs
+
+      - name: Upload visual golden evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: gouno-ui-canonical-visual-golden-${{ github.run_id }}
+          path: |
+            playwright-report-canonical-visual-golden
+            test-results/canonical-visual-golden
+          if-no-files-found: ignore
+          retention-days: 14

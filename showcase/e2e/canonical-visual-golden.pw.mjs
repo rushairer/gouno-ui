@@ -102,24 +102,28 @@ const scenarios = [
   },
 ];
 
+async function prepareLightFixture(page, scenario) {
+  await page.setViewportSize(scenario.viewport);
+  await page.addInitScript(() => {
+    localStorage.setItem("gouno-ui-showcase:theme", "light");
+  });
+
+  await page.goto(
+    `/?embedded=1&workspace=${scenario.workspace}&brand=${scenario.brand}#${scenario.fixture}`,
+    { waitUntil: "networkidle" },
+  );
+
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await expect(page.locator("html")).toHaveAttribute("data-brand", scenario.brand);
+  await expect(page.locator(scenario.ready).first()).toBeVisible();
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+  });
+}
+
 for (const scenario of scenarios) {
   test(scenario.name, async ({ page }) => {
-    await page.setViewportSize(scenario.viewport);
-    await page.addInitScript(() => {
-      localStorage.setItem("gouno-ui-showcase:theme", "light");
-    });
-
-    await page.goto(
-      `/?embedded=1&workspace=${scenario.workspace}&brand=${scenario.brand}#${scenario.fixture}`,
-      { waitUntil: "networkidle" },
-    );
-
-    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
-    await expect(page.locator("html")).toHaveAttribute("data-brand", scenario.brand);
-    await expect(page.locator(scenario.ready).first()).toBeVisible();
-    await page.evaluate(async () => {
-      await document.fonts.ready;
-    });
+    await prepareLightFixture(page, scenario);
 
     await expect(page).toHaveScreenshot(`${scenario.name}.png`, {
       fullPage: true,
@@ -129,3 +133,18 @@ for (const scenario of scenarios) {
     });
   });
 }
+
+test("gosso-account-settings-mfa-tab-interaction", async ({ page }) => {
+  const scenario = scenarios.find(
+    ({ name }) => name === "gosso-account-settings-desktop-light",
+  );
+  expect(scenario).toBeTruthy();
+  await prepareLightFixture(page, scenario);
+
+  const profileTab = page.getByRole("tab", { name: /个人资料/ });
+  const mfaTab = page.getByRole("tab", { name: /MFA/ });
+  await expect(profileTab).toHaveAttribute("aria-selected", "true");
+  await mfaTab.click();
+  await expect(mfaTab).toHaveAttribute("aria-selected", "true");
+  await expect(page.locator('[data-slot="card"]').first()).toBeVisible();
+});
