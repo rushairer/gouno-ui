@@ -105,7 +105,7 @@ describe("Document editor patterns", () => {
     expect(editorRef.current?.getSelection().text).toBe("beta");
   });
 
-  it("supports strikethrough, lists and fenced code as built-in authoring commands", async () => {
+  it("keeps lower-frequency Markdown commands in a compact overflow menu without losing selection", async () => {
     const editorRef = createRef<MarkdownEditorRef>();
 
     function Fixture() {
@@ -113,20 +113,28 @@ describe("Document editor patterns", () => {
       return <MarkdownEditor ref={editorRef} value={value} onChange={setValue} textareaAriaLabel="扩展 Markdown" />;
     }
 
+    const runMoreCommand = async (name: string) => {
+      fireEvent.pointerDown(screen.getByRole("button", { name: "更多格式" }), {
+        button: 0,
+        ctrlKey: false,
+      });
+      fireEvent.click(screen.getByRole("menuitem", { name }));
+      await act(async () => Promise.resolve());
+    };
+
     render(<Fixture />);
+    expect(screen.queryByRole("button", { name: "删除线" })).toBeNull();
+
     editorRef.current?.setSelection(0, 5);
-    fireEvent.click(screen.getByRole("button", { name: "删除线" }));
-    await act(async () => Promise.resolve());
+    await runMoreCommand("删除线");
     expect((screen.getByLabelText("扩展 Markdown") as HTMLTextAreaElement).value).toBe("~~alpha~~\nbeta");
 
     editorRef.current?.setSelection(0, (screen.getByLabelText("扩展 Markdown") as HTMLTextAreaElement).value.length);
-    fireEvent.click(screen.getByRole("button", { name: "无序列表" }));
-    await act(async () => Promise.resolve());
+    await runMoreCommand("无序列表");
     expect((screen.getByLabelText("扩展 Markdown") as HTMLTextAreaElement).value).toBe("- ~~alpha~~\n- beta");
 
     editorRef.current?.setSelection(2, 11);
-    fireEvent.click(screen.getByRole("button", { name: "代码块" }));
-    await act(async () => Promise.resolve());
+    await runMoreCommand("代码块");
     expect((screen.getByLabelText("扩展 Markdown") as HTMLTextAreaElement).value).toContain("```text\n~~alpha~~\n```");
   });
 
@@ -171,10 +179,12 @@ describe("Document editor patterns", () => {
     expect((screen.getByLabelText("块级 Markdown") as HTMLTextAreaElement).value).toBe("first line\n## second line");
 
     editorRef.current?.setSelection(13);
-    await act(async () => {
-      fireEvent.click(screen.getByRole("button", { name: "引用" }));
-      await Promise.resolve();
+    fireEvent.pointerDown(screen.getByRole("button", { name: "更多格式" }), {
+      button: 0,
+      ctrlKey: false,
     });
+    fireEvent.click(screen.getByRole("menuitem", { name: "引用" }));
+    await act(async () => Promise.resolve());
     expect((screen.getByLabelText("块级 Markdown") as HTMLTextAreaElement).value).toBe("first line\n> ## second line");
   });
 });
