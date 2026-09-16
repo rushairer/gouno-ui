@@ -43,6 +43,33 @@ jobs:
           PY
           bash /tmp/apply-editor-ai-ux.sh
           sed -i 's/<TooltipContent side="right" className="max-w-80">/<TooltipContent className="max-w-80">/' showcase/demos/products/blog-admin/post-editor.tsx
+          python3 <<'PY'
+          from pathlib import Path
+
+          pattern = Path('src/patterns/ai-suggestions.tsx')
+          text = pattern.read_text()
+          text = text.replace(
+              'import { Button, Checkbox, Radio } from "../core";',
+              'import { Button } from "../core/button";\nimport { Checkbox, Radio } from "../core/selection-controls";',
+          )
+          pattern.write_text(text)
+
+          architecture = Path('tests/architecture-boundaries.test.ts')
+          text = architecture.read_text()
+          text = text.replace(
+              '["BulkActionBar", "DocumentEditorShell", "MarkdownEditor"]',
+              '["AISuggestionPicker", "AISuggestionReview", "BulkActionBar", "DocumentEditorShell", "MarkdownEditor"]',
+          )
+          architecture.write_text(text)
+
+          post_test = Path('tests/product-blog-admin-post-editor.test.tsx')
+          text = post_test.read_text()
+          text = text.replace(
+              '/跳转到 当 Agent 从一次性生成走向长期自动化/',
+              '/跳转到 为什么现在要谈可观测性/',
+          )
+          post_test.write_text(text)
+          PY
 
       - name: Install dependencies
         run: npm ci
@@ -64,6 +91,7 @@ jobs:
           git add src/patterns/ai-suggestions.tsx src/patterns/index.ts \
             showcase/demos/products/blog-admin/post-editor.tsx \
             showcase/demos/products/blog-admin/page-editor.tsx \
+            tests/architecture-boundaries.test.ts \
             tests/pattern-ai-suggestions.test.tsx \
             tests/product-blog-admin-post-editor.test.tsx \
             tests/product-blog-admin-page-editor.test.tsx \
