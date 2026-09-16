@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 
 const desktop = { width: 1440, height: 900 };
 const mobile = { width: 390, height: 844 };
+const narrowTablet = { width: 782, height: 1360 };
 
 const scenarios = [
   {
@@ -133,6 +134,55 @@ for (const scenario of scenarios) {
     });
   });
 }
+
+test("blog-admin-post-editor-narrow-preview-edit-roundtrip", async ({ page }) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-post-editor",
+    viewport: narrowTablet,
+    ready: '[data-slot="markdown-editor"]',
+  });
+
+  const editor = page.locator('[data-slot="markdown-editor"]').first();
+  const toolbar = editor.locator('[data-slot="markdown-editor-toolbar"]');
+  const modeSwitcher = editor.locator('[data-slot="markdown-editor-mode-switcher"]');
+
+  await modeSwitcher.getByRole("button", { name: "预览" }).click();
+  await expect(editor).toHaveAttribute("data-mode", "preview");
+  await modeSwitcher.getByRole("button", { name: "编辑" }).click();
+  await expect(editor).toHaveAttribute("data-mode", "edit");
+  await page.waitForTimeout(100);
+
+  const geometry = await toolbar.evaluate((element) => {
+    const toolbarRect = element.getBoundingClientRect();
+    return {
+      clientWidth: element.clientWidth,
+      scrollWidth: element.scrollWidth,
+      density: element.getAttribute("data-adaptive-density"),
+      wrap: element.getAttribute("data-adaptive-wrap"),
+      toolbar: { left: toolbarRect.left, right: toolbarRect.right, width: toolbarRect.width },
+      children: Array.from(element.children).map((child) => {
+        const rect = child.getBoundingClientRect();
+        return {
+          slot: child.getAttribute("data-slot"),
+          left: rect.left,
+          right: rect.right,
+          width: rect.width,
+        };
+      }),
+    };
+  });
+  console.log("MARKDOWN_EDITOR_NARROW_GEOMETRY", JSON.stringify(geometry));
+
+  const [toolbarBox, modeBox] = await Promise.all([
+    toolbar.boundingBox(),
+    modeSwitcher.boundingBox(),
+  ]);
+  expect(toolbarBox).toBeTruthy();
+  expect(modeBox).toBeTruthy();
+  expect(modeBox.x + modeBox.width).toBeLessThanOrEqual(toolbarBox.x + toolbarBox.width + 1);
+});
 
 test("gosso-account-settings-mfa-tab-interaction", async ({ page }) => {
   const scenario = scenarios.find(
