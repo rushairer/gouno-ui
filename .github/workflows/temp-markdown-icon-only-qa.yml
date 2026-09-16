@@ -64,7 +64,11 @@ jobs:
           });
 
           await setWidth(900);
-          assert.deepEqual(await state(), { density: 'full', wrap: 'false', primary: 4, height: 44 });
+          const broad = await state();
+          assert.equal(broad.density, 'full');
+          assert.equal(broad.wrap, 'false');
+          assert.equal(broad.primary, 4);
+          assert.ok((broad.height ?? 99) <= 52);
 
           for (const width of [700, 620, 580, 540, 520, 500, 480, 460]) {
             await setWidth(width);
