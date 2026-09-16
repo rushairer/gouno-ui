@@ -1,6 +1,7 @@
 import {
   forwardRef,
   useImperativeHandle,
+  useLayoutEffect,
   useRef,
   useState,
   type HTMLAttributes,
@@ -24,6 +25,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../components/primitives/dropdown-menu";
 import { Button } from "../core/button";
@@ -104,6 +106,8 @@ type CommandItem = {
   icon: ReactNode;
 };
 
+// Display order also expresses collapse priority: lower-priority commands at the end
+// move into the overflow menu first when the toolbar runs out of inline space.
 const primaryCommands: readonly CommandItem[] = [
   { command: "bold", label: "加粗", icon: <Bold /> },
   { command: "italic", label: "斜体", icon: <Italic /> },
@@ -340,12 +344,21 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
     const [activeHeadingLevel, setActiveHeadingLevel] = useState<MarkdownHeadingLevel | null>(() =>
       headingLevelAt(value, 0),
     );
+    const [visiblePrimaryCount, setVisiblePrimaryCount] = useState(primaryCommands.length);
+    const [allowToolbarWrap, setAllowToolbarWrap] = useState(false);
+    const [toolbarLayoutEpoch, setToolbarLayoutEpoch] = useState(0);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const toolbarRef = useRef<HTMLDivElement>(null);
+    const toolbarActionsRef = useRef<HTMLDivElement>(null);
+    const modeSwitcherRef = useRef<HTMLDivElement>(null);
+    const headingTriggerRef = useRef<HTMLButtonElement>(null);
     const headingSelectionRef = useRef<MarkdownEditorSelection | null>(null);
     const overflowSelectionRef = useRef<MarkdownEditorSelection | null>(null);
     const activeMode = mode ?? internalMode;
     const activeBlockLabel = activeHeadingLevel ? `H${activeHeadingLevel}` : "正文";
     const showAuthoringTools = !readOnly && activeMode !== "preview";
+    const visiblePrimaryCommands = primaryCommands.slice(0, visiblePrimaryCount);
+    const overflowPrimaryCommands = primaryCommands.slice(visiblePrimaryCount);
 
     const changeMode = (next: MarkdownEditorMode) => {
       if (mode === undefined) setInternalMode(next);
@@ -428,6 +441,65 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
       applyTransform(transformHeading(value, selection.start, selection.end, level));
     };
 
+    // Compact only the built-in primary formatting actions. Product-injected actions and
+    // the edit/split/preview switch stay stable; if even the compacted toolbar cannot fit,
+    // normal wrapping remains the final fallback for extremely narrow containers.
+    useLayoutEffect(() => {
+      if (!showAuthoringTools || allowToolbarWrap) return;
+      const toolbar = toolbarRef.current;
+      if (!toolbar) return;
+      if (toolbar.scrollWidth <= toolbar.clientWidth + 1) return;
+
+      if (visiblePrimaryCount > 0) {
+        setVisiblePrimaryCount((count) => Math.max(0, count - 1));
+        return;
+      }
+
+      setAllowToolbarWrap(true);
+    }, [allowToolbarWrap, showAuthoringTools, toolbarLayoutEpoch, visiblePrimaryCount]);
+
+    // Re-expand first, then compact against the new geometry whenever the container or one
+    // of the fixed toolbar regions changes width. Width-only comparison avoids reacting to
+    // the height change caused by the final wrapping fallback.
+    useLayoutEffect(() => {
+      const toolbar = toolbarRef.current;
+      if (!toolbar || typeof ResizeObserver === "undefined") return;
+
+      const observed = [
+        toolbar,
+        toolbarActionsRef.current,
+        modeSwitcherRef.current,
+        headingTriggerRef.current,
+      ].filter((element): element is Element => Boolean(element));
+      const widths = new Map<Element, number>();
+      observed.forEach((element) => widths.set(element, element.getBoundingClientRect().width));
+
+      const observer = new ResizeObserver((entries) => {
+        let widthChanged = false;
+        entries.forEach((entry) => {
+          const previous = widths.get(entry.target);
+          const next = entry.contentRect.width;
+          widths.set(entry.target, next);
+          if (previous !== undefined && Math.abs(previous - next) > 0.5) widthChanged = true;
+        });
+        if (!widthChanged) return;
+
+        setAllowToolbarWrap(false);
+        setVisiblePrimaryCount(primaryCommands.length);
+        setToolbarLayoutEpoch((epoch) => epoch + 1);
+      });
+
+      observed.forEach((element) => observer.observe(element));
+      return () => observer.disconnect();
+    }, [showAuthoringTools]);
+
+    useLayoutEffect(() => {
+      if (!showAuthoringTools) return;
+      setAllowToolbarWrap(false);
+      setVisiblePrimaryCount(primaryCommands.length);
+      setToolbarLayoutEpoch((epoch) => epoch + 1);
+    }, [showAuthoringTools]);
+
     const editor = (
       <Textarea
         ref={textareaRef}
@@ -474,16 +546,27 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
         data-mode={activeMode}
       >
         <div
-          className="flex min-h-11 flex-wrap items-center gap-1 border-b bg-muted/20 px-2 py-1.5"
+          ref={toolbarRef}
+          className={cn(
+            "flex min-h-11 items-center gap-1 border-b bg-muted/20 px-2 py-1.5",
+            allowToolbarWrap ? "flex-wrap" : "flex-nowrap",
+          )}
           role="toolbar"
           aria-label="Markdown 编辑工具栏"
           data-slot="markdown-editor-toolbar"
+          data-adaptive-wrap={allowToolbarWrap ? "true" : "false"}
         >
           {showAuthoringTools ? (
-            <div className="flex shrink-0 items-center gap-0.5" aria-label="Markdown 格式工具">
+            <div
+              className="flex shrink-0 items-center gap-0.5"
+              aria-label="Markdown 格式工具"
+              data-slot="markdown-editor-format-tools"
+              data-visible-primary-count={visiblePrimaryCount}
+            >
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
+                    ref={headingTriggerRef}
                     type="button"
                     size="small"
                     variant="text"
@@ -525,7 +608,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {primaryCommands.map((item) => (
+              {visiblePrimaryCommands.map((item) => (
                 <Button
                   key={item.command}
                   type="button"
@@ -534,6 +617,8 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
                   icon={item.icon}
                   aria-label={item.label}
                   title={item.label}
+                  data-slot="markdown-editor-primary-command"
+                  data-command={item.command}
                   onMouseDown={(event) => event.preventDefault()}
                   onClick={() => runCommand(item.command)}
                 >
@@ -558,6 +643,19 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-40">
+                  {overflowPrimaryCommands.map((item) => (
+                    <DropdownMenuItem
+                      key={item.command}
+                      onSelect={() => {
+                        runCommand(item.command, overflowSelectionRef.current);
+                        overflowSelectionRef.current = null;
+                      }}
+                    >
+                      <span className="mr-2 inline-flex size-4 items-center justify-center">{item.icon}</span>
+                      {item.label}
+                    </DropdownMenuItem>
+                  ))}
+                  {overflowPrimaryCommands.length > 0 ? <DropdownMenuSeparator /> : null}
                   {moreCommands.map((item) => (
                     <DropdownMenuItem
                       key={item.command}
@@ -577,6 +675,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
 
           {toolbarActions && showAuthoringTools ? (
             <div
+              ref={toolbarActionsRef}
               className="ml-1 flex shrink-0 items-center gap-1 border-l pl-2"
               data-slot="markdown-editor-actions"
             >
@@ -585,8 +684,10 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
           ) : null}
 
           <div
+            ref={modeSwitcherRef}
             className="ml-auto flex shrink-0 items-center gap-0.5 rounded-md bg-muted/60 p-0.5"
             aria-label="编辑器视图"
+            data-slot="markdown-editor-mode-switcher"
           >
             {(["edit", "split", "preview"] as const).map((nextMode) => (
               <Button
