@@ -28,8 +28,14 @@ import {
   Tabs,
   Text,
   Textarea,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from "../../../../src/core";
 import {
+  AISuggestionPicker,
+  AISuggestionReview,
   DocumentEditorShell,
   MarkdownEditor,
   type MarkdownEditorMode,
@@ -84,6 +90,22 @@ const categories = [
   { id: 2, name: "后端架构" },
   { id: 3, name: "前端工程" },
 ];
+
+const postTitleSuggestions = [
+  "Agent 工作流可观测性：从运行记录到人工审批",
+  "AI 自动化进入生产后，为什么运行证据比生成结果更重要",
+] as const;
+
+const postSummarySuggestions = [
+  "从运行证据、人工审批和失败回放三个层面解释 Agent 自动化进入生产后的治理要求。",
+  "聚焦 Agent 长期运行后的可观测性问题，说明执行证据、人工边界与失败回放为什么成为生产能力。",
+] as const;
+
+const postSeoSuggestions = [
+  { key: "slug", label: "Slug", value: "agent-workflow-observability", monospace: true },
+  { key: "seo-title", label: "SEO 标题", value: "Agent 工作流可观测性：运行证据、审批与失败回放" },
+  { key: "seo-description", label: "SEO 描述", value: "拆解 Agent 自动化进入生产后需要保留的执行证据、人工审批边界与失败回放能力。" },
+] as const;
 
 const versions: readonly VersionFixture[] = [
   {
@@ -177,10 +199,19 @@ function versionExcerpt(content: string) {
     .find((line) => line && !line.startsWith("#")) ?? "暂无版本摘要";
 }
 
-function InspectorSection({ title, children }: { title: string; children: ReactNode }) {
+function InspectorSection({
+  title,
+  action,
+  children,
+}: {
+  title: string;
+  action?: ReactNode;
+  children: ReactNode;
+}) {
   return (
-    <details open className="border-b py-4 last:border-b-0">
-      <summary className="cursor-pointer select-none text-sm font-semibold">{title}</summary>
+    <details open className="relative border-b py-4 last:border-b-0">
+      <summary className="cursor-pointer select-none pr-12 text-sm font-semibold">{title}</summary>
+      {action ? <div className="absolute right-0 top-2.5 z-10">{action}</div> : null}
       <div className="mt-4 flex flex-col gap-4">{children}</div>
     </details>
   );
@@ -212,9 +243,9 @@ function FieldActionHeader({
         onClick={onAction}
         disabled={disabled}
         aria-label={actionLabel}
-      >
-        AI
-      </Button>
+        title={actionLabel}
+        className="size-8 px-0"
+      />
     </div>
   );
 }
@@ -245,8 +276,11 @@ export function BlogAdminPostEditorDemo({
   const [exitOpen, setExitOpen] = useState(false);
   const [aiPanel, setAIPanel] = useState<AIPanel>(null);
   const [titleCandidates, setTitleCandidates] = useState<string[]>([]);
-  const [summaryCandidate, setSummaryCandidate] = useState<string | null>(null);
+  const [selectedTitleCandidate, setSelectedTitleCandidate] = useState<string | null>(null);
+  const [summaryCandidates, setSummaryCandidates] = useState<string[]>([]);
+  const [selectedSummaryCandidate, setSelectedSummaryCandidate] = useState<string | null>(null);
   const [metadataSuggestionsOpen, setMetadataSuggestionsOpen] = useState(false);
+  const [metadataSelection, setMetadataSelection] = useState<string[]>([]);
   const [writingPrompt, setWritingPrompt] = useState("");
   const [generatedContent, setGeneratedContent] = useState<string | null>(null);
   const [imagePrompt, setImagePrompt] = useState("");
@@ -268,8 +302,11 @@ export function BlogAdminPostEditorDemo({
     setExitOpen(false);
     setAIPanel(null);
     setTitleCandidates([]);
-    setSummaryCandidate(null);
+    setSelectedTitleCandidate(null);
+    setSummaryCandidates([]);
+    setSelectedSummaryCandidate(null);
     setMetadataSuggestionsOpen(false);
+    setMetadataSelection([]);
     setGeneratedContent(null);
     setGeneratedImage(false);
     setEditorSelection(null);
@@ -340,21 +377,22 @@ export function BlogAdminPostEditorDemo({
           : "发布";
 
   const applyMetadataSuggestions = () => {
-    setPost((current) => ({
-      ...current,
-      summary: "从运行证据、人工审批与失败回放三个层面解释 Agent 可观测性为什么成为生产能力。",
-      slug: "agent-workflow-observability",
-      tags: [...new Set([...current.tags, "Workflow", "治理"])],
-      categoryId: 1,
-      coverAlt: current.coverAlt || "Agent 工作流运行证据与审批边界示意图",
-      seoTitle: "Agent 工作流可观测性：运行证据、审批与失败回放",
-      seoDescription: "拆解 Agent 自动化进入生产后需要保留的执行证据、人工审批边界与失败回放能力。",
-    }));
-    setDirty(true);
-    setSavedAt(null);
-    setMetadataSuggestionsOpen(false);
-    setNotice("已应用 AI 元数据建议（Showcase 模拟）。");
-  };
+  const selected = new Set(metadataSelection);
+  setPost((current) => ({
+    ...current,
+    slug: selected.has("slug") ? "agent-workflow-observability" : current.slug,
+    seoTitle: selected.has("seo-title")
+      ? "Agent 工作流可观测性：运行证据、审批与失败回放"
+      : current.seoTitle,
+    seoDescription: selected.has("seo-description")
+      ? "拆解 Agent 自动化进入生产后需要保留的执行证据、人工审批边界与失败回放能力。"
+      : current.seoDescription,
+  }));
+  setDirty(true);
+  setSavedAt(null);
+  setMetadataSuggestionsOpen(false);
+  setNotice(`已应用 ${metadataSelection.length} 项 AI 路径与 SEO 建议（Showcase 模拟）。`);
+};
 
   const openWritingAssistant = (prompt: string) => {
     setWritingPrompt(prompt);
@@ -559,21 +597,30 @@ export function BlogAdminPostEditorDemo({
 
       <div className="mt-3 flex flex-col gap-1.5">
         {navigatorMode === "outline" ? (
-          outline.length ? (
-            outline.map((item) => (
-              <ChoiceButton
-                key={item.id}
-                type="button"
-                className="rounded-md px-2 py-1.5 text-left text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                style={{ paddingLeft: `${8 + Math.max(0, item.level - 2) * 12}px` }}
-                onClick={() => focusOutlineItem(item)}
-              >
-                <span className="block truncate">{item.text}</span>
-              </ChoiceButton>
-            ))
-          ) : (
-            <Text size="sm" tone="muted">在正文中添加 Markdown 标题后，大纲会自动生成。</Text>
-          )
+  outline.length ? (
+    <TooltipProvider delayDuration={350}>
+      {outline.map((item) => (
+        <Tooltip key={item.id}>
+<TooltipTrigger asChild>
+  <ChoiceButton
+    type="button"
+    aria-label={`跳转到 ${item.text}`}
+    className="w-full min-w-0 overflow-hidden rounded-md px-2 py-1.5 text-left text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground [&>span]:min-w-0 [&>span]:w-full"
+    style={{ paddingLeft: `${8 + Math.max(0, item.level - 2) * 12}px` }}
+    onClick={() => focusOutlineItem(item)}
+  >
+    <span className="block min-w-0 truncate">{item.text}</span>
+  </ChoiceButton>
+</TooltipTrigger>
+<TooltipContent className="max-w-80">
+  {item.text}
+</TooltipContent>
+        </Tooltip>
+      ))}
+    </TooltipProvider>
+  ) : (
+    <Text size="sm" tone="muted">在正文中添加 Markdown 标题后，大纲会自动生成。</Text>
+  )
         ) : (
           <div className="flex flex-col gap-1" data-slot="post-history-list">
             {versions.map((version) => (
@@ -666,47 +713,11 @@ export function BlogAdminPostEditorDemo({
   ) : null;
 
   const inspector = (
-    <fieldset disabled={readOnly} className="min-w-0 border-0 p-0">
-      <div className="flex min-h-9 items-center justify-between gap-3 border-b pb-3">
-        <div>
-          <Text className="font-semibold">属性</Text>
-          <Text size="xs" tone="muted" className="mt-0.5 block">发布、组织、封面与 SEO。</Text>
-        </div>
-        {!readOnly ? (
-          <Button
-            size="small"
-            variant="text"
-            icon={<Sparkles />}
-            onClick={() => setMetadataSuggestionsOpen((current) => !current)}
-            disabled={!post.title.trim() && !post.content.trim()}
-          >
-            智能补全
-          </Button>
-        ) : null}
-      </div>
-
-      {metadataSuggestionsOpen ? (
-        <Card variant="subtle" padding="base" className="mt-4" aria-label="AI 元数据建议">
-          <div className="flex flex-col gap-3">
-            <div>
-              <Text className="font-semibold">AI 建议 6 项修改</Text>
-              <Text size="xs" tone="muted" className="mt-1 block">先预览，再决定是否整体应用。</Text>
-            </div>
-            <dl className="grid gap-2 text-xs">
-              <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-2"><dt className="text-muted-foreground">摘要</dt><dd>聚焦运行证据、审批与失败回放</dd></div>
-              <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-2"><dt className="text-muted-foreground">分类</dt><dd>AI</dd></div>
-              <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-2"><dt className="text-muted-foreground">标签</dt><dd>Workflow、治理</dd></div>
-              <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-2"><dt className="text-muted-foreground">Slug</dt><dd className="break-all font-mono">agent-workflow-observability</dd></div>
-              <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-2"><dt className="text-muted-foreground">SEO</dt><dd>标题与描述同步优化</dd></div>
-              <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-2"><dt className="text-muted-foreground">图片 Alt</dt><dd>补齐语义化描述</dd></div>
-            </dl>
-            <div className="flex flex-wrap justify-end gap-2">
-              <Button size="small" variant="text" onClick={() => setMetadataSuggestionsOpen(false)}>取消</Button>
-              <Button size="small" variant="solid" color="primary" onClick={applyMetadataSuggestions}>全部应用</Button>
-            </div>
-          </div>
-        </Card>
-      ) : null}
+  <fieldset disabled={readOnly} className="min-w-0 border-0 p-0">
+    <div className="min-h-9 border-b pb-3">
+      <Text className="font-semibold">属性</Text>
+      <Text size="xs" tone="muted" className="mt-0.5 block">发布、组织、封面与 SEO。</Text>
+    </div>
 
       <InspectorSection title="发布设置">
         <Field label="状态">
@@ -766,17 +777,51 @@ export function BlogAdminPostEditorDemo({
         </Field>
       </InspectorSection>
 
-      <InspectorSection title="路径与 SEO">
-        <Field label="访问路径 (Slug)" required hint="访问路径为 /articles/<slug>">
-          <Input aria-label="访问路径 (Slug)" className="font-mono" value={post.slug} onChange={(event) => updatePost("slug", event.target.value)} />
-        </Field>
-        <Field label="SEO 标题" hint={`${post.seoTitle.length}/60`}>
-          <Input aria-label="SEO 标题" maxLength={60} value={post.seoTitle} onChange={(event) => updatePost("seoTitle", event.target.value)} placeholder="留空时默认使用标题" />
-        </Field>
-        <Field label="SEO 描述" hint={`${post.seoDescription.length}/160`}>
-          <Textarea aria-label="SEO 描述" rows={4} maxLength={160} value={post.seoDescription} onChange={(event) => updatePost("seoDescription", event.target.value)} placeholder="留空时默认使用摘要" />
-        </Field>
-      </InspectorSection>
+      <InspectorSection
+  title="路径与 SEO"
+  action={!readOnly ? (
+    <Button
+      type="button"
+      size="small"
+      variant="text"
+      icon={<Sparkles />}
+      aria-label="AI 优化路径与 SEO"
+      title="AI 优化路径与 SEO"
+      className="size-8 px-0"
+      disabled={!post.title.trim() && !post.content.trim()}
+      onClick={() => {
+        if (metadataSuggestionsOpen) {
+setMetadataSuggestionsOpen(false);
+return;
+        }
+        setMetadataSelection(postSeoSuggestions.map((item) => item.key));
+        setMetadataSuggestionsOpen(true);
+      }}
+    />
+  ) : undefined}
+>
+  {metadataSuggestionsOpen ? (
+    <AISuggestionReview
+      aria-label="AI 路径与 SEO 建议"
+      groupLabel="路径与 SEO 建议"
+      description="审阅后只应用勾选的路径与 SEO 修改。"
+      items={postSeoSuggestions}
+      selectedKeys={metadataSelection}
+      onSelectedKeysChange={setMetadataSelection}
+      onCancel={() => setMetadataSuggestionsOpen(false)}
+      onApply={applyMetadataSuggestions}
+    />
+  ) : null}
+  <Field label="访问路径 (Slug)" required hint="访问路径为 /articles/<slug>">
+    <Input aria-label="访问路径 (Slug)" className="font-mono" value={post.slug} onChange={(event) => updatePost("slug", event.target.value)} />
+  </Field>
+  <Field label="SEO 标题" hint={`${post.seoTitle.length}/60`}>
+    <Input aria-label="SEO 标题" maxLength={60} value={post.seoTitle} onChange={(event) => updatePost("seoTitle", event.target.value)} placeholder="留空时默认使用标题" />
+  </Field>
+  <Field label="SEO 描述" hint={`${post.seoDescription.length}/160`}>
+    <Textarea aria-label="SEO 描述" rows={4} maxLength={160} value={post.seoDescription} onChange={(event) => updatePost("seoDescription", event.target.value)} placeholder="留空时默认使用摘要" />
+  </Field>
+</InspectorSection>
     </fieldset>
   );
 
@@ -801,82 +846,103 @@ export function BlogAdminPostEditorDemo({
         inspectorAriaLabel="文章元数据 Inspector"
       >
         <div className="flex min-w-0 flex-col gap-5">
-          <div>
-            {!readOnly ? (
-              <FieldActionHeader
-                label="标题"
-                required
-                actionLabel="AI 生成标题候选"
-                onAction={() => setTitleCandidates([
-                  "Agent 工作流可观测性：从运行记录到人工审批",
-                  "AI 自动化进入生产后，为什么运行证据比生成结果更重要",
-                ])}
-              />
-            ) : null}
-            <Field label="标题" required hideLabel={!readOnly}>
-              <Textarea
-                aria-label="标题"
-                rows={2}
-                value={post.title}
-                onChange={(event) => updatePost("title", event.target.value)}
-                placeholder="写一个清晰、具体的标题"
-                disabled={readOnly}
-                readOnly={readOnly}
-              />
-            </Field>
-            {titleCandidates.length ? (
-              <div className="mt-2 flex flex-col gap-2 rounded-md border bg-muted/20 p-2" aria-label="标题候选">
-                {titleCandidates.map((candidate) => (
-                  <ChoiceButton
-                    key={candidate}
-                    type="button"
-                    className="rounded-md px-3 py-2 text-left text-sm hover:bg-background"
-                    onClick={() => {
-                      updatePost("title", candidate);
-                      setTitleCandidates([]);
-                    }}
-                  >
-                    {candidate} <strong className="ml-1">应用</strong>
-                  </ChoiceButton>
-                ))}
-              </div>
-            ) : null}
-          </div>
+  <div>
+    {!readOnly ? (
+      <FieldActionHeader
+        label="标题"
+        required
+        actionLabel="AI 生成标题候选"
+        onAction={() => {
+const candidates = [...postTitleSuggestions];
+setTitleCandidates(candidates);
+setSelectedTitleCandidate(candidates[0] ?? null);
+        }}
+      />
+    ) : null}
+    <Field label="标题" required hideLabel={!readOnly}>
+      <Textarea
+        aria-label="标题"
+        rows={2}
+        value={post.title}
+        onChange={(event) => updatePost("title", event.target.value)}
+        placeholder="写一个清晰、具体的标题"
+        disabled={readOnly}
+        readOnly={readOnly}
+      />
+    </Field>
+    {titleCandidates.length ? (
+      <AISuggestionPicker
+        className="mt-2"
+        aria-label="标题 AI 建议"
+        groupLabel="标题候选"
+        description="选择一个候选，再统一应用到标题。"
+        options={titleCandidates.map((candidate) => ({ value: candidate }))}
+        value={selectedTitleCandidate}
+        onValueChange={setSelectedTitleCandidate}
+        onDismiss={() => {
+setTitleCandidates([]);
+setSelectedTitleCandidate(null);
+        }}
+        onRegenerate={() => {
+const candidates = [...postTitleSuggestions].reverse();
+setTitleCandidates(candidates);
+setSelectedTitleCandidate(candidates[0] ?? null);
+        }}
+        onApply={(candidate) => {
+updatePost("title", candidate);
+setTitleCandidates([]);
+setSelectedTitleCandidate(null);
+        }}
+      />
+    ) : null}
+  </div>
 
-          <div>
-            {!readOnly ? (
-              <FieldActionHeader
-                label="摘要"
-                actionLabel="AI 根据正文生成摘要"
-                onAction={() => setSummaryCandidate("从运行证据、人工审批和失败回放三个层面解释 Agent 自动化进入生产后的治理要求。")}
-                disabled={!post.content.trim()}
-              />
-            ) : null}
-            <Field label="摘要" hideLabel={!readOnly} hint={`${post.summary.length}/300`}>
-              <Textarea
-                aria-label="摘要"
-                rows={3}
-                maxLength={300}
-                value={post.summary}
-                onChange={(event) => updatePost("summary", event.target.value)}
-                placeholder="用两三句话说明文章解决的问题"
-                disabled={readOnly}
-                readOnly={readOnly}
-              />
-            </Field>
-            {summaryCandidate ? (
-              <ChoiceButton
-                type="button"
-                className="mt-2 w-full rounded-md border bg-muted/20 px-3 py-2 text-left text-sm hover:bg-muted"
-                onClick={() => {
-                  updatePost("summary", summaryCandidate);
-                  setSummaryCandidate(null);
-                }}
-              >
-                {summaryCandidate} <strong className="ml-1">应用</strong>
-              </ChoiceButton>
-            ) : null}
-          </div>
+  <div>
+    {!readOnly ? (
+      <FieldActionHeader
+        label="摘要"
+        actionLabel="AI 根据正文生成摘要"
+        onAction={() => {
+const candidates = [...postSummarySuggestions];
+setSummaryCandidates(candidates);
+setSelectedSummaryCandidate(candidates[0] ?? null);
+        }}
+        disabled={!post.content.trim()}
+      />
+    ) : null}
+    <Field label="摘要" hideLabel={!readOnly} hint={`${post.summary.length}/300`}>
+      <Textarea
+        aria-label="摘要"
+        rows={3}
+        maxLength={300}
+        value={post.summary}
+        onChange={(event) => updatePost("summary", event.target.value)}
+        placeholder="用两三句话说明文章解决的问题"
+        disabled={readOnly}
+        readOnly={readOnly}
+      />
+    </Field>
+    {summaryCandidates.length ? (
+      <AISuggestionPicker
+        className="mt-2"
+        aria-label="摘要 AI 建议"
+        groupLabel="摘要候选"
+        description="从候选摘要中选择一个，再应用到当前字段。"
+        options={summaryCandidates.map((candidate) => ({ value: candidate }))}
+        value={selectedSummaryCandidate}
+        onValueChange={setSelectedSummaryCandidate}
+        onDismiss={() => {
+setSummaryCandidates([]);
+setSelectedSummaryCandidate(null);
+        }}
+        onApply={(candidate) => {
+updatePost("summary", candidate);
+setSummaryCandidates([]);
+setSelectedSummaryCandidate(null);
+        }}
+      />
+    ) : null}
+  </div>
 
           <div>
             <div className="mb-2">

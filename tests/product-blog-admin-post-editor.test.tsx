@@ -78,6 +78,11 @@ describe("Blog Admin PostEditor", () => {
   it("keeps outline and history as stable peer views and restores only after confirmation", () => {
     render(<BlogAdminPostEditorDemo />);
 
+    const longOutlineItem = screen.getByRole("button", { name: /跳转到 为什么现在要谈可观测性/ });
+    expect(longOutlineItem.className).toContain("w-full");
+    expect(longOutlineItem.className).toContain("overflow-hidden");
+    expect(longOutlineItem.querySelector(".truncate")).toBeTruthy();
+
     fireEvent.mouseDown(screen.getByRole("tab", { name: /历史 2/ }), { button: 0 });
     expect(screen.getByRole("tab", { name: /历史 2/ }).getAttribute("aria-selected")).toBe("true");
     expect(screen.getByText("版本 42")).toBeTruthy();
@@ -100,18 +105,21 @@ describe("Blog Admin PostEditor", () => {
     expect(screen.getByRole("tab", { name: /大纲 2/ }).getAttribute("aria-selected")).toBe("true");
   });
 
-  it("keeps field AI attached to its field instead of presenting detached page-level actions", () => {
-    render(<BlogAdminPostEditorDemo />);
+  it("keeps single-field AI as an explicit candidate list before applying", () => {
+  render(<BlogAdminPostEditorDemo />);
 
-    fireEvent.click(screen.getByRole("button", { name: "AI 生成标题候选" }));
-    expect(screen.getByLabelText("标题候选")).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: /Agent 工作流可观测性：从运行记录到人工审批/ }));
-    expect((screen.getByLabelText("标题") as HTMLTextAreaElement).value).toBe("Agent 工作流可观测性：从运行记录到人工审批");
+  fireEvent.click(screen.getByRole("button", { name: "AI 生成标题候选" }));
+  expect(screen.getByRole("radiogroup", { name: "标题候选" })).toBeTruthy();
+  const secondTitle = screen.getByRole("radio", { name: "AI 自动化进入生产后，为什么运行证据比生成结果更重要" });
+  fireEvent.click(secondTitle);
+  fireEvent.click(screen.getByRole("button", { name: "使用所选" }));
+  expect((screen.getByLabelText("标题") as HTMLTextAreaElement).value).toBe("AI 自动化进入生产后，为什么运行证据比生成结果更重要");
 
-    fireEvent.click(screen.getByRole("button", { name: "AI 根据正文生成摘要" }));
-    fireEvent.click(screen.getByRole("button", { name: /从运行证据、人工审批和失败回放三个层面/ }));
-    expect((screen.getByLabelText("摘要") as HTMLTextAreaElement).value).toContain("三个层面");
-  });
+  fireEvent.click(screen.getByRole("button", { name: "AI 根据正文生成摘要" }));
+  expect(screen.getByRole("radiogroup", { name: "摘要候选" })).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "使用所选" }));
+  expect((screen.getByLabelText("摘要") as HTMLTextAreaElement).value).toContain("三个层面");
+});
 
   it("keeps another author's post read-only and removes write-only AI and publish actions", () => {
     render(<BlogAdminPostEditorDemo initialRoute="readonly" />);
@@ -121,7 +129,7 @@ describe("Blog Admin PostEditor", () => {
     expect((screen.getByLabelText("文章正文 Markdown") as HTMLTextAreaElement).disabled).toBe(true);
     expect(screen.queryByRole("button", { name: "保存草稿" })).toBeNull();
     expect(screen.queryByRole("button", { name: "发布" })).toBeNull();
-    expect(screen.queryByRole("button", { name: "智能补全" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "AI 优化路径与 SEO" })).toBeNull();
     expect(screen.queryByRole("button", { name: "AI 写作" })).toBeNull();
     expect(screen.queryByRole("button", { name: "插图" })).toBeNull();
   });
@@ -135,13 +143,15 @@ describe("Blog Admin PostEditor", () => {
 
     render(<BlogAdminPostEditorDemo />);
 
-    fireEvent.click(screen.getByRole("button", { name: "智能补全" }));
-    expect(screen.getByLabelText("AI 元数据建议")).toBeTruthy();
-    expect(screen.getByText("AI 建议 6 项修改")).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "全部应用" }));
+    const initialSeoDescription = (screen.getByLabelText("SEO 描述") as HTMLTextAreaElement).value;
+    fireEvent.click(screen.getByRole("button", { name: "AI 优化路径与 SEO" }));
+    expect(screen.getByLabelText("AI 路径与 SEO 建议")).toBeTruthy();
+    expect(screen.getByRole("group", { name: "路径与 SEO 建议" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("checkbox", { name: "应用 SEO 描述 建议" }));
+    fireEvent.click(screen.getByRole("button", { name: "应用 2 项建议" }));
     expect(screen.getByDisplayValue("agent-workflow-observability")).toBeTruthy();
-    expect(screen.getByDisplayValue(/Workflow/)).toBeTruthy();
-    expect(screen.getByText(/已应用 AI 元数据建议/)).toBeTruthy();
+    expect((screen.getByLabelText("SEO 描述") as HTMLTextAreaElement).value).toBe(initialSeoDescription);
+    expect(screen.getByText(/已应用 2 项 AI 路径与 SEO 建议/)).toBeTruthy();
 
     fireEvent.pointerDown(screen.getByRole("button", { name: "AI 写作" }), {
       button: 0,
