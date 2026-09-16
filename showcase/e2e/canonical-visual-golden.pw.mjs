@@ -82,7 +82,7 @@ const scenarios = [
     brand: "gosso-admin",
     fixture: "gosso-system-clients",
     viewport: desktop,
-    ready: "[data-slot=\"card\"]",
+    ready: "table",
   },
   {
     name: "gosso-site-settings-desktop-light",
