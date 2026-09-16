@@ -169,6 +169,13 @@ function outlineFrom(content: string): OutlineItem[] {
   return items;
 }
 
+function versionExcerpt(content: string) {
+  return content
+    .split("\n")
+    .map((line) => line.trim())
+    .find((line) => line && !line.startsWith("#")) ?? "暂无版本摘要";
+}
+
 function InspectorSection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <details open className="border-b py-4 last:border-b-0">
@@ -538,10 +545,6 @@ export function BlogAdminPostEditorDemo({
 
   const navigator = (
     <div className="min-w-0">
-      <div className="mb-3">
-        <Text className="font-semibold">文档导航</Text>
-        <Text size="xs" tone="muted" className="mt-1 block">定位正文结构，或查看历史版本。</Text>
-      </div>
       <Tabs<NavigatorMode>
         aria-label="文档导航视图"
         size="small"
@@ -553,7 +556,7 @@ export function BlogAdminPostEditorDemo({
         ]}
       />
 
-      <div className="mt-4 flex flex-col gap-1.5">
+      <div className="mt-3 flex flex-col gap-1.5">
         {navigatorMode === "outline" ? (
           outline.length ? (
             outline.map((item) => (
@@ -571,18 +574,27 @@ export function BlogAdminPostEditorDemo({
             <Text size="sm" tone="muted">在正文中添加 Markdown 标题后，大纲会自动生成。</Text>
           )
         ) : (
-          versions.map((version) => (
-            <ChoiceButton
-              key={version.id}
-              type="button"
-              className="rounded-md border px-3 py-2 text-left text-sm transition-colors hover:bg-muted"
-              onClick={() => setRestoreTarget(version)}
-              aria-label={`查看 ${version.createdAt} 的历史版本`}
-            >
-              <span className="block truncate font-medium">{version.title}</span>
-              <span className="mt-1 block text-xs text-muted-foreground">{version.createdAt}</span>
-            </ChoiceButton>
-          ))
+          <div className="flex flex-col gap-1" data-slot="post-history-list">
+            {versions.map((version) => (
+              <ChoiceButton
+                key={version.id}
+                type="button"
+                className="h-auto min-h-0 w-full items-start rounded-md px-2.5 py-2.5 text-left text-sm whitespace-normal transition-colors hover:bg-muted/70 [&>span]:min-w-0 [&>span]:w-full"
+                onClick={() => setRestoreTarget(version)}
+                aria-label={`查看 ${version.createdAt} 的历史版本`}
+              >
+                <span className="flex min-w-0 w-full flex-col gap-1">
+                  <span className="flex w-full items-baseline justify-between gap-2">
+                    <span className="font-medium text-foreground">版本 {version.id}</span>
+                    <span className="shrink-0 text-[11px] font-normal text-muted-foreground">{version.createdAt.slice(5)}</span>
+                  </span>
+                  <span className="line-clamp-2 text-xs font-normal leading-5 text-muted-foreground">
+                    {versionExcerpt(version.content)}
+                  </span>
+                </span>
+              </ChoiceButton>
+            ))}
+          </div>
         )}
       </div>
     </div>

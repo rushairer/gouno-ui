@@ -15,6 +15,8 @@ describe("Blog Admin PostEditor", () => {
     expect(screen.getByLabelText("编辑器导航")).toBeTruthy();
     expect(screen.getByLabelText("文章编辑画布")).toBeTruthy();
     expect(screen.getByLabelText("文章元数据 Inspector")).toBeTruthy();
+    expect(screen.queryByText("文档导航")).toBeNull();
+    expect(screen.queryByText("定位正文结构，或查看历史版本。")).toBeNull();
     expect(screen.getByRole("tab", { name: /大纲 4/ }).getAttribute("aria-selected")).toBe("true");
     expect(screen.getByRole("tab", { name: /历史 2/ }).getAttribute("aria-selected")).toBe("false");
     expect(screen.getByLabelText("文章正文 Markdown")).toBeTruthy();
@@ -78,7 +80,13 @@ describe("Blog Admin PostEditor", () => {
 
     fireEvent.mouseDown(screen.getByRole("tab", { name: /历史 2/ }), { button: 0 });
     expect(screen.getByRole("tab", { name: /历史 2/ }).getAttribute("aria-selected")).toBe("true");
-    fireEvent.click(screen.getByRole("button", { name: "查看 2026-09-08 18:32 的历史版本" }));
+    expect(screen.getByText("版本 42")).toBeTruthy();
+    expect(screen.getByText("09-08 18:32")).toBeTruthy();
+    expect(screen.getByText("上一版重点讨论 Agent 运行记录。")).toBeTruthy();
+    const historyItem = screen.getByRole("button", { name: "查看 2026-09-08 18:32 的历史版本" });
+    expect(historyItem.className).toContain("h-auto");
+    expect(historyItem.className).toContain("whitespace-normal");
+    fireEvent.click(historyItem);
     const dialog = screen.getByRole("dialog");
     expect(dialog).toBeTruthy();
     expect(dialog.textContent).toContain("先查看版本内容，再决定是否恢复。");

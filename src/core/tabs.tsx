@@ -197,6 +197,11 @@ export function TabList({
         vertical
           ? "max-h-full flex-col items-stretch overflow-x-hidden overflow-y-auto"
           : "overflow-x-auto overflow-y-hidden",
+        type === "line" && !vertical
+          ? tabPosition === "bottom"
+            ? "items-start"
+            : "items-end"
+          : null,
         listEdgeClass(tabPosition),
         className,
       )}
