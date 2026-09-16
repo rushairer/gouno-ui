@@ -65,25 +65,16 @@ const commandMeta: readonly {
   { command: "italic", label: "斜体", icon: <Italic /> },
   { command: "quote", label: "引用", icon: <Quote /> },
   { command: "code", label: "行内代码", icon: <Code2 /> },
-  { command: "link", label: "链接", icon: <Link2 /> },
+  { command: "link", label: "插入链接", icon: <Link2 /> },
 ];
 
-function transformSelection(command: MarkdownEditorCommand, selected: string) {
-  switch (command) {
-    case "heading":
-      return { value: `## ${selected || "标题"}`, offset: 3, suffixLength: 0 };
-    case "bold":
-      return { value: `**${selected || "重点内容"}**`, offset: 2, suffixLength: 2 };
-    case "italic":
-      return { value: `*${selected || "强调内容"}*`, offset: 1, suffixLength: 1 };
-    case "quote":
-      return { value: `> ${selected || "引用内容"}`, offset: 2, suffixLength: 0 };
-    case "code":
-      return { value: `\`${selected || "code"}\``, offset: 1, suffixLength: 1 };
-    case "link":
-      return { value: `[${selected || "链接文本"}](https://)`, offset: 1, suffixLength: 11 };
-  }
-}
+type CommandTransform = {
+  replaceStart: number;
+  replaceEnd: number;
+  value: string;
+  selectionStart: number;
+  selectionEnd: number;
+};
 
 function clampSelection(value: string, start: number, end = start): MarkdownEditorSelection {
   const safeStart = Math.max(0, Math.min(start, value.length));
@@ -92,6 +83,73 @@ function clampSelection(value: string, start: number, end = start): MarkdownEdit
     start: safeStart,
     end: safeEnd,
     text: value.slice(safeStart, safeEnd),
+  };
+}
+
+function lineBounds(value: string, start: number, end: number) {
+  const replaceStart = value.lastIndexOf("\n", Math.max(0, start - 1)) + 1;
+  const nextBreak = value.indexOf("\n", end);
+  const replaceEnd = nextBreak === -1 ? value.length : nextBreak;
+  return { replaceStart, replaceEnd };
+}
+
+function transformCommand(
+  command: MarkdownEditorCommand,
+  value: string,
+  start: number,
+  end: number,
+): CommandTransform {
+  const selected = value.slice(start, end);
+
+  if (command === "heading" || command === "quote") {
+    const { replaceStart, replaceEnd } = lineBounds(value, start, end);
+    const block = value.slice(replaceStart, replaceEnd);
+    const lines = block.split("\n");
+    const nextLines = command === "heading"
+      ? lines.map((line) => `## ${line.replace(/^#{1,6}\s+/, "") || "标题"}`)
+      : lines.every((line) => line.startsWith("> "))
+        ? lines.map((line) => line.slice(2))
+        : lines.map((line) => `> ${line}`);
+    const nextBlock = nextLines.join("\n");
+    const firstPrefix = command === "heading" ? 3 : nextLines[0]?.startsWith("> ") ? 2 : 0;
+
+    return {
+      replaceStart,
+      replaceEnd,
+      value: nextBlock,
+      selectionStart: replaceStart + firstPrefix,
+      selectionEnd: replaceStart + nextBlock.length,
+    };
+  }
+
+  if (command === "link") {
+    const label = selected || "链接文本";
+    const url = "https://example.com";
+    const nextValue = `[${label}](${url})`;
+    const urlStart = start + label.length + 3;
+    return {
+      replaceStart: start,
+      replaceEnd: end,
+      value: nextValue,
+      selectionStart: urlStart,
+      selectionEnd: urlStart + url.length,
+    };
+  }
+
+  const meta = {
+    bold: { open: "**", close: "**", placeholder: "重点内容" },
+    italic: { open: "*", close: "*", placeholder: "强调内容" },
+    code: { open: "`", close: "`", placeholder: "code" },
+  }[command];
+  const body = selected || meta.placeholder;
+  const nextValue = `${meta.open}${body}${meta.close}`;
+
+  return {
+    replaceStart: start,
+    replaceEnd: end,
+    value: nextValue,
+    selectionStart: start + meta.open.length,
+    selectionEnd: start + meta.open.length + body.length,
   };
 }
 
@@ -156,9 +214,9 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
       onChange(next);
 
       queueMicrotask(() => {
-        const start = selection.start;
-        const end = options.selectInserted ? start + text.length : start + text.length;
-        applySelection(clampSelection(next, start + (options.selectInserted ? 0 : text.length), end));
+        const nextStart = options.selectInserted ? selection.start : selection.start + text.length;
+        const nextEnd = selection.start + text.length;
+        applySelection(clampSelection(next, nextStart, nextEnd));
       });
     };
 
@@ -178,14 +236,12 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
 
       const start = textarea.selectionStart ?? 0;
       const end = textarea.selectionEnd ?? start;
-      const transformed = transformSelection(command, value.slice(start, end));
-      const next = `${value.slice(0, start)}${transformed.value}${value.slice(end)}`;
+      const transformed = transformCommand(command, value, start, end);
+      const next = `${value.slice(0, transformed.replaceStart)}${transformed.value}${value.slice(transformed.replaceEnd)}`;
       onChange(next);
 
       queueMicrotask(() => {
-        const selectionStart = start + transformed.offset;
-        const selectionEnd = start + transformed.value.length - transformed.suffixLength;
-        applySelection(clampSelection(next, selectionStart, selectionEnd));
+        applySelection(clampSelection(next, transformed.selectionStart, transformed.selectionEnd));
       });
     };
 
@@ -242,6 +298,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
                   icon={item.icon}
                   aria-label={item.label}
                   title={item.label}
+                  onMouseDown={(event) => event.preventDefault()}
                   onClick={() => runCommand(item.command)}
                 >
                   <span className="sr-only">{item.label}</span>
