@@ -77,8 +77,9 @@ describe("Blog Admin PostEditor", () => {
     fireEvent.mouseDown(screen.getByRole("tab", { name: /历史 2/ }), { button: 0 });
     expect(screen.getByRole("tab", { name: /历史 2/ }).getAttribute("aria-selected")).toBe("true");
     fireEvent.click(screen.getByRole("button", { name: "查看 2026-09-08 18:32 的历史版本" }));
-    expect(screen.getByRole("dialog")).toBeTruthy();
-    expect(screen.getByText("先查看版本内容，再决定是否恢复。", { exact: false })).toBeTruthy();
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toBeTruthy();
+    expect(dialog.textContent).toContain("先查看版本内容，再决定是否恢复。");
     fireEvent.click(screen.getByRole("button", { name: "恢复版本" }));
 
     expect(screen.getByText("已成功恢复历史版本。")).toBeTruthy();
