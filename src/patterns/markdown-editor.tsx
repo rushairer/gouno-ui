@@ -709,7 +709,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
               className={cn(
                 "ml-1 flex shrink-0 items-center gap-1 border-l pl-2",
                 compactFixedActions &&
-                  "[&_[data-slot=button]:has(>.btn__icon)]:size-8 [&_[data-slot=button]:has(>.btn__icon)]:px-0 [&_[data-slot=button]:has(>.btn__icon)>span:not(.btn__icon)]:sr-only",
+                  "[&_[data-slot=button]]:size-8 [&_[data-slot=button]]:px-0 [&_[data-slot=button]>span:not(.btn__icon)]:sr-only",
               )}
               data-slot="markdown-editor-actions"
               data-icon-only={compactFixedActions ? "true" : "false"}

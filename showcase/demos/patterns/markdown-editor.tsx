@@ -43,7 +43,7 @@ export function PatternMarkdownEditorDemo() {
           <Tag color="success">Admitted</Tag>
         </div>
         <Text tone="muted" className="max-w-3xl leading-relaxed">
-          统一 Markdown 编辑、段落 / H1–H6 标题转换、格式工具、编辑 / 分屏 / 预览视图，以及光标与选区控制。正文型消费者可限制 headingLevels；产品动作继续通过 toolbarActions 与 ref API 组合。工具栏按自身容器宽度自适应：空间不足时低优先级内建格式命令会依次进入“更多格式”；继续变窄时，产品动作与视图切换收敛为仅图标；只有极窄容器才允许多行。
+          统一 Markdown 编辑、段落 / H1–H6 标题转换、格式工具、编辑 / 分屏 / 预览视图，以及光标与选区控制。正文型消费者可限制 headingLevels；产品动作继续通过 toolbarActions 与 ref API 组合。工具栏按自身容器宽度自适应：空间不足时低优先级内建格式命令会依次进入“更多格式”；继续变窄时，带图标的产品动作与视图切换收敛为仅图标；只有极窄容器才允许多行。产品注入的 toolbarActions 应为紧凑态提供可识别图标与 aria-label。
         </Text>
       </header>
 
