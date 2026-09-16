@@ -104,7 +104,7 @@ export function ButtonLink({ to, href, variant = "link", color = "default", size
   const inactive = disabled || loading;
   const hasLabel = children !== undefined && children !== null && children !== "";
   const primitiveVariant = color === "error" && variant === "solid" ? "destructive" : variants[variant];
-  return <PrimitiveButton asChild variant={primitiveVariant} size={sizes[size]}><Link {...props} to={to ?? href ?? "#"} className={cn(resolveColorClass(variant, color), variant === "dashed" && "border-dashed", shapeClass[shape], block && "w-full", inactive && "pointer-events-none opacity-50", className)} aria-disabled={inactive || undefined} aria-busy={loading || undefined} tabIndex={inactive ? -1 : props.tabIndex} onClick={(event) => { if (inactive) { event.preventDefault(); return; } onClick?.(event); }}>
+  return <PrimitiveButton asChild variant={primitiveVariant} size={sizes[size]} className={cn(resolveColorClass(variant, color), variant === "dashed" && "border-dashed", shapeClass[shape], block && "w-full", inactive && "pointer-events-none opacity-50", className)}><Link {...props} to={to ?? href ?? "#"} aria-disabled={inactive || undefined} aria-busy={loading || undefined} tabIndex={inactive ? -1 : props.tabIndex} onClick={(event) => { if (inactive) { event.preventDefault(); return; } onClick?.(event); }}>
     {loading ? <LoaderCircle className="animate-spin" aria-hidden="true" /> : icon && iconPlacement === "start" ? <span className="btn__icon" aria-hidden="true">{icon}</span> : null}
     {hasLabel || loadingText ? <span>{loading && loadingText ? loadingText : children}</span> : null}
     {!loading && icon && iconPlacement === "end" ? <span className="btn__icon" aria-hidden="true">{icon}</span> : null}

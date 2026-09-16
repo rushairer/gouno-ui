@@ -60,6 +60,7 @@ describe("Core Button", () => {
 
     const info = screen.getByRole("link", { name: "Info" });
     expect(info.className).toContain("text-info");
+    expect(info.className).not.toContain("text-primary");
 
     for (const element of [success, warning, info]) {
       expect(element.className).not.toContain("btn-color-");
@@ -114,6 +115,8 @@ describe("Core Button", () => {
     expect(link.getAttribute("href")).toBe("/next");
     expect(link.children).toHaveLength(1);
     expect(link.firstElementChild?.classList.contains("btn__icon")).toBe(true);
+    expect(link.className).toContain("rounded-full");
+    expect(link.className).not.toContain("rounded-md");
   });
 
   it("maps ChoiceButton selection to aria-pressed without owning product state", () => {
