@@ -69,6 +69,15 @@ export interface MarkdownEditorRef {
   insertText: (text: string, options?: MarkdownEditorInsertOptions) => void;
 }
 
+export interface MarkdownEditorToolbarActionsContext {
+  density: "full" | "icon";
+  compact: boolean;
+}
+
+export type MarkdownEditorToolbarActions =
+  | ReactNode
+  | ((context: MarkdownEditorToolbarActionsContext) => ReactNode);
+
 export interface MarkdownEditorProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "children" | "onChange"> {
   value: string;
@@ -78,7 +87,7 @@ export interface MarkdownEditorProps
   onModeChange?: (mode: MarkdownEditorMode) => void;
   onSelectionChange?: (selection: MarkdownEditorSelection) => void;
   renderPreview?: (value: string) => ReactNode;
-  toolbarActions?: ReactNode;
+  toolbarActions?: MarkdownEditorToolbarActions;
   headingLevels?: readonly MarkdownHeadingLevel[];
   placeholder?: string;
   readOnly?: boolean;
@@ -568,6 +577,15 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
       </div>
     );
 
+    const toolbarActionsContext: MarkdownEditorToolbarActionsContext = {
+      density: compactFixedActions ? "icon" : "full",
+      compact: compactFixedActions,
+    };
+    const resolvedToolbarActions =
+      typeof toolbarActions === "function"
+        ? toolbarActions(toolbarActionsContext)
+        : toolbarActions;
+
     return (
       <div
         {...props}
@@ -704,17 +722,13 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
             </div>
           ) : null}
 
-          {toolbarActions && showAuthoringTools ? (
+          {resolvedToolbarActions && showAuthoringTools ? (
             <div
-              className={cn(
-                "ml-1 flex shrink-0 items-center gap-1 border-l pl-2",
-                compactFixedActions &&
-                  "[&_[data-slot=button]]:size-8 [&_[data-slot=button]]:px-0 [&_[data-slot=button]>span]:sr-only [&_[data-slot=button]>.btn__icon]:not-sr-only [&_[data-slot=button]>.btn__icon]:inline-flex",
-              )}
+              className="ml-1 flex shrink-0 items-center gap-1 border-l pl-2"
               data-slot="markdown-editor-actions"
               data-icon-only={compactFixedActions ? "true" : "false"}
             >
-              {toolbarActions}
+              {resolvedToolbarActions}
             </div>
           ) : null}
 

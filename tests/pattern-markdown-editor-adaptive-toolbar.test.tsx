@@ -159,7 +159,9 @@ describe("MarkdownEditor adaptive toolbar", () => {
       <MarkdownEditor
         value="body"
         onChange={() => undefined}
-        toolbarActions={<button type="button">产品动作</button>}
+        toolbarActions={({ compact }) => (
+          <button type="button" aria-label="产品动作">{compact ? null : "产品动作"}</button>
+        )}
         textareaAriaLabel="窄 Markdown"
       />,
     );
@@ -181,6 +183,7 @@ describe("MarkdownEditor adaptive toolbar", () => {
 
     const modeSwitcher = container.querySelector('[data-slot="markdown-editor-mode-switcher"]') as HTMLElement;
     expect(modeSwitcher.getAttribute("data-icon-only")).toBe("true");
+    expect(screen.getByRole("button", { name: "产品动作" }).textContent).toBe("");
     expect(screen.getByRole("button", { name: "编辑" }).textContent).toBe("");
     expect(screen.getByRole("button", { name: "预览" }).textContent).toBe("");
 
@@ -209,6 +212,7 @@ describe("MarkdownEditor adaptive toolbar", () => {
       expect(toolbar.getAttribute("data-adaptive-density")).toBe("full");
       expect(container.querySelectorAll('[data-slot="markdown-editor-primary-command"]')).toHaveLength(4);
     });
+    expect(screen.getByRole("button", { name: "产品动作" }).textContent).toBe("产品动作");
   });
 
   it("uses wrapping only after icon-only fixed actions still cannot fit", async () => {
@@ -217,7 +221,9 @@ describe("MarkdownEditor adaptive toolbar", () => {
       <MarkdownEditor
         value="body"
         onChange={() => undefined}
-        toolbarActions={<button type="button">产品动作</button>}
+        toolbarActions={({ compact }) => (
+          <button type="button" aria-label="产品动作">{compact ? null : "产品动作"}</button>
+        )}
         textareaAriaLabel="极窄 Markdown"
       />,
     );

@@ -14,7 +14,7 @@ const propsApi: ApiRow[] = [
   { name: "onModeChange", type: "(mode) => void", description: "编辑 / 分屏 / 预览切换回调。" },
   { name: "onSelectionChange", type: "(selection) => void", description: "光标或选区变化回调；产品可据此决定 AI 的作用域。" },
   { name: "renderPreview", type: "(value: string) => ReactNode", description: "预览渲染器。MarkdownEditor 不绑定具体 Markdown parser；产品接入自己选定的 Markdown renderer。" },
-  { name: "toolbarActions", type: "ReactNode", description: "产品级工具扩展槽。AI 写作、插图、媒体库等业务动作通过这里注入，不是 MarkdownEditor 内建能力；响应式收缩时优先保留这些产品动作。" },
+  { name: "toolbarActions", type: "ReactNode | ({ density, compact }) => ReactNode", description: "产品级工具扩展槽。需要参与紧凑态时使用 render callback，根据 compact / density 在文本按钮与 icon-only 之间切换；业务动作仍由产品拥有。" },
   { name: "headingLevels", type: "readonly (1 | 2 | 3 | 4 | 5 | 6)[]", description: "段落 / 标题菜单可用的标题级别。正文编辑默认保留页面级 H1 给外部标题；独立 Markdown 文档可显式开启 H1。", defaultValue: "[2,3,4,5,6]" },
   { name: "placeholder", type: "string", description: "编辑区占位文本。" },
   { name: "readOnly", type: "boolean", description: "只读模式；隐藏格式工具并禁止写入。", defaultValue: "false" },
@@ -43,7 +43,7 @@ export function PatternMarkdownEditorDemo() {
           <Tag color="success">Admitted</Tag>
         </div>
         <Text tone="muted" className="max-w-3xl leading-relaxed">
-          统一 Markdown 编辑、段落 / H1–H6 标题转换、格式工具、编辑 / 分屏 / 预览视图，以及光标与选区控制。正文型消费者可限制 headingLevels；产品动作继续通过 toolbarActions 与 ref API 组合。工具栏按自身容器宽度自适应：空间不足时低优先级内建格式命令会依次进入“更多格式”；继续变窄时，带图标的产品动作与视图切换收敛为仅图标；只有极窄容器才允许多行。产品注入的 toolbarActions 应为紧凑态提供可识别图标与 aria-label。
+          统一 Markdown 编辑、段落 / H1–H6 标题转换、格式工具、编辑 / 分屏 / 预览视图，以及光标与选区控制。正文型消费者可限制 headingLevels；产品动作继续通过 toolbarActions 与 ref API 组合。工具栏按自身容器宽度自适应：空间不足时低优先级内建格式命令会依次进入“更多格式”；继续变窄时，带图标的产品动作与视图切换收敛为仅图标；只有极窄容器才允许多行。产品注入的 toolbarActions 应使用 density-aware render callback，为紧凑态显式提供可识别图标与 aria-label，而不是依赖 Pattern 猜测子节点 DOM。
         </Text>
       </header>
 
