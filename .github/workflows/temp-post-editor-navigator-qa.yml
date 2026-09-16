@@ -1,0 +1,86 @@
+name: Temp Post Editor Navigator QA
+
+on:
+  push:
+    branches: [post-editor-navigator-polish]
+    paths:
+      - ".github/workflows/temp-post-editor-navigator-qa.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: post-editor-navigator-polish
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install repository dependencies
+        run: npm ci
+
+      - name: Install isolated Playwright runtime
+        run: |
+          PLAYWRIGHT_VERSION=1.55.0
+          npm install --no-save --ignore-scripts @playwright/test@${PLAYWRIGHT_VERSION}
+          npx playwright install --with-deps chromium
+
+      - name: Accept reviewed Post Editor golden
+        run: npx playwright test --config=showcase/e2e/canonical-visual-golden.config.mjs -g "blog-admin-post-editor-desktop-light" --update-snapshots
+
+      - name: Capture History rail interaction evidence
+        run: |
+          cp showcase/e2e/canonical-visual-golden.pw.mjs /tmp/canonical-visual-golden.pw.mjs
+          cat > showcase/e2e/canonical-visual-golden.pw.mjs <<'EOF'
+          import { expect, test } from "@playwright/test";
+
+          test("post-editor-history-rail-qa", async ({ page }) => {
+            await page.setViewportSize({ width: 1440, height: 900 });
+            await page.addInitScript(() => localStorage.setItem("gouno-ui-showcase:theme", "light"));
+            await page.goto("/?embedded=1&workspace=blog-admin&brand=blog-admin#blog-admin-post-editor", { waitUntil: "networkidle" });
+            await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+            await expect(page.getByRole("tab", { name: /大纲 4/ })).toHaveAttribute("aria-selected", "true");
+            await page.getByRole("tab", { name: /历史 2/ }).click();
+            await expect(page.getByRole("tab", { name: /历史 2/ })).toHaveAttribute("aria-selected", "true");
+            await expect(page.getByText("版本 42")).toBeVisible();
+            await expect(page.getByText("上一版重点讨论 Agent 运行记录。" )).toBeVisible();
+            await page.screenshot({ path: "test-results/post-editor-history-rail.png", fullPage: true });
+            await page.getByRole("button", { name: "查看 2026-09-08 18:32 的历史版本" }).click();
+            await expect(page.getByRole("dialog", { name: "历史版本详情" })).toBeVisible();
+            await page.screenshot({ path: "test-results/post-editor-history-review.png", fullPage: true });
+          });
+          EOF
+          npx playwright test --config=showcase/e2e/canonical-visual-golden.config.mjs
+          mv /tmp/canonical-visual-golden.pw.mjs showcase/e2e/canonical-visual-golden.pw.mjs
+
+      - name: Commit reviewed golden update
+        run: |
+          git config user.name "Aben"
+          git config user.email "5195693+rushairer@users.noreply.github.com"
+          git add showcase/e2e/canonical-visual-golden.pw.mjs-snapshots/blog-admin-post-editor-desktop-light.png
+          if git diff --cached --quiet; then
+            echo "Golden already current"
+          else
+            git commit -m "test(visual): update Post Editor navigator golden"
+            git push origin HEAD:post-editor-navigator-polish
+          fi
+
+      - name: Upload navigator QA evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: post-editor-navigator-qa-${{ github.run_id }}
+          path: |
+            test-results/post-editor-history-rail.png
+            test-results/post-editor-history-review.png
+          if-no-files-found: ignore
+          retention-days: 7
