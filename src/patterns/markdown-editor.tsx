@@ -143,6 +143,11 @@ const moreCommands: readonly CommandItem[] = [
   { command: "horizontal-rule", label: "分隔线", icon: <Minus /> },
 ];
 
+// Fixed product actions and the view switcher use a deterministic density based on the
+// editor's own rendered width. This avoids relying on a multi-step overflow transition
+// that can become stale when Preview hides authoring controls and Edit restores them.
+const FIXED_ACTION_ICON_ONLY_MAX_WIDTH = 768;
+
 type CommandTransform = {
   replaceStart: number;
   replaceEnd: number;
@@ -377,12 +382,11 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
       headingLevelAt(value, 0),
     );
     const [visiblePrimaryCount, setVisiblePrimaryCount] = useState(primaryCommands.length);
-    const [compactFixedActions, setCompactFixedActions] = useState(false);
+    const [compactFixedActions, setCompactFixedActions] = useState(true);
     const [allowToolbarWrap, setAllowToolbarWrap] = useState(false);
     const [toolbarLayoutEpoch, setToolbarLayoutEpoch] = useState(0);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const toolbarRef = useRef<HTMLDivElement>(null);
-    const compactEnterWidthRef = useRef<number | null>(null);
     const headingTriggerRef = useRef<HTMLButtonElement>(null);
     const headingSelectionRef = useRef<MarkdownEditorSelection | null>(null);
     const overflowSelectionRef = useRef<MarkdownEditorSelection | null>(null);
@@ -473,10 +477,9 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
       applyTransform(transformHeading(value, selection.start, selection.end, level));
     };
 
-    // Three-stage degradation: built-in format commands collapse into More first; then
-    // product actions and the view switch become icon-only; wrapping is reserved for the
-    // final fallback when the compact toolbar still cannot fit. scrollWidth is not sufficient
-    // for every flex/browser combination, so also verify the rendered child bounds.
+    // Built-in format commands still collapse into More by measured overflow, but fixed
+    // product actions and view modes no longer depend on that transition. Their density is
+    // decided only from the editor width, so Preview -> Edit cannot restore a stale full mode.
     useLayoutEffect(() => {
       if (!showAuthoringTools || allowToolbarWrap) return;
       const toolbar = toolbarRef.current;
@@ -488,25 +491,9 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
         return;
       }
 
-      if (!compactFixedActions) {
-        compactEnterWidthRef.current = toolbar.clientWidth;
-        setCompactFixedActions(true);
-        return;
-      }
-
       setAllowToolbarWrap(true);
-    }, [
-      allowToolbarWrap,
-      compactFixedActions,
-      showAuthoringTools,
-      toolbarLayoutEpoch,
-      visiblePrimaryCount,
-    ]);
+    }, [allowToolbarWrap, compactFixedActions, showAuthoringTools, toolbarLayoutEpoch, visiblePrimaryCount]);
 
-    // Shrinking is monotonic: never re-expand controls while available width is decreasing.
-    // When growing, leave wrap mode first but keep icon density until the container clears
-    // the width where compact mode was entered. The small hysteresis prevents resize jitter
-    // around the boundary; larger growth restores the full toolbar and reruns compaction.
     useLayoutEffect(() => {
       const toolbar = toolbarRef.current;
       if (!toolbar || typeof ResizeObserver === "undefined") return;
@@ -520,24 +507,9 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
         if (Math.abs(delta) <= 0.5) return;
         previousWidth = nextWidth;
 
-        if (delta < 0) {
-          setToolbarLayoutEpoch((epoch) => epoch + 1);
-          return;
-        }
-
-        const compactEnterWidth = compactEnterWidthRef.current;
-        if (compactEnterWidth !== null && nextWidth <= compactEnterWidth + 8) {
-          setAllowToolbarWrap(false);
-          setCompactFixedActions(true);
-          setVisiblePrimaryCount(0);
-          setToolbarLayoutEpoch((epoch) => epoch + 1);
-          return;
-        }
-
-        compactEnterWidthRef.current = null;
+        setCompactFixedActions(nextWidth <= FIXED_ACTION_ICON_ONLY_MAX_WIDTH);
         setAllowToolbarWrap(false);
-        setCompactFixedActions(false);
-        setVisiblePrimaryCount(primaryCommands.length);
+        if (delta > 0) setVisiblePrimaryCount(primaryCommands.length);
         setToolbarLayoutEpoch((epoch) => epoch + 1);
       });
 
@@ -547,9 +519,11 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
 
     useLayoutEffect(() => {
       if (!showAuthoringTools) return;
-      compactEnterWidthRef.current = null;
+      const toolbarWidth = toolbarRef.current?.getBoundingClientRect().width ?? 0;
+      setCompactFixedActions(
+        toolbarWidth === 0 || toolbarWidth <= FIXED_ACTION_ICON_ONLY_MAX_WIDTH,
+      );
       setAllowToolbarWrap(false);
-      setCompactFixedActions(false);
       setVisiblePrimaryCount(primaryCommands.length);
       setToolbarLayoutEpoch((epoch) => epoch + 1);
     }, [showAuthoringTools]);
