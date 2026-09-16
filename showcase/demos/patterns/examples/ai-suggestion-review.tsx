@@ -11,11 +11,29 @@ const suggestions: readonly AISuggestionReviewItem[] = [
 export default function AISuggestionReviewExample() {
   const [selectedKeys, setSelectedKeys] = useState(suggestions.map((item) => item.key));
   const [appliedKeys, setAppliedKeys] = useState<string[]>([]);
+  const [visible, setVisible] = useState(true);
 
   const appliedLabel = useMemo(
     () => appliedKeys.length ? `最近应用：${appliedKeys.join("、")}` : "尚未应用建议",
     [appliedKeys],
   );
+
+  if (!visible) {
+    return (
+      <div className="flex min-h-48 items-center justify-center rounded-lg border border-dashed bg-muted/10">
+        <button
+          type="button"
+          className="rounded-md border px-3 py-2 text-sm font-medium"
+          onClick={() => {
+            setSelectedKeys(suggestions.map((item) => item.key));
+            setVisible(true);
+          }}
+        >
+          重新打开 AI 建议
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -27,7 +45,7 @@ export default function AISuggestionReviewExample() {
         items={suggestions}
         selectedKeys={selectedKeys}
         onSelectedKeysChange={setSelectedKeys}
-        onCancel={() => setSelectedKeys([])}
+        onCancel={() => setVisible(false)}
         onRegenerate={() => setSelectedKeys(suggestions.map((item) => item.key))}
         onApply={() => setAppliedKeys(selectedKeys)}
       />

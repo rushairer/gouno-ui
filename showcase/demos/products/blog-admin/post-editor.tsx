@@ -112,7 +112,7 @@ const postTaxonomySuggestions = [
   { key: "tags", label: "标签补充", value: "AI 治理、自动化" },
 ] as const;
 
-const postTaxonomyTags = ["AI", "Agent", "可观测性", "AI 治理", "自动化"] as const;
+const postTaxonomyTags = ["AI 治理", "自动化"] as const;
 
 const versions: readonly VersionFixture[] = [
   {

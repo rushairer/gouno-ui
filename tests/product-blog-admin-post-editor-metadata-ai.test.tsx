@@ -17,8 +17,7 @@ describe("Blog Admin PostEditor AI metadata and cover actions", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "应用 2 项建议" }));
     expect(screen.getByRole("combobox", { name: "分类" }).textContent).toContain("AI");
-    expect((screen.getByLabelText("标签") as HTMLInputElement).value).toContain("AI 治理");
-    expect((screen.getByLabelText("标签") as HTMLInputElement).value).toContain("自动化");
+    expect((screen.getByLabelText("标签") as HTMLInputElement).value).toBe("AI 治理, 自动化");
   });
 
   it("uses one cover-source menu and writes the chosen image into URL and alt fields", () => {
