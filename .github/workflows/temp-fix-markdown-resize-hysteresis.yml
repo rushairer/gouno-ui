@@ -1,0 +1,82 @@
+name: Temp Fix Markdown Resize Hysteresis
+
+on:
+  push:
+    branches: [markdown-editor-icon-only-fallback]
+    paths:
+      - ".github/workflows/temp-fix-markdown-resize-hysteresis.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: markdown-editor-icon-only-fallback
+
+      - name: Apply monotonic resize state machine
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(text: str, old: str, new: str, label: str) -> str:
+              if old not in text:
+                  raise SystemExit(f"missing replacement target: {label}")
+              return text.replace(old, new, 1)
+
+          path = Path("src/patterns/markdown-editor.tsx")
+          text = path.read_text()
+
+          text = replace_once(
+              text,
+              '''    const textareaRef = useRef<HTMLTextAreaElement>(null);\n    const toolbarRef = useRef<HTMLDivElement>(null);\n    const headingTriggerRef = useRef<HTMLButtonElement>(null);''',
+              '''    const textareaRef = useRef<HTMLTextAreaElement>(null);\n    const toolbarRef = useRef<HTMLDivElement>(null);\n    const compactEnterWidthRef = useRef<number | null>(null);\n    const headingTriggerRef = useRef<HTMLButtonElement>(null);''',
+              "compact threshold ref",
+          )
+
+          text = replace_once(
+              text,
+              '''      if (!compactFixedActions) {\n        setCompactFixedActions(true);\n        return;\n      }''',
+              '''      if (!compactFixedActions) {\n        compactEnterWidthRef.current = toolbar.clientWidth;\n        setCompactFixedActions(true);\n        return;\n      }''',
+              "capture compact entry width",
+          )
+
+          old_observer = '''    // Re-expand first whenever the editor container itself changes width, then rerun the\n    // degradation sequence against the new geometry. Only observing the toolbar avoids a\n    // feedback loop when fixed actions intentionally shrink into icon-only mode.\n    useLayoutEffect(() => {\n      const toolbar = toolbarRef.current;\n      if (!toolbar || typeof ResizeObserver === "undefined") return;\n\n      let previousWidth = toolbar.getBoundingClientRect().width;\n      const observer = new ResizeObserver((entries) => {\n        const entry = entries.find((candidate) => candidate.target === toolbar);\n        if (!entry) return;\n        const nextWidth = entry.contentRect.width;\n        if (Math.abs(previousWidth - nextWidth) <= 0.5) return;\n        previousWidth = nextWidth;\n\n        setAllowToolbarWrap(false);\n        setCompactFixedActions(false);\n        setVisiblePrimaryCount(primaryCommands.length);\n        setToolbarLayoutEpoch((epoch) => epoch + 1);\n      });\n\n      observer.observe(toolbar);\n      return () => observer.disconnect();\n    }, [showAuthoringTools]);'''
+          new_observer = '''    // Shrinking is monotonic: never re-expand controls while available width is decreasing.\n    // When growing, leave wrap mode first but keep icon density until the container clears\n    // the width where compact mode was entered. The small hysteresis prevents resize jitter\n    // around the boundary; larger growth restores the full toolbar and reruns compaction.\n    useLayoutEffect(() => {\n      const toolbar = toolbarRef.current;\n      if (!toolbar || typeof ResizeObserver === "undefined") return;\n\n      let previousWidth = toolbar.getBoundingClientRect().width;\n      const observer = new ResizeObserver((entries) => {\n        const entry = entries.find((candidate) => candidate.target === toolbar);\n        if (!entry) return;\n        const nextWidth = entry.contentRect.width;\n        const delta = nextWidth - previousWidth;\n        if (Math.abs(delta) <= 0.5) return;\n        previousWidth = nextWidth;\n\n        if (delta < 0) {\n          setToolbarLayoutEpoch((epoch) => epoch + 1);\n          return;\n        }\n\n        const compactEnterWidth = compactEnterWidthRef.current;\n        if (compactEnterWidth !== null && nextWidth <= compactEnterWidth + 8) {\n          setAllowToolbarWrap(false);\n          setCompactFixedActions(true);\n          setVisiblePrimaryCount(0);\n          setToolbarLayoutEpoch((epoch) => epoch + 1);\n          return;\n        }\n\n        compactEnterWidthRef.current = null;\n        setAllowToolbarWrap(false);\n        setCompactFixedActions(false);\n        setVisiblePrimaryCount(primaryCommands.length);\n        setToolbarLayoutEpoch((epoch) => epoch + 1);\n      });\n\n      observer.observe(toolbar);\n      return () => observer.disconnect();\n    }, [showAuthoringTools]);'''
+          text = replace_once(text, old_observer, new_observer, "monotonic resize observer")
+
+          text = replace_once(
+              text,
+              '''    useLayoutEffect(() => {\n      if (!showAuthoringTools) return;\n      setAllowToolbarWrap(false);\n      setCompactFixedActions(false);\n      setVisiblePrimaryCount(primaryCommands.length);''',
+              '''    useLayoutEffect(() => {\n      if (!showAuthoringTools) return;\n      compactEnterWidthRef.current = null;\n      setAllowToolbarWrap(false);\n      setCompactFixedActions(false);\n      setVisiblePrimaryCount(primaryCommands.length);''',
+              "authoring reset threshold",
+          )
+          path.write_text(text)
+
+          test_path = Path("tests/pattern-markdown-editor-adaptive-toolbar.test.tsx")
+          test = test_path.read_text()
+          old = '''    const toolbar = container.querySelector('[data-slot="markdown-editor-toolbar"]') as HTMLElement;\n    const width = 280;\n    installToolbarGeometry(toolbar, container, () => width, 320, 220);'''
+          new = '''    const toolbar = container.querySelector('[data-slot="markdown-editor-toolbar"]') as HTMLElement;\n    let width = 280;\n    installToolbarGeometry(toolbar, container, () => width, 320, 220);'''
+          test = replace_once(test, old, new, "mutable compact test width")
+
+          marker = '''    const modeSwitcher = container.querySelector('[data-slot="markdown-editor-mode-switcher"]') as HTMLElement;\n    expect(modeSwitcher.getAttribute("data-icon-only")).toBe("true");\n    expect(screen.getByRole("button", { name: "编辑" }).textContent).toBe("");\n    expect(screen.getByRole("button", { name: "预览" }).textContent).toBe("");\n  });'''
+          replacement = '''    const modeSwitcher = container.querySelector('[data-slot="markdown-editor-mode-switcher"]') as HTMLElement;\n    expect(modeSwitcher.getAttribute("data-icon-only")).toBe("true");\n    expect(screen.getByRole("button", { name: "编辑" }).textContent).toBe("");\n    expect(screen.getByRole("button", { name: "预览" }).textContent).toBe("");\n\n    width = 260;\n    await act(async () => {\n      resize.notify(toolbar, width);\n      await Promise.resolve();\n    });\n    expect(toolbar.getAttribute("data-adaptive-density")).toBe("icon");\n    expect(toolbar.getAttribute("data-adaptive-wrap")).toBe("false");\n\n    width = 284;\n    await act(async () => {\n      resize.notify(toolbar, width);\n      await Promise.resolve();\n    });\n    expect(toolbar.getAttribute("data-adaptive-density")).toBe("icon");\n    expect(toolbar.getAttribute("data-adaptive-wrap")).toBe("false");\n\n    width = 600;\n    await act(async () => {\n      resize.notify(toolbar, width);\n      await Promise.resolve();\n    });\n    await waitFor(() => {\n      expect(toolbar.getAttribute("data-adaptive-density")).toBe("full");\n      expect(container.querySelectorAll('[data-slot="markdown-editor-primary-command"]')).toHaveLength(4);\n    });\n  });'''
+          test = replace_once(test, marker, replacement, "hysteresis regression")
+          test_path.write_text(test)
+          PY
+
+      - name: Commit implementation
+        shell: bash
+        run: |
+          git status --short
+          git config user.name "Aben"
+          git config user.email "5195693+rushairer@users.noreply.github.com"
+          git add src/patterns/markdown-editor.tsx tests/pattern-markdown-editor-adaptive-toolbar.test.tsx
+          git commit -m "fix(patterns): stabilize adaptive toolbar resize states"
+          git push origin HEAD:markdown-editor-icon-only-fallback
