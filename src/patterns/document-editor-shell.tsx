@@ -30,49 +30,50 @@ export function DocumentEditorShell({
     : "xl:grid-cols-[minmax(0,1fr)_20rem]";
 
   return (
-    <Card
-      padding="none"
-      className={cn("gap-0 overflow-clip", className)}
-      aria-label={ariaLabel}
-      data-slot="document-editor-shell"
-      {...props}
-    >
-      <header
-        className="flex min-h-16 flex-col gap-3 border-b px-5 py-3 lg:flex-row lg:items-center"
-        data-slot="document-editor-command-bar"
+    <div data-slot="document-editor-shell">
+      <Card
+        padding="none"
+        className={cn("gap-0 overflow-clip", className)}
+        aria-label={ariaLabel}
+        {...props}
       >
-        {header}
-      </header>
-
-      <div className={cn("grid min-w-0", columns)} data-slot="document-editor-workspace">
-        {navigator ? (
-          <aside
-            className="min-w-0 border-b bg-muted/10 p-4 xl:border-b-0 xl:border-r"
-            aria-label={navigatorAriaLabel}
-            data-slot="document-editor-navigator"
-          >
-            {navigator}
-          </aside>
-        ) : null}
-
-        <main
-          className="min-w-0 border-b p-5 xl:border-b-0 xl:p-6"
-          aria-label={canvasAriaLabel}
-          data-slot="document-editor-canvas"
+        <header
+          className="flex min-h-16 flex-col gap-3 border-b px-6 py-4 lg:flex-row lg:items-center"
+          data-slot="document-editor-command-bar"
         >
-          {children}
-        </main>
+          {header}
+        </header>
 
-        {inspector ? (
-          <aside
-            className="min-w-0 bg-muted/[0.025] p-5 xl:border-l"
-            aria-label={inspectorAriaLabel}
-            data-slot="document-editor-inspector"
+        <div className={cn("grid min-w-0", columns)} data-slot="document-editor-workspace">
+          {navigator ? (
+            <aside
+              className="min-w-0 border-b bg-muted/10 p-4 xl:border-b-0 xl:border-r"
+              aria-label={navigatorAriaLabel}
+              data-slot="document-editor-navigator"
+            >
+              {navigator}
+            </aside>
+          ) : null}
+
+          <main
+            className="min-w-0 border-b p-5 xl:border-b-0 xl:p-6"
+            aria-label={canvasAriaLabel}
+            data-slot="document-editor-canvas"
           >
-            {inspector}
-          </aside>
-        ) : null}
-      </div>
-    </Card>
+            {children}
+          </main>
+
+          {inspector ? (
+            <aside
+              className="min-w-0 bg-muted/[0.025] p-5 xl:border-l"
+              aria-label={inspectorAriaLabel}
+              data-slot="document-editor-inspector"
+            >
+              {inspector}
+            </aside>
+          ) : null}
+        </div>
+      </Card>
+    </div>
   );
 }
