@@ -102,7 +102,7 @@ describe("MarkdownEditor adaptive toolbar", () => {
 
     const { container } = render(<Fixture />);
     const toolbar = container.querySelector('[data-slot="markdown-editor-toolbar"]') as HTMLElement;
-    let width = 425;
+    let width = 329;
     installToolbarGeometry(toolbar, container, () => width);
 
     await act(async () => {
@@ -122,6 +122,7 @@ describe("MarkdownEditor adaptive toolbar", () => {
     expect(screen.getByRole("button", { name: "插图" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "编辑" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "预览" })).toBeTruthy();
+    expect(toolbar.getAttribute("data-adaptive-density")).toBe("icon");
     expect(toolbar.getAttribute("data-adaptive-wrap")).toBe("false");
 
     editorRef.current?.setSelection(6, 10);
@@ -140,7 +141,7 @@ describe("MarkdownEditor adaptive toolbar", () => {
     );
     expect(editorRef.current?.getSelection().text).toBe("https://example.com");
 
-    width = 600;
+    width = 900;
     await act(async () => {
       resize.notify(toolbar, width);
       await Promise.resolve();
@@ -148,12 +149,13 @@ describe("MarkdownEditor adaptive toolbar", () => {
 
     await waitFor(() => {
       expect(container.querySelectorAll('[data-slot="markdown-editor-primary-command"]')).toHaveLength(4);
+      expect(toolbar.getAttribute("data-adaptive-density")).toBe("full");
     });
     expect(screen.getByRole("button", { name: "插入链接" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "行内代码" })).toBeTruthy();
   });
 
-  it("switches product actions and view modes to icon density before wrapping", async () => {
+  it("uses deterministic icon density for fixed actions at narrow editor widths", async () => {
     const resize = installResizeObserverMock();
     const { container } = render(
       <MarkdownEditor
@@ -167,7 +169,7 @@ describe("MarkdownEditor adaptive toolbar", () => {
     );
 
     const toolbar = container.querySelector('[data-slot="markdown-editor-toolbar"]') as HTMLElement;
-    let width = 280;
+    let width = 600;
     installToolbarGeometry(toolbar, container, () => width, 320, 220);
 
     await act(async () => {
@@ -176,7 +178,6 @@ describe("MarkdownEditor adaptive toolbar", () => {
     });
 
     await waitFor(() => {
-      expect(container.querySelectorAll('[data-slot="markdown-editor-primary-command"]')).toHaveLength(0);
       expect(toolbar.getAttribute("data-adaptive-density")).toBe("icon");
       expect(toolbar.getAttribute("data-adaptive-wrap")).toBe("false");
     });
@@ -187,23 +188,7 @@ describe("MarkdownEditor adaptive toolbar", () => {
     expect(screen.getByRole("button", { name: "编辑" }).textContent).toBe("");
     expect(screen.getByRole("button", { name: "预览" }).textContent).toBe("");
 
-    width = 260;
-    await act(async () => {
-      resize.notify(toolbar, width);
-      await Promise.resolve();
-    });
-    expect(toolbar.getAttribute("data-adaptive-density")).toBe("icon");
-    expect(toolbar.getAttribute("data-adaptive-wrap")).toBe("false");
-
-    width = 284;
-    await act(async () => {
-      resize.notify(toolbar, width);
-      await Promise.resolve();
-    });
-    expect(toolbar.getAttribute("data-adaptive-density")).toBe("icon");
-    expect(toolbar.getAttribute("data-adaptive-wrap")).toBe("false");
-
-    width = 600;
+    width = 900;
     await act(async () => {
       resize.notify(toolbar, width);
       await Promise.resolve();
@@ -213,6 +198,16 @@ describe("MarkdownEditor adaptive toolbar", () => {
       expect(container.querySelectorAll('[data-slot="markdown-editor-primary-command"]')).toHaveLength(4);
     });
     expect(screen.getByRole("button", { name: "产品动作" }).textContent).toBe("产品动作");
+
+    width = 700;
+    await act(async () => {
+      resize.notify(toolbar, width);
+      await Promise.resolve();
+    });
+    await waitFor(() => {
+      expect(toolbar.getAttribute("data-adaptive-density")).toBe("icon");
+    });
+    expect(screen.getByRole("button", { name: "产品动作" }).textContent).toBe("");
   });
 
   it("uses wrapping only after icon-only fixed actions still cannot fit", async () => {
