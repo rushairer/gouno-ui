@@ -23,6 +23,12 @@ const CoreComponentPage = lazy(() =>
 const PatternBulkActionBarDemo = lazy(() =>
   import("../demos/patterns/bulk-action-bar").then((module) => ({ default: module.PatternBulkActionBarDemo })),
 );
+const PatternAISuggestionPickerDemo = lazy(() =>
+  import("../demos/patterns/ai-suggestion-picker").then((module) => ({ default: module.PatternAISuggestionPickerDemo })),
+);
+const PatternAISuggestionReviewDemo = lazy(() =>
+  import("../demos/patterns/ai-suggestion-review").then((module) => ({ default: module.PatternAISuggestionReviewDemo })),
+);
 const PatternMarkdownEditorDemo = lazy(() =>
   import("../demos/patterns/markdown-editor").then((module) => ({ default: module.PatternMarkdownEditorDemo })),
 );
@@ -184,6 +190,10 @@ export function ShowcasePage({ page, workspace }: { page: string; workspace: Sho
       return <ThemeSystemDemo />;
     case "pattern-bulk-action-bar":
       return <Suspense fallback={loading}><PatternBulkActionBarDemo /></Suspense>;
+    case "pattern-ai-suggestion-picker":
+      return <Suspense fallback={loading}><PatternAISuggestionPickerDemo /></Suspense>;
+    case "pattern-ai-suggestion-review":
+      return <Suspense fallback={loading}><PatternAISuggestionReviewDemo /></Suspense>;
     case "pattern-markdown-editor":
       return <Suspense fallback={loading}><PatternMarkdownEditorDemo /></Suspense>;
     case "gouno-app-shell":

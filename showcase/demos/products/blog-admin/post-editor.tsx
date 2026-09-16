@@ -52,7 +52,7 @@ type EditorRoute = "edit" | "new" | "readonly";
 type FixtureScenario = "ready" | "loading" | "error" | "conflict";
 type PostStatus = "draft" | "published" | "scheduled";
 type NavigatorMode = "outline" | "history";
-type AIPanel = "writing" | "image" | null;
+type AIPanel = "writing" | "image" | "cover-image" | null;
 
 type PostFixture = {
   id: number;
@@ -106,6 +106,13 @@ const postSeoSuggestions = [
   { key: "seo-title", label: "SEO 标题", value: "Agent 工作流可观测性：运行证据、审批与失败回放" },
   { key: "seo-description", label: "SEO 描述", value: "拆解 Agent 自动化进入生产后需要保留的执行证据、人工审批边界与失败回放能力。" },
 ] as const;
+
+const postTaxonomySuggestions = [
+  { key: "category", label: "分类", value: "AI" },
+  { key: "tags", label: "标签补充", value: "AI 治理、自动化" },
+] as const;
+
+const postTaxonomyTags = ["AI", "Agent", "可观测性", "AI 治理", "自动化"] as const;
 
 const versions: readonly VersionFixture[] = [
   {
@@ -281,6 +288,8 @@ export function BlogAdminPostEditorDemo({
   const [selectedSummaryCandidate, setSelectedSummaryCandidate] = useState<string | null>(null);
   const [metadataSuggestionsOpen, setMetadataSuggestionsOpen] = useState(false);
   const [metadataSelection, setMetadataSelection] = useState<string[]>([]);
+  const [taxonomySuggestionsOpen, setTaxonomySuggestionsOpen] = useState(false);
+  const [taxonomySelection, setTaxonomySelection] = useState<string[]>([]);
   const [writingPrompt, setWritingPrompt] = useState("");
   const [generatedContent, setGeneratedContent] = useState<string | null>(null);
   const [imagePrompt, setImagePrompt] = useState("");
@@ -307,6 +316,8 @@ export function BlogAdminPostEditorDemo({
     setSelectedSummaryCandidate(null);
     setMetadataSuggestionsOpen(false);
     setMetadataSelection([]);
+    setTaxonomySuggestionsOpen(false);
+    setTaxonomySelection([]);
     setGeneratedContent(null);
     setGeneratedImage(false);
     setEditorSelection(null);
@@ -393,6 +404,50 @@ export function BlogAdminPostEditorDemo({
   setMetadataSuggestionsOpen(false);
   setNotice(`已应用 ${metadataSelection.length} 项 AI 路径与 SEO 建议（Showcase 模拟）。`);
 };
+
+  const applyTaxonomySuggestions = () => {
+    const selected = new Set(taxonomySelection);
+    setPost((current) => ({
+      ...current,
+      categoryId: selected.has("category") ? 1 : current.categoryId,
+      tags: selected.has("tags")
+        ? Array.from(new Set([...current.tags, ...postTaxonomyTags]))
+        : current.tags,
+    }));
+    setDirty(true);
+    setSavedAt(null);
+    setTaxonomySuggestionsOpen(false);
+    setNotice(`已应用 ${taxonomySelection.length} 项 AI 分类与标签建议（Showcase 模拟）。`);
+  };
+
+  const applyCoverSource = (source: "library" | "upload") => {
+    const nextCover = source === "library"
+      ? {
+          url: "/media/ai-agent-observability-cover.webp",
+          alt: "AI Agent 工作流运行证据与人工审批主题封面",
+        }
+      : {
+          url: "/media/uploads/agent-governance-cover.webp",
+          alt: "Agent 工作流治理文章封面",
+        };
+
+    setPost((current) => ({
+      ...current,
+      coverUrl: nextCover.url,
+      coverAlt: nextCover.alt,
+    }));
+    setDirty(true);
+    setSavedAt(null);
+    setError(null);
+    setNotice(source === "library" ? "已从媒体库选择文章封面。" : "已上传并设置文章封面。");
+  };
+
+  const openCoverGenerator = () => {
+    setImagePrompt("");
+    setImageAlt(post.coverAlt || (post.title.trim() ? `${post.title.trim()}封面` : "文章封面"));
+    setGeneratedImage(false);
+    setAIPanel("cover-image");
+  };
 
   const openWritingAssistant = (prompt: string) => {
     setWritingPrompt(prompt);
@@ -747,7 +802,41 @@ export function BlogAdminPostEditorDemo({
         ) : null}
       </InspectorSection>
 
-      <InspectorSection title="分类与标签">
+      <InspectorSection
+        title="分类与标签"
+        action={!readOnly ? (
+          <Button
+            type="button"
+            size="small"
+            variant="text"
+            icon={<Sparkles />}
+            aria-label="AI 推荐分类与标签"
+            title="AI 推荐分类与标签"
+            className="size-8 px-0"
+            disabled={!post.title.trim() && !post.summary.trim() && !post.content.trim()}
+            onClick={() => {
+              if (taxonomySuggestionsOpen) {
+                setTaxonomySuggestionsOpen(false);
+                return;
+              }
+              setTaxonomySelection(postTaxonomySuggestions.map((item) => item.key));
+              setTaxonomySuggestionsOpen(true);
+            }}
+          />
+        ) : undefined}
+      >
+        {taxonomySuggestionsOpen ? (
+          <AISuggestionReview
+            aria-label="AI 分类与标签建议"
+            groupLabel="分类与标签建议"
+            description="分类只从现有分类中推荐；标签建议以补充为主，不覆盖手工标签。"
+            items={postTaxonomySuggestions}
+            selectedKeys={taxonomySelection}
+            onSelectedKeysChange={setTaxonomySelection}
+            onCancel={() => setTaxonomySuggestionsOpen(false)}
+            onApply={applyTaxonomySuggestions}
+          />
+        ) : null}
         <Field label="分类">
           <Select
             aria-label="分类"
@@ -768,7 +857,31 @@ export function BlogAdminPostEditorDemo({
         </Field>
       </InspectorSection>
 
-      <InspectorSection title="封面">
+      <InspectorSection
+        title="封面"
+        action={!readOnly ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                size="small"
+                variant={aiPanel === "cover-image" ? "solid" : "text"}
+                color={aiPanel === "cover-image" ? "primary" : undefined}
+                icon={<ImageIcon />}
+                aria-label="选择文章封面"
+                title="选择文章封面"
+                className="size-8 px-0"
+              />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-52">
+              <DropdownMenuItem onSelect={() => applyCoverSource("library")}>从媒体库选择</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => applyCoverSource("upload")}>上传图片</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onSelect={openCoverGenerator}>AI 生成封面</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : undefined}
+      >
         <Field label="封面 URL">
           <Input aria-label="封面 URL" value={post.coverUrl} onChange={(event) => updatePost("coverUrl", event.target.value)} placeholder="/media/cover.webp" />
         </Field>
@@ -1019,9 +1132,11 @@ setSelectedSummaryCandidate(null);
           </Modal>
 
           <Modal
-            open={aiPanel === "image" && !readOnly}
-            title="AI 配图"
-            description="生成后可插入当前编辑位置，或设为文章封面。"
+            open={(aiPanel === "image" || aiPanel === "cover-image") && !readOnly}
+            title={aiPanel === "cover-image" ? "AI 生成封面" : "AI 配图"}
+            description={aiPanel === "cover-image"
+              ? "生成单张封面；采用后会同时填写封面 URL 与替代文本。"
+              : "生成后可插入当前编辑位置，或设为文章封面。"}
             size="lg"
             onOpenChange={(open) => {
               if (!open) {
@@ -1055,20 +1170,48 @@ setSelectedSummaryCandidate(null);
               {generatedImage ? (
                 <div className="grid gap-4 rounded-md border bg-background p-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
                   <div className="flex min-h-40 items-center justify-center rounded-md border border-dashed bg-muted/30 text-center text-sm text-muted-foreground">
-                    AI 生成插图预览
+                    {aiPanel === "cover-image" ? "AI 生成封面预览" : "AI 生成插图预览"}
                   </div>
                   <div className="flex min-w-0 flex-col gap-3">
-                    <code className="overflow-x-auto rounded bg-muted px-3 py-2 text-xs">![{imageAlt || "文章插图"}](/media/ai-generated-agent-workflow.webp)</code>
-                    <div className="flex flex-wrap gap-2">
-                      <Button size="small" variant="solid" color="primary" onClick={insertGeneratedImageAtCursor}>插入光标位置</Button>
-                      <Button size="small" onClick={() => {
-                        updatePost("coverUrl", "/media/ai-generated-agent-workflow.webp");
-                        updatePost("coverAlt", imageAlt || "文章插图");
-                        setAIPanel(null);
-                        setNotice("已将 AI 图片设为文章封面。");
-                      }}>设为文章封面</Button>
-                      <Button size="small" variant="text" onClick={() => setGeneratedImage(false)}>放弃</Button>
-                    </div>
+                    <code className="overflow-x-auto rounded bg-muted px-3 py-2 text-xs">
+                      {aiPanel === "cover-image"
+                        ? "/media/ai-generated-agent-workflow.webp"
+                        : `![${imageAlt || "文章插图"}](/media/ai-generated-agent-workflow.webp)`}
+                    </code>
+                    {aiPanel === "cover-image" ? (
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          size="small"
+                          variant="solid"
+                          color="primary"
+                          onClick={() => {
+                            setPost((current) => ({
+                              ...current,
+                              coverUrl: "/media/ai-generated-agent-workflow.webp",
+                              coverAlt: imageAlt || "文章封面",
+                            }));
+                            setDirty(true);
+                            setSavedAt(null);
+                            setAIPanel(null);
+                            setNotice("已采用 AI 生成封面，并回填封面 URL 与替代文本。");
+                          }}
+                        >
+                          使用此封面
+                        </Button>
+                        <Button size="small" variant="text" onClick={() => setGeneratedImage(false)}>放弃</Button>
+                      </div>
+                    ) : (
+                      <div className="flex flex-wrap gap-2">
+                        <Button size="small" variant="solid" color="primary" onClick={insertGeneratedImageAtCursor}>插入光标位置</Button>
+                        <Button size="small" onClick={() => {
+                          updatePost("coverUrl", "/media/ai-generated-agent-workflow.webp");
+                          updatePost("coverAlt", imageAlt || "文章插图");
+                          setAIPanel(null);
+                          setNotice("已将 AI 图片设为文章封面。");
+                        }}>设为文章封面</Button>
+                        <Button size="small" variant="text" onClick={() => setGeneratedImage(false)}>放弃</Button>
+                      </div>
+                    )}
                   </div>
                 </div>
               ) : null}

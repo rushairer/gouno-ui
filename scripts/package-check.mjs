@@ -82,7 +82,7 @@ const [core, theme, patterns, gouno] = await Promise.all([
 for (const [owner, module, names] of [
   ["core", core, ["Button", "Card", "Tabs", "Table"]],
   ["theme", theme, ["ThemeProvider", "ThemeToggle", "useTheme"]],
-  ["patterns", patterns, ["BulkActionBar"]],
+  ["patterns", patterns, ["BulkActionBar", "DocumentEditorShell", "MarkdownEditor", "AISuggestionPicker", "AISuggestionReview"]],
   ["gouno", gouno, ["AppShell", "PageContainer", "PageHeader"]],
 ]) {
   for (const name of names) {
