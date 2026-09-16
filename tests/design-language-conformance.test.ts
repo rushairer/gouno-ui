@@ -301,9 +301,12 @@ describe("design-language conformance", () => {
     expect(postEditor).not.toContain("<Tabs<EditorMode>");
     expect(postEditor).not.toContain("<PageHeader");
 
-    // PageEditor remains on its legacy view-state Tabs until its dedicated migration phase.
+    // PageEditor has no document-navigation tier. Edit/split/preview is the same
+    // MarkdownEditor view state and therefore must not consume a persistent Tabs tier.
     const pageEditor = readFileSync(resolve(productsRoot, "blog-admin/page-editor.tsx"), "utf8");
-    expect(pageEditor).toContain("<Tabs<EditorMode>");
+    expect(tabsCount(pageEditor)).toBe(0);
+    expect(pageEditor).toContain("<MarkdownEditor");
+    expect(pageEditor).not.toContain("<Tabs<EditorMode>");
     expect(pageEditor).not.toContain("<PageHeader");
   });
 
