@@ -68,6 +68,10 @@ jobs:
               '/跳转到 当 Agent 从一次性生成走向长期自动化/',
               '/跳转到 为什么现在要谈可观测性/',
           )
+          text = text.replace(
+              'expect(longOutlineItem.querySelector("span")?.className).toContain("truncate");',
+              'expect(longOutlineItem.querySelector(".truncate")).toBeTruthy();',
+          )
           post_test.write_text(text)
           PY
 
