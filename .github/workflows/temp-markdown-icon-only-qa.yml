@@ -1,4 +1,4 @@
-# QA rerun after compact injected action selector fix
+# QA rerun with explicit compact icon visibility assertions
 name: Temp Markdown Icon-only QA
 
 on:
@@ -117,6 +117,13 @@ jobs:
           for (const button of [aiButton, imageButton, editButton, previewButton]) {
             const box = await button.boundingBox();
             assert.ok(box && box.width <= 36, `expected icon-only button width <= 36, got ${box?.width}`);
+          }
+
+          for (const actionButton of [aiButton, imageButton]) {
+            const icon = actionButton.locator('.btn__icon svg');
+            const iconBox = await icon.boundingBox();
+            assert.ok(await icon.isVisible(), 'expected injected action icon to remain visible');
+            assert.ok(iconBox && iconBox.width >= 12 && iconBox.height >= 12, `expected visible injected action icon, got ${JSON.stringify(iconBox)}`);
           }
 
           const labelBox = await aiButton.locator('span:not(.btn__icon)').boundingBox();
