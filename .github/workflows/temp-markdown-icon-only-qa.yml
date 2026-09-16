@@ -1,0 +1,121 @@
+name: Temp Markdown Icon-only QA
+
+on:
+  push:
+    branches: [markdown-editor-icon-only-fallback]
+    paths:
+      - ".github/workflows/temp-markdown-icon-only-qa.yml"
+  workflow_dispatch:
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: markdown-editor-icon-only-fallback
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install isolated Playwright runtime
+        run: |
+          PLAYWRIGHT_VERSION=1.55.0
+          npm install --no-save --ignore-scripts @playwright/test@${PLAYWRIGHT_VERSION}
+          npx playwright install --with-deps chromium
+
+      - name: Run responsive icon-only QA
+        shell: bash
+        run: |
+          cat > /tmp/markdown-icon-only-qa.mjs <<'EOF'
+          import { chromium } from '@playwright/test';
+          import assert from 'node:assert/strict';
+          import { mkdir } from 'node:fs/promises';
+
+          const browser = await chromium.launch();
+          const page = await browser.newPage({ viewport: { width: 1280, height: 1200 } });
+          const errors = [];
+          page.on('console', (message) => {
+            if (message.type() === 'error') errors.push(message.text());
+          });
+          page.on('pageerror', (error) => errors.push(String(error)));
+
+          await page.goto('http://127.0.0.1:4174/#pattern-markdown-editor');
+          await page.waitForSelector('[data-slot="markdown-editor"]');
+          const editor = page.locator('[data-slot="markdown-editor"]').first();
+          const toolbar = editor.locator('[data-slot="markdown-editor-toolbar"]');
+          const actions = editor.locator('[data-slot="markdown-editor-actions"]');
+          const modes = editor.locator('[data-slot="markdown-editor-mode-switcher"]');
+
+          const setWidth = async (width) => {
+            await editor.evaluate((element, nextWidth) => {
+              element.style.width = `${nextWidth}px`;
+              element.style.maxWidth = `${nextWidth}px`;
+            }, width);
+            await page.waitForTimeout(150);
+          };
+
+          await setWidth(900);
+          assert.equal(await toolbar.getAttribute('data-adaptive-density'), 'full');
+          assert.equal(await toolbar.getAttribute('data-adaptive-wrap'), 'false');
+          assert.equal(await editor.locator('[data-slot="markdown-editor-primary-command"]').count(), 4);
+
+          await setWidth(520);
+          assert.equal(await toolbar.getAttribute('data-adaptive-density'), 'icon');
+          assert.equal(await toolbar.getAttribute('data-adaptive-wrap'), 'false');
+          assert.equal(await actions.getAttribute('data-icon-only'), 'true');
+          assert.equal(await modes.getAttribute('data-icon-only'), 'true');
+
+          const aiButton = editor.getByRole('button', { name: 'AI 写作' });
+          const imageButton = editor.getByRole('button', { name: '插图' });
+          const editButton = editor.getByRole('button', { name: '编辑' });
+          const previewButton = editor.getByRole('button', { name: '预览' });
+          for (const button of [aiButton, imageButton, editButton, previewButton]) {
+            const box = await button.boundingBox();
+            assert.ok(box && box.width <= 36, `expected icon-only button width <= 36, got ${box?.width}`);
+          }
+
+          const labelBox = await aiButton.locator('span:not(.btn__icon)').boundingBox();
+          assert.ok(labelBox && labelBox.width <= 2 && labelBox.height <= 2, `expected visually hidden AI label, got ${JSON.stringify(labelBox)}`);
+          const toolbarBox = await toolbar.boundingBox();
+          assert.ok(toolbarBox && toolbarBox.height <= 48, `expected one-line toolbar at 520px, got ${toolbarBox?.height}`);
+
+          await mkdir('/tmp/markdown-icon-only-evidence', { recursive: true });
+          await editor.screenshot({ path: '/tmp/markdown-icon-only-evidence/icon-only-520.png' });
+
+          await setWidth(320);
+          assert.equal(await toolbar.getAttribute('data-adaptive-density'), 'icon');
+          assert.equal(await toolbar.getAttribute('data-adaptive-wrap'), 'true');
+          await editor.screenshot({ path: '/tmp/markdown-icon-only-evidence/wrap-320.png' });
+
+          await setWidth(900);
+          assert.equal(await toolbar.getAttribute('data-adaptive-density'), 'full');
+          assert.equal(await toolbar.getAttribute('data-adaptive-wrap'), 'false');
+          assert.equal(await editor.locator('[data-slot="markdown-editor-primary-command"]').count(), 4);
+
+          assert.deepEqual(errors, []);
+          await browser.close();
+          EOF
+          npm run showcase:dev -- --host 127.0.0.1 --port 4174 >/tmp/showcase.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:4174/ >/dev/null; then break; fi
+            sleep 1
+          done
+          node /tmp/markdown-icon-only-qa.mjs
+
+      - name: Upload QA evidence
+        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
+        with:
+          name: markdown-icon-only-qa-${{ github.run_id }}
+          path: /tmp/markdown-icon-only-evidence
+          if-no-files-found: error
