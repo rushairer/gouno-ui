@@ -35,7 +35,7 @@ jobs:
       - name: Run responsive icon-only QA
         shell: bash
         run: |
-          cat > /tmp/markdown-icon-only-qa.mjs <<'EOF'
+          cat > .tmp-markdown-icon-only-qa.mjs <<'EOF'
           import { chromium } from '@playwright/test';
           import assert from 'node:assert/strict';
           import { mkdir } from 'node:fs/promises';
@@ -111,7 +111,7 @@ jobs:
             if curl -fsS http://127.0.0.1:4174/ >/dev/null; then break; fi
             sleep 1
           done
-          node /tmp/markdown-icon-only-qa.mjs
+          node .tmp-markdown-icon-only-qa.mjs
 
       - name: Upload QA evidence
         uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
