@@ -1,0 +1,51 @@
+name: Temporary Update Editor Golden
+
+on:
+  push:
+    branches:
+      - fix/markdown-editor-deterministic-compact
+    paths:
+      - ".github/workflows/tmp-update-editor-golden.yml"
+      - "src/patterns/markdown-editor.tsx"
+      - "showcase/e2e/canonical-visual-golden.pw.mjs"
+
+permissions:
+  contents: write
+
+jobs:
+  update-golden:
+    if: ${{ !contains(github.event.head_commit.message, '[golden-update]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: fix/markdown-editor-deterministic-compact
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright
+        run: |
+          PLAYWRIGHT_VERSION=1.55.0
+          npm install --no-save --ignore-scripts @playwright/test@${PLAYWRIGHT_VERSION}
+          npx playwright install --with-deps chromium
+
+      - name: Update editor golden only
+        run: npx playwright test --config=showcase/e2e/canonical-visual-golden.config.mjs --grep "blog-admin-post-editor-desktop-light$" --update-snapshots
+
+      - name: Commit updated golden
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add showcase/e2e/canonical-visual-golden.pw.mjs-snapshots/blog-admin-post-editor-desktop-light.png
+          git diff --cached --quiet && exit 0
+          git commit -m "test(showcase): update editor icon-only golden [golden-update]"
+          git push origin HEAD:fix/markdown-editor-deterministic-compact
