@@ -1,16 +1,19 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { Image as ImageIcon, Sparkles } from "lucide-react";
 import { Button } from "../../../../src/core";
 import { MarkdownEditor, type MarkdownEditorRef } from "../../../../src/patterns";
-import { MarkdownPreview } from "../../../components/markdown-preview";
 
 const initialValue = `## MarkdownEditor
 
-这是一个 **加粗**、*斜体* 和 [链接](https://example.com) 都能正确预览的示例。
+这是一个 **加粗**、*斜体* 和 [链接](https://example.com) 的示例。
 
 > toolbarActions 只提供扩展槽，AI、插入等业务由产品自己注入。`;
 
-export default function MarkdownEditorExample() {
+export interface MarkdownEditorExampleProps {
+  renderPreview?: (markdown: string) => ReactNode;
+}
+
+export default function MarkdownEditorExample({ renderPreview }: MarkdownEditorExampleProps) {
   const [value, setValue] = useState(initialValue);
   const editorRef = useRef<MarkdownEditorRef>(null);
 
@@ -19,7 +22,9 @@ export default function MarkdownEditorExample() {
       ref={editorRef}
       value={value}
       onChange={setValue}
-      renderPreview={(markdown) => <MarkdownPreview value={markdown} />}
+      renderPreview={renderPreview ?? ((markdown) => (
+        <pre className="whitespace-pre-wrap font-sans text-sm leading-7">{markdown}</pre>
+      ))}
       toolbarActions={(
         <>
           <Button
