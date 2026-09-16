@@ -45,6 +45,7 @@ jobs:
       - name: Commit intended golden
         run: |
           GOLDEN=showcase/e2e/canonical-visual-golden.pw.mjs-snapshots/blog-admin-post-editor-desktop-light.png
+          rm -rf playwright-report-canonical-visual-golden test-results
           git status --short
           test -f "$GOLDEN"
           CHANGED=$(git status --short | awk '{print $2}')
