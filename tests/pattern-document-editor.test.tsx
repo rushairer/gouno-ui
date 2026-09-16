@@ -161,23 +161,77 @@ describe("Document editor patterns", () => {
     expect(editorRef.current?.getSelection().text).toBe("https://example.com");
   });
 
-  it("applies heading and quote commands to the current line instead of corrupting inline text", async () => {
+  it("converts the current block between paragraph and configured heading levels without losing the target line", async () => {
     const editorRef = createRef<MarkdownEditorRef>();
 
     function Fixture() {
       const [value, setValue] = useState("first line\nsecond line");
-      return <MarkdownEditor ref={editorRef} value={value} onChange={setValue} textareaAriaLabel="块级 Markdown" />;
+      return (
+        <MarkdownEditor
+          ref={editorRef}
+          value={value}
+          onChange={setValue}
+          headingLevels={[2, 3, 4, 5, 6]}
+          textareaAriaLabel="块级 Markdown"
+        />
+      );
     }
 
     render(<Fixture />);
     editorRef.current?.setSelection(13);
 
-    await act(async () => {
-      fireEvent.click(screen.getByRole("button", { name: "二级标题" }));
-      await Promise.resolve();
-    });
-    expect((screen.getByLabelText("块级 Markdown") as HTMLTextAreaElement).value).toBe("first line\n## second line");
+    const openHeadingMenu = (buttonName: string) => {
+      fireEvent.pointerDown(screen.getByRole("button", { name: buttonName }), {
+        button: 0,
+        ctrlKey: false,
+      });
+    };
 
+    openHeadingMenu("段落样式：正文");
+    expect(screen.queryByRole("menuitem", { name: /一级标题/ })).toBeNull();
+    expect(screen.getByRole("menuitem", { name: /二级标题/ })).toBeTruthy();
+    expect(screen.getByRole("menuitem", { name: /六级标题/ })).toBeTruthy();
+    fireEvent.click(screen.getByRole("menuitem", { name: /三级标题/ }));
+    await act(async () => Promise.resolve());
+
+    expect((screen.getByLabelText("块级 Markdown") as HTMLTextAreaElement).value).toBe("first line\n### second line");
+    expect(screen.getByRole("button", { name: "段落样式：H3" })).toBeTruthy();
+
+    openHeadingMenu("段落样式：H3");
+    fireEvent.click(screen.getByRole("menuitem", { name: "正文" }));
+    await act(async () => Promise.resolve());
+
+    expect((screen.getByLabelText("块级 Markdown") as HTMLTextAreaElement).value).toBe("first line\nsecond line");
+    expect(screen.getByRole("button", { name: "段落样式：正文" })).toBeTruthy();
+  });
+
+  it("can opt into the full H1-H6 heading range for standalone Markdown documents", () => {
+    render(
+      <MarkdownEditor
+        value="standalone document"
+        onChange={() => undefined}
+        headingLevels={[1, 2, 3, 4, 5, 6]}
+        textareaAriaLabel="完整标题 Markdown"
+      />,
+    );
+
+    fireEvent.pointerDown(screen.getByRole("button", { name: "段落样式：正文" }), {
+      button: 0,
+      ctrlKey: false,
+    });
+    expect(screen.getByRole("menuitem", { name: /一级标题/ })).toBeTruthy();
+    expect(screen.getByRole("menuitem", { name: /六级标题/ })).toBeTruthy();
+  });
+
+  it("applies quote commands to the current line instead of corrupting inline text", async () => {
+    const editorRef = createRef<MarkdownEditorRef>();
+
+    function Fixture() {
+      const [value, setValue] = useState("first line\n## second line");
+      return <MarkdownEditor ref={editorRef} value={value} onChange={setValue} textareaAriaLabel="引用 Markdown" />;
+    }
+
+    render(<Fixture />);
     editorRef.current?.setSelection(13);
     fireEvent.pointerDown(screen.getByRole("button", { name: "更多格式" }), {
       button: 0,
@@ -185,6 +239,6 @@ describe("Document editor patterns", () => {
     });
     fireEvent.click(screen.getByRole("menuitem", { name: "引用" }));
     await act(async () => Promise.resolve());
-    expect((screen.getByLabelText("块级 Markdown") as HTMLTextAreaElement).value).toBe("first line\n> ## second line");
+    expect((screen.getByLabelText("引用 Markdown") as HTMLTextAreaElement).value).toBe("first line\n> ## second line");
   });
 });
