@@ -4,6 +4,14 @@
  */
 export { BulkActionBar, type BulkActionBarProps } from "./bulk-action-bar";
 export {
+  AISuggestionPicker,
+  AISuggestionReview,
+  type AISuggestionOption,
+  type AISuggestionPickerProps,
+  type AISuggestionReviewItem,
+  type AISuggestionReviewProps,
+} from "./ai-suggestions";
+export {
   DocumentEditorShell,
   type DocumentEditorShellProps,
 } from "./document-editor-shell";

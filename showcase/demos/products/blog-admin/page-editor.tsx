@@ -12,7 +12,6 @@ import {
   Alert,
   Button,
   Card,
-  ChoiceButton,
   Checkbox,
   DropdownMenu,
   DropdownMenuContent,
@@ -29,6 +28,8 @@ import {
   Textarea,
 } from "../../../../src/core";
 import {
+  AISuggestionPicker,
+  AISuggestionReview,
   DocumentEditorShell,
   MarkdownEditor,
   type MarkdownEditorMode,
@@ -110,6 +111,22 @@ const scenarioOptions = [
   { value: "conflict", label: "409 冲突" },
 ] as const;
 
+const pageTitleSuggestions = [
+  "关于我们：技术、产品与长期主义",
+  "认识我们：从工程实践到开放技术",
+] as const;
+
+const pageSummarySuggestions = [
+  "介绍团队背景、技术方向、产品理念与长期目标。",
+  "用一个页面说明我们是谁、长期关注什么，以及为什么持续分享工程实践与开放技术。",
+] as const;
+
+const pageSeoSuggestions = [
+  { key: "slug", label: "Slug", value: "about-us", monospace: true },
+  { key: "seo-title", label: "SEO 标题", value: "关于我们：团队、技术方向与长期愿景" },
+  { key: "seo-description", label: "SEO 描述", value: "介绍团队背景、技术栈、开放技术实践与长期目标。" },
+] as const;
+
 const templateLabels: Record<PageTemplate, string> = {
   default: "默认标准排版 (Default)",
   about: "关于页专用模板 (About)",
@@ -125,10 +142,19 @@ function seedPage(route: EditorRoute): PageFixture {
   return route === "new" ? { ...emptyPage } : { ...existingPage };
 }
 
-function InspectorSection({ title, children }: { title: string; children: ReactNode }) {
+function InspectorSection({
+  title,
+  action,
+  children,
+}: {
+  title: string;
+  action?: ReactNode;
+  children: ReactNode;
+}) {
   return (
-    <details open className="border-b py-4 last:border-b-0">
-      <summary className="cursor-pointer select-none text-sm font-semibold">{title}</summary>
+    <details open className="relative border-b py-4 last:border-b-0">
+      <summary className="cursor-pointer select-none pr-12 text-sm font-semibold">{title}</summary>
+      {action ? <div className="absolute right-0 top-2.5 z-10">{action}</div> : null}
       <div className="mt-4 flex flex-col gap-4">{children}</div>
     </details>
   );
@@ -160,9 +186,9 @@ function FieldActionHeader({
         onClick={onAction}
         disabled={disabled}
         aria-label={actionLabel}
-      >
-        AI
-      </Button>
+        title={actionLabel}
+        className="size-8 px-0"
+      />
     </div>
   );
 }
@@ -191,9 +217,11 @@ export function BlogAdminPageEditorDemo({
   const [exitOpen, setExitOpen] = useState(false);
   const [aiPanel, setAIPanel] = useState<AIPanel>(null);
   const [titleCandidates, setTitleCandidates] = useState<string[]>([]);
+  const [selectedTitleCandidate, setSelectedTitleCandidate] = useState<string | null>(null);
   const [summaryCandidates, setSummaryCandidates] = useState<string[]>([]);
-  const [slugCandidates, setSlugCandidates] = useState<string[]>([]);
+  const [selectedSummaryCandidate, setSelectedSummaryCandidate] = useState<string | null>(null);
   const [metadataSuggestionsOpen, setMetadataSuggestionsOpen] = useState(false);
+  const [metadataSelection, setMetadataSelection] = useState<string[]>([]);
   const [writingPrompt, setWritingPrompt] = useState("");
   const [generatedContent, setGeneratedContent] = useState<string | null>(null);
   const [imagePrompt, setImagePrompt] = useState("");
@@ -213,9 +241,11 @@ export function BlogAdminPageEditorDemo({
     setExitOpen(false);
     setAIPanel(null);
     setTitleCandidates([]);
+    setSelectedTitleCandidate(null);
     setSummaryCandidates([]);
-    setSlugCandidates([]);
+    setSelectedSummaryCandidate(null);
     setMetadataSuggestionsOpen(false);
+    setMetadataSelection([]);
     setGeneratedContent(null);
     setGeneratedImage(false);
   };
@@ -293,18 +323,22 @@ export function BlogAdminPageEditorDemo({
         : "发布";
 
   const applyMetadataSuggestions = () => {
-    setPage((current) => ({
-      ...current,
-      summary: "介绍团队背景、技术方向、产品理念与长期目标。",
-      slug: "about-us",
-      seoTitle: "关于我们：团队、技术方向与长期愿景",
-      seoDescription: "介绍团队背景、技术栈、开放技术实践与长期目标。",
-    }));
-    setDirty(true);
-    setSavedAt(null);
-    setMetadataSuggestionsOpen(false);
-    setNotice("已应用 AI 元数据建议（Showcase 模拟）。");
-  };
+  const selected = new Set(metadataSelection);
+  setPage((current) => ({
+    ...current,
+    slug: selected.has("slug") ? "about-us" : current.slug,
+    seoTitle: selected.has("seo-title")
+      ? "关于我们：团队、技术方向与长期愿景"
+      : current.seoTitle,
+    seoDescription: selected.has("seo-description")
+      ? "介绍团队背景、技术栈、开放技术实践与长期目标。"
+      : current.seoDescription,
+  }));
+  setDirty(true);
+  setSavedAt(null);
+  setMetadataSuggestionsOpen(false);
+  setNotice(`已应用 ${metadataSelection.length} 项 AI 路径与 SEO 建议（Showcase 模拟）。`);
+};
 
   const openWritingAssistant = (prompt: string) => {
     setWritingPrompt(prompt);
@@ -534,43 +568,11 @@ export function BlogAdminPageEditorDemo({
   );
 
   const inspector = (
-    <div className="min-w-0">
-      <div className="flex min-h-9 items-center justify-between gap-3 border-b pb-3">
-        <div>
-          <Text className="font-semibold">属性</Text>
-          <Text size="xs" tone="muted" className="mt-0.5 block">发布、页面配置、路径与 SEO。</Text>
-        </div>
-        <Button
-          size="small"
-          variant="text"
-          icon={<Sparkles />}
-          onClick={() => setMetadataSuggestionsOpen((current) => !current)}
-          disabled={!page.title.trim() && !page.content.trim()}
-        >
-          智能补全
-        </Button>
-      </div>
-
-      {metadataSuggestionsOpen ? (
-        <Card variant="subtle" padding="base" className="mt-4" aria-label="AI 元数据建议">
-          <div className="flex flex-col gap-3">
-            <div>
-              <Text className="font-semibold">AI 建议 4 项修改</Text>
-              <Text size="xs" tone="muted" className="mt-1 block">只建议内容元数据，不改模板、导航与排序。</Text>
-            </div>
-            <dl className="grid gap-2 text-xs">
-              <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-2"><dt className="text-muted-foreground">摘要</dt><dd>团队背景、技术方向与长期目标</dd></div>
-              <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-2"><dt className="text-muted-foreground">Slug</dt><dd className="font-mono">about-us</dd></div>
-              <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-2"><dt className="text-muted-foreground">SEO 标题</dt><dd>关于我们：团队、技术方向与长期愿景</dd></div>
-              <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-2"><dt className="text-muted-foreground">SEO 描述</dt><dd>团队背景、技术栈与开放技术实践</dd></div>
-            </dl>
-            <div className="flex flex-wrap justify-end gap-2">
-              <Button size="small" variant="text" onClick={() => setMetadataSuggestionsOpen(false)}>取消</Button>
-              <Button size="small" variant="solid" color="primary" onClick={applyMetadataSuggestions}>全部应用</Button>
-            </div>
-          </div>
-        </Card>
-      ) : null}
+  <div className="min-w-0">
+    <div className="min-h-9 border-b pb-3">
+      <Text className="font-semibold">属性</Text>
+      <Text size="xs" tone="muted" className="mt-0.5 block">发布、页面配置、路径与 SEO。</Text>
+    </div>
 
       <InspectorSection title="发布设置">
         <Field label="状态">
@@ -620,62 +622,70 @@ export function BlogAdminPageEditorDemo({
         ) : null}
       </InspectorSection>
 
-      <InspectorSection title="路径与 SEO">
-        <div>
-          <FieldActionHeader
-            label="访问路径 (Slug)"
-            required
-            actionLabel="AI 生成 Slug 候选"
-            onAction={() => setSlugCandidates(["about-us", "team-and-vision"])}
-          />
-          <Field label="访问路径 (Slug)" required hideLabel>
-            <Input
-              aria-label="访问路径 (Slug)"
-              className="font-mono"
-              value={page.slug}
-              onChange={(event) => updatePage("slug", event.target.value)}
-              placeholder="about"
-            />
-          </Field>
-          <Text size="xs" tone="muted" className="mt-1 block">访问路径为 /&lt;slug&gt;</Text>
-          {slugCandidates.length ? (
-            <div className="mt-2 flex flex-col gap-1.5 rounded-md border bg-muted/20 p-2" aria-label="Slug 候选">
-              {slugCandidates.map((candidate) => (
-                <ChoiceButton
-                  key={candidate}
-                  type="button"
-                  className="rounded-md px-3 py-2 text-left font-mono text-sm hover:bg-background"
-                  onClick={() => {
-                    updatePage("slug", candidate);
-                    setSlugCandidates([]);
-                  }}
-                >
-                  {candidate} <strong className="ml-1 font-sans">应用</strong>
-                </ChoiceButton>
-              ))}
-            </div>
-          ) : null}
-        </div>
-        <Field label="SEO 标题" hint={`${page.seoTitle.length}/60`}>
-          <Input
-            aria-label="SEO 标题"
-            maxLength={60}
-            value={page.seoTitle}
-            onChange={(event) => updatePage("seoTitle", event.target.value)}
-            placeholder="留空时默认使用标题"
-          />
-        </Field>
-        <Field label="SEO 描述" hint={`${page.seoDescription.length}/160`}>
-          <Textarea
-            aria-label="SEO 描述"
-            rows={4}
-            maxLength={160}
-            value={page.seoDescription}
-            onChange={(event) => updatePage("seoDescription", event.target.value)}
-            placeholder="留空时默认使用摘要"
-          />
-        </Field>
-      </InspectorSection>
+      <InspectorSection
+  title="路径与 SEO"
+  action={(
+    <Button
+      type="button"
+      size="small"
+      variant="text"
+      icon={<Sparkles />}
+      aria-label="AI 优化路径与 SEO"
+      title="AI 优化路径与 SEO"
+      className="size-8 px-0"
+      disabled={!page.title.trim() && !page.content.trim()}
+      onClick={() => {
+        if (metadataSuggestionsOpen) {
+setMetadataSuggestionsOpen(false);
+return;
+        }
+        setMetadataSelection(pageSeoSuggestions.map((item) => item.key));
+        setMetadataSuggestionsOpen(true);
+      }}
+    />
+  )}
+>
+  {metadataSuggestionsOpen ? (
+    <AISuggestionReview
+      aria-label="AI 路径与 SEO 建议"
+      groupLabel="路径与 SEO 建议"
+      description="审阅后只应用勾选的路径与 SEO 修改。"
+      items={pageSeoSuggestions}
+      selectedKeys={metadataSelection}
+      onSelectedKeysChange={setMetadataSelection}
+      onCancel={() => setMetadataSuggestionsOpen(false)}
+      onApply={applyMetadataSuggestions}
+    />
+  ) : null}
+  <Field label="访问路径 (Slug)" required hint="访问路径为 /<slug>">
+    <Input
+      aria-label="访问路径 (Slug)"
+      className="font-mono"
+      value={page.slug}
+      onChange={(event) => updatePage("slug", event.target.value)}
+      placeholder="about"
+    />
+  </Field>
+  <Field label="SEO 标题" hint={`${page.seoTitle.length}/60`}>
+    <Input
+      aria-label="SEO 标题"
+      maxLength={60}
+      value={page.seoTitle}
+      onChange={(event) => updatePage("seoTitle", event.target.value)}
+      placeholder="留空时默认使用标题"
+    />
+  </Field>
+  <Field label="SEO 描述" hint={`${page.seoDescription.length}/160`}>
+    <Textarea
+      aria-label="SEO 描述"
+      rows={4}
+      maxLength={160}
+      value={page.seoDescription}
+      onChange={(event) => updatePage("seoDescription", event.target.value)}
+      placeholder="留空时默认使用摘要"
+    />
+  </Field>
+</InspectorSection>
     </div>
   );
 
@@ -698,75 +708,94 @@ export function BlogAdminPageEditorDemo({
         inspectorAriaLabel="单页元数据 Inspector"
       >
         <div className="flex min-w-0 flex-col gap-5">
-          <div>
-            <FieldActionHeader
-              label="标题"
-              required
-              actionLabel="AI 生成标题候选"
-              onAction={() => setTitleCandidates(["关于我们：技术、产品与长期主义", "认识我们：从工程实践到开放技术"])}
-            />
-            <Field label="标题" required hideLabel>
-              <Textarea
-                aria-label="标题"
-                rows={2}
-                value={page.title}
-                onChange={(event) => updatePage("title", event.target.value)}
-                placeholder="写一个清晰、具体的单页标题"
-              />
-            </Field>
-            {titleCandidates.length ? (
-              <div className="mt-2 flex flex-col gap-2 rounded-md border bg-muted/20 p-2" aria-label="标题候选">
-                {titleCandidates.map((candidate) => (
-                  <ChoiceButton
-                    key={candidate}
-                    type="button"
-                    className="rounded-md px-3 py-2 text-left text-sm hover:bg-background"
-                    onClick={() => {
-                      updatePage("title", candidate);
-                      setTitleCandidates([]);
-                    }}
-                  >
-                    {candidate} <strong className="ml-1">应用</strong>
-                  </ChoiceButton>
-                ))}
-              </div>
-            ) : null}
-          </div>
+  <div>
+    <FieldActionHeader
+      label="标题"
+      required
+      actionLabel="AI 生成标题候选"
+      onAction={() => {
+        const candidates = [...pageTitleSuggestions];
+        setTitleCandidates(candidates);
+        setSelectedTitleCandidate(candidates[0] ?? null);
+      }}
+    />
+    <Field label="标题" required hideLabel>
+      <Textarea
+        aria-label="标题"
+        rows={2}
+        value={page.title}
+        onChange={(event) => updatePage("title", event.target.value)}
+        placeholder="写一个清晰、具体的单页标题"
+      />
+    </Field>
+    {titleCandidates.length ? (
+      <AISuggestionPicker
+        className="mt-2"
+        aria-label="标题 AI 建议"
+        groupLabel="标题候选"
+        description="选择一个候选，再统一应用到标题。"
+        options={titleCandidates.map((candidate) => ({ value: candidate }))}
+        value={selectedTitleCandidate}
+        onValueChange={setSelectedTitleCandidate}
+        onDismiss={() => {
+setTitleCandidates([]);
+setSelectedTitleCandidate(null);
+        }}
+        onRegenerate={() => {
+const candidates = [...pageTitleSuggestions].reverse();
+setTitleCandidates(candidates);
+setSelectedTitleCandidate(candidates[0] ?? null);
+        }}
+        onApply={(candidate) => {
+updatePage("title", candidate);
+setTitleCandidates([]);
+setSelectedTitleCandidate(null);
+        }}
+      />
+    ) : null}
+  </div>
 
-          <div>
-            <FieldActionHeader
-              label="摘要 / 描述"
-              actionLabel="AI 根据正文生成摘要"
-              onAction={() => setSummaryCandidates(["介绍团队背景、技术方向、产品理念与长期目标。"]) }
-            />
-            <Field label="摘要 / 描述" hint={`${page.summary.length}/300`} hideLabel>
-              <Textarea
-                aria-label="摘要 / 描述"
-                rows={3}
-                maxLength={300}
-                value={page.summary}
-                onChange={(event) => updatePage("summary", event.target.value)}
-                placeholder="用一两句话说明单页内容"
-              />
-            </Field>
-            {summaryCandidates.length ? (
-              <div className="mt-2 flex flex-col gap-2 rounded-md border bg-muted/20 p-2" aria-label="摘要候选">
-                {summaryCandidates.map((candidate) => (
-                  <ChoiceButton
-                    key={candidate}
-                    type="button"
-                    className="rounded-md px-3 py-2 text-left text-sm hover:bg-background"
-                    onClick={() => {
-                      updatePage("summary", candidate);
-                      setSummaryCandidates([]);
-                    }}
-                  >
-                    {candidate} <strong className="ml-1">应用</strong>
-                  </ChoiceButton>
-                ))}
-              </div>
-            ) : null}
-          </div>
+  <div>
+    <FieldActionHeader
+      label="摘要 / 描述"
+      actionLabel="AI 根据正文生成摘要"
+      onAction={() => {
+        const candidates = [...pageSummarySuggestions];
+        setSummaryCandidates(candidates);
+        setSelectedSummaryCandidate(candidates[0] ?? null);
+      }}
+    />
+    <Field label="摘要 / 描述" hint={`${page.summary.length}/300`} hideLabel>
+      <Textarea
+        aria-label="摘要 / 描述"
+        rows={3}
+        maxLength={300}
+        value={page.summary}
+        onChange={(event) => updatePage("summary", event.target.value)}
+        placeholder="用一两句话说明单页内容"
+      />
+    </Field>
+    {summaryCandidates.length ? (
+      <AISuggestionPicker
+        className="mt-2"
+        aria-label="摘要 AI 建议"
+        groupLabel="摘要候选"
+        description="从候选摘要中选择一个，再应用到当前字段。"
+        options={summaryCandidates.map((candidate) => ({ value: candidate }))}
+        value={selectedSummaryCandidate}
+        onValueChange={setSelectedSummaryCandidate}
+        onDismiss={() => {
+setSummaryCandidates([]);
+setSelectedSummaryCandidate(null);
+        }}
+        onApply={(candidate) => {
+updatePage("summary", candidate);
+setSummaryCandidates([]);
+setSelectedSummaryCandidate(null);
+        }}
+      />
+    ) : null}
+  </div>
 
           <div>
             <div className="mb-2">

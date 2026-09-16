@@ -105,21 +105,22 @@ describe("Blog Admin PageEditor", () => {
     expect(order.value).toBe("20");
   });
 
-  it("keeps field AI attached to title, summary and slug", () => {
-    render(<BlogAdminPageEditorDemo />);
+  it("keeps field AI on title and summary while moving Slug/SEO to one section action", () => {
+  render(<BlogAdminPageEditorDemo />);
 
-    fireEvent.click(screen.getByRole("button", { name: "AI 生成标题候选" }));
-    fireEvent.click(screen.getByRole("button", { name: /关于我们：技术、产品与长期主义/ }));
-    expect((screen.getByLabelText("标题") as HTMLTextAreaElement).value).toBe("关于我们：技术、产品与长期主义");
+  fireEvent.click(screen.getByRole("button", { name: "AI 生成标题候选" }));
+  expect(screen.getByRole("radiogroup", { name: "标题候选" })).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "使用所选" }));
+  expect((screen.getByLabelText("标题") as HTMLTextAreaElement).value).toBe("关于我们：技术、产品与长期主义");
 
-    fireEvent.click(screen.getByRole("button", { name: "AI 根据正文生成摘要" }));
-    fireEvent.click(screen.getByRole("button", { name: /介绍团队背景、技术方向、产品理念与长期目标/ }));
-    expect((screen.getByLabelText("摘要 / 描述") as HTMLTextAreaElement).value).toContain("产品理念");
+  fireEvent.click(screen.getByRole("button", { name: "AI 根据正文生成摘要" }));
+  expect(screen.getByRole("radiogroup", { name: "摘要候选" })).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "使用所选" }));
+  expect((screen.getByLabelText("摘要 / 描述") as HTMLTextAreaElement).value).toContain("产品理念");
 
-    fireEvent.click(screen.getByRole("button", { name: "AI 生成 Slug 候选" }));
-    fireEvent.click(screen.getByRole("button", { name: /team-and-vision/ }));
-    expect((screen.getByLabelText("访问路径 (Slug)") as HTMLInputElement).value).toBe("team-and-vision");
-  });
+  expect(screen.queryByRole("button", { name: "AI 生成 Slug 候选" })).toBeNull();
+  expect(screen.getByRole("button", { name: "AI 优化路径与 SEO" })).toBeTruthy();
+});
 
   it("reviews metadata suggestions before applying and does not change page configuration", () => {
     render(<BlogAdminPageEditorDemo />);
@@ -129,12 +130,13 @@ describe("Blog Admin PageEditor", () => {
     const navigation = screen.getByRole("checkbox", { name: /显示在顶部主导航栏/ }) as HTMLInputElement;
     expect(navigation.checked).toBe(true);
 
-    fireEvent.click(screen.getByRole("button", { name: "智能补全" }));
-    expect(screen.getByLabelText("AI 元数据建议")).toBeTruthy();
-    expect(screen.getByText("AI 建议 4 项修改")).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "全部应用" }));
+    fireEvent.click(screen.getByRole("button", { name: "AI 优化路径与 SEO" }));
+    expect(screen.getByLabelText("AI 路径与 SEO 建议")).toBeTruthy();
+    expect(screen.getByRole("group", { name: "路径与 SEO 建议" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("checkbox", { name: "应用 SEO 描述 建议" }));
+    fireEvent.click(screen.getByRole("button", { name: "应用 2 项建议" }));
 
-    expect(screen.getByText(/已应用 AI 元数据建议/)).toBeTruthy();
+    expect(screen.getByText(/已应用 2 项 AI 路径与 SEO 建议/)).toBeTruthy();
     expect((screen.getByLabelText("访问路径 (Slug)") as HTMLInputElement).value).toBe("about-us");
     expect(template.textContent).toContain("关于页专用模板");
     expect(navigation.checked).toBe(true);
