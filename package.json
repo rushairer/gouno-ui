@@ -17,7 +17,6 @@
     "design-system",
     "component-library",
     "tailwindcss",
-    "radix-ui",
     "admin"
   ],
   "type": "module",
@@ -70,7 +69,8 @@
     "showcase:dev": "vite --config showcase/vite.config.ts",
     "pack": "npm pack",
     "test": "vitest run --environment jsdom",
-    "verify": "npm run typecheck && npm test && npm run build && npm run showcase:build",
+    "lint:microcopy": "node scripts/check-microcopy-contract.mjs",
+    "verify": "npm run lint:microcopy && npm run typecheck && npm test && npm run build && npm run showcase:build",
     "package:check": "node scripts/package-check.mjs",
     "release:check": "npm run verify && npm run package:check",
     "prepublishOnly": "npm run release:check"
