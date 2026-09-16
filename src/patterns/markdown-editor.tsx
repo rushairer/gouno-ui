@@ -143,11 +143,6 @@ const moreCommands: readonly CommandItem[] = [
   { command: "horizontal-rule", label: "分隔线", icon: <Minus /> },
 ];
 
-// Fixed product actions and the view switcher use a deterministic density based on the
-// editor's own rendered width. This avoids relying on a multi-step overflow transition
-// that can become stale when Preview hides authoring controls and Edit restores them.
-const FIXED_ACTION_ICON_ONLY_MAX_WIDTH = 768;
-
 type CommandTransform = {
   replaceStart: number;
   replaceEnd: number;
@@ -382,7 +377,6 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
       headingLevelAt(value, 0),
     );
     const [visiblePrimaryCount, setVisiblePrimaryCount] = useState(primaryCommands.length);
-    const [compactFixedActions, setCompactFixedActions] = useState(true);
     const [allowToolbarWrap, setAllowToolbarWrap] = useState(false);
     const [toolbarLayoutEpoch, setToolbarLayoutEpoch] = useState(0);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -477,9 +471,9 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
       applyTransform(transformHeading(value, selection.start, selection.end, level));
     };
 
-    // Built-in format commands still collapse into More by measured overflow, but fixed
-    // product actions and view modes no longer depend on that transition. Their density is
-    // decided only from the editor width, so Preview -> Edit cannot restore a stale full mode.
+    // Product actions and Edit/Split/Preview are deliberately icon-only at every width.
+    // Width adaptation is limited to one responsibility: progressively collapse lower-priority
+    // Markdown format commands into More, then wrap only if the icon toolbar still cannot fit.
     useLayoutEffect(() => {
       if (!showAuthoringTools || allowToolbarWrap) return;
       const toolbar = toolbarRef.current;
@@ -492,7 +486,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
       }
 
       setAllowToolbarWrap(true);
-    }, [allowToolbarWrap, compactFixedActions, showAuthoringTools, toolbarLayoutEpoch, visiblePrimaryCount]);
+    }, [allowToolbarWrap, showAuthoringTools, toolbarLayoutEpoch, visiblePrimaryCount]);
 
     useLayoutEffect(() => {
       const toolbar = toolbarRef.current;
@@ -507,7 +501,6 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
         if (Math.abs(delta) <= 0.5) return;
         previousWidth = nextWidth;
 
-        setCompactFixedActions(nextWidth <= FIXED_ACTION_ICON_ONLY_MAX_WIDTH);
         setAllowToolbarWrap(false);
         if (delta > 0) setVisiblePrimaryCount(primaryCommands.length);
         setToolbarLayoutEpoch((epoch) => epoch + 1);
@@ -519,10 +512,6 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
 
     useLayoutEffect(() => {
       if (!showAuthoringTools) return;
-      const toolbarWidth = toolbarRef.current?.getBoundingClientRect().width ?? 0;
-      setCompactFixedActions(
-        toolbarWidth === 0 || toolbarWidth <= FIXED_ACTION_ICON_ONLY_MAX_WIDTH,
-      );
       setAllowToolbarWrap(false);
       setVisiblePrimaryCount(primaryCommands.length);
       setToolbarLayoutEpoch((epoch) => epoch + 1);
@@ -567,8 +556,8 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
     );
 
     const toolbarActionsContext: MarkdownEditorToolbarActionsContext = {
-      density: compactFixedActions ? "icon" : "full",
-      compact: compactFixedActions,
+      density: "icon",
+      compact: true,
     };
     const resolvedToolbarActions =
       typeof toolbarActions === "function"
@@ -591,7 +580,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
           role="toolbar"
           aria-label="Markdown 编辑工具栏"
           data-slot="markdown-editor-toolbar"
-          data-adaptive-density={compactFixedActions ? "icon" : "full"}
+          data-adaptive-density="icon"
           data-adaptive-wrap={allowToolbarWrap ? "true" : "false"}
         >
           {showAuthoringTools ? (
@@ -715,7 +704,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
             <div
               className="ml-1 flex shrink-0 items-center gap-1 border-l pl-2"
               data-slot="markdown-editor-actions"
-              data-icon-only={compactFixedActions ? "true" : "false"}
+              data-icon-only="true"
             >
               {resolvedToolbarActions}
             </div>
@@ -725,7 +714,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
             className="ml-auto flex shrink-0 items-center gap-0.5 rounded-md bg-muted/60 p-0.5"
             aria-label="编辑器视图"
             data-slot="markdown-editor-mode-switcher"
-            data-icon-only={compactFixedActions ? "true" : "false"}
+            data-icon-only="true"
           >
             {(["edit", "split", "preview"] as const).map((nextMode) => (
               <Button
@@ -734,18 +723,16 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
                 size="small"
                 variant={activeMode === nextMode ? "solid" : "text"}
                 color={activeMode === nextMode ? "primary" : undefined}
-                icon={compactFixedActions ? modeIcons[nextMode] : undefined}
+                icon={modeIcons[nextMode]}
                 className={cn(
+                  "size-8 px-0",
                   nextMode === "split" && "hidden md:inline-flex",
-                  compactFixedActions && "size-8 px-0",
                 )}
                 aria-label={modeLabels[nextMode]}
-                title={compactFixedActions ? modeLabels[nextMode] : undefined}
+                title={modeLabels[nextMode]}
                 aria-pressed={activeMode === nextMode}
                 onClick={() => changeMode(nextMode)}
-              >
-                {compactFixedActions ? null : modeLabels[nextMode]}
-              </Button>
+              />
             ))}
           </div>
         </div>
