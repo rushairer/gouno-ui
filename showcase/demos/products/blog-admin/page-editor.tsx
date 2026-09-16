@@ -33,6 +33,7 @@ import {
   MarkdownEditor,
   type MarkdownEditorMode,
   type MarkdownEditorRef,
+  type MarkdownEditorToolbarActionsContext,
   type MarkdownEditorSelection,
 } from "../../../../src/patterns";
 import { FixtureDock } from "../../../components/fixture-dock";
@@ -468,7 +469,7 @@ export function BlogAdminPageEditorDemo({
     </>
   );
 
-  const aiToolbarActions = (
+  const aiToolbarActions = ({ compact }: MarkdownEditorToolbarActionsContext) => (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -479,8 +480,10 @@ export function BlogAdminPageEditorDemo({
             color={aiPanel === "writing" ? "primary" : undefined}
             icon={<Sparkles />}
             aria-label="AI 写作"
+            title={compact ? "AI 写作" : undefined}
+            className={compact ? "size-8 px-0" : undefined}
           >
-            AI 写作
+            {compact ? null : "AI 写作"}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-56">
@@ -511,8 +514,10 @@ export function BlogAdminPageEditorDemo({
             color={aiPanel === "image" ? "primary" : undefined}
             icon={<ImageIcon />}
             aria-label="插图"
+            title={compact ? "插图" : undefined}
+            className={compact ? "size-8 px-0" : undefined}
           >
-            插图
+            {compact ? null : "插图"}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-52">

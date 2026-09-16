@@ -11,6 +11,8 @@ import {
   Bold,
   ChevronDown,
   Code2,
+  Columns2,
+  Eye,
   Italic,
   Link2,
   List,
@@ -18,6 +20,7 @@ import {
   ListOrdered,
   Minus,
   MoreHorizontal,
+  Pencil,
   Quote,
   Strikethrough,
 } from "lucide-react";
@@ -66,6 +69,15 @@ export interface MarkdownEditorRef {
   insertText: (text: string, options?: MarkdownEditorInsertOptions) => void;
 }
 
+export interface MarkdownEditorToolbarActionsContext {
+  density: "full" | "icon";
+  compact: boolean;
+}
+
+export type MarkdownEditorToolbarActions =
+  | ReactNode
+  | ((context: MarkdownEditorToolbarActionsContext) => ReactNode);
+
 export interface MarkdownEditorProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "children" | "onChange"> {
   value: string;
@@ -75,7 +87,7 @@ export interface MarkdownEditorProps
   onModeChange?: (mode: MarkdownEditorMode) => void;
   onSelectionChange?: (selection: MarkdownEditorSelection) => void;
   renderPreview?: (value: string) => ReactNode;
-  toolbarActions?: ReactNode;
+  toolbarActions?: MarkdownEditorToolbarActions;
   headingLevels?: readonly MarkdownHeadingLevel[];
   placeholder?: string;
   readOnly?: boolean;
@@ -88,6 +100,12 @@ const modeLabels: Record<MarkdownEditorMode, string> = {
   edit: "编辑",
   split: "分屏",
   preview: "预览",
+};
+
+const modeIcons: Record<MarkdownEditorMode, ReactNode> = {
+  edit: <Pencil />,
+  split: <Columns2 />,
+  preview: <Eye />,
 };
 
 const defaultHeadingLevels = [2, 3, 4, 5, 6] as const satisfies readonly MarkdownHeadingLevel[];
@@ -345,12 +363,12 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
       headingLevelAt(value, 0),
     );
     const [visiblePrimaryCount, setVisiblePrimaryCount] = useState(primaryCommands.length);
+    const [compactFixedActions, setCompactFixedActions] = useState(false);
     const [allowToolbarWrap, setAllowToolbarWrap] = useState(false);
     const [toolbarLayoutEpoch, setToolbarLayoutEpoch] = useState(0);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const toolbarRef = useRef<HTMLDivElement>(null);
-    const toolbarActionsRef = useRef<HTMLDivElement>(null);
-    const modeSwitcherRef = useRef<HTMLDivElement>(null);
+    const compactEnterWidthRef = useRef<number | null>(null);
     const headingTriggerRef = useRef<HTMLButtonElement>(null);
     const headingSelectionRef = useRef<MarkdownEditorSelection | null>(null);
     const overflowSelectionRef = useRef<MarkdownEditorSelection | null>(null);
@@ -441,9 +459,9 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
       applyTransform(transformHeading(value, selection.start, selection.end, level));
     };
 
-    // Compact only the built-in primary formatting actions. Product-injected actions and
-    // the edit/split/preview switch stay stable; if even the compacted toolbar cannot fit,
-    // normal wrapping remains the final fallback for extremely narrow containers.
+    // Three-stage degradation: built-in format commands collapse into More first; then
+    // product actions and the view switch become icon-only; wrapping is reserved for the
+    // final fallback when the compact toolbar still cannot fit.
     useLayoutEffect(() => {
       if (!showAuthoringTools || allowToolbarWrap) return;
       const toolbar = toolbarRef.current;
@@ -455,45 +473,68 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
         return;
       }
 
-      setAllowToolbarWrap(true);
-    }, [allowToolbarWrap, showAuthoringTools, toolbarLayoutEpoch, visiblePrimaryCount]);
+      if (!compactFixedActions) {
+        compactEnterWidthRef.current = toolbar.clientWidth;
+        setCompactFixedActions(true);
+        return;
+      }
 
-    // Re-expand first, then compact against the new geometry whenever the container or one
-    // of the fixed toolbar regions changes width. Width-only comparison avoids reacting to
-    // the height change caused by the final wrapping fallback.
+      setAllowToolbarWrap(true);
+    }, [
+      allowToolbarWrap,
+      compactFixedActions,
+      showAuthoringTools,
+      toolbarLayoutEpoch,
+      visiblePrimaryCount,
+    ]);
+
+    // Shrinking is monotonic: never re-expand controls while available width is decreasing.
+    // When growing, leave wrap mode first but keep icon density until the container clears
+    // the width where compact mode was entered. The small hysteresis prevents resize jitter
+    // around the boundary; larger growth restores the full toolbar and reruns compaction.
     useLayoutEffect(() => {
       const toolbar = toolbarRef.current;
       if (!toolbar || typeof ResizeObserver === "undefined") return;
 
-      const observed: Element[] = [toolbar];
-      if (toolbarActionsRef.current) observed.push(toolbarActionsRef.current);
-      if (modeSwitcherRef.current) observed.push(modeSwitcherRef.current);
-      if (headingTriggerRef.current) observed.push(headingTriggerRef.current);
-      const widths = new Map<Element, number>();
-      observed.forEach((element) => widths.set(element, element.getBoundingClientRect().width));
-
+      let previousWidth = toolbar.getBoundingClientRect().width;
       const observer = new ResizeObserver((entries) => {
-        let widthChanged = false;
-        entries.forEach((entry) => {
-          const previous = widths.get(entry.target);
-          const next = entry.contentRect.width;
-          widths.set(entry.target, next);
-          if (previous !== undefined && Math.abs(previous - next) > 0.5) widthChanged = true;
-        });
-        if (!widthChanged) return;
+        const entry = entries.find((candidate) => candidate.target === toolbar);
+        if (!entry) return;
+        const nextWidth = entry.contentRect.width;
+        const delta = nextWidth - previousWidth;
+        if (Math.abs(delta) <= 0.5) return;
+        previousWidth = nextWidth;
 
+        if (delta < 0) {
+          setToolbarLayoutEpoch((epoch) => epoch + 1);
+          return;
+        }
+
+        const compactEnterWidth = compactEnterWidthRef.current;
+        if (compactEnterWidth !== null && nextWidth <= compactEnterWidth + 8) {
+          setAllowToolbarWrap(false);
+          setCompactFixedActions(true);
+          setVisiblePrimaryCount(0);
+          setToolbarLayoutEpoch((epoch) => epoch + 1);
+          return;
+        }
+
+        compactEnterWidthRef.current = null;
         setAllowToolbarWrap(false);
+        setCompactFixedActions(false);
         setVisiblePrimaryCount(primaryCommands.length);
         setToolbarLayoutEpoch((epoch) => epoch + 1);
       });
 
-      observed.forEach((element) => observer.observe(element));
+      observer.observe(toolbar);
       return () => observer.disconnect();
     }, [showAuthoringTools]);
 
     useLayoutEffect(() => {
       if (!showAuthoringTools) return;
+      compactEnterWidthRef.current = null;
       setAllowToolbarWrap(false);
+      setCompactFixedActions(false);
       setVisiblePrimaryCount(primaryCommands.length);
       setToolbarLayoutEpoch((epoch) => epoch + 1);
     }, [showAuthoringTools]);
@@ -536,6 +577,15 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
       </div>
     );
 
+    const toolbarActionsContext: MarkdownEditorToolbarActionsContext = {
+      density: compactFixedActions ? "icon" : "full",
+      compact: compactFixedActions,
+    };
+    const resolvedToolbarActions =
+      typeof toolbarActions === "function"
+        ? toolbarActions(toolbarActionsContext)
+        : toolbarActions;
+
     return (
       <div
         {...props}
@@ -552,6 +602,7 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
           role="toolbar"
           aria-label="Markdown 编辑工具栏"
           data-slot="markdown-editor-toolbar"
+          data-adaptive-density={compactFixedActions ? "icon" : "full"}
           data-adaptive-wrap={allowToolbarWrap ? "true" : "false"}
         >
           {showAuthoringTools ? (
@@ -671,21 +722,21 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
             </div>
           ) : null}
 
-          {toolbarActions && showAuthoringTools ? (
+          {resolvedToolbarActions && showAuthoringTools ? (
             <div
-              ref={toolbarActionsRef}
               className="ml-1 flex shrink-0 items-center gap-1 border-l pl-2"
               data-slot="markdown-editor-actions"
+              data-icon-only={compactFixedActions ? "true" : "false"}
             >
-              {toolbarActions}
+              {resolvedToolbarActions}
             </div>
           ) : null}
 
           <div
-            ref={modeSwitcherRef}
             className="ml-auto flex shrink-0 items-center gap-0.5 rounded-md bg-muted/60 p-0.5"
             aria-label="编辑器视图"
             data-slot="markdown-editor-mode-switcher"
+            data-icon-only={compactFixedActions ? "true" : "false"}
           >
             {(["edit", "split", "preview"] as const).map((nextMode) => (
               <Button
@@ -694,11 +745,17 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
                 size="small"
                 variant={activeMode === nextMode ? "solid" : "text"}
                 color={activeMode === nextMode ? "primary" : undefined}
-                className={nextMode === "split" ? "hidden md:inline-flex" : undefined}
+                icon={compactFixedActions ? modeIcons[nextMode] : undefined}
+                className={cn(
+                  nextMode === "split" && "hidden md:inline-flex",
+                  compactFixedActions && "size-8 px-0",
+                )}
+                aria-label={modeLabels[nextMode]}
+                title={compactFixedActions ? modeLabels[nextMode] : undefined}
                 aria-pressed={activeMode === nextMode}
                 onClick={() => changeMode(nextMode)}
               >
-                {modeLabels[nextMode]}
+                {compactFixedActions ? null : modeLabels[nextMode]}
               </Button>
             ))}
           </div>

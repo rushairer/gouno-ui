@@ -4,6 +4,7 @@ import { Button } from "../../../../src/core";
 import {
   MarkdownEditor,
   type MarkdownEditorRef,
+  type MarkdownEditorToolbarActionsContext,
   type MarkdownHeadingLevel,
 } from "../../../../src/patterns";
 
@@ -46,25 +47,31 @@ export default function MarkdownEditorExample({ renderPreview }: MarkdownEditorE
       renderPreview={renderPreview ?? ((markdown) => (
         <pre className="whitespace-pre-wrap font-sans text-sm leading-7">{markdown}</pre>
       ))}
-      toolbarActions={(
+      toolbarActions={({ compact }: MarkdownEditorToolbarActionsContext) => (
         <>
           <Button
             type="button"
             size="small"
             variant="text"
             icon={<Sparkles />}
+            aria-label="AI 写作"
+            title={compact ? "AI 写作" : undefined}
+            className={compact ? "size-8 px-0" : undefined}
             onClick={() => editorRef.current?.insertText("AI 生成内容", { replaceSelection: true })}
           >
-            AI 写作
+            {compact ? null : "AI 写作"}
           </Button>
           <Button
             type="button"
             size="small"
             variant="text"
             icon={<ImageIcon />}
+            aria-label="插图"
+            title={compact ? "插图" : undefined}
+            className={compact ? "size-8 px-0" : undefined}
             onClick={() => editorRef.current?.insertText("![插图](/image.webp)", { replaceSelection: false })}
           >
-            插图
+            {compact ? null : "插图"}
           </Button>
         </>
       )}
