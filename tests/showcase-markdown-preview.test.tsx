@@ -49,12 +49,14 @@ describe("Showcase MarkdownPreview", () => {
   });
 
   it("does not break fenced code when the snippet contains blank lines", () => {
-    render(
+    const { container } = render(
       <MarkdownPreview value={"```ts\nconst first = true;\n\nconst second = false;\n```"} />,
     );
 
-    expect(screen.getByText(/const first = true;/)).toBeTruthy();
-    expect(screen.getByText(/const second = false;/)).toBeTruthy();
+    const code = container.querySelector('[data-slot="code-block-code"]');
+    expect(code?.textContent).toContain("const first = true;");
+    expect(code?.textContent).toContain("const second = false;");
+    expect(code?.textContent).toContain("\n\n");
   });
 
   it("does not emit unsafe javascript links or image sources", () => {
