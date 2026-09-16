@@ -1,6 +1,7 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { Text } from "../../src/core";
 import { cn } from "../../src/lib/utils";
+import { CodeBlock } from "./code-block";
 
 export interface MarkdownPreviewProps extends HTMLAttributes<HTMLElement> {
   value: string;
@@ -17,7 +18,7 @@ function safeUrl(value: string, kind: "href" | "src") {
 
 function renderInline(source: string, keyPrefix: string): ReactNode[] {
   const nodes: ReactNode[] = [];
-  const token = /(!?\[[^\]\n]+\]\([^\s)]+\)|`[^`\n]+`|\*\*[^*\n]+\*\*|\*[^*\n]+\*)/g;
+  const token = /(!?\[[^\]\n]+\]\([^\s)]+\)|`[^`\n]+`|\*\*[^*\n]+\*\*|__[^_\n]+__|~~[^~\n]+~~|\*[^*\n]+\*|_[^_\n]+_)/g;
   let cursor = 0;
   let match: RegExpExecArray | null;
   let index = 0;
@@ -50,8 +51,10 @@ function renderInline(source: string, keyPrefix: string): ReactNode[] {
       );
     } else if (value.startsWith("`")) {
       nodes.push(<code key={key} className="rounded bg-muted px-1.5 py-0.5 font-mono text-[0.92em]">{value.slice(1, -1)}</code>);
-    } else if (value.startsWith("**")) {
+    } else if (value.startsWith("**") || value.startsWith("__")) {
       nodes.push(<strong key={key} className="font-semibold text-foreground">{value.slice(2, -2)}</strong>);
+    } else if (value.startsWith("~~")) {
+      nodes.push(<del key={key}>{value.slice(2, -2)}</del>);
     } else {
       nodes.push(<em key={key}>{value.slice(1, -1)}</em>);
     }
@@ -61,6 +64,39 @@ function renderInline(source: string, keyPrefix: string): ReactNode[] {
 
   if (cursor < source.length) nodes.push(source.slice(cursor));
   return nodes;
+}
+
+function splitTableRow(line: string) {
+  return line
+    .trim()
+    .replace(/^\|/, "")
+    .replace(/\|$/, "")
+    .split("|")
+    .map((cell) => cell.trim());
+}
+
+function isTableDelimiter(line: string) {
+  const cells = splitTableRow(line);
+  return cells.length > 0 && cells.every((cell) => /^:?-{3,}:?$/.test(cell));
+}
+
+function isHorizontalRule(line: string) {
+  return /^\s{0,3}((\*\s*){3,}|(-\s*){3,}|(_\s*){3,})\s*$/.test(line);
+}
+
+function isBlockStart(lines: string[], index: number) {
+  const line = lines[index] ?? "";
+  const next = lines[index + 1] ?? "";
+  return (
+    /^\s*(```|~~~)/.test(line) ||
+    /^\s{0,3}#{1,6}\s+/.test(line) ||
+    /^\s*>\s?/.test(line) ||
+    /^\s*[-*+]\s+\[[ xX]\]\s+/.test(line) ||
+    /^\s*[-*+]\s+/.test(line) ||
+    /^\s*\d+[.)]\s+/.test(line) ||
+    isHorizontalRule(line) ||
+    (line.includes("|") && isTableDelimiter(next))
+  );
 }
 
 function renderParagraph(text: string, key: string) {
@@ -79,58 +115,187 @@ export function MarkdownPreview({ value, emptyLabel = "开始写作后，预览�
   const source = value.trim();
   if (!source) return <Text tone="muted">{emptyLabel}</Text>;
 
+  const lines = source.replace(/\r\n?/g, "\n").split("\n");
+  const blocks: ReactNode[] = [];
+  let index = 0;
+  let blockIndex = 0;
+
+  while (index < lines.length) {
+    const line = lines[index];
+    if (!line.trim()) {
+      index += 1;
+      continue;
+    }
+
+    const key = `markdown-block-${blockIndex++}`;
+    const fence = line.match(/^\s*(```|~~~)\s*([^\s]*)\s*$/);
+    if (fence) {
+      const marker = fence[1];
+      const language = fence[2] || "text";
+      const codeLines: string[] = [];
+      index += 1;
+      while (index < lines.length && !lines[index].trimStart().startsWith(marker)) {
+        codeLines.push(lines[index]);
+        index += 1;
+      }
+      if (index < lines.length) index += 1;
+      blocks.push(<CodeBlock key={key} code={codeLines.join("\n")} language={language} />);
+      continue;
+    }
+
+    const heading = line.match(/^\s{0,3}(#{1,6})\s+(.+)$/);
+    if (heading) {
+      const level = heading[1].length;
+      const headingClass = {
+        1: "text-2xl font-semibold tracking-tight",
+        2: "text-xl font-semibold tracking-tight",
+        3: "text-base font-semibold",
+        4: "text-sm font-semibold",
+        5: "text-sm font-semibold text-muted-foreground",
+        6: "text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+      }[level];
+      const content = renderInline(heading[2], key);
+      blocks.push(
+        level === 1 ? <h1 key={key} className={headingClass}>{content}</h1>
+          : level === 2 ? <h2 key={key} className={headingClass}>{content}</h2>
+            : level === 3 ? <h3 key={key} className={headingClass}>{content}</h3>
+              : level === 4 ? <h4 key={key} className={headingClass}>{content}</h4>
+                : level === 5 ? <h5 key={key} className={headingClass}>{content}</h5>
+                  : <h6 key={key} className={headingClass}>{content}</h6>,
+      );
+      index += 1;
+      continue;
+    }
+
+    if (isHorizontalRule(line)) {
+      blocks.push(<hr key={key} className="border-border" />);
+      index += 1;
+      continue;
+    }
+
+    if (line.includes("|") && isTableDelimiter(lines[index + 1] ?? "")) {
+      const header = splitTableRow(line);
+      index += 2;
+      const rows: string[][] = [];
+      while (index < lines.length && lines[index].trim() && lines[index].includes("|")) {
+        rows.push(splitTableRow(lines[index]));
+        index += 1;
+      }
+      blocks.push(
+        <div key={key} className="overflow-x-auto rounded-md border">
+          <table className="w-full border-collapse text-left text-sm">
+            <thead className="bg-muted/50">
+              <tr>
+                {header.map((cell, cellIndex) => (
+                  <th key={`${key}-head-${cellIndex}`} className="border-b px-3 py-2 font-semibold">
+                    {renderInline(cell, `${key}-head-${cellIndex}`)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, rowIndex) => (
+                <tr key={`${key}-row-${rowIndex}`} className="border-b last:border-b-0">
+                  {header.map((_, cellIndex) => (
+                    <td key={`${key}-cell-${rowIndex}-${cellIndex}`} className="px-3 py-2 text-muted-foreground">
+                      {renderInline(row[cellIndex] ?? "", `${key}-cell-${rowIndex}-${cellIndex}`)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>,
+      );
+      continue;
+    }
+
+    if (/^\s*>\s?/.test(line)) {
+      const quoteLines: string[] = [];
+      while (index < lines.length && /^\s*>\s?/.test(lines[index])) {
+        quoteLines.push(lines[index].replace(/^\s*>\s?/, ""));
+        index += 1;
+      }
+      blocks.push(
+        <blockquote key={key} className="border-l-2 pl-4 text-sm leading-7 text-muted-foreground">
+          {quoteLines.flatMap((quoteLine, quoteIndex) => [
+            ...renderInline(quoteLine, `${key}-${quoteIndex}`),
+            quoteIndex < quoteLines.length - 1 ? <br key={`${key}-br-${quoteIndex}`} /> : null,
+          ])}
+        </blockquote>,
+      );
+      continue;
+    }
+
+    if (/^\s*[-*+]\s+\[[ xX]\]\s+/.test(line)) {
+      const items: { checked: boolean; text: string }[] = [];
+      while (index < lines.length) {
+        const match = lines[index].match(/^\s*[-*+]\s+\[([ xX])\]\s+(.+)$/);
+        if (!match) break;
+        items.push({ checked: match[1].toLowerCase() === "x", text: match[2] });
+        index += 1;
+      }
+      blocks.push(
+        <ul key={key} className="space-y-1.5 text-sm leading-7 text-muted-foreground">
+          {items.map((item, itemIndex) => (
+            <li key={`${key}-${itemIndex}`} className="flex items-start gap-2">
+              <input type="checkbox" checked={item.checked} readOnly disabled className="mt-1.5 size-4 shrink-0" />
+              <span>{renderInline(item.text, `${key}-${itemIndex}`)}</span>
+            </li>
+          ))}
+        </ul>,
+      );
+      continue;
+    }
+
+    if (/^\s*[-*+]\s+/.test(line)) {
+      const items: string[] = [];
+      while (index < lines.length) {
+        const match = lines[index].match(/^\s*[-*+]\s+(.+)$/);
+        if (!match || /^\[[ xX]\]\s+/.test(match[1])) break;
+        items.push(match[1]);
+        index += 1;
+      }
+      blocks.push(
+        <ul key={key} className="list-disc space-y-1 pl-6 text-sm leading-7 text-muted-foreground">
+          {items.map((item, itemIndex) => (
+            <li key={`${key}-${itemIndex}`}>{renderInline(item, `${key}-${itemIndex}`)}</li>
+          ))}
+        </ul>,
+      );
+      continue;
+    }
+
+    if (/^\s*\d+[.)]\s+/.test(line)) {
+      const items: string[] = [];
+      while (index < lines.length) {
+        const match = lines[index].match(/^\s*\d+[.)]\s+(.+)$/);
+        if (!match) break;
+        items.push(match[1]);
+        index += 1;
+      }
+      blocks.push(
+        <ol key={key} className="list-decimal space-y-1 pl-6 text-sm leading-7 text-muted-foreground">
+          {items.map((item, itemIndex) => (
+            <li key={`${key}-${itemIndex}`}>{renderInline(item, `${key}-${itemIndex}`)}</li>
+          ))}
+        </ol>,
+      );
+      continue;
+    }
+
+    const paragraphLines = [line];
+    index += 1;
+    while (index < lines.length && lines[index].trim() && !isBlockStart(lines, index)) {
+      paragraphLines.push(lines[index]);
+      index += 1;
+    }
+    blocks.push(renderParagraph(paragraphLines.join("\n"), key));
+  }
+
   return (
     <article {...props} className={cn("mx-auto max-w-3xl space-y-4", className)}>
-      {source.split(/\n{2,}/).map((block, index) => {
-        const text = block.trim();
-        const key = `markdown-block-${index}`;
-
-        if (text.startsWith("```") && text.endsWith("```")) {
-          return (
-            <pre key={key} className="overflow-x-auto rounded-md bg-muted p-4 font-mono text-xs leading-6">
-              <code>{text.replace(/^```[^\n]*\n?/, "").replace(/```$/, "")}</code>
-            </pre>
-          );
-        }
-        if (text.startsWith("### ")) {
-          return <h3 key={key} className="text-base font-semibold">{renderInline(text.slice(4), key)}</h3>;
-        }
-        if (text.startsWith("## ")) {
-          return <h2 key={key} className="text-xl font-semibold tracking-tight">{renderInline(text.slice(3), key)}</h2>;
-        }
-        if (text.startsWith("# ")) {
-          return <h1 key={key} className="text-2xl font-semibold tracking-tight">{renderInline(text.slice(2), key)}</h1>;
-        }
-        if (text.split("\n").every((line) => /^[-*]\s+/.test(line))) {
-          return (
-            <ul key={key} className="list-disc space-y-1 pl-6 text-sm leading-7 text-muted-foreground">
-              {text.split("\n").map((line, lineIndex) => (
-                <li key={`${key}-${lineIndex}`}>{renderInline(line.replace(/^[-*]\s+/, ""), `${key}-${lineIndex}`)}</li>
-              ))}
-            </ul>
-          );
-        }
-        if (text.split("\n").every((line) => /^\d+\.\s+/.test(line))) {
-          return (
-            <ol key={key} className="list-decimal space-y-1 pl-6 text-sm leading-7 text-muted-foreground">
-              {text.split("\n").map((line, lineIndex) => (
-                <li key={`${key}-${lineIndex}`}>{renderInline(line.replace(/^\d+\.\s+/, ""), `${key}-${lineIndex}`)}</li>
-              ))}
-            </ol>
-          );
-        }
-        if (text.split("\n").every((line) => line.startsWith("> "))) {
-          return (
-            <blockquote key={key} className="border-l-2 pl-4 text-sm leading-7 text-muted-foreground">
-              {text.split("\n").flatMap((line, lineIndex) => [
-                ...renderInline(line.slice(2), `${key}-${lineIndex}`),
-                lineIndex < text.split("\n").length - 1 ? <br key={`${key}-br-${lineIndex}`} /> : null,
-              ])}
-            </blockquote>
-          );
-        }
-        return renderParagraph(text, key);
-      })}
+      {blocks}
     </article>
   );
 }
