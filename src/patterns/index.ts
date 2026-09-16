@@ -10,7 +10,9 @@ export {
 export {
   MarkdownEditor,
   type MarkdownEditorCommand,
+  type MarkdownEditorInsertOptions,
   type MarkdownEditorMode,
   type MarkdownEditorProps,
+  type MarkdownEditorRef,
   type MarkdownEditorSelection,
 } from "./markdown-editor";
