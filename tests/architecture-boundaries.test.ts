@@ -41,7 +41,9 @@ describe("public layer architecture", () => {
 
   it("publishes only admitted Pattern interactions", async () => {
     const patterns = await import("../src/patterns/index");
-    expect(Object.keys(patterns).sort()).toEqual(["BulkActionBar"]);
+    expect(Object.keys(patterns).sort()).toEqual(
+      ["BulkActionBar", "DocumentEditorShell", "MarkdownEditor"].sort(),
+    );
   });
 
   it("publishes only admitted Gouno product-family structure", async () => {
