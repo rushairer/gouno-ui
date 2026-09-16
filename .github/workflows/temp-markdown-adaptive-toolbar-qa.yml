@@ -39,13 +39,13 @@ jobs:
         run: |
           npm run showcase:dev -- --host 127.0.0.1 --port 4174 > /tmp/gouno-showcase.log 2>&1 &
           SHOWCASE_PID=$!
-          trap 'kill $SHOWCASE_PID || true' EXIT
+          trap 'kill $SHOWCASE_PID || true; rm -f .tmp-markdown-toolbar-qa.mjs' EXIT
           for i in $(seq 1 60); do
             if curl -fsS http://127.0.0.1:4174/ >/dev/null; then break; fi
             sleep 1
           done
           mkdir -p /tmp/markdown-toolbar-qa
-          cat > /tmp/markdown-toolbar-qa/run.mjs <<'EOF'
+          cat > .tmp-markdown-toolbar-qa.mjs <<'EOF'
           import { chromium } from '@playwright/test';
           import fs from 'node:fs';
 
@@ -112,7 +112,7 @@ jobs:
           if (relevantErrors.length) throw new Error(`console errors: ${relevantErrors.join('\n')}`);
           await browser.close();
           EOF
-          node /tmp/markdown-toolbar-qa/run.mjs
+          node .tmp-markdown-toolbar-qa.mjs
 
       - name: Upload QA evidence
         if: always()
