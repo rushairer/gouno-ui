@@ -1,0 +1,91 @@
+name: Temporary editor AI suggestion UX diagnostic
+
+on:
+  push:
+    branches:
+      - feat/editor-ai-suggestion-ux
+    paths:
+      - .github/workflows/editor-ai-suggestion-ux-diagnostic.yml
+
+permissions:
+  contents: write
+
+jobs:
+  diagnose:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: feat/editor-ai-suggestion-ux
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Reuse patch script from staging workflow
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          source = Path('.github/workflows/editor-ai-suggestion-ux-patch.yml').read_text().splitlines()
+          start = source.index('      - name: Apply editor UX changes')
+          stop = source.index('      - name: Install dependencies')
+          block = source[start:stop]
+          run_index = block.index('        run: |')
+          shell = []
+          for line in block[run_index + 1:]:
+              shell.append(line[10:] if line.startswith('          ') else line)
+          Path('/tmp/apply-editor-ai-ux.sh').write_text('\n'.join(shell) + '\n')
+          PY
+          bash /tmp/apply-editor-ai-ux.sh
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Capture verification diagnostics
+        run: |
+          set +e
+          : > /tmp/editor-ai-ux-verify.log
+          status=0
+          for command in \
+            "npm run lint:microcopy" \
+            "npm run lint:parity" \
+            "npm run typecheck" \
+            "npm test" \
+            "npm run build" \
+            "npm run showcase:build" \
+            "npm run package:check"
+          do
+            echo "===== $command =====" | tee -a /tmp/editor-ai-ux-verify.log
+            bash -lc "$command" 2>&1 | tee -a /tmp/editor-ai-ux-verify.log
+            code=${PIPESTATUS[0]}
+            echo "exit=$code" | tee -a /tmp/editor-ai-ux-verify.log
+            if [ "$code" -ne 0 ]; then
+              status=$code
+              break
+            fi
+          done
+          echo "FINAL_STATUS=$status" | tee -a /tmp/editor-ai-ux-verify.log
+          exit 0
+
+      - name: Commit patched source and diagnostics for inspection
+        run: |
+          mkdir -p diagnostics
+          cp /tmp/editor-ai-ux-verify.log diagnostics/editor-ai-suggestion-ux.log
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/editor-ai-suggestion-ux-patch.yml .github/workflows/editor-ai-suggestion-ux-diagnostic.yml
+          git add src/patterns/ai-suggestions.tsx src/patterns/index.ts \
+            showcase/demos/products/blog-admin/post-editor.tsx \
+            showcase/demos/products/blog-admin/page-editor.tsx \
+            tests/pattern-ai-suggestions.test.tsx \
+            tests/product-blog-admin-post-editor.test.tsx \
+            tests/product-blog-admin-page-editor.test.tsx \
+            docs/api-conformance.md docs/abstraction-register.md \
+            diagnostics/editor-ai-suggestion-ux.log
+          git commit -m "feat(blog-admin): stage unified AI suggestion UX"
+          git push origin HEAD:feat/editor-ai-suggestion-ux
