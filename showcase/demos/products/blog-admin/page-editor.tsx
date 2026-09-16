@@ -17,7 +17,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   Field,
@@ -39,6 +38,7 @@ import {
 import { FixtureDock } from "../../../components/fixture-dock";
 import { FixtureNotification } from "./fixture-notification";
 import { MarkdownPreview } from "../../../components/markdown-preview";
+import { copyText } from "../../../lib/copy-text";
 
 type EditorRoute = "edit" | "new";
 type FixtureScenario = "ready" | "loading" | "error" | "conflict";
@@ -342,6 +342,12 @@ export function BlogAdminPageEditorDemo({
     setNotice(mode === "replace" ? "已替换单页正文。" : "已将生成内容追加到单页正文末尾。");
   };
 
+  const copyGeneratedContent = async () => {
+    if (!generatedContent) return;
+    const copied = await copyText(generatedContent);
+    setNotice(copied ? "已复制 AI 生成内容。" : "复制失败，请手动选择生成结果。");
+  };
+
   const insertGeneratedImageAtCursor = () => {
     const markdown = `![${imageAlt || "单页插图"}](/media/ai-generated-page.webp)`;
     setEditorMode("edit");
@@ -474,11 +480,10 @@ export function BlogAdminPageEditorDemo({
             icon={<Sparkles />}
             aria-label="AI 写作"
           >
-            AI
+            AI 写作
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-56">
-          <DropdownMenuLabel>{editorSelection?.text ? "处理所选内容" : "正文写作"}</DropdownMenuLabel>
           {editorSelection?.text ? (
             <>
               <DropdownMenuItem onSelect={() => openWritingAssistant("保持原意，润色当前选中的文字，提升连贯性和表达质量")}>润色所选</DropdownMenuItem>
@@ -505,20 +510,19 @@ export function BlogAdminPageEditorDemo({
             variant={aiPanel === "image" ? "solid" : "text"}
             color={aiPanel === "image" ? "primary" : undefined}
             icon={<ImageIcon />}
-            aria-label="插入内容"
+            aria-label="插图"
           >
-            插入
+            插图
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-52">
-          <DropdownMenuLabel>插入图片</DropdownMenuLabel>
           <DropdownMenuItem onSelect={() => setNotice("将打开媒体库选择器（Showcase 模拟）。")}>从媒体库选择</DropdownMenuItem>
           <DropdownMenuItem onSelect={() => setNotice("将打开本地图片上传（Showcase 模拟）。")}>上传图片</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => {
             setAIPanel("image");
             setGeneratedImage(false);
-          }}>AI 生成图片</DropdownMenuItem>
+          }}>AI 生成配图</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </>
@@ -781,7 +785,7 @@ export function BlogAdminPageEditorDemo({
 
           <Modal
             open={aiPanel === "writing"}
-            title="AI 写作助手"
+            title="AI 写作"
             description={editorSelection?.text ? `当前作用域：已选 ${editorSelection.text.length} 个字符` : "当前作用域：正文"}
             size="lg"
             onOpenChange={(open) => {
@@ -822,6 +826,7 @@ export function BlogAdminPageEditorDemo({
                         <Button size="small" variant="solid" color="primary" onClick={() => applyGeneratedContent("replace")}>替换全文</Button>
                       )}
                       <Button size="small" onClick={() => applyGeneratedContent("append")}>追加到末尾</Button>
+                      <Button size="small" onClick={() => void copyGeneratedContent()}>复制</Button>
                       <Button size="small" variant="text" onClick={() => setGeneratedContent(null)}>放弃</Button>
                     </div>
                   </div>
@@ -833,7 +838,7 @@ export function BlogAdminPageEditorDemo({
 
           <Modal
             open={aiPanel === "image"}
-            title="AI 生成图片"
+            title="AI 配图"
             description="生成后插入当前编辑位置，不改变单页页面配置。"
             size="lg"
             onOpenChange={(open) => {
@@ -863,7 +868,7 @@ export function BlogAdminPageEditorDemo({
                   onChange={(event) => setImageAlt(event.target.value)}
                   placeholder="图片描述 (Alt)"
                 />
-                <Button variant="solid" color="primary" disabled={!imagePrompt.trim()} onClick={() => setGeneratedImage(true)}>开始生图</Button>
+                <Button variant="solid" color="primary" disabled={!imagePrompt.trim()} onClick={() => setGeneratedImage(true)}>生成图片</Button>
               </div>
               {generatedImage ? (
                 <div className="grid gap-4 rounded-md border bg-background p-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
