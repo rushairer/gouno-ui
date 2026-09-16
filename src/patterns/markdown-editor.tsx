@@ -336,6 +336,20 @@ function transformCommand(
   }
 }
 
+function toolbarHasVisualOverflow(toolbar: HTMLDivElement) {
+  const tolerance = 1;
+  if (toolbar.scrollWidth > toolbar.clientWidth + tolerance) return true;
+
+  const toolbarRect = toolbar.getBoundingClientRect();
+  return Array.from(toolbar.children).some((child) => {
+    const childRect = child.getBoundingClientRect();
+    return (
+      childRect.left < toolbarRect.left - tolerance ||
+      childRect.right > toolbarRect.right + tolerance
+    );
+  });
+}
+
 export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>(
   function MarkdownEditor(
     {
@@ -461,12 +475,13 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
 
     // Three-stage degradation: built-in format commands collapse into More first; then
     // product actions and the view switch become icon-only; wrapping is reserved for the
-    // final fallback when the compact toolbar still cannot fit.
+    // final fallback when the compact toolbar still cannot fit. scrollWidth is not sufficient
+    // for every flex/browser combination, so also verify the rendered child bounds.
     useLayoutEffect(() => {
       if (!showAuthoringTools || allowToolbarWrap) return;
       const toolbar = toolbarRef.current;
       if (!toolbar) return;
-      if (toolbar.scrollWidth <= toolbar.clientWidth + 1) return;
+      if (!toolbarHasVisualOverflow(toolbar)) return;
 
       if (visiblePrimaryCount > 0) {
         setVisiblePrimaryCount((count) => Math.max(0, count - 1));
