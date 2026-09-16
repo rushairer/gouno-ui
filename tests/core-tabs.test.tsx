@@ -60,7 +60,7 @@ describe("Core Tabs", () => {
     expect(screen.getByRole("tab", { name: "General" }).getAttribute("aria-selected")).toBe("true");
   });
 
-  it("keeps line indicators inside the tab-list scroll boundary and leaves content padding to consumers", () => {
+  it("keeps line indicators on the tab-list edge and leaves content padding to consumers", () => {
     const { container } = render(
       <Tabs
         aria-label="Line tabs"
@@ -78,6 +78,7 @@ describe("Core Tabs", () => {
     expect(trigger.className).toContain("group-data-[variant=line]/tabs-list:after:bg-primary");
     expect(list.getAttribute("data-variant")).toBe("line");
     expect(list.className).toContain("overflow-y-hidden");
+    expect(list.className).toContain("items-end");
     expect(panel.className).not.toContain("pt-5");
     expect(panel.className).toContain("min-w-0");
   });
@@ -127,6 +128,7 @@ describe("Core Tabs", () => {
     );
     expect(screen.getByRole("tab", { name: "One" }).className).toContain("[&::after]:!top-0");
     expect(screen.getByRole("tablist", { name: "Bottom tabs" }).className).toContain("border-t");
+    expect(screen.getByRole("tablist", { name: "Bottom tabs" }).className).toContain("items-start");
 
     rerender(
       <Tabs
