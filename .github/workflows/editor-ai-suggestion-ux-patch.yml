@@ -1,0 +1,1097 @@
+name: Temporary editor AI suggestion UX patch
+
+on:
+  push:
+    branches:
+      - feat/editor-ai-suggestion-ux
+    paths:
+      - .github/workflows/editor-ai-suggestion-ux-patch.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply-and-verify:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: feat/editor-ai-suggestion-ux
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Apply editor UX changes
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          def read(path: str) -> str:
+              return Path(path).read_text()
+
+          def write(path: str, content: str) -> None:
+              Path(path).parent.mkdir(parents=True, exist_ok=True)
+              Path(path).write_text(content)
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              text = read(path)
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"{path}: expected exactly one match, found {count}: {old[:80]!r}")
+              write(path, text.replace(old, new, 1))
+
+          def replace_between(path: str, start: str, end: str, replacement: str) -> None:
+              text = read(path)
+              i = text.find(start)
+              if i < 0:
+                  raise SystemExit(f"{path}: start marker not found: {start[:100]!r}")
+              j = text.find(end, i + len(start))
+              if j < 0:
+                  raise SystemExit(f"{path}: end marker not found: {end[:100]!r}")
+              write(path, text[:i] + replacement + text[j:])
+
+          pattern = r'''import { useId, type HTMLAttributes, type ReactNode } from "react";
+          import { RefreshCw, Sparkles } from "lucide-react";
+          import { Button, Checkbox, Radio } from "../core";
+          import { cn } from "../lib/utils";
+
+          export interface AISuggestionOption {
+            value: string;
+            description?: ReactNode;
+            monospace?: boolean;
+          }
+
+          export interface AISuggestionPickerProps
+            extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
+            heading?: ReactNode;
+            description?: ReactNode;
+            groupLabel?: string;
+            options: readonly AISuggestionOption[];
+            value: string | null;
+            onValueChange: (value: string) => void;
+            onApply: (value: string) => void;
+            onDismiss?: () => void;
+            onRegenerate?: () => void;
+            applyLabel?: string;
+          }
+
+          export interface AISuggestionReviewItem {
+            key: string;
+            label: string;
+            value: ReactNode;
+            monospace?: boolean;
+          }
+
+          export interface AISuggestionReviewProps extends HTMLAttributes<HTMLDivElement> {
+            heading?: ReactNode;
+            description?: ReactNode;
+            groupLabel?: string;
+            items: readonly AISuggestionReviewItem[];
+            selectedKeys: readonly string[];
+            onSelectedKeysChange: (keys: string[]) => void;
+            onApply: () => void;
+            onCancel?: () => void;
+            onRegenerate?: () => void;
+          }
+
+          function SuggestionHeader({
+            heading,
+            description,
+            countLabel,
+            onRegenerate,
+          }: {
+            heading: ReactNode;
+            description?: ReactNode;
+            countLabel: ReactNode;
+            onRegenerate?: () => void;
+          }) {
+            return (
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                    <Sparkles aria-hidden="true" className="size-4 text-primary" />
+                    <span>{heading}</span>
+                  </div>
+                  <div className="mt-1 text-xs leading-5 text-muted-foreground">
+                    {description ?? countLabel}
+                  </div>
+                </div>
+                {onRegenerate ? (
+                  <Button
+                    type="button"
+                    size="small"
+                    variant="text"
+                    icon={<RefreshCw />}
+                    onClick={onRegenerate}
+                  >
+                    重新生成
+                  </Button>
+                ) : null}
+              </div>
+            );
+          }
+
+          export function AISuggestionPicker({
+            heading = "AI 建议",
+            description,
+            groupLabel = "AI 建议候选",
+            options,
+            value,
+            onValueChange,
+            onApply,
+            onDismiss,
+            onRegenerate,
+            applyLabel = "使用所选",
+            className,
+            ...props
+          }: AISuggestionPickerProps) {
+            const name = useId();
+
+            return (
+              <div
+                {...props}
+                data-slot="ai-suggestion-picker"
+                className={cn("rounded-lg border bg-muted/20 p-3", className)}
+              >
+                <SuggestionHeader
+                  heading={heading}
+                  description={description}
+                  countLabel={`${options.length} 个候选，选择后统一应用。`}
+                  onRegenerate={onRegenerate}
+                />
+
+                <div
+                  className="mt-3 overflow-hidden rounded-md border bg-background"
+                  role="radiogroup"
+                  aria-label={groupLabel}
+                  data-slot="ai-suggestion-list"
+                >
+                  {options.map((option) => {
+                    const selected = option.value === value;
+                    return (
+                      <label
+                        key={option.value}
+                        className={cn(
+                          "grid cursor-pointer grid-cols-[auto_minmax(0,1fr)] items-start gap-3 border-b px-3 py-2.5 text-sm last:border-b-0",
+                          "transition-colors hover:bg-muted/40",
+                          selected && "bg-primary/[0.06]",
+                        )}
+                        data-selected={selected ? "true" : "false"}
+                      >
+                        <Radio
+                          className="mt-0.5"
+                          name={name}
+                          value={option.value}
+                          checked={selected}
+                          onChange={() => onValueChange(option.value)}
+                          aria-label={option.value}
+                        />
+                        <span className="min-w-0">
+                          <span
+                            className={cn(
+                              "block whitespace-normal break-words leading-5 text-foreground",
+                              option.monospace && "break-all font-mono text-xs",
+                            )}
+                          >
+                            {option.value}
+                          </span>
+                          {option.description ? (
+                            <span className="mt-1 block text-xs leading-5 text-muted-foreground">
+                              {option.description}
+                            </span>
+                          ) : null}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+
+                <div className="mt-3 flex items-center justify-end gap-2">
+                  {onDismiss ? (
+                    <Button type="button" size="small" variant="text" onClick={onDismiss}>
+                      取消
+                    </Button>
+                  ) : null}
+                  <Button
+                    type="button"
+                    size="small"
+                    variant="solid"
+                    color="primary"
+                    disabled={!value}
+                    onClick={() => value && onApply(value)}
+                  >
+                    {applyLabel}
+                  </Button>
+                </div>
+              </div>
+            );
+          }
+
+          export function AISuggestionReview({
+            heading = "AI 建议",
+            description,
+            groupLabel = "AI 建议选择",
+            items,
+            selectedKeys,
+            onSelectedKeysChange,
+            onApply,
+            onCancel,
+            onRegenerate,
+            className,
+            ...props
+          }: AISuggestionReviewProps) {
+            const selected = new Set(selectedKeys);
+            const toggle = (key: string, checked: boolean) => {
+              onSelectedKeysChange(
+                checked
+                  ? [...selectedKeys, key].filter((candidate, index, all) => all.indexOf(candidate) === index)
+                  : selectedKeys.filter((candidate) => candidate !== key),
+              );
+            };
+
+            return (
+              <div
+                {...props}
+                data-slot="ai-suggestion-review"
+                className={cn("rounded-lg border bg-muted/20 p-3", className)}
+              >
+                <SuggestionHeader
+                  heading={heading}
+                  description={description}
+                  countLabel={`${selectedKeys.length}/${items.length} 项建议已选择。`}
+                  onRegenerate={onRegenerate}
+                />
+
+                <div
+                  className="mt-3 overflow-hidden rounded-md border bg-background"
+                  role="group"
+                  aria-label={groupLabel}
+                  data-slot="ai-suggestion-review-list"
+                >
+                  {items.map((item) => {
+                    const checked = selected.has(item.key);
+                    return (
+                      <label
+                        key={item.key}
+                        className={cn(
+                          "grid cursor-pointer grid-cols-[auto_5rem_minmax(0,1fr)] items-start gap-2 border-b px-3 py-2.5 text-xs last:border-b-0",
+                          "transition-colors hover:bg-muted/40",
+                          checked && "bg-primary/[0.04]",
+                        )}
+                      >
+                        <Checkbox
+                          className="mt-0.5"
+                          checked={checked}
+                          onChange={(event) => toggle(item.key, event.target.checked)}
+                          aria-label={`应用 ${item.label} 建议`}
+                        />
+                        <span className="font-medium text-muted-foreground">{item.label}</span>
+                        <span className={cn("min-w-0 break-words text-foreground", item.monospace && "break-all font-mono")}>
+                          {item.value}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+
+                <div className="mt-3 flex items-center justify-end gap-2">
+                  {onCancel ? (
+                    <Button type="button" size="small" variant="text" onClick={onCancel}>
+                      取消
+                    </Button>
+                  ) : null}
+                  <Button
+                    type="button"
+                    size="small"
+                    variant="solid"
+                    color="primary"
+                    disabled={selectedKeys.length === 0}
+                    onClick={onApply}
+                  >
+                    应用 {selectedKeys.length} 项建议
+                  </Button>
+                </div>
+              </div>
+            );
+          }
+          '''
+          write("src/patterns/ai-suggestions.tsx", pattern.replace("          ", ""))
+
+          replace_once(
+              "src/patterns/index.ts",
+              'export { BulkActionBar, type BulkActionBarProps } from "./bulk-action-bar";\n',
+              'export { BulkActionBar, type BulkActionBarProps } from "./bulk-action-bar";\nexport {\n  AISuggestionPicker,\n  AISuggestionReview,\n  type AISuggestionOption,\n  type AISuggestionPickerProps,\n  type AISuggestionReviewItem,\n  type AISuggestionReviewProps,\n} from "./ai-suggestions";\n',
+          )
+
+          replace_once(
+              "docs/api-conformance.md",
+              "当前准入 `BulkActionBar`、`DocumentEditorShell` 与 `MarkdownEditor`。",
+              "当前准入 `BulkActionBar`、`DocumentEditorShell`、`MarkdownEditor`、`AISuggestionPicker` 与 `AISuggestionReview`。",
+          )
+          register = read("docs/abstraction-register.md")
+          if "PD-053 — AI suggestions separate generation from explicit review and apply" not in register:
+              register += r'''
+
+          ### PD-053 — AI suggestions separate generation from explicit review and apply
+          - **Status:** accepted / Pattern admission
+          - **Owner:** Patterns / Blog Admin editor convergence
+          - **Evidence:** Blog Admin PostEditor and PageEditor independently need the same two AI-result interactions: a single-field candidate set where one suggestion is selected before application, and a related-field review where several generated changes can be accepted or rejected before one commit. The prior product-local `ChoiceButton + 应用` rows looked like ordinary text actions instead of a selectable result set, while PageEditor also retained a Slug-only AI affordance that diverged from PostEditor.
+          - **Decision:** admit two narrow patterns. `AISuggestionPicker` owns candidate-list selection plus one explicit apply action; `AISuggestionReview` owns checkbox review of related field changes plus one explicit apply action. Generation, model policy, prompts, persistence and product field ownership remain caller-owned. Editor AI continues to belong to `MarkdownEditor`; field AI remains attached only to true single-field outcomes; related Slug/SEO changes use one section-scoped review entry.
+          - **Design/accessibility impact:** suggestion results must read as lists, not loose buttons. Picker rows use radiogroup/radio semantics; review rows use checkboxes. Candidate text occupies the primary row content and the repeated per-row `应用` affordance is removed. A single footer action communicates the commit boundary. Code-like values may opt into monospace presentation without creating a second component family.
+          - **API impact:** both patterns expose standard root div attributes plus controlled selection state and caller-owned suggestion data. They do not own network/loading/error states, AI branding policy, prompt input, field labels or business validation. PostEditor outline remains product navigation and is not generalized into another Pattern.
+          - **Validation:** focused Pattern tests cover controlled selection, one-step apply semantics and partial multi-field review. PostEditor/PageEditor product tests protect field-vs-section AI ownership, removal of Slug-only AI, and explicit review before mutation.
+          '''.replace("          ", "")
+              write("docs/abstraction-register.md", register)
+
+          # ---------- PostEditor ----------
+          post = "showcase/demos/products/blog-admin/post-editor.tsx"
+          replace_once(post, '  Text,\n  Textarea,\n} from "../../../../src/core";', '  Text,\n  Textarea,\n  Tooltip,\n  TooltipContent,\n  TooltipProvider,\n  TooltipTrigger,\n} from "../../../../src/core";')
+          replace_once(post, 'import {\n  DocumentEditorShell,', 'import {\n  AISuggestionPicker,\n  AISuggestionReview,\n  DocumentEditorShell,')
+          replace_once(
+              post,
+              'const categories = [\n  { id: 1, name: "AI" },\n  { id: 2, name: "后端架构" },\n  { id: 3, name: "前端工程" },\n];\n',
+              'const categories = [\n  { id: 1, name: "AI" },\n  { id: 2, name: "后端架构" },\n  { id: 3, name: "前端工程" },\n];\n\nconst postTitleSuggestions = [\n  "Agent 工作流可观测性：从运行记录到人工审批",\n  "AI 自动化进入生产后，为什么运行证据比生成结果更重要",\n] as const;\n\nconst postSummarySuggestions = [\n  "从运行证据、人工审批和失败回放三个层面解释 Agent 自动化进入生产后的治理要求。",\n  "聚焦 Agent 长期运行后的可观测性问题，说明执行证据、人工边界与失败回放为什么成为生产能力。",\n] as const;\n\nconst postSeoSuggestions = [\n  { key: "slug", label: "Slug", value: "agent-workflow-observability", monospace: true },\n  { key: "seo-title", label: "SEO 标题", value: "Agent 工作流可观测性：运行证据、审批与失败回放" },\n  { key: "seo-description", label: "SEO 描述", value: "拆解 Agent 自动化进入生产后需要保留的执行证据、人工审批边界与失败回放能力。" },\n] as const;\n',
+          )
+          replace_between(
+              post,
+              "function InspectorSection(",
+              "function renderPostPreview",
+              r'''function InspectorSection({
+            title,
+            action,
+            children,
+          }: {
+            title: string;
+            action?: ReactNode;
+            children: ReactNode;
+          }) {
+            return (
+              <details open className="relative border-b py-4 last:border-b-0">
+                <summary className="cursor-pointer select-none pr-12 text-sm font-semibold">{title}</summary>
+                {action ? <div className="absolute right-0 top-2.5 z-10">{action}</div> : null}
+                <div className="mt-4 flex flex-col gap-4">{children}</div>
+              </details>
+            );
+          }
+
+          function FieldActionHeader({
+            label,
+            actionLabel,
+            onAction,
+            disabled = false,
+            required = false,
+          }: {
+            label: string;
+            actionLabel: string;
+            onAction: () => void;
+            disabled?: boolean;
+            required?: boolean;
+          }) {
+            return (
+              <div className="mb-2 flex min-h-8 items-center justify-between gap-3">
+                <div className="text-sm font-medium">
+                  {label}{required ? <span aria-hidden="true" className="text-destructive">*</span> : null}
+                </div>
+                <Button
+                  type="button"
+                  size="small"
+                  variant="text"
+                  icon={<Sparkles />}
+                  onClick={onAction}
+                  disabled={disabled}
+                  aria-label={actionLabel}
+                  title={actionLabel}
+                  className="size-8 px-0"
+                />
+              </div>
+            );
+          }
+
+          '''.replace("          ", ""),
+          )
+          replace_once(
+              post,
+              '  const [titleCandidates, setTitleCandidates] = useState<string[]>([]);\n  const [summaryCandidate, setSummaryCandidate] = useState<string | null>(null);\n  const [metadataSuggestionsOpen, setMetadataSuggestionsOpen] = useState(false);',
+              '  const [titleCandidates, setTitleCandidates] = useState<string[]>([]);\n  const [selectedTitleCandidate, setSelectedTitleCandidate] = useState<string | null>(null);\n  const [summaryCandidates, setSummaryCandidates] = useState<string[]>([]);\n  const [selectedSummaryCandidate, setSelectedSummaryCandidate] = useState<string | null>(null);\n  const [metadataSuggestionsOpen, setMetadataSuggestionsOpen] = useState(false);\n  const [metadataSelection, setMetadataSelection] = useState<string[]>([]);',
+          )
+          replace_once(
+              post,
+              '    setTitleCandidates([]);\n    setSummaryCandidate(null);\n    setMetadataSuggestionsOpen(false);',
+              '    setTitleCandidates([]);\n    setSelectedTitleCandidate(null);\n    setSummaryCandidates([]);\n    setSelectedSummaryCandidate(null);\n    setMetadataSuggestionsOpen(false);\n    setMetadataSelection([]);',
+          )
+          replace_between(
+              post,
+              "  const applyMetadataSuggestions = () => {",
+              "  const openWritingAssistant",
+              r'''  const applyMetadataSuggestions = () => {
+            const selected = new Set(metadataSelection);
+            setPost((current) => ({
+              ...current,
+              slug: selected.has("slug") ? "agent-workflow-observability" : current.slug,
+              seoTitle: selected.has("seo-title")
+                ? "Agent 工作流可观测性：运行证据、审批与失败回放"
+                : current.seoTitle,
+              seoDescription: selected.has("seo-description")
+                ? "拆解 Agent 自动化进入生产后需要保留的执行证据、人工审批边界与失败回放能力。"
+                : current.seoDescription,
+            }));
+            setDirty(true);
+            setSavedAt(null);
+            setMetadataSuggestionsOpen(false);
+            setNotice(`已应用 ${metadataSelection.length} 项 AI 路径与 SEO 建议（Showcase 模拟）。`);
+          };
+
+          '''.replace("          ", ""),
+          )
+          replace_between(
+              post,
+              '        {navigatorMode === "outline" ? (',
+              '        ) : (\n          <div className="flex flex-col gap-1" data-slot="post-history-list">',
+              r'''        {navigatorMode === "outline" ? (
+            outline.length ? (
+              <TooltipProvider delayDuration={350}>
+                {outline.map((item) => (
+                  <Tooltip key={item.id}>
+                    <TooltipTrigger asChild>
+                      <ChoiceButton
+                        type="button"
+                        aria-label={`跳转到 ${item.text}`}
+                        className="w-full min-w-0 overflow-hidden rounded-md px-2 py-1.5 text-left text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground [&>span]:min-w-0 [&>span]:w-full"
+                        style={{ paddingLeft: `${8 + Math.max(0, item.level - 2) * 12}px` }}
+                        onClick={() => focusOutlineItem(item)}
+                      >
+                        <span className="block min-w-0 truncate">{item.text}</span>
+                      </ChoiceButton>
+                    </TooltipTrigger>
+                    <TooltipContent side="right" className="max-w-80">
+                      {item.text}
+                    </TooltipContent>
+                  </Tooltip>
+                ))}
+              </TooltipProvider>
+            ) : (
+              <Text size="sm" tone="muted">在正文中添加 Markdown 标题后，大纲会自动生成。</Text>
+            )
+          '''.replace("          ", ""),
+          )
+          replace_between(
+              post,
+              "  const inspector = (",
+              '      <InspectorSection title="发布设置">',
+              r'''  const inspector = (
+            <fieldset disabled={readOnly} className="min-w-0 border-0 p-0">
+              <div className="min-h-9 border-b pb-3">
+                <Text className="font-semibold">属性</Text>
+                <Text size="xs" tone="muted" className="mt-0.5 block">发布、组织、封面与 SEO。</Text>
+              </div>
+
+          '''.replace("          ", ""),
+          )
+          replace_between(
+              post,
+              '      <InspectorSection title="路径与 SEO">',
+              "    </fieldset>",
+              r'''      <InspectorSection
+            title="路径与 SEO"
+            action={!readOnly ? (
+              <Button
+                type="button"
+                size="small"
+                variant="text"
+                icon={<Sparkles />}
+                aria-label="AI 优化路径与 SEO"
+                title="AI 优化路径与 SEO"
+                className="size-8 px-0"
+                disabled={!post.title.trim() && !post.content.trim()}
+                onClick={() => {
+                  if (metadataSuggestionsOpen) {
+                    setMetadataSuggestionsOpen(false);
+                    return;
+                  }
+                  setMetadataSelection(postSeoSuggestions.map((item) => item.key));
+                  setMetadataSuggestionsOpen(true);
+                }}
+              />
+            ) : undefined}
+          >
+            {metadataSuggestionsOpen ? (
+              <AISuggestionReview
+                aria-label="AI 路径与 SEO 建议"
+                groupLabel="路径与 SEO 建议"
+                description="审阅后只应用勾选的路径与 SEO 修改。"
+                items={postSeoSuggestions}
+                selectedKeys={metadataSelection}
+                onSelectedKeysChange={setMetadataSelection}
+                onCancel={() => setMetadataSuggestionsOpen(false)}
+                onApply={applyMetadataSuggestions}
+              />
+            ) : null}
+            <Field label="访问路径 (Slug)" required hint="访问路径为 /articles/<slug>">
+              <Input aria-label="访问路径 (Slug)" className="font-mono" value={post.slug} onChange={(event) => updatePost("slug", event.target.value)} />
+            </Field>
+            <Field label="SEO 标题" hint={`${post.seoTitle.length}/60`}>
+              <Input aria-label="SEO 标题" maxLength={60} value={post.seoTitle} onChange={(event) => updatePost("seoTitle", event.target.value)} placeholder="留空时默认使用标题" />
+            </Field>
+            <Field label="SEO 描述" hint={`${post.seoDescription.length}/160`}>
+              <Textarea aria-label="SEO 描述" rows={4} maxLength={160} value={post.seoDescription} onChange={(event) => updatePost("seoDescription", event.target.value)} placeholder="留空时默认使用摘要" />
+            </Field>
+          </InspectorSection>
+          '''.replace("          ", ""),
+          )
+          replace_between(
+              post,
+              '        <div className="flex min-w-0 flex-col gap-5">\n          <div>\n            {!readOnly ? (',
+              '          <div>\n            <div className="mb-2">\n              <Text className="font-medium">正文</Text>',
+              r'''        <div className="flex min-w-0 flex-col gap-5">
+            <div>
+              {!readOnly ? (
+                <FieldActionHeader
+                  label="标题"
+                  required
+                  actionLabel="AI 生成标题候选"
+                  onAction={() => {
+                    const candidates = [...postTitleSuggestions];
+                    setTitleCandidates(candidates);
+                    setSelectedTitleCandidate(candidates[0] ?? null);
+                  }}
+                />
+              ) : null}
+              <Field label="标题" required hideLabel={!readOnly}>
+                <Textarea
+                  aria-label="标题"
+                  rows={2}
+                  value={post.title}
+                  onChange={(event) => updatePost("title", event.target.value)}
+                  placeholder="写一个清晰、具体的标题"
+                  disabled={readOnly}
+                  readOnly={readOnly}
+                />
+              </Field>
+              {titleCandidates.length ? (
+                <AISuggestionPicker
+                  className="mt-2"
+                  aria-label="标题 AI 建议"
+                  groupLabel="标题候选"
+                  description="选择一个候选，再统一应用到标题。"
+                  options={titleCandidates.map((candidate) => ({ value: candidate }))}
+                  value={selectedTitleCandidate}
+                  onValueChange={setSelectedTitleCandidate}
+                  onDismiss={() => {
+                    setTitleCandidates([]);
+                    setSelectedTitleCandidate(null);
+                  }}
+                  onRegenerate={() => {
+                    const candidates = [...postTitleSuggestions].reverse();
+                    setTitleCandidates(candidates);
+                    setSelectedTitleCandidate(candidates[0] ?? null);
+                  }}
+                  onApply={(candidate) => {
+                    updatePost("title", candidate);
+                    setTitleCandidates([]);
+                    setSelectedTitleCandidate(null);
+                  }}
+                />
+              ) : null}
+            </div>
+
+            <div>
+              {!readOnly ? (
+                <FieldActionHeader
+                  label="摘要"
+                  actionLabel="AI 根据正文生成摘要"
+                  onAction={() => {
+                    const candidates = [...postSummarySuggestions];
+                    setSummaryCandidates(candidates);
+                    setSelectedSummaryCandidate(candidates[0] ?? null);
+                  }}
+                  disabled={!post.content.trim()}
+                />
+              ) : null}
+              <Field label="摘要" hideLabel={!readOnly} hint={`${post.summary.length}/300`}>
+                <Textarea
+                  aria-label="摘要"
+                  rows={3}
+                  maxLength={300}
+                  value={post.summary}
+                  onChange={(event) => updatePost("summary", event.target.value)}
+                  placeholder="用两三句话说明文章解决的问题"
+                  disabled={readOnly}
+                  readOnly={readOnly}
+                />
+              </Field>
+              {summaryCandidates.length ? (
+                <AISuggestionPicker
+                  className="mt-2"
+                  aria-label="摘要 AI 建议"
+                  groupLabel="摘要候选"
+                  description="从候选摘要中选择一个，再应用到当前字段。"
+                  options={summaryCandidates.map((candidate) => ({ value: candidate }))}
+                  value={selectedSummaryCandidate}
+                  onValueChange={setSelectedSummaryCandidate}
+                  onDismiss={() => {
+                    setSummaryCandidates([]);
+                    setSelectedSummaryCandidate(null);
+                  }}
+                  onApply={(candidate) => {
+                    updatePost("summary", candidate);
+                    setSummaryCandidates([]);
+                    setSelectedSummaryCandidate(null);
+                  }}
+                />
+              ) : null}
+            </div>
+
+          '''.replace("          ", ""),
+          )
+
+          # ---------- PageEditor ----------
+          page = "showcase/demos/products/blog-admin/page-editor.tsx"
+          replace_once(page, "  ChoiceButton,\n", "")
+          replace_once(page, 'import {\n  DocumentEditorShell,', 'import {\n  AISuggestionPicker,\n  AISuggestionReview,\n  DocumentEditorShell,')
+          replace_once(
+              page,
+              'const templateLabels: Record<PageTemplate, string> = {',
+              'const pageTitleSuggestions = [\n  "关于我们：技术、产品与长期主义",\n  "认识我们：从工程实践到开放技术",\n] as const;\n\nconst pageSummarySuggestions = [\n  "介绍团队背景、技术方向、产品理念与长期目标。",\n  "用一个页面说明我们是谁、长期关注什么，以及为什么持续分享工程实践与开放技术。",\n] as const;\n\nconst pageSeoSuggestions = [\n  { key: "slug", label: "Slug", value: "about-us", monospace: true },\n  { key: "seo-title", label: "SEO 标题", value: "关于我们：团队、技术方向与长期愿景" },\n  { key: "seo-description", label: "SEO 描述", value: "介绍团队背景、技术栈、开放技术实践与长期目标。" },\n] as const;\n\nconst templateLabels: Record<PageTemplate, string> = {',
+          )
+          replace_between(
+              page,
+              "function InspectorSection(",
+              "function renderPagePreview",
+              r'''function InspectorSection({
+            title,
+            action,
+            children,
+          }: {
+            title: string;
+            action?: ReactNode;
+            children: ReactNode;
+          }) {
+            return (
+              <details open className="relative border-b py-4 last:border-b-0">
+                <summary className="cursor-pointer select-none pr-12 text-sm font-semibold">{title}</summary>
+                {action ? <div className="absolute right-0 top-2.5 z-10">{action}</div> : null}
+                <div className="mt-4 flex flex-col gap-4">{children}</div>
+              </details>
+            );
+          }
+
+          function FieldActionHeader({
+            label,
+            actionLabel,
+            onAction,
+            disabled = false,
+            required = false,
+          }: {
+            label: string;
+            actionLabel: string;
+            onAction: () => void;
+            disabled?: boolean;
+            required?: boolean;
+          }) {
+            return (
+              <div className="mb-2 flex min-h-8 items-center justify-between gap-3">
+                <div className="text-sm font-medium">
+                  {label}{required ? <span aria-hidden="true" className="text-destructive">*</span> : null}
+                </div>
+                <Button
+                  type="button"
+                  size="small"
+                  variant="text"
+                  icon={<Sparkles />}
+                  onClick={onAction}
+                  disabled={disabled}
+                  aria-label={actionLabel}
+                  title={actionLabel}
+                  className="size-8 px-0"
+                />
+              </div>
+            );
+          }
+
+          '''.replace("          ", ""),
+          )
+          replace_once(
+              page,
+              '  const [titleCandidates, setTitleCandidates] = useState<string[]>([]);\n  const [summaryCandidates, setSummaryCandidates] = useState<string[]>([]);\n  const [slugCandidates, setSlugCandidates] = useState<string[]>([]);\n  const [metadataSuggestionsOpen, setMetadataSuggestionsOpen] = useState(false);',
+              '  const [titleCandidates, setTitleCandidates] = useState<string[]>([]);\n  const [selectedTitleCandidate, setSelectedTitleCandidate] = useState<string | null>(null);\n  const [summaryCandidates, setSummaryCandidates] = useState<string[]>([]);\n  const [selectedSummaryCandidate, setSelectedSummaryCandidate] = useState<string | null>(null);\n  const [metadataSuggestionsOpen, setMetadataSuggestionsOpen] = useState(false);\n  const [metadataSelection, setMetadataSelection] = useState<string[]>([]);',
+          )
+          replace_once(
+              page,
+              '    setTitleCandidates([]);\n    setSummaryCandidates([]);\n    setSlugCandidates([]);\n    setMetadataSuggestionsOpen(false);',
+              '    setTitleCandidates([]);\n    setSelectedTitleCandidate(null);\n    setSummaryCandidates([]);\n    setSelectedSummaryCandidate(null);\n    setMetadataSuggestionsOpen(false);\n    setMetadataSelection([]);',
+          )
+          replace_between(
+              page,
+              "  const applyMetadataSuggestions = () => {",
+              "  const openWritingAssistant",
+              r'''  const applyMetadataSuggestions = () => {
+            const selected = new Set(metadataSelection);
+            setPage((current) => ({
+              ...current,
+              slug: selected.has("slug") ? "about-us" : current.slug,
+              seoTitle: selected.has("seo-title")
+                ? "关于我们：团队、技术方向与长期愿景"
+                : current.seoTitle,
+              seoDescription: selected.has("seo-description")
+                ? "介绍团队背景、技术栈、开放技术实践与长期目标。"
+                : current.seoDescription,
+            }));
+            setDirty(true);
+            setSavedAt(null);
+            setMetadataSuggestionsOpen(false);
+            setNotice(`已应用 ${metadataSelection.length} 项 AI 路径与 SEO 建议（Showcase 模拟）。`);
+          };
+
+          '''.replace("          ", ""),
+          )
+          replace_between(
+              page,
+              "  const inspector = (",
+              '      <InspectorSection title="发布设置">',
+              r'''  const inspector = (
+            <div className="min-w-0">
+              <div className="min-h-9 border-b pb-3">
+                <Text className="font-semibold">属性</Text>
+                <Text size="xs" tone="muted" className="mt-0.5 block">发布、页面配置、路径与 SEO。</Text>
+              </div>
+
+          '''.replace("          ", ""),
+          )
+          replace_between(
+              page,
+              '      <InspectorSection title="路径与 SEO">',
+              "    </div>\n  );\n\n  return (",
+              r'''      <InspectorSection
+            title="路径与 SEO"
+            action={(
+              <Button
+                type="button"
+                size="small"
+                variant="text"
+                icon={<Sparkles />}
+                aria-label="AI 优化路径与 SEO"
+                title="AI 优化路径与 SEO"
+                className="size-8 px-0"
+                disabled={!page.title.trim() && !page.content.trim()}
+                onClick={() => {
+                  if (metadataSuggestionsOpen) {
+                    setMetadataSuggestionsOpen(false);
+                    return;
+                  }
+                  setMetadataSelection(pageSeoSuggestions.map((item) => item.key));
+                  setMetadataSuggestionsOpen(true);
+                }}
+              />
+            )}
+          >
+            {metadataSuggestionsOpen ? (
+              <AISuggestionReview
+                aria-label="AI 路径与 SEO 建议"
+                groupLabel="路径与 SEO 建议"
+                description="审阅后只应用勾选的路径与 SEO 修改。"
+                items={pageSeoSuggestions}
+                selectedKeys={metadataSelection}
+                onSelectedKeysChange={setMetadataSelection}
+                onCancel={() => setMetadataSuggestionsOpen(false)}
+                onApply={applyMetadataSuggestions}
+              />
+            ) : null}
+            <Field label="访问路径 (Slug)" required hint="访问路径为 /<slug>">
+              <Input
+                aria-label="访问路径 (Slug)"
+                className="font-mono"
+                value={page.slug}
+                onChange={(event) => updatePage("slug", event.target.value)}
+                placeholder="about"
+              />
+            </Field>
+            <Field label="SEO 标题" hint={`${page.seoTitle.length}/60`}>
+              <Input
+                aria-label="SEO 标题"
+                maxLength={60}
+                value={page.seoTitle}
+                onChange={(event) => updatePage("seoTitle", event.target.value)}
+                placeholder="留空时默认使用标题"
+              />
+            </Field>
+            <Field label="SEO 描述" hint={`${page.seoDescription.length}/160`}>
+              <Textarea
+                aria-label="SEO 描述"
+                rows={4}
+                maxLength={160}
+                value={page.seoDescription}
+                onChange={(event) => updatePage("seoDescription", event.target.value)}
+                placeholder="留空时默认使用摘要"
+              />
+            </Field>
+          </InspectorSection>
+          '''.replace("          ", ""),
+          )
+          replace_between(
+              page,
+              '        <div className="flex min-w-0 flex-col gap-5">\n          <div>\n            <FieldActionHeader',
+              '          <div>\n            <div className="mb-2">\n              <Text className="font-medium">正文</Text>',
+              r'''        <div className="flex min-w-0 flex-col gap-5">
+            <div>
+              <FieldActionHeader
+                label="标题"
+                required
+                actionLabel="AI 生成标题候选"
+                onAction={() => {
+                  const candidates = [...pageTitleSuggestions];
+                  setTitleCandidates(candidates);
+                  setSelectedTitleCandidate(candidates[0] ?? null);
+                }}
+              />
+              <Field label="标题" required hideLabel>
+                <Textarea
+                  aria-label="标题"
+                  rows={2}
+                  value={page.title}
+                  onChange={(event) => updatePage("title", event.target.value)}
+                  placeholder="写一个清晰、具体的单页标题"
+                />
+              </Field>
+              {titleCandidates.length ? (
+                <AISuggestionPicker
+                  className="mt-2"
+                  aria-label="标题 AI 建议"
+                  groupLabel="标题候选"
+                  description="选择一个候选，再统一应用到标题。"
+                  options={titleCandidates.map((candidate) => ({ value: candidate }))}
+                  value={selectedTitleCandidate}
+                  onValueChange={setSelectedTitleCandidate}
+                  onDismiss={() => {
+                    setTitleCandidates([]);
+                    setSelectedTitleCandidate(null);
+                  }}
+                  onRegenerate={() => {
+                    const candidates = [...pageTitleSuggestions].reverse();
+                    setTitleCandidates(candidates);
+                    setSelectedTitleCandidate(candidates[0] ?? null);
+                  }}
+                  onApply={(candidate) => {
+                    updatePage("title", candidate);
+                    setTitleCandidates([]);
+                    setSelectedTitleCandidate(null);
+                  }}
+                />
+              ) : null}
+            </div>
+
+            <div>
+              <FieldActionHeader
+                label="摘要 / 描述"
+                actionLabel="AI 根据正文生成摘要"
+                onAction={() => {
+                  const candidates = [...pageSummarySuggestions];
+                  setSummaryCandidates(candidates);
+                  setSelectedSummaryCandidate(candidates[0] ?? null);
+                }}
+              />
+              <Field label="摘要 / 描述" hint={`${page.summary.length}/300`} hideLabel>
+                <Textarea
+                  aria-label="摘要 / 描述"
+                  rows={3}
+                  maxLength={300}
+                  value={page.summary}
+                  onChange={(event) => updatePage("summary", event.target.value)}
+                  placeholder="用一两句话说明单页内容"
+                />
+              </Field>
+              {summaryCandidates.length ? (
+                <AISuggestionPicker
+                  className="mt-2"
+                  aria-label="摘要 AI 建议"
+                  groupLabel="摘要候选"
+                  description="从候选摘要中选择一个，再应用到当前字段。"
+                  options={summaryCandidates.map((candidate) => ({ value: candidate }))}
+                  value={selectedSummaryCandidate}
+                  onValueChange={setSelectedSummaryCandidate}
+                  onDismiss={() => {
+                    setSummaryCandidates([]);
+                    setSelectedSummaryCandidate(null);
+                  }}
+                  onApply={(candidate) => {
+                    updatePage("summary", candidate);
+                    setSummaryCandidates([]);
+                    setSelectedSummaryCandidate(null);
+                  }}
+                />
+              ) : null}
+            </div>
+
+          '''.replace("          ", ""),
+          )
+
+          # ---------- Focused Pattern tests ----------
+          pattern_test = r'''import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+          import { afterEach, describe, expect, it, vi } from "vitest";
+          import { AISuggestionPicker, AISuggestionReview } from "../src/patterns";
+
+          afterEach(cleanup);
+
+          describe("AI suggestion patterns", () => {
+            it("presents field candidates as a radio list and applies only the selected value", () => {
+              const onValueChange = vi.fn();
+              const onApply = vi.fn();
+              render(
+                <AISuggestionPicker
+                  aria-label="标题 AI 建议"
+                  groupLabel="标题候选"
+                  options={[{ value: "候选 A" }, { value: "候选 B" }]}
+                  value="候选 A"
+                  onValueChange={onValueChange}
+                  onApply={onApply}
+                />,
+              );
+
+              expect(screen.getByRole("radiogroup", { name: "标题候选" })).toBeTruthy();
+              expect((screen.getByRole("radio", { name: "候选 A" }) as HTMLInputElement).checked).toBe(true);
+              fireEvent.click(screen.getByRole("radio", { name: "候选 B" }));
+              expect(onValueChange).toHaveBeenCalledWith("候选 B");
+              fireEvent.click(screen.getByRole("button", { name: "使用所选" }));
+              expect(onApply).toHaveBeenCalledWith("候选 A");
+            });
+
+            it("reviews related field changes with checkboxes before one explicit apply", () => {
+              const onSelectedKeysChange = vi.fn();
+              const onApply = vi.fn();
+              render(
+                <AISuggestionReview
+                  aria-label="AI 路径与 SEO 建议"
+                  groupLabel="路径与 SEO 建议"
+                  items={[
+                    { key: "slug", label: "Slug", value: "about-us", monospace: true },
+                    { key: "seo-title", label: "SEO 标题", value: "关于我们" },
+                  ]}
+                  selectedKeys={["slug", "seo-title"]}
+                  onSelectedKeysChange={onSelectedKeysChange}
+                  onApply={onApply}
+                />,
+              );
+
+              expect(screen.getByRole("group", { name: "路径与 SEO 建议" })).toBeTruthy();
+              fireEvent.click(screen.getByRole("checkbox", { name: "应用 SEO 标题 建议" }));
+              expect(onSelectedKeysChange).toHaveBeenCalledWith(["slug"]);
+              fireEvent.click(screen.getByRole("button", { name: "应用 2 项建议" }));
+              expect(onApply).toHaveBeenCalledTimes(1);
+            });
+          });
+          '''
+          write("tests/pattern-ai-suggestions.test.tsx", pattern_test.replace("          ", ""))
+
+          # ---------- Product test updates ----------
+          post_test = "tests/product-blog-admin-post-editor.test.tsx"
+          replace_between(
+              post_test,
+              '  it("keeps field AI attached to its field instead of presenting detached page-level actions", () => {',
+              '  it("keeps another author\'s post read-only and removes write-only AI and publish actions", () => {',
+              r'''  it("keeps single-field AI as an explicit candidate list before applying", () => {
+            render(<BlogAdminPostEditorDemo />);
+
+            fireEvent.click(screen.getByRole("button", { name: "AI 生成标题候选" }));
+            expect(screen.getByRole("radiogroup", { name: "标题候选" })).toBeTruthy();
+            const secondTitle = screen.getByRole("radio", { name: "AI 自动化进入生产后，为什么运行证据比生成结果更重要" });
+            fireEvent.click(secondTitle);
+            fireEvent.click(screen.getByRole("button", { name: "使用所选" }));
+            expect((screen.getByLabelText("标题") as HTMLTextAreaElement).value).toBe("AI 自动化进入生产后，为什么运行证据比生成结果更重要");
+
+            fireEvent.click(screen.getByRole("button", { name: "AI 根据正文生成摘要" }));
+            expect(screen.getByRole("radiogroup", { name: "摘要候选" })).toBeTruthy();
+            fireEvent.click(screen.getByRole("button", { name: "使用所选" }));
+            expect((screen.getByLabelText("摘要") as HTMLTextAreaElement).value).toContain("三个层面");
+          });
+
+          '''.replace("          ", ""),
+          )
+          replace_once(
+              post_test,
+              '    expect(screen.queryByRole("button", { name: "智能补全" })).toBeNull();',
+              '    expect(screen.queryByRole("button", { name: "AI 优化路径与 SEO" })).toBeNull();',
+          )
+          replace_once(
+              post_test,
+              '    fireEvent.click(screen.getByRole("button", { name: "智能补全" }));\n    expect(screen.getByLabelText("AI 元数据建议")).toBeTruthy();\n    expect(screen.getByText("AI 建议 6 项修改")).toBeTruthy();\n    fireEvent.click(screen.getByRole("button", { name: "全部应用" }));\n    expect(screen.getByDisplayValue("agent-workflow-observability")).toBeTruthy();\n    expect(screen.getByDisplayValue(/Workflow/)).toBeTruthy();\n    expect(screen.getByText(/已应用 AI 元数据建议/)).toBeTruthy();',
+              '    const initialSeoDescription = (screen.getByLabelText("SEO 描述") as HTMLTextAreaElement).value;\n    fireEvent.click(screen.getByRole("button", { name: "AI 优化路径与 SEO" }));\n    expect(screen.getByLabelText("AI 路径与 SEO 建议")).toBeTruthy();\n    expect(screen.getByRole("group", { name: "路径与 SEO 建议" })).toBeTruthy();\n    fireEvent.click(screen.getByRole("checkbox", { name: "应用 SEO 描述 建议" }));\n    fireEvent.click(screen.getByRole("button", { name: "应用 2 项建议" }));\n    expect(screen.getByDisplayValue("agent-workflow-observability")).toBeTruthy();\n    expect((screen.getByLabelText("SEO 描述") as HTMLTextAreaElement).value).toBe(initialSeoDescription);\n    expect(screen.getByText(/已应用 2 项 AI 路径与 SEO 建议/)).toBeTruthy();',
+          )
+          replace_once(
+              post_test,
+              '    render(<BlogAdminPostEditorDemo />);\n\n    fireEvent.mouseDown(screen.getByRole("tab", { name: /历史 2/ }), { button: 0 });',
+              '    render(<BlogAdminPostEditorDemo />);\n\n    const longOutlineItem = screen.getByRole("button", { name: /跳转到 当 Agent 从一次性生成走向长期自动化/ });\n    expect(longOutlineItem.className).toContain("w-full");\n    expect(longOutlineItem.className).toContain("overflow-hidden");\n    expect(longOutlineItem.querySelector("span")?.className).toContain("truncate");\n\n    fireEvent.mouseDown(screen.getByRole("tab", { name: /历史 2/ }), { button: 0 });',
+          )
+
+          page_test = "tests/product-blog-admin-page-editor.test.tsx"
+          replace_between(
+              page_test,
+              '  it("keeps field AI attached to title, summary and slug", () => {',
+              '  it("reviews metadata suggestions before applying and does not change page configuration", () => {',
+              r'''  it("keeps field AI on title and summary while moving Slug/SEO to one section action", () => {
+            render(<BlogAdminPageEditorDemo />);
+
+            fireEvent.click(screen.getByRole("button", { name: "AI 生成标题候选" }));
+            expect(screen.getByRole("radiogroup", { name: "标题候选" })).toBeTruthy();
+            fireEvent.click(screen.getByRole("button", { name: "使用所选" }));
+            expect((screen.getByLabelText("标题") as HTMLTextAreaElement).value).toBe("关于我们：技术、产品与长期主义");
+
+            fireEvent.click(screen.getByRole("button", { name: "AI 根据正文生成摘要" }));
+            expect(screen.getByRole("radiogroup", { name: "摘要候选" })).toBeTruthy();
+            fireEvent.click(screen.getByRole("button", { name: "使用所选" }));
+            expect((screen.getByLabelText("摘要 / 描述") as HTMLTextAreaElement).value).toContain("产品理念");
+
+            expect(screen.queryByRole("button", { name: "AI 生成 Slug 候选" })).toBeNull();
+            expect(screen.getByRole("button", { name: "AI 优化路径与 SEO" })).toBeTruthy();
+          });
+
+          '''.replace("          ", ""),
+          )
+          replace_once(
+              page_test,
+              '    fireEvent.click(screen.getByRole("button", { name: "智能补全" }));\n    expect(screen.getByLabelText("AI 元数据建议")).toBeTruthy();\n    expect(screen.getByText("AI 建议 4 项修改")).toBeTruthy();\n    fireEvent.click(screen.getByRole("button", { name: "全部应用" }));\n\n    expect(screen.getByText(/已应用 AI 元数据建议/)).toBeTruthy();',
+              '    fireEvent.click(screen.getByRole("button", { name: "AI 优化路径与 SEO" }));\n    expect(screen.getByLabelText("AI 路径与 SEO 建议")).toBeTruthy();\n    expect(screen.getByRole("group", { name: "路径与 SEO 建议" })).toBeTruthy();\n    fireEvent.click(screen.getByRole("checkbox", { name: "应用 SEO 描述 建议" }));\n    fireEvent.click(screen.getByRole("button", { name: "应用 2 项建议" }));\n\n    expect(screen.getByText(/已应用 2 项 AI 路径与 SEO 建议/)).toBeTruthy();',
+          )
+
+          PY
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify source and tests
+        run: |
+          npm run lint:microcopy
+          npm run lint:parity
+          npm run typecheck
+          npm test
+          npm run build
+          npm run showcase:build
+          npm run package:check
+
+      - name: Regenerate affected visual golden snapshots
+        run: |
+          PLAYWRIGHT_VERSION=1.55.0
+          npm install --no-save --ignore-scripts @playwright/test@${PLAYWRIGHT_VERSION}
+          npx playwright install --with-deps chromium
+          npx playwright test --config=showcase/e2e/canonical-visual-golden.config.mjs --update-snapshots
+          git restore package.json package-lock.json
+
+      - name: Commit verified editor UX changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/editor-ai-suggestion-ux-patch.yml
+          git add src/patterns/ai-suggestions.tsx src/patterns/index.ts \
+            showcase/demos/products/blog-admin/post-editor.tsx \
+            showcase/demos/products/blog-admin/page-editor.tsx \
+            tests/pattern-ai-suggestions.test.tsx \
+            tests/product-blog-admin-post-editor.test.tsx \
+            tests/product-blog-admin-page-editor.test.tsx \
+            docs/api-conformance.md docs/abstraction-register.md \
+            showcase/e2e
+          git commit -m "feat(blog-admin): unify editor AI suggestion UX"
+          git push origin HEAD:feat/editor-ai-suggestion-ux
