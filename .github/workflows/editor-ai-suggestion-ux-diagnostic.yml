@@ -78,7 +78,6 @@ jobs:
           cp /tmp/editor-ai-ux-verify.log diagnostics/editor-ai-suggestion-ux.log
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git rm .github/workflows/editor-ai-suggestion-ux-patch.yml .github/workflows/editor-ai-suggestion-ux-diagnostic.yml
           git add src/patterns/ai-suggestions.tsx src/patterns/index.ts \
             showcase/demos/products/blog-admin/post-editor.tsx \
             showcase/demos/products/blog-admin/page-editor.tsx \
