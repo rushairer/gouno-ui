@@ -27,6 +27,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify Showcase microcopy and action grammar
+        run: npm run lint:microcopy
+
       - name: Typecheck package and Showcase
         run: npm run typecheck
 
