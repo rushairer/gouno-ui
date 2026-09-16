@@ -48,7 +48,7 @@ jobs:
           });
           page.on('pageerror', (error) => errors.push(String(error)));
 
-          await page.goto('http://127.0.0.1:4174/#pattern-markdown-editor');
+          await page.goto('http://127.0.0.1:4174/?embedded=1&workspace=gouno-ui&brand=blog-admin#pattern-markdown-editor');
           await page.waitForSelector('[data-slot="markdown-editor"]');
           const editor = page.locator('[data-slot="markdown-editor"]').first();
           const toolbar = editor.locator('[data-slot="markdown-editor-toolbar"]');
@@ -60,7 +60,7 @@ jobs:
               element.style.width = `${nextWidth}px`;
               element.style.maxWidth = `${nextWidth}px`;
             }, width);
-            await page.waitForTimeout(150);
+            await page.waitForTimeout(200);
           };
 
           await setWidth(900);
