@@ -58,22 +58,22 @@ function SuggestionHeader({
     <div className="flex items-start justify-between gap-3">
       <div className="min-w-0">
         <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-<Sparkles aria-hidden="true" className="size-4 text-primary" />
-<span>{heading}</span>
+          <Sparkles aria-hidden="true" className="size-4 text-primary" />
+          <span>{heading}</span>
         </div>
         <div className="mt-1 text-xs leading-5 text-muted-foreground">
-{description ?? countLabel}
+          {description ?? countLabel}
         </div>
       </div>
       {onRegenerate ? (
         <Button
-type="button"
-size="small"
-variant="text"
-icon={<RefreshCw />}
-onClick={onRegenerate}
+          type="button"
+          size="small"
+          variant="text"
+          icon={<RefreshCw />}
+          onClick={onRegenerate}
         >
-重新生成
+          重新生成
         </Button>
       ) : null}
     </div>
@@ -116,60 +116,60 @@ export function AISuggestionPicker({
         data-slot="ai-suggestion-list"
       >
         {options.map((option) => {
-const selected = option.value === value;
-return (
-  <label
-    key={option.value}
-    className={cn(
-      "grid cursor-pointer grid-cols-[auto_minmax(0,1fr)] items-start gap-3 border-b px-3 py-2.5 text-sm last:border-b-0",
-      "transition-colors hover:bg-muted/40",
-      selected && "bg-primary/[0.06]",
-    )}
-    data-selected={selected ? "true" : "false"}
-  >
-    <Radio
-      className="mt-0.5"
-      name={name}
-      value={option.value}
-      checked={selected}
-      onChange={() => onValueChange(option.value)}
-      aria-label={option.value}
-    />
-    <span className="min-w-0">
-      <span
-        className={cn(
-"block whitespace-normal break-words leading-5 text-foreground",
-option.monospace && "break-all font-mono text-xs",
-        )}
-      >
-        {option.value}
-      </span>
-      {option.description ? (
-        <span className="mt-1 block text-xs leading-5 text-muted-foreground">
-{option.description}
-        </span>
-      ) : null}
-    </span>
-  </label>
-);
+          const selected = option.value === value;
+          return (
+            <label
+              key={option.value}
+              className={cn(
+                "grid cursor-pointer grid-cols-[auto_minmax(0,1fr)] items-start gap-3 border-b px-3 py-2.5 text-sm last:border-b-0",
+                "transition-colors hover:bg-muted/40",
+                selected && "bg-primary/[0.06]",
+              )}
+              data-selected={selected ? "true" : "false"}
+            >
+              <Radio
+                className="mt-0.5"
+                name={name}
+                value={option.value}
+                checked={selected}
+                onChange={() => onValueChange(option.value)}
+                aria-label={option.value}
+              />
+              <span className="min-w-0">
+                <span
+                  className={cn(
+                    "block whitespace-normal break-words leading-5 text-foreground",
+                    option.monospace && "break-all font-mono text-xs",
+                  )}
+                >
+                  {option.value}
+                </span>
+                {option.description ? (
+                  <span className="mt-1 block text-xs leading-5 text-muted-foreground">
+                    {option.description}
+                  </span>
+                ) : null}
+              </span>
+            </label>
+          );
         })}
       </div>
 
       <div className="mt-3 flex items-center justify-end gap-2">
         {onDismiss ? (
-<Button type="button" size="small" variant="text" onClick={onDismiss}>
-  取消
-</Button>
+          <Button type="button" size="small" variant="text" onClick={onDismiss}>
+            取消
+          </Button>
         ) : null}
         <Button
-type="button"
-size="small"
-variant="solid"
-color="primary"
-disabled={!value}
-onClick={() => value && onApply(value)}
+          type="button"
+          size="small"
+          variant="solid"
+          color="primary"
+          disabled={!value}
+          onClick={() => value && onApply(value)}
         >
-{applyLabel}
+          {applyLabel}
         </Button>
       </div>
     </div>
@@ -193,7 +193,9 @@ export function AISuggestionReview({
   const toggle = (key: string, checked: boolean) => {
     onSelectedKeysChange(
       checked
-        ? [...selectedKeys, key].filter((candidate, index, all) => all.indexOf(candidate) === index)
+        ? [...selectedKeys, key].filter(
+            (candidate, index, all) => all.indexOf(candidate) === index,
+          )
         : selectedKeys.filter((candidate) => candidate !== key),
     );
   };
@@ -218,46 +220,51 @@ export function AISuggestionReview({
         data-slot="ai-suggestion-review-list"
       >
         {items.map((item) => {
-const checked = selected.has(item.key);
-return (
-  <label
-    key={item.key}
-    className={cn(
-      "grid cursor-pointer grid-cols-[auto_5rem_minmax(0,1fr)] items-start gap-2 border-b px-3 py-2.5 text-xs last:border-b-0",
-      "transition-colors hover:bg-muted/40",
-      checked && "bg-primary/[0.04]",
-    )}
-  >
-    <Checkbox
-      className="mt-0.5"
-      checked={checked}
-      onChange={(event) => toggle(item.key, event.target.checked)}
-      aria-label={`应用 ${item.label} 建议`}
-    />
-    <span className="font-medium text-muted-foreground">{item.label}</span>
-    <span className={cn("min-w-0 break-words text-foreground", item.monospace && "break-all font-mono")}>
-      {item.value}
-    </span>
-  </label>
-);
+          const checked = selected.has(item.key);
+          return (
+            <label
+              key={item.key}
+              className={cn(
+                "grid cursor-pointer grid-cols-[auto_5rem_minmax(0,1fr)] items-start gap-2 border-b px-3 py-2.5 text-xs last:border-b-0",
+                "transition-colors hover:bg-muted/40",
+                checked && "bg-primary/[0.04]",
+              )}
+            >
+              <Checkbox
+                className="mt-0.5"
+                checked={checked}
+                onChange={(event) => toggle(item.key, event.target.checked)}
+                aria-label={`应用 ${item.label} 建议`}
+              />
+              <span className="font-medium text-muted-foreground">{item.label}</span>
+              <span
+                className={cn(
+                  "min-w-0 break-words text-foreground",
+                  item.monospace && "break-all font-mono",
+                )}
+              >
+                {item.value}
+              </span>
+            </label>
+          );
         })}
       </div>
 
       <div className="mt-3 flex items-center justify-end gap-2">
         {onCancel ? (
-<Button type="button" size="small" variant="text" onClick={onCancel}>
-  取消
-</Button>
+          <Button type="button" size="small" variant="text" onClick={onCancel}>
+            取消
+          </Button>
         ) : null}
         <Button
-type="button"
-size="small"
-variant="solid"
-color="primary"
-disabled={selectedKeys.length === 0}
-onClick={onApply}
+          type="button"
+          size="small"
+          variant="solid"
+          color="primary"
+          disabled={selectedKeys.length === 0}
+          onClick={onApply}
         >
-应用 {selectedKeys.length} 项建议
+          应用 {selectedKeys.length} 项建议
         </Button>
       </div>
     </div>
