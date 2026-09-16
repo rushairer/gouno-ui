@@ -1,0 +1,68 @@
+name: Temp Fix Markdown Icon Visibility
+
+on:
+  push:
+    branches: [markdown-editor-icon-only-fallback]
+    paths:
+      - ".github/workflows/temp-fix-markdown-icon-visibility.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: markdown-editor-icon-only-fallback
+
+      - name: Keep injected action icons visible in compact mode
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(text: str, old: str, new: str, label: str) -> str:
+              if old not in text:
+                  raise SystemExit(f"missing replacement target: {label}")
+              return text.replace(old, new, 1)
+
+          path = Path("src/patterns/markdown-editor.tsx")
+          text = path.read_text()
+          text = replace_once(
+              text,
+              '"[&_[data-slot=button]]:size-8 [&_[data-slot=button]]:px-0 [&_[data-slot=button]>span:not(.btn__icon)]:sr-only",',
+              '"[&_[data-slot=button]]:size-8 [&_[data-slot=button]]:px-0 [&_[data-slot=button]>span]:sr-only [&_[data-slot=button]>.btn__icon]:not-sr-only [&_[data-slot=button]>.btn__icon]:inline-flex",',
+              "compact action icon reset",
+          )
+          path.write_text(text)
+
+          example_path = Path("showcase/demos/patterns/examples/markdown-editor.tsx")
+          example = example_path.read_text()
+          example = replace_once(
+              example,
+              '''            icon={<Sparkles />}\n            onClick={() => editorRef.current?.insertText("AI 生成内容", { replaceSelection: true })}''',
+              '''            icon={<Sparkles />}\n            aria-label="AI 写作"\n            onClick={() => editorRef.current?.insertText("AI 生成内容", { replaceSelection: true })}''',
+              "AI action aria label",
+          )
+          example = replace_once(
+              example,
+              '''            icon={<ImageIcon />}\n            onClick={() => editorRef.current?.insertText("![插图](/image.webp)", { replaceSelection: false })}''',
+              '''            icon={<ImageIcon />}\n            aria-label="插图"\n            onClick={() => editorRef.current?.insertText("![插图](/image.webp)", { replaceSelection: false })}''',
+              "image action aria label",
+          )
+          example_path.write_text(example)
+          PY
+
+      - name: Commit implementation
+        shell: bash
+        run: |
+          git status --short
+          git config user.name "Aben"
+          git config user.email "5195693+rushairer@users.noreply.github.com"
+          git add src/patterns/markdown-editor.tsx showcase/demos/patterns/examples/markdown-editor.tsx
+          git commit -m "fix(patterns): keep compact toolbar action icons visible"
+          git push origin HEAD:markdown-editor-icon-only-fallback
