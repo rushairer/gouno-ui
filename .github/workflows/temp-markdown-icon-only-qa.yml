@@ -60,15 +60,42 @@ jobs:
               element.style.width = `${nextWidth}px`;
               element.style.maxWidth = `${nextWidth}px`;
             }, width);
-            await page.waitForTimeout(200);
+            await page.waitForTimeout(250);
           };
 
-          await setWidth(900);
-          assert.equal(await toolbar.getAttribute('data-adaptive-density'), 'full');
-          assert.equal(await toolbar.getAttribute('data-adaptive-wrap'), 'false');
-          assert.equal(await editor.locator('[data-slot="markdown-editor-primary-command"]').count(), 4);
+          const readState = async (width) => {
+            const toolbarBox = await toolbar.boundingBox();
+            const state = {
+              width,
+              density: await toolbar.getAttribute('data-adaptive-density'),
+              wrap: await toolbar.getAttribute('data-adaptive-wrap'),
+              primary: await editor.locator('[data-slot="markdown-editor-primary-command"]').count(),
+              toolbarHeight: toolbarBox?.height ?? null,
+            };
+            console.log('STATE', JSON.stringify(state));
+            return state;
+          };
 
-          await setWidth(520);
+          const widths = [900, 700, 620, 580, 540, 520, 500, 480, 460, 440, 420, 400, 380, 360, 340, 320, 300, 280, 260, 240, 220, 200, 180];
+          const states = [];
+          for (const width of widths) {
+            await setWidth(width);
+            states.push(await readState(width));
+          }
+
+          const broad = states.find((state) => state.width === 900);
+          assert.equal(broad?.density, 'full');
+          assert.equal(broad?.wrap, 'false');
+          assert.equal(broad?.primary, 4);
+
+          const iconState = states.find((state) => state.density === 'icon' && state.wrap === 'false');
+          assert.ok(iconState, `expected an icon-only/no-wrap stage, got ${JSON.stringify(states)}`);
+          const wrapState = states.find((state) => state.density === 'icon' && state.wrap === 'true');
+          assert.ok(wrapState, `expected wrap only after icon-only stage, got ${JSON.stringify(states)}`);
+          assert.ok(iconState.width > wrapState.width, `expected icon stage before wrap stage: ${JSON.stringify({ iconState, wrapState })}`);
+          assert.equal(iconState.primary, 0);
+
+          await setWidth(iconState.width);
           assert.equal(await toolbar.getAttribute('data-adaptive-density'), 'icon');
           assert.equal(await toolbar.getAttribute('data-adaptive-wrap'), 'false');
           assert.equal(await actions.getAttribute('data-icon-only'), 'true');
@@ -85,16 +112,16 @@ jobs:
 
           const labelBox = await aiButton.locator('span:not(.btn__icon)').boundingBox();
           assert.ok(labelBox && labelBox.width <= 2 && labelBox.height <= 2, `expected visually hidden AI label, got ${JSON.stringify(labelBox)}`);
-          const toolbarBox = await toolbar.boundingBox();
-          assert.ok(toolbarBox && toolbarBox.height <= 48, `expected one-line toolbar at 520px, got ${toolbarBox?.height}`);
+          const iconToolbarBox = await toolbar.boundingBox();
+          assert.ok(iconToolbarBox && iconToolbarBox.height <= 48, `expected one-line icon toolbar, got ${iconToolbarBox?.height}`);
 
           await mkdir('/tmp/markdown-icon-only-evidence', { recursive: true });
-          await editor.screenshot({ path: '/tmp/markdown-icon-only-evidence/icon-only-520.png' });
+          await editor.screenshot({ path: `/tmp/markdown-icon-only-evidence/icon-only-${iconState.width}.png` });
 
-          await setWidth(320);
+          await setWidth(wrapState.width);
           assert.equal(await toolbar.getAttribute('data-adaptive-density'), 'icon');
           assert.equal(await toolbar.getAttribute('data-adaptive-wrap'), 'true');
-          await editor.screenshot({ path: '/tmp/markdown-icon-only-evidence/wrap-320.png' });
+          await editor.screenshot({ path: `/tmp/markdown-icon-only-evidence/wrap-${wrapState.width}.png` });
 
           await setWidth(900);
           assert.equal(await toolbar.getAttribute('data-adaptive-density'), 'full');
