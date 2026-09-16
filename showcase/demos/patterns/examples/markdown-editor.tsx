@@ -1,7 +1,13 @@
 import { useRef, useState, type ReactNode } from "react";
 import { Image as ImageIcon, Sparkles } from "lucide-react";
 import { Button } from "../../../../src/core";
-import { MarkdownEditor, type MarkdownEditorRef } from "../../../../src/patterns";
+import {
+  MarkdownEditor,
+  type MarkdownEditorRef,
+  type MarkdownHeadingLevel,
+} from "../../../../src/patterns";
+
+const headingLevels = [1, 2, 3, 4, 5, 6] as const satisfies readonly MarkdownHeadingLevel[];
 
 const initialValue = [
   "## MarkdownEditor",
@@ -36,6 +42,7 @@ export default function MarkdownEditorExample({ renderPreview }: MarkdownEditorE
       ref={editorRef}
       value={value}
       onChange={setValue}
+      headingLevels={headingLevels}
       renderPreview={renderPreview ?? ((markdown) => (
         <pre className="whitespace-pre-wrap font-sans text-sm leading-7">{markdown}</pre>
       ))}
