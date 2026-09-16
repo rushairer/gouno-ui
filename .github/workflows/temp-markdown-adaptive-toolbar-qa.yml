@@ -55,7 +55,7 @@ jobs:
           page.on('console', (message) => {
             if (message.type() === 'error') consoleErrors.push(message.text());
           });
-          await page.goto('http://127.0.0.1:4174/#pattern-markdown-editor');
+          await page.goto('http://127.0.0.1:4174/?embedded=1&workspace=gouno-ui#pattern-markdown-editor');
           await page.waitForLoadState('networkidle');
           const editor = page.locator('[data-slot="markdown-editor"]').first();
           await editor.waitFor({ state: 'visible' });
