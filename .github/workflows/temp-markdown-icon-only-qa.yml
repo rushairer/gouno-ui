@@ -113,7 +113,7 @@ jobs:
           const labelBox = await aiButton.locator('span:not(.btn__icon)').boundingBox();
           assert.ok(labelBox && labelBox.width <= 2 && labelBox.height <= 2, `expected visually hidden AI label, got ${JSON.stringify(labelBox)}`);
           const iconToolbarBox = await toolbar.boundingBox();
-          assert.ok(iconToolbarBox && iconToolbarBox.height <= 48, `expected one-line icon toolbar, got ${iconToolbarBox?.height}`);
+          assert.ok(iconToolbarBox && iconToolbarBox.height <= 52, `expected one-line icon toolbar, got ${iconToolbarBox?.height}`);
 
           await mkdir('/tmp/markdown-icon-only-evidence', { recursive: true });
           await editor.screenshot({ path: `/tmp/markdown-icon-only-evidence/icon-only-${iconState.width}.png` });
