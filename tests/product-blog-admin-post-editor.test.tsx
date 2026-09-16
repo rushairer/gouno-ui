@@ -127,7 +127,10 @@ describe("Blog Admin PostEditor", () => {
     expect(screen.getByDisplayValue(/Workflow/)).toBeTruthy();
     expect(screen.getByText(/已应用 AI 元数据建议/)).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("button", { name: "AI 写作" }));
+    fireEvent.pointerDown(screen.getByRole("button", { name: "AI 写作" }), {
+      button: 0,
+      ctrlKey: false,
+    });
     fireEvent.click(screen.getByRole("menuitem", { name: "继续写作" }));
     expect(screen.getByLabelText("AI 写作助手")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "生成 / 执行" }));
@@ -135,7 +138,10 @@ describe("Blog Admin PostEditor", () => {
     fireEvent.click(screen.getByRole("button", { name: "追加到末尾" }));
     expect((screen.getByLabelText("文章正文 Markdown") as HTMLTextAreaElement).value).toContain("三个治理抓手");
 
-    fireEvent.click(screen.getByRole("button", { name: "插入内容" }));
+    fireEvent.pointerDown(screen.getByRole("button", { name: "插入内容" }), {
+      button: 0,
+      ctrlKey: false,
+    });
     fireEvent.click(screen.getByRole("menuitem", { name: "AI 生成图片" }));
     expect(screen.getByLabelText("AI 图片生成器")).toBeTruthy();
     fireEvent.change(screen.getByLabelText("生图提示词"), { target: { value: "Agent approval workflow illustration" } });
