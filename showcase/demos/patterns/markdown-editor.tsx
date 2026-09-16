@@ -43,13 +43,13 @@ export function PatternMarkdownEditorDemo() {
           <Tag color="success">Admitted</Tag>
         </div>
         <Text tone="muted" className="max-w-3xl leading-relaxed">
-          统一 Markdown 编辑、段落 / H1–H6 标题转换、格式工具、编辑 / 分屏 / 预览视图，以及光标与选区控制。正文型消费者可限制 headingLevels；产品动作继续通过 toolbarActions 与 ref API 组合。工具栏按自身容器宽度自适应：空间不足时低优先级内建格式命令会依次进入“更多格式”，优先保持产品动作与视图切换稳定可见。
+          统一 Markdown 编辑、段落 / H1–H6 标题转换、格式工具、编辑 / 分屏 / 预览视图，以及光标与选区控制。正文型消费者可限制 headingLevels；产品动作继续通过 toolbarActions 与 ref API 组合。工具栏按自身容器宽度自适应：空间不足时低优先级内建格式命令会依次进入“更多格式”；继续变窄时，产品动作与视图切换收敛为仅图标；只有极窄容器才允许多行。
         </Text>
       </header>
 
       <DemoSection
         title="常用 Markdown、标题层级、代码高亮与产品扩展"
-        description="段落样式菜单会识别当前光标所在块，并在正文与 H1–H6 之间转换；示例显式开启完整标题范围。Showcase renderer 额外演示表格、任务列表、删除线、图片和带语言标记的 fenced code 高亮。MarkdownEditor 仍通过 renderPreview 保持 parser 解耦。示例中的 AI 写作 / 插图只是 toolbarActions 自定义动作；缩窄 Demo 容器时，行内代码、链接等较低优先级默认命令会自动收进“更多格式”，极窄宽度才退回多行布局。"
+        description="段落样式菜单会识别当前光标所在块，并在正文与 H1–H6 之间转换；示例显式开启完整标题范围。Showcase renderer 额外演示表格、任务列表、删除线、图片和带语言标记的 fenced code 高亮。MarkdownEditor 仍通过 renderPreview 保持 parser 解耦。示例中的 AI 写作 / 插图只是 toolbarActions 自定义动作；缩窄 Demo 容器时，行内代码、链接等较低优先级默认命令会自动收进“更多格式”；继续变窄后，AI 写作 / 插图与编辑 / 分屏 / 预览会切换为 icon-only，仍放不下时才退回多行布局。"
         code={canonicalExampleSource(MarkdownEditorExampleSource)}
       >
         <MarkdownEditorExample renderPreview={(markdown) => <MarkdownPreview value={markdown} />} />
