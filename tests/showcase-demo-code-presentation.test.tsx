@@ -9,6 +9,7 @@ import { canonicalExampleSource } from "../showcase/demos/shared/example-source"
 const pairedLayerDemoFiles = [
   "showcase/demos/theme/system.tsx",
   "showcase/demos/patterns/bulk-action-bar.tsx",
+  "showcase/demos/patterns/markdown-editor.tsx",
   "showcase/demos/gouno/components.tsx",
   "showcase/demos/gouno/page-header.tsx",
 ] as const;

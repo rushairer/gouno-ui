@@ -132,7 +132,8 @@ describe("Blog Admin PostEditor", () => {
       ctrlKey: false,
     });
     fireEvent.click(screen.getByRole("menuitem", { name: "继续写作" }));
-    expect(screen.getByLabelText("AI 写作助手")).toBeTruthy();
+    expect(screen.getByRole("dialog", { name: "AI 写作助手" })).toBeTruthy();
+    expect(document.querySelector('[data-slot="dialog-overlay"]')).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "生成 / 执行" }));
     expect(screen.getByText("生成结果预览")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "追加到末尾" }));
@@ -143,7 +144,8 @@ describe("Blog Admin PostEditor", () => {
       ctrlKey: false,
     });
     fireEvent.click(screen.getByRole("menuitem", { name: "AI 生成图片" }));
-    expect(screen.getByLabelText("AI 图片生成器")).toBeTruthy();
+    expect(screen.getByRole("dialog", { name: "AI 生成图片" })).toBeTruthy();
+    expect(document.querySelector('[data-slot="dialog-overlay"]')).toBeTruthy();
     fireEvent.change(screen.getByLabelText("生图提示词"), { target: { value: "Agent approval workflow illustration" } });
     fireEvent.change(screen.getByLabelText("图片描述 Alt"), { target: { value: "Agent 审批工作流" } });
     fireEvent.click(screen.getByRole("button", { name: "开始生图" }));

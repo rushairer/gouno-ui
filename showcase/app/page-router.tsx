@@ -23,6 +23,9 @@ const CoreComponentPage = lazy(() =>
 const PatternBulkActionBarDemo = lazy(() =>
   import("../demos/patterns/bulk-action-bar").then((module) => ({ default: module.PatternBulkActionBarDemo })),
 );
+const PatternMarkdownEditorDemo = lazy(() =>
+  import("../demos/patterns/markdown-editor").then((module) => ({ default: module.PatternMarkdownEditorDemo })),
+);
 const BlogHomeDemo = lazy(() =>
   import("../demos/products/blog/home").then((module) => ({ default: module.BlogHomeDemo })),
 );
@@ -181,6 +184,8 @@ export function ShowcasePage({ page, workspace }: { page: string; workspace: Sho
       return <ThemeSystemDemo />;
     case "pattern-bulk-action-bar":
       return <Suspense fallback={loading}><PatternBulkActionBarDemo /></Suspense>;
+    case "pattern-markdown-editor":
+      return <Suspense fallback={loading}><PatternMarkdownEditorDemo /></Suspense>;
     case "gouno-app-shell":
       return <GounoComponentDemo component="app-shell" />;
     case "gouno-page-container":
