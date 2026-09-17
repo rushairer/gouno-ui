@@ -122,6 +122,14 @@ async function prepareLightFixture(page, scenario) {
   });
 }
 
+async function expectNoHorizontalDocumentOverflow(page) {
+  const dimensions = await page.evaluate(() => ({
+    viewport: window.innerWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+  }));
+  expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.viewport + 1);
+}
+
 for (const scenario of scenarios) {
   test(scenario.name, async ({ page }) => {
     await prepareLightFixture(page, scenario);
@@ -172,6 +180,116 @@ for (const [name, viewport] of [
     expect(modeBox.x + modeBox.width).toBeLessThanOrEqual(toolbarBox.x + toolbarBox.width + 1);
   });
 }
+
+test("blog-admin-ai-operations-workflow-list-visual-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-ai-operations",
+    viewport: desktop,
+    ready: '[role="tablist"]',
+  });
+
+  await page.getByRole("tab", { name: "自动化" }).click();
+  await expect(page.getByRole("list", { name: "Workflow 列表" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "创建 Workflow" })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+  await page.screenshot({
+    path: testInfo.outputPath("blog-admin-ai-operations-workflow-list-desktop.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("blog-admin-ai-operations-workflow-detail-visual-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-ai-operations",
+    viewport: desktop,
+    ready: '[role="tablist"]',
+  });
+
+  await page.getByRole("tab", { name: "自动化" }).click();
+  await page.getByRole("button", { name: "进入详情 / 运行" }).first().click();
+  await expect(page.getByRole("heading", { level: 2, name: "旧文维护" })).toBeVisible();
+  await expect(page.getByText("流程定义")).toBeVisible();
+  await expect(page.getByText("运行当前 Workflow")).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+  await page.screenshot({
+    path: testInfo.outputPath("blog-admin-ai-operations-workflow-detail-desktop.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("blog-admin-ai-operations-workflow-detail-mobile-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-ai-operations",
+    viewport: mobile,
+    ready: '[role="tablist"]',
+  });
+
+  await page.getByRole("tab", { name: "自动化" }).click();
+  await page.getByRole("button", { name: "进入详情 / 运行" }).first().click();
+  await expect(page.getByRole("heading", { level: 2, name: "旧文维护" })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+  await page.screenshot({
+    path: testInfo.outputPath("blog-admin-ai-operations-workflow-detail-mobile.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("blog-admin-ai-operations-run-center-visual-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-ai-operations",
+    viewport: desktop,
+    ready: '[role="tablist"]',
+  });
+
+  await page.getByRole("tab", { name: "运行中心" }).click();
+  await expect(page.getByRole("heading", { level: 2, name: "运行中心" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 3, name: /Run #245/ })).toBeVisible();
+  await expect(page.getByText("执行过程")).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+  await page.screenshot({
+    path: testInfo.outputPath("blog-admin-ai-operations-run-center-desktop.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("blog-admin-ai-settings-skill-editor-visual-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-ai-settings",
+    viewport: desktop,
+    ready: '[role="tablist"]',
+  });
+
+  await page.getByRole("tab", { name: "Skills" }).click();
+  await page.getByRole("button", { name: "编辑" }).first().click();
+  await expect(page.getByRole("heading", { level: 2, name: /编辑 Skill/ })).toBeVisible();
+  await expect(page.getByText("Tool 授权")).toBeVisible();
+  await expect(page.getByText("默认治理限制")).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+  await page.screenshot({
+    path: testInfo.outputPath("blog-admin-ai-settings-skill-editor-desktop.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
 
 test("gosso-account-settings-mfa-tab-interaction", async ({ page }) => {
   const scenario = scenarios.find(
