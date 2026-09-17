@@ -187,7 +187,7 @@ New migrated pages start from the current contract. Do not introduce 20px/32px n
 
 ## DL-08 — The outer surface owns edge geometry
 
-The component that owns a surface boundary also owns that boundary's outer border, outer radius and clipping. Internal regions such as headers, content bodies, tables or sticky action footers must compose *inside* that geometry rather than redefining it.
+The component that owns a surface boundary also owns that boundary's outer border, outer radius and clipping. Internal regions such as headers, content bodies, tables or sticky action footers must compose _inside_ that geometry rather than redefining it.
 
 When an internal region needs to run full-bleed to a Card edge, prefer explicit Card anatomy:
 
@@ -230,15 +230,15 @@ This is a visual-composition rule, not evidence for a public `RowActions`, `Acti
 
 Elevation is not a page-local decoration knob. Gouno defines these roles:
 
-| Role | Meaning | Typical surfaces | Treatment |
-| --- | --- | --- | --- |
-| **canvas / level 0** | lowest application backdrop | AppShell content canvas, open layout regions | `bg-canvas`, no ambient shadow |
-| **control / micro** | tactile separation for a bounded control, not a new page layer | solid/default/outline/secondary Button, selected Segmented item | `shadow-control`; ghost/text/link controls stay flat |
-| **surface / level 1** | persistent bounded content separated from the application canvas | default Card, bordered Table, top-level filter/settings/collection boxes | card/container tone + border + very low `shadow-surface` |
-| **raised / level 2** | deliberately promoted focal/standalone task or a peer surface actively lifting on interaction | audited `Card variant="elevated"`; interactive peer Card hover | `bg-raised` + `shadow-raised` |
-| **overlay / level 3** | temporary UI occupying a real layer above another UI | Select/Dropdown/Popover menus, suggestions, floating notifications/tooling | popover/overlay tone + `shadow-overlay` |
-| **modal / level 4** | blocking high-depth interaction | Dialog/Modal, AlertDialog, Drawer/Sheet | mask + modal surface + `shadow-modal` |
-| **overflow** | indicates clipped/scrollable content, not object height | Table/scroll edge cue | directional/inset edge shadow only when a border is insufficient |
+| Role                  | Meaning                                                                                       | Typical surfaces                                                           | Treatment                                                        |
+| --------------------- | --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| **canvas / level 0**  | lowest application backdrop                                                                   | AppShell content canvas, open layout regions                               | `bg-canvas`, no ambient shadow                                   |
+| **control / micro**   | tactile separation for a bounded control, not a new page layer                                | solid/default/outline/secondary Button, selected Segmented item            | `shadow-control`; ghost/text/link controls stay flat             |
+| **surface / level 1** | persistent bounded content separated from the application canvas                              | default Card, bordered Table, top-level filter/settings/collection boxes   | card/container tone + border + very low `shadow-surface`         |
+| **raised / level 2**  | deliberately promoted focal/standalone task or a peer surface actively lifting on interaction | audited `Card variant="elevated"`; interactive peer Card hover             | `bg-raised` + `shadow-raised`                                    |
+| **overlay / level 3** | temporary UI occupying a real layer above another UI                                          | Select/Dropdown/Popover menus, suggestions, floating notifications/tooling | popover/overlay tone + `shadow-overlay`                          |
+| **modal / level 4**   | blocking high-depth interaction                                                               | Dialog/Modal, AlertDialog, Drawer/Sheet                                    | mask + modal surface + `shadow-modal`                            |
+| **overflow**          | indicates clipped/scrollable content, not object height                                       | Table/scroll edge cue                                                      | directional/inset edge shadow only when a border is insufficient |
 
 Binding rules:
 
@@ -275,7 +275,9 @@ Rules:
 - A tab change must not replace the route-family H1 with a different H1.
 - The active Tab already names and accessibly labels its `tabpanel`. Do **not** mechanically repeat the same wording as an immediate visible H2 (`系统管理 → 用户管理 Tab → 用户管理 H2`, for example). That is label echo, not useful hierarchy.
 - A panel may place a concise description/status/action lead below Tabs when it adds active-section context. The lead should not invent another title merely to justify actions.
-- Use a visible H2 when it names a real concept *inside* the active panel, differs materially from the Tab label, or divides the panel into meaningful subsections. If the repeated panel H2 is removed, those real subsections may be H2 directly under the route H1; the Tab is navigation/tabpanel labelling, not a document-outline heading.
+- When sibling panels in one route family genuinely need visible task-concept headings, they must use one shared panel-lead anatomy (same H2 role, description typography, action alignment and vertical rhythm). Do not let Overview, Inbox, Automation and Records each invent a different title/subtitle composition.
+- A titled panel lead is still a Showcase composition contract, not a new public UI primitive. The visible H2 must materially differ from the active Tab label and name the task concept inside that panel.
+- Use a visible H2 when it names a real concept _inside_ the active panel, differs materially from the Tab label, or divides the panel into meaningful subsections. If the repeated panel H2 is removed, those real subsections may be H2 directly under the route H1; the Tab is navigation/tabpanel labelling, not a document-outline heading.
 - Tab-local actions that truly belong only to the active section stay with the panel lead or the relevant local section instead of being hoisted into the route-level `PageHeader`.
 - Tabs that are themselves the primary route-family switch still follow the same visual order even when the URL segment/query changes with the active key.
 - Do not choose `Tabs → PageHeader` on one product and `PageHeader → Tabs` on another merely because each local implementation was migrated at a different time.
@@ -286,7 +288,7 @@ This rule standardizes hierarchy and information density, not implementation. It
 
 ## DL-12 — Stateful decoration must not change control geometry
 
-Reusable controls own their outer block size. Auxiliary content such as icons, counts, status dots, badges or metadata may fit *inside* that geometry but must not silently enlarge one sibling control.
+Reusable controls own their outer block size. Auxiliary content such as icons, counts, status dots, badges or metadata may fit _inside_ that geometry but must not silently enlarge one sibling control.
 
 For Tabs specifically:
 
