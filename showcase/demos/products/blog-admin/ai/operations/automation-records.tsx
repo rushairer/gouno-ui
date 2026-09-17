@@ -1,5 +1,13 @@
 import { useMemo, useState } from "react";
-import { Clock3, GitBranch, History, Play, RotateCcw, Search, TestTube2 } from "lucide-react";
+import {
+  Clock3,
+  GitBranch,
+  History,
+  Play,
+  RotateCcw,
+  Search,
+  TestTube2,
+} from "lucide-react";
 import {
   Alert,
   Button,
@@ -52,6 +60,16 @@ function workflowMatches(workflow: WorkflowFixture, query: string, status: strin
   if (status === "disabled" && workflow.enabled) return false;
   if (!normalized) return true;
   return `${workflow.name} ${workflow.description}`.toLowerCase().includes(normalized);
+}
+
+function Metric({ label, value, detail }: { label: string; value: string; detail?: string }) {
+  return (
+    <div className="min-w-0 py-2">
+      <Text size="xs" tone="muted">{label}</Text>
+      <strong className="mt-1 block text-sm">{value}</strong>
+      {detail ? <Text size="xs" tone="muted">{detail}</Text> : null}
+    </div>
+  );
 }
 
 export function AIOpsAutomationPanel({
@@ -130,72 +148,71 @@ export function AIOpsAutomationPanel({
   };
 
   return (
-    <div className="flex flex-col gap-6" aria-label="自动化">
-      <Card padding="base">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end">
-          <div className="min-w-0 flex-1">
-            <Input
-              aria-label="搜索 Workflow"
-              prefix={<Search className="size-4" />}
-              placeholder="搜索名称或描述"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-            />
-          </div>
-          <div className="lg:w-40">
-            <Select aria-label="Workflow 状态" value={status} onChange={(value) => setStatus(String(value))}>
-              <option value="">全部状态</option>
-              <option value="enabled">已启用</option>
-              <option value="disabled">已停用</option>
-            </Select>
-          </div>
+    <div className="flex flex-col gap-5" aria-label="自动化执行">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+        <div className="min-w-0 flex-1">
+          <Input
+            aria-label="搜索 Workflow"
+            prefix={<Search className="size-4" />}
+            placeholder="搜索 Workflow 名称或说明"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+          />
         </div>
-      </Card>
+        <div className="lg:w-44">
+          <Select aria-label="Workflow 状态" value={status} onChange={(value) => setStatus(String(value))}>
+            <option value="">全部状态</option>
+            <option value="enabled">已启用</option>
+            <option value="disabled">已停用</option>
+          </Select>
+        </div>
+      </div>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(16rem,0.75fr)_minmax(0,1.75fr)]">
+      <div className="grid gap-5 xl:grid-cols-[minmax(15rem,0.65fr)_minmax(0,1.8fr)]">
         <Card padding="none" className="overflow-hidden">
-          <CardHeader className="border-b p-6">
+          <CardHeader className="border-b p-5">
             <div className="flex flex-col gap-1">
               <CardTitle className="text-base">Workflow</CardTitle>
-              <Text size="xs" tone="muted">选择一个流程查看运行范围、输入、版本与执行状态。</Text>
+              <Text size="xs" tone="muted">选择流程后执行、查看版本或进入运行证据。</Text>
             </div>
           </CardHeader>
           <CardContent className="divide-y p-0">
-            {visible.length ? (
-              visible.map((workflow) => (
-                <Button variant="ghost"
-                  key={workflow.id}
-                  type="button"
-                  aria-pressed={selected?.id === workflow.id}
-                  className="flex w-full items-start justify-between gap-4 p-6 text-left hover:bg-muted/40"
-                  onClick={() => setSelectedWorkflowId(workflow.id)}
-                >
-                  <div className="min-w-0">
-                    <strong className="text-sm">{workflow.name}</strong>
-                    <Text size="xs" tone="muted">v{workflow.currentVersion} · {workflow.schedule}</Text>
-                  </div>
-                  <WorkflowStatus enabled={workflow.enabled} />
-                </Button>
-              ))
-            ) : (
-              <div className="p-6"><Text tone="muted">没有符合条件的 Workflow。</Text></div>
-            )}
+            {visible.length ? visible.map((workflow) => (
+              <Button
+                key={workflow.id}
+                type="button"
+                variant="ghost"
+                aria-pressed={selected?.id === workflow.id}
+                className="flex w-full items-start justify-between gap-3 rounded-none p-5 text-left"
+                onClick={() => {
+                  setSelectedWorkflowId(workflow.id);
+                  setFeedback(null);
+                }}
+              >
+                <div className="min-w-0">
+                  <strong className="block truncate text-sm">{workflow.name}</strong>
+                  <Text size="xs" tone="muted">v{workflow.currentVersion} · {workflow.schedule}</Text>
+                </div>
+                <WorkflowStatus enabled={workflow.enabled} />
+              </Button>
+            )) : <div className="p-5"><Text tone="muted">没有符合条件的 Workflow。</Text></div>}
           </CardContent>
         </Card>
 
         {selected ? (
-          <div className="flex min-w-0 flex-col gap-6">
+          <div className="flex min-w-0 flex-col gap-5">
             <Card padding="base">
               <div className="flex flex-col gap-5">
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-                  <div className="min-w-0 space-y-2">
+                  <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <Heading level={2}>{selected.name}</Heading>
                       <WorkflowStatus enabled={selected.enabled} />
                     </div>
-                    <Text tone="muted">{selected.description}</Text>
+                    <Text className="mt-1" tone="muted">{selected.description}</Text>
                   </div>
                   <Button
+                    size="small"
                     variant="outline"
                     icon={<Clock3 />}
                     onClick={() => onOpenRecords({ record: "workflow", workflow: selected.id })}
@@ -204,110 +221,105 @@ export function AIOpsAutomationPanel({
                   </Button>
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-3">
-                  <div><Text size="xs" tone="muted">执行计划</Text><strong>{selected.schedule}</strong><Text size="xs" tone="muted">{selected.timezone}</Text></div>
-                  <div><Text size="xs" tone="muted">下次运行</Text><strong>{selected.nextRunAt}</strong></div>
-                  <div><Text size="xs" tone="muted">运行 / 失败 / Token</Text><strong>{selected.metrics.runs} / {selected.metrics.failures} / {selected.metrics.tokens}</strong></div>
+                <div className="grid border-y py-3 sm:grid-cols-2 xl:grid-cols-4 xl:divide-x">
+                  <div className="xl:pr-4">
+                    <Metric label="执行计划" value={selected.schedule} detail={selected.timezone} />
+                  </div>
+                  <div className="xl:px-4">
+                    <Metric label="下次运行" value={selected.nextRunAt} />
+                  </div>
+                  <div className="xl:px-4">
+                    <Metric label="运行 / 失败 / Token" value={`${selected.metrics.runs} / ${selected.metrics.failures} / ${selected.metrics.tokens}`} />
+                  </div>
+                  <div className="xl:pl-4">
+                    <Metric
+                      label="运行范围"
+                      value={selected.scopeMode === "strict" ? "严格限制所选资源" : "兼容模式"}
+                      detail={selected.discoveryTools.length ? `允许发现：${selected.discoveryTools.join(", ")}` : "无额外 discovery tools"}
+                    />
+                  </div>
                 </div>
 
-                <div className="rounded-md border p-4">
-                  <Text size="xs" tone="muted">运行范围</Text>
-                  <strong>{selected.scopeMode === "strict" ? "严格限制所选资源" : "兼容模式"}</strong>
-                  <Text size="xs" tone="muted">
-                    {selected.discoveryTools.length ? `允许发现：${selected.discoveryTools.join(", ")}` : "无额外 discovery tools"}
-                  </Text>
-                </div>
-              </div>
-            </Card>
-
-            <Card padding="none" className="overflow-hidden">
-              <CardHeader className="border-b p-6">
-                <div className="flex flex-col gap-1">
-                  <CardTitle className="text-base">运行输入</CardTitle>
-                  <Text size="xs" tone="muted">输入会先经过 preflight；正式运行和 dry-run 使用同一份受控输入。</Text>
-                </div>
-              </CardHeader>
-              <CardContent className="flex flex-col gap-5 p-6">
-                <div className="grid gap-4 md:grid-cols-2">
-                  <label className="flex flex-col gap-2 text-sm font-medium">
-                    主题
-                    <Input
-                      aria-label="Workflow 主题"
-                      value={(inputByWorkflow[selected.id] ?? selected.input).topic}
-                      onChange={(event) =>
-                        setInputByWorkflow((current) => ({
+                <div className="flex flex-col gap-4">
+                  <div>
+                    <strong className="text-sm">本次运行输入</strong>
+                    <Text size="xs" tone="muted">正式运行和 Dry-run 共享同一份受控输入，并且都会先执行 preflight。</Text>
+                  </div>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <label className="flex flex-col gap-2 text-sm font-medium">
+                      主题
+                      <Input
+                        aria-label="Workflow 主题"
+                        value={(inputByWorkflow[selected.id] ?? selected.input).topic}
+                        onChange={(event) => setInputByWorkflow((current) => ({
                           ...current,
                           [selected.id]: {
                             ...(current[selected.id] ?? selected.input),
                             topic: event.target.value,
                           },
-                        }))
-                      }
-                    />
-                  </label>
-                  <label className="flex flex-col gap-2 text-sm font-medium">
-                    时间范围（天）
-                    <Input
-                      aria-label="Workflow 时间范围"
-                      type="number"
-                      min={1}
-                      value={(inputByWorkflow[selected.id] ?? selected.input).days}
-                      onChange={(event) =>
-                        setInputByWorkflow((current) => ({
+                        }))}
+                      />
+                    </label>
+                    <label className="flex flex-col gap-2 text-sm font-medium">
+                      时间范围（天）
+                      <Input
+                        aria-label="Workflow 时间范围"
+                        type="number"
+                        min={1}
+                        value={(inputByWorkflow[selected.id] ?? selected.input).days}
+                        onChange={(event) => setInputByWorkflow((current) => ({
                           ...current,
                           [selected.id]: {
                             ...(current[selected.id] ?? selected.input),
                             days: Number(event.target.value) || 1,
                           },
-                        }))
-                      }
-                    />
-                  </label>
-                </div>
-
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    variant="outline"
-                    icon={<TestTube2 />}
-                    disabled={Boolean(running)}
-                    onClick={() => void execute(selected, true)}
-                  >
-                    {running === "dry" ? "Dry-run 中…" : "Dry-run"}
-                  </Button>
-                  <Button
-                    variant="solid"
-                    color="primary"
-                    icon={<Play />}
-                    disabled={!selected.enabled || Boolean(running)}
-                    onClick={() => void execute(selected, false)}
-                  >
-                    {running === "run" ? "运行中…" : "运行"}
-                  </Button>
-                </div>
-
-                {feedback ? (
-                  <Alert
-                    type={feedback.type}
-                    showIcon
-                    title={feedback.message}
-                    description={feedback.runId ? `运行记录：Run #${feedback.runId}` : undefined}
-                  />
-                ) : null}
-                {feedback?.runId ? (
-                  <div>
+                        }))}
+                      />
+                    </label>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
                     <Button
-                      variant="ghost"
-                      onClick={() => onOpenRecords({ record: "workflow", workflow: selected.id, run: feedback.runId })}
+                      variant="outline"
+                      icon={<TestTube2 />}
+                      disabled={Boolean(running)}
+                      onClick={() => void execute(selected, true)}
                     >
-                      查看 Run #{feedback.runId}
+                      {running === "dry" ? "Dry-run 中…" : "Dry-run"}
+                    </Button>
+                    <Button
+                      variant="solid"
+                      color="primary"
+                      icon={<Play />}
+                      disabled={!selected.enabled || Boolean(running)}
+                      onClick={() => void execute(selected, false)}
+                    >
+                      {running === "run" ? "运行中…" : "运行"}
                     </Button>
                   </div>
-                ) : null}
-              </CardContent>
+                  {feedback ? (
+                    <Alert
+                      type={feedback.type}
+                      showIcon
+                      title={feedback.message}
+                      description={feedback.runId ? `运行记录：Run #${feedback.runId}` : undefined}
+                    />
+                  ) : null}
+                  {feedback?.runId ? (
+                    <div>
+                      <Button
+                        variant="ghost"
+                        onClick={() => onOpenRecords({ record: "workflow", workflow: selected.id, run: feedback.runId })}
+                      >
+                        查看 Run #{feedback.runId}
+                      </Button>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
             </Card>
 
             <Card padding="none" className="overflow-hidden">
-              <CardHeader className="border-b p-6">
+              <CardHeader className="border-b p-5">
                 <div className="flex items-center gap-2">
                   <History className="size-4 text-muted-foreground" />
                   <CardTitle className="text-base">版本历史</CardTitle>
@@ -315,7 +327,7 @@ export function AIOpsAutomationPanel({
               </CardHeader>
               <CardContent className="divide-y p-0">
                 {selected.versions.map((version) => (
-                  <div key={version.version} className="flex flex-col gap-3 p-6 sm:flex-row sm:items-center sm:justify-between">
+                  <div key={version.version} className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <strong>v{version.version}</strong>
                       <Text size="xs" tone="muted">{version.createdAt} · {version.note}</Text>
@@ -342,80 +354,127 @@ export function AIOpsAutomationPanel({
 }
 
 function WorkflowRunDetail({ run }: { run: WorkflowRunFixture }) {
+  const finished = run.finishedAt || "仍在运行";
+
   return (
-    <div className="flex flex-col gap-5" aria-label={`Workflow Run #${run.id} 详情`}>
-      <div className="flex flex-col gap-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <Heading level={3}>Run #{run.id} · {run.workflowName}</Heading>
-          <RunStatus status={run.status} />
-          {run.dryRun ? <Tag>Dry-run</Tag> : null}
+    <div className="flex min-w-0 flex-col gap-5" aria-label={`Workflow Run #${run.id} 详情`}>
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <Heading level={3}>Run #{run.id} · {run.workflowName}</Heading>
+              <RunStatus status={run.status} />
+              {run.dryRun ? <Tag>Dry-run</Tag> : null}
+            </div>
+            <Text className="mt-1" tone="muted">一次运行就是一份可追溯证据：执行步骤、资源、人工交互与事件都保留在这里。</Text>
+          </div>
         </div>
-        <Text tone="muted">{run.startedAt} · Token {run.tokenUsage}</Text>
-        {run.errorMessage ? <Alert type="error" showIcon title={run.errorMessage} /> : null}
+
+        <div className="grid border-y py-3 sm:grid-cols-2 xl:grid-cols-4 xl:divide-x">
+          <div className="xl:pr-4"><Metric label="开始时间" value={run.startedAt} /></div>
+          <div className="xl:px-4"><Metric label="结束时间" value={finished} /></div>
+          <div className="xl:px-4"><Metric label="Token" value={String(run.tokenUsage)} /></div>
+          <div className="xl:pl-4"><Metric label="执行步骤" value={String(run.steps.length)} /></div>
+        </div>
+
+        {run.errorMessage ? (
+          <Alert
+            type="error"
+            showIcon
+            title="运行失败"
+            description={run.errorMessage}
+          />
+        ) : null}
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card padding="base">
-          <CardTitle className="text-base">步骤</CardTitle>
-          <div className="mt-4 flex flex-col gap-4">
-            {run.steps.map((step) => (
-              <div key={step.id} className="border-t pt-4 first:border-t-0 first:pt-0">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <strong className="text-sm">{step.name}</strong>
-                  <RunStatus status={step.status === "waiting_for_user" ? "waiting_for_user" : step.status} />
+      <div className="grid gap-5 xl:grid-cols-[minmax(16rem,0.8fr)_minmax(0,1.2fr)]">
+        <Card padding="none" className="overflow-hidden">
+          <CardHeader className="border-b p-5">
+            <CardTitle className="text-base">执行过程</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="divide-y">
+              {run.steps.map((step, index) => (
+                <div key={step.id} className="flex gap-4 p-5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold">
+                    {index + 1}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <strong className="text-sm">{step.name}</strong>
+                      <RunStatus status={step.status === "waiting_for_user" ? "waiting_for_user" : step.status} />
+                    </div>
+                    <Text size="xs" tone="muted">{step.durationMs} ms</Text>
+                    <Text size="sm" className="mt-1">{step.detail}</Text>
+                  </div>
                 </div>
-                <Text size="xs" tone="muted">{step.durationMs} ms · {step.detail}</Text>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </CardContent>
         </Card>
-        <Card padding="base">
-          <CardTitle className="text-base">资源</CardTitle>
-          <div className="mt-4 flex flex-col gap-3">
-            {run.resources.map((resource, index) => (
-              <div key={`${resource.type}-${index}`} className="flex items-center justify-between gap-3">
-                <Text size="sm">{resource.label}</Text><Tag>{resource.type}</Tag>
+
+        <div className="flex min-w-0 flex-col gap-5">
+          <Card padding="none" className="overflow-hidden">
+            <CardHeader className="border-b p-5">
+              <CardTitle className="text-base">运行证据</CardTitle>
+            </CardHeader>
+            <CardContent className="p-5">
+              <div className="grid gap-6 md:grid-cols-2">
+                <section>
+                  <strong className="text-sm">资源</strong>
+                  <div className="mt-3 flex flex-col gap-3">
+                    {run.resources.length ? run.resources.map((resource, index) => (
+                      <div key={`${resource.type}-${index}`} className="flex items-center justify-between gap-3">
+                        <Text size="sm">{resource.label}</Text>
+                        <Tag>{resource.type}</Tag>
+                      </div>
+                    )) : <Text size="sm" tone="muted">该运行没有结构化资源快照。</Text>}
+                  </div>
+                </section>
+                <section>
+                  <strong className="text-sm">人工交互</strong>
+                  <div className="mt-3 flex flex-col gap-3">
+                    {run.interactions.length ? run.interactions.map((interaction, index) => (
+                      <div key={`${interaction.type}-${index}`}>
+                        <Text size="sm">{interaction.label}</Text>
+                        <Text size="xs" tone="muted">{interaction.type} · {interaction.status}</Text>
+                      </div>
+                    )) : <Text size="sm" tone="muted">本次运行没有人工交互。</Text>}
+                  </div>
+                </section>
               </div>
-            ))}
-          </div>
-        </Card>
-        <Card padding="base">
-          <CardTitle className="text-base">交互</CardTitle>
-          <div className="mt-4 flex flex-col gap-3">
-            {run.interactions.length ? run.interactions.map((interaction, index) => (
-              <div key={`${interaction.type}-${index}`}>
-                <strong className="text-sm">{interaction.label}</strong>
-                <Text size="xs" tone="muted">{interaction.type} · {interaction.status}</Text>
-              </div>
-            )) : <Text tone="muted">本次运行没有人工交互。</Text>}
-          </div>
-        </Card>
-        <Card padding="base">
-          <CardTitle className="text-base">事件</CardTitle>
-          <div className="mt-4 flex flex-col gap-3">
-            {run.events.map((event, index) => (
-              <div key={`${event.type}-${index}`}>
-                <strong className="text-sm">{event.type}</strong>
-                <Text size="xs" tone="muted">{event.message}</Text>
-              </div>
-            ))}
-          </div>
-        </Card>
+            </CardContent>
+          </Card>
+
+          <Card padding="none" className="overflow-hidden">
+            <CardHeader className="border-b p-5">
+              <CardTitle className="text-base">事件</CardTitle>
+            </CardHeader>
+            <CardContent className="divide-y p-0">
+              {run.events.map((event, index) => (
+                <div key={`${event.type}-${index}`} className="p-5">
+                  <strong className="font-mono text-xs">{event.type}</strong>
+                  <Text size="sm" tone="muted">{event.message}</Text>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {run.mediaCandidates.length ? (
-        <Card padding="base">
-          <CardTitle className="text-base">媒体候选</CardTitle>
-          <div className="mt-4 flex flex-col gap-3">
+        <Card padding="none" className="overflow-hidden">
+          <CardHeader className="border-b p-5"><CardTitle className="text-base">媒体候选</CardTitle></CardHeader>
+          <CardContent className="divide-y p-0">
             {run.mediaCandidates.map((candidate) => (
-              <div key={candidate.id} className="flex flex-wrap items-center justify-between gap-3">
+              <div key={candidate.id} className="flex flex-wrap items-center justify-between gap-3 p-5">
                 <Text size="sm">#{candidate.id} · {candidate.title}</Text>
                 <Tag color={candidate.status === "failed" ? "error" : candidate.status === "generated" ? "success" : "warning"}>
                   {candidate.status}
                 </Tag>
               </div>
             ))}
-          </div>
+          </CardContent>
         </Card>
       ) : null}
     </div>
@@ -424,28 +483,35 @@ function WorkflowRunDetail({ run }: { run: WorkflowRunFixture }) {
 
 function AgentRunDetail({ run }: { run: AgentRunFixture }) {
   return (
-    <div className="flex flex-col gap-5" aria-label={`Agent Run #${run.id} 详情`}>
-      <div className="flex flex-col gap-2">
+    <div className="flex min-w-0 flex-col gap-5" aria-label={`Agent Run #${run.id} 详情`}>
+      <div className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <Heading level={3}>Run #{run.id} · {run.agentName}</Heading>
           <RunStatus status={run.status} />
         </div>
-        <Text tone="muted">{run.startedAt} · Token {run.tokenUsage}</Text>
         <Text>{run.summary}</Text>
+        <div className="grid border-y py-3 sm:grid-cols-3 sm:divide-x">
+          <div className="sm:pr-4"><Metric label="开始时间" value={run.startedAt} /></div>
+          <div className="sm:px-4"><Metric label="结束时间" value={run.finishedAt || "仍在运行"} /></div>
+          <div className="sm:pl-4"><Metric label="Token" value={String(run.tokenUsage)} /></div>
+        </div>
       </div>
-      <Card padding="base">
-        <CardTitle className="text-base">Tool Calls</CardTitle>
-        <div className="mt-4 flex flex-col gap-4">
+
+      <Card padding="none" className="overflow-hidden">
+        <CardHeader className="border-b p-5">
+          <CardTitle className="text-base">Tool Calls</CardTitle>
+        </CardHeader>
+        <CardContent className="divide-y p-0">
           {run.toolCalls.map((call, index) => (
-            <div key={`${call.tool}-${index}`} className="border-t pt-4 first:border-t-0 first:pt-0">
+            <div key={`${call.tool}-${index}`} className="p-5">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <strong className="text-sm">{call.tool}</strong>
+                <strong className="font-mono text-sm">{call.tool}</strong>
                 <Tag color={call.status === "succeeded" ? "success" : "error"}>{call.status}</Tag>
               </div>
-              <Text size="xs" tone="muted">{call.detail}</Text>
+              <Text size="sm" tone="muted" className="mt-1">{call.detail}</Text>
             </div>
           ))}
-        </div>
+        </CardContent>
       </Card>
     </div>
   );
@@ -472,13 +538,12 @@ export function AIOpsRecordsPanel({
     initialRecord === "agent" ? initialRunId ?? fixture.agentRuns[0]?.id ?? 0 : fixture.agentRuns[0]?.id ?? 0,
   );
 
-  const workflowRuns = useMemo(() => {
-    return fixture.workflowRuns.filter((run) => {
-      if (workflowId && run.workflowId !== workflowId) return false;
-      if (status && run.status !== status) return false;
-      return true;
-    });
-  }, [fixture.workflowRuns, status, workflowId]);
+  const workflowRuns = useMemo(() => fixture.workflowRuns.filter((run) => {
+    if (workflowId && run.workflowId !== workflowId) return false;
+    if (status && run.status !== status) return false;
+    return true;
+  }), [fixture.workflowRuns, status, workflowId]);
+
   const selectedWorkflowRun = fixture.workflowRuns.find((run) => run.id === selectedWorkflowRunId) ?? workflowRuns[0] ?? null;
   const selectedAgentRun = fixture.agentRuns.find((run) => run.id === selectedAgentRunId) ?? fixture.agentRuns[0] ?? null;
 
@@ -488,94 +553,110 @@ export function AIOpsRecordsPanel({
   };
 
   return (
-    <div className="flex flex-col gap-6" aria-label="运行中心">
-      <Card padding="base">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <Heading level={2}>运行中心</Heading>
-            <Text tone="muted">从运行记录追溯步骤、资源、人工交互、事件和 Tool Call，而不是只看最终状态。</Text>
-          </div>
-          <div className="flex flex-wrap gap-2" aria-label="运行中心类型">
-            <Button variant={record === "workflow" ? "solid" : "outline"} color={record === "workflow" ? "primary" : undefined} onClick={() => selectRecord("workflow")} icon={<GitBranch />}>
-              Workflow 任务
-            </Button>
-            <Button variant={record === "agent" ? "solid" : "outline"} color={record === "agent" ? "primary" : undefined} onClick={() => selectRecord("agent")} icon={<Clock3 />}>
-              Agent 运行
-            </Button>
-          </div>
+    <div className="flex flex-col gap-5" aria-label="运行中心">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <Heading level={2}>运行中心</Heading>
+          <Text tone="muted">从一次 Run 追溯步骤、资源、人工交互、事件和 Tool Call，而不是只看最终状态。</Text>
         </div>
-      </Card>
+        <div className="flex flex-wrap gap-2" aria-label="运行中心类型">
+          <Button
+            variant={record === "workflow" ? "solid" : "outline"}
+            color={record === "workflow" ? "primary" : undefined}
+            onClick={() => selectRecord("workflow")}
+            icon={<GitBranch />}
+          >
+            Workflow 任务
+          </Button>
+          <Button
+            variant={record === "agent" ? "solid" : "outline"}
+            color={record === "agent" ? "primary" : undefined}
+            onClick={() => selectRecord("agent")}
+            icon={<Clock3 />}
+          >
+            Agent 运行
+          </Button>
+        </div>
+      </div>
 
       {record === "workflow" ? (
-        <div className="flex flex-col gap-6">
-          <Card padding="base">
-            <div className="grid gap-4 md:grid-cols-2">
-              <Select
-                aria-label="按 Workflow 筛选运行"
-                value={String(workflowId)}
-                onChange={(value) => {
-                  const next = Number(value) || 0;
-                  setWorkflowId(next);
-                  onRouteChange({ record: "workflow", workflow: next || undefined });
-                }}
-              >
-                <option value="0">全部 Workflow</option>
-                {fixture.workflows.map((workflow) => <option key={workflow.id} value={workflow.id}>{workflow.name}</option>)}
-              </Select>
-              <Select aria-label="按状态筛选 Workflow 运行" value={status} onChange={(value) => setStatus(String(value))}>
-                <option value="">全部状态</option>
-                <option value="succeeded">成功</option>
-                <option value="failed">失败</option>
-                <option value="awaiting_approval">等待审批</option>
-                <option value="waiting_for_user">等待用户</option>
-              </Select>
-            </div>
-          </Card>
+        <div className="flex flex-col gap-5">
+          <div className="grid gap-3 md:grid-cols-2">
+            <Select
+              aria-label="按 Workflow 筛选运行"
+              value={String(workflowId)}
+              onChange={(value) => {
+                const next = Number(value) || 0;
+                setWorkflowId(next);
+                onRouteChange({ record: "workflow", workflow: next || undefined });
+              }}
+            >
+              <option value="0">全部 Workflow</option>
+              {fixture.workflows.map((workflow) => (
+                <option key={workflow.id} value={workflow.id}>{workflow.name}</option>
+              ))}
+            </Select>
+            <Select aria-label="按状态筛选 Workflow 运行" value={status} onChange={(value) => setStatus(String(value))}>
+              <option value="">全部状态</option>
+              <option value="succeeded">成功</option>
+              <option value="failed">失败</option>
+              <option value="awaiting_approval">等待审批</option>
+              <option value="waiting_for_user">等待用户</option>
+            </Select>
+          </div>
 
-          <div className="grid gap-6 xl:grid-cols-[minmax(15rem,0.75fr)_minmax(0,1.75fr)]">
+          <div className="grid gap-5 xl:grid-cols-[minmax(15rem,0.62fr)_minmax(0,1.8fr)]">
             <Card padding="none" className="overflow-hidden">
-              <CardHeader className="border-b p-6"><CardTitle className="text-base">Workflow Runs</CardTitle></CardHeader>
+              <CardHeader className="border-b p-5"><CardTitle className="text-base">Workflow Runs</CardTitle></CardHeader>
               <CardContent className="divide-y p-0">
                 {workflowRuns.length ? workflowRuns.map((run) => (
-                  <Button variant="ghost"
+                  <Button
                     key={run.id}
                     type="button"
+                    variant="ghost"
                     aria-pressed={selectedWorkflowRun?.id === run.id}
-                    className="flex w-full items-start justify-between gap-4 p-6 text-left hover:bg-muted/40"
+                    className="flex w-full items-start justify-between gap-3 rounded-none p-5 text-left"
                     onClick={() => {
                       setSelectedWorkflowRunId(run.id);
                       onRouteChange({ record: "workflow", workflow: run.workflowId, run: run.id });
                     }}
                   >
-                    <div>
+                    <div className="min-w-0">
                       <strong className="text-sm">Run #{run.id}</strong>
                       <Text size="xs" tone="muted">{run.workflowName} · {run.startedAt}</Text>
                     </div>
-                    <div className="flex flex-col items-end gap-1"><RunStatus status={run.status} />{run.dryRun ? <Tag>Dry-run</Tag> : null}</div>
+                    <div className="flex flex-col items-end gap-1">
+                      <RunStatus status={run.status} />
+                      {run.dryRun ? <Tag>Dry-run</Tag> : null}
+                    </div>
                   </Button>
-                )) : <div className="p-6"><Text tone="muted">没有符合条件的 Workflow Run。</Text></div>}
+                )) : <div className="p-5"><Text tone="muted">没有符合条件的 Workflow Run。</Text></div>}
               </CardContent>
             </Card>
             {selectedWorkflowRun ? <WorkflowRunDetail run={selectedWorkflowRun} /> : null}
           </div>
         </div>
       ) : (
-        <div className="grid gap-6 xl:grid-cols-[minmax(15rem,0.75fr)_minmax(0,1.75fr)]">
+        <div className="grid gap-5 xl:grid-cols-[minmax(15rem,0.62fr)_minmax(0,1.8fr)]">
           <Card padding="none" className="overflow-hidden">
-            <CardHeader className="border-b p-6"><CardTitle className="text-base">Agent Runs</CardTitle></CardHeader>
+            <CardHeader className="border-b p-5"><CardTitle className="text-base">Agent Runs</CardTitle></CardHeader>
             <CardContent className="divide-y p-0">
               {fixture.agentRuns.map((run) => (
-                <Button variant="ghost"
+                <Button
                   key={run.id}
                   type="button"
+                  variant="ghost"
                   aria-pressed={selectedAgentRun?.id === run.id}
-                  className="flex w-full items-start justify-between gap-4 p-6 text-left hover:bg-muted/40"
+                  className="flex w-full items-start justify-between gap-3 rounded-none p-5 text-left"
                   onClick={() => {
                     setSelectedAgentRunId(run.id);
                     onRouteChange({ record: "agent", run: run.id });
                   }}
                 >
-                  <div><strong className="text-sm">Run #{run.id}</strong><Text size="xs" tone="muted">{run.agentName} · {run.startedAt}</Text></div>
+                  <div className="min-w-0">
+                    <strong className="text-sm">Run #{run.id}</strong>
+                    <Text size="xs" tone="muted">{run.agentName} · {run.startedAt}</Text>
+                  </div>
                   <RunStatus status={run.status} />
                 </Button>
               ))}
