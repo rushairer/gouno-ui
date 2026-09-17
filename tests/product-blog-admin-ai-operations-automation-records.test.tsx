@@ -26,17 +26,24 @@ function renderWorkflowExecution(overrides: Partial<Parameters<typeof WorkflowEx
 }
 
 function openFirstWorkflow() {
-  fireEvent.click(screen.getAllByRole("button", { name: "进入详情 / 运行" })[0]);
+  fireEvent.click(screen.getByRole("button", { name: "打开 Workflow：旧文维护" }));
 }
 
-describe("Blog Admin AI Operations automation/records migration modules", () => {
-  it("preserves selected Workflow execution context, scope, metrics and version history", () => {
+function openWorkflowMenu() {
+  fireEvent.click(screen.getByRole("button", { name: "更多 Workflow 操作" }));
+}
+
+describe("Blog Admin AI Operations automation/records canonical modules", () => {
+  it("preserves selected Workflow execution context, run boundary and version history", () => {
     renderWorkflowExecution();
 
     expect(screen.getByText("运行当前 Workflow")).toBeTruthy();
-    expect(screen.getByText("严格限制所选资源")).toBeTruthy();
-    expect(screen.getByText("允许发现：search_posts, read_post")).toBeTruthy();
-    expect(screen.getByText("31 / 2 / 128400")).toBeTruthy();
+    expect(screen.getByText("本次运行输入")).toBeTruthy();
+    expect(screen.getByText("运行范围")).toBeTruthy();
+    expect(screen.getByText("遵守 Workflow 严格资源边界")).toBeTruthy();
+    expect(screen.getByDisplayValue("AI Agent")).toBeTruthy();
+    expect(screen.getByDisplayValue("180")).toBeTruthy();
+    expect(screen.getByText("版本历史")).toBeTruthy();
     expect(screen.getByText("v4")).toBeTruthy();
     expect(screen.getByRole("button", { name: "回滚到 v3" })).toBeTruthy();
   });
@@ -77,7 +84,8 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
     });
 
     fireEvent.click(screen.getByRole("button", { name: "运行" }));
-    expect(await screen.findByText("运行失败（Run #246）。请修正后重试，运行证据已保留。")).toBeTruthy();
+    expect(await screen.findByText("运行失败 · Run #246")).toBeTruthy();
+    expect(screen.getByText("失败证据已经持久化。进入运行中心查看失败步骤、资源与事件后再决定是否重试。")).toBeTruthy();
     const alert = screen.getByRole("alert");
     expect(alert.getAttribute("data-type")).toBe("error");
     fireEvent.click(screen.getByRole("button", { name: "查看 Run #246" }));
@@ -92,7 +100,7 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
     expect(onRollback).toHaveBeenCalledWith(42, 3);
   });
 
-  it("uses a Workflow list-detail route and restores create/edit/enable/delete entry points", () => {
+  it("uses a Workflow list-detail route and keeps secondary management actions in one menu", () => {
     render(<BlogAdminAIOperationsDemo initialRoute={{ tab: "automation", record: "workflow" }} />);
 
     expect(screen.getByRole("button", { name: "创建 Workflow" })).toBeTruthy();
@@ -102,8 +110,8 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
     openFirstWorkflow();
     expect(screen.getByRole("button", { name: "返回 Workflow 列表" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "编辑" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "停用" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "删除" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "运行记录" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "更多 Workflow 操作" })).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "返回 Workflow 列表" }));
     fireEvent.click(screen.getByRole("button", { name: "创建 Workflow" }));
@@ -112,10 +120,12 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
     expect(screen.getByText("内容巡检 已保存，当前版本 v1。")).toBeTruthy();
     expect(screen.getByRole("heading", { level: 2, name: "内容巡检" })).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("button", { name: "启用" }));
+    openWorkflowMenu();
+    fireEvent.click(screen.getByRole("menuitem", { name: "启用 Workflow" }));
     expect(screen.getByText("内容巡检 已启用。")).toBeTruthy();
-    expect(screen.getByRole("button", { name: "停用" })).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "删除" }));
+
+    openWorkflowMenu();
+    fireEvent.click(screen.getByRole("menuitem", { name: /删除 Workflow/ }));
     const dialog = screen.getByRole("dialog");
     expect(within(dialog).getByRole("heading", { name: "确认删除 Workflow" })).toBeTruthy();
     fireEvent.click(within(dialog).getByRole("button", { name: "删除" }));
@@ -130,7 +140,7 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
     fireEvent.click(screen.getByRole("button", { name: "Dry-run" }));
     fireEvent.click(await screen.findByRole("button", { name: "查看 Run #246" }));
 
-    expect(await screen.findByRole("heading", { level: 3, name: "Run #246 · 旧文维护" })).toBeTruthy();
+    expect(await screen.findByRole("heading", { level: 2, name: "Run #246 · 旧文维护" })).toBeTruthy();
     expect(screen.getByText("验证 Workflow 配置")).toBeTruthy();
     expect(screen.getByText("No writes applied")).toBeTruthy();
   });
@@ -142,10 +152,10 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
     openFirstWorkflow();
 
     fireEvent.click(screen.getByRole("button", { name: "运行" }));
-    expect(await screen.findByText("运行失败（Run #246）。请修正后重试，运行证据已保留。")).toBeTruthy();
+    expect(await screen.findByText("运行失败 · Run #246")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "查看 Run #246" }));
 
-    expect(await screen.findByRole("heading", { level: 3, name: "Run #246 · 旧文维护" })).toBeTruthy();
+    expect(await screen.findByRole("heading", { level: 2, name: "Run #246 · 旧文维护" })).toBeTruthy();
     expect(screen.getAllByText("query_events failed: column reference event_key is ambiguous").length).toBeGreaterThan(0);
     expect(screen.getByText("读取运营事件")).toBeTruthy();
     expect(screen.getByText("run_failed")).toBeTruthy();
@@ -162,7 +172,7 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
       />,
     );
 
-    expect(screen.getByRole("heading", { level: 3, name: "Run #245 · AI 每日资讯" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "Run #245 · AI 每日资讯" })).toBeTruthy();
     expect(screen.getByText("发现近 24 小时资讯")).toBeTruthy();
     expect(screen.getByText("7 verified references")).toBeTruthy();
     expect(screen.getByText("为技术架构文章选择封面方向")).toBeTruthy();
@@ -171,7 +181,7 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
 
     fireEvent.click(screen.getByRole("button", { name: /Run #244/ }));
     expect(onRouteChange).toHaveBeenCalledWith({ record: "workflow", workflow: 42, run: 244 });
-    expect(screen.getByRole("heading", { level: 3, name: "Run #244 · 旧文维护" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "Run #244 · 旧文维护" })).toBeTruthy();
     expect(screen.getAllByText("Dry-run").length).toBeGreaterThan(0);
     expect(screen.getByText("No writes applied")).toBeTruthy();
   });
@@ -190,7 +200,7 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
 
     fireEvent.click(screen.getByRole("button", { name: /Run #701/ }));
     expect(onRouteChange).toHaveBeenCalledWith({ record: "agent", run: 701 });
-    expect(screen.getByRole("heading", { level: 3, name: "Run #701 · Content Maintainer" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "Run #701 · Content Maintainer" })).toBeTruthy();
     expect(screen.getByText("query_events")).toBeTruthy();
     expect(screen.getByText("column reference event_key is ambiguous")).toBeTruthy();
   });
