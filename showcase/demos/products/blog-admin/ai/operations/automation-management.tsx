@@ -297,7 +297,7 @@ export function AutomationManagement({
                   />
                 </div>
               )) : (
-                <div className="p-8"><Text tone="muted">没有符合条件的 Workflow。</Text></div>
+                <div className="p-6"><Text tone="muted">没有符合条件的 Workflow。</Text></div>
               )}
             </div>
           </div>
@@ -335,7 +335,7 @@ export function AutomationManagement({
 
         <div className="flex min-w-0 flex-col gap-5">
           <section className="overflow-hidden rounded-xl border bg-background" aria-label={`${selected.name} Workflow 概览`}>
-            <div className="flex flex-col gap-4 border-b p-5 lg:flex-row lg:items-start lg:justify-between">
+            <div className="flex flex-col gap-4 border-b p-6 lg:flex-row lg:items-start lg:justify-between">
               <div className="flex min-w-0 items-start gap-3">
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-primary/15 bg-primary/[0.08] text-primary">
                   <GitBranch className="size-5" aria-hidden="true" />
@@ -373,7 +373,7 @@ export function AutomationManagement({
               </div>
             </div>
 
-            <div className="grid gap-3 p-5 sm:grid-cols-2 2xl:grid-cols-4">
+            <div className="grid gap-3 p-6 sm:grid-cols-2 2xl:grid-cols-4">
               <WorkflowMetric
                 label="成功率"
                 value={`${successRate}%`}
@@ -385,7 +385,7 @@ export function AutomationManagement({
               <WorkflowMetric label="Token 消耗" value={selected.metrics.tokens.toLocaleString()} detail="累计 Workflow Run" />
             </div>
 
-            <div className="mx-5 grid border-t sm:grid-cols-2 xl:grid-cols-4 xl:divide-x">
+            <div className="mx-6 grid border-t sm:grid-cols-2 xl:grid-cols-4 xl:divide-x">
               <ScheduleFact label="下次运行" value={selected.nextRunAt} detail={selected.enabled ? "Scheduler 已启用" : "Workflow 已停用"} />
               <ScheduleFact label="执行计划" value={selected.schedule} detail={selected.timezone} />
               <ScheduleFact label="当前版本" value={`v${selected.currentVersion}`} detail={selected.templateKey || "自定义 Workflow"} />
@@ -394,7 +394,7 @@ export function AutomationManagement({
           </section>
 
           <section className="overflow-hidden rounded-xl border bg-background" aria-label="最近运行">
-            <div className="border-b px-5 py-4">
+            <div className="border-b px-6 py-4">
               <OpsRegionHeading
                 title="最近运行"
                 description="先看最近执行结果，需要完整步骤、资源与人工交互证据时进入运行中心。"
@@ -409,9 +409,9 @@ export function AutomationManagement({
                     type="button"
                     variant="ghost"
                     block
-                    className="grid h-auto w-full min-w-0 grid-cols-1 gap-3 whitespace-normal rounded-none px-5 py-3.5 text-left font-normal transition-colors hover:bg-muted/35 sm:grid-cols-[7rem_7rem_minmax(7rem,0.7fr)_6rem_minmax(0,1.5fr)] sm:items-center"
+                    className="grid h-auto w-full min-w-0 grid-cols-1 gap-3 whitespace-normal rounded-none px-6 py-3.5 text-left font-normal transition-colors hover:bg-muted/35 sm:grid-cols-[7rem_7rem_minmax(7rem,0.7fr)_6rem_minmax(0,1.5fr)] sm:items-center"
                     onClick={() => onOpenRun?.(run)}
-                    aria-label={`查看 Run #${run.id}`}
+                    aria-label={`打开最近 Run #${run.id}`}
                   >
                     <strong className="text-sm">Run #{run.id}</strong>
                     <span>{runStatusTag(run.status)}</span>
@@ -431,12 +431,12 @@ export function AutomationManagement({
 
           <div className="grid gap-5 2xl:grid-cols-[minmax(0,1.15fr)_minmax(19rem,0.85fr)]">
             <section className="overflow-hidden rounded-xl border bg-background" aria-label="Workflow 流程定义">
-              <div className="border-b px-5 py-4">
+              <div className="border-b px-6 py-4">
                 <OpsRegionHeading title="流程定义" description={`${selected.steps.length} 个步骤，按实际执行顺序排列。定义说明“会做什么”，运行证据在运行中心查看。`} action={selected.templateKey ? <Tag>{selected.templateKey}</Tag> : undefined} />
               </div>
               <ol className="divide-y">
                 {selected.steps.map((step, index) => (
-                  <li key={step.id} className="flex gap-4 px-5 py-4">
+                  <li key={step.id} className="flex gap-4 px-6 py-4">
                     <span className="flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold">{index + 1}</span>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -451,7 +451,7 @@ export function AutomationManagement({
             </section>
 
             <div className="flex min-w-0 flex-col gap-5">
-              <section className="rounded-xl border bg-background p-5" aria-label="Workflow 运行边界">
+              <section className="rounded-xl border bg-background p-6" aria-label="Workflow 运行边界">
                 <OpsRegionHeading title="运行边界" description="决定 Workflow 可以发现什么、哪些对象可以成为目标，以及空查询时如何结束。" />
                 <dl className="mt-4 space-y-4 text-sm">
                   <div><dt className="text-xs text-muted-foreground">Scope</dt><dd className="mt-1 font-medium">{selected.scopeMode === "strict" ? "严格限制目标资源" : "Unscoped 兼容模式"}</dd></div>
@@ -461,7 +461,7 @@ export function AutomationManagement({
                 </dl>
               </section>
 
-              <section className="rounded-xl border bg-background p-5" aria-label="Workflow 输入契约">
+              <section className="rounded-xl border bg-background p-6" aria-label="Workflow 输入契约">
                 <OpsRegionHeading title="运行输入契约" description="人工执行可以覆盖默认值，但不会因此改写当前 Workflow Version。" />
                 <div className="mt-4 divide-y">
                   {selected.inputFields.map((field) => (
