@@ -111,7 +111,7 @@ export function WorkflowExecutionPanel({
 
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)]" aria-label={`${workflow.name} 执行工作区`}>
-      <section className="rounded-lg border bg-background p-5 lg:p-6" aria-label="运行当前 Workflow">
+      <section className="rounded-lg border bg-background p-6" aria-label="运行当前 Workflow">
         <OpsRegionHeading
           title="运行当前 Workflow"
           description="人工执行先做 Preflight，再创建持久化 Run。Run 由后台 Worker 异步推进，状态与证据统一进入运行中心。"
