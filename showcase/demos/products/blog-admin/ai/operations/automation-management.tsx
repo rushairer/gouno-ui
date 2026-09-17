@@ -5,6 +5,14 @@ import { TabPanelLead } from "../../../../../components/tab-panel-lead";
 import type { WorkflowFixture } from "./automation-records-fixtures";
 import { WorkflowEditor } from "./workflow-editor";
 
+const stepLabels: Record<WorkflowFixture["steps"][number]["type"], string> = {
+  resource_query: "资源筛选",
+  model: "Agent",
+  for_each: "逐项处理",
+  approval_gate: "审批",
+  output: "输出",
+};
+
 export function AutomationManagement({
   workflows,
   onSave,
@@ -40,7 +48,7 @@ export function AutomationManagement({
   if (editing) {
     return (
       <div className="flex flex-col gap-5">
-        <TabPanelLead description="把 Workflow 定义按基础信息、执行计划、运行边界和默认输入分组；保存形成新版本，运行证据仍进入运行中心。" />
+        <TabPanelLead description="编辑 Workflow 的输入契约、流程定义、执行计划与运行边界；保存形成新版本，运行证据仍进入运行中心。" />
         <WorkflowEditor
           value={editing}
           nextId={nextId}
@@ -58,7 +66,7 @@ export function AutomationManagement({
   return (
     <div className="flex flex-col gap-5">
       <TabPanelLead
-        description="选择一个 Workflow 后在同一上下文中管理定义、执行和运行证据；高频执行动作与低频配置操作保持清晰层级。"
+        description="Workflow 是持续运营目标的版本化定义；先审阅输入、步骤与边界，再从同一上下文试运行或正式执行。"
         actions={(
           <Button
             size="small"
@@ -74,57 +82,85 @@ export function AutomationManagement({
 
       {selected ? (
         <Card padding="base">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            <div className="min-w-0 flex-1">
-              <Text size="xs" tone="muted">当前 Workflow</Text>
-              <div className="mt-2 max-w-xl">
-                <Select
-                  aria-label="选择要管理的 Workflow"
-                  value={String(selected.id)}
-                  onChange={(value) => selectWorkflow(Number(value))}
-                >
-                  {workflows.map((workflow) => (
-                    <option key={workflow.id} value={String(workflow.id)}>
-                      {workflow.name} · v{workflow.currentVersion}
-                    </option>
-                  ))}
-                </Select>
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+              <div className="min-w-0 flex-1">
+                <Text size="xs" tone="muted">Workflow 定义</Text>
+                <div className="mt-2 max-w-xl">
+                  <Select
+                    aria-label="选择要管理的 Workflow"
+                    value={String(selected.id)}
+                    onChange={(value) => selectWorkflow(Number(value))}
+                  >
+                    {workflows.map((workflow) => (
+                      <option key={workflow.id} value={String(workflow.id)}>
+                        {workflow.name} · v{workflow.currentVersion}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <Tag color={selected.enabled ? "success" : undefined}>{selected.enabled ? "已启用" : "已停用"}</Tag>
+                  <Text size="xs" tone="muted">{selected.description}</Text>
+                </div>
               </div>
-              <div className="mt-3 flex flex-wrap items-center gap-2">
-                <Tag color={selected.enabled ? "success" : undefined}>{selected.enabled ? "已启用" : "已停用"}</Tag>
-                <Text size="xs" tone="muted">{selected.description}</Text>
+
+              <div
+                className="flex w-full flex-wrap items-center gap-2 lg:w-auto lg:justify-end"
+                data-slot="workflow-management-actions"
+              >
+                {onOpenRecords ? (
+                  <Button
+                    size="small"
+                    variant="outline"
+                    icon={<Clock3 />}
+                    onClick={() => onOpenRecords(selected)}
+                  >
+                    运行记录
+                  </Button>
+                ) : null}
+                <Button size="small" variant="outline" icon={<Edit2 />} onClick={() => setEditing(selected)}>
+                  编辑
+                </Button>
+                <Button size="small" variant="ghost" icon={<Power />} onClick={() => onToggle(selected)}>
+                  {selected.enabled ? "停用" : "启用"}
+                </Button>
+                <Button
+                  size="small"
+                  variant="ghost"
+                  color="error"
+                  icon={<Trash2 />}
+                  onClick={() => setDeleteTarget(selected)}
+                >
+                  删除
+                </Button>
               </div>
             </div>
 
-            <div
-              className="flex w-full flex-wrap items-center gap-2 lg:w-auto lg:justify-end"
-              data-slot="workflow-management-actions"
-            >
-              {onOpenRecords ? (
-                <Button
-                  size="small"
-                  variant="outline"
-                  icon={<Clock3 />}
-                  onClick={() => onOpenRecords(selected)}
-                >
-                  运行记录
-                </Button>
-              ) : null}
-              <Button size="small" variant="outline" icon={<Edit2 />} onClick={() => setEditing(selected)}>
-                编辑
-              </Button>
-              <Button size="small" variant="ghost" icon={<Power />} onClick={() => onToggle(selected)}>
-                {selected.enabled ? "停用" : "启用"}
-              </Button>
-              <Button
-                size="small"
-                variant="ghost"
-                color="error"
-                icon={<Trash2 />}
-                onClick={() => setDeleteTarget(selected)}
-              >
-                删除
-              </Button>
+            <div className="border-t pt-5">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <strong className="text-sm">流程定义</strong>
+                  <Text size="xs" tone="muted">{selected.steps.length} 个步骤，按实际执行顺序排列。</Text>
+                </div>
+                {selected.templateKey ? <Tag>{selected.templateKey}</Tag> : null}
+              </div>
+              <div className="mt-4 divide-y rounded-md border">
+                {selected.steps.map((step, index) => (
+                  <div key={step.id} className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:gap-4">
+                    <span className="flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold">
+                      {index + 1}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <strong className="block text-sm">{step.name}</strong>
+                      <Text size="xs" tone="muted">
+                        {step.agent ? `${step.agent} · ` : ""}{step.detail || step.id}
+                      </Text>
+                    </div>
+                    <Tag>{stepLabels[step.type]}</Tag>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </Card>
