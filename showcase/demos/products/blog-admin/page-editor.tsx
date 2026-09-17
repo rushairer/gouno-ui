@@ -654,6 +654,10 @@ return;
       selectedKeys={metadataSelection}
       onSelectedKeysChange={setMetadataSelection}
       onCancel={() => setMetadataSuggestionsOpen(false)}
+      onRegenerate={() => {
+        setMetadataSelection(pageSeoSuggestions.map((item) => item.key));
+        setNotice("已重新生成 AI 路径与 SEO 建议（Showcase 模拟）。");
+      }}
       onApply={applyMetadataSuggestions}
     />
   ) : null}
@@ -742,9 +746,10 @@ setTitleCandidates([]);
 setSelectedTitleCandidate(null);
         }}
         onRegenerate={() => {
-const candidates = [...pageTitleSuggestions].reverse();
+const candidates = [...titleCandidates].reverse();
 setTitleCandidates(candidates);
 setSelectedTitleCandidate(candidates[0] ?? null);
+setNotice("已重新生成标题候选（Showcase 模拟）。");
         }}
         onApply={(candidate) => {
 updatePage("title", candidate);
@@ -787,6 +792,12 @@ setSelectedTitleCandidate(null);
         onDismiss={() => {
 setSummaryCandidates([]);
 setSelectedSummaryCandidate(null);
+        }}
+        onRegenerate={() => {
+const candidates = [...summaryCandidates].reverse();
+setSummaryCandidates(candidates);
+setSelectedSummaryCandidate(candidates[0] ?? null);
+setNotice("已重新生成摘要候选（Showcase 模拟）。");
         }}
         onApply={(candidate) => {
 updatePage("summary", candidate);

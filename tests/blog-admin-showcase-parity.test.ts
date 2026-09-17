@@ -39,6 +39,15 @@ function jsxAttributes(node: ts.JsxElement | ts.JsxSelfClosingElement) {
     : node.attributes;
 }
 
+function hasJsxAttribute(
+  node: ts.JsxElement | ts.JsxSelfClosingElement,
+  name: string,
+) {
+  return jsxAttributes(node).properties.some(
+    (item) => ts.isJsxAttribute(item) && item.name.text === name,
+  );
+}
+
 function staticAttribute(
   node: ts.JsxElement | ts.JsxSelfClosingElement,
   name: string,
@@ -160,6 +169,34 @@ describe("Blog Admin Showcase parity contract", () => {
             if (type !== "hidden" && !hiddenFileBridge) {
               violations.push(`${displayPath}:${line} visible native input`);
             }
+          }
+        }
+        ts.forEachChild(node, visit);
+      }
+
+      visit(file);
+    }
+
+    expect(violations).toEqual([]);
+  });
+
+  it("keeps every PostEditor and PageEditor AI suggestion surface retryable", () => {
+    const violations: string[] = [];
+    for (const name of ["post-editor.tsx", "page-editor.tsx"]) {
+      const filePath = resolve(blogAdminRoot, name);
+      const source = readFileSync(filePath, "utf8");
+      const file = sourceFile(filePath, source);
+
+      function visit(node: ts.Node) {
+        if (ts.isJsxElement(node) || ts.isJsxSelfClosingElement(node)) {
+          const tag = jsxTag(node, file);
+          if (
+            ["AISuggestionPicker", "AISuggestionReview"].includes(tag) &&
+            !hasJsxAttribute(node, "onRegenerate")
+          ) {
+            const line =
+              file.getLineAndCharacterOfPosition(node.getStart(file)).line + 1;
+            violations.push(`${name}:${line} ${tag} missing onRegenerate`);
           }
         }
         ts.forEachChild(node, visit);
