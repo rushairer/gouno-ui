@@ -45,7 +45,7 @@ describe("Blog Admin AI canonical redesign contract", () => {
     expect(screen.getByText("事件")).toBeTruthy();
   });
 
-  it("groups Agent settings by product concepts rather than rendering a flat configuration form", () => {
+  it("groups Agent settings into identity, binding, schedule and stricter runtime governance", () => {
     render(
       <AISettingsEditor
         editor={{ kind: "agent", value: aiSettingsFixture.agents[0] }}
@@ -58,12 +58,17 @@ describe("Blog Admin AI canonical redesign contract", () => {
     expect(screen.getByRole("heading", { level: 2, name: /编辑 Agent/ })).toBeTruthy();
     expect(screen.getByText("基础信息")).toBeTruthy();
     expect(screen.getByText("能力绑定")).toBeTruthy();
-    expect(screen.getByText("调度只决定何时发起运行；实际执行仍受 Agent 状态、权限和审批链路约束。")).toBeTruthy();
+    expect(screen.getByText("触发方式")).toBeTruthy();
+    expect(screen.getByText("运行治理")).toBeTruthy();
+    expect(screen.getByText(/覆盖值只能更严格/)).toBeTruthy();
     expect(screen.getByLabelText(/Agent 名称/)).toBeTruthy();
-    expect(screen.getByLabelText(/模型连接/)).toBeTruthy();
+    expect(screen.getByLabelText(/绑定 Skill Version/)).toBeTruthy();
+    expect(screen.getByLabelText(/日运行上限/)).toBeTruthy();
+    expect(screen.getByLabelText(/月 Token 预算/)).toBeTruthy();
+    expect(screen.getByLabelText(/最大步数覆盖/)).toBeTruthy();
   });
 
-  it("groups Skill settings into definition and execution boundaries", () => {
+  it("keeps Skill behavior, tool authorization, publication policy and governance limits together", () => {
     render(
       <AISettingsEditor
         editor={{ kind: "skill", value: aiSettingsFixture.skills[0] }}
@@ -74,8 +79,18 @@ describe("Blog Admin AI canonical redesign contract", () => {
     );
 
     expect(screen.getByText("能力定义")).toBeTruthy();
-    expect(screen.getByText("执行边界")).toBeTruthy();
-    expect(screen.getByLabelText(/Capabilities/)).toBeTruthy();
+    expect(screen.getByText("Tool 授权")).toBeTruthy();
+    expect(screen.getByText("输入契约")).toBeTruthy();
+    expect(screen.getByText("执行与发布边界")).toBeTruthy();
+    expect(screen.getByText("默认治理限制")).toBeTruthy();
+    expect(screen.getByLabelText(/固定指令/)).toBeTruthy();
+    expect(screen.getByRole("checkbox", { name: /web_research/ })).toBeTruthy();
+    expect(screen.getByLabelText(/内容发布策略/)).toBeTruthy();
+    expect(screen.getByLabelText("Max steps")).toBeTruthy();
+    expect(screen.getByLabelText(/默认日运行上限/)).toBeTruthy();
+    expect(screen.getByLabelText("Max input tokens")).toBeTruthy();
+    expect(screen.getByLabelText("Max output tokens")).toBeTruthy();
+    expect(screen.getByLabelText(/默认月 Token 预算/)).toBeTruthy();
     expect(screen.getByRole("button", { name: "保存 Skill" })).toBeTruthy();
   });
 });
