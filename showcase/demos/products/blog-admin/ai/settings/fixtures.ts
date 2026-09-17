@@ -261,14 +261,38 @@ export const aiSettingsFixture: AISettingsFixture = {
   ],
   tools: [
     {
+      name: "web_research",
+      description: "读取公开来源并形成候选研究证据。",
+      surfaces: ["agent"],
+      risk: "low",
+    },
+    {
+      name: "citation_check",
+      description: "核验候选引用、时间与来源一致性。",
+      surfaces: ["agent"],
+      risk: "low",
+    },
+    {
       name: "search_posts",
       description: "按受控条件发现 Blog 文章。",
       surfaces: ["agent"],
       risk: "low",
     },
     {
+      name: "read_post",
+      description: "读取已授权文章内容与必要元数据。",
+      surfaces: ["agent"],
+      risk: "low",
+    },
+    {
       name: "query_events",
       description: "读取站点事件用于内容维护判断。",
+      surfaces: ["agent"],
+      risk: "medium",
+    },
+    {
+      name: "create_media_candidate",
+      description: "创建媒体候选与生成前 brief，不直接替换正式资源。",
       surfaces: ["agent"],
       risk: "medium",
     },
