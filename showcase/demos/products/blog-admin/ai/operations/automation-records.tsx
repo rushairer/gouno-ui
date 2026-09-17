@@ -311,7 +311,7 @@ export function AIOpsRecordsPanel({
                     type="button"
                     variant="ghost"
                     aria-pressed={selectedWorkflowRun?.id === run.id}
-                    className="flex h-auto w-full items-start justify-between gap-3 whitespace-normal rounded-none p-6 text-left"
+                    className="flex h-auto w-full items-start justify-between gap-3 whitespace-normal rounded-none p-6 text-left aria-pressed:bg-accent/30"
                     onClick={() => {
                       setSelectedWorkflowRunId(run.id);
                       onRouteChange({ record: "workflow", workflow: run.workflowId, run: run.id });
@@ -343,7 +343,7 @@ export function AIOpsRecordsPanel({
                   type="button"
                   variant="ghost"
                   aria-pressed={selectedAgentRun?.id === run.id}
-                  className="flex h-auto w-full items-start justify-between gap-3 whitespace-normal rounded-none p-6 text-left"
+                  className="flex h-auto w-full items-start justify-between gap-3 whitespace-normal rounded-none p-6 text-left aria-pressed:bg-accent/30"
                   onClick={() => {
                     setSelectedAgentRunId(run.id);
                     onRouteChange({ record: "agent", run: run.id });
