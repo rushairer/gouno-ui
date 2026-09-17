@@ -13,6 +13,7 @@ export function OpsObjectRow({
   meta,
   summary,
   signals,
+  leading,
   selected = false,
   onClick,
   ariaLabel,
@@ -22,6 +23,7 @@ export function OpsObjectRow({
   meta?: ReactNode;
   summary?: ReactNode;
   signals?: ReactNode;
+  leading?: ReactNode;
   selected?: boolean;
   onClick?: () => void;
   ariaLabel?: string;
@@ -33,30 +35,47 @@ export function OpsObjectRow({
       aria-label={ariaLabel}
       aria-pressed={selected}
       className={[
-        "h-auto items-stretch justify-start whitespace-normal rounded-none border-b px-[18px] py-4 text-left last:border-b-0",
+        "group relative h-auto items-stretch justify-start whitespace-normal rounded-none border-b border-l-2 px-4 py-4 text-left transition-colors last:border-b-0",
         "focus-visible:ring-inset",
-        selected ? "bg-primary/5 hover:bg-primary/5" : "hover:bg-muted/35",
+        selected
+          ? "border-l-primary bg-primary/[0.08] hover:bg-primary/[0.08]"
+          : "border-l-transparent hover:bg-muted/45",
       ].join(" ")}
       onClick={onClick}
     >
-      <span className="flex w-full min-w-0 flex-col gap-2">
-        <span className="flex min-w-0 items-start justify-between gap-3">
-          <strong className="min-w-0 flex-1 text-sm font-semibold leading-5 text-foreground">
-            {title}
-          </strong>
-          {status ? <span className="shrink-0 pt-px">{status}</span> : null}
-        </span>
-        {meta ? (
-          <span className="block text-xs leading-4 text-muted-foreground">{meta}</span>
-        ) : null}
-        {summary ? (
-          <span className="block text-sm leading-5 text-foreground/80">{summary}</span>
-        ) : null}
-        {signals ? (
-          <span className="flex min-w-0 flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
-            {signals}
+      <span className="flex w-full min-w-0 items-start gap-3">
+        {leading ? (
+          <span
+            className={[
+              "mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg border transition-colors",
+              selected
+                ? "border-primary/20 bg-primary/10 text-primary"
+                : "border-border bg-muted/35 text-muted-foreground group-hover:text-foreground",
+            ].join(" ")}
+            aria-hidden="true"
+          >
+            {leading}
           </span>
         ) : null}
+        <span className="flex min-w-0 flex-1 flex-col gap-1.5">
+          <span className="flex min-w-0 items-start justify-between gap-3">
+            <strong className="min-w-0 flex-1 text-sm font-semibold leading-5 text-foreground">
+              {title}
+            </strong>
+            {status ? <span className="shrink-0 pt-px">{status}</span> : null}
+          </span>
+          {meta ? (
+            <span className="block text-xs leading-4 text-muted-foreground">{meta}</span>
+          ) : null}
+          {summary ? (
+            <span className="block text-sm leading-5 text-foreground/80">{summary}</span>
+          ) : null}
+          {signals ? (
+            <span className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+              {signals}
+            </span>
+          ) : null}
+        </span>
       </span>
     </Button>
   );
