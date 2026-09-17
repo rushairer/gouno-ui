@@ -197,11 +197,6 @@ export function BlogAdminAIOperationsDemo({
     setNotice(null);
   };
 
-  const backToWorkflowList = () => {
-    setRoute((current) => ({ ...current, tab: "automation", record: "workflow", workflow: undefined, run: undefined }));
-    setNotice(null);
-  };
-
   const openRecords = (target: AIOpsRecordsTarget) => {
     setRoute({
       tab: "records",
@@ -362,8 +357,8 @@ export function BlogAdminAIOperationsDemo({
   ] as const;
 
   const selectedWorkflow = route.workflow
-    ? automationRecordsFixture.workflows.find((item) => item.id === route.workflow) ?? null
-    : null;
+    ? automationRecordsFixture.workflows.find((item) => item.id === route.workflow) ?? automationRecordsFixture.workflows[0] ?? null
+    : automationRecordsFixture.workflows[0] ?? null;
   const recordsFixture = route.record === "workflow" && route.workflow
     ? {
         ...automationRecordsFixture,
@@ -396,13 +391,14 @@ export function BlogAdminAIOperationsDemo({
     content = (
       <AutomationManagement
         workflows={automationRecordsFixture.workflows}
-        selectedWorkflowId={route.workflow}
+        workflowRuns={automationRecordsFixture.workflowRuns}
+        selectedWorkflowId={selectedWorkflow?.id}
         onSave={saveWorkflow}
         onDelete={deleteWorkflow}
         onToggle={toggleWorkflow}
         onSelect={selectWorkflow}
-        onBack={backToWorkflowList}
         onOpenRecords={(workflow) => openRecords({ record: "workflow", workflow: workflow.id })}
+        onOpenRun={(run) => openRecords({ record: "workflow", workflow: run.workflowId, run: run.id })}
         detailContent={selectedWorkflow ? (
           <WorkflowExecutionPanel
             workflow={selectedWorkflow}
