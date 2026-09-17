@@ -280,8 +280,8 @@ test("blog-admin-ai-settings-skill-editor-visual-evidence", async ({ page }, tes
   await page.getByRole("tab", { name: "Skills" }).click();
   await page.getByRole("button", { name: "编辑" }).first().click();
   await expect(page.getByRole("heading", { level: 2, name: /编辑 Skill/ })).toBeVisible();
-  await expect(page.getByText("Tool 授权")).toBeVisible();
-  await expect(page.getByText("默认治理限制")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Tool 授权" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "默认治理限制" })).toBeVisible();
   await expectNoHorizontalDocumentOverflow(page);
   await page.screenshot({
     path: testInfo.outputPath("blog-admin-ai-settings-skill-editor-desktop.png"),
