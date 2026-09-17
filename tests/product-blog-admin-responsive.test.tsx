@@ -5,6 +5,26 @@ import { aiOpsAutomationRecordsFixture } from "../showcase/demos/products/blog-a
 
 afterEach(cleanup);
 
+  it("keeps Workflow navigation height content-driven instead of capped by a magic max-height", () => {
+    render(
+      <AutomationManagement
+        workflows={aiOpsAutomationRecordsFixture.workflows}
+        onSave={() => {}}
+        onDelete={() => {}}
+        onToggle={() => {}}
+      />,
+    );
+
+    const list = screen.getByRole("list", { name: "Workflow 列表" });
+    const rail = list.closest('[data-slot="ops-rail"]');
+    expect(rail).toBeTruthy();
+    expect(rail?.className).toContain("flex");
+    expect(rail?.className).toContain("min-h-0");
+    expect(list.className).toContain("flex-1");
+    expect(list.className).toContain("overflow-y-auto");
+    expect(list.className).not.toContain("max-h-[");
+  });
+
 describe("Blog Admin responsive product structure", () => {
   it("allows Workflow management actions to wrap inside narrow cards", () => {
     const { container } = render(

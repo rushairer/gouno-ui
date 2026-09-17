@@ -83,6 +83,27 @@ for (const workflow of workflows) {
   );
 }
 
+const aiOpsAdaptiveRailFiles = [
+  "showcase/demos/products/blog-admin/ai/operations/automation-management.tsx",
+  "showcase/demos/products/blog-admin/ai/operations/overview-inbox.tsx",
+  "showcase/demos/products/blog-admin/ai/operations/automation-records.tsx",
+];
+for (const path of aiOpsAdaptiveRailFiles) {
+  const text = await source(path);
+  if (/max-h-\[(?:42|44|46|48|56)rem\]/.test(text)) {
+    failures.push(
+      `${path}: AI Operations master-detail rails must be content-driven; fixed rem max-height is forbidden`,
+    );
+  }
+  for (const marker of ['data-slot="ops-rail"', 'data-slot="ops-rail-body"']) {
+    requireText(
+      text,
+      marker,
+      `${path}: missing adaptive master-detail rail marker ${marker}`,
+    );
+  }
+}
+
 const goldenWorkflowPath = ".github/workflows/canonical-visual-golden.yml";
 const goldenWorkflowSource = await source(goldenWorkflowPath);
 const goldenWorkflowMarkers = [
@@ -127,6 +148,13 @@ const expectedGoldenBaselines = [
   "blog-admin-posts-desktop-light.png",
   "blog-admin-posts-mobile-light.png",
   "blog-admin-post-editor-desktop-light.png",
+  "blog-admin-ai-operations-overview-desktop-light.png",
+  "blog-admin-ai-operations-inbox-desktop-light.png",
+  "blog-admin-ai-operations-workflow-list-desktop-light.png",
+  "blog-admin-ai-operations-workflow-detail-desktop-light.png",
+  "blog-admin-ai-operations-workflow-detail-mobile-light.png",
+  "blog-admin-ai-operations-workflow-editor-desktop-light.png",
+  "blog-admin-ai-operations-run-center-desktop-light.png",
   "gosso-overview-desktop-light.png",
   "gosso-system-clients-desktop-light.png",
   "gosso-site-settings-desktop-light.png",

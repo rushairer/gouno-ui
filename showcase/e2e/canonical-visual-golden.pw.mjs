@@ -200,6 +200,12 @@ test("blog-admin-ai-operations-overview-visual-evidence", async ({ page }, testI
     animations: "disabled",
     caret: "hide",
   });
+  await expect(page).toHaveScreenshot("blog-admin-ai-operations-overview-desktop-light.png", {
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+    maxDiffPixelRatio: 0.002,
+  });
 });
 
 test("blog-admin-ai-operations-inbox-visual-evidence", async ({ page }, testInfo) => {
@@ -221,6 +227,12 @@ test("blog-admin-ai-operations-inbox-visual-evidence", async ({ page }, testInfo
     animations: "disabled",
     caret: "hide",
   });
+  await expect(page).toHaveScreenshot("blog-admin-ai-operations-inbox-desktop-light.png", {
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+    maxDiffPixelRatio: 0.002,
+  });
 });
 
 test("blog-admin-ai-operations-workflow-list-visual-evidence", async ({ page }, testInfo) => {
@@ -241,6 +253,12 @@ test("blog-admin-ai-operations-workflow-list-visual-evidence", async ({ page }, 
     fullPage: true,
     animations: "disabled",
     caret: "hide",
+  });
+  await expect(page).toHaveScreenshot("blog-admin-ai-operations-workflow-list-desktop-light.png", {
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+    maxDiffPixelRatio: 0.002,
   });
 });
 
@@ -265,6 +283,12 @@ test("blog-admin-ai-operations-workflow-detail-visual-evidence", async ({ page }
     animations: "disabled",
     caret: "hide",
   });
+  await expect(page).toHaveScreenshot("blog-admin-ai-operations-workflow-detail-desktop-light.png", {
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+    maxDiffPixelRatio: 0.002,
+  });
 });
 
 test("blog-admin-ai-operations-workflow-detail-mobile-evidence", async ({ page }, testInfo) => {
@@ -285,6 +309,42 @@ test("blog-admin-ai-operations-workflow-detail-mobile-evidence", async ({ page }
     fullPage: true,
     animations: "disabled",
     caret: "hide",
+  });
+  await expect(page).toHaveScreenshot("blog-admin-ai-operations-workflow-detail-mobile-light.png", {
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+    maxDiffPixelRatio: 0.002,
+  });
+});
+
+test("blog-admin-ai-operations-workflow-editor-visual-golden", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-ai-operations",
+    viewport: desktop,
+    ready: '[role="tablist"]',
+  });
+
+  await page.getByRole("tab", { name: "自动化" }).click();
+  await page.getByRole("button", { name: "打开 Workflow：旧文维护" }).click();
+  await page.getByRole("button", { name: "编辑", exact: true }).click();
+  await expect(page.getByText("基础信息", { exact: true })).toBeVisible();
+  await expect(page.getByText("运行输入契约", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "保存 Workflow" })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+  await page.screenshot({
+    path: testInfo.outputPath("blog-admin-ai-operations-workflow-editor-desktop.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+  await expect(page).toHaveScreenshot("blog-admin-ai-operations-workflow-editor-desktop-light.png", {
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+    maxDiffPixelRatio: 0.002,
   });
 });
 
@@ -308,6 +368,12 @@ test("blog-admin-ai-operations-run-center-visual-evidence", async ({ page }, tes
     fullPage: true,
     animations: "disabled",
     caret: "hide",
+  });
+  await expect(page).toHaveScreenshot("blog-admin-ai-operations-run-center-desktop-light.png", {
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+    maxDiffPixelRatio: 0.002,
   });
 });
 
