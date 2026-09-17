@@ -18,12 +18,11 @@ describe("Blog Admin responsive product structure", () => {
 
     const actions = container.querySelector('[data-slot="workflow-management-actions"]');
     expect(actions).toBeTruthy();
-    expect(actions?.className).toContain("w-full");
     expect(actions?.className).toContain("flex-wrap");
-    expect(actions?.className).toContain("lg:w-auto");
     expect(actions?.className).not.toContain("min-w-max");
     expect(screen.getByRole("button", { name: "编辑" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "停用" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "删除" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "更多 Workflow 操作" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "停用" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "删除" })).toBeNull();
   });
 });
