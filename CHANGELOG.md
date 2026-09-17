@@ -4,6 +4,15 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.4.3] - 2026-09-17
+
+### Added
+- Document editor patterns for canonical Showcase-to-product adoption: `DocumentEditorShell`, `MarkdownEditor`, `AISuggestionPicker` and `AISuggestionReview`.
+- Responsive Markdown authoring with edit, split and preview modes, adaptive formatting tools, and icon-only AI regeneration actions.
+
+### Changed
+- Standardized AI suggestion selection and multi-field review semantics so users explicitly choose suggestions before applying them.
+
 ## [0.4.2] - 2026-09-16
 
 ### Fixed
