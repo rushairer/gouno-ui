@@ -306,17 +306,17 @@ export function AIOpsRecordsPanel({
                     type="button"
                     variant="ghost"
                     aria-pressed={selectedWorkflowRun?.id === run.id}
-                    className="flex w-full items-start justify-between gap-3 rounded-none p-6 text-left"
+                    className="flex h-auto w-full items-start justify-between gap-3 whitespace-normal rounded-none p-6 text-left"
                     onClick={() => {
                       setSelectedWorkflowRunId(run.id);
                       onRouteChange({ record: "workflow", workflow: run.workflowId, run: run.id });
                     }}
                   >
                     <div className="min-w-0">
-                      <strong className="text-sm">Run #{run.id}</strong>
+                      <strong className="block text-sm">Run #{run.id}</strong>
                       <Text size="xs" tone="muted">{run.workflowName} · {run.startedAt}</Text>
                     </div>
-                    <div className="flex flex-col items-end gap-1">
+                    <div className="flex shrink-0 flex-col items-end gap-1">
                       <RunStatus status={run.status} />
                       {run.dryRun ? <Tag>Dry-run</Tag> : null}
                     </div>
@@ -338,14 +338,14 @@ export function AIOpsRecordsPanel({
                   type="button"
                   variant="ghost"
                   aria-pressed={selectedAgentRun?.id === run.id}
-                  className="flex w-full items-start justify-between gap-3 rounded-none p-6 text-left"
+                  className="flex h-auto w-full items-start justify-between gap-3 whitespace-normal rounded-none p-6 text-left"
                   onClick={() => {
                     setSelectedAgentRunId(run.id);
                     onRouteChange({ record: "agent", run: run.id });
                   }}
                 >
                   <div className="min-w-0">
-                    <strong className="text-sm">Run #{run.id}</strong>
+                    <strong className="block text-sm">Run #{run.id}</strong>
                     <Text size="xs" tone="muted">{run.agentName} · {run.startedAt}</Text>
                   </div>
                   <RunStatus status={run.status} />
