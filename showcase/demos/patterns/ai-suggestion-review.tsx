@@ -26,6 +26,8 @@ const itemApi: ApiRow[] = [
 ];
 
 export function PatternAISuggestionReviewDemo() {
+  const exampleCode = canonicalExampleSource(AISuggestionReviewExampleSource);
+
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
@@ -44,7 +46,7 @@ export function PatternAISuggestionReviewDemo() {
       <DemoSection
         title="多字段建议先审阅再提交"
         description="Preview 与 Code 使用同一份示例源码。取消某些建议后，确认动作会实时反映最终应用数量。"
-        code={canonicalExampleSource(AISuggestionReviewExampleSource)}
+        code={exampleCode}
       >
         <AISuggestionReviewExample />
       </DemoSection>
@@ -52,6 +54,7 @@ export function PatternAISuggestionReviewDemo() {
       <DemoSection
         title="窄容器行为"
         description="重新生成始终保持 32×32 icon-only；Header 为内容区 + 固定操作区，说明文字可以换行，底部按钮在空间不足时按按钮粒度换行。"
+        code={exampleCode}
       >
         <div className="max-w-72">
           <AISuggestionReviewExample />
