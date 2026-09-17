@@ -268,6 +268,34 @@ test("blog-admin-ai-operations-run-center-visual-evidence", async ({ page }, tes
   });
 });
 
+test("blog-admin-ai-operations-failed-run-visual-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-ai-operations",
+    viewport: desktop,
+    ready: '[role="tablist"]',
+  });
+
+  await page.getByRole("button", { name: "打开 Fixture 控制" }).click();
+  await page.getByRole("radio", { name: "运行失败" }).click();
+  await page.keyboard.press("Escape");
+  await page.getByRole("tab", { name: "自动化" }).click();
+  await page.getByRole("button", { name: "进入详情 / 运行" }).first().click();
+  await page.getByRole("button", { name: "运行" }).click();
+  await expect(page.getByText(/运行失败（Run #/)).toBeVisible();
+  await page.getByRole("button", { name: /查看 Run #/ }).click();
+  await expect(page.getByRole("heading", { level: 3, name: /Run #/ })).toBeVisible();
+  await expect(page.getByRole("alert")).toContainText("运行失败");
+  await expectNoHorizontalDocumentOverflow(page);
+  await page.screenshot({
+    path: testInfo.outputPath("blog-admin-ai-operations-failed-run-desktop.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
 test("blog-admin-ai-settings-skill-editor-visual-evidence", async ({ page }, testInfo) => {
   await prepareLightFixture(page, {
     workspace: "blog-admin",
@@ -281,10 +309,19 @@ test("blog-admin-ai-settings-skill-editor-visual-evidence", async ({ page }, tes
   await page.getByRole("button", { name: "编辑" }).first().click();
   await expect(page.getByRole("heading", { level: 2, name: /编辑 Skill/ })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Tool 授权" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "默认治理限制" })).toBeVisible();
+  const governanceHeading = page.getByRole("heading", { name: "默认治理限制" });
+  await expect(governanceHeading).toBeVisible();
   await expectNoHorizontalDocumentOverflow(page);
   await page.screenshot({
     path: testInfo.outputPath("blog-admin-ai-settings-skill-editor-desktop.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await governanceHeading.scrollIntoViewIfNeeded();
+  await page.screenshot({
+    path: testInfo.outputPath("blog-admin-ai-settings-skill-governance-desktop.png"),
     fullPage: true,
     animations: "disabled",
     caret: "hide",
