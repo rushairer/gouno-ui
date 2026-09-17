@@ -20,7 +20,7 @@ A formal layer may depend on itself or a lower layer, never a higher layer.
 
 - `core` owns product-agnostic controls, layout, data entry, navigation, display, feedback and overlay APIs.
 - `theme` owns theme state, persistence and theme controls.
-- `patterns` owns only admitted reusable compound interactions. Current canonical runtime surface: `BulkActionBar`, `DocumentEditorShell` and `MarkdownEditor`.
+- `patterns` owns only admitted reusable compound interactions. Current canonical runtime surface: `BulkActionBar`, `DocumentEditorShell`, `MarkdownEditor`, `AISuggestionPicker` and `AISuggestionReview`.
 - `gouno` owns admitted Gouno product-family structure/policy. Current canonical runtime surface: `AppShell`, `PageContainer`, `PageHeader`, `NavigationGroup`, `navigationItemClass`.
 - `components/primitives` and `lib` are implementation foundations, not public package domains.
 

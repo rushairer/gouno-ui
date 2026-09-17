@@ -71,6 +71,7 @@ import {
   SquareCheckBig,
   SquareStack,
   Stamp,
+  Sparkles,
   Star,
   StretchHorizontal,
   Table2,
@@ -217,6 +218,8 @@ export const showcaseCatalog: ShowcaseGroup[] = [
   ]},
   { workspace: "gouno-ui", layer: "patterns", group: "Admitted Patterns 已认证模式", items: [
     item("pattern-bulk-action-bar", "BulkActionBar", "批量操作栏", 100, <ListChecks />),
+    item("pattern-ai-suggestion-picker", "AISuggestionPicker", "AI 候选选择器", 100, <Sparkles />),
+    item("pattern-ai-suggestion-review", "AISuggestionReview", "AI 建议审阅器", 100, <SquareCheckBig />),
     item("pattern-markdown-editor", "MarkdownEditor", "Markdown 编辑器", 100, <FileText />),
   ]},
   { workspace: "gouno-ui", layer: "gouno", group: "Application Structure 应用结构", items: [

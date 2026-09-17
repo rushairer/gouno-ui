@@ -78,6 +78,8 @@ const completedComponents = new Set([
   "core-tree",
   "theme-system",
   "pattern-bulk-action-bar",
+  "pattern-ai-suggestion-picker",
+  "pattern-ai-suggestion-review",
   "pattern-markdown-editor",
   "gouno-app-shell",
   "gouno-page-container",
@@ -115,6 +117,18 @@ componentReviews["gouno-page-skeleton"] = {
   scope: "PD-076: initial-loading page data-region skeleton layouts validated across completed Gosso Admin and Blog corpora.",
   evidence: ["docs/page-skeleton.md", "tests/gouno-page-skeleton.test.tsx"],
   baseline: "PD-076 / 2026-09-14",
+};
+componentReviews["pattern-ai-suggestion-picker"] = {
+  status: "reviewed",
+  scope: "Single-field AI candidate selection with explicit radio semantics, optional regenerate/dismiss controls and one apply action.",
+  evidence: ["showcase/demos/patterns/ai-suggestion-picker.tsx", "tests/pattern-ai-suggestions.test.tsx"],
+  baseline: "2026-09-17",
+};
+componentReviews["pattern-ai-suggestion-review"] = {
+  status: "reviewed",
+  scope: "Related-field AI change review with explicit checkbox selection and one counted apply action.",
+  evidence: ["showcase/demos/patterns/ai-suggestion-review.tsx", "tests/pattern-ai-suggestions.test.tsx"],
+  baseline: "2026-09-17",
 };
 componentReviews["pattern-markdown-editor"] = {
   status: "reviewed",
