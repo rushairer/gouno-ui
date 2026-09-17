@@ -404,10 +404,12 @@ export function AutomationManagement({
             {recentRuns.length ? (
               <div className="divide-y">
                 {recentRuns.map((run) => (
-                  <button
+                  <Button
                     key={run.id}
                     type="button"
-                    className="grid w-full min-w-0 gap-3 px-5 py-3.5 text-left transition-colors hover:bg-muted/35 sm:grid-cols-[7rem_7rem_minmax(7rem,0.7fr)_6rem_minmax(0,1.5fr)] sm:items-center"
+                    variant="ghost"
+                    block
+                    className="grid h-auto w-full min-w-0 grid-cols-1 gap-3 whitespace-normal rounded-none px-5 py-3.5 text-left font-normal transition-colors hover:bg-muted/35 sm:grid-cols-[7rem_7rem_minmax(7rem,0.7fr)_6rem_minmax(0,1.5fr)] sm:items-center"
                     onClick={() => onOpenRun?.(run)}
                     aria-label={`查看 Run #${run.id}`}
                   >
@@ -416,10 +418,10 @@ export function AutomationManagement({
                     <Text size="xs" tone="muted">{run.startedAt}</Text>
                     <Text size="xs" tone="muted">{runDuration(run)}</Text>
                     <span className="min-w-0">
-                      <Text size="sm" className="truncate">{run.errorMessage || run.outputSummary || run.steps.at(-1)?.detail || "运行证据已记录"}</Text>
+                      <Text size="sm" className="truncate">{run.errorMessage || run.outputSummary || run.steps[run.steps.length - 1]?.detail || "运行证据已记录"}</Text>
                       <Text size="xs" tone="muted" className="mt-0.5">{run.tokenUsage.toLocaleString()} Token{run.dryRun ? " · Dry-run" : ""}</Text>
                     </span>
-                  </button>
+                  </Button>
                 ))}
               </div>
             ) : (
