@@ -30,6 +30,7 @@ const stepTypeLabels: Record<WorkflowStepFixture["type"], string> = {
   model: "Agent 模型步骤",
   for_each: "逐项处理",
   approval_gate: "人工审批",
+  human_interaction: "人工交互",
   output: "输出",
 };
 
@@ -141,6 +142,7 @@ export function WorkflowEditor({
         ...(newStepType === "model" ? { agent: "", detail: "包含受控上下文" } : {}),
         ...(newStepType === "resource_query" ? { detail: "post · max 20" } : {}),
         ...(newStepType === "approval_gate" ? { detail: "需要人工确认后继续" } : {}),
+        ...(newStepType === "human_interaction" ? { detail: "等待人工选择、输入或确认后继续" } : {}),
         ...(newStepType === "output" ? { detail: "/steps" } : {}),
       };
       return newStepType === "resource_query"
@@ -183,10 +185,13 @@ export function WorkflowEditor({
           scopeMode,
           discoveryTools,
           resourceQueryEmptyPolicy,
+          resourceQueryLastCount: initial?.resourceQueryLastCount,
+          resourceQueryLastRunAt: initial?.resourceQueryLastRunAt,
           inputFields: inputFields.map((field) => ({ ...field })),
           steps: steps.map((step) => ({ ...step })),
           input: { topic, days: Number.isFinite(daysValue) && daysValue > 0 ? daysValue : 1 },
           metrics: initial?.metrics ?? { runs: 0, failures: 0, tokens: 0 },
+          latestRun: initial?.latestRun ? { ...initial.latestRun } : undefined,
           versions: [
             { version: currentVersion, createdAt: "刚刚", note: initial ? "编辑保存" : "创建 Workflow" },
             ...(initial?.versions ?? []),
