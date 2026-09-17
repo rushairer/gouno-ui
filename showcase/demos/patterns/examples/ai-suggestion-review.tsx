@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Text } from "../../../../src/core";
+import { Button, Text } from "../../../../src/core";
 import { AISuggestionReview, type AISuggestionReviewItem } from "../../../../src/patterns";
 
 const suggestions: readonly AISuggestionReviewItem[] = [
@@ -21,16 +21,14 @@ export default function AISuggestionReviewExample() {
   if (!visible) {
     return (
       <div className="flex min-h-48 items-center justify-center rounded-lg border border-dashed bg-muted/10">
-        <button
-          type="button"
-          className="rounded-md border px-3 py-2 text-sm font-medium"
+        <Button
           onClick={() => {
             setSelectedKeys(suggestions.map((item) => item.key));
             setVisible(true);
           }}
         >
           重新打开 AI 建议
-        </button>
+        </Button>
       </div>
     );
   }
