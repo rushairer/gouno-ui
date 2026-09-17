@@ -1,0 +1,69 @@
+name: AI Ops Run Center Recovery Once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/ai-ops-run-center-recovery-once.yml"
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: Normalize Agent Run Center selectors
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('showcase/demos/products/blog-admin/ai/operations/automation-records.tsx')
+          text = path.read_text()
+          changes = [
+            ('<div className="grid gap-6 xl:grid-cols-[19rem_minmax(0,1fr)]">', '<div data-slot="ops-master-detail" className="grid min-w-0 items-stretch gap-6 xl:grid-cols-[19rem_minmax(0,1fr)]">'),
+            ('<section className="overflow-hidden rounded-lg border bg-background" aria-label="Agent Runs">', '<section data-slot="ops-rail" className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-lg border bg-background" aria-label="Agent Runs">'),
+            ('<div>{fixture.agentRuns.map((run) => (', '<div data-slot="ops-rail-body" className="min-h-0 flex-1 overflow-y-auto overscroll-contain">{fixture.agentRuns.map((run) => ('),
+          ]
+          for old, new in changes:
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'expected one occurrence of {old!r}, found {count}')
+              text = text.replace(old, new, 1)
+          path.write_text(text)
+          PY
+          npx prettier --write showcase/demos/products/blog-admin/ai/operations/automation-records.tsx
+      - name: Verify canonical source
+        run: |
+          npm run typecheck
+          npx vitest run tests/product-blog-admin-ai-operations-automation-records.test.tsx tests/product-blog-admin-ai-operations-panel-lead.test.ts
+          npm run showcase:build
+      - name: Commit and retire helpers
+        shell: bash
+        run: |
+          git rm .github/workflows/ai-ops-run-center-hardening-once.yml
+          git rm .github/workflows/ai-ops-run-center-recovery-once.yml
+          git add showcase/demos/products/blog-admin/ai/operations/automation-records.tsx
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "fix(ai-ops): canonicalize agent run center anatomy"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+      - name: Re-run permanent gates
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run ci.yml --ref main
+          gh workflow run blog-consumer-parity.yml --ref main
+          gh workflow run canonical-visual-golden.yml --ref main
+          gh workflow run showcase-pages.yml --ref main
