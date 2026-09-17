@@ -1,18 +1,19 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { AIOpsAutomationPanel, AIOpsRecordsPanel } from "../showcase/demos/products/blog-admin/ai/operations/automation-records";
+import { AIOpsRecordsPanel } from "../showcase/demos/products/blog-admin/ai/operations/automation-records";
 import { aiOpsAutomationRecordsFixture } from "../showcase/demos/products/blog-admin/ai/operations/automation-records-fixtures";
 import { WorkflowEditor } from "../showcase/demos/products/blog-admin/ai/operations/workflow-editor";
+import { WorkflowExecutionPanel } from "../showcase/demos/products/blog-admin/ai/operations/workflow-execution";
 import { AISettingsEditor } from "../showcase/demos/products/blog-admin/ai/settings/editors";
 import { aiSettingsFixture } from "../showcase/demos/products/blog-admin/ai/settings/fixtures";
 
 afterEach(cleanup);
 
 describe("Blog Admin AI canonical redesign contract", () => {
-  it("keeps automation centered on one selected workflow with execution context and evidence access", () => {
+  it("keeps execution centered on one selected Workflow with context and evidence access", () => {
     render(
-      <AIOpsAutomationPanel
-        fixture={aiOpsAutomationRecordsFixture}
+      <WorkflowExecutionPanel
+        workflow={aiOpsAutomationRecordsFixture.workflows[0]}
         onPreflight={vi.fn().mockResolvedValue({ ready: true })}
         onRun={vi.fn().mockResolvedValue({ id: 246, status: "succeeded" })}
         onRollback={vi.fn()}
@@ -20,12 +21,12 @@ describe("Blog Admin AI canonical redesign contract", () => {
       />,
     );
 
-    expect(screen.getByRole("heading", { level: 2, name: "旧文维护" })).toBeTruthy();
+    expect(screen.getByText("运行当前 Workflow")).toBeTruthy();
     expect(screen.getByText("本次运行输入")).toBeTruthy();
     expect(screen.getByText("运行范围")).toBeTruthy();
-    expect(screen.getByRole("button", { name: "运行记录" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Dry-run" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "运行" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "回滚到 v3" })).toBeTruthy();
   });
 
   it("keeps Workflow input contract, ordered definition and run boundary visible while editing", () => {
