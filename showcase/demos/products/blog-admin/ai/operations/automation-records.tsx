@@ -287,7 +287,12 @@ export function AIOpsRecordsPanel({
                 <option key={workflow.id} value={workflow.id}>{workflow.name}</option>
               ))}
             </Select>
-            <Select aria-label="按状态筛选 Workflow 运行" value={status} onChange={(value) => setStatus(String(value))}>
+            <Select
+              aria-label="按状态筛选 Workflow 运行"
+              placeholder="全部状态"
+              value={status}
+              onChange={(value) => setStatus(String(value))}
+            >
               <option value="">全部状态</option>
               <option value="succeeded">成功</option>
               <option value="failed">失败</option>
