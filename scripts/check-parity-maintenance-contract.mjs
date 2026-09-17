@@ -81,6 +81,37 @@ for (const workflow of workflows) {
     workflow.evidence,
     `${workflow.path}: paired parity evidence artifact contract changed or was removed`,
   );
+  if (workflow.name === "Blog Consumer Parity") {
+    requireText(
+      workflowSource,
+      "Verify Gouno UI-owned AI Operations consumer contract",
+      `${workflow.path}: missing Gouno UI-owned AI Operations consumer contract step`,
+    );
+    requireText(
+      workflowSource,
+      "node scripts/check-blog-ai-ops-consumer-parity.mjs",
+      `${workflow.path}: missing AI Operations consumer contract command`,
+    );
+  }
+}
+
+const blogAiOpsConsumerContractPath =
+  "scripts/check-blog-ai-ops-consumer-parity.mjs";
+const blogAiOpsConsumerContract = await source(blogAiOpsConsumerContractPath);
+for (const marker of [
+  'data-pattern="tab-panel-lead"',
+  "OperationsPanelLead",
+  "sm:grid-cols-[7rem_7rem_minmax(7rem,0.7fr)_6rem_minmax(0,1.5fr)]",
+  "[&>span]:contents",
+  "xl:grid-cols-[19rem_minmax(0,1fr)]",
+  "AI Operations top-level panels, Recent Runs and Run Center match Showcase",
+  "installAiFixtures",
+]) {
+  requireText(
+    blogAiOpsConsumerContract,
+    marker,
+    `${blogAiOpsConsumerContractPath}: missing consumer-owned AI Operations parity marker ${marker}`,
+  );
 }
 
 const aiOpsAdaptiveRailFiles = [
