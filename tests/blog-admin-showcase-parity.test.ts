@@ -180,12 +180,13 @@ describe("Blog Admin Showcase parity contract", () => {
     expect(violations).toEqual([]);
   });
 
-  it("keeps every PostEditor and PageEditor AI suggestion surface retryable", () => {
+  it("keeps every Blog Admin inline AI suggestion surface retryable", () => {
     const violations: string[] = [];
-    for (const name of ["post-editor.tsx", "page-editor.tsx"]) {
-      const filePath = resolve(blogAdminRoot, name);
+
+    for (const filePath of applicationFiles) {
       const source = readFileSync(filePath, "utf8");
       const file = sourceFile(filePath, source);
+      const displayPath = relative(repoRoot, filePath).replaceAll("\\", "/");
 
       function visit(node: ts.Node) {
         if (ts.isJsxElement(node) || ts.isJsxSelfClosingElement(node)) {
@@ -196,7 +197,7 @@ describe("Blog Admin Showcase parity contract", () => {
           ) {
             const line =
               file.getLineAndCharacterOfPosition(node.getStart(file)).line + 1;
-            violations.push(`${name}:${line} ${tag} missing onRegenerate`);
+            violations.push(`${displayPath}:${line} ${tag} missing onRegenerate`);
           }
         }
         ts.forEachChild(node, visit);
@@ -206,6 +207,20 @@ describe("Blog Admin Showcase parity contract", () => {
     }
 
     expect(violations).toEqual([]);
+  });
+
+  it("uses the canonical AI suggestion picker for category Slug candidates", () => {
+    const categories = readFileSync(
+      resolve(blogAdminRoot, "categories.tsx"),
+      "utf8",
+    );
+
+    expect(categories).toContain("<AISuggestionPicker");
+    expect(categories).toContain('aria-label="Slug AI 建议"');
+    expect(categories).toContain('groupLabel="Slug 候选"');
+    expect(categories).toContain("onRegenerate={regenerateSlug}");
+    expect(categories).toContain('applyLabel="使用所选 Slug"');
+    expect(categories).not.toContain('aria-label="Slug 候选">');
   });
 
   it("routes fixture notifications through canonical Notification without recreating an overlay", () => {
