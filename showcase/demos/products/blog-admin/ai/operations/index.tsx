@@ -171,6 +171,11 @@ export function BlogAdminAIOperationsDemo({
     setNotice(null);
   };
 
+  const selectWorkflow = (workflow: WorkflowFixture) => {
+    setRoute((current) => ({ ...current, tab: "automation", record: "workflow", workflow: workflow.id, run: undefined }));
+    setNotice(null);
+  };
+
   const openRecords = (target: AIOpsRecordsTarget) => {
     setRoute({
       tab: "records",
@@ -222,6 +227,7 @@ export function BlogAdminAIOperationsDemo({
         ? current.workflows.map((item) => item.id === workflow.id ? workflow : item)
         : [...current.workflows, workflow],
     }));
+    setRoute((current) => ({ ...current, workflow: workflow.id }));
     setNotice({ type: "success", text: `${workflow.name} 已保存，当前版本 v${workflow.currentVersion}。` });
   };
 
@@ -357,8 +363,11 @@ export function BlogAdminAIOperationsDemo({
           onSave={saveWorkflow}
           onDelete={deleteWorkflow}
           onToggle={toggleWorkflow}
+          onSelect={selectWorkflow}
+          onOpenRecords={(workflow) => openRecords({ record: "workflow", workflow: workflow.id })}
         />
         <AIOpsAutomationPanel
+          key={route.workflow ?? automationFixture.workflows[0]?.id ?? 0}
           fixture={automationFixture}
           onPreflight={async () => ({ ready: true })}
           onRun={async (workflowId, dryRun) => runWorkflow(workflowId, dryRun)}
