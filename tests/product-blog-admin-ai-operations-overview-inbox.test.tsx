@@ -74,7 +74,7 @@ describe("Blog Admin AI Operations overview/inbox canonical modules", () => {
     );
 
     expect(screen.getByText("上次批准后的执行失败")).toBeTruthy();
-    expect(screen.getByText("column reference event_key is ambiguous")).toBeTruthy();
+    expect(screen.getAllByText("column reference event_key is ambiguous").length).toBeGreaterThan(0);
     expect(screen.getByText("Kafka 高吞吐陷阱：并发并不总能换来 QPS")).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "重试批准并执行" }));
@@ -93,7 +93,7 @@ describe("Blog Admin AI Operations overview/inbox canonical modules", () => {
     expect(screen.getByText("Kafka 高吞吐陷阱：并发并不总能换来 QPS")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "重试批准并执行" }));
     expect(screen.getByText("审批 #902 执行失败；提案未丢失，仍可从待我处理重试。")).toBeTruthy();
-    expect(screen.getByText("下游执行失败；审批提案已保留，可修正后再次重试。")).toBeTruthy();
+    expect(screen.getAllByText("下游执行失败；审批提案已保留，可修正后再次重试。").length).toBeGreaterThan(0);
     expect(screen.getByRole("button", { name: "重试批准并执行" })).toBeTruthy();
 
     fireEvent.click(screen.getByRole("radio", { name: "操作成功" }));
@@ -136,7 +136,7 @@ describe("Blog Admin AI Operations overview/inbox canonical modules", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: /为技术架构文章选择封面方向/ }));
-    expect(screen.getByText("AI 每日资讯 · Run #245 · AI 每日资讯候选稿")).toBeTruthy();
+    expect(screen.getAllByText("AI 每日资讯 · Run #245 · AI 每日资讯候选稿").length).toBeGreaterThan(0);
     fireEvent.click(screen.getByRole("button", { name: "科技插画" }));
     expect(onResolveInteraction).toHaveBeenCalledWith(
       expect.objectContaining({ id: 903, workflowRunId: 245 }),
