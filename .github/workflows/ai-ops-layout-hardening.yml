@@ -1,0 +1,85 @@
+name: One-shot AI Ops Layout Hardening
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/scripts/harden-ai-ops-layout.mjs"
+      - ".github/workflows/ai-ops-layout-hardening.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: one-shot-ai-ops-layout-hardening
+  cancel-in-progress: false
+
+jobs:
+  harden:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Apply canonical AI Operations hardening
+        run: node .github/scripts/harden-ai-ops-layout.mjs
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install isolated Playwright runtime
+        run: |
+          PLAYWRIGHT_VERSION=1.55.0
+          npm install --no-save --ignore-scripts @playwright/test@${PLAYWRIGHT_VERSION}
+          npx playwright install --with-deps chromium
+          git restore package.json package-lock.json
+
+      - name: Generate accepted AI Operations visual baselines
+        run: >-
+          npx playwright test
+          --config=showcase/e2e/canonical-visual-golden.config.mjs
+          --grep "blog-admin-ai-operations-(overview|inbox|workflow-list|workflow-detail|workflow-editor|run-center)"
+          --update-snapshots
+
+      - name: Verify package and canonical contracts
+        run: npm run verify
+
+      - name: Verify accepted AI Operations visual baselines read-only
+        run: >-
+          npx playwright test
+          --config=showcase/e2e/canonical-visual-golden.config.mjs
+          --grep "blog-admin-ai-operations-(overview|inbox|workflow-list|workflow-detail|workflow-editor|run-center)"
+
+      - name: Commit adaptive canonical layout
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            showcase/demos/products/blog-admin/ai/operations/automation-management.tsx \
+            showcase/demos/products/blog-admin/ai/operations/overview-inbox.tsx \
+            showcase/demos/products/blog-admin/ai/operations/automation-records.tsx \
+            showcase/demos/products/blog-admin/ai/operations/workflow-execution.tsx
+          git commit -m "fix(ai-ops): make canonical layouts adaptive"
+
+      - name: Commit permanent parity guardrails
+        run: |
+          git add \
+            tests/product-blog-admin-responsive.test.tsx \
+            showcase/e2e/canonical-visual-golden.pw.mjs \
+            showcase/e2e/canonical-visual-golden.pw.mjs-snapshots \
+            scripts/check-parity-maintenance-contract.mjs
+          git rm .github/scripts/harden-ai-ops-layout.mjs .github/workflows/ai-ops-layout-hardening.yml
+          git commit -m "test(ai-ops): lock adaptive layout and visual goldens"
+
+      - name: Push staged hardening commits
+        run: git push origin HEAD:main
