@@ -86,11 +86,24 @@ export function formatAIOpsRoute(route: AIOpsRouteState): string {
 function cloneDecisionFixture(): AIOpsDecisionFixture {
   return {
     ...aiOpsDecisionFixture,
-    approvals: aiOpsDecisionFixture.approvals.map((item) => ({ ...item, proposal: { ...item.proposal } })),
-    interactions: aiOpsDecisionFixture.interactions.map((item) => ({ ...item, options: item.options ? [...item.options] : undefined })),
+    approvals: aiOpsDecisionFixture.approvals.map((item) => ({
+      ...item,
+      proposal: {
+        ...item.proposal,
+        suggestions: item.proposal.suggestions ? [...item.proposal.suggestions] : undefined,
+      },
+      beforeSnapshot: item.beforeSnapshot ? { ...item.beforeSnapshot } : undefined,
+    })),
+    interactions: aiOpsDecisionFixture.interactions.map((item) => ({
+      ...item,
+      options: item.options ? [...item.options] : undefined,
+    })),
     operations: {
-      suggestions: aiOpsDecisionFixture.operations.suggestions.map((item) => ({ ...item })),
-      candidateSets: aiOpsDecisionFixture.operations.candidateSets.map((item) => ({ ...item })),
+      suggestions: aiOpsDecisionFixture.operations.suggestions.map((item) => ({ ...item, evidence: [...item.evidence] })),
+      candidateSets: aiOpsDecisionFixture.operations.candidateSets.map((item) => ({
+        ...item,
+        candidates: item.candidates.map((candidate) => ({ ...candidate })),
+      })),
       mediaCandidates: aiOpsDecisionFixture.operations.mediaCandidates.map((item) => ({ ...item })),
       editorialTasks: aiOpsDecisionFixture.operations.editorialTasks.map((item) => ({ ...item })),
     },
@@ -106,18 +119,23 @@ function cloneAutomationFixture(): AIOpsAutomationRecordsFixture {
       steps: workflow.steps.map((step) => ({ ...step })),
       input: { ...workflow.input },
       metrics: { ...workflow.metrics },
+      latestRun: workflow.latestRun ? { ...workflow.latestRun } : undefined,
       versions: workflow.versions.map((version) => ({ ...version })),
     })),
     workflowRuns: aiOpsAutomationRecordsFixture.workflowRuns.map((run) => ({
       ...run,
       steps: run.steps.map((step) => ({ ...step })),
       resources: run.resources.map((resource) => ({ ...resource })),
-      interactions: run.interactions.map((interaction) => ({ ...interaction })),
+      interactions: run.interactions.map((interaction) => ({
+        ...interaction,
+        options: interaction.options ? [...interaction.options] : undefined,
+      })),
       events: run.events.map((event) => ({ ...event })),
       mediaCandidates: run.mediaCandidates.map((candidate) => ({ ...candidate })),
     })),
     agentRuns: aiOpsAutomationRecordsFixture.agentRuns.map((run) => ({
       ...run,
+      citations: run.citations?.map((citation) => ({ ...citation })),
       toolCalls: run.toolCalls.map((call) => ({ ...call })),
     })),
   };
@@ -125,22 +143,23 @@ function cloneAutomationFixture(): AIOpsAutomationRecordsFixture {
 
 function pendingDecisionCount(fixture: AIOpsDecisionFixture) {
   return (
+    fixture.interactions.length +
     fixture.approvals.filter((item) => item.status === "pending" || item.status === "failed").length +
     fixture.operations.suggestions.filter((item) => item.status === "new").length +
     fixture.operations.candidateSets.filter((item) => item.status === "pending").length +
-    fixture.operations.mediaCandidates.filter((item) => item.status === "ready_to_generate").length
+    fixture.operations.mediaCandidates.filter((item) => ["brief_ready", "ready_to_generate", "failed"].includes(item.status)).length +
+    fixture.operations.editorialTasks.filter((item) => item.status === "open").length
   );
 }
 
 function LoadingSurface() {
   return (
     <div className="flex flex-col gap-6" aria-label="AI 运营加载中">
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card padding="base"><Skeleton className="h-20 w-full" /></Card>
-        <Card padding="base"><Skeleton className="h-20 w-full" /></Card>
-        <Card padding="base"><Skeleton className="h-20 w-full" /></Card>
+      <div className="border-y py-4"><Skeleton className="h-16 w-full" /></div>
+      <div className="grid gap-6 xl:grid-cols-[19rem_minmax(0,1fr)]">
+        <Card padding="base"><Skeleton className="h-80 w-full" /></Card>
+        <Card padding="base"><Skeleton className="h-80 w-full" /></Card>
       </div>
-      <Card padding="base"><Skeleton className="h-64 w-full" /></Card>
     </div>
   );
 }
@@ -253,7 +272,11 @@ export function BlogAdminAIOperationsDemo({
   const toggleWorkflow = (workflow: WorkflowFixture) => {
     setAutomationRecordsFixture((current) => ({
       ...current,
-      workflows: current.workflows.map((item) => item.id === workflow.id ? { ...item, enabled: !item.enabled, nextRunAt: item.enabled ? "—" : "待重新计算" } : item),
+      workflows: current.workflows.map((item) => item.id === workflow.id ? {
+        ...item,
+        enabled: !item.enabled,
+        nextRunAt: item.enabled ? "—" : "待重新计算",
+      } : item),
     }));
     setNotice({ type: "success", text: `${workflow.name} 已${workflow.enabled ? "停用" : "启用"}。` });
   };
@@ -273,34 +296,44 @@ export function BlogAdminAIOperationsDemo({
     const failed = operationScenario === "run-failure" && !dryRun;
     const status: WorkflowRunFixture["status"] = failed ? "failed" : dryRun ? "succeeded" : "awaiting_approval";
     const tokenUsage = failed ? 640 : dryRun ? 320 : 1180;
+    const outputSummary = failed
+      ? "读取运营事件时失败，未产生候选结果。"
+      : dryRun
+        ? "Preflight 与受控输入验证通过，未写入产品数据。"
+        : "候选结果已生成，等待人工审批。";
     const run: WorkflowRunFixture = {
       id,
       workflowId,
       workflowName: workflow.name,
+      workflowVersion: workflow.currentVersion,
       status,
       dryRun,
       startedAt: "刚刚",
       finishedAt: failed || dryRun ? "刚刚" : undefined,
+      inputTokens: failed ? 640 : dryRun ? 200 : 760,
+      outputTokens: failed ? 0 : dryRun ? 120 : 420,
       tokenUsage,
+      triggeredBy: "admin",
+      outputSummary,
+      errorCode: failed ? "tool_execution_failed" : undefined,
       errorMessage: failed ? "query_events failed: column reference event_key is ambiguous" : undefined,
       steps: [{
         id: failed ? "query-events" : dryRun ? "dry-run" : "candidate",
         name: failed ? "读取运营事件" : dryRun ? "验证 Workflow 配置" : "生成候选结果",
+        type: failed ? "resource_query" : dryRun ? "output" : "model",
         status: failed ? "failed" : "succeeded",
         durationMs: failed ? 410 : dryRun ? 260 : 840,
-        detail: failed
-          ? "query_events failed: column reference event_key is ambiguous"
-          : dryRun
-            ? "Preflight 与受控输入验证通过，未写入产品数据。"
-            : "候选结果已生成，等待人工审批。",
+        detail: outputSummary,
+        errorMessage: failed ? "column reference event_key is ambiguous" : undefined,
       }],
-      resources: failed || dryRun ? [] : [{ type: "candidate", label: `${workflow.name} 候选结果` }],
-      interactions: failed || dryRun ? [] : [{ type: "approval", label: "确认应用候选结果", status: "pending" }],
+      resources: failed || dryRun ? [] : [{ type: "candidate", label: `${workflow.name} 候选结果`, source: "manual", accessLevel: "target" }],
+      interactions: failed || dryRun ? [] : [{ id: id + 1000, type: "approval", label: "确认应用候选结果", status: "pending", stepId: "approval" }],
       events: [
-        { type: "run_started", message: `${dryRun ? "Dry-run" : "Run"} requested from Showcase` },
+        { type: "run_started", message: `${dryRun ? "Dry-run" : "Run"} requested from Showcase`, createdAt: "刚刚" },
         {
           type: failed ? "run_failed" : dryRun ? "run_succeeded" : "approval_created",
           message: failed ? "query_events failed before candidate generation" : dryRun ? "No writes applied" : "Approval fixture created",
+          createdAt: "刚刚",
         },
       ],
       mediaCandidates: [],
@@ -315,6 +348,7 @@ export function BlogAdminAIOperationsDemo({
           failures: item.metrics.failures + (failed ? 1 : 0),
           tokens: item.metrics.tokens + run.tokenUsage,
         },
+        latestRun: { id, status, at: "刚刚", summary: outputSummary },
       } : item),
     }));
     return { id, status };
@@ -343,7 +377,7 @@ export function BlogAdminAIOperationsDemo({
   } else if (scenario === "error") {
     content = <Alert type="error" showIcon title="AI 运营数据加载失败" description="Showcase 模拟真实聚合请求失败；刷新后可重新加载，不会丢失产品数据。" />;
   } else if (route.tab === "overview") {
-    content = <AIOpsOverviewPanel fixture={decisionFixture} onNavigate={selectTab} />;
+    content = <AIOpsOverviewPanel fixture={decisionFixture} automation={automationRecordsFixture} onNavigate={selectTab} />;
   } else if (route.tab === "inbox") {
     content = (
       <AIOpsInboxPanel
@@ -395,7 +429,7 @@ export function BlogAdminAIOperationsDemo({
     <div className="flex flex-col gap-6">
       <FixtureDock
         route={formatAIOpsRoute(route)}
-        note="AI 运营保留发现、决策、自动化与运行证据；自动化采用 Workflow 列表 → 定义/执行详情，稳定治理配置继续留在独立 AI 设置路由。"
+        note="AI 运营 Fixture 已按 Blog Admin 当前真实对象与 API 能力重建：人工决策、Workflow 资产、异步 Run 与证据链保持同一产品语义。"
         controls={(
           <div className="flex flex-col gap-3">
             <Segmented<FixtureScenario>
@@ -423,7 +457,7 @@ export function BlogAdminAIOperationsDemo({
       />
       <PageHeader
         title="AI 运营"
-        description="从发现机会、人工决策、自动化执行到运行证据，保持完整的人机协作闭环。"
+        description="观察运营信号、处理人工决策、管理自动化，并从 Run 追溯真实执行证据。"
         actions={<Button variant="outline" icon={<RefreshCw />} onClick={() => { setScenario("data"); setNotice({ type: "success", text: "AI 运营数据已刷新。" }); }}>刷新</Button>}
       />
       <Tabs<AIOpsTab> activeKey={route.tab} items={tabs} onChange={selectTab} ariaLabel="AI 运营工作区" />
