@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Clock3,
   GitBranch,
@@ -78,6 +78,7 @@ export function AIOpsAutomationPanel({
   onRun,
   onRollback,
   onOpenRecords,
+  onSelectWorkflow,
 }: {
   fixture: AIOpsAutomationRecordsFixture;
   onPreflight: (
@@ -92,6 +93,7 @@ export function AIOpsAutomationPanel({
   ) => Promise<{ id: number; status: WorkflowRunStatus }>;
   onRollback: (workflowId: number, version: number) => void;
   onOpenRecords: (target: AIOpsRecordsTarget) => void;
+  onSelectWorkflow?: (workflow: WorkflowFixture) => void;
 }) {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("");
@@ -101,6 +103,13 @@ export function AIOpsAutomationPanel({
   );
   const [running, setRunning] = useState<"run" | "dry" | null>(null);
   const [feedback, setFeedback] = useState<RunFeedback | null>(null);
+  const preferredWorkflowId = fixture.workflows[0]?.id ?? 0;
+
+  useEffect(() => {
+    if (!preferredWorkflowId) return;
+    setSelectedWorkflowId(preferredWorkflowId);
+    setFeedback(null);
+  }, [preferredWorkflowId]);
 
   const visible = useMemo(
     () => fixture.workflows.filter((workflow) => workflowMatches(workflow, query, status)),
@@ -170,7 +179,7 @@ export function AIOpsAutomationPanel({
 
       <div className="grid gap-5 xl:grid-cols-[minmax(15rem,0.65fr)_minmax(0,1.8fr)]">
         <Card padding="none" className="overflow-hidden">
-          <CardHeader className="border-b p-5">
+          <CardHeader className="border-b p-6">
             <div className="flex flex-col gap-1">
               <CardTitle className="text-base">Workflow</CardTitle>
               <Text size="xs" tone="muted">选择流程后执行、查看版本或进入运行证据。</Text>
@@ -183,10 +192,11 @@ export function AIOpsAutomationPanel({
                 type="button"
                 variant="ghost"
                 aria-pressed={selected?.id === workflow.id}
-                className="flex w-full items-start justify-between gap-3 rounded-none p-5 text-left"
+                className="flex w-full items-start justify-between gap-3 rounded-none p-6 text-left"
                 onClick={() => {
                   setSelectedWorkflowId(workflow.id);
                   setFeedback(null);
+                  onSelectWorkflow?.(workflow);
                 }}
               >
                 <div className="min-w-0">
@@ -195,7 +205,7 @@ export function AIOpsAutomationPanel({
                 </div>
                 <WorkflowStatus enabled={workflow.enabled} />
               </Button>
-            )) : <div className="p-5"><Text tone="muted">没有符合条件的 Workflow。</Text></div>}
+            )) : <div className="p-6"><Text tone="muted">没有符合条件的 Workflow。</Text></div>}
           </CardContent>
         </Card>
 
@@ -319,7 +329,7 @@ export function AIOpsAutomationPanel({
             </Card>
 
             <Card padding="none" className="overflow-hidden">
-              <CardHeader className="border-b p-5">
+              <CardHeader className="border-b p-6">
                 <div className="flex items-center gap-2">
                   <History className="size-4 text-muted-foreground" />
                   <CardTitle className="text-base">版本历史</CardTitle>
@@ -327,7 +337,7 @@ export function AIOpsAutomationPanel({
               </CardHeader>
               <CardContent className="divide-y p-0">
                 {selected.versions.map((version) => (
-                  <div key={version.version} className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
+                  <div key={version.version} className="flex flex-col gap-3 p-6 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <strong>v{version.version}</strong>
                       <Text size="xs" tone="muted">{version.createdAt} · {version.note}</Text>
@@ -389,13 +399,13 @@ function WorkflowRunDetail({ run }: { run: WorkflowRunFixture }) {
 
       <div className="grid gap-5 xl:grid-cols-[minmax(16rem,0.8fr)_minmax(0,1.2fr)]">
         <Card padding="none" className="overflow-hidden">
-          <CardHeader className="border-b p-5">
+          <CardHeader className="border-b p-6">
             <CardTitle className="text-base">执行过程</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-y">
               {run.steps.map((step, index) => (
-                <div key={step.id} className="flex gap-4 p-5">
+                <div key={step.id} className="flex gap-4 p-6">
                   <div className="flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold">
                     {index + 1}
                   </div>
@@ -415,10 +425,10 @@ function WorkflowRunDetail({ run }: { run: WorkflowRunFixture }) {
 
         <div className="flex min-w-0 flex-col gap-5">
           <Card padding="none" className="overflow-hidden">
-            <CardHeader className="border-b p-5">
+            <CardHeader className="border-b p-6">
               <CardTitle className="text-base">运行证据</CardTitle>
             </CardHeader>
-            <CardContent className="p-5">
+            <CardContent className="p-6">
               <div className="grid gap-6 md:grid-cols-2">
                 <section>
                   <strong className="text-sm">资源</strong>
@@ -447,12 +457,12 @@ function WorkflowRunDetail({ run }: { run: WorkflowRunFixture }) {
           </Card>
 
           <Card padding="none" className="overflow-hidden">
-            <CardHeader className="border-b p-5">
+            <CardHeader className="border-b p-6">
               <CardTitle className="text-base">事件</CardTitle>
             </CardHeader>
             <CardContent className="divide-y p-0">
               {run.events.map((event, index) => (
-                <div key={`${event.type}-${index}`} className="p-5">
+                <div key={`${event.type}-${index}`} className="p-6">
                   <strong className="font-mono text-xs">{event.type}</strong>
                   <Text size="sm" tone="muted">{event.message}</Text>
                 </div>
@@ -464,10 +474,10 @@ function WorkflowRunDetail({ run }: { run: WorkflowRunFixture }) {
 
       {run.mediaCandidates.length ? (
         <Card padding="none" className="overflow-hidden">
-          <CardHeader className="border-b p-5"><CardTitle className="text-base">媒体候选</CardTitle></CardHeader>
+          <CardHeader className="border-b p-6"><CardTitle className="text-base">媒体候选</CardTitle></CardHeader>
           <CardContent className="divide-y p-0">
             {run.mediaCandidates.map((candidate) => (
-              <div key={candidate.id} className="flex flex-wrap items-center justify-between gap-3 p-5">
+              <div key={candidate.id} className="flex flex-wrap items-center justify-between gap-3 p-6">
                 <Text size="sm">#{candidate.id} · {candidate.title}</Text>
                 <Tag color={candidate.status === "failed" ? "error" : candidate.status === "generated" ? "success" : "warning"}>
                   {candidate.status}
@@ -498,12 +508,12 @@ function AgentRunDetail({ run }: { run: AgentRunFixture }) {
       </div>
 
       <Card padding="none" className="overflow-hidden">
-        <CardHeader className="border-b p-5">
+        <CardHeader className="border-b p-6">
           <CardTitle className="text-base">Tool Calls</CardTitle>
         </CardHeader>
         <CardContent className="divide-y p-0">
           {run.toolCalls.map((call, index) => (
-            <div key={`${call.tool}-${index}`} className="p-5">
+            <div key={`${call.tool}-${index}`} className="p-6">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <strong className="font-mono text-sm">{call.tool}</strong>
                 <Tag color={call.status === "succeeded" ? "success" : "error"}>{call.status}</Tag>
@@ -607,7 +617,7 @@ export function AIOpsRecordsPanel({
 
           <div className="grid gap-5 xl:grid-cols-[minmax(15rem,0.62fr)_minmax(0,1.8fr)]">
             <Card padding="none" className="overflow-hidden">
-              <CardHeader className="border-b p-5"><CardTitle className="text-base">Workflow Runs</CardTitle></CardHeader>
+              <CardHeader className="border-b p-6"><CardTitle className="text-base">Workflow Runs</CardTitle></CardHeader>
               <CardContent className="divide-y p-0">
                 {workflowRuns.length ? workflowRuns.map((run) => (
                   <Button
@@ -615,7 +625,7 @@ export function AIOpsRecordsPanel({
                     type="button"
                     variant="ghost"
                     aria-pressed={selectedWorkflowRun?.id === run.id}
-                    className="flex w-full items-start justify-between gap-3 rounded-none p-5 text-left"
+                    className="flex w-full items-start justify-between gap-3 rounded-none p-6 text-left"
                     onClick={() => {
                       setSelectedWorkflowRunId(run.id);
                       onRouteChange({ record: "workflow", workflow: run.workflowId, run: run.id });
@@ -630,7 +640,7 @@ export function AIOpsRecordsPanel({
                       {run.dryRun ? <Tag>Dry-run</Tag> : null}
                     </div>
                   </Button>
-                )) : <div className="p-5"><Text tone="muted">没有符合条件的 Workflow Run。</Text></div>}
+                )) : <div className="p-6"><Text tone="muted">没有符合条件的 Workflow Run。</Text></div>}
               </CardContent>
             </Card>
             {selectedWorkflowRun ? <WorkflowRunDetail run={selectedWorkflowRun} /> : null}
@@ -639,7 +649,7 @@ export function AIOpsRecordsPanel({
       ) : (
         <div className="grid gap-5 xl:grid-cols-[minmax(15rem,0.62fr)_minmax(0,1.8fr)]">
           <Card padding="none" className="overflow-hidden">
-            <CardHeader className="border-b p-5"><CardTitle className="text-base">Agent Runs</CardTitle></CardHeader>
+            <CardHeader className="border-b p-6"><CardTitle className="text-base">Agent Runs</CardTitle></CardHeader>
             <CardContent className="divide-y p-0">
               {fixture.agentRuns.map((run) => (
                 <Button
@@ -647,7 +657,7 @@ export function AIOpsRecordsPanel({
                   type="button"
                   variant="ghost"
                   aria-pressed={selectedAgentRun?.id === run.id}
-                  className="flex w-full items-start justify-between gap-3 rounded-none p-5 text-left"
+                  className="flex w-full items-start justify-between gap-3 rounded-none p-6 text-left"
                   onClick={() => {
                     setSelectedAgentRunId(run.id);
                     onRouteChange({ record: "agent", run: run.id });
