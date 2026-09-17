@@ -751,9 +751,13 @@ export function AIOpsRecordsPanel({
           </div>
         </div>
       ) : (
-        <div className="grid gap-6 xl:grid-cols-[19rem_minmax(0,1fr)]">
+        <div
+          data-slot="ops-master-detail"
+          className="grid min-w-0 items-stretch gap-6 xl:grid-cols-[19rem_minmax(0,1fr)]"
+        >
           <section
-            className="overflow-hidden rounded-lg border bg-background"
+            data-slot="ops-rail"
+            className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-lg border bg-background"
             aria-label="Agent Runs"
           >
             <div className="border-b px-[18px] py-4">
@@ -762,7 +766,10 @@ export function AIOpsRecordsPanel({
                 {fixture.agentRuns.length} 条运行记录
               </Text>
             </div>
-            <div>
+            <div
+              data-slot="ops-rail-body"
+              className="min-h-0 flex-1 overflow-y-auto overscroll-contain"
+            >
               {fixture.agentRuns.map((run) => (
                 <OpsObjectRow
                   key={run.id}
