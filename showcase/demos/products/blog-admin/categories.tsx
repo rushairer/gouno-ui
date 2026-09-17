@@ -23,7 +23,7 @@ import {
   Textarea,
 } from "../../../../src/core";
 import { PageHeader, PageSkeleton } from "../../../../src/gouno";
-import { BulkActionBar } from "../../../../src/patterns";
+import { AISuggestionPicker, BulkActionBar } from "../../../../src/patterns";
 import { FixtureDock } from "../../../components/fixture-dock";
 import { BlogAdminWorkflowLauncherFixture } from "./workflow-launcher-fixture";
 import { FixtureNotification } from "./fixture-notification";
@@ -81,6 +81,13 @@ function slugify(value: string) {
     .replace(/^-|-$/g, "");
 }
 
+function slugCandidatesFor(name: string) {
+  const normalized = name.trim();
+  const known = knownSlugCandidates[normalized];
+  const fallback = slugify(normalized);
+  return [...new Set(known ?? [fallback || "category", `${fallback || "category"}-notes`, `${fallback || "category"}-topic`])];
+}
+
 function CategoryActions({
   category,
   onEdit,
@@ -105,6 +112,7 @@ export function BlogAdminCategoriesDemo() {
   const [editor, setEditor] = useState<EditorState>(null);
   const [draft, setDraft] = useState<CategoryDraft>(emptyDraft);
   const [slugCandidates, setSlugCandidates] = useState<string[]>([]);
+  const [selectedSlugCandidate, setSelectedSlugCandidate] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
   const [aiOpen, setAIOpen] = useState(false);
   const [notice, setNotice] = useState<{ type: "success" | "info" | "error"; text: string } | null>(null);
@@ -117,16 +125,20 @@ export function BlogAdminCategoriesDemo() {
   );
 
   const clearSelection = () => setSelected([]);
+  const clearSlugSuggestions = () => {
+    setSlugCandidates([]);
+    setSelectedSlugCandidate(null);
+  };
 
   const openCreate = () => {
     setDraft(emptyDraft);
-    setSlugCandidates([]);
+    clearSlugSuggestions();
     setEditor({ mode: "create" });
   };
 
   const openEdit = (category: CategoryFixture) => {
     setDraft({ name: category.name, slug: category.slug, description: category.description, sortOrder: category.sortOrder });
-    setSlugCandidates([]);
+    clearSlugSuggestions();
     setEditor({ mode: "edit", id: category.id });
   };
 
@@ -135,15 +147,26 @@ export function BlogAdminCategoriesDemo() {
       setNotice({ type: "error", text: "请先填写分类名称，再生成 Slug 候选。" });
       return;
     }
-    const known = knownSlugCandidates[draft.name.trim()];
-    const fallback = slugify(draft.name);
-    const candidates = known ?? [fallback || "category", `${fallback || "category"}-notes`, `${fallback || "category"}-topic`];
-    setSlugCandidates([...new Set(candidates)]);
+    const candidates = slugCandidatesFor(draft.name);
+    setSlugCandidates(candidates);
+    setSelectedSlugCandidate(candidates[0] ?? null);
+  };
+
+  const regenerateSlug = () => {
+    if (!draft.name.trim()) {
+      setNotice({ type: "error", text: "请先填写分类名称，再生成 Slug 候选。" });
+      return;
+    }
+    const source = slugCandidates.length > 0 ? slugCandidates : slugCandidatesFor(draft.name);
+    const candidates = [...source].reverse();
+    setSlugCandidates(candidates);
+    setSelectedSlugCandidate(candidates[0] ?? null);
+    setNotice({ type: "info", text: "已重新生成 Slug 候选（Showcase 模拟）。" });
   };
 
   const applySlug = (slug: string) => {
     setDraft((current) => ({ ...current, slug }));
-    setSlugCandidates([]);
+    clearSlugSuggestions();
   };
 
   const saveCategory = () => {
@@ -165,7 +188,7 @@ export function BlogAdminCategoriesDemo() {
       setNotice({ type: "success", text: `分类“${name}”已创建（Showcase 模拟）。` });
     }
     setEditor(null);
-    setSlugCandidates([]);
+    clearSlugSuggestions();
   };
 
   const setSelection = (id: number, checked: boolean) => {
@@ -203,7 +226,7 @@ export function BlogAdminCategoriesDemo() {
     <div className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/categories"
-        note="保留真实分类数据与操作语义，并用桌面 Table / 移动 Card 双呈现承载响应式布局；批量部分失败保留选择、Drawer 编辑、AI Slug 与 category WorkflowLauncher 均保持一致。Fixture 不请求真实 Blog/AI API。"
+        note="保留真实分类数据与操作语义，并用桌面 Table / 移动 Card 双呈现承载响应式布局；批量部分失败保留选择、Drawer 编辑、AISuggestion Slug 与 category WorkflowLauncher 均保持一致。Fixture 不请求真实 Blog/AI API。"
         controls={(
           <Segmented<FixtureScenario>
             aria-label="分类页 Fixture 状态"
@@ -343,28 +366,70 @@ export function BlogAdminCategoriesDemo() {
         title={editor?.mode === "edit" ? "编辑分类" : "新建分类"}
         description={editor?.mode === "edit" ? "更新名称、URL 标识、描述与排序。" : "创建一个可长期复用的内容主题。"}
         width={440}
-        onClose={() => setEditor(null)}
+        onClose={() => {
+          setEditor(null);
+          clearSlugSuggestions();
+        }}
         footer={(
           <>
-            <Button onClick={() => setEditor(null)}>取消</Button>
+            <Button onClick={() => {
+              setEditor(null);
+              clearSlugSuggestions();
+            }}>取消</Button>
             <Button variant="solid" color="primary" onClick={saveCategory}>{editor?.mode === "edit" ? "保存修改" : "创建分类"}</Button>
           </>
         )}
       >
         <div className="flex flex-col gap-5">
           <FormField label="分类名称" required>
-            <Input aria-label="分类名称" required value={draft.name} onChange={(event) => setDraft((current) => ({ ...current, name: event.target.value }))} />
+            <Input
+              aria-label="分类名称"
+              required
+              value={draft.name}
+              onChange={(event) => {
+                setDraft((current) => ({ ...current, name: event.target.value }));
+                clearSlugSuggestions();
+              }}
+            />
           </FormField>
           <FormField label="Slug 标识" required hint="用于分类 URL，建议使用稳定的英文短语。">
             <div className="flex flex-col gap-2">
-              <div className="flex gap-2">
-                <Input aria-label="Slug 标识" required value={draft.slug} onChange={(event) => setDraft((current) => ({ ...current, slug: event.target.value }))} />
-                <Button size="small" icon={<Sparkles />} onClick={requestSlug}>AI 生成</Button>
+              <div className="flex items-center gap-2">
+                <Input
+                  aria-label="Slug 标识"
+                  className="min-w-0 flex-1 font-mono"
+                  required
+                  value={draft.slug}
+                  onChange={(event) => {
+                    setDraft((current) => ({ ...current, slug: event.target.value }));
+                    clearSlugSuggestions();
+                  }}
+                />
+                <Button
+                  type="button"
+                  size="small"
+                  variant="text"
+                  icon={<Sparkles />}
+                  aria-label="AI 生成 Slug 候选"
+                  title="AI 生成 Slug 候选"
+                  className="size-8 shrink-0 px-0"
+                  onClick={requestSlug}
+                />
               </div>
               {slugCandidates.length > 0 ? (
-                <div className="flex flex-wrap gap-2" aria-label="Slug 候选">
-                  {slugCandidates.map((candidate) => <Button key={candidate} size="small" variant="text" onClick={() => applySlug(candidate)}>{candidate}</Button>)}
-                </div>
+                <AISuggestionPicker
+                  aria-label="Slug AI 建议"
+                  heading="Slug 候选"
+                  groupLabel="Slug 候选"
+                  description="根据分类名称生成稳定 URL 标识，选择后再写回字段。"
+                  options={slugCandidates.map((candidate) => ({ value: candidate, monospace: true }))}
+                  value={selectedSlugCandidate}
+                  onValueChange={setSelectedSlugCandidate}
+                  onDismiss={clearSlugSuggestions}
+                  onRegenerate={regenerateSlug}
+                  onApply={applySlug}
+                  applyLabel="使用所选 Slug"
+                />
               ) : null}
             </div>
           </FormField>
