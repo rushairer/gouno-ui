@@ -304,7 +304,7 @@ function DecisionWorkbench({
   if (item.kind === "interaction") {
     const task = item.payload as InteractionFixture;
     return (
-      <div className="flex flex-col gap-5 p-5 lg:p-6">
+      <div className="flex flex-col gap-5 p-6">
         {context}
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0"><Heading level={2}>{task.title}</Heading><Text className="mt-2" tone="muted">{task.reason || "当前运行需要你的输入才能继续。"}</Text></div>
@@ -337,7 +337,7 @@ function DecisionWorkbench({
     const approval = item.payload as ApprovalFixture;
     const impact = approvalImpact(approval);
     return (
-      <div className="flex flex-col gap-5 p-5 lg:p-6">
+      <div className="flex flex-col gap-5 p-6">
         {context}
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0"><Heading level={2}>{approvalTitle(approval)}</Heading><Text className="mt-2" tone="muted">需要确认 AI 准备的变更以及真正会影响的对象。</Text></div>
@@ -371,7 +371,7 @@ function DecisionWorkbench({
   if (item.kind === "suggestion") {
     const suggestion = item.payload as SuggestionFixture;
     return (
-      <div className="flex flex-col gap-5 p-5 lg:p-6">
+      <div className="flex flex-col gap-5 p-6">
         {context}
         <div className="flex flex-wrap items-start justify-between gap-3"><div><Heading level={2}>{suggestion.title}</Heading><Text className="mt-2" tone="muted">{suggestion.description}</Text></div>{decisionStatus(item)}</div>
         <section className="border-t pt-5"><OpsRegionHeading title="AI 的判断依据" description="这是只读运营证据；创建编辑任务不会修改或发布内容。" /><ul className="mt-4 space-y-2 text-sm">{suggestion.evidence.map((evidence) => <li key={evidence} className="flex gap-2"><Check className="mt-0.5 size-4 shrink-0 text-muted-foreground" />{evidence}</li>)}</ul></section>
@@ -383,7 +383,7 @@ function DecisionWorkbench({
   if (item.kind === "candidate") {
     const set = item.payload as CandidateSetFixture;
     return (
-      <div className="flex flex-col gap-5 p-5 lg:p-6">
+      <div className="flex flex-col gap-5 p-6">
         {context}
         <div className="flex flex-wrap items-start justify-between gap-3"><div><Heading level={2}>{set.title}</Heading><Text className="mt-2" tone="muted">当前值：{set.beforeValue}</Text></div>{decisionStatus(item)}</div>
         <section className="border-t pt-5"><OpsRegionHeading title="选择候选" description="选择后只会创建下一步明确的内容变更审批，不会立即写入文章。" /><div className="mt-4 space-y-3">{set.candidates.map((candidate) => <div key={candidate.id} className="flex flex-col gap-3 rounded-md border p-4 sm:flex-row sm:items-center sm:justify-between"><div className="min-w-0"><strong className="text-sm">{candidate.value}</strong><Text size="xs" tone="muted" className="mt-1">{candidate.rationale}</Text></div><Button size="small" variant="outline" onClick={() => onOpenOperation("candidateSets", set.id)}>选择此项</Button></div>)}</div></section>
@@ -394,7 +394,7 @@ function DecisionWorkbench({
   if (item.kind === "media") {
     const media = item.payload as MediaCandidateFixture;
     return (
-      <div className="flex flex-col gap-5 p-5 lg:p-6">
+      <div className="flex flex-col gap-5 p-6">
         {context}
         <div className="flex flex-wrap items-start justify-between gap-3"><div><Heading level={2}>{media.title}</Heading><Text className="mt-2" tone="muted">{media.brief}</Text></div>{decisionStatus(item)}</div>
         <OpsSummaryStrip items={[{ label: "位置", value: media.placement === "cover" ? "封面" : "正文插图" }, { label: "Safety", value: media.safetyStatus }, { label: "Copyright", value: media.copyrightStatus }, { label: "目标", value: `文章 #${media.postId}` }]} />
@@ -405,7 +405,7 @@ function DecisionWorkbench({
 
   const task = item.payload as EditorialTaskFixture;
   return (
-    <div className="flex flex-col gap-5 p-5 lg:p-6">
+    <div className="flex flex-col gap-5 p-6">
       {context}
       <div className="flex flex-wrap items-start justify-between gap-3"><div><Heading level={2}>{task.title}</Heading><Text className="mt-2" tone="muted">{task.description}</Text></div>{decisionStatus(item)}</div>
       <section className="border-t pt-5"><OpsRegionHeading title="后续工作" description="这是由 AI 运营建议转成的人工编辑任务。完成或取消只更新任务状态，本身不会修改内容。" /></section>
@@ -446,7 +446,7 @@ export function AIOpsInboxPanel({
   return (
     <div className="flex flex-col gap-5" aria-label="待我处理">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-        <div><Heading level={2}>待我处理</Heading><Text className="mt-1" tone="muted">把审批、选择、确认、运营建议和后续编辑任务放进同一人工决策队列，而不是分散成多个互不相关的卡片区。</Text></div>
+        <Text tone="muted" size="sm" className="max-w-3xl leading-relaxed">把审批、选择、确认、运营建议和后续编辑任务放进同一人工决策队列，而不是分散成多个互不相关的卡片区。</Text>
         <div className="flex flex-wrap gap-2" aria-label="决策队列筛选">
           {([[
             "all", "全部"
