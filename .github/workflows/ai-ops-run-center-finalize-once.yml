@@ -1,0 +1,90 @@
+name: AI Ops Run Center Finalize Once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/ai-ops-run-center-finalize-once.yml"
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: Normalize Agent Run Center selectors
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          path = Path('showcase/demos/products/blog-admin/ai/operations/automation-records.tsx')
+          text = path.read_text()
+
+          pattern = r'(\) : \(\n\s*)<div className="grid gap-6 xl:grid-cols-\[19rem_minmax\(0,1fr\)\]">'
+          text, count = re.subn(pattern, r'\1<div data-slot="ops-master-detail" className="grid min-w-0 items-stretch gap-6 xl:grid-cols-[19rem_minmax(0,1fr)]">', text, count=1)
+          if count != 1:
+              raise SystemExit(f'agent master/detail grid replacement count={count}')
+
+          old = '''          <section
+            className="overflow-hidden rounded-lg border bg-background"
+            aria-label="Agent Runs"
+          >'''
+          new = '''          <section
+            data-slot="ops-rail"
+            className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-lg border bg-background"
+            aria-label="Agent Runs"
+          >'''
+          if text.count(old) != 1:
+              raise SystemExit(f'agent rail replacement count={text.count(old)}')
+          text = text.replace(old, new, 1)
+
+          old = '''            <div>
+              {fixture.agentRuns.map((run) => ('''
+          new = '''            <div
+              data-slot="ops-rail-body"
+              className="min-h-0 flex-1 overflow-y-auto overscroll-contain"
+            >
+              {fixture.agentRuns.map((run) => ('''
+          if text.count(old) != 1:
+              raise SystemExit(f'agent rail body replacement count={text.count(old)}')
+          text = text.replace(old, new, 1)
+          path.write_text(text)
+          PY
+          npx prettier --write showcase/demos/products/blog-admin/ai/operations/automation-records.tsx
+      - name: Verify canonical source
+        run: |
+          npm run typecheck
+          npx vitest run tests/product-blog-admin-ai-operations-automation-records.test.tsx tests/product-blog-admin-ai-operations-panel-lead.test.ts
+          npm run showcase:build
+      - name: Commit and retire all one-time helpers
+        shell: bash
+        run: |
+          git rm .github/workflows/ai-ops-run-center-hardening-once.yml
+          git rm .github/workflows/ai-ops-run-center-recovery-once.yml
+          git rm .github/workflows/ai-ops-run-center-finalize-once.yml
+          git add showcase/demos/products/blog-admin/ai/operations/automation-records.tsx
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "fix(ai-ops): canonicalize agent run center anatomy"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+      - name: Re-run permanent gates
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run ci.yml --ref main
+          gh workflow run blog-consumer-parity.yml --ref main
+          gh workflow run canonical-visual-golden.yml --ref main
+          gh workflow run showcase-pages.yml --ref main
