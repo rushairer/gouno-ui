@@ -19,6 +19,12 @@ export type AgentFixture = {
   schedule: string;
   timezone: string;
   latestRun: string;
+  triggerType?: "manual" | "cron";
+  dailyRunLimit?: number;
+  monthlyTokenBudget?: number;
+  maxStepsOverride?: number;
+  maxInputTokensOverride?: number;
+  maxOutputTokensOverride?: number;
 };
 
 export type SkillFixture = {
@@ -30,6 +36,15 @@ export type SkillFixture = {
   system: boolean;
   executionMode: "advisory" | "approval";
   updatedAt: string;
+  systemPrompt?: string;
+  contentPublishMode?: "approval" | "draft" | "publish";
+  allowedTriggers?: Array<"manual" | "cron">;
+  maxSteps?: number;
+  maxInputTokens?: number;
+  maxOutputTokens?: number;
+  defaultDailyRunLimit?: number;
+  defaultMonthlyTokenBudget?: number;
+  inputSchema?: Record<string, unknown>;
 };
 
 export type ToolFixture = {
@@ -105,6 +120,12 @@ export type AISettingsFixture = {
   connectorOutbox: ConnectorOutboxFixture[];
 };
 
+const objectInputSchema = {
+  $schema: "https://json-schema.org/draft/2020-12/schema",
+  type: "object",
+  additionalProperties: false,
+} as const;
+
 export const aiSettingsFixture: AISettingsFixture = {
   agents: [
     {
@@ -120,6 +141,9 @@ export const aiSettingsFixture: AISettingsFixture = {
       schedule: "30 8 * * *",
       timezone: "Asia/Shanghai",
       latestRun: "Run #702 · 成功",
+      triggerType: "cron",
+      dailyRunLimit: 10,
+      monthlyTokenBudget: 1000000,
     },
     {
       id: 82,
@@ -134,6 +158,10 @@ export const aiSettingsFixture: AISettingsFixture = {
       schedule: "0 9 * * 1",
       timezone: "Asia/Shanghai",
       latestRun: "Run #701 · 失败",
+      triggerType: "cron",
+      dailyRunLimit: 4,
+      monthlyTokenBudget: 400000,
+      maxStepsOverride: 5,
     },
     {
       id: 83,
@@ -148,6 +176,9 @@ export const aiSettingsFixture: AISettingsFixture = {
       schedule: "手动",
       timezone: "Asia/Shanghai",
       latestRun: "尚未运行",
+      triggerType: "manual",
+      dailyRunLimit: 5,
+      monthlyTokenBudget: 250000,
     },
   ],
   skills: [
@@ -160,6 +191,15 @@ export const aiSettingsFixture: AISettingsFixture = {
       system: true,
       executionMode: "approval",
       updatedAt: "2026-09-08 08:12",
+      systemPrompt: "只基于已核验且仍在时效范围内的来源生成候选稿；对不确定信息明确保留证据边界。",
+      contentPublishMode: "approval",
+      allowedTriggers: ["manual", "cron"],
+      maxSteps: 8,
+      maxInputTokens: 32000,
+      maxOutputTokens: 8000,
+      defaultDailyRunLimit: 20,
+      defaultMonthlyTokenBudget: 2000000,
+      inputSchema: { ...objectInputSchema },
     },
     {
       id: 72,
@@ -170,6 +210,15 @@ export const aiSettingsFixture: AISettingsFixture = {
       system: true,
       executionMode: "approval",
       updatedAt: "2026-09-07 16:30",
+      systemPrompt: "发现超过维护周期的文章，给出可核验的维护建议；任何内容写入必须进入审批。",
+      contentPublishMode: "approval",
+      allowedTriggers: ["manual", "cron"],
+      maxSteps: 6,
+      maxInputTokens: 16000,
+      maxOutputTokens: 4000,
+      defaultDailyRunLimit: 10,
+      defaultMonthlyTokenBudget: 1000000,
+      inputSchema: { ...objectInputSchema },
     },
     {
       id: 73,
@@ -180,6 +229,15 @@ export const aiSettingsFixture: AISettingsFixture = {
       system: false,
       executionMode: "advisory",
       updatedAt: "2026-09-06 11:20",
+      systemPrompt: "分析标题、摘要、结构和引用完整性，只提供建议，不直接写入内容。",
+      contentPublishMode: "approval",
+      allowedTriggers: ["manual"],
+      maxSteps: 4,
+      maxInputTokens: 12000,
+      maxOutputTokens: 3000,
+      defaultDailyRunLimit: 20,
+      defaultMonthlyTokenBudget: 500000,
+      inputSchema: { ...objectInputSchema },
     },
     {
       id: 74,
@@ -190,6 +248,15 @@ export const aiSettingsFixture: AISettingsFixture = {
       system: true,
       executionMode: "approval",
       updatedAt: "2026-09-05 09:00",
+      systemPrompt: "从文章内容提炼图片 brief；生成前保留人工确认，不直接替换文章媒体资源。",
+      contentPublishMode: "approval",
+      allowedTriggers: ["manual", "cron"],
+      maxSteps: 6,
+      maxInputTokens: 16000,
+      maxOutputTokens: 4000,
+      defaultDailyRunLimit: 10,
+      defaultMonthlyTokenBudget: 1000000,
+      inputSchema: { ...objectInputSchema },
     },
   ],
   tools: [
