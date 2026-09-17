@@ -10,6 +10,10 @@ import { aiOpsAutomationRecordsFixture } from "../showcase/demos/products/blog-a
 
 afterEach(cleanup);
 
+function openFirstWorkflow() {
+  fireEvent.click(screen.getAllByRole("button", { name: "进入详情 / 运行" })[0]);
+}
+
 describe("Blog Admin AI Operations automation/records migration modules", () => {
   it("preserves workflow execution context, scope, metrics and version history", () => {
     render(
@@ -110,19 +114,25 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
     expect(onRollback).toHaveBeenCalledWith(42, 3);
   });
 
-  it("restores Workflow create, edit, enable/disable and delete management entry points", () => {
+  it("uses a Workflow list-detail route and restores create/edit/enable/delete entry points", () => {
     render(<BlogAdminAIOperationsDemo initialRoute={{ tab: "automation", record: "workflow" }} />);
 
     expect(screen.getByRole("button", { name: "创建 Workflow" })).toBeTruthy();
+    expect(screen.getByRole("list", { name: "Workflow 列表" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "编辑" })).toBeNull();
+
+    openFirstWorkflow();
+    expect(screen.getByRole("button", { name: "返回 Workflow 列表" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "编辑" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "停用" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "删除" })).toBeTruthy();
 
+    fireEvent.click(screen.getByRole("button", { name: "返回 Workflow 列表" }));
     fireEvent.click(screen.getByRole("button", { name: "创建 Workflow" }));
     fireEvent.change(screen.getByLabelText(/Workflow 名称/), { target: { value: "内容巡检" } });
     fireEvent.click(screen.getByRole("button", { name: "保存 Workflow" }));
     expect(screen.getByText("内容巡检 已保存，当前版本 v1。")).toBeTruthy();
-    expect(screen.getByRole("combobox", { name: "选择要管理的 Workflow" }).textContent).toContain("内容巡检 · v1");
+    expect(screen.getByRole("heading", { level: 2, name: "内容巡检" })).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "启用" }));
     expect(screen.getByText("内容巡检 已启用。")).toBeTruthy();
@@ -132,10 +142,12 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
     expect(within(dialog).getByRole("heading", { name: "确认删除 Workflow" })).toBeTruthy();
     fireEvent.click(within(dialog).getByRole("button", { name: "删除" }));
     expect(screen.getByText("内容巡检 已从静态 Fixture 删除。")).toBeTruthy();
+    expect(screen.getByRole("list", { name: "Workflow 列表" })).toBeTruthy();
   });
 
-  it("keeps a newly created Dry-run reachable as real run evidence in the run center", async () => {
+  it("keeps a Dry-run reachable as real run evidence from the selected Workflow detail", async () => {
     render(<BlogAdminAIOperationsDemo initialRoute={{ tab: "automation", record: "workflow" }} />);
+    openFirstWorkflow();
 
     fireEvent.click(screen.getByRole("button", { name: "Dry-run" }));
     fireEvent.click(await screen.findByRole("button", { name: "查看 Run #246" }));
@@ -149,9 +161,10 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
     render(<BlogAdminAIOperationsDemo initialRoute={{ tab: "automation", record: "workflow" }} />);
     fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
     fireEvent.click(screen.getByRole("radio", { name: "运行失败" }));
+    openFirstWorkflow();
 
     fireEvent.click(screen.getByRole("button", { name: "运行" }));
-    expect(await screen.findByText("运行失败（Run #246）。请修正后重试，步骤日志可在运行中心查看。")).toBeTruthy();
+    expect(await screen.findByText("运行失败（Run #246）。请修正后重试，运行证据已保留。")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "查看 Run #246" }));
 
     expect(await screen.findByRole("heading", { level: 3, name: "Run #246 · 旧文维护" })).toBeTruthy();
