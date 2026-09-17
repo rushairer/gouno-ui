@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AIOpsRecordsPanel } from "../showcase/demos/products/blog-admin/ai/operations/automation-records";
 import { aiOpsAutomationRecordsFixture } from "../showcase/demos/products/blog-admin/ai/operations/automation-records-fixtures";
@@ -65,6 +65,24 @@ describe("Blog Admin AI canonical redesign contract", () => {
     expect(screen.getByText("资源")).toBeTruthy();
     expect(screen.getByText("人工交互")).toBeTruthy();
     expect(screen.getByText("事件")).toBeTruthy();
+  });
+
+  it("keeps the visible Run detail inside the active Workflow filters", () => {
+    render(
+      <AIOpsRecordsPanel
+        fixture={aiOpsAutomationRecordsFixture}
+        initialRecord="workflow"
+        initialRunId={245}
+        onRouteChange={vi.fn()}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("combobox", { name: "按状态筛选 Workflow 运行" }));
+    fireEvent.click(screen.getByRole("option", { name: "成功" }));
+
+    expect(screen.queryByRole("heading", { level: 3, name: "Run #245 · AI 每日资讯" })).toBeNull();
+    expect(screen.getByRole("heading", { level: 3, name: "Run #244 · 旧文维护" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Run #244/ }).getAttribute("aria-pressed")).toBe("true");
   });
 
   it("groups Agent settings into identity, binding, schedule and stricter runtime governance", () => {
