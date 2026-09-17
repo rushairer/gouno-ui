@@ -19,7 +19,6 @@ import { PageHeader } from "../../../../../../src/gouno";
 import { FixtureDock } from "../../../../../components/fixture-dock";
 import { AutomationManagement } from "./automation-management";
 import {
-  AIOpsAutomationPanel,
   AIOpsRecordsPanel,
   type AIOpsRecordsTarget,
 } from "./automation-records";
@@ -29,6 +28,7 @@ import {
   type WorkflowFixture,
   type WorkflowRunFixture,
 } from "./automation-records-fixtures";
+import { WorkflowExecutionPanel } from "./workflow-execution";
 import { aiOpsDecisionFixture, type AIOpsDecisionFixture, type AIOpsTab } from "./fixtures";
 import { AIOpsInboxPanel, AIOpsOverviewPanel } from "./overview-inbox";
 import { FixtureNotification } from "../../fixture-notification";
@@ -102,6 +102,8 @@ function cloneAutomationFixture(): AIOpsAutomationRecordsFixture {
     workflows: aiOpsAutomationRecordsFixture.workflows.map((workflow) => ({
       ...workflow,
       discoveryTools: [...workflow.discoveryTools],
+      inputFields: workflow.inputFields.map((field) => ({ ...field })),
+      steps: workflow.steps.map((step) => ({ ...step })),
       input: { ...workflow.input },
       metrics: { ...workflow.metrics },
       versions: workflow.versions.map((version) => ({ ...version })),
@@ -176,6 +178,11 @@ export function BlogAdminAIOperationsDemo({
     setNotice(null);
   };
 
+  const backToWorkflowList = () => {
+    setRoute((current) => ({ ...current, tab: "automation", record: "workflow", workflow: undefined, run: undefined }));
+    setNotice(null);
+  };
+
   const openRecords = (target: AIOpsRecordsTarget) => {
     setRoute({
       tab: "records",
@@ -227,7 +234,7 @@ export function BlogAdminAIOperationsDemo({
         ? current.workflows.map((item) => item.id === workflow.id ? workflow : item)
         : [...current.workflows, workflow],
     }));
-    setRoute((current) => ({ ...current, workflow: workflow.id }));
+    setRoute((current) => ({ ...current, tab: "automation", record: "workflow", workflow: workflow.id, run: undefined }));
     setNotice({ type: "success", text: `${workflow.name} 已保存，当前版本 v${workflow.currentVersion}。` });
   };
 
@@ -237,7 +244,9 @@ export function BlogAdminAIOperationsDemo({
       workflows: current.workflows.filter((item) => item.id !== workflow.id),
       workflowRuns: current.workflowRuns.filter((run) => run.workflowId !== workflow.id),
     }));
-    setRoute((current) => current.workflow === workflow.id ? { ...current, workflow: undefined } : current);
+    setRoute((current) => current.workflow === workflow.id
+      ? { ...current, tab: "automation", record: "workflow", workflow: undefined, run: undefined }
+      : current);
     setNotice({ type: "success", text: `${workflow.name} 已从静态 Fixture 删除。` });
   };
 
@@ -318,15 +327,9 @@ export function BlogAdminAIOperationsDemo({
     { key: "records", label: tabLabel("运行中心", <Clock3 aria-hidden="true" className="size-4" />) },
   ] as const;
 
-  const automationFixture = route.workflow
-    ? {
-        ...automationRecordsFixture,
-        workflows: [
-          ...automationRecordsFixture.workflows.filter((item) => item.id === route.workflow),
-          ...automationRecordsFixture.workflows.filter((item) => item.id !== route.workflow),
-        ],
-      }
-    : automationRecordsFixture;
+  const selectedWorkflow = route.workflow
+    ? automationRecordsFixture.workflows.find((item) => item.id === route.workflow) ?? null
+    : null;
   const recordsFixture = route.record === "workflow" && route.workflow
     ? {
         ...automationRecordsFixture,
@@ -357,24 +360,25 @@ export function BlogAdminAIOperationsDemo({
     );
   } else if (route.tab === "automation") {
     content = (
-      <div className="flex flex-col gap-6">
-        <AutomationManagement
-          workflows={automationFixture.workflows}
-          onSave={saveWorkflow}
-          onDelete={deleteWorkflow}
-          onToggle={toggleWorkflow}
-          onSelect={selectWorkflow}
-          onOpenRecords={(workflow) => openRecords({ record: "workflow", workflow: workflow.id })}
-        />
-        <AIOpsAutomationPanel
-          fixture={automationFixture}
-          onPreflight={async () => ({ ready: true })}
-          onRun={async (workflowId, dryRun) => runWorkflow(workflowId, dryRun)}
-          onRollback={rollbackWorkflow}
-          onOpenRecords={openRecords}
-          onSelectWorkflow={selectWorkflow}
-        />
-      </div>
+      <AutomationManagement
+        workflows={automationRecordsFixture.workflows}
+        selectedWorkflowId={route.workflow}
+        onSave={saveWorkflow}
+        onDelete={deleteWorkflow}
+        onToggle={toggleWorkflow}
+        onSelect={selectWorkflow}
+        onBack={backToWorkflowList}
+        onOpenRecords={(workflow) => openRecords({ record: "workflow", workflow: workflow.id })}
+        detailContent={selectedWorkflow ? (
+          <WorkflowExecutionPanel
+            workflow={selectedWorkflow}
+            onPreflight={async () => ({ ready: true })}
+            onRun={async (workflowId, dryRun) => runWorkflow(workflowId, dryRun)}
+            onRollback={rollbackWorkflow}
+            onOpenRecords={openRecords}
+          />
+        ) : undefined}
+      />
     );
   } else {
     content = (
@@ -391,7 +395,7 @@ export function BlogAdminAIOperationsDemo({
     <div className="flex flex-col gap-6">
       <FixtureDock
         route={formatAIOpsRoute(route)}
-        note="AI 运营保留发现、决策、自动化与运行证据；Fixture 可复现失败 Run 与审批重试失败，稳定治理配置已拆分到独立 AI 设置路由。"
+        note="AI 运营保留发现、决策、自动化与运行证据；自动化采用 Workflow 列表 → 定义/执行详情，稳定治理配置继续留在独立 AI 设置路由。"
         controls={(
           <div className="flex flex-col gap-3">
             <Segmented<FixtureScenario>
