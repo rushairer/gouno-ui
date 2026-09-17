@@ -58,7 +58,7 @@ describe("Blog Admin AI canonical redesign contract", () => {
     expect(screen.getByRole("heading", { level: 2, name: /编辑 Agent/ })).toBeTruthy();
     expect(screen.getByText("基础信息")).toBeTruthy();
     expect(screen.getByText("能力绑定")).toBeTruthy();
-    expect(screen.getByText("运行计划")).toBeTruthy();
+    expect(screen.getByText("调度只决定何时发起运行；实际执行仍受 Agent 状态、权限和审批链路约束。")).toBeTruthy();
     expect(screen.getByLabelText(/Agent 名称/)).toBeTruthy();
     expect(screen.getByLabelText(/模型连接/)).toBeTruthy();
   });
