@@ -48,7 +48,6 @@ export function AutomationManagement({
           onSave={(workflow) => {
             onSave(workflow);
             setSelectedId(workflow.id);
-            onSelect?.(workflow);
             setEditing(null);
           }}
         />
@@ -75,86 +74,57 @@ export function AutomationManagement({
 
       {selected ? (
         <Card padding="base">
-          <div className="flex flex-col gap-5">
-            <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-              <div className="min-w-0 flex-1">
-                <Text size="xs" tone="muted">当前 Workflow</Text>
-                <div className="mt-2 max-w-xl">
-                  <Select
-                    aria-label="选择要管理的 Workflow"
-                    value={String(selected.id)}
-                    onChange={(value) => selectWorkflow(Number(value))}
-                  >
-                    {workflows.map((workflow) => (
-                      <option key={workflow.id} value={String(workflow.id)}>
-                        {workflow.name} · v{workflow.currentVersion}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <Tag color={selected.enabled ? "success" : undefined}>{selected.enabled ? "已启用" : "已停用"}</Tag>
-                  <Text size="xs" tone="muted">{selected.description}</Text>
-                </div>
-              </div>
-
-              <div
-                className="flex w-full flex-wrap items-center gap-2 xl:w-auto xl:justify-end"
-                data-slot="workflow-management-actions"
-              >
-                {onOpenRecords ? (
-                  <Button
-                    size="small"
-                    variant="outline"
-                    icon={<Clock3 />}
-                    onClick={() => onOpenRecords(selected)}
-                  >
-                    运行记录
-                  </Button>
-                ) : null}
-                <Button size="small" variant="outline" icon={<Edit2 />} onClick={() => setEditing(selected)}>
-                  编辑
-                </Button>
-                <Button size="small" variant="ghost" icon={<Power />} onClick={() => onToggle(selected)}>
-                  {selected.enabled ? "停用" : "启用"}
-                </Button>
-                <Button
-                  size="small"
-                  variant="ghost"
-                  color="error"
-                  icon={<Trash2 />}
-                  onClick={() => setDeleteTarget(selected)}
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="min-w-0 flex-1">
+              <Text size="xs" tone="muted">当前 Workflow</Text>
+              <div className="mt-2 max-w-xl">
+                <Select
+                  aria-label="选择要管理的 Workflow"
+                  value={String(selected.id)}
+                  onChange={(value) => selectWorkflow(Number(value))}
                 >
-                  删除
-                </Button>
+                  {workflows.map((workflow) => (
+                    <option key={workflow.id} value={String(workflow.id)}>
+                      {workflow.name} · v{workflow.currentVersion}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <Tag color={selected.enabled ? "success" : undefined}>{selected.enabled ? "已启用" : "已停用"}</Tag>
+                <Text size="xs" tone="muted">{selected.description}</Text>
               </div>
             </div>
 
-            <div className="grid border-t pt-5 sm:grid-cols-2 xl:grid-cols-4">
-              <div className="min-w-0 py-2 pr-4 sm:border-r">
-                <Text size="xs" tone="muted">执行计划</Text>
-                <strong className="mt-1 block text-sm">{selected.schedule}</strong>
-                <Text size="xs" tone="muted">{selected.timezone}</Text>
-              </div>
-              <div className="min-w-0 py-2 px-0 sm:px-4 xl:border-r">
-                <Text size="xs" tone="muted">下次运行</Text>
-                <strong className="mt-1 block text-sm">{selected.nextRunAt}</strong>
-              </div>
-              <div className="min-w-0 py-2 pr-4 sm:border-r sm:pl-0 xl:pl-4">
-                <Text size="xs" tone="muted">运行 / 失败 / Token</Text>
-                <strong className="mt-1 block text-sm">
-                  {selected.metrics.runs} / {selected.metrics.failures} / {selected.metrics.tokens}
-                </strong>
-              </div>
-              <div className="min-w-0 py-2 sm:pl-4">
-                <Text size="xs" tone="muted">运行边界</Text>
-                <strong className="mt-1 block text-sm">
-                  {selected.scopeMode === "strict" ? "严格限制所选资源" : "兼容模式"}
-                </strong>
-                <Text size="xs" tone="muted">
-                  {selected.discoveryTools.length ? `允许发现：${selected.discoveryTools.join(", ")}` : "无额外 discovery tools"}
-                </Text>
-              </div>
+            <div
+              className="flex w-full flex-wrap items-center gap-2 lg:w-auto lg:justify-end"
+              data-slot="workflow-management-actions"
+            >
+              {onOpenRecords ? (
+                <Button
+                  size="small"
+                  variant="outline"
+                  icon={<Clock3 />}
+                  onClick={() => onOpenRecords(selected)}
+                >
+                  运行记录
+                </Button>
+              ) : null}
+              <Button size="small" variant="outline" icon={<Edit2 />} onClick={() => setEditing(selected)}>
+                编辑
+              </Button>
+              <Button size="small" variant="ghost" icon={<Power />} onClick={() => onToggle(selected)}>
+                {selected.enabled ? "停用" : "启用"}
+              </Button>
+              <Button
+                size="small"
+                variant="ghost"
+                color="error"
+                icon={<Trash2 />}
+                onClick={() => setDeleteTarget(selected)}
+              >
+                删除
+              </Button>
             </div>
           </div>
         </Card>
