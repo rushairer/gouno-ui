@@ -24,16 +24,28 @@ describe("Blog Admin Categories product migration fixture", () => {
     expect(screen.getAllByRole("button", { name: "删除分类 工程实践" }).length).toBeGreaterThanOrEqual(2);
   });
 
-  it("preserves create/edit Drawer and AI Slug assistance", () => {
+  it("preserves create/edit Drawer and routes Slug AI through AISuggestionPicker", () => {
     render(<BlogAdminCategoriesDemo />);
     fireEvent.click(screen.getByRole("button", { name: "新建分类" }));
     expect(screen.getByText("创建一个可长期复用的内容主题。")).toBeTruthy();
     fireEvent.change(screen.getByRole("textbox", { name: "分类名称" }), { target: { value: "Design System" } });
-    fireEvent.click(screen.getByRole("button", { name: "AI 生成" }));
-    fireEvent.click(screen.getByRole("button", { name: "design-system" }));
+    fireEvent.click(screen.getByRole("button", { name: "AI 生成 Slug 候选" }));
+
+    const picker = screen.getByLabelText("Slug AI 建议");
+    expect(picker.getAttribute("data-slot")).toBe("ai-suggestion-picker");
+    expect(within(picker).getByRole("radiogroup", { name: "Slug 候选" })).toBeTruthy();
+    expect((within(picker).getByRole("radio", { name: "design-system" }) as HTMLInputElement).checked).toBe(true);
+
+    fireEvent.click(within(picker).getByRole("button", { name: "重新生成 AI 建议" }));
+    expect((within(picker).getByRole("radio", { name: "design-system-topic" }) as HTMLInputElement).checked).toBe(true);
+    fireEvent.click(within(picker).getByRole("button", { name: "使用所选 Slug" }));
+    expect((screen.getByRole("textbox", { name: "Slug 标识" }) as HTMLInputElement).value).toBe("design-system-topic");
+
     fireEvent.click(screen.getByRole("button", { name: "创建分类" }));
     expect(screen.getByText("分类“Design System”已创建（Showcase 模拟）。")).toBeTruthy();
     expect(screen.getAllByText("Design System").length).toBeGreaterThanOrEqual(2);
+    expect(screen.getAllByText("design-system-topic").length).toBeGreaterThanOrEqual(2);
+
     fireEvent.click(screen.getAllByRole("button", { name: "编辑分类 Design System" })[0]);
     fireEvent.change(screen.getByRole("textbox", { name: "分类描述" }), { target: { value: "验证分类编辑工作流。" } });
     fireEvent.click(screen.getByRole("button", { name: "保存修改" }));
