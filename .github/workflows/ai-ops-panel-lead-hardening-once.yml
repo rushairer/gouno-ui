@@ -1,0 +1,150 @@
+name: AI Ops Panel Lead Hardening Once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/ai-ops-panel-lead-hardening-once.yml"
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: ai-ops-panel-lead-hardening-once
+  cancel-in-progress: false
+
+jobs:
+  harden:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Apply canonical AI Operations panel lead contract
+        shell: bash
+        run: |
+          node --input-type=module <<'EOF'
+          import { readFile, writeFile } from 'node:fs/promises';
+
+          async function edit(path, transform) {
+            const before = await readFile(path, 'utf8');
+            const after = transform(before);
+            if (after === before) throw new Error(`${path}: no change produced`);
+            await writeFile(path, after);
+          }
+          function replaceOnce(source, from, to, label) {
+            const first = source.indexOf(from);
+            if (first < 0) throw new Error(`missing ${label}`);
+            if (source.indexOf(from, first + from.length) >= 0) throw new Error(`ambiguous ${label}`);
+            return source.slice(0, first) + to + source.slice(first + from.length);
+          }
+
+          await edit('showcase/components/tab-panel-lead.tsx', (source) => {
+            source = replaceOnce(source,
+              'import { Text } from "../../src/core";',
+              'import { Heading, Text } from "../../src/core";',
+              'TabPanelLead imports');
+            source = replaceOnce(source,
+              'export function TabPanelLead({\n  description,\n  actions,\n}: {\n  description?: ReactNode;\n  actions?: ReactNode;\n}) {\n  if (!description && !actions) return null;',
+              'export function TabPanelLead({\n  title,\n  description,\n  actions,\n}: {\n  title?: ReactNode;\n  description?: ReactNode;\n  actions?: ReactNode;\n}) {\n  if (!title && !description && !actions) return null;',
+              'TabPanelLead signature');
+            source = replaceOnce(source,
+              '      <div className="min-w-0">\n        {description ? (\n          <Text tone="muted" size="sm" className="max-w-3xl leading-relaxed">\n            {description}\n          </Text>\n        ) : null}\n      </div>',
+              '      <div className="min-w-0">\n        {title ? <Heading level={2}>{title}</Heading> : null}\n        {description ? (\n          <Text\n            tone="muted"\n            size="sm"\n            className={title ? "mt-1 max-w-3xl leading-relaxed" : "max-w-3xl leading-relaxed"}\n          >\n            {description}\n          </Text>\n        ) : null}\n      </div>',
+              'TabPanelLead body');
+            return source;
+          });
+
+          await edit('showcase/demos/products/blog-admin/ai/operations/overview-inbox.tsx', (source) => {
+            source = replaceOnce(source,
+              'import { OpsMeta, OpsObjectRow, OpsRegionHeading, OpsSummaryStrip } from "./canonical-patterns";',
+              'import { TabPanelLead } from "../../../../../components/tab-panel-lead";\nimport { OpsMeta, OpsObjectRow, OpsRegionHeading, OpsSummaryStrip } from "./canonical-patterns";',
+              'overview panel lead import');
+            source = replaceOnce(source,
+              '      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">\n        <div className="max-w-3xl">\n          <Heading level={2}>今天需要关注什么</Heading>\n          <Text className="mt-1" tone="muted">\n            先处理失败与等待人工的运行，再决定建议、候选和后续编辑任务；AI 不会绕过人工边界直接发布内容。\n          </Text>\n        </div>\n        <div className="flex flex-wrap gap-2">\n          <Button variant="outline" icon={<ShieldCheck />} onClick={() => onNavigate("inbox")}>待我处理 {decisions.length}</Button>\n          <Button variant="solid" color="primary" icon={<GitBranch />} onClick={() => onNavigate("automation")}>查看自动化</Button>\n        </div>\n      </div>',
+              '      <TabPanelLead\n        title="今天需要关注什么"\n        description="先处理失败与等待人工的运行，再决定建议、候选和后续编辑任务；AI 不会绕过人工边界直接发布内容。"\n        actions={(\n          <>\n            <Button variant="outline" icon={<ShieldCheck />} onClick={() => onNavigate("inbox")}>待我处理 {decisions.length}</Button>\n            <Button variant="solid" color="primary" icon={<GitBranch />} onClick={() => onNavigate("automation")}>查看自动化</Button>\n          </>\n        )}\n      />',
+              'overview bespoke lead');
+            source = replaceOnce(source,
+              '      <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">\n        <Text tone="muted" size="sm" className="max-w-3xl leading-relaxed">把审批、选择、确认、运营建议和后续编辑任务放进同一人工决策队列，而不是分散成多个互不相关的卡片区。</Text>\n        <div className="flex flex-wrap gap-2" aria-label="决策队列筛选">\n          {([[\n            "all", "全部"\n          ], ["approval", "审批"], ["choice", "选择 / 确认"], ["operation", "运营建议"], ["follow-up", "后续任务"]] as Array<[DecisionFilter, string]>).map(([key, label]) => (\n            <Button key={key} size="small" variant={filter === key ? "solid" : "outline"} color={filter === key ? "primary" : undefined} onClick={() => setFilter(key)}>{label}</Button>\n          ))}\n        </div>\n      </div>',
+              '      <TabPanelLead\n        title="人工决策队列"\n        description="把审批、选择、确认、运营建议和后续编辑任务放进同一人工决策队列，而不是分散成多个互不相关的卡片区。"\n      />\n      <div className="flex flex-wrap gap-2" aria-label="决策队列筛选">\n        {([[\n          "all", "全部"\n        ], ["approval", "审批"], ["choice", "选择 / 确认"], ["operation", "运营建议"], ["follow-up", "后续任务"]] as Array<[DecisionFilter, string]>).map(([key, label]) => (\n          <Button key={key} size="small" variant={filter === key ? "solid" : "outline"} color={filter === key ? "primary" : undefined} onClick={() => setFilter(key)}>{label}</Button>\n        ))}\n      </div>',
+              'inbox bespoke lead');
+            return source;
+          });
+
+          await edit('showcase/demos/products/blog-admin/ai/operations/automation-management.tsx', (source) => {
+            source = replaceOnce(source,
+              '<TabPanelLead description="编辑 Workflow 的输入契约、流程定义、执行计划与运行边界；保存形成新版本，运行证据继续进入运行中心。" />',
+              '<TabPanelLead title="编辑自动化" description="编辑 Workflow 的输入契约、流程定义、执行计划与运行边界；保存形成新版本，运行证据继续进入运行中心。" />',
+              'automation editor lead');
+            source = source.replaceAll(
+              '<TabPanelLead\n          description="Workflow 是持续运行的版本化自动化资产。',
+              '<TabPanelLead\n          title="自动化资产"\n          description="Workflow 是持续运行的版本化自动化资产.');
+            if (!source.includes('title="自动化资产"')) throw new Error('automation asset title missing');
+            source = source.replaceAll('版本化自动化资产.先', '版本化自动化资产。先');
+            source = source.replaceAll('版本化自动化资产.左', '版本化自动化资产。左');
+            return source;
+          });
+
+          await edit('showcase/demos/products/blog-admin/ai/operations/automation-records.tsx', (source) => {
+            source = replaceOnce(source,
+              'import { OpsMeta, OpsObjectRow, OpsRegionHeading, OpsSummaryStrip } from "./canonical-patterns";',
+              'import { TabPanelLead } from "../../../../../components/tab-panel-lead";\nimport { OpsMeta, OpsObjectRow, OpsRegionHeading, OpsSummaryStrip } from "./canonical-patterns";',
+              'records panel lead import');
+            source = replaceOnce(source,
+              '      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">\n        <div className="max-w-3xl">\n          <Text tone="muted">从一次 Run 追溯执行步骤、资源边界、人工交互、媒体候选、Tool Call 与持久化事件；这里是证据中心，不是 Workflow 配置页。</Text>\n        </div>\n        <div className="flex flex-wrap gap-2" aria-label="运行中心类型">\n          <Button variant={record === "workflow" ? "solid" : "outline"} color={record === "workflow" ? "primary" : undefined} onClick={() => selectRecord("workflow")} icon={<GitBranch />}>Workflow 任务</Button>\n          <Button variant={record === "agent" ? "solid" : "outline"} color={record === "agent" ? "primary" : undefined} onClick={() => selectRecord("agent")} icon={<Clock3 />}>Agent 运行</Button>\n        </div>\n      </div>',
+              '      <TabPanelLead\n        title="运行证据中心"\n        description="从一次 Run 追溯执行步骤、资源边界、人工交互、媒体候选、Tool Call 与持久化事件；这里是证据中心，不是 Workflow 配置页。"\n        actions={(\n          <div className="flex flex-wrap gap-2" aria-label="运行中心类型">\n            <Button variant={record === "workflow" ? "solid" : "outline"} color={record === "workflow" ? "primary" : undefined} onClick={() => selectRecord("workflow")} icon={<GitBranch />}>Workflow 任务</Button>\n            <Button variant={record === "agent" ? "solid" : "outline"} color={record === "agent" ? "primary" : undefined} onClick={() => selectRecord("agent")} icon={<Clock3 />}>Agent 运行</Button>\n          </div>\n        )}\n      />',
+              'run center bespoke lead');
+            return source;
+          });
+
+          await edit('docs/design-language.md', (source) => replaceOnce(source,
+            '- A panel may place a concise description/status/action lead below Tabs when it adds active-section context. The lead should not invent another title merely to justify actions.',
+            '- A panel may place a concise description/status/action lead below Tabs when it adds active-section context. The lead should not invent another title merely to justify actions.\n- When sibling panels in one route family genuinely need visible task-concept headings, they must use one shared panel-lead anatomy (same H2 role, description typography, action alignment and vertical rhythm). Do not let Overview, Inbox, Automation and Records each invent a different title/subtitle composition.\n- A titled panel lead is still a Showcase composition contract, not a new public UI primitive. The visible H2 must materially differ from the active Tab label and name the task concept inside that panel.',
+            'DL-11 panel lead family rule'));
+
+          await writeFile('tests/product-blog-admin-ai-operations-panel-lead.test.ts', `import { readFileSync } from "node:fs";\nimport { describe, expect, it } from "vitest";\n\nconst read = (path: string) => readFileSync(new URL(\`../\${path}\`, import.meta.url), "utf8");\n\ndescribe("Blog Admin AI Operations panel lead contract", () => {\n  it("uses one titled lead anatomy across every top-level AI Operations panel", () => {\n    const lead = read("showcase/components/tab-panel-lead.tsx");\n    const overview = read("showcase/demos/products/blog-admin/ai/operations/overview-inbox.tsx");\n    const automation = read("showcase/demos/products/blog-admin/ai/operations/automation-management.tsx");\n    const records = read("showcase/demos/products/blog-admin/ai/operations/automation-records.tsx");\n\n    expect(lead).toContain("title?: ReactNode");\n    expect(lead).toContain("<Heading level={2}>{title}</Heading>");\n    expect(overview).toContain('title="今天需要关注什么"');\n    expect(overview).toContain('title="人工决策队列"');\n    expect(automation).toContain('title="自动化资产"');\n    expect(records).toContain('title="运行证据中心"');\n  });\n});\n`, 'utf8');
+          EOF
+
+      - name: Format changed source
+        run: npx prettier --write showcase/components/tab-panel-lead.tsx showcase/demos/products/blog-admin/ai/operations/overview-inbox.tsx showcase/demos/products/blog-admin/ai/operations/automation-management.tsx showcase/demos/products/blog-admin/ai/operations/automation-records.tsx tests/product-blog-admin-ai-operations-panel-lead.test.ts docs/design-language.md
+
+      - name: Verify Gouno UI
+        run: npm run verify
+
+      - name: Commit hardened Showcase and retire helper
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm .github/workflows/ai-ops-panel-lead-hardening-once.yml
+          git add showcase/components/tab-panel-lead.tsx \
+            showcase/demos/products/blog-admin/ai/operations/overview-inbox.tsx \
+            showcase/demos/products/blog-admin/ai/operations/automation-management.tsx \
+            showcase/demos/products/blog-admin/ai/operations/automation-records.tsx \
+            tests/product-blog-admin-ai-operations-panel-lead.test.ts \
+            docs/design-language.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "fix(ai-ops): unify canonical panel lead language"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+
+      - name: Re-run permanent gates on final main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run ci.yml --ref main
+          gh workflow run blog-consumer-parity.yml --ref main
+          gh workflow run showcase-pages.yml --ref main
