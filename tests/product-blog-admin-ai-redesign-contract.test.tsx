@@ -42,9 +42,9 @@ describe("Blog Admin AI canonical redesign contract", () => {
     expect(screen.getByText("流程定义")).toBeTruthy();
     expect(screen.getByText("运行边界")).toBeTruthy();
     expect(screen.getByLabelText("空结果策略")).toBeTruthy();
-    expect(screen.getByText("筛选超过维护周期的文章")).toBeTruthy();
-    expect(screen.getByText("生成维护建议")).toBeTruthy();
-    expect(screen.getByText("人工审批维护建议")).toBeTruthy();
+    expect(screen.getByDisplayValue("筛选超过维护周期的文章")).toBeTruthy();
+    expect(screen.getByDisplayValue("生成维护建议")).toBeTruthy();
+    expect(screen.getByDisplayValue("人工审批维护建议")).toBeTruthy();
     expect(screen.getByRole("button", { name: "保存 Workflow" })).toBeTruthy();
   });
 
