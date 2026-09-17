@@ -235,7 +235,7 @@ export function AIOpsRecordsPanel({
     return true;
   }), [fixture.workflowRuns, status, workflowId]);
 
-  const selectedWorkflowRun = fixture.workflowRuns.find((run) => run.id === selectedWorkflowRunId) ?? workflowRuns[0] ?? null;
+  const selectedWorkflowRun = workflowRuns.find((run) => run.id === selectedWorkflowRunId) ?? workflowRuns[0] ?? null;
   const selectedAgentRun = fixture.agentRuns.find((run) => run.id === selectedAgentRunId) ?? fixture.agentRuns[0] ?? null;
 
   const selectRecord = (next: "workflow" | "agent") => {
