@@ -14,7 +14,7 @@ const propsApi: ApiRow[] = [
   { name: "description", type: "ReactNode", description: "建议区辅助说明；不传时显示候选数量。" },
   { name: "groupLabel", type: "string", description: "RadioGroup accessible name。", defaultValue: '"AI 建议候选"' },
   { name: "onDismiss", type: "() => void", description: "可选取消 / 关闭入口。" },
-  { name: "onRegenerate", type: "() => void", description: "可选重新生成入口；生成逻辑仍由消费者拥有。" },
+  { name: "onRegenerate", type: "() => void", description: "可选重新生成入口；传入后 Header 右上角显示固定 icon-only 操作，并保留 accessible label/title。生成逻辑仍由消费者拥有。" },
   { name: "applyLabel", type: "string", description: "统一确认动作文案。", defaultValue: '"使用所选"' },
   { name: "className", type: "string", description: "扩展 Pattern 外层 surface。" },
 ];
@@ -37,7 +37,7 @@ export function PatternAISuggestionPickerDemo() {
           <Tag color="success">Admitted</Tag>
         </div>
         <Text tone="muted" className="max-w-3xl leading-relaxed">
-          用于“一个业务字段对应多个互斥 AI 候选”的场景。Pattern 提供真实 Radio 选择、重新生成、取消与一个明确的确认动作；它不拥有模型、Prompt、持久化或字段校验。
+          用于“一个业务字段对应多个互斥 AI 候选”的场景。Pattern 提供真实 Radio 选择、重新生成、取消与一个明确的确认动作；它不拥有模型、Prompt、持久化或字段校验。重新生成固定使用 icon-only 次级动作，避免窄容器中与标题、说明争抢横向空间。
         </Text>
       </header>
 
@@ -47,6 +47,15 @@ export function PatternAISuggestionPickerDemo() {
         code={canonicalExampleSource(AISuggestionPickerExampleSource)}
       >
         <AISuggestionPickerExample />
+      </DemoSection>
+
+      <DemoSection
+        title="窄容器行为"
+        description="重新生成始终保持 32×32 icon-only；标题与说明获得剩余宽度并自然换行，底部动作在必要时按按钮粒度换行。"
+      >
+        <div className="max-w-72">
+          <AISuggestionPickerExample />
+        </div>
       </DemoSection>
 
       <section className="space-y-4">

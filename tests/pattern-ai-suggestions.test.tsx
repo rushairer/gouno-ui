@@ -35,8 +35,8 @@ describe("AI suggestion patterns", () => {
         aria-label="AI 路径与 SEO 建议"
         groupLabel="路径与 SEO 建议"
         items={[
-{ key: "slug", label: "Slug", value: "about-us", monospace: true },
-{ key: "seo-title", label: "SEO 标题", value: "关于我们" },
+          { key: "slug", label: "Slug", value: "about-us", monospace: true },
+          { key: "seo-title", label: "SEO 标题", value: "关于我们" },
         ]}
         selectedKeys={["slug", "seo-title"]}
         onSelectedKeysChange={onSelectedKeysChange}
@@ -49,5 +49,36 @@ describe("AI suggestion patterns", () => {
     expect(onSelectedKeysChange).toHaveBeenCalledWith(["slug"]);
     fireEvent.click(screen.getByRole("button", { name: "应用 2 项建议" }));
     expect(onApply).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders regeneration only when provided and keeps it icon-only with an accessible name", () => {
+    const onRegenerate = vi.fn();
+    const { rerender } = render(
+      <AISuggestionPicker
+        options={[{ value: "候选 A" }]}
+        value="候选 A"
+        onValueChange={() => undefined}
+        onApply={() => undefined}
+      />,
+    );
+
+    expect(screen.queryByRole("button", { name: "重新生成 AI 建议" })).toBeNull();
+
+    rerender(
+      <AISuggestionPicker
+        options={[{ value: "候选 A" }]}
+        value="候选 A"
+        onValueChange={() => undefined}
+        onApply={() => undefined}
+        onRegenerate={onRegenerate}
+      />,
+    );
+
+    const regenerate = screen.getByRole("button", { name: "重新生成 AI 建议" });
+    expect(regenerate.textContent).toBe("");
+    expect(regenerate.getAttribute("title")).toBe("重新生成 AI 建议");
+    expect(regenerate.getAttribute("data-slot")).toBe("ai-suggestion-regenerate");
+    fireEvent.click(regenerate);
+    expect(onRegenerate).toHaveBeenCalledTimes(1);
   });
 });

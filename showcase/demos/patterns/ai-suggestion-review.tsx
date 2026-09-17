@@ -14,7 +14,7 @@ const propsApi: ApiRow[] = [
   { name: "description", type: "ReactNode", description: "审阅说明；不传时显示已选择数量。" },
   { name: "groupLabel", type: "string", description: "建议列表 accessible name。", defaultValue: '"AI 建议选择"' },
   { name: "onCancel", type: "() => void", description: "可选取消入口。" },
-  { name: "onRegenerate", type: "() => void", description: "可选重新生成入口；Pattern 不负责生成逻辑。" },
+  { name: "onRegenerate", type: "() => void", description: "可选重新生成入口；传入后 Header 右上角显示固定 icon-only 操作，并保留 accessible label/title。Pattern 不负责生成逻辑。" },
   { name: "className", type: "string", description: "扩展 Pattern 外层 surface。" },
 ];
 
@@ -37,7 +37,7 @@ export function PatternAISuggestionReviewDemo() {
           <Tag color="success">Admitted</Tag>
         </div>
         <Text tone="muted" className="max-w-3xl leading-relaxed">
-          用于“一次 AI 操作会修改多个相关字段”的场景。Pattern 用 Checkbox 明确哪些修改将被采用，并把提交收敛到一个“应用 N 项建议”动作，避免静默覆盖。
+          用于“一次 AI 操作会修改多个相关字段”的场景。Pattern 用 Checkbox 明确哪些修改将被采用，并把提交收敛到一个“应用 N 项建议”动作，避免静默覆盖。重新生成固定使用 icon-only 次级动作，窄容器不再切换文字密度。
         </Text>
       </header>
 
@@ -47,6 +47,15 @@ export function PatternAISuggestionReviewDemo() {
         code={canonicalExampleSource(AISuggestionReviewExampleSource)}
       >
         <AISuggestionReviewExample />
+      </DemoSection>
+
+      <DemoSection
+        title="窄容器行为"
+        description="重新生成始终保持 32×32 icon-only；Header 为内容区 + 固定操作区，说明文字可以换行，底部按钮在空间不足时按按钮粒度换行。"
+      >
+        <div className="max-w-72">
+          <AISuggestionReviewExample />
+        </div>
       </DemoSection>
 
       <section className="space-y-4">
