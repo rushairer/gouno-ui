@@ -2,31 +2,38 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-li
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { BlogAdminAIOperationsDemo } from "../showcase/demos/products/blog-admin/ai/operations";
 import {
-  AIOpsAutomationPanel,
   AIOpsRecordsPanel,
   type AIOpsRecordsTarget,
 } from "../showcase/demos/products/blog-admin/ai/operations/automation-records";
 import { aiOpsAutomationRecordsFixture } from "../showcase/demos/products/blog-admin/ai/operations/automation-records-fixtures";
+import { WorkflowExecutionPanel } from "../showcase/demos/products/blog-admin/ai/operations/workflow-execution";
 
 afterEach(cleanup);
+
+const workflow = aiOpsAutomationRecordsFixture.workflows[0];
+
+function renderWorkflowExecution(overrides: Partial<Parameters<typeof WorkflowExecutionPanel>[0]> = {}) {
+  const props: Parameters<typeof WorkflowExecutionPanel>[0] = {
+    workflow,
+    onPreflight: vi.fn().mockResolvedValue({ ready: true }),
+    onRun: vi.fn().mockResolvedValue({ id: 246, status: "succeeded" }),
+    onRollback: vi.fn(),
+    onOpenRecords: vi.fn(),
+    ...overrides,
+  };
+  render(<WorkflowExecutionPanel {...props} />);
+  return props;
+}
 
 function openFirstWorkflow() {
   fireEvent.click(screen.getAllByRole("button", { name: "进入详情 / 运行" })[0]);
 }
 
 describe("Blog Admin AI Operations automation/records migration modules", () => {
-  it("preserves workflow execution context, scope, metrics and version history", () => {
-    render(
-      <AIOpsAutomationPanel
-        fixture={aiOpsAutomationRecordsFixture}
-        onPreflight={vi.fn().mockResolvedValue({ ready: true })}
-        onRun={vi.fn().mockResolvedValue({ id: 246, status: "succeeded" })}
-        onRollback={vi.fn()}
-        onOpenRecords={vi.fn()}
-      />,
-    );
+  it("preserves selected Workflow execution context, scope, metrics and version history", () => {
+    renderWorkflowExecution();
 
-    expect(screen.getByRole("heading", { level: 2, name: "旧文维护" })).toBeTruthy();
+    expect(screen.getByText("运行当前 Workflow")).toBeTruthy();
     expect(screen.getByText("严格限制所选资源")).toBeTruthy();
     expect(screen.getByText("允许发现：search_posts, read_post")).toBeTruthy();
     expect(screen.getByText("31 / 2 / 128400")).toBeTruthy();
@@ -34,18 +41,10 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
     expect(screen.getByRole("button", { name: "回滚到 v3" })).toBeTruthy();
   });
 
-  it("blocks execution when preflight fails and never queues the workflow", async () => {
+  it("blocks execution when preflight fails and never queues the Workflow", async () => {
     const onPreflight = vi.fn().mockResolvedValue({ ready: false, message: "关联 Agent 未启用。" });
     const onRun = vi.fn();
-    render(
-      <AIOpsAutomationPanel
-        fixture={aiOpsAutomationRecordsFixture}
-        onPreflight={onPreflight}
-        onRun={onRun}
-        onRollback={vi.fn()}
-        onOpenRecords={vi.fn()}
-      />,
-    );
+    renderWorkflowExecution({ onPreflight, onRun });
 
     fireEvent.click(screen.getByRole("button", { name: "运行" }));
 
@@ -56,18 +55,10 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
     expect(await screen.findByText("关联 Agent 未启用。")).toBeTruthy();
   });
 
-  it("preserves dry-run semantics and opens the exact workflow run target", async () => {
+  it("preserves dry-run semantics and opens the exact Workflow Run target", async () => {
     const onRun = vi.fn().mockResolvedValue({ id: 246, status: "succeeded" });
     const onOpenRecords = vi.fn<(target: AIOpsRecordsTarget) => void>();
-    render(
-      <AIOpsAutomationPanel
-        fixture={aiOpsAutomationRecordsFixture}
-        onPreflight={vi.fn().mockResolvedValue({ ready: true })}
-        onRun={onRun}
-        onRollback={vi.fn()}
-        onOpenRecords={onOpenRecords}
-      />,
-    );
+    renderWorkflowExecution({ onRun, onOpenRecords });
 
     fireEvent.click(screen.getByRole("button", { name: "Dry-run" }));
 
@@ -80,35 +71,22 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
 
   it("treats a failed returned Run as an error while preserving its evidence link", async () => {
     const onOpenRecords = vi.fn<(target: AIOpsRecordsTarget) => void>();
-    render(
-      <AIOpsAutomationPanel
-        fixture={aiOpsAutomationRecordsFixture}
-        onPreflight={vi.fn().mockResolvedValue({ ready: true })}
-        onRun={vi.fn().mockResolvedValue({ id: 246, status: "failed" })}
-        onRollback={vi.fn()}
-        onOpenRecords={onOpenRecords}
-      />,
-    );
+    renderWorkflowExecution({
+      onRun: vi.fn().mockResolvedValue({ id: 246, status: "failed" }),
+      onOpenRecords,
+    });
 
     fireEvent.click(screen.getByRole("button", { name: "运行" }));
-    expect(await screen.findByText("运行失败（Run #246）。请修正后重试，步骤日志可在运行中心查看。")).toBeTruthy();
+    expect(await screen.findByText("运行失败（Run #246）。请修正后重试，运行证据已保留。")).toBeTruthy();
     const alert = screen.getByRole("alert");
     expect(alert.getAttribute("data-type")).toBe("error");
     fireEvent.click(screen.getByRole("button", { name: "查看 Run #246" }));
     expect(onOpenRecords).toHaveBeenCalledWith({ record: "workflow", workflow: 42, run: 246 });
   });
 
-  it("keeps rollback explicit and scoped to the selected workflow version", () => {
+  it("keeps rollback explicit and scoped to the selected Workflow version", () => {
     const onRollback = vi.fn();
-    render(
-      <AIOpsAutomationPanel
-        fixture={aiOpsAutomationRecordsFixture}
-        onPreflight={vi.fn().mockResolvedValue({ ready: true })}
-        onRun={vi.fn().mockResolvedValue({ id: 246, status: "succeeded" })}
-        onRollback={onRollback}
-        onOpenRecords={vi.fn()}
-      />,
-    );
+    renderWorkflowExecution({ onRollback });
 
     fireEvent.click(screen.getByRole("button", { name: "回滚到 v3" }));
     expect(onRollback).toHaveBeenCalledWith(42, 3);
@@ -173,7 +151,7 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
     expect(screen.getByText("run_failed")).toBeTruthy();
   });
 
-  it("preserves workflow run deep-link evidence across steps, resources, interactions and events", () => {
+  it("preserves Workflow Run deep-link evidence across steps, resources, interactions and events", () => {
     const onRouteChange = vi.fn<(target: AIOpsRecordsTarget) => void>();
     render(
       <AIOpsRecordsPanel
@@ -198,7 +176,7 @@ describe("Blog Admin AI Operations automation/records migration modules", () => 
     expect(screen.getByText("No writes applied")).toBeTruthy();
   });
 
-  it("keeps agent records separate and exposes failed tool-call evidence", () => {
+  it("keeps Agent records separate and exposes failed Tool Call evidence", () => {
     const onRouteChange = vi.fn<(target: AIOpsRecordsTarget) => void>();
     render(
       <AIOpsRecordsPanel
