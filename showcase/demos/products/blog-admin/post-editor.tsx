@@ -834,6 +834,10 @@ export function BlogAdminPostEditorDemo({
             selectedKeys={taxonomySelection}
             onSelectedKeysChange={setTaxonomySelection}
             onCancel={() => setTaxonomySuggestionsOpen(false)}
+            onRegenerate={() => {
+              setTaxonomySelection(postTaxonomySuggestions.map((item) => item.key));
+              setNotice("已重新生成 AI 分类与标签建议（Showcase 模拟）。");
+            }}
             onApply={applyTaxonomySuggestions}
           />
         ) : null}
@@ -922,6 +926,10 @@ return;
       selectedKeys={metadataSelection}
       onSelectedKeysChange={setMetadataSelection}
       onCancel={() => setMetadataSuggestionsOpen(false)}
+      onRegenerate={() => {
+        setMetadataSelection(postSeoSuggestions.map((item) => item.key));
+        setNotice("已重新生成 AI 路径与 SEO 建议（Showcase 模拟）。");
+      }}
       onApply={applyMetadataSuggestions}
     />
   ) : null}
@@ -997,9 +1005,10 @@ setTitleCandidates([]);
 setSelectedTitleCandidate(null);
         }}
         onRegenerate={() => {
-const candidates = [...postTitleSuggestions].reverse();
+const candidates = [...titleCandidates].reverse();
 setTitleCandidates(candidates);
 setSelectedTitleCandidate(candidates[0] ?? null);
+setNotice("已重新生成标题候选（Showcase 模拟）。");
         }}
         onApply={(candidate) => {
 updatePost("title", candidate);
@@ -1047,6 +1056,12 @@ setSelectedSummaryCandidate(candidates[0] ?? null);
         onDismiss={() => {
 setSummaryCandidates([]);
 setSelectedSummaryCandidate(null);
+        }}
+        onRegenerate={() => {
+const candidates = [...summaryCandidates].reverse();
+setSummaryCandidates(candidates);
+setSelectedSummaryCandidate(candidates[0] ?? null);
+setNotice("已重新生成摘要候选（Showcase 模拟）。");
         }}
         onApply={(candidate) => {
 updatePost("summary", candidate);
