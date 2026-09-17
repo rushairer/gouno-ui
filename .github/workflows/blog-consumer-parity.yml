@@ -70,6 +70,12 @@ jobs:
           npm install --no-save --ignore-scripts @playwright/test@${PLAYWRIGHT_VERSION}
           npx playwright install --with-deps chromium
 
+      - name: Verify Gouno UI-owned AI Operations consumer contract
+        working-directory: consumer-blog/upstream-gouno-ui
+        env:
+          BLOG_CONSUMER_ROOT: ..
+        run: node scripts/check-blog-ai-ops-consumer-parity.mjs
+
       - name: Compare candidate Showcase with current Blog consumer
         working-directory: consumer-blog/blog-frontend
         run: npx playwright test --config=e2e/showcase-parity.config.mjs
