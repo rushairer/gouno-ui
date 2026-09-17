@@ -37,7 +37,7 @@ describe("Blog Admin AI Operations route shell", () => {
     );
   });
 
-  it("exposes four operational surfaces with one page-local tablist", () => {
+  it("exposes four operational surfaces with one page-local tablist and a Workflow list-detail drill-in", () => {
     render(<BlogAdminAIOperationsDemo />);
 
     expect(screen.getByRole("heading", { level: 1, name: "AI 运营" })).toBeTruthy();
@@ -50,7 +50,11 @@ describe("Blog Admin AI Operations route shell", () => {
     expect(screen.getByRole("heading", { level: 2, name: "从一件想改善的事开始" })).toBeTruthy();
 
     fireEvent.mouseDown(screen.getByRole("tab", { name: "自动化" }), { button: 0 });
+    expect(screen.getByRole("list", { name: "Workflow 列表" })).toBeTruthy();
+    expect(screen.queryByRole("heading", { level: 2, name: "旧文维护" })).toBeNull();
+    fireEvent.click(screen.getAllByRole("button", { name: "进入详情 / 运行" })[0]);
     expect(screen.getByRole("heading", { level: 2, name: "旧文维护" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "返回 Workflow 列表" })).toBeTruthy();
   });
 
   it("honors a direct automation workflow route without inventing a new router abstraction", () => {
@@ -63,6 +67,7 @@ describe("Blog Admin AI Operations route shell", () => {
     expect(screen.getByRole("heading", { level: 2, name: "AI 每日资讯" })).toBeTruthy();
     expect(screen.getByDisplayValue("AI")).toBeTruthy();
     expect(screen.getByText("58 / 4 / 421900")).toBeTruthy();
+    expect(screen.getByText("发现近 24 小时资讯")).toBeTruthy();
   });
 
   it("hydrates a Workflow Run deep link with its filtered evidence chain", () => {
