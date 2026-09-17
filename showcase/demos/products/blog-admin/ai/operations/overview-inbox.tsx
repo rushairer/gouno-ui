@@ -1,22 +1,22 @@
+import { useMemo, useState } from "react";
 import {
+  AlertTriangle,
+  Check,
   ChevronRight,
+  CircleAlert,
+  Clock3,
   GitBranch,
+  Image,
   Lightbulb,
   Play,
   ShieldCheck,
-  Sparkles,
   X,
 } from "lucide-react";
 import {
   Alert,
   Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
   Empty,
   Heading,
-  Statistic,
   Tag,
   Text,
 } from "../../../../../../src/core";
@@ -24,358 +24,393 @@ import type {
   AIOpsDecisionFixture,
   AIOpsTab,
   ApprovalFixture,
+  CandidateSetFixture,
+  EditorialTaskFixture,
   InteractionFixture,
+  MediaCandidateFixture,
   OperationsFixture,
+  SuggestionFixture,
 } from "./fixtures";
+import type { AIOpsAutomationRecordsFixture, WorkflowRunStatus } from "./automation-records-fixtures";
+import { OpsMeta, OpsObjectRow, OpsRegionHeading, OpsSummaryStrip } from "./canonical-patterns";
+
+type DecisionKind = "interaction" | "approval" | "suggestion" | "candidate" | "media" | "editorial";
+type DecisionFilter = "all" | "approval" | "choice" | "operation" | "follow-up";
+
+type DecisionItem = {
+  key: string;
+  kind: DecisionKind;
+  id: number;
+  title: string;
+  status: string;
+  createdAt: string;
+  meta: string;
+  summary: string;
+  payload:
+    | InteractionFixture
+    | ApprovalFixture
+    | SuggestionFixture
+    | CandidateSetFixture
+    | MediaCandidateFixture
+    | EditorialTaskFixture;
+};
+
+function runStatus(status: WorkflowRunStatus) {
+  if (status === "failed") return <Tag color="error">失败</Tag>;
+  if (status === "waiting_for_user") return <Tag color="warning">等待用户</Tag>;
+  if (status === "awaiting_approval") return <Tag color="warning">等待审批</Tag>;
+  if (status === "running") return <Tag color="primary">运行中</Tag>;
+  if (status === "queued") return <Tag>已排队</Tag>;
+  if (status === "cancelled") return <Tag>已取消</Tag>;
+  return <Tag color="success">成功</Tag>;
+}
 
 function approvalTitle(approval: ApprovalFixture): string {
   if (approval.actionType === "create_content_candidates") {
-    return `为文章 #${approval.targetId ?? "?"} 准备${approval.proposal.field === "summary" ? "摘要" : "标题"}候选`;
+    return `为${approval.targetLabel || `文章 #${approval.targetId ?? "?"}`}准备${approval.proposal.field === "summary" ? "摘要" : "标题"}候选`;
   }
   if (approval.actionType === "create_media_candidate") {
-    return `为${approval.targetType === "page" ? "单页" : "文章"}准备图片方案`;
+    return `为${approval.targetLabel || (approval.targetType === "page" ? "单页" : "文章")}准备图片方案`;
   }
   return approval.proposal.title || "应用内容建议";
 }
 
-function proposalImpact(approval: ApprovalFixture): string {
+function approvalImpact(approval: ApprovalFixture): { happens: string; safe: string } {
   if (approval.actionType === "create_content_candidates") {
-    return "批准后只会生成候选项，不会直接修改或发布文章。";
+    return {
+      happens: "生成一组可选择的内容候选，后续仍会形成明确的内容变更审批。",
+      safe: "不会直接修改或发布文章。",
+    };
   }
   if (approval.actionType === "create_media_candidate") {
-    return "批准后只会创建图片任务；真正生成图片仍需要后续确认。";
+    return {
+      happens: "创建媒体任务并回到所属 Run 继续生成、选择和预览。",
+      safe: "不会跳过人工选择，也不会自动应用到文章。",
+    };
   }
-  return "批准后会应用下面展示的内容建议；不会影响其他文章或站点设置。";
+  return {
+    happens: "应用当前展示的内容建议。",
+    safe: "不会影响其他文章或站点设置。",
+  };
 }
 
-function ReadableProposal({ approval }: { approval: ApprovalFixture }) {
-  const proposal = approval.proposal;
-  if (approval.actionType === "create_content_candidates") {
-    return (
-      <Card padding="base" variant="subtle" aria-label="候选内容预览">
-        <div className="flex flex-col gap-3">
-          <Text size="xs" tone="muted">候选内容</Text>
-          <div className="flex flex-col gap-2">
-            {(proposal.suggestions ?? []).map((suggestion, index) => (
-              <div key={suggestion} className="rounded-md border bg-background px-4 py-3 text-sm">
-                <span className="mr-2 font-mono text-xs text-muted-foreground">{index + 1}</span>
-                {suggestion}
-              </div>
-            ))}
-          </div>
-        </div>
-      </Card>
-    );
-  }
+function interactionLabel(task: InteractionFixture) {
+  if (task.type === "choice") return "需要选择";
+  if (task.type === "input") return "需要输入";
+  if (task.type === "preview_confirm") return "需要确认";
+  return "需要审批";
+}
 
-  return (
-    <Card padding="base" variant="subtle" aria-label="内容提案预览">
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
-          <Heading level={3}>{proposal.title || "内容提案"}</Heading>
-          {proposal.summary ? <Text tone="muted">{proposal.summary}</Text> : null}
-        </div>
-        {proposal.content ? (
-          <div className="rounded-md border bg-background p-4">
-            {proposal.content.split("\n").map((line, index) => (
-              line.startsWith("## ") ? (
-                <h4 key={`${line}-${index}`} className="mb-2 mt-3 text-sm font-semibold first:mt-0">{line.slice(3)}</h4>
-              ) : line.startsWith("- ") ? (
-                <p key={`${line}-${index}`} className="pl-3 text-sm text-muted-foreground">• {line.slice(2)}</p>
-              ) : line ? (
-                <p key={`${line}-${index}`} className="text-sm text-muted-foreground">{line}</p>
-              ) : null
-            ))}
-          </div>
-        ) : null}
-      </div>
-    </Card>
-  );
+function buildDecisionItems(fixture: AIOpsDecisionFixture): DecisionItem[] {
+  const items: DecisionItem[] = [];
+  fixture.interactions.forEach((task) => items.push({
+    key: `interaction-${task.id}`,
+    kind: "interaction",
+    id: task.id,
+    title: task.title,
+    status: interactionLabel(task),
+    createdAt: task.createdAt || "",
+    meta: `${task.workflowName || "Workflow"} · Run #${task.workflowRunId}${task.targetLabel ? ` · ${task.targetLabel}` : ""}`,
+    summary: task.reason || "当前 Run 需要人工输入后才能继续。",
+    payload: task,
+  }));
+  fixture.approvals
+    .filter((item) => item.status === "pending" || item.status === "failed")
+    .forEach((approval) => items.push({
+      key: `approval-${approval.id}`,
+      kind: "approval",
+      id: approval.id,
+      title: approvalTitle(approval),
+      status: approval.status === "failed" ? "执行失败" : "待审批",
+      createdAt: approval.createdAt || "",
+      meta: `Agent Run #${approval.runId}${approval.targetLabel ? ` · ${approval.targetLabel}` : ""}`,
+      summary: approval.status === "failed"
+        ? approval.reviewNote || "上次批准后的执行失败，提案仍然保留。"
+        : "需要确认 AI 准备的变更及其影响范围。",
+      payload: approval,
+    }));
+  fixture.operations.suggestions
+    .filter((item) => item.status === "new")
+    .forEach((item) => items.push({
+      key: `suggestion-${item.id}`,
+      kind: "suggestion",
+      id: item.id,
+      title: item.title,
+      status: item.priority === "high" ? "优先处理" : item.priority === "medium" ? "建议查看" : "可稍后",
+      createdAt: item.createdAt,
+      meta: `${item.sourceLabel}${item.targetLabel ? ` · ${item.targetLabel}` : ""}`,
+      summary: item.description,
+      payload: item,
+    }));
+  fixture.operations.candidateSets
+    .filter((item) => item.status === "pending")
+    .forEach((item) => items.push({
+      key: `candidate-${item.id}`,
+      kind: "candidate",
+      id: item.id,
+      title: item.title,
+      status: "需要选择",
+      createdAt: item.createdAt,
+      meta: `Run #${item.sourceRunId} · 文章 #${item.postId}`,
+      summary: `${item.candidates.length} 个候选；选择后只会创建下一步内容变更审批。`,
+      payload: item,
+    }));
+  fixture.operations.mediaCandidates
+    .filter((item) => ["brief_ready", "ready_to_generate", "failed"].includes(item.status))
+    .forEach((item) => items.push({
+      key: `media-${item.id}`,
+      kind: "media",
+      id: item.id,
+      title: item.title,
+      status: item.status === "failed" ? "生成失败" : item.status === "brief_ready" ? "待审核" : "可生成",
+      createdAt: item.createdAt,
+      meta: `${item.workflowRunId ? `Run #${item.workflowRunId} · ` : ""}文章 #${item.postId} · ${item.placement === "cover" ? "封面" : "正文插图"}`,
+      summary: item.errorMessage || item.brief,
+      payload: item,
+    }));
+  fixture.operations.editorialTasks
+    .filter((item) => item.status === "open")
+    .forEach((item) => items.push({
+      key: `editorial-${item.id}`,
+      kind: "editorial",
+      id: item.id,
+      title: item.title,
+      status: "待跟进",
+      createdAt: item.createdAt,
+      meta: item.sourceLabel,
+      summary: item.description,
+      payload: item,
+    }));
+  return items.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+function decisionStatus(item: DecisionItem) {
+  if (item.status.includes("失败")) return <Tag color="error">{item.status}</Tag>;
+  if (["待审批", "需要选择", "需要输入", "需要确认", "待审核"].includes(item.status)) return <Tag color="warning">{item.status}</Tag>;
+  if (item.status === "可生成") return <Tag color="primary">{item.status}</Tag>;
+  return <Tag>{item.status}</Tag>;
 }
 
 export function AIOpsOverviewPanel({
   fixture,
+  automation,
   onNavigate,
 }: {
   fixture: AIOpsDecisionFixture;
+  automation?: AIOpsAutomationRecordsFixture;
   onNavigate: (tab: AIOpsTab) => void;
 }) {
-  const pendingApprovals = fixture.approvals.filter((item) => item.status === "pending" || item.status === "failed").length;
-  const newSuggestions = fixture.operations.suggestions.filter((item) => item.status === "new").length;
-  const pendingCandidates = fixture.operations.candidateSets.filter((item) => item.status === "pending").length;
-  const readyMedia = fixture.operations.mediaCandidates.filter((item) => item.status === "ready_to_generate").length;
-  const reviewCount = pendingApprovals + newSuggestions + pendingCandidates + readyMedia;
+  const decisions = buildDecisionItems(fixture);
+  const runs = automation?.workflowRuns || [];
+  const activeRuns = runs.filter((run) => ["queued", "running"].includes(run.status)).length;
+  const failedRuns = runs.filter((run) => run.status === "failed").length;
+  const waitingRuns = runs.filter((run) => ["waiting_for_user", "awaiting_approval"].includes(run.status)).length;
+  const tokenUsage = runs.reduce((total, run) => total + run.tokenUsage, 0);
+  const attentionRuns = runs.filter((run) => ["failed", "waiting_for_user", "awaiting_approval"].includes(run.status)).slice(0, 4);
+  const workflows = automation?.workflows || [];
 
   return (
     <div className="flex flex-col gap-6" aria-label="AI 运营概览">
-      <Card padding="base">
-        <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-          <div className="max-w-2xl space-y-2">
-            <Heading level={2}>从一件想改善的事开始</Heading>
-            <Text tone="muted">AI 会找出机会、准备建议；发布、修改和生成始终由你决定。</Text>
-          </div>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="max-w-3xl">
+          <Heading level={2}>今天需要关注什么</Heading>
+          <Text className="mt-1" tone="muted">
+            先处理失败与等待人工的运行，再决定建议、候选和后续编辑任务；AI 不会绕过人工边界直接发布内容。
+          </Text>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" icon={<ShieldCheck />} onClick={() => onNavigate("inbox")}>待我处理 {decisions.length}</Button>
           <Button variant="solid" color="primary" icon={<GitBranch />} onClick={() => onNavigate("automation")}>查看自动化</Button>
         </div>
-      </Card>
+      </div>
 
-      <section className="grid grid-cols-1 gap-4 md:grid-cols-3" aria-label="当前待办">
-        <Card padding="base" interactive className="relative h-full">
-          <div className="flex items-start justify-between gap-4">
-            <Statistic title="待审批变更" value={pendingApprovals} />
-            <ShieldCheck className="size-5 text-muted-foreground" />
-          </div>
-          <Text size="xs" tone="muted">项等待你的审批</Text>
-          <Button
-            variant="ghost"
-            aria-label={`查看待审批变更：${pendingApprovals} 项`}
-            className="absolute inset-0 z-10 h-auto rounded-lg p-0 hover:bg-transparent"
-            onClick={() => onNavigate("inbox")}
-          />
-        </Card>
-        <Card padding="base" interactive className="relative h-full">
-          <div className="flex items-start justify-between gap-4">
-            <Statistic title="内容建议" value={newSuggestions + pendingCandidates} />
-            <Lightbulb className="size-5 text-muted-foreground" />
-          </div>
-          <Text size="xs" tone="muted">条待处理建议与候选</Text>
-          <Button
-            variant="ghost"
-            aria-label={`查看内容建议：${newSuggestions + pendingCandidates} 条`}
-            className="absolute inset-0 z-10 h-auto rounded-lg p-0 hover:bg-transparent"
-            onClick={() => onNavigate("inbox")}
-          />
-        </Card>
-        <Card padding="base" interactive className="relative h-full">
-          <div className="flex items-start justify-between gap-4">
-            <Statistic title="图片任务" value={readyMedia} />
-            <Sparkles className="size-5 text-muted-foreground" />
-          </div>
-          <Text size="xs" tone="muted">个图片任务可继续生成</Text>
-          <Button
-            variant="ghost"
-            aria-label={`查看图片任务：${readyMedia} 个可生成`}
-            className="absolute inset-0 z-10 h-auto rounded-lg p-0 hover:bg-transparent"
-            onClick={() => onNavigate("inbox")}
-          />
-        </Card>
-      </section>
+      <OpsSummaryStrip
+        ariaLabel="AI 运营健康度"
+        items={[
+          { label: "执行中", value: activeRuns, detail: "queued / running" },
+          { label: "失败运行", value: failedRuns, detail: failedRuns ? "优先查看失败证据" : "暂无失败" },
+          { label: "等待人工", value: waitingRuns + decisions.length, detail: `${decisions.length} 项在决策队列` },
+          { label: "Fixture Token", value: tokenUsage.toLocaleString(), detail: "当前示例 Run 合计" },
+        ]}
+      />
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Card padding="none" className="overflow-hidden">
-          <CardHeader className="border-b p-6">
-            <div className="flex flex-col gap-1">
-              <CardTitle className="text-base">下一步做什么？</CardTitle>
-              <Text size="xs" tone="muted">按影响与人工决策优先级排序。</Text>
-            </div>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4 p-6">
-            <strong>{reviewCount ? `有 ${reviewCount} 项工作等你决定` : "当前没有需要你处理的事项"}</strong>
-            <Text size="sm" tone="muted">先审阅 AI 准备好的建议；它不会自行修改博客内容。</Text>
-            <div><Button icon={<ShieldCheck />} onClick={() => onNavigate("inbox")}>进入待我处理</Button></div>
-          </CardContent>
-        </Card>
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.25fr)_minmax(20rem,0.75fr)]">
+        <section className="overflow-hidden rounded-lg border bg-background" aria-label="需要关注">
+          <div className="border-b px-5 py-4">
+            <OpsRegionHeading
+              title="需要关注"
+              description="失败、等待审批和等待输入的 Run 优先于普通成功记录。"
+              action={<Button size="small" variant="ghost" onClick={() => onNavigate("records")}>进入运行中心</Button>}
+            />
+          </div>
+          <div>
+            {attentionRuns.length ? attentionRuns.map((run) => (
+              <OpsObjectRow
+                key={run.id}
+                title={`Run #${run.id} · ${run.workflowName}`}
+                status={runStatus(run.status)}
+                meta={`${run.startedAt}${run.workflowVersion ? ` · Workflow v${run.workflowVersion}` : ""}`}
+                summary={run.errorMessage || run.outputSummary || "查看本次执行证据。"}
+                signals={run.dryRun ? <Tag>Dry-run</Tag> : undefined}
+                onClick={() => onNavigate("records")}
+              />
+            )) : <div className="p-8"><Empty title="暂无需要关注的运行" /></div>}
+          </div>
+        </section>
 
-        <Card padding="none" className="overflow-hidden">
-          <CardHeader className="border-b p-6">
-            <div className="flex flex-col gap-1">
-              <CardTitle className="text-base">让 AI 持续帮忙</CardTitle>
-              <Text size="xs" tone="muted">已启用 {fixture.enabledWorkflowCount} 个自动化流程。</Text>
-            </div>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4 p-6">
-            <ul className="space-y-3 text-sm">
-              <li><strong>发布前检查</strong><Text size="xs" tone="muted">发现 SEO、链接和内容问题。</Text></li>
-              <li><strong>旧文更新</strong><Text size="xs" tone="muted">发现需要维护的文章。</Text></li>
-              <li><strong>运营周报</strong><Text size="xs" tone="muted">汇总值得关注的变化。</Text></li>
-            </ul>
-            <div><Button icon={<Play />} onClick={() => onNavigate("automation")}>配置自动化</Button></div>
-          </CardContent>
-        </Card>
+        <section className="overflow-hidden rounded-lg border bg-background" aria-label="自动化健康度">
+          <div className="border-b px-5 py-4">
+            <OpsRegionHeading title="自动化健康度" description={`${workflows.filter((item) => item.enabled).length} 个 Workflow 已启用`} />
+          </div>
+          <div>
+            {workflows.slice(0, 4).map((workflow) => (
+              <OpsObjectRow
+                key={workflow.id}
+                title={workflow.name}
+                status={<Tag color={workflow.enabled ? "success" : undefined}>{workflow.enabled ? "已启用" : "已停用"}</Tag>}
+                meta={`${workflow.schedule} · 下次 ${workflow.nextRunAt}`}
+                summary={workflow.latestRun?.summary || workflow.description}
+                signals={<><OpsMeta>v{workflow.currentVersion}</OpsMeta><OpsMeta>{workflow.metrics.runs} 次运行 · {workflow.metrics.failures} 次失败</OpsMeta></>}
+                onClick={() => onNavigate("automation")}
+              />
+            ))}
+          </div>
+        </section>
       </div>
     </div>
   );
 }
 
-function InteractionQueue({
-  tasks,
-  onResolve,
+function DecisionWorkbench({
+  item,
+  onReviewApproval,
+  onResolveInteraction,
+  onOpenOperation,
 }: {
-  tasks: InteractionFixture[];
-  onResolve: (task: InteractionFixture, response: unknown) => void;
+  item: DecisionItem | null;
+  onReviewApproval: (approval: ApprovalFixture, approved: boolean) => void;
+  onResolveInteraction: (task: InteractionFixture, response: unknown) => void;
+  onOpenOperation: (kind: keyof OperationsFixture, id: number) => void;
 }) {
-  if (tasks.length === 0) return null;
-  return (
-    <Card padding="none" className="overflow-hidden">
-      <CardHeader className="border-b p-6">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex flex-col gap-1">
-            <CardTitle className="text-base">流程交互</CardTitle>
-            <Text size="xs" tone="muted">图片选择、确认和输入都在这里处理，并回到原运行。</Text>
-          </div>
-          <Tag color="primary">{tasks.length}</Tag>
-        </div>
-      </CardHeader>
-      <CardContent className="divide-y p-0">
-        {tasks.map((task) => (
-          <div key={task.id} className="flex flex-col gap-3 p-6">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <strong className="text-sm">{task.title}</strong>
-                <Text size="xs" tone="muted">Run #{task.workflowRunId} · {task.stepId}</Text>
-              </div>
-              <Tag>{task.type === "choice" ? "选择项" : "确认预览"}</Tag>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {task.type === "choice" && task.options?.length ? task.options.map((option) => (
-                <Button key={option} size="small" onClick={() => onResolve(task, { option })}>{option}</Button>
-              )) : (
-                <Button size="small" variant="solid" color="primary" onClick={() => onResolve(task, { confirmed: true })}>确认并继续</Button>
-              )}
-            </div>
-          </div>
-        ))}
-      </CardContent>
-    </Card>
+  if (!item) return <div className="p-8"><Empty title="当前没有需要处理的事项" /></div>;
+
+  const context = (
+    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+      <span>{item.meta}</span>
+      {item.createdAt ? <><span aria-hidden="true">·</span><span>{item.createdAt}</span></> : null}
+    </div>
   );
-}
 
-function ApprovalQueue({
-  approvals,
-  selectedId,
-  onSelect,
-  onReview,
-}: {
-  approvals: ApprovalFixture[];
-  selectedId: number | null;
-  onSelect: (id: number) => void;
-  onReview: (approval: ApprovalFixture, approved: boolean) => void;
-}) {
-  const selected = approvals.find((approval) => approval.id === selectedId) ?? approvals[0] ?? null;
-  const actionable = selected?.status === "pending" || selected?.status === "failed";
-
-  return (
-    <Card padding="none" className="overflow-hidden">
-      <CardHeader className="border-b p-6">
-        <div className="flex flex-col gap-1">
-          <CardTitle className="text-base">需要你决定的内容变更</CardTitle>
-          <Text size="xs" tone="muted">先读清楚影响，再决定是否批准。AI 不会绕过你的确认。</Text>
+  if (item.kind === "interaction") {
+    const task = item.payload as InteractionFixture;
+    return (
+      <div className="flex flex-col gap-5 p-5 lg:p-6">
+        {context}
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0"><Heading level={2}>{task.title}</Heading><Text className="mt-2" tone="muted">{task.reason || "当前运行需要你的输入才能继续。"}</Text></div>
+          <Tag color="warning">{interactionLabel(task)}</Tag>
         </div>
-      </CardHeader>
-      <CardContent className="p-0">
-        {approvals.length === 0 ? (
-          <div className="p-6"><Empty title="当前没有待审批变更" /></div>
-        ) : (
-          <div className="grid min-h-96 grid-cols-1 lg:grid-cols-[minmax(15rem,0.8fr)_minmax(0,1.8fr)]">
-            <div className="border-b lg:border-b-0 lg:border-r">
-              {approvals.map((approval) => (
-                <Button variant="ghost"
-                  key={approval.id}
-                  type="button"
-                  className={`flex w-full items-start justify-between gap-3 border-b p-4 text-left transition-colors last:border-b-0 hover:bg-muted/40 ${selected?.id === approval.id ? "bg-muted/50" : ""}`}
-                  onClick={() => onSelect(approval.id)}
-                >
-                  <span className="min-w-0">
-                    <strong className="block text-sm">{approvalTitle(approval)}</strong>
-                    <span className="text-xs text-muted-foreground">来自 AI 运行 #{approval.runId}</span>
-                  </span>
-                  <Tag color={approval.status === "failed" ? "error" : approval.status === "pending" ? "warning" : "default"}>
-                    {approval.status === "failed" ? "执行失败" : approval.status === "pending" ? "待审批" : approval.status === "approved" ? "已批准" : "已拒绝"}
-                  </Tag>
-                </Button>
+        <section className="border-t pt-5">
+          <OpsRegionHeading title="为什么需要你" description="这一步属于运行中的 Human Interaction。完成后 Workflow 会从当前步骤继续，不会创建新的独立运行。" />
+        </section>
+        {task.type === "choice" && task.options?.length ? (
+          <section className="border-t pt-5">
+            <OpsRegionHeading title="请选择一个方向" description="选择只会提交给当前 Run，后续媒体生成与应用仍保留各自的确认边界。" />
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              {task.options.map((option) => (
+                <Button key={option} variant="outline" onClick={() => onResolveInteraction(task, { option })}>{option}</Button>
               ))}
             </div>
-            <div className="min-w-0 p-6">
-              {selected ? (
-                <div className="flex flex-col gap-5">
-                  <div className="flex flex-col gap-2">
-                    <Tag color="warning">请你确认</Tag>
-                    <Heading level={2}>{approvalTitle(selected)}</Heading>
-                    <Text tone="muted">{proposalImpact(selected)}</Text>
-                  </div>
-                  {selected.status === "failed" ? (
-                    <Alert
-                      type="error"
-                      showIcon
-                      title="上次执行失败，提案未丢失"
-                      description={selected.reviewNote || "未记录具体错误，请重试；若再次失败请查看服务日志。"}
-                    />
-                  ) : null}
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <Card padding="sm" variant="subtle">
-                      <Text size="xs" tone="muted">批准后会发生什么</Text>
-                      <strong className="mt-1 block text-sm">{approvalTitle(selected)}</strong>
-                    </Card>
-                    <Card padding="sm" variant="subtle">
-                      <Text size="xs" tone="muted">不会发生什么</Text>
-                      <strong className="mt-1 block text-sm">{selected.actionType === "create_content_candidates" ? "不会直接修改或发布文章" : "不会影响其他文章或设置"}</strong>
-                    </Card>
-                  </div>
-                  <ReadableProposal approval={selected} />
-                  <details className="rounded-md border p-4">
-                    <summary className="flex cursor-pointer items-center justify-between gap-3 text-sm font-medium">
-                      查看技术详情
-                      <ChevronRight className="size-4" />
-                    </summary>
-                    <pre className="mt-4 max-h-64 overflow-auto rounded-md bg-muted p-4 text-xs">{JSON.stringify(selected.proposal, null, 2)}</pre>
-                  </details>
-                  {actionable ? (
-                    <div className="flex flex-wrap justify-end gap-2 border-t pt-5">
-                      <Button icon={<X />} onClick={() => onReview(selected, false)}>拒绝此建议</Button>
-                      <Button variant="solid" color="primary" icon={<ShieldCheck />} onClick={() => onReview(selected, true)}>
-                        {selected.status === "failed" ? "重试批准并执行" : "批准并继续"}
-                      </Button>
-                    </div>
-                  ) : null}
-                </div>
-              ) : <Empty title="选择一项查看其影响" />}
-            </div>
-          </div>
+          </section>
+        ) : (
+          <section className="border-t pt-5">
+            <OpsRegionHeading title="确认后会发生什么" description="确认当前预览/范围，并恢复所属 Run 的后续步骤。" />
+            <div className="mt-4"><Button variant="solid" color="primary" icon={<Play />} onClick={() => onResolveInteraction(task, { confirmed: true })}>确认并继续</Button></div>
+          </section>
         )}
-      </CardContent>
-    </Card>
-  );
-}
+        <div className="border-t pt-4 text-xs text-muted-foreground">安全边界：不会跳过后续审批、媒体选择或内容应用步骤。</div>
+      </div>
+    );
+  }
 
-function OperationsReview({
-  operations,
-  onOpen,
-}: {
-  operations: OperationsFixture;
-  onOpen: (kind: keyof OperationsFixture, id: number) => void;
-}) {
-  const groups: Array<{
-    key: keyof OperationsFixture;
-    title: string;
-    description: string;
-    items: Array<{ id: number; title: string; status: string }>;
-  }> = [
-    { key: "suggestions", title: "运营建议", description: "AI 找到的内容维护机会。", items: operations.suggestions },
-    { key: "candidateSets", title: "内容候选", description: "需要你选择的标题或摘要候选。", items: operations.candidateSets },
-    { key: "mediaCandidates", title: "图片任务", description: "经过审批后等待生成的媒体方案。", items: operations.mediaCandidates },
-    { key: "editorialTasks", title: "编辑任务", description: "需要人工复核的运营事项。", items: operations.editorialTasks },
-  ];
+  if (item.kind === "approval") {
+    const approval = item.payload as ApprovalFixture;
+    const impact = approvalImpact(approval);
+    return (
+      <div className="flex flex-col gap-5 p-5 lg:p-6">
+        {context}
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0"><Heading level={2}>{approvalTitle(approval)}</Heading><Text className="mt-2" tone="muted">需要确认 AI 准备的变更以及真正会影响的对象。</Text></div>
+          {decisionStatus(item)}
+        </div>
+        {approval.status === "failed" ? <Alert type="error" showIcon title="上次批准后的执行失败" description={approval.reviewNote || "提案仍保留，可修正后重试。"} /> : null}
+        <section className="border-t pt-5">
+          <OpsRegionHeading title="AI 准备了什么" description={approval.proposal.summary || "以下内容来自本次 Agent / Workflow 运行。"} />
+          <div className="mt-4 rounded-md bg-muted/35 p-4">
+            {approval.proposal.title ? <strong className="text-sm">{approval.proposal.title}</strong> : null}
+            {approval.proposal.content ? <pre className="mt-3 whitespace-pre-wrap font-sans text-sm leading-6 text-muted-foreground">{approval.proposal.content}</pre> : null}
+            {approval.proposal.suggestions?.length ? (
+              <ol className="space-y-2 text-sm">
+                {approval.proposal.suggestions.map((value, index) => <li key={value}><span className="mr-2 text-xs text-muted-foreground">{index + 1}.</span>{value}</li>)}
+              </ol>
+            ) : null}
+          </div>
+        </section>
+        <div className="grid gap-4 border-t pt-5 sm:grid-cols-2">
+          <div><Text size="xs" tone="muted">批准后会发生什么</Text><strong className="mt-1 block text-sm">{impact.happens}</strong></div>
+          <div><Text size="xs" tone="muted">不会发生什么</Text><strong className="mt-1 block text-sm">{impact.safe}</strong></div>
+        </div>
+        <div className="flex flex-wrap justify-end gap-2 border-t pt-5">
+          <Button variant="outline" icon={<X />} onClick={() => onReviewApproval(approval, false)}>拒绝此建议</Button>
+          <Button variant="solid" color="primary" icon={<ShieldCheck />} onClick={() => onReviewApproval(approval, true)}>{approval.status === "failed" ? "重试批准并执行" : "批准并继续"}</Button>
+        </div>
+      </div>
+    );
+  }
 
+  if (item.kind === "suggestion") {
+    const suggestion = item.payload as SuggestionFixture;
+    return (
+      <div className="flex flex-col gap-5 p-5 lg:p-6">
+        {context}
+        <div className="flex flex-wrap items-start justify-between gap-3"><div><Heading level={2}>{suggestion.title}</Heading><Text className="mt-2" tone="muted">{suggestion.description}</Text></div>{decisionStatus(item)}</div>
+        <section className="border-t pt-5"><OpsRegionHeading title="AI 的判断依据" description="这是只读运营证据；创建编辑任务不会修改或发布内容。" /><ul className="mt-4 space-y-2 text-sm">{suggestion.evidence.map((evidence) => <li key={evidence} className="flex gap-2"><Check className="mt-0.5 size-4 shrink-0 text-muted-foreground" />{evidence}</li>)}</ul></section>
+        <div className="flex flex-wrap justify-end gap-2 border-t pt-5"><Button variant="outline" onClick={() => onOpenOperation("suggestions", suggestion.id)}>暂不处理</Button><Button variant="solid" color="primary" onClick={() => onOpenOperation("suggestions", suggestion.id)}>创建编辑任务</Button></div>
+      </div>
+    );
+  }
+
+  if (item.kind === "candidate") {
+    const set = item.payload as CandidateSetFixture;
+    return (
+      <div className="flex flex-col gap-5 p-5 lg:p-6">
+        {context}
+        <div className="flex flex-wrap items-start justify-between gap-3"><div><Heading level={2}>{set.title}</Heading><Text className="mt-2" tone="muted">当前值：{set.beforeValue}</Text></div>{decisionStatus(item)}</div>
+        <section className="border-t pt-5"><OpsRegionHeading title="选择候选" description="选择后只会创建下一步明确的内容变更审批，不会立即写入文章。" /><div className="mt-4 space-y-3">{set.candidates.map((candidate) => <div key={candidate.id} className="flex flex-col gap-3 rounded-md border p-4 sm:flex-row sm:items-center sm:justify-between"><div className="min-w-0"><strong className="text-sm">{candidate.value}</strong><Text size="xs" tone="muted" className="mt-1">{candidate.rationale}</Text></div><Button size="small" variant="outline" onClick={() => onOpenOperation("candidateSets", set.id)}>选择此项</Button></div>)}</div></section>
+      </div>
+    );
+  }
+
+  if (item.kind === "media") {
+    const media = item.payload as MediaCandidateFixture;
+    return (
+      <div className="flex flex-col gap-5 p-5 lg:p-6">
+        {context}
+        <div className="flex flex-wrap items-start justify-between gap-3"><div><Heading level={2}>{media.title}</Heading><Text className="mt-2" tone="muted">{media.brief}</Text></div>{decisionStatus(item)}</div>
+        <OpsSummaryStrip items={[{ label: "位置", value: media.placement === "cover" ? "封面" : "正文插图" }, { label: "Safety", value: media.safetyStatus }, { label: "Copyright", value: media.copyrightStatus }, { label: "目标", value: `文章 #${media.postId}` }]} />
+        <div className="flex flex-wrap justify-end gap-2"><Button variant="outline" onClick={() => onOpenOperation("mediaCandidates", media.id)}>拒绝方案</Button><Button variant="solid" color="primary" icon={<Image />} onClick={() => onOpenOperation("mediaCandidates", media.id)}>{media.status === "brief_ready" ? "审核通过" : "生成图片"}</Button></div>
+      </div>
+    );
+  }
+
+  const task = item.payload as EditorialTaskFixture;
   return (
-    <section className="grid grid-cols-1 gap-4 lg:grid-cols-2" aria-label="运营建议与候选">
-      {groups.map((group) => (
-        <Card key={group.key} padding="none" className="overflow-hidden">
-          <CardHeader className="border-b p-6">
-            <div className="flex flex-col gap-1">
-              <CardTitle className="text-base">{group.title}</CardTitle>
-              <Text size="xs" tone="muted">{group.description}</Text>
-            </div>
-          </CardHeader>
-          <CardContent className="p-0">
-            {group.items.length === 0 ? <div className="p-6"><Empty title={`暂无${group.title}`} /></div> : group.items.map((item) => (
-              <Button variant="ghost" key={item.id} type="button" className="flex w-full items-center justify-between gap-3 border-b p-4 text-left last:border-b-0 hover:bg-muted/40" onClick={() => onOpen(group.key, item.id)}>
-                <span className="min-w-0 truncate text-sm font-medium">{item.title}</span>
-                <Tag>{item.status}</Tag>
-              </Button>
-            ))}
-          </CardContent>
-        </Card>
-      ))}
-    </section>
+    <div className="flex flex-col gap-5 p-5 lg:p-6">
+      {context}
+      <div className="flex flex-wrap items-start justify-between gap-3"><div><Heading level={2}>{task.title}</Heading><Text className="mt-2" tone="muted">{task.description}</Text></div>{decisionStatus(item)}</div>
+      <section className="border-t pt-5"><OpsRegionHeading title="后续工作" description="这是由 AI 运营建议转成的人工编辑任务。完成或取消只更新任务状态，本身不会修改内容。" /></section>
+      <div className="flex flex-wrap justify-end gap-2 border-t pt-5"><Button variant="outline" onClick={() => onOpenOperation("editorialTasks", task.id)}>取消任务</Button><Button variant="solid" color="primary" onClick={() => onOpenOperation("editorialTasks", task.id)}>标记完成</Button></div>
+    </div>
   );
 }
 
@@ -394,11 +429,58 @@ export function AIOpsInboxPanel({
   onResolveInteraction: (task: InteractionFixture, response: unknown) => void;
   onOpenOperation: (kind: keyof OperationsFixture, id: number) => void;
 }) {
+  const allItems = useMemo(() => buildDecisionItems(fixture), [fixture]);
+  const defaultKey = selectedApprovalId ? `approval-${selectedApprovalId}` : allItems[0]?.key || "";
+  const [selectedKey, setSelectedKey] = useState(defaultKey);
+  const [filter, setFilter] = useState<DecisionFilter>("all");
+
+  const items = allItems.filter((item) => {
+    if (filter === "all") return true;
+    if (filter === "approval") return item.kind === "approval";
+    if (filter === "choice") return item.kind === "interaction" || item.kind === "candidate";
+    if (filter === "follow-up") return item.kind === "editorial";
+    return item.kind === "suggestion" || item.kind === "media";
+  });
+  const selected = allItems.find((item) => item.key === selectedKey) || items[0] || allItems[0] || null;
+
   return (
-    <div className="flex flex-col gap-6" aria-label="待我处理">
-      <InteractionQueue tasks={fixture.interactions} onResolve={onResolveInteraction} />
-      <ApprovalQueue approvals={fixture.approvals} selectedId={selectedApprovalId} onSelect={onSelectApproval} onReview={onReviewApproval} />
-      <OperationsReview operations={fixture.operations} onOpen={onOpenOperation} />
+    <div className="flex flex-col gap-5" aria-label="待我处理">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+        <div><Heading level={2}>待我处理</Heading><Text className="mt-1" tone="muted">把审批、选择、确认、运营建议和后续编辑任务放进同一人工决策队列，而不是分散成多个互不相关的卡片区。</Text></div>
+        <div className="flex flex-wrap gap-2" aria-label="决策队列筛选">
+          {([[
+            "all", "全部"
+          ], ["approval", "审批"], ["choice", "选择 / 确认"], ["operation", "运营建议"], ["follow-up", "后续任务"]] as Array<[DecisionFilter, string]>).map(([key, label]) => (
+            <Button key={key} size="small" variant={filter === key ? "solid" : "outline"} color={filter === key ? "primary" : undefined} onClick={() => setFilter(key)}>{label}</Button>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid min-h-[34rem] overflow-hidden rounded-lg border bg-background xl:grid-cols-[minmax(18rem,0.72fr)_minmax(0,1.55fr)]">
+        <section className="border-b xl:border-b-0 xl:border-r" aria-label="Decision Queue">
+          <div className="border-b px-[18px] py-4"><div className="flex items-center justify-between gap-3"><div><strong className="text-sm">决策队列</strong><Text size="xs" tone="muted">{items.length} 项符合当前筛选</Text></div><Clock3 className="size-4 text-muted-foreground" /></div></div>
+          <div className="max-h-[42rem] overflow-y-auto">
+            {items.length ? items.map((item) => (
+              <OpsObjectRow
+                key={item.key}
+                title={item.title}
+                status={decisionStatus(item)}
+                meta={item.meta}
+                summary={item.summary}
+                signals={item.createdAt ? <OpsMeta>{item.createdAt}</OpsMeta> : undefined}
+                selected={selected?.key === item.key}
+                onClick={() => {
+                  setSelectedKey(item.key);
+                  if (item.kind === "approval") onSelectApproval(item.id);
+                }}
+              />
+            )) : <div className="p-8"><Empty title="当前筛选没有待处理事项" /></div>}
+          </div>
+        </section>
+        <section className="min-w-0" aria-label="Decision Workbench">
+          <DecisionWorkbench item={selected} onReviewApproval={onReviewApproval} onResolveInteraction={onResolveInteraction} onOpenOperation={onOpenOperation} />
+        </section>
+      </div>
     </div>
   );
 }
