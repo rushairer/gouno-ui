@@ -284,7 +284,7 @@ test("blog-admin-ai-operations-failed-run-visual-evidence", async ({ page }, tes
   await page.keyboard.press("Escape");
   await page.getByRole("tab", { name: "自动化" }).click();
   await page.getByRole("button", { name: "进入详情 / 运行" }).first().click();
-  await page.getByRole("button", { name: "运行" }).click();
+  await page.getByRole("button", { name: "运行", exact: true }).click();
   await expect(page.getByText(/运行失败（Run #/)).toBeVisible();
   await page.getByRole("button", { name: /查看 Run #/ }).click();
   await expect(page.getByRole("heading", { level: 3, name: /Run #/ })).toBeVisible();
