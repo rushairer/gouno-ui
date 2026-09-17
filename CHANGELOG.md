@@ -4,6 +4,20 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.4.4] - 2026-09-17
+
+### Added
+- Canonical Blog Admin AI Operations Showcase grounded in the real Blog Admin workflow, Run, approval, interaction, media and evidence capabilities.
+- Product-level Workflow master-detail, Decision Workbench and Run Evidence compositions with responsive and visual-golden coverage.
+
+### Changed
+- AI Settings Showcase now groups Agent, Skill, Provider, Embedding and Connector governance around explicit product semantics instead of flat configuration fields.
+- Workflow automation surfaces now use a consistent list-item anatomy, operational summary hierarchy and source-grounded Fixture scenarios.
+
+### Fixed
+- Recent Workflow Run rows preserve desktop column semantics inside Gouno Button composition and collapse cleanly on narrow viewports.
+- Workflow selection, filtered Run detail and failed/Dry-run evidence stay synchronized across the AI Operations workspace.
+
 ## [0.4.3] - 2026-09-17
 
 ### Added
