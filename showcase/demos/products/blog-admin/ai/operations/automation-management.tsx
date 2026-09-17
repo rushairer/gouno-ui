@@ -271,7 +271,7 @@ export function AutomationManagement({
         </section>
 
         <div className="flex min-w-0 flex-col gap-6">
-          <section className="rounded-lg border bg-background p-5" aria-label="Workflow 运行边界">
+          <section className="rounded-lg border bg-background p-6" aria-label="Workflow 运行边界">
             <OpsRegionHeading title="运行边界" description="这些约束决定 Workflow 可以发现什么、可以把什么作为目标，以及空查询时如何结束。" />
             <dl className="mt-5 space-y-4 text-sm">
               <div><dt className="text-xs text-muted-foreground">Scope</dt><dd className="mt-1 font-medium">{selected.scopeMode === "strict" ? "严格限制目标资源" : "Unscoped 兼容模式"}</dd></div>
@@ -281,7 +281,7 @@ export function AutomationManagement({
             </dl>
           </section>
 
-          <section className="rounded-lg border bg-background p-5" aria-label="Workflow 输入契约">
+          <section className="rounded-lg border bg-background p-6" aria-label="Workflow 输入契约">
             <OpsRegionHeading title="运行输入契约" description="人工执行可以覆盖默认值，但不会因此改写当前 Workflow Version。" />
             <div className="mt-5 divide-y">
               {selected.inputFields.map((field) => (
