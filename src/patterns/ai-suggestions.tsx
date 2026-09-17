@@ -55,11 +55,11 @@ function SuggestionHeader({
   onRegenerate?: () => void;
 }) {
   return (
-    <div className="flex items-start justify-between gap-3">
+    <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
       <div className="min-w-0">
         <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-          <Sparkles aria-hidden="true" className="size-4 text-primary" />
-          <span>{heading}</span>
+          <Sparkles aria-hidden="true" className="size-4 shrink-0 text-primary" />
+          <span className="min-w-0">{heading}</span>
         </div>
         <div className="mt-1 text-xs leading-5 text-muted-foreground">
           {description ?? countLabel}
@@ -72,9 +72,11 @@ function SuggestionHeader({
           variant="text"
           icon={<RefreshCw />}
           onClick={onRegenerate}
-        >
-          重新生成
-        </Button>
+          aria-label="重新生成 AI 建议"
+          title="重新生成 AI 建议"
+          className="size-8 shrink-0 px-0"
+          data-slot="ai-suggestion-regenerate"
+        />
       ) : null}
     </div>
   );
@@ -155,7 +157,7 @@ export function AISuggestionPicker({
         })}
       </div>
 
-      <div className="mt-3 flex items-center justify-end gap-2">
+      <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
         {onDismiss ? (
           <Button type="button" size="small" variant="text" onClick={onDismiss}>
             取消
@@ -250,7 +252,7 @@ export function AISuggestionReview({
         })}
       </div>
 
-      <div className="mt-3 flex items-center justify-end gap-2">
+      <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
         {onCancel ? (
           <Button type="button" size="small" variant="text" onClick={onCancel}>
             取消
