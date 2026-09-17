@@ -104,20 +104,19 @@ describe("Blog Admin AI Operations automation/records canonical modules", () => 
     expect(onRollback).toHaveBeenCalledWith(42, 3);
   });
 
-  it("uses a Workflow list-detail route and keeps secondary management actions in one menu", () => {
+  it("uses a Workflow master-detail workspace and keeps secondary management actions in one menu", () => {
     render(<BlogAdminAIOperationsDemo initialRoute={{ tab: "automation", record: "workflow" }} />);
 
     expect(screen.getByRole("button", { name: "创建 Workflow" })).toBeTruthy();
     expect(screen.getByRole("list", { name: "Workflow 列表" })).toBeTruthy();
-    expect(screen.queryByRole("button", { name: "编辑" })).toBeNull();
-
-    openFirstWorkflow();
-    expect(screen.getByRole("button", { name: "返回 Workflow 列表" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "旧文维护" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "打开 Workflow：旧文维护" }).getAttribute("aria-pressed")).toBe("true");
     expect(screen.getByRole("button", { name: "编辑" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "运行记录" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "更多 Workflow 操作" })).toBeTruthy();
+    expect(screen.getByText("成功率")).toBeTruthy();
+    expect(screen.getByRole("region", { name: "最近运行" })).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("button", { name: "返回 Workflow 列表" }));
     fireEvent.click(screen.getByRole("button", { name: "创建 Workflow" }));
     fireEvent.change(screen.getByLabelText(/Workflow 名称/), { target: { value: "内容巡检" } });
     fireEvent.click(screen.getByRole("button", { name: "保存 Workflow" }));
