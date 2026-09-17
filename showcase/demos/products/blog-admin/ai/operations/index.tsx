@@ -367,12 +367,12 @@ export function BlogAdminAIOperationsDemo({
           onOpenRecords={(workflow) => openRecords({ record: "workflow", workflow: workflow.id })}
         />
         <AIOpsAutomationPanel
-          key={route.workflow ?? automationFixture.workflows[0]?.id ?? 0}
           fixture={automationFixture}
           onPreflight={async () => ({ ready: true })}
           onRun={async (workflowId, dryRun) => runWorkflow(workflowId, dryRun)}
           onRollback={rollbackWorkflow}
           onOpenRecords={openRecords}
+          onSelectWorkflow={selectWorkflow}
         />
       </div>
     );
