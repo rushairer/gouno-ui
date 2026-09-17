@@ -2,6 +2,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AIOpsAutomationPanel, AIOpsRecordsPanel } from "../showcase/demos/products/blog-admin/ai/operations/automation-records";
 import { aiOpsAutomationRecordsFixture } from "../showcase/demos/products/blog-admin/ai/operations/automation-records-fixtures";
+import { WorkflowEditor } from "../showcase/demos/products/blog-admin/ai/operations/workflow-editor";
 import { AISettingsEditor } from "../showcase/demos/products/blog-admin/ai/settings/editors";
 import { aiSettingsFixture } from "../showcase/demos/products/blog-admin/ai/settings/fixtures";
 
@@ -25,6 +26,26 @@ describe("Blog Admin AI canonical redesign contract", () => {
     expect(screen.getByRole("button", { name: "运行记录" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Dry-run" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "运行" })).toBeTruthy();
+  });
+
+  it("keeps Workflow input contract, ordered definition and run boundary visible while editing", () => {
+    render(
+      <WorkflowEditor
+        value={aiOpsAutomationRecordsFixture.workflows[0]}
+        nextId={45}
+        onSave={vi.fn()}
+        onCancel={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText("运行输入契约")).toBeTruthy();
+    expect(screen.getByText("流程定义")).toBeTruthy();
+    expect(screen.getByText("运行边界")).toBeTruthy();
+    expect(screen.getByLabelText("空结果策略")).toBeTruthy();
+    expect(screen.getByText("筛选超过维护周期的文章")).toBeTruthy();
+    expect(screen.getByText("生成维护建议")).toBeTruthy();
+    expect(screen.getByText("人工审批维护建议")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "保存 Workflow" })).toBeTruthy();
   });
 
   it("presents run detail as summary, execution process and evidence instead of peer card fragments", () => {
