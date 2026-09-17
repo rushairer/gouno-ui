@@ -139,7 +139,7 @@ describe("Blog Admin AI canonical redesign contract", () => {
     );
 
     expect(screen.getByRole("heading", { level: 2, name: "Run #702 · Citation Verifier" })).toBeTruthy();
-    expect(screen.getByText("Tool Calls")).toBeTruthy();
+    expect(screen.getAllByText("Tool Calls").length).toBeGreaterThan(0);
     expect(screen.getByText("引用证据")).toBeTruthy();
     expect(screen.getAllByText("read").length).toBeGreaterThan(0);
     expect(screen.getAllByText("validated").length).toBeGreaterThan(0);
