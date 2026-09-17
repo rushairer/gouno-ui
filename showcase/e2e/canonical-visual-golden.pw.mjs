@@ -278,7 +278,9 @@ test("blog-admin-ai-operations-failed-run-visual-evidence", async ({ page }, tes
   });
 
   await page.getByRole("button", { name: "打开 Fixture 控制" }).click();
-  await page.getByRole("radio", { name: "运行失败" }).click();
+  const failureScenario = page.getByRole("radio", { name: "运行失败" });
+  await failureScenario.check({ force: true });
+  await expect(failureScenario).toBeChecked();
   await page.keyboard.press("Escape");
   await page.getByRole("tab", { name: "自动化" }).click();
   await page.getByRole("button", { name: "进入详情 / 运行" }).first().click();
