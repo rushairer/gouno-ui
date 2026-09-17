@@ -1,3 +1,20 @@
+export type WorkflowInputFieldFixture = {
+  key: string;
+  label: string;
+  type: "string" | "integer" | "number" | "boolean";
+  required: boolean;
+  defaultValue?: string | number | boolean;
+  description?: string;
+};
+
+export type WorkflowStepFixture = {
+  id: string;
+  name: string;
+  type: "resource_query" | "model" | "for_each" | "approval_gate" | "output";
+  agent?: string;
+  detail?: string;
+};
+
 export type WorkflowFixture = {
   id: number;
   name: string;
@@ -7,8 +24,12 @@ export type WorkflowFixture = {
   schedule: string;
   timezone: string;
   nextRunAt: string;
+  templateKey?: string;
   scopeMode: "strict" | "unscoped";
   discoveryTools: string[];
+  resourceQueryEmptyPolicy: "succeed" | "fail";
+  inputFields: WorkflowInputFieldFixture[];
+  steps: WorkflowStepFixture[];
   input: {
     topic: string;
     days: number;
@@ -102,8 +123,55 @@ export const aiOpsAutomationRecordsFixture: AIOpsAutomationRecordsFixture = {
       schedule: "0 9 * * 1",
       timezone: "Asia/Shanghai",
       nextRunAt: "2026-09-14 09:00",
+      templateKey: "old-content-maintenance",
       scopeMode: "strict",
       discoveryTools: ["search_posts", "read_post"],
+      resourceQueryEmptyPolicy: "succeed",
+      inputFields: [
+        {
+          key: "topic",
+          label: "维护主题",
+          type: "string",
+          required: true,
+          defaultValue: "AI Agent",
+          description: "用于限制本次维护关注的主题。",
+        },
+        {
+          key: "days",
+          label: "距今未更新天数",
+          type: "integer",
+          required: true,
+          defaultValue: 180,
+          description: "只处理超过该维护周期的文章。",
+        },
+      ],
+      steps: [
+        {
+          id: "select_resources",
+          name: "筛选超过维护周期的文章",
+          type: "resource_query",
+          detail: "post · updated_before_days · max 20",
+        },
+        {
+          id: "write_suggestion",
+          name: "生成维护建议",
+          type: "model",
+          agent: "Content Maintainer",
+          detail: "包含受控上下文",
+        },
+        {
+          id: "approval_gate",
+          name: "人工审批维护建议",
+          type: "approval_gate",
+          detail: "内容写入前必须确认",
+        },
+        {
+          id: "result",
+          name: "输出维护候选",
+          type: "output",
+          detail: "/steps",
+        },
+      ],
       input: { topic: "AI Agent", days: 180 },
       metrics: { runs: 31, failures: 2, tokens: 128400 },
       versions: [
@@ -121,8 +189,54 @@ export const aiOpsAutomationRecordsFixture: AIOpsAutomationRecordsFixture = {
       schedule: "30 8 * * *",
       timezone: "Asia/Shanghai",
       nextRunAt: "2026-09-09 08:30",
+      templateKey: "daily-briefing",
       scopeMode: "strict",
       discoveryTools: ["web_research", "citation_check"],
+      resourceQueryEmptyPolicy: "succeed",
+      inputFields: [
+        {
+          key: "topic",
+          label: "资讯主题",
+          type: "string",
+          required: true,
+          defaultValue: "AI",
+        },
+        {
+          key: "days",
+          label: "时间范围（天）",
+          type: "integer",
+          required: true,
+          defaultValue: 1,
+        },
+      ],
+      steps: [
+        {
+          id: "discover",
+          name: "发现近 24 小时资讯",
+          type: "model",
+          agent: "Daily Briefing Writer",
+          detail: "使用已授权的只读研究 Tool",
+        },
+        {
+          id: "verify",
+          name: "核验引用与时间",
+          type: "model",
+          agent: "Daily Briefing Writer",
+          detail: "citation_check",
+        },
+        {
+          id: "approval_gate",
+          name: "人工确认候选稿",
+          type: "approval_gate",
+          detail: "候选内容不会自动发布",
+        },
+        {
+          id: "result",
+          name: "输出候选稿",
+          type: "output",
+          detail: "/steps",
+        },
+      ],
       input: { topic: "AI", days: 1 },
       metrics: { runs: 58, failures: 4, tokens: 421900 },
       versions: [
@@ -139,8 +253,41 @@ export const aiOpsAutomationRecordsFixture: AIOpsAutomationRecordsFixture = {
       schedule: "0 10 * * 1",
       timezone: "Asia/Shanghai",
       nextRunAt: "—",
+      templateKey: "weekly-operations",
       scopeMode: "unscoped",
       discoveryTools: [],
+      resourceQueryEmptyPolicy: "fail",
+      inputFields: [
+        {
+          key: "topic",
+          label: "汇总范围",
+          type: "string",
+          required: true,
+          defaultValue: "site",
+        },
+        {
+          key: "days",
+          label: "统计周期（天）",
+          type: "integer",
+          required: true,
+          defaultValue: 7,
+        },
+      ],
+      steps: [
+        {
+          id: "collect",
+          name: "汇总运营信号",
+          type: "model",
+          agent: "Content Maintainer",
+          detail: "只读数据上下文",
+        },
+        {
+          id: "result",
+          name: "输出运营建议",
+          type: "output",
+          detail: "/steps",
+        },
+      ],
       input: { topic: "site", days: 7 },
       metrics: { runs: 8, failures: 1, tokens: 38600 },
       versions: [
