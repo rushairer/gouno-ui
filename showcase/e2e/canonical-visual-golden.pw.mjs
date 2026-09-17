@@ -181,6 +181,48 @@ for (const [name, viewport] of [
   });
 }
 
+test("blog-admin-ai-operations-overview-visual-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-ai-operations",
+    viewport: desktop,
+    ready: '[role="tablist"]',
+  });
+
+  await expect(page.getByRole("heading", { level: 2, name: "今天需要关注什么" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "需要关注" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "自动化健康度" })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+  await page.screenshot({
+    path: testInfo.outputPath("blog-admin-ai-operations-overview-desktop.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("blog-admin-ai-operations-inbox-visual-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-ai-operations",
+    viewport: desktop,
+    ready: '[role="tablist"]',
+  });
+
+  await page.getByRole("tab", { name: /待我处理/ }).click();
+  await expect(page.getByText("决策队列")).toBeVisible();
+  await expect(page.getByRole("region", { name: "Decision Workbench" })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+  await page.screenshot({
+    path: testInfo.outputPath("blog-admin-ai-operations-inbox-desktop.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
 test("blog-admin-ai-operations-workflow-list-visual-evidence", async ({ page }, testInfo) => {
   await prepareLightFixture(page, {
     workspace: "blog-admin",
@@ -212,7 +254,7 @@ test("blog-admin-ai-operations-workflow-detail-visual-evidence", async ({ page }
   });
 
   await page.getByRole("tab", { name: "自动化" }).click();
-  await page.getByRole("button", { name: "进入详情 / 运行" }).first().click();
+  await page.getByRole("button", { name: "打开 Workflow：旧文维护" }).click();
   await expect(page.getByRole("heading", { level: 2, name: "旧文维护" })).toBeVisible();
   await expect(page.getByText("流程定义")).toBeVisible();
   await expect(page.getByText("运行当前 Workflow")).toBeVisible();
@@ -235,7 +277,7 @@ test("blog-admin-ai-operations-workflow-detail-mobile-evidence", async ({ page }
   });
 
   await page.getByRole("tab", { name: "自动化" }).click();
-  await page.getByRole("button", { name: "进入详情 / 运行" }).first().click();
+  await page.getByRole("button", { name: "打开 Workflow：旧文维护" }).click();
   await expect(page.getByRole("heading", { level: 2, name: "旧文维护" })).toBeVisible();
   await expectNoHorizontalDocumentOverflow(page);
   await page.screenshot({
@@ -256,12 +298,36 @@ test("blog-admin-ai-operations-run-center-visual-evidence", async ({ page }, tes
   });
 
   await page.getByRole("tab", { name: "运行中心" }).click();
-  await expect(page.getByRole("heading", { level: 2, name: "运行中心" })).toBeVisible();
-  await expect(page.getByRole("heading", { level: 3, name: /Run #245/ })).toBeVisible();
+  await expect(page.getByText("Workflow Runs")).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: /Run #246/ })).toBeVisible();
   await expect(page.getByText("执行过程")).toBeVisible();
+  await expect(page.getByText("资源证据")).toBeVisible();
   await expectNoHorizontalDocumentOverflow(page);
   await page.screenshot({
     path: testInfo.outputPath("blog-admin-ai-operations-run-center-desktop.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("blog-admin-ai-operations-agent-run-visual-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-ai-operations",
+    viewport: desktop,
+    ready: '[role="tablist"]',
+  });
+
+  await page.getByRole("tab", { name: "运行中心" }).click();
+  await page.getByRole("button", { name: "Agent 运行" }).click();
+  await expect(page.getByRole("heading", { level: 2, name: /Run #702/ })).toBeVisible();
+  await expect(page.getByText("Tool Calls")).toBeVisible();
+  await expect(page.getByText("引用证据")).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+  await page.screenshot({
+    path: testInfo.outputPath("blog-admin-ai-operations-agent-run-desktop.png"),
     fullPage: true,
     animations: "disabled",
     caret: "hide",
@@ -283,11 +349,11 @@ test("blog-admin-ai-operations-failed-run-visual-evidence", async ({ page }, tes
   await expect(failureScenario).toBeChecked();
   await page.keyboard.press("Escape");
   await page.getByRole("tab", { name: "自动化" }).click();
-  await page.getByRole("button", { name: "进入详情 / 运行" }).first().click();
+  await page.getByRole("button", { name: "打开 Workflow：旧文维护" }).click();
   await page.getByRole("button", { name: "运行", exact: true }).click();
-  await expect(page.getByText(/运行失败（Run #/)).toBeVisible();
+  await expect(page.getByRole("alert")).toContainText("运行失败");
   await page.getByRole("button", { name: /查看 Run #/ }).click();
-  await expect(page.getByRole("heading", { level: 3, name: /Run #/ })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: /Run #/ })).toBeVisible();
   await expect(page.getByRole("alert")).toContainText("运行失败");
   await expectNoHorizontalDocumentOverflow(page);
   await page.screenshot({
