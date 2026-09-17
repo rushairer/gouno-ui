@@ -116,6 +116,9 @@ describe("Blog Admin AI Operations automation/records canonical modules", () => 
     expect(screen.getByRole("button", { name: "更多 Workflow 操作" })).toBeTruthy();
     expect(screen.getByText("成功率")).toBeTruthy();
     expect(screen.getByRole("region", { name: "最近运行" })).toBeTruthy();
+    const recentRunRows = screen.getAllByRole("button", { name: /打开最近 Run #/ });
+    expect(recentRunRows.length).toBeGreaterThan(0);
+    expect(recentRunRows[0].className).toContain("[&>span]:contents");
 
     fireEvent.click(screen.getByRole("button", { name: "创建 Workflow" }));
     fireEvent.change(screen.getByLabelText(/Workflow 名称/), { target: { value: "内容巡检" } });
