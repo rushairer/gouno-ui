@@ -47,12 +47,12 @@ describe("Blog Admin AI Operations route shell", () => {
     expect(screen.getByRole("tab", { name: "自动化" })).toBeTruthy();
     expect(screen.getByRole("tab", { name: "运行中心" })).toBeTruthy();
     expect(screen.queryByRole("tab", { name: "高级设置" })).toBeNull();
-    expect(screen.getByRole("heading", { level: 2, name: "从一件想改善的事开始" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "今天需要关注什么" })).toBeTruthy();
 
     fireEvent.mouseDown(screen.getByRole("tab", { name: "自动化" }), { button: 0 });
     expect(screen.getByRole("list", { name: "Workflow 列表" })).toBeTruthy();
     expect(screen.queryByRole("heading", { level: 2, name: "旧文维护" })).toBeNull();
-    fireEvent.click(screen.getAllByRole("button", { name: "进入详情 / 运行" })[0]);
+    fireEvent.click(screen.getByRole("button", { name: "打开 Workflow：旧文维护" }));
     expect(screen.getByRole("heading", { level: 2, name: "旧文维护" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "返回 Workflow 列表" })).toBeTruthy();
   });
@@ -66,7 +66,9 @@ describe("Blog Admin AI Operations route shell", () => {
 
     expect(screen.getByRole("heading", { level: 2, name: "AI 每日资讯" })).toBeTruthy();
     expect(screen.getByDisplayValue("AI")).toBeTruthy();
-    expect(screen.getByText("58 / 4 / 421900")).toBeTruthy();
+    expect(screen.getByText("累计运行")).toBeTruthy();
+    expect(screen.getByText("58 / 4 失败")).toBeTruthy();
+    expect(screen.getByText("421,900 Token")).toBeTruthy();
     expect(screen.getByText("发现近 24 小时资讯")).toBeTruthy();
   });
 
@@ -77,7 +79,7 @@ describe("Blog Admin AI Operations route shell", () => {
       />,
     );
 
-    expect(screen.getByRole("heading", { level: 3, name: "Run #245 · AI 每日资讯" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "Run #245 · AI 每日资讯" })).toBeTruthy();
     expect(screen.getByText("发现近 24 小时资讯")).toBeTruthy();
     expect(screen.getByText("为技术架构文章选择封面方向")).toBeTruthy();
     expect(screen.queryByRole("button", { name: /Run #244/ })).toBeNull();
