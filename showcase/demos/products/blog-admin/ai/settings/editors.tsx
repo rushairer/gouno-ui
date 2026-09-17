@@ -6,6 +6,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  Checkbox,
   Field,
   Form,
   FormActions,
@@ -48,6 +49,33 @@ function text(values: Record<string, FormDataEntryValue>, key: string, fallback 
 
 function checked(values: Record<string, FormDataEntryValue>, key: string) {
   return values[key] === "on";
+}
+
+function numberValue(values: Record<string, FormDataEntryValue>, key: string, fallback: number) {
+  const value = values[key];
+  if (typeof value !== "string" || !value.trim()) return fallback;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+function optionalNumber(values: Record<string, FormDataEntryValue>, key: string) {
+  const value = values[key];
+  if (typeof value !== "string" || !value.trim()) return undefined;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
+}
+
+function objectSchema(values: Record<string, FormDataEntryValue>, key: string, fallback?: Record<string, unknown>) {
+  const raw = text(values, key, "");
+  if (!raw) return fallback ?? { type: "object", additionalProperties: false };
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+      ? parsed as Record<string, unknown>
+      : fallback ?? { type: "object", additionalProperties: false };
+  } catch {
+    return fallback ?? { type: "object", additionalProperties: false };
+  }
 }
 
 function EditorHeader({ title, description, icon }: { title: string; description: string; icon: ReactNode }) {
@@ -107,6 +135,7 @@ function AgentEditor({
         const providerName = text(values, "provider", defaultProvider);
         const skillName = text(values, "skill", defaultSkill);
         const skill = fixture.skills.find((item) => item.name === skillName);
+        const triggerType = text(values, "triggerType", initial?.triggerType || "manual") as AgentFixture["triggerType"];
         onSave({
           kind: "agent",
           id: initial?.id,
@@ -122,6 +151,12 @@ function AgentEditor({
             schedule: text(values, "schedule", initial?.schedule || "手动"),
             timezone: text(values, "timezone", initial?.timezone || "Asia/Shanghai"),
             latestRun: initial?.latestRun || "尚未运行",
+            triggerType,
+            dailyRunLimit: numberValue(values, "dailyRunLimit", initial?.dailyRunLimit ?? skill?.defaultDailyRunLimit ?? 10),
+            monthlyTokenBudget: numberValue(values, "monthlyTokenBudget", initial?.monthlyTokenBudget ?? skill?.defaultMonthlyTokenBudget ?? 1000000),
+            maxStepsOverride: optionalNumber(values, "maxStepsOverride"),
+            maxInputTokensOverride: optionalNumber(values, "maxInputTokensOverride"),
+            maxOutputTokensOverride: optionalNumber(values, "maxOutputTokensOverride"),
           },
         });
       }}
@@ -129,13 +164,13 @@ function AgentEditor({
       <div className="flex flex-col gap-5">
         <EditorHeader
           title={initial ? `编辑 Agent：${initial.name}` : "创建 Agent"}
-          description="把 Agent 的身份、能力绑定与运行计划分开配置；运行证据仍只进入 AI 运营。"
+          description="Agent 只绑定稳定的模型与 Skill Version；调度、预算和限制覆盖属于运行治理，不复制 Skill 的安全边界。"
           icon={<Bot />}
         />
 
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)]">
+        <div className="grid gap-5 xl:grid-cols-[minmax(0,1.12fr)_minmax(20rem,0.88fr)]">
           <div className="flex min-w-0 flex-col gap-5">
-            <EditorSection title="基础信息" description="名称与说明帮助运营人员理解这个 Agent 的职责。">
+            <EditorSection title="基础信息" description="名称、说明与启停状态表达这个 Agent 在运营中的职责。">
               <div className="flex flex-col gap-5">
                 <Field label="Agent 名称" required>
                   <Input name="name" defaultValue={initial?.name} placeholder="Content Maintainer" />
@@ -149,42 +184,88 @@ function AgentEditor({
               </div>
             </EditorSection>
 
-            <EditorSection title="能力绑定" description="Agent 通过模型连接与 Skill Version 获得受控能力，不直接越过 Skill 调用 Tool。">
-              <FormGrid columns={2}>
-                <Field label="模型连接" required>
-                  <Select name="provider" defaultValue={defaultProvider}>
-                    {fixture.providers.filter((item) => item.enabled).map((provider) => (
-                      <option key={provider.id} value={provider.name}>{provider.name} · {provider.model}</option>
-                    ))}
-                  </Select>
-                </Field>
-                <Field label="Skill" required>
-                  <Select name="skill" defaultValue={defaultSkill}>
-                    {fixture.skills.map((skill) => (
-                      <option key={skill.id} value={skill.name}>{skill.name} · v{skill.version}</option>
-                    ))}
-                  </Select>
-                </Field>
-              </FormGrid>
+            <EditorSection title="能力绑定" description="模型可以跟随默认连接；行为、Tool 授权、发布策略与安全上限由绑定的 Skill Version 固定。">
+              <div className="flex flex-col gap-5">
+                <FormGrid columns={2}>
+                  <Field label="模型连接">
+                    <Select name="provider" defaultValue={defaultProvider}>
+                      <option value="">跟随系统默认文本模型</option>
+                      {fixture.providers.filter((item) => item.enabled).map((provider) => (
+                        <option key={provider.id} value={provider.name}>{provider.name} · {provider.model}</option>
+                      ))}
+                    </Select>
+                  </Field>
+                  <Field label="绑定 Skill Version" required>
+                    <Select name="skill" defaultValue={defaultSkill}>
+                      {fixture.skills.map((skill) => (
+                        <option key={skill.id} value={skill.name}>{skill.name} · v{skill.version}</option>
+                      ))}
+                    </Select>
+                  </Field>
+                </FormGrid>
+                {initial ? (
+                  <div className="rounded-md border bg-muted/20 p-4">
+                    <Text size="xs" tone="muted">当前行为策略</Text>
+                    <strong className="mt-1 block text-sm">{initial.skill} · v{initial.skillVersion}</strong>
+                    <Text size="xs" tone="muted">已授权 {initial.capabilities.length} 个 Tool；限制覆盖只能比 Skill 默认值更严格。</Text>
+                  </div>
+                ) : null}
+              </div>
             </EditorSection>
           </div>
 
-          <EditorSection title="运行计划" description="调度只决定何时发起运行；实际执行仍受 Agent 状态、权限和审批链路约束。">
-            <div className="flex flex-col gap-5">
-              <Field label="运行计划" hint="Cron 表达式；无需自动调度时填写“手动”。">
-                <Input name="schedule" defaultValue={initial?.schedule || "手动"} placeholder="30 8 * * *" />
-              </Field>
-              <Field label="时区">
-                <Input name="timezone" defaultValue={initial?.timezone || "Asia/Shanghai"} />
-              </Field>
-              {initial ? (
+          <div className="flex min-w-0 flex-col gap-5">
+            <EditorSection title="运行计划" description="触发方式决定何时发起运行；正式执行仍受权限、审批和运行状态约束。">
+              <div className="flex flex-col gap-5">
+                <Field label="触发方式">
+                  <Select name="triggerType" defaultValue={initial?.triggerType || (initial?.schedule && initial.schedule !== "手动" ? "cron" : "manual")}>
+                    <option value="manual">手动触发</option>
+                    <option value="cron">Cron 定时</option>
+                  </Select>
+                </Field>
+                <Field label="运行计划" hint="Cron 表达式；手动触发时保留“手动”。">
+                  <Input name="schedule" defaultValue={initial?.schedule || "手动"} placeholder="30 8 * * *" />
+                </Field>
+                <Field label="时区">
+                  <Input name="timezone" defaultValue={initial?.timezone || "Asia/Shanghai"} />
+                </Field>
+                {initial ? (
+                  <div className="border-t pt-5">
+                    <Text size="xs" tone="muted">最近运行</Text>
+                    <strong className="mt-1 block text-sm">{initial.latestRun}</strong>
+                  </div>
+                ) : null}
+              </div>
+            </EditorSection>
+
+            <EditorSection title="运行治理" description="Agent 可以设置运行次数和月度预算，并只允许把 Skill 的最大限制向下收紧。">
+              <div className="flex flex-col gap-5">
+                <FormGrid columns={2}>
+                  <Field label="日运行上限">
+                    <Input name="dailyRunLimit" type="number" min={1} defaultValue={String(initial?.dailyRunLimit ?? 10)} />
+                  </Field>
+                  <Field label="月 Token 预算">
+                    <Input name="monthlyTokenBudget" type="number" min={1} defaultValue={String(initial?.monthlyTokenBudget ?? 1000000)} />
+                  </Field>
+                </FormGrid>
                 <div className="border-t pt-5">
-                  <Text size="xs" tone="muted">最近运行</Text>
-                  <strong className="mt-1 block text-sm">{initial.latestRun}</strong>
+                  <Text size="xs" tone="muted">限制覆盖</Text>
+                  <Text size="xs" tone="muted">留空继承 Skill；覆盖值只能更严格，不能放宽 Skill Version 的默认上限。</Text>
                 </div>
-              ) : null}
-            </div>
-          </EditorSection>
+                <FormGrid columns={2}>
+                  <Field label="最大步数覆盖">
+                    <Input name="maxStepsOverride" type="number" min={1} defaultValue={initial?.maxStepsOverride ? String(initial.maxStepsOverride) : undefined} />
+                  </Field>
+                  <Field label="最大输入 Token 覆盖">
+                    <Input name="maxInputTokensOverride" type="number" min={1} defaultValue={initial?.maxInputTokensOverride ? String(initial.maxInputTokensOverride) : undefined} />
+                  </Field>
+                  <Field label="最大输出 Token 覆盖">
+                    <Input name="maxOutputTokensOverride" type="number" min={1} defaultValue={initial?.maxOutputTokensOverride ? String(initial.maxOutputTokensOverride) : undefined} />
+                  </Field>
+                </FormGrid>
+              </div>
+            </EditorSection>
+          </div>
         </div>
 
         <FormActions>
@@ -196,26 +277,52 @@ function AgentEditor({
   );
 }
 
-function SkillEditor({ value, onSave, onCancel }: { value: SkillFixture | "new"; onSave: (result: AISettingsEditorResult) => void; onCancel: () => void }) {
+function SkillEditor({
+  value,
+  fixture,
+  onSave,
+  onCancel,
+}: {
+  value: SkillFixture | "new";
+  fixture: AISettingsFixture;
+  onSave: (result: AISettingsEditorResult) => void;
+  onCancel: () => void;
+}) {
   const initial = value === "new" ? undefined : value;
+  const triggers = initial?.allowedTriggers ?? ["manual", "cron"];
+  const inputSchema = initial?.inputSchema ?? {
+    $schema: "https://json-schema.org/draft/2020-12/schema",
+    type: "object",
+    additionalProperties: false,
+  };
+
   return (
     <Form
       onFinish={(_, values) => {
-        const capabilities = text(values, "capabilities", initial?.capabilities.join(", ") || "")
-          .split(",")
-          .map((item) => item.trim())
-          .filter(Boolean);
+        const capabilities = fixture.tools
+          .filter((tool) => checked(values, `capability:${tool.name}`))
+          .map((tool) => tool.name);
+        const allowedTriggers = (["manual", "cron"] as const).filter((trigger) => checked(values, `trigger:${trigger}`));
         onSave({
           kind: "skill",
           id: initial?.id,
           value: {
             name: text(values, "name", initial?.name || "Custom Skill"),
-            version: initial?.version ?? 1,
+            version: initial ? initial.version + 1 : 1,
             summary: text(values, "summary", initial?.summary || "自定义 Skill。"),
             capabilities,
             system: initial?.system ?? false,
             executionMode: text(values, "executionMode", initial?.executionMode || "advisory") as SkillFixture["executionMode"],
             updatedAt: "刚刚",
+            systemPrompt: text(values, "systemPrompt", initial?.systemPrompt || "仅在明确授权范围内执行任务。"),
+            contentPublishMode: text(values, "contentPublishMode", initial?.contentPublishMode || "approval") as SkillFixture["contentPublishMode"],
+            allowedTriggers,
+            maxSteps: numberValue(values, "maxSteps", initial?.maxSteps ?? 6),
+            maxInputTokens: numberValue(values, "maxInputTokens", initial?.maxInputTokens ?? 16000),
+            maxOutputTokens: numberValue(values, "maxOutputTokens", initial?.maxOutputTokens ?? 2000),
+            defaultDailyRunLimit: numberValue(values, "defaultDailyRunLimit", initial?.defaultDailyRunLimit ?? 10),
+            defaultMonthlyTokenBudget: numberValue(values, "defaultMonthlyTokenBudget", initial?.defaultMonthlyTokenBudget ?? 1000000),
+            inputSchema: objectSchema(values, "inputSchema", inputSchema),
           },
         });
       }}
@@ -223,40 +330,118 @@ function SkillEditor({ value, onSave, onCancel }: { value: SkillFixture | "new";
       <div className="flex flex-col gap-5">
         <EditorHeader
           title={initial ? `编辑 Skill：${initial.name}` : "创建 Skill"}
-          description="把能力定义、执行边界和版本身份分开表达，避免长表单把所有配置压成同一层级。"
+          description="Skill Version 是行为与安全边界的稳定合同：固定指令、Tool 授权、发布策略、触发器和默认治理限制都在这里定义。"
           icon={<ListChecks />}
         />
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)]">
-          <EditorSection title="能力定义" description="描述这项 Skill 解决什么问题，以及对运营人员意味着什么。">
-            <div className="flex flex-col gap-5">
-              <Field label="Skill 名称" required>
-                <Input name="name" defaultValue={initial?.name} placeholder="SEO Review" />
+
+        <div className="grid gap-5 xl:grid-cols-[minmax(0,1.16fr)_minmax(21rem,0.84fr)]">
+          <div className="flex min-w-0 flex-col gap-5">
+            <EditorSection title="能力定义" description="先定义职责和固定指令，再决定允许它调用哪些 Tool。">
+              <div className="flex flex-col gap-5">
+                <Field label="Skill 名称" required>
+                  <Input name="name" defaultValue={initial?.name} placeholder="SEO Review" />
+                </Field>
+                <Field label="说明">
+                  <Input name="summary" defaultValue={initial?.summary} />
+                </Field>
+                <Field label="固定指令" hint="固定在 Skill Version 中；Agent 不能覆盖。">
+                  <Textarea name="systemPrompt" defaultValue={initial?.systemPrompt} rows={7} className="font-mono" />
+                </Field>
+              </div>
+            </EditorSection>
+
+            <EditorSection title="Tool 授权" description="只勾选这项能力真正需要的 Tool；建议模式应避免写入型能力。">
+              <div className="grid gap-3 sm:grid-cols-2">
+                {fixture.tools.map((tool) => (
+                  <label key={tool.name} className="flex items-start gap-3 rounded-md border p-4">
+                    <Checkbox
+                      name={`capability:${tool.name}`}
+                      defaultChecked={initial?.capabilities.includes(tool.name) ?? false}
+                    />
+                    <span className="min-w-0">
+                      <strong className="block font-mono text-sm">{tool.name}</strong>
+                      <Text size="xs" tone="muted">{tool.description}</Text>
+                      <Text size="xs" tone="muted">风险：{tool.risk === "high" ? "高" : tool.risk === "medium" ? "中" : "低"}</Text>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </EditorSection>
+
+            <EditorSection title="输入契约" description="输入 Schema 是 Skill Version 的一部分，用来约束 Workflow 或人工运行传入的数据。">
+              <Field label="输入 JSON Schema（Draft 2020-12）">
+                <Textarea
+                  name="inputSchema"
+                  defaultValue={JSON.stringify(inputSchema, null, 2)}
+                  rows={7}
+                  className="font-mono"
+                />
               </Field>
-              <Field label="说明">
-                <Textarea name="summary" defaultValue={initial?.summary} rows={4} />
-              </Field>
-            </div>
-          </EditorSection>
-          <EditorSection title="执行边界" description="Capabilities 决定可用能力；执行模式决定建议是否需要进入审批链路。">
-            <div className="flex flex-col gap-5">
-              <Field label="执行模式">
-                <Select name="executionMode" defaultValue={initial?.executionMode || "advisory"}>
-                  <option value="advisory">建议模式</option>
-                  <option value="approval">审批后执行</option>
-                </Select>
-              </Field>
-              <Field label="Capabilities" hint="使用逗号分隔，与受控 Tool capability 名称保持一致。">
-                <Textarea name="capabilities" defaultValue={initial?.capabilities.join(", ")} rows={4} placeholder="read_post, citation_check" />
-              </Field>
-              {initial ? (
-                <div className="grid grid-cols-2 gap-4 border-t pt-5">
-                  <div><Text size="xs" tone="muted">当前版本</Text><strong className="mt-1 block text-sm">v{initial.version}</strong></div>
-                  <div><Text size="xs" tone="muted">最近更新</Text><strong className="mt-1 block text-sm">{initial.updatedAt}</strong></div>
+            </EditorSection>
+          </div>
+
+          <div className="flex min-w-0 flex-col gap-5">
+            <EditorSection title="执行与发布边界" description="执行模式、发布策略与允许触发器属于 Skill Version，不由 Agent 临时放宽。">
+              <div className="flex flex-col gap-5">
+                <Field label="执行模式">
+                  <Select name="executionMode" defaultValue={initial?.executionMode || "advisory"}>
+                    <option value="advisory">仅分析建议</option>
+                    <option value="approval">生成审批提案</option>
+                  </Select>
+                </Field>
+                <Field label="内容发布策略" hint="Agent 不能覆盖。">
+                  <Select name="contentPublishMode" defaultValue={initial?.contentPublishMode || "approval"}>
+                    <option value="approval">审批后创建</option>
+                    <option value="draft">创建草稿</option>
+                    <option value="publish">显式自动发布</option>
+                  </Select>
+                </Field>
+                <div className="border-t pt-5">
+                  <Text size="sm">允许触发器</Text>
+                  <div className="mt-3 flex flex-col gap-3">
+                    <label className="inline-flex items-center gap-2 text-sm">
+                      <Checkbox name="trigger:manual" defaultChecked={triggers.includes("manual")} />
+                      手动触发
+                    </label>
+                    <label className="inline-flex items-center gap-2 text-sm">
+                      <Checkbox name="trigger:cron" defaultChecked={triggers.includes("cron")} />
+                      Cron 定时
+                    </label>
+                  </div>
                 </div>
-              ) : null}
-            </div>
-          </EditorSection>
+                {initial ? (
+                  <div className="grid grid-cols-2 gap-4 border-t pt-5">
+                    <div><Text size="xs" tone="muted">当前版本</Text><strong className="mt-1 block text-sm">v{initial.version}</strong></div>
+                    <div><Text size="xs" tone="muted">最近更新</Text><strong className="mt-1 block text-sm">{initial.updatedAt}</strong></div>
+                  </div>
+                ) : null}
+              </div>
+            </EditorSection>
+
+            <EditorSection title="默认治理限制" description="这些是 Skill 的安全与成本上限；Agent 只能继承或进一步调低，不能放宽。">
+              <div className="flex flex-col gap-5">
+                <FormGrid columns={2}>
+                  <Field label="Max steps">
+                    <Input name="maxSteps" type="number" min={1} max={20} defaultValue={String(initial?.maxSteps ?? 6)} />
+                  </Field>
+                  <Field label="默认日运行上限">
+                    <Input name="defaultDailyRunLimit" type="number" min={1} defaultValue={String(initial?.defaultDailyRunLimit ?? 10)} />
+                  </Field>
+                  <Field label="Max input tokens">
+                    <Input name="maxInputTokens" type="number" min={1} defaultValue={String(initial?.maxInputTokens ?? 16000)} />
+                  </Field>
+                  <Field label="Max output tokens">
+                    <Input name="maxOutputTokens" type="number" min={1} defaultValue={String(initial?.maxOutputTokens ?? 2000)} />
+                  </Field>
+                </FormGrid>
+                <Field label="默认月 Token 预算">
+                  <Input name="defaultMonthlyTokenBudget" type="number" min={1} defaultValue={String(initial?.defaultMonthlyTokenBudget ?? 1000000)} />
+                </Field>
+              </div>
+            </EditorSection>
+          </div>
         </div>
+
         <FormActions>
           <Button type="button" variant="outline" onClick={onCancel}>取消</Button>
           <Button type="submit" variant="solid" color="primary">保存 Skill</Button>
@@ -457,7 +642,7 @@ export function AISettingsEditor({ editor, fixture, onSave, onCancel }: { editor
     case "agent":
       return <AgentEditor value={editor.value} fixture={fixture} onSave={onSave} onCancel={onCancel} />;
     case "skill":
-      return <SkillEditor value={editor.value} onSave={onSave} onCancel={onCancel} />;
+      return <SkillEditor value={editor.value} fixture={fixture} onSave={onSave} onCancel={onCancel} />;
     case "provider":
       return <ProviderEditor value={editor.value} onSave={onSave} onCancel={onCancel} />;
     case "embedding":
