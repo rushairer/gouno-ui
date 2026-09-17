@@ -1,0 +1,117 @@
+name: AI Ops Panel Lead Recovery Once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/ai-ops-panel-lead-recovery-once.yml"
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: ai-ops-panel-lead-recovery-once
+  cancel-in-progress: false
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Reuse the reviewed hardening transform
+        shell: bash
+        run: |
+          set -euo pipefail
+          awk '
+            /node --input-type=module <<.EOF./ { capture=1; next }
+            capture && /^          EOF$/ { capture=0; exit }
+            capture { sub(/^          /, ""); print }
+          ' .github/workflows/ai-ops-panel-lead-hardening-once.yml > /tmp/apply-ai-ops-panel-lead.mjs
+          test -s /tmp/apply-ai-ops-panel-lead.mjs
+          node /tmp/apply-ai-ops-panel-lead.mjs
+          npx prettier --write showcase/components/tab-panel-lead.tsx showcase/demos/products/blog-admin/ai/operations/overview-inbox.tsx showcase/demos/products/blog-admin/ai/operations/automation-management.tsx showcase/demos/products/blog-admin/ai/operations/automation-records.tsx tests/product-blog-admin-ai-operations-panel-lead.test.ts docs/design-language.md
+
+      - name: Run verification stages with diagnostic logs
+        id: verify
+        shell: bash
+        run: |
+          set +e
+          mkdir -p /tmp/ai-ops-verify
+          failed=0
+          for entry in \
+            "microcopy|npm run lint:microcopy" \
+            "parity|npm run lint:parity" \
+            "typecheck|npm run typecheck" \
+            "test|npm test" \
+            "build|npm run build" \
+            "showcase-build|npm run showcase:build"
+          do
+            name="${entry%%|*}"
+            cmd="${entry#*|}"
+            echo "=== ${name}: ${cmd} ==="
+            bash -lc "$cmd" > "/tmp/ai-ops-verify/${name}.log" 2>&1
+            status=$?
+            cat "/tmp/ai-ops-verify/${name}.log"
+            if [ "$status" -ne 0 ]; then
+              echo "FAILED: ${name} (${status})"
+              failed=1
+            fi
+          done
+          echo "failed=${failed}" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Upload diagnostic logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ai-ops-panel-lead-verify-${{ github.run_id }}
+          path: /tmp/ai-ops-verify
+          if-no-files-found: error
+          retention-days: 3
+
+      - name: Stop on verification failure
+        if: steps.verify.outputs.failed != '0'
+        run: exit 1
+
+      - name: Commit hardened Showcase and retire one-time helpers
+        if: steps.verify.outputs.failed == '0'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm .github/workflows/ai-ops-panel-lead-hardening-once.yml
+          git rm .github/workflows/ai-ops-panel-lead-recovery-once.yml
+          git add showcase/components/tab-panel-lead.tsx \
+            showcase/demos/products/blog-admin/ai/operations/overview-inbox.tsx \
+            showcase/demos/products/blog-admin/ai/operations/automation-management.tsx \
+            showcase/demos/products/blog-admin/ai/operations/automation-records.tsx \
+            tests/product-blog-admin-ai-operations-panel-lead.test.ts \
+            docs/design-language.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "fix(ai-ops): unify canonical panel lead language"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+
+      - name: Re-run permanent gates on final main
+        if: steps.verify.outputs.failed == '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run ci.yml --ref main
+          gh workflow run blog-consumer-parity.yml --ref main
+          gh workflow run showcase-pages.yml --ref main
