@@ -11,6 +11,7 @@ import { WorkflowExecutionPanel } from "../showcase/demos/products/blog-admin/ai
 afterEach(cleanup);
 
 const workflow = aiOpsAutomationRecordsFixture.workflows[0];
+const nextWorkflowRunId = Math.max(...aiOpsAutomationRecordsFixture.workflowRuns.map((run) => run.id)) + 1;
 
 function renderWorkflowExecution(overrides: Partial<Parameters<typeof WorkflowExecutionPanel>[0]> = {}) {
   const props: Parameters<typeof WorkflowExecutionPanel>[0] = {
@@ -30,7 +31,10 @@ function openFirstWorkflow() {
 }
 
 function openWorkflowMenu() {
-  fireEvent.click(screen.getByRole("button", { name: "更多 Workflow 操作" }));
+  fireEvent.pointerDown(screen.getByRole("button", { name: "更多 Workflow 操作" }), {
+    button: 0,
+    ctrlKey: false,
+  });
 }
 
 describe("Blog Admin AI Operations automation/records canonical modules", () => {
@@ -138,11 +142,11 @@ describe("Blog Admin AI Operations automation/records canonical modules", () => 
     openFirstWorkflow();
 
     fireEvent.click(screen.getByRole("button", { name: "Dry-run" }));
-    fireEvent.click(await screen.findByRole("button", { name: "查看 Run #246" }));
+    fireEvent.click(await screen.findByRole("button", { name: `查看 Run #${nextWorkflowRunId}` }));
 
-    expect(await screen.findByRole("heading", { level: 2, name: "Run #246 · 旧文维护" })).toBeTruthy();
+    expect(await screen.findByRole("heading", { level: 2, name: `Run #${nextWorkflowRunId} · 旧文维护` })).toBeTruthy();
     expect(screen.getByText("验证 Workflow 配置")).toBeTruthy();
-    expect(screen.getByText("No writes applied")).toBeTruthy();
+    expect(screen.getAllByText(/Dry-run 未写入产品数据/).length).toBeGreaterThan(0);
   });
 
   it("keeps a failed live Run reachable with error, step and event evidence", async () => {
@@ -152,10 +156,10 @@ describe("Blog Admin AI Operations automation/records canonical modules", () => 
     openFirstWorkflow();
 
     fireEvent.click(screen.getByRole("button", { name: "运行" }));
-    expect(await screen.findByText("运行失败 · Run #246")).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "查看 Run #246" }));
+    expect(await screen.findByText(`运行失败 · Run #${nextWorkflowRunId}`)).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: `查看 Run #${nextWorkflowRunId}` }));
 
-    expect(await screen.findByRole("heading", { level: 2, name: "Run #246 · 旧文维护" })).toBeTruthy();
+    expect(await screen.findByRole("heading", { level: 2, name: `Run #${nextWorkflowRunId} · 旧文维护` })).toBeTruthy();
     expect(screen.getAllByText("query_events failed: column reference event_key is ambiguous").length).toBeGreaterThan(0);
     expect(screen.getByText("读取运营事件")).toBeTruthy();
     expect(screen.getByText("run_failed")).toBeTruthy();
@@ -183,7 +187,7 @@ describe("Blog Admin AI Operations automation/records canonical modules", () => 
     expect(onRouteChange).toHaveBeenCalledWith({ record: "workflow", workflow: 42, run: 244 });
     expect(screen.getByRole("heading", { level: 2, name: "Run #244 · 旧文维护" })).toBeTruthy();
     expect(screen.getAllByText("Dry-run").length).toBeGreaterThan(0);
-    expect(screen.getByText("No writes applied")).toBeTruthy();
+    expect(screen.getAllByText(/Dry-run 未写入产品数据/).length).toBeGreaterThan(0);
   });
 
   it("keeps Agent records separate and exposes failed Tool Call evidence", () => {
