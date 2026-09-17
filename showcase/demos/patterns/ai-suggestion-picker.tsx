@@ -26,6 +26,8 @@ const optionApi: ApiRow[] = [
 ];
 
 export function PatternAISuggestionPickerDemo() {
+  const exampleCode = canonicalExampleSource(AISuggestionPickerExampleSource);
+
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
@@ -44,7 +46,7 @@ export function PatternAISuggestionPickerDemo() {
       <DemoSection
         title="候选选择后统一应用"
         description="Preview 与 Code 使用同一份示例源码。选择候选只改变选中态，只有点击“使用所选”才把结果写回示例字段。"
-        code={canonicalExampleSource(AISuggestionPickerExampleSource)}
+        code={exampleCode}
       >
         <AISuggestionPickerExample />
       </DemoSection>
@@ -52,6 +54,7 @@ export function PatternAISuggestionPickerDemo() {
       <DemoSection
         title="窄容器行为"
         description="重新生成始终保持 32×32 icon-only；标题与说明获得剩余宽度并自然换行，底部动作在必要时按按钮粒度换行。"
+        code={exampleCode}
       >
         <div className="max-w-72">
           <AISuggestionPickerExample />
