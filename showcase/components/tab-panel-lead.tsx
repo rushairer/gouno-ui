@@ -15,6 +15,7 @@ export function TabPanelLead({
   return (
     <div
       data-slot="showcase-tab-panel-lead"
+      data-pattern="tab-panel-lead"
       className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"
     >
       <div className="min-w-0">
