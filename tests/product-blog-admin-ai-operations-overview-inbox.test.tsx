@@ -1,6 +1,7 @@
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { BlogAdminAIOperationsDemo } from "../showcase/demos/products/blog-admin/ai/operations";
+import { aiOpsAutomationRecordsFixture } from "../showcase/demos/products/blog-admin/ai/operations/automation-records-fixtures";
 import {
   AIOpsInboxPanel,
   AIOpsOverviewPanel,
@@ -14,25 +15,32 @@ import {
 
 afterEach(cleanup);
 
-describe("Blog Admin AI Operations overview/inbox migration modules", () => {
-  it("preserves the decision-first overview and routes work to Inbox/Automation", () => {
+describe("Blog Admin AI Operations overview/inbox canonical modules", () => {
+  it("prioritizes operational attention and routes work to Inbox or Automation", () => {
     const onNavigate = vi.fn();
-    render(<AIOpsOverviewPanel fixture={aiOpsDecisionFixture} onNavigate={onNavigate} />);
+    render(
+      <AIOpsOverviewPanel
+        fixture={aiOpsDecisionFixture}
+        automation={aiOpsAutomationRecordsFixture}
+        onNavigate={onNavigate}
+      />,
+    );
 
-    expect(screen.getByRole("heading", { name: "从一件想改善的事开始" })).toBeTruthy();
-    expect(screen.getByText("待审批变更")).toBeTruthy();
-    expect(screen.getByText("内容建议")).toBeTruthy();
-    expect(screen.getByText("图片任务")).toBeTruthy();
-    expect(screen.getByText("有 6 项工作等你决定")).toBeTruthy();
-    expect(screen.getByText("已启用 4 个自动化流程。")).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "今天需要关注什么" })).toBeTruthy();
+    expect(screen.getByText("执行中")).toBeTruthy();
+    expect(screen.getByText("失败运行")).toBeTruthy();
+    expect(screen.getByText("等待人工")).toBeTruthy();
+    expect(screen.getByText("Fixture Token")).toBeTruthy();
+    expect(screen.getByText("需要关注")).toBeTruthy();
+    expect(screen.getByText("自动化健康度")).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("button", { name: /待审批变更/ }));
+    fireEvent.click(screen.getByRole("button", { name: /待我处理/ }));
     expect(onNavigate).toHaveBeenCalledWith("inbox");
     fireEvent.click(screen.getByRole("button", { name: "查看自动化" }));
     expect(onNavigate).toHaveBeenCalledWith("automation");
   });
 
-  it("renders a governed proposal as readable content while retaining raw JSON for audit", () => {
+  it("renders a governed proposal as readable decision content", () => {
     render(
       <AIOpsInboxPanel
         fixture={aiOpsDecisionFixture}
@@ -44,15 +52,12 @@ describe("Blog Admin AI Operations overview/inbox migration modules", () => {
       />,
     );
 
-    expect(screen.getByRole("heading", { level: 3, name: "AI 每日资讯：模型、Agent 与工具链更新" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "AI 每日资讯：模型、Agent 与工具链更新" })).toBeTruthy();
     expect(screen.getByText("汇总过去 24 小时经过核验的 AI 行业变化。")).toBeTruthy();
-    expect(screen.getByText("今日重点")).toBeTruthy();
-    expect(screen.getByText("• Agent 工具调用治理继续加强。")).toBeTruthy();
-
-    const details = screen.getByText("查看技术详情").closest("details");
-    expect(details).toBeTruthy();
-    fireEvent.click(screen.getByText("查看技术详情"));
-    expect(within(details!).getByText(/"slug": "ai-daily-briefing"/)).toBeTruthy();
+    expect(screen.getByText(/今日重点/)).toBeTruthy();
+    expect(screen.getByText(/Agent 工具调用治理继续加强/)).toBeTruthy();
+    expect(screen.getByText("批准后会发生什么")).toBeTruthy();
+    expect(screen.getByText("不会发生什么")).toBeTruthy();
   });
 
   it("keeps failed approvals actionable and retries the same preserved proposal", () => {
@@ -68,7 +73,7 @@ describe("Blog Admin AI Operations overview/inbox migration modules", () => {
       />,
     );
 
-    expect(screen.getByText("上次执行失败，提案未丢失")).toBeTruthy();
+    expect(screen.getByText("上次批准后的执行失败")).toBeTruthy();
     expect(screen.getByText("column reference event_key is ambiguous")).toBeTruthy();
     expect(screen.getByText("Kafka 高吞吐陷阱：并发并不总能换来 QPS")).toBeTruthy();
 
@@ -79,11 +84,11 @@ describe("Blog Admin AI Operations overview/inbox migration modules", () => {
     );
   });
 
-  it("keeps a failed approval retry in Inbox until the same preserved proposal succeeds", () => {
+  it("keeps a failed approval retry in Inbox until the preserved proposal succeeds", () => {
     render(<BlogAdminAIOperationsDemo initialRoute={{ tab: "inbox", record: "workflow" }} />);
     fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
     fireEvent.click(screen.getByRole("radio", { name: "审批重试失败" }));
-    fireEvent.click(screen.getByRole("button", { name: /为文章 #103 准备标题候选/ }));
+    fireEvent.click(screen.getByRole("button", { name: /为Kafka 消费者背压准备标题候选/ }));
 
     expect(screen.getByText("Kafka 高吞吐陷阱：并发并不总能换来 QPS")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "重试批准并执行" }));
@@ -130,7 +135,8 @@ describe("Blog Admin AI Operations overview/inbox migration modules", () => {
       />,
     );
 
-    expect(screen.getByText("Run #245 · hero-style")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: /为技术架构文章选择封面方向/ }));
+    expect(screen.getByText("AI 每日资讯 · Run #245 · AI 每日资讯候选稿")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "科技插画" }));
     expect(onResolveInteraction).toHaveBeenCalledWith(
       expect.objectContaining({ id: 903, workflowRunId: 245 }),
@@ -138,7 +144,7 @@ describe("Blog Admin AI Operations overview/inbox migration modules", () => {
     );
   });
 
-  it("keeps suggestions, candidate sets, media candidates and editorial tasks as separate product domains", () => {
+  it("keeps suggestions, candidate sets, media candidates and editorial tasks as separate decision types", () => {
     const onOpenOperation = vi.fn<(kind: keyof OperationsFixture, id: number) => void>();
     render(
       <AIOpsInboxPanel
@@ -151,12 +157,14 @@ describe("Blog Admin AI Operations overview/inbox migration modules", () => {
       />,
     );
 
-    expect(screen.getByText("运营建议")).toBeTruthy();
-    expect(screen.getByText("内容候选")).toBeTruthy();
-    expect(screen.getByText("图片任务", { selector: ".text-base" })).toBeTruthy();
-    expect(screen.getByText("编辑任务")).toBeTruthy();
+    expect(screen.getByRole("button", { name: /3 篇旧文超过 180 天未更新/ })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /为 OAuth BFF 文章选择标题/ })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /Kafka 背压示意图/ })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /复核 AI Daily Briefing 引用来源/ })).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("button", { name: /OAuth BFF 文章标题候选/ }));
+    fireEvent.click(screen.getByRole("button", { name: /为 OAuth BFF 文章选择标题/ }));
+    expect(screen.getByText("当前值：浏览器与 BFF 绑定关系")).toBeTruthy();
+    fireEvent.click(screen.getAllByRole("button", { name: "选择此项" })[0]);
     expect(onOpenOperation).toHaveBeenCalledWith("candidateSets", 920);
   });
 });
