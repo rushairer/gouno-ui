@@ -114,24 +114,27 @@ export function AutomationManagement({
               <div role="list" aria-label="Workflow 列表" className="divide-y">
                 {visible.length ? visible.map((workflow) => (
                   <div key={workflow.id} role="listitem" className="flex flex-col gap-4 p-6 lg:flex-row lg:items-center lg:justify-between">
-                    <button
+                    <Button
                       type="button"
-                      className="min-w-0 flex-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      variant="ghost"
+                      className="h-auto min-w-0 flex-1 justify-start whitespace-normal p-0 text-left hover:bg-transparent"
                       onClick={() => onSelect?.(workflow)}
                     >
-                      <span className="flex flex-wrap items-center gap-2">
-                        <strong className="text-sm">{workflow.name}</strong>
-                        <Tag color={workflow.enabled ? "success" : undefined}>{workflow.enabled ? "已启用" : "已停用"}</Tag>
-                        <Tag>v{workflow.currentVersion}</Tag>
+                      <span className="min-w-0 flex-1">
+                        <span className="flex flex-wrap items-center gap-2">
+                          <strong className="text-sm">{workflow.name}</strong>
+                          <Tag color={workflow.enabled ? "success" : undefined}>{workflow.enabled ? "已启用" : "已停用"}</Tag>
+                          <Tag>v{workflow.currentVersion}</Tag>
+                        </span>
+                        <span className="mt-1 block text-sm text-muted-foreground">{workflow.description}</span>
+                        <span className="mt-3 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2 xl:grid-cols-4">
+                          <span>{workflow.schedule} · {workflow.timezone}</span>
+                          <span>下次：{workflow.nextRunAt}</span>
+                          <span>{workflow.steps.length} 个步骤</span>
+                          <span>运行 / 失败：{workflow.metrics.runs} / {workflow.metrics.failures}</span>
+                        </span>
                       </span>
-                      <span className="mt-1 block text-sm text-muted-foreground">{workflow.description}</span>
-                      <span className="mt-3 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2 xl:grid-cols-4">
-                        <span>{workflow.schedule} · {workflow.timezone}</span>
-                        <span>下次：{workflow.nextRunAt}</span>
-                        <span>{workflow.steps.length} 个步骤</span>
-                        <span>运行 / 失败：{workflow.metrics.runs} / {workflow.metrics.failures}</span>
-                      </span>
-                    </button>
+                    </Button>
                     <Button size="small" variant="ghost" icon={<ChevronRight />} onClick={() => onSelect?.(workflow)}>
                       进入详情 / 运行
                     </Button>
