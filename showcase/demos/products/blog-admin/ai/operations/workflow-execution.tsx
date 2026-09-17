@@ -111,14 +111,16 @@ export function WorkflowExecutionPanel({
 
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)]" aria-label={`${workflow.name} 执行工作区`}>
-      <section className="rounded-lg border bg-background p-6" aria-label="运行当前 Workflow">
-        <OpsRegionHeading
+      <section data-slot="workflow-run-surface" className="overflow-hidden rounded-xl border bg-background" aria-label="运行当前 Workflow">
+        <div className="border-b p-6">
+          <OpsRegionHeading
           title="运行当前 Workflow"
           description="人工执行先做 Preflight，再创建持久化 Run。Run 由后台 Worker 异步推进，状态与证据统一进入运行中心。"
           action={<Tag color={workflow.enabled ? "success" : undefined}>{workflow.enabled ? "可运行" : "已停用"}</Tag>}
-        />
+          />
+        </div>
 
-        <div className="mt-5 border-t pt-5">
+        <div className="p-6">
           <div>
             <strong className="text-sm">本次运行输入</strong>
             <Text size="xs" tone="muted" className="mt-1">默认值来自 Workflow 输入契约；这里只覆盖本次 Run，不形成新版本。</Text>
@@ -145,7 +147,7 @@ export function WorkflowExecutionPanel({
           </div>
         </div>
 
-        <div className="mt-5 flex flex-col gap-3 border-t pt-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 border-t px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <Text size="xs" tone="muted">运行范围</Text>
             <strong className="mt-1 block text-sm">{workflow.scopeMode === "strict" ? "遵守 Workflow 严格资源边界" : "使用 Workflow 兼容范围"}</strong>
@@ -172,7 +174,7 @@ export function WorkflowExecutionPanel({
         </div>
 
         {feedback ? (
-          <div className="mt-5">
+          <div className="border-t p-6">
             <Alert
               type={feedback.type}
               showIcon

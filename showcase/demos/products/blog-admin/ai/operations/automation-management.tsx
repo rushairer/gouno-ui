@@ -94,8 +94,8 @@ function WorkflowRail({
   onSelect?: (workflow: WorkflowFixture) => void;
 }) {
   return (
-    <aside className="min-w-0 overflow-hidden rounded-xl border bg-background" aria-label="Workflow 导航">
-      <div className="border-b bg-muted/20 p-4">
+    <aside data-slot="ops-rail" className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-xl border bg-background" aria-label="Workflow 导航">
+      <div className="shrink-0 border-b bg-muted/20 p-4">
         <div className="mb-3 flex items-center justify-between gap-3">
           <div>
             <strong className="text-sm">Workflows</strong>
@@ -123,7 +123,7 @@ function WorkflowRail({
         </div>
       </div>
 
-      <div role="list" aria-label="Workflow 列表" className="max-h-[44rem] overflow-y-auto">
+      <div data-slot="ops-rail-body" role="list" aria-label="Workflow 列表" className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
         {workflows.length ? workflows.map((workflow) => (
           <div key={workflow.id} role="listitem">
             <OpsObjectRow
@@ -322,7 +322,7 @@ export function AutomationManagement({
         )}
       />
 
-      <div className="grid min-w-0 gap-5 xl:grid-cols-[21rem_minmax(0,1fr)]">
+      <div data-slot="ops-master-detail" className="grid min-w-0 items-stretch gap-5 xl:grid-cols-[21rem_minmax(0,1fr)]">
         <WorkflowRail
           workflows={visible}
           selected={selected}
@@ -333,7 +333,7 @@ export function AutomationManagement({
           onSelect={onSelect}
         />
 
-        <div className="flex min-w-0 flex-col gap-5">
+        <div data-slot="ops-detail-stack" className="flex min-w-0 flex-col gap-5">
           <section className="overflow-hidden rounded-xl border bg-background" aria-label={`${selected.name} Workflow 概览`}>
             <div className="flex flex-col gap-4 border-b p-6 lg:flex-row lg:items-start lg:justify-between">
               <div className="flex min-w-0 items-start gap-3">

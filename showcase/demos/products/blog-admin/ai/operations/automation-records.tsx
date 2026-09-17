@@ -304,10 +304,10 @@ export function AIOpsRecordsPanel({
             </Select>
           </div>
 
-          <div className="grid gap-6 xl:grid-cols-[19rem_minmax(0,1fr)]">
-            <section className="overflow-hidden rounded-lg border bg-background" aria-label="Workflow Runs">
-              <div className="border-b px-[18px] py-4"><strong className="text-sm">Workflow Runs</strong><Text size="xs" tone="muted">{workflowRuns.length} 条运行记录</Text></div>
-              <div className="max-h-[46rem] overflow-y-auto">
+          <div data-slot="ops-master-detail" className="grid items-stretch gap-6 xl:grid-cols-[19rem_minmax(0,1fr)]">
+            <section data-slot="ops-rail" className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-lg border bg-background" aria-label="Workflow Runs">
+              <div className="shrink-0 border-b px-[18px] py-4"><strong className="text-sm">Workflow Runs</strong><Text size="xs" tone="muted">{workflowRuns.length} 条运行记录</Text></div>
+              <div data-slot="ops-rail-body" className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
                 {workflowRuns.length ? workflowRuns.map((run) => (
                   <OpsObjectRow
                     key={run.id}

@@ -456,10 +456,10 @@ export function AIOpsInboxPanel({
         </div>
       </div>
 
-      <div className="grid min-h-[34rem] overflow-hidden rounded-lg border bg-background xl:grid-cols-[minmax(18rem,0.72fr)_minmax(0,1.55fr)]">
-        <section className="border-b xl:border-b-0 xl:border-r" aria-label="Decision Queue">
-          <div className="border-b px-[18px] py-4"><div className="flex items-center justify-between gap-3"><div><strong className="text-sm">决策队列</strong><Text size="xs" tone="muted">{items.length} 项符合当前筛选</Text></div><Clock3 className="size-4 text-muted-foreground" /></div></div>
-          <div className="max-h-[42rem] overflow-y-auto">
+      <div data-slot="ops-master-detail" className="grid min-h-[34rem] items-stretch overflow-hidden rounded-lg border bg-background xl:grid-cols-[minmax(18rem,0.72fr)_minmax(0,1.55fr)]">
+        <section data-slot="ops-rail" className="flex min-h-0 min-w-0 flex-col border-b xl:border-b-0 xl:border-r" aria-label="Decision Queue">
+          <div className="shrink-0 border-b px-[18px] py-4"><div className="flex items-center justify-between gap-3"><div><strong className="text-sm">决策队列</strong><Text size="xs" tone="muted">{items.length} 项符合当前筛选</Text></div><Clock3 className="size-4 text-muted-foreground" /></div></div>
+          <div data-slot="ops-rail-body" className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
             {items.length ? items.map((item) => (
               <OpsObjectRow
                 key={item.key}
