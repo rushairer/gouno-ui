@@ -61,7 +61,6 @@ jobs:
               r'            >\n'
               r'              {fixture.agentRuns.map((run) => ('
           )
-          # Restrict to the Agent Runs tail so the Workflow rail body cannot be touched.
           marker = 'aria-label="Agent Runs"'
           head, tail = text.rsplit(marker, 1)
           tail, body_count = body_pattern.subn(body_replacement, tail, count=1)
@@ -73,10 +72,11 @@ jobs:
 
           cat > tests/product-blog-admin-ai-operations-run-center-contract.test.ts <<'EOF'
           import { readFileSync } from "node:fs";
+          import { resolve } from "node:path";
           import { describe, expect, it } from "vitest";
 
-          const read = (path: string) =>
-            readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
+          const read = (file: string) =>
+            readFileSync(resolve(process.cwd(), file), "utf8");
 
           describe("Blog Admin AI Operations canonical run-center contract", () => {
             it("uses the canonical panel lead across all top-level AI Operations tabs", () => {
