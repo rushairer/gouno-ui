@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Text } from "../../../../../../src/core";
+import { Button, Text } from "../../../../../../src/core";
 
 export type OpsSummaryItem = {
   label: ReactNode;
@@ -27,18 +27,19 @@ export function OpsObjectRow({
   ariaLabel?: string;
 }) {
   return (
-    <button
-      type="button"
+    <Button
+      variant="ghost"
+      block
       aria-label={ariaLabel}
       aria-pressed={selected}
       className={[
-        "group w-full border-b px-[18px] py-4 text-left last:border-b-0",
-        "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset",
-        selected ? "bg-primary/5" : "hover:bg-muted/35",
+        "h-auto items-stretch justify-start whitespace-normal rounded-none border-b px-[18px] py-4 text-left last:border-b-0",
+        "focus-visible:ring-inset",
+        selected ? "bg-primary/5 hover:bg-primary/5" : "hover:bg-muted/35",
       ].join(" ")}
       onClick={onClick}
     >
-      <span className="flex min-w-0 flex-col gap-2">
+      <span className="flex w-full min-w-0 flex-col gap-2">
         <span className="flex min-w-0 items-start justify-between gap-3">
           <strong className="min-w-0 flex-1 text-sm font-semibold leading-5 text-foreground">
             {title}
@@ -57,7 +58,7 @@ export function OpsObjectRow({
           </span>
         ) : null}
       </span>
-    </button>
+    </Button>
   );
 }
 
