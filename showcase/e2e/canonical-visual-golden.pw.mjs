@@ -353,7 +353,7 @@ test("blog-admin-ai-operations-failed-run-visual-evidence", async ({ page }, tes
   await page.getByRole("button", { name: "运行", exact: true }).click();
   const runFailureAlert = page.getByRole("alert");
   await expect(runFailureAlert).toContainText("运行失败");
-  await runFailureAlert.getByRole("button", { name: /查看 Run #/ }).click();
+  await page.getByRole("button", { name: /查看 Run #/ }).last().click();
   await expect(page.getByRole("heading", { level: 2, name: /Run #/ })).toBeVisible();
   await expect(page.getByRole("alert")).toContainText("运行失败");
   await expectNoHorizontalDocumentOverflow(page);
