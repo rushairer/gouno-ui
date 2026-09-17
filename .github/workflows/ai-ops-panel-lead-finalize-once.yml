@@ -1,0 +1,110 @@
+name: AI Ops Panel Lead Finalize Once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/ai-ops-panel-lead-finalize-once.yml"
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: ai-ops-panel-lead-finalize-once
+  cancel-in-progress: false
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Apply reviewed AI Operations panel lead transform
+        shell: bash
+        run: |
+          set -euo pipefail
+          awk '
+            /node --input-type=module <<.EOF./ { capture=1; next }
+            capture && /^          EOF$/ { capture=0; exit }
+            capture { sub(/^          /, ""); print }
+          ' .github/workflows/ai-ops-panel-lead-hardening-once.yml > /tmp/apply-ai-ops-panel-lead.mjs
+          test -s /tmp/apply-ai-ops-panel-lead.mjs
+          node /tmp/apply-ai-ops-panel-lead.mjs
+
+          cat > tests/product-blog-admin-ai-operations-panel-lead.test.ts <<'EOF'
+          import { readFileSync } from "node:fs";
+          import { resolve } from "node:path";
+          import { describe, expect, it } from "vitest";
+
+          const read = (path: string) => readFileSync(resolve(process.cwd(), path), "utf8");
+
+          describe("Blog Admin AI Operations panel lead contract", () => {
+            it("uses one titled lead anatomy across every top-level AI Operations panel", () => {
+              const lead = read("showcase/components/tab-panel-lead.tsx");
+              const overview = read("showcase/demos/products/blog-admin/ai/operations/overview-inbox.tsx");
+              const automation = read("showcase/demos/products/blog-admin/ai/operations/automation-management.tsx");
+              const records = read("showcase/demos/products/blog-admin/ai/operations/automation-records.tsx");
+
+              expect(lead).toContain("title?: ReactNode");
+              expect(lead).toContain("<Heading level={2}>{title}</Heading>");
+              expect(overview).toContain('title="今天需要关注什么"');
+              expect(overview).toContain('title="人工决策队列"');
+              expect(automation).toContain('title="自动化资产"');
+              expect(records).toContain('title="运行证据中心"');
+            });
+          });
+          EOF
+
+          npx prettier --write \
+            showcase/components/tab-panel-lead.tsx \
+            showcase/demos/products/blog-admin/ai/operations/overview-inbox.tsx \
+            showcase/demos/products/blog-admin/ai/operations/automation-management.tsx \
+            showcase/demos/products/blog-admin/ai/operations/automation-records.tsx \
+            tests/product-blog-admin-ai-operations-panel-lead.test.ts \
+            docs/design-language.md
+
+      - name: Verify Gouno UI
+        run: npm run verify
+
+      - name: Commit canonical fix and retire one-time helpers
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm .github/workflows/ai-ops-panel-lead-hardening-once.yml
+          git rm .github/workflows/ai-ops-panel-lead-recovery-once.yml
+          git rm .github/workflows/ai-ops-panel-lead-finalize-once.yml
+          git add \
+            showcase/components/tab-panel-lead.tsx \
+            showcase/demos/products/blog-admin/ai/operations/overview-inbox.tsx \
+            showcase/demos/products/blog-admin/ai/operations/automation-management.tsx \
+            showcase/demos/products/blog-admin/ai/operations/automation-records.tsx \
+            tests/product-blog-admin-ai-operations-panel-lead.test.ts \
+            docs/design-language.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "fix(ai-ops): unify canonical panel lead language"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+
+      - name: Re-run permanent gates on final main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run ci.yml --ref main
+          gh workflow run blog-consumer-parity.yml --ref main
+          gh workflow run canonical-visual-golden.yml --ref main
+          gh workflow run showcase-pages.yml --ref main
