@@ -35,7 +35,7 @@ export function DemoSection({ title, description, code, children }: DemoSectionP
             type="button"
             role="tab"
             aria-selected={tab === value}
-            className={`border-b-2 px-3 py-2 text-sm ${
+            className={`border-be-emphasis px-3 py-2 text-sm ${
               tab === value
                 ? "border-primary text-foreground"
                 : "border-transparent text-muted-foreground"
