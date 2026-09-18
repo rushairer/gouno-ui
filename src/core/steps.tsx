@@ -345,7 +345,7 @@ export function Steps({
               "relative min-w-0",
               orientation === "horizontal" ? "min-w-36 flex-1" : "w-full pb-3",
               type === "panel" && "rounded-lg border border-border p-3",
-              type === "navigation" && active && "border-be-emphasis border-primary",
+              type === "navigation" && active && "edge-be-emphasis border-primary",
               item.disabled && "opacity-60",
               semanticClassNames.item,
             )}
