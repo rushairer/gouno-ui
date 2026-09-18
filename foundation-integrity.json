@@ -906,7 +906,7 @@
       }
     },
     "motion": {
-      "status": "in_progress",
+      "status": "certified",
       "affectedComponentReviews": [
         "core-anchor",
         "core-back-top",
@@ -943,26 +943,36 @@
           ]
         },
         "corpus": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "scripts/check-foundation-integrity.mjs",
-            "src"
-          ]
+            "src",
+            "CI run 35355223840 (#514): Motion corpus audit directSmoothScrollBypasses=0, unexpectedMotionQueryFiles=0"
+          ],
+          "directSmoothScrollBypasses": 0,
+          "unexpectedMotionQueryFiles": 0
         },
         "guard": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "scripts/check-foundation-integrity.mjs",
-            "tests/motion-foundation-conformance.test.tsx"
+            "tests/motion-foundation-conformance.test.tsx",
+            "CI run 35355223840 (#514): success; 164/164 test files, 847/847 tests"
           ]
         },
         "visual": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Canonical Visual Golden Smoke run 35354776927 (#441): success; 56/56 passed",
+            "showcase/e2e/canonical-visual-golden.pw.mjs: motion-reduced-preference-collapses-carousel-movement passed"
+          ]
         },
         "consumers": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Blog Consumer Parity run 35354894431 (#501): success",
+            "Gosso Admin Consumer Parity run 35354894525 (#496): success"
+          ]
         }
       },
       "inventory": {
