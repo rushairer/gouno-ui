@@ -372,6 +372,10 @@ export function BlogAdminMediaLibraryDemo() {
         </Alert>
       ) : null}
 
+      {scenario === "error" ? (
+        <Alert type="error" showIcon title="媒体加载失败" description="无法读取媒体库。真实产品会保留当前筛选上下文并允许重新请求。" action={<Button size="small" onClick={() => setScenario("data")}>重新载入</Button>} />
+      ) : null}
+
       <Card padding="base">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
           <div className="min-w-0 flex-1">
@@ -409,9 +413,7 @@ export function BlogAdminMediaLibraryDemo() {
         </BulkActionBar>
       ) : null}
 
-      {scenario === "error" ? (
-        <Alert type="error" showIcon title="媒体加载失败" description="无法读取媒体库。真实产品会保留当前筛选上下文并允许重新请求。" action={<Button size="small" onClick={() => setScenario("data")}>重新载入</Button>} />
-      ) : scenario === "loading" ? (
+      {scenario === "error" ? null : scenario === "loading" ? (
         <LoadingMedia />
       ) : visibleAssets.length === 0 ? (
         <Card padding="lg">
