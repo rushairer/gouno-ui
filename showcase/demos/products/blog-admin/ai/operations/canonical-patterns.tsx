@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Button, Text } from "../../../../../../src/core";
+import { Button, Heading, Text } from "../../../../../../src/core";
 
 export type OpsSummaryItem = {
   label: ReactNode;
@@ -130,11 +130,11 @@ export function OpsRegionHeading({
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
       <div className="min-w-0">
-        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+        <Heading level={3} variant="label">{title}</Heading>
         {description ? (
-          <p className="mt-1 max-w-3xl text-xs leading-5 text-muted-foreground">
+          <Text size="xs" tone="muted" className="mt-1 max-w-3xl leading-5">
             {description}
-          </p>
+          </Text>
         ) : null}
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}
