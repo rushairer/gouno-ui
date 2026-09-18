@@ -16,11 +16,13 @@ import {
 import { Button, type ButtonProps } from "./button";
 import { useOverlayBody } from "../hooks/use-overlay-body";
 import { cn } from "../lib/utils";
-const closeText = () =>
+const localizedText = (en: string, zh: string) =>
   typeof document !== "undefined" &&
   document.documentElement.lang.startsWith("en")
-    ? "Close"
-    : "关闭";
+    ? en
+    : zh;
+const closeText = () => localizedText("Close", "关闭");
+const dialogText = () => localizedText("Dialog", "对话框");
 export interface ModalProps {
   open?: boolean;
   defaultOpen?: boolean;
@@ -141,6 +143,7 @@ export function Modal({
           zIndex={zIndex}
           maskStyle={styles?.mask}
           showCloseButton={showCloseButton}
+          closeLabel={closeText()}
           onEscapeKeyDown={(e) => {
             if (!closeOnEsc) e.preventDefault();
           }}
@@ -156,7 +159,7 @@ export function Modal({
         >
           <DialogHeader style={styles?.header}>
             <DialogTitle className={title ? undefined : "sr-only"}>
-              {title || ariaLabel || closeText()}
+              {title || ariaLabel || dialogText()}
             </DialogTitle>
             {description ? (
               <DialogDescription>{description}</DialogDescription>
