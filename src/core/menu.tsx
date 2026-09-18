@@ -554,7 +554,7 @@ export function Menu({
                   "m-0 list-none p-0",
                   popup
                     ? cn(
-                        "absolute z-50 min-w-44 rounded-md border bg-popover p-1 text-popover-foreground shadow-overlay",
+                        "absolute layer-popup min-w-44 rounded-md border bg-popover p-1 text-popover-foreground shadow-overlay",
                         mode === "horizontal" && depth === 0
                           ? "left-0 top-full mt-1"
                           : "left-full top-0 ml-1",

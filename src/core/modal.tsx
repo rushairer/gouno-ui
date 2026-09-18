@@ -79,7 +79,7 @@ export function Modal({
   loading = false,
   centered = true,
   mask = true,
-  zIndex = 50,
+  zIndex,
   destroyOnClose = true,
   onOk,
   onCancel,

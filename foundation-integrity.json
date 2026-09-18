@@ -1088,37 +1088,125 @@
       }
     },
     "overlay": {
-      "status": "planned",
-      "affectedComponentReviews": [],
+      "status": "certified",
+      "affectedComponentReviews": [
+        "theme-system",
+        "gouno-app-shell",
+        "pattern-bulk-action-bar",
+        "core-affix",
+        "core-back-top",
+        "core-float-button",
+        "core-modal",
+        "core-drawer",
+        "core-popconfirm",
+        "core-popover",
+        "core-tooltip",
+        "core-dropdown",
+        "core-select",
+        "core-menu",
+        "core-autocomplete",
+        "core-mentions",
+        "core-message",
+        "core-notification"
+      ],
       "gates": {
         "inventory": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/foundation-overlay-inventory.md",
+            "src/gouno/app-shell.tsx",
+            "src/core/affix.tsx",
+            "src/core/modal.tsx",
+            "src/core/drawer.tsx",
+            "src/core/message.tsx",
+            "src/core/notification.tsx",
+            "src/components/primitives/dialog.tsx",
+            "src/components/primitives/sheet.tsx",
+            "src/components/primitives/popover.tsx",
+            "src/components/primitives/dropdown-menu.tsx",
+            "src/components/primitives/tooltip.tsx",
+            "src/components/primitives/select.tsx"
+          ]
         },
         "tokens": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "src/tokens.css: --layer-sticky/shell/floating/modal/popup/notice",
+            "src/tokens.css: layer-* semantic utilities"
+          ]
         },
         "authority": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/design-language.md: DL-23",
+            "docs/foundation-overlay-inventory.md",
+            "src/tokens.css",
+            "showcase/styles/showcase.css: Showcase-only tooling layer"
+          ]
         },
         "corpus": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "src",
+            "showcase/components",
+            "showcase/demos/products",
+            "scripts/check-foundation-integrity.mjs",
+            "CI run 35364329607 (#555): Overlay corpus audit rawGlobalLayerFiles=0, numericGlobalInlineFiles=0"
+          ],
+          "rawGlobalLayerFiles": 0,
+          "numericGlobalInlineFiles": 0
         },
         "guard": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "scripts/check-foundation-integrity.mjs",
+            "tests/overlay-foundation-conformance.test.tsx",
+            "CI run 35364329607 (#555): success; 166/166 test files, 857/857 tests"
+          ]
         },
         "visual": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "showcase/demos/core/modal/layering.tsx",
+            "showcase/e2e/canonical-visual-golden.pw.mjs: overlay-semantic-modal-popup-ordering",
+            "Canonical Visual Golden Smoke run 35364330737 (#472): success; 58/58 passed"
+          ]
         },
         "consumers": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Blog Consumer Parity run 35364330586 (#533): success",
+            "Gosso Admin Consumer Parity run 35364329528 (#528): success"
+          ]
         }
+      },
+      "inventory": {
+        "observedGlobalLayers": {
+          "sticky": [
+            20,
+            30
+          ],
+          "floating": [
+            40
+          ],
+          "modalAndPopupCollision": [
+            50
+          ],
+          "notice": [
+            100
+          ],
+          "showcaseTooling": [
+            60,
+            100
+          ]
+        },
+        "confirmedDefects": [
+          "Application-global z-index authority is encoded as raw component literals instead of semantic Layer roles.",
+          "Blocking modal surfaces and nested transient popup portals collide at z=50 and may rely on DOM insertion order.",
+          "Message and Notification use an unowned z-[100] emergency layer.",
+          "Showcase tooling uses product-adjacent layer numbers and needs an explicit tooling-only exception."
+        ],
+        "targetPolicy": "Local stacking stays component-owned; sticky/floating/modal/popup/notice become semantic runtime layers; Showcase tooling remains isolated from product Layer authority."
       }
     },
     "state": {

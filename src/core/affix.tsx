@@ -47,8 +47,8 @@ export function Affix({
       {...props}
       ref={ref}
       data-slot="affix"
-      className={cn("z-20", className)}
-      style={{ zIndex: 20, ...style, position: "sticky", top }}
+      className={cn("layer-sticky", className)}
+      style={{ ...style, position: "sticky", top }}
     >
       {children}
     </div>
@@ -84,7 +84,7 @@ export function BackTop({
       data-slot="back-top"
       data-visibility-height={threshold}
       className={cn(
-        "fixed right-6 bottom-6 z-40 inline-flex size-10 items-center justify-center rounded-full border bg-popover text-foreground shadow-overlay transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50",
+        "fixed right-6 bottom-6 layer-floating inline-flex size-10 items-center justify-center rounded-full border bg-popover text-foreground shadow-overlay transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50",
         className,
       )}
       onClick={(event) => {

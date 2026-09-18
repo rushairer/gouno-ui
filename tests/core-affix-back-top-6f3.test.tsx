@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { Affix, BackTop } from "../src/core";
-import { componentProgress } from "../showcase/catalog/component-progress";
+import { componentReviews } from "../showcase/catalog/component-progress";
 import { otherDocuments } from "../showcase/demos/core/other";
 
 function setScrollY(value: number) {
@@ -106,7 +106,7 @@ describe("Affix and BackTop 6F3", () => {
     expect(backTopNames).toEqual(
       expect.arrayContaining(["aria-label", "visibilityHeight", "onClick", "ref"]),
     );
-    expect(componentProgress("core-affix", 62)).toBe(100);
-    expect(componentProgress("core-back-top", 68)).toBe(100);
+    expect(componentReviews["core-affix"]?.evidence.length).toBeGreaterThan(0);
+    expect(componentReviews["core-back-top"]?.evidence.length).toBeGreaterThan(0);
   });
 });

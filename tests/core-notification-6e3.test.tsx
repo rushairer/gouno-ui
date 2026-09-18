@@ -7,7 +7,7 @@ import {
   screen,
 } from "@testing-library/react";
 import { NotificationProvider, useNotification } from "../src/core";
-import { componentProgress } from "../showcase/catalog/component-progress";
+import { componentReviews } from "../showcase/catalog/component-progress";
 import { notificationReviewDocuments } from "../showcase/demos/core/feedback-review-6e3";
 
 function NotificationProbe() {
@@ -187,6 +187,6 @@ describe("Notification 6E3", () => {
     expect(document.code).toContain("<NotificationProvider");
     expect(document.code).toContain("useNotification");
     expect(document.code).toContain('persistent: true');
-    expect(componentProgress("core-notification", 75)).toBe(100);
+    expect(componentReviews["core-notification"]?.evidence.length).toBeGreaterThan(0);
   });
 });

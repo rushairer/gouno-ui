@@ -312,7 +312,7 @@ export function BlogArticleDetailDemo({
       <BlogPublicShellFixture currentPath={route} onNavigate={navigate}>
         <div
           aria-hidden="true"
-          className="fixed inset-x-0 top-0 z-50 h-1 bg-muted"
+          className="fixed inset-x-0 top-0 layer-shell h-1 bg-muted"
         >
           <div className="h-full w-[42%] bg-primary" />
         </div>

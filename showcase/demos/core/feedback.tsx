@@ -5,6 +5,8 @@ import ModalRetention from "./modal/retention";
 import ModalRetentionCode from "./modal/retention.tsx?raw";
 import ModalUncontrolled from "./modal/uncontrolled";
 import ModalUncontrolledCode from "./modal/uncontrolled.tsx?raw";
+import ModalLayering from "./modal/layering";
+import ModalLayeringCode from "./modal/layering.tsx?raw";
 import DrawerRetention from "./drawer/retention";
 import DrawerRetentionCode from "./drawer/retention.tsx?raw";
 import DrawerUncontrolled from "./drawer/uncontrolled";
@@ -162,7 +164,7 @@ const modalApi = [
     name: "zIndex",
     description: "弹层层级",
     type: "number",
-    defaultValue: "50",
+    defaultValue: "Layer.modal (50)",
   },
   {
     name: "destroyOnClose",
@@ -458,6 +460,15 @@ export const feedbackDocuments: Record<string, ComponentDocument> = {
           "@gouno/ui/core",
         ).replaceAll("../../../../src/patterns", "@gouno/ui/patterns"),
         render: () => <ModalUncontrolled />,
+      },
+      {
+        title: "嵌套浮层层级",
+        description: "Modal 使用 modal layer；Popover/Select portal 使用 popup layer，稳定高于 Modal surface。",
+        code: ModalLayeringCode.replaceAll(
+          "../../../../src/core",
+          "@gouno/ui/core",
+        ),
+        render: () => <ModalLayering />,
       },
     ],
     api: modalApi,

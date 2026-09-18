@@ -9,7 +9,7 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { Popconfirm } from "../src/core";
-import { componentProgress } from "../showcase/catalog/component-progress";
+import { componentReviews } from "../showcase/catalog/component-progress";
 import { popconfirmReviewDocuments } from "../showcase/demos/core/feedback-review-6e1";
 
 afterEach(cleanup);
@@ -173,6 +173,6 @@ describe("Popconfirm 6E1", () => {
     expect(document.code).toContain("<Popconfirm");
     expect(document.code).toContain('okText="删除"');
     expect(document.code).toContain('cancelText="取消"');
-    expect(componentProgress("core-popconfirm", 78)).toBe(100);
+    expect(componentReviews["core-popconfirm"]?.evidence.length).toBeGreaterThan(0);
   });
 });

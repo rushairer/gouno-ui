@@ -1197,6 +1197,139 @@ if (focus?.status !== "planned") {
   }
 }
 
+const overlay = matrix.foundations.overlay;
+if (overlay?.status !== "planned") {
+  const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");
+  const modalSource = readFileSync(resolve(root, "src/core/modal.tsx"), "utf8");
+  const drawerSource = readFileSync(resolve(root, "src/core/drawer.tsx"), "utf8");
+  const dialogSource = readFileSync(
+    resolve(root, "src/components/primitives/dialog.tsx"),
+    "utf8",
+  );
+  const sheetSource = readFileSync(
+    resolve(root, "src/components/primitives/sheet.tsx"),
+    "utf8",
+  );
+  const popoverSource = readFileSync(
+    resolve(root, "src/components/primitives/popover.tsx"),
+    "utf8",
+  );
+  const selectSource = readFileSync(
+    resolve(root, "src/components/primitives/select.tsx"),
+    "utf8",
+  );
+  const messageSource = readFileSync(
+    resolve(root, "src/core/message.tsx"),
+    "utf8",
+  );
+  const notificationSource = readFileSync(
+    resolve(root, "src/core/notification.tsx"),
+    "utf8",
+  );
+  const fixtureToolsSource = readFileSync(
+    resolve(root, "showcase/components/fixture-tools.tsx"),
+    "utf8",
+  );
+  const standaloneNavigationSource = readFileSync(
+    resolve(root, "showcase/components/standalone-navigation.tsx"),
+    "utf8",
+  );
+  const showcaseStylesSource = readFileSync(
+    resolve(root, "showcase/styles/showcase.css"),
+    "utf8",
+  );
+
+  for (const marker of [
+    "--layer-sticky: 20;",
+    "--layer-shell: 30;",
+    "--layer-floating: 40;",
+    "--layer-modal: 50;",
+    "--layer-popup: 60;",
+    "--layer-notice: 100;",
+    "@utility layer-sticky",
+    "@utility layer-shell",
+    "@utility layer-floating",
+    "@utility layer-modal",
+    "@utility layer-popup",
+    "@utility layer-notice",
+  ]) {
+    if (!tokenSource.includes(marker)) {
+      failures.push("overlay.guard: missing canonical Layer authority " + marker);
+    }
+  }
+
+  for (const [name, source, marker] of [
+    ["Dialog", dialogSource, "layer-modal"],
+    ["Sheet", sheetSource, "layer-modal"],
+    ["Popover", popoverSource, "layer-popup"],
+    ["Select", selectSource, "layer-popup"],
+    ["Message", messageSource, "layer-notice"],
+    ["Notification", notificationSource, "layer-notice"],
+  ]) {
+    if (!source.includes(marker)) {
+      failures.push("overlay.guard: " + name + " escaped semantic Layer role " + marker);
+    }
+  }
+
+  if (modalSource.includes("zIndex = 50") || drawerSource.includes("zIndex = 50")) {
+    failures.push(
+      "overlay.guard: Modal/Drawer default zIndex must resolve through layer-modal, not an inline numeric default",
+    );
+  }
+
+  if (
+    !fixtureToolsSource.includes("showcase-layer-tools") ||
+    !standaloneNavigationSource.includes("showcase-layer-tools") ||
+    !showcaseStylesSource.includes("--showcase-layer-tools: 1000;")
+  ) {
+    failures.push(
+      "overlay.guard: Showcase tooling must remain isolated from the runtime Layer scale",
+    );
+  }
+
+  const overlayCorpusFiles = [
+    ...collectTsx(resolve(root, "src")),
+    ...collectTsx(resolve(root, "showcase/components")),
+    ...canonicalProductFiles,
+  ];
+  const localLayerExceptions = new Set([
+    resolve(root, "src/core/carousel.tsx"),
+  ]);
+  const rawGlobalLayerFiles = overlayCorpusFiles.filter((file) => {
+    const source = readFileSync(file, "utf8");
+    if (/\bz-(?:30|40|50|\[100\])\b/.test(source)) return true;
+    return /\bz-20\b/.test(source) && !localLayerExceptions.has(file);
+  });
+  const numericGlobalInlineFiles = overlayCorpusFiles.filter((file) =>
+    /\bzIndex\s*[:=]\s*(?:20|30|40|50|100)\b/.test(
+      readFileSync(file, "utf8"),
+    ),
+  );
+
+  const shortOverlayPath = (file) =>
+    file.startsWith(root) ? file.slice(root.length + 1) : file;
+  process.stdout.write(
+    "Overlay corpus audit: rawGlobalLayerFiles=" +
+      rawGlobalLayerFiles.length +
+      ", numericGlobalInlineFiles=" +
+      numericGlobalInlineFiles.length +
+      "\n",
+  );
+
+  if (rawGlobalLayerFiles.length !== 0) {
+    failures.push(
+      "overlay.corpus: runtime/product global stacking must consume semantic Layer roles: " +
+        rawGlobalLayerFiles.map(shortOverlayPath).join(", "),
+    );
+  }
+  if (numericGlobalInlineFiles.length !== 0) {
+    failures.push(
+      "overlay.corpus: default global zIndex numbers must not bypass Layer authority: " +
+        numericGlobalInlineFiles.map(shortOverlayPath).join(", "),
+    );
+  }
+}
+
 const density = matrix.foundations.density;
 if (density?.status !== "planned") {
   const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");

@@ -100,7 +100,7 @@ export function NotificationProvider({
       {children}
       <div
         data-slot="notification-region"
-        className="fixed right-4 top-4 z-[100] flex w-80 max-w-[calc(100vw-2rem)] flex-col gap-2"
+        className="fixed right-4 top-4 layer-notice flex w-80 max-w-[calc(100vw-2rem)] flex-col gap-2"
       >
         {items.map((item) => {
           const type = item.type ?? "info";

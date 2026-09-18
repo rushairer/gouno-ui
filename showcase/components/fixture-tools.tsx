@@ -37,7 +37,7 @@ export function FixtureTools({ children, navigation }: { children: ReactNode; na
 
   return <FixtureTarget.Provider value={target}>
     <div className="flex h-dvh min-w-0 flex-col" data-showcase-product-preview>
-      <div ref={toolsRef} aria-label="Showcase 工具" role="region" className="relative z-[60] flex min-h-12 shrink-0 items-center justify-between gap-2 border-b bg-background px-3 py-1">
+      <div ref={toolsRef} aria-label="Showcase 工具" role="region" className="relative showcase-layer-tools flex min-h-12 shrink-0 items-center justify-between gap-2 border-b bg-background px-3 py-1">
         {navigation ?? <span className="text-xs text-muted-foreground">Showcase Fixture</span>}
         <div ref={setTarget} data-showcase-fixture-target className="flex shrink-0 items-center gap-2" />
       </div>

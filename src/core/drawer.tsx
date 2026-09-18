@@ -63,7 +63,7 @@ export function Drawer({
   height = 378,
   loading = false,
   mask = true,
-  zIndex = 50,
+  zIndex,
   destroyOnClose = true,
   extra,
   styles,

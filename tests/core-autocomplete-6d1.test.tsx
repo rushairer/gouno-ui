@@ -2,7 +2,7 @@ import { createRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { AutoComplete } from "../src/core";
-import { componentProgress } from "../showcase/catalog/component-progress";
+import { componentReviews } from "../showcase/catalog/component-progress";
 import { autoCompleteReviewDocuments } from "../showcase/demos/core/data-entry-review-6d1";
 
 afterEach(cleanup);
@@ -125,6 +125,6 @@ describe("Core AutoComplete 6D1", () => {
         "ref",
       ]),
     );
-    expect(componentProgress("core-autocomplete", 86)).toBe(100);
+    expect(componentReviews["core-autocomplete"]?.evidence.length).toBeGreaterThan(0);
   });
 });

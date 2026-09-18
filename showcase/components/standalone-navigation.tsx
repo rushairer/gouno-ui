@@ -40,7 +40,7 @@ export function StandaloneNavigation({
   return (
     <nav
       aria-label="Standalone Showcase navigation"
-      className="relative z-[100] flex max-w-full flex-col items-start gap-2"
+      className="relative showcase-layer-tools flex max-w-full flex-col items-start gap-2"
     >
       <div className="flex items-center gap-1 rounded-full border border-border/80 bg-popover/90 p-1 shadow-overlay backdrop-blur-xl">
         <button

@@ -180,7 +180,7 @@ export const Mentions = forwardRef<HTMLTextAreaElement, MentionsProps>(
             id={listboxId}
             role="listbox"
             data-slot="mentions-popup"
-            className="absolute z-50 mt-1 max-h-48 w-full overflow-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-overlay"
+            className="absolute layer-popup mt-1 max-h-48 w-full overflow-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-overlay"
           >
             {matches.map((option, index) => (
               <li

@@ -1,0 +1,50 @@
+# Foundation Integrity Open Defects
+
+Updated: 2026-09-18
+
+This queue records defects discovered while the Foundation Integrity Program is active. A defect does not silently remain under a `reviewed` component entry. It is either resolved in the relevant Foundation or explicitly carried into the final defect sweep.
+
+## FI-D001 — Steps connector / copy geometry
+
+**Status:** open  
+**Component:** `core-steps`  
+**Observed evidence:** Showcase Steps variant screenshot, 2026-09-18.
+
+The horizontal and vertical connector geometry does not maintain a convincing spatial relationship to the marker/title/content block. In the current implementation the connector is absolutely positioned from the marker while the title/content remain transparent siblings above it, which allows connector geometry to visually compete with text.
+
+Next action:
+
+- verify horizontal and vertical layouts in browser;
+- determine whether this is a local Steps composition defect or evidence of a broader Layout/Spacing authority gap;
+- if local, fix Steps and add geometry/browser regression evidence;
+- if systemic, reopen the owning Foundation before recertification.
+
+## FI-D002 — Carousel arrows do not navigate in the real Showcase
+
+**Status:** open / high priority  
+**Component:** `core-carousel`  
+**Observed evidence:** Showcase Carousel screenshot and manual click report, 2026-09-18.
+
+Unit tests currently call `fireEvent.click` and pass, but the real Showcase has `draggable` enabled. The Carousel viewport captures pointer input during `pointerdown`; arrow buttons live inside that viewport. This creates a credible browser-only event-ownership defect that JSDOM click tests do not exercise.
+
+Next action:
+
+- reproduce through Playwright pointer/click behavior;
+- ensure drag gesture ownership ignores interactive descendants or otherwise separates arrow hit targets from draggable pointer capture;
+- add a browser contract proving previous/next buttons change the active slide;
+- close during Interaction State Foundation at the latest.
+
+## FI-D003 — ConfigProvider Showcase does not visibly prove localization
+
+**Status:** open  
+**Component:** `core-config-provider`  
+**Observed evidence:** Showcase review, 2026-09-18.
+
+The implementation has localization unit coverage, but the current demo mostly renders controls whose localized copy is hidden behind icon accessible labels, opened portals or secondary interactions. A viewer cannot immediately tell what ConfigProvider changed.
+
+Next action:
+
+- redesign the localized demo so English and Chinese effects are simultaneously or clearly observably different;
+- expose visible localized component copy/states without requiring source inspection;
+- preserve explicit local override precedence in the example;
+- add Showcase contract coverage for the visible proof.
