@@ -96,7 +96,7 @@
       }
     },
     "spacing": {
-      "status": "in_progress",
+      "status": "certified",
       "affectedComponentReviews": [
         "core-space",
         "core-flex",
@@ -104,8 +104,9 @@
       ],
       "gates": {
         "inventory": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
+            "docs/foundation-geometry-inventory.md",
             "src/tokens.css",
             "src/core/layout.tsx",
             "showcase/demos/core/space",
@@ -114,28 +115,33 @@
           ]
         },
         "tokens": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "src/tokens.css",
-            "docs/design-language.md"
+            "docs/design-language.md",
+            "docs/foundation-geometry-inventory.md"
           ]
         },
         "authority": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "src/tokens.css",
             "src/core/layout.tsx",
-            "tests/core-feedback-layout.test.tsx",
-            "tests/core-general-layout-6a.test.tsx",
-            "tests/core-avatar-grid-6b1.test.tsx"
+            "scripts/check-foundation-integrity.mjs"
           ]
         },
         "corpus": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "showcase/demos/products/blog",
+            "showcase/demos/products/blog-admin",
+            "showcase/demos/products/gosso-admin",
+            "scripts/check-foundation-integrity.mjs: Spacing corpus audit foundationUtilityLeaks=0"
+          ],
+          "foundationUtilityLeaks": 0
         },
         "guard": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "scripts/check-foundation-integrity.mjs",
             "tests/core-feedback-layout.test.tsx",
@@ -144,17 +150,22 @@
           ]
         },
         "visual": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Canonical Visual Golden Smoke run 35337669639 (#381): success"
+          ]
         },
         "consumers": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Blog Consumer Parity run 35337723535 (#429): success",
+            "Gosso Admin Consumer Parity run 35337723638 (#424): success"
+          ]
         }
       }
     },
     "sizing": {
-      "status": "in_progress",
+      "status": "certified",
       "affectedComponentReviews": [
         "core-button",
         "core-segmented",
@@ -162,7 +173,7 @@
       ],
       "gates": {
         "inventory": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "docs/foundation-geometry-inventory.md",
             "src/core/control-types.ts",
@@ -173,7 +184,7 @@
           ]
         },
         "tokens": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "src/tokens.css",
             "docs/design-language.md",
@@ -181,7 +192,7 @@
           ]
         },
         "authority": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "src/tokens.css",
             "src/core/control-types.ts",
@@ -192,11 +203,17 @@
           ]
         },
         "corpus": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "showcase/demos/products/blog",
+            "showcase/demos/products/blog-admin",
+            "showcase/demos/products/gosso-admin",
+            "scripts/check-foundation-integrity.mjs: Sizing corpus audit foundationUtilityLeaks=0"
+          ],
+          "foundationUtilityLeaks": 0
         },
         "guard": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "scripts/check-foundation-integrity.mjs",
             "tests/sizing-foundation-conformance.test.ts",
@@ -206,12 +223,17 @@
           ]
         },
         "visual": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Canonical Visual Golden Smoke run 35337669639 (#381): success"
+          ]
         },
         "consumers": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Blog Consumer Parity run 35337723535 (#429): success",
+            "Gosso Admin Consumer Parity run 35337723638 (#424): success"
+          ]
         }
       }
     },
@@ -419,30 +441,31 @@
       }
     },
     "layout": {
-      "status": "in_progress",
+      "status": "certified",
       "affectedComponentReviews": [
         "gouno-page-container"
       ],
       "gates": {
         "inventory": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
+            "docs/foundation-geometry-inventory.md",
             "src/tokens.css",
-            "src/core/layout.tsx",
             "src/gouno/page-container.tsx",
             "showcase/demos/gouno/examples/page-container.tsx",
             "tests/gouno-structure.test.tsx"
           ]
         },
         "tokens": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "src/tokens.css",
-            "docs/design-language.md"
+            "docs/design-language.md",
+            "docs/foundation-geometry-inventory.md"
           ]
         },
         "authority": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "src/tokens.css",
             "src/gouno/page-container.tsx",
@@ -451,23 +474,34 @@
           ]
         },
         "corpus": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "showcase/demos/products/blog",
+            "showcase/demos/products/blog-admin",
+            "showcase/demos/products/gosso-admin",
+            "scripts/check-foundation-integrity.mjs: Layout corpus audit foundationUtilityLeaks=0"
+          ],
+          "foundationUtilityLeaks": 0
         },
         "guard": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "scripts/check-foundation-integrity.mjs",
             "tests/gouno-structure.test.tsx"
           ]
         },
         "visual": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Canonical Visual Golden Smoke run 35337669639 (#381): success"
+          ]
         },
         "consumers": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Blog Consumer Parity run 35337723535 (#429): success",
+            "Gosso Admin Consumer Parity run 35337723638 (#424): success"
+          ]
         }
       }
     },
