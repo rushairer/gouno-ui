@@ -69,7 +69,7 @@ export function MfaPanel() {
               </div>
               <div className="flex flex-col gap-4">
                 <div>
-                  <Heading level={2} className="text-base">使用身份验证器扫描二维码</Heading>
+                  <Heading level={2} variant="compact">使用身份验证器扫描二维码</Heading>
                   <Text size="sm" tone="muted" className="mt-1 leading-relaxed">如果无法扫描，可以手动输入下面的密钥。真实产品中的密钥由服务端临时生成。</Text>
                 </div>
                 <div className="flex max-w-lg items-center justify-between gap-3 rounded-md border bg-muted/30 p-3">
