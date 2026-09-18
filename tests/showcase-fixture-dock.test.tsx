@@ -1,4 +1,6 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { FixtureDock } from "../showcase/components/fixture-dock";
 import { FixtureTools } from "../showcase/components/fixture-tools";
@@ -19,6 +21,13 @@ describe("Showcase FixtureDock", () => {
   it("publishes Fixture toolbar height for portaled overlay safe area", () => {
     render(<FixtureTools><main>Product</main></FixtureTools>);
     expect(document.documentElement.style.getPropertyValue("--showcase-tools-inset-top")).toBe("48px");
+  });
+
+  it("binds portaled Sheets to the Fixture overlay safe area", () => {
+    const styles = readFileSync(resolve(process.cwd(), "showcase/styles/showcase.css"), "utf8");
+    expect(styles).toContain('[data-slot="sheet-overlay"]');
+    expect(styles).toContain('[data-slot="sheet-content"][data-side="right"]');
+    expect(styles).toContain('height: calc(100dvh - var(--showcase-tools-inset-top, 3rem))');
   });
 
   it("reserves normal-flow space when rendered without Showcase tooling", () => {
