@@ -40,6 +40,12 @@ describe("Color Foundation conformance", () => {
     expect(alert).not.toContain("hover:bg-white/");
   });
 
+  it("derives Tag close hover from its current foreground instead of a raw palette color", () => {
+    const tag = source("src/core/tag.tsx");
+    expect(tag).toContain("hover:bg-current/10");
+    expect(tag).not.toMatch(/hover:bg-(?:black|white)\//);
+  });
+
   it("keeps fixed generated-media and caller-owned color APIs explicit", () => {
     const qrcode = source("src/core/qrcode.tsx");
     const tag = source("src/core/tag.tsx");
