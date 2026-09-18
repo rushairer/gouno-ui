@@ -185,6 +185,15 @@ componentReviews["gouno-page-header"] = {
   evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "src/gouno/page-header.tsx"],
   baseline: "FI-001 / 2026-09-18",
 };
+for (const id of ["core-space", "core-flex", "core-grid"]) {
+  componentReviews[id] = {
+    status: "reopened",
+    scope: "FI-001 Phase 2: Spacing Foundation reopened because generic named gap values were not governed by one semantic scale across Space, Flex and Grid.",
+    evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "src/tokens.css", "src/core/layout.tsx"],
+    baseline: "FI-001 Phase 2 / 2026-09-18",
+  };
+}
+
 componentReviews["gouno-page-container"] = {
   status: "reopened",
   scope: "FI-001 Phase 2: PageContainer Layout Foundation reopened because canonical page width and vertical rhythm were encoded as local utility literals instead of a semantic geometry authority.",
