@@ -6,6 +6,7 @@ import {
   FormGrid,
   Input,
   OverlayForm,
+  Select,
   Textarea,
 } from "../../../../src/core";
 
@@ -19,6 +20,12 @@ export default function FormAnatomyDemo() {
           </FormField>
           <FormField label="联系邮箱" hint="用于接收系统通知。">
             <Input name="email" type="email" placeholder="ops@example.com" />
+          </FormField>
+          <FormField label="发布状态" hint="复合 Select 的可见标签也必须命中真实 combobox。" required>
+            <Select name="status" defaultValue="draft">
+              <option value="draft">草稿</option>
+              <option value="published">已发布</option>
+            </Select>
           </FormField>
         </FormGrid>
         <FormActions>
