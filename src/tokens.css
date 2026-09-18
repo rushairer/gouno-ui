@@ -64,6 +64,26 @@
   --shadow-xl: 0 0 #0000;
   --shadow-2xl: 0 0 #0000;
 }
+@utility border-emphasis {
+  border-width: var(--border-width-emphasis);
+}
+
+@utility border-bs-emphasis {
+  border-block-start-width: var(--border-width-emphasis);
+}
+
+@utility border-be-emphasis {
+  border-block-end-width: var(--border-width-emphasis);
+}
+
+@utility border-s-emphasis {
+  border-inline-start-width: var(--border-width-emphasis);
+}
+
+@utility border-e-emphasis {
+  border-inline-end-width: var(--border-width-emphasis);
+}
+
 @layer base {
   :root {
     /* Semantic typography tokens. Visual roles are intentionally outside Tailwind text-* utilities. */
@@ -165,6 +185,11 @@
     --control-height-small: 2rem;
     --control-height-middle: 2.25rem;
     --control-height-large: 2.75rem;
+
+    /* Border width roles. Ordinary `border` remains the canonical 1px boundary
+       substrate; stronger separators/indicators use the semantic emphasis width. */
+    --border-width-boundary: 1px;
+    --border-width-emphasis: 2px;
 
     /* Density-aware component geometry. Theme density selects the default policy;
        explicit component density remains a local override. */
