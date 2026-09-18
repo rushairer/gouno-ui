@@ -18,6 +18,7 @@ export function DedicatedEditorLead({
   onBack,
   status,
   actions,
+  headingLevel = 2,
 }: {
   title: ReactNode;
   description: ReactNode;
@@ -25,6 +26,7 @@ export function DedicatedEditorLead({
   onBack: () => void;
   status?: ReactNode;
   actions?: ReactNode;
+  headingLevel?: 1 | 2;
 }) {
   return (
     <header
@@ -46,7 +48,7 @@ export function DedicatedEditorLead({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <div className="flex min-w-0 flex-wrap items-center gap-2">
-            <Heading level={2}>{title}</Heading>
+            <Heading level={headingLevel} variant="task">{title}</Heading>
             {status}
           </div>
           <Text size="sm" tone="muted" className="mt-1 max-w-3xl leading-relaxed">
@@ -113,7 +115,7 @@ export function DedicatedEditorSection({
       <CardHeader className="border-b p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <CardTitle className="text-base">{title}</CardTitle>
+            <CardTitle>{title}</CardTitle>
             {description ? (
               <Text size="xs" tone="muted" className="mt-1 leading-relaxed">
                 {description}
