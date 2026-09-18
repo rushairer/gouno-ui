@@ -185,7 +185,9 @@ describe("Blog Admin AI canonical redesign contract", () => {
       />,
     );
 
-    expect(screen.getByRole("heading", { level: 2, name: /编辑 Agent/ })).toBeTruthy();
+    expect(screen.queryByRole("heading", { level: 2, name: /编辑 Agent/ })).toBeNull();
+    expect(document.querySelector('[data-pattern="dedicated-editor-layout"]')).toBeTruthy();
+    expect(document.querySelector('[data-slot="showcase-dedicated-editor-actions"]')).toBeTruthy();
     expect(screen.getByText("基础信息")).toBeTruthy();
     expect(screen.getByText("能力绑定")).toBeTruthy();
     expect(screen.getByText("触发方式")).toBeTruthy();
