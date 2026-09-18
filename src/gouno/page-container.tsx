@@ -10,7 +10,7 @@ export function PageContainer({ className, ...props }: PageContainerProps) {
       {...props}
       data-slot="page-container"
       className={cn(
-        "mx-auto flex w-full min-w-0 max-w-[1440px] flex-col gap-6",
+        "layout-page-container mx-auto flex w-full min-w-0 flex-col",
         className,
       )}
     />
