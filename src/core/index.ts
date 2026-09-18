@@ -9,7 +9,7 @@ export { Spinner, type SpinnerProps } from "./spinner";
 export { Progress, type ProgressProps } from "./progress";
 export { AspectRatio, type AspectRatioProps } from "./aspect-ratio";
 export { Kbd, type KbdProps } from "./kbd";
-export { Heading, Text, Typography, type HeadingProps, type TextProps, type TypographyProps, type HeadingLevel, type TextSize, type TextTone } from "./typography";
+export { Heading, Text, Typography, type HeadingProps, type TextProps, type TypographyProps, type HeadingLevel, type HeadingVariant, type TextSize, type TextTone } from "./typography";
 export { CodeBlock, type CodeBlockProps } from "./code-block";
 export { Input, SearchField, type InputProps } from "./input";
 export { Textarea, type TextareaProps } from "./textarea";
