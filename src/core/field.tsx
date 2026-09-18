@@ -19,24 +19,41 @@ export function Field({ label, children, id, hint, error, required = false, clas
   const generated = useId();
   const child = isValidElement<{
     id?: string;
+    label?: ReactNode;
     required?: boolean;
+    "aria-label"?: string;
     "aria-labelledby"?: string;
     "aria-describedby"?: string;
     "aria-invalid"?: boolean;
   }>(children) ? children : null;
   const controlId = id || child?.props.id || `field-${generated}`;
   const labelId = `${controlId}-label`;
+  const childOwnsAccessibleName = Boolean(
+    child?.props["aria-label"] ||
+      child?.props["aria-labelledby"] ||
+      child?.props.label,
+  );
   const hintId = hint ? `${controlId}-hint` : undefined;
   const errorId = error ? `${controlId}-error` : undefined;
   return (
-    <FieldRoot data-invalid={error ? true : undefined} className={cn("field min-w-0", className)}>
-      <FieldLabel id={labelId} htmlFor={controlId} className={hideLabel ? "sr-only" : undefined}>
+    <FieldRoot
+      data-invalid={error ? true : undefined}
+      aria-labelledby={childOwnsAccessibleName ? labelId : undefined}
+      className={cn("field min-w-0", className)}
+    >
+      <FieldLabel
+        id={labelId}
+        htmlFor={childOwnsAccessibleName ? undefined : controlId}
+        className={hideLabel ? "sr-only" : undefined}
+      >
         {label}{required ? <span aria-hidden="true" className="text-destructive">*</span> : null}
       </FieldLabel>
       {child ? cloneElement(child, {
         id: controlId,
         required: child.props.required ?? required,
-        "aria-labelledby": [labelId, child.props["aria-labelledby"]].filter(Boolean).join(" ") || undefined,
+        "aria-labelledby": childOwnsAccessibleName
+          ? child.props["aria-labelledby"]
+          : labelId,
         "aria-describedby": [child.props["aria-describedby"], hintId, errorId].filter(Boolean).join(" ") || undefined,
         "aria-invalid": child.props["aria-invalid"] || Boolean(error) || undefined,
       }) : children}
