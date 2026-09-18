@@ -307,9 +307,6 @@
     "color": {
       "status": "reopened",
       "affectedComponentReviews": [
-        "theme-system",
-        "core-alert",
-        "core-image",
         "core-tag"
       ],
       "gates": {
