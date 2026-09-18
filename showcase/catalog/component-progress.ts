@@ -287,10 +287,10 @@ for (const id of ["theme-system","gouno-app-shell","pattern-bulk-action-bar","co
 }
 
 componentReviews["core-steps"] = {
-  status: "reopened",
-  scope: "FI-D001 / Responsive reopening: horizontal connector crossed the copy lane, vertical dot connector ignored dot-marker geometry, and max-sm changed only the root axis while item/body/connector geometry stayed desktop-owned. Fix is implemented; exact-head browser geometry and consumer gates are pending.",
-  evidence: ["foundation-integrity.json", "docs/foundation-integrity-open-defects.md", "docs/foundation-responsive-inventory.md", "src/core/steps.tsx", "tests/responsive-foundation-conformance.test.tsx", "showcase/e2e/canonical-visual-golden.pw.mjs"],
-  baseline: "FI-D001 responsive reopening / 2026-09-19",
+  status: "reviewed",
+  scope: "FI-D001 certified: connector and copy occupy distinct desktop lanes, vertical dot geometry uses dot-specific marker offsets, and max-sm converts the complete item/body/connector composition rather than only the root flex axis.",
+  evidence: ["foundation-integrity.json", "docs/foundation-responsive-inventory.md", "src/core/steps.tsx", "tests/responsive-foundation-conformance.test.tsx", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+  baseline: "FI-D001 certified / 2026-09-19",
 };
 
 componentReviews["core-tag"] = {
@@ -308,10 +308,10 @@ componentReviews["core-carousel"] = {
 };
 
 componentReviews["core-config-provider"] = {
-  status: "reopened",
-  scope: "FI-D003: locale runtime behavior was already unit-covered, but canonical Showcase evidence hid most effects behind aria labels/secondary interactions. The demo now exposes simultaneous zh-CN/en-US Select/Pagination copy plus explicit caller override precedence; exact-head gates remain pending.",
-  evidence: ["docs/foundation-integrity-open-defects.md", "showcase/demos/core/config-provider/localized.tsx", "tests/core-localization.test.tsx", "tests/showcase-config-provider-demo.test.tsx"],
-  baseline: "FI-D003 visible-proof fix pending certification / 2026-09-19",
+  status: "reviewed",
+  scope: "FI-D003 certified: canonical Showcase visibly proves simultaneous zh-CN/en-US Provider effects on Select/Pagination and explicit caller-copy precedence; focused DOM and real-browser contracts protect the evidence.",
+  evidence: ["docs/component-localization.md", "showcase/demos/core/config-provider/localized.tsx", "tests/core-localization.test.tsx", "tests/showcase-config-provider-demo.test.tsx", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+  baseline: "FI-D003 certified / 2026-09-19",
 };
 
 componentReviews["pattern-dedicated-editor"] = {
