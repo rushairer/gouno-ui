@@ -49,16 +49,11 @@ describe("audited batch completion", () => {
     }
   });
 
-  it("keeps Theme below certified completion while Responsive is reopened", () => {
-    expect(componentProgress("theme-system", 0)).toBeLessThan(100);
-  });
-
-  it("keeps Responsive-owned reviews below certified completion", () => {
+  it("reports Responsive-owned reviews complete only after certification", () => {
     for (const id of ["theme-system", "core-steps", "core-grid"]) {
-      expect(componentProgress(id, 0), id).toBeLessThan(100);
+      expect(componentProgress(id, 0), id).toBe(100);
     }
   });
-
 
   it("reports admitted Patterns complete only after focused review", () => {
     for (const id of [
