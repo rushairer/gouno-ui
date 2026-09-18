@@ -55,14 +55,14 @@ export function getAISettingsEditorPresentation(editor: Exclude<AISettingsEditor
     case "agent":
       return {
         title: name ? `编辑 Agent：${name}` : "创建 Agent",
-        description: "Agent 的能力绑定、运行计划与治理限制属于深度配置任务。",
+        description: "Agent 只绑定稳定的模型与 Skill Version；调度、预算和限制覆盖属于运行治理，不复制 Skill 的安全边界。",
         submitLabel: "保存 Agent",
         formId: "ai-settings-agent-editor",
       };
     case "skill":
       return {
         title: name ? `编辑 Skill：${name}` : "创建 Skill",
-        description: "Skill Version 同时定义行为、Tool 授权、发布策略、输入契约与治理上限。",
+        description: "Skill Version 是行为与安全边界的稳定合同：固定指令、Tool 授权、发布策略、触发器和默认治理限制都在这里定义。",
         submitLabel: "保存 Skill",
         formId: "ai-settings-skill-editor",
       };
