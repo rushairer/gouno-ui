@@ -128,12 +128,50 @@ for (const marker of goldenWorkflowMarkers) {
     `${goldenWorkflowPath}: missing visual golden contract marker ${marker}`,
   );
 }
-if (goldenWorkflowSource.includes("contents: write")) {
-  failures.push(`${goldenWorkflowPath}: permanent visual golden CI must remain read-only`);
+const refreshMarker = "\n  refresh:";
+const refreshIndex = goldenWorkflowSource.indexOf(refreshMarker);
+if (refreshIndex < 0) {
+  failures.push(`${goldenWorkflowPath}: explicit visual golden refresh job is missing`);
+} else {
+  const compareSection = goldenWorkflowSource.slice(0, refreshIndex);
+  const refreshSection = goldenWorkflowSource.slice(refreshIndex);
+  if (compareSection.includes("contents: write")) {
+    failures.push(`${goldenWorkflowPath}: normal visual comparison job must remain read-only`);
+  }
+  if (compareSection.includes("--update-snapshots")) {
+    failures.push(`${goldenWorkflowPath}: normal visual comparison job must never update accepted baselines`);
+  }
+  requireText(
+    refreshSection,
+    "github.event.head_commit.message == 'chore(showcase): refresh canonical visual goldens'",
+    `${goldenWorkflowPath}: refresh job must stay explicitly gated by the canonical refresh commit message`,
+  );
+  requireText(
+    refreshSection,
+    "contents: write",
+    `${goldenWorkflowPath}: refresh job needs narrowly scoped write permission to publish reviewed baselines`,
+  );
+  requireText(
+    refreshSection,
+    "--update-snapshots",
+    `${goldenWorkflowPath}: refresh job no longer regenerates canonical baselines`,
+  );
+  requireText(
+    refreshSection,
+    'git commit -m "test(showcase): refresh canonical visual goldens"',
+    `${goldenWorkflowPath}: refresh job must commit regenerated baselines with the canonical verification message`,
+  );
 }
-if (goldenWorkflowSource.includes("--update-snapshots")) {
+const writePermissionCount = (goldenWorkflowSource.match(/contents: write/g) ?? []).length;
+if (writePermissionCount !== 1) {
   failures.push(
-    `${goldenWorkflowPath}: permanent visual golden CI must never auto-update accepted baselines`,
+    `${goldenWorkflowPath}: visual golden workflow must contain exactly one write-permission scope for the explicit refresh job; found ${writePermissionCount}`,
+  );
+}
+const updateSnapshotCount = (goldenWorkflowSource.match(/--update-snapshots/g) ?? []).length;
+if (updateSnapshotCount !== 1) {
+  failures.push(
+    `${goldenWorkflowPath}: visual golden workflow must contain exactly one snapshot-update command in the explicit refresh job; found ${updateSnapshotCount}`,
   );
 }
 
@@ -159,6 +197,10 @@ const expectedGoldenBaselines = [
   "gosso-system-clients-desktop-light.png",
   "gosso-site-settings-desktop-light.png",
   "gosso-account-settings-desktop-light.png",
+  "blog-admin-posts-desktop-dark.png",
+  "blog-admin-posts-mobile-dark.png",
+  "blog-admin-post-editor-desktop-dark.png",
+  "gosso-site-settings-desktop-dark.png",
 ].sort();
 
 for (const baseline of expectedGoldenBaselines) {
