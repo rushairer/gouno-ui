@@ -403,7 +403,7 @@ export function BlogAdminUsersDemo() {
         : `恢复“${confirmMember.displayName}”的 Blog 成员资格？`;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div data-pattern="collection-composition" className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/users"
         note="真实 Blog Admin 成员与权限页面；Fixture 模拟成员目录、Sudo/MFA 入口状态与写操作过程中 recent_mfa_required 的 Step-Up 重试，不连接真实 GOSSO 或 Blog API。"
