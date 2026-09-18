@@ -196,6 +196,60 @@ for (const scenario of scenarios) {
   });
 }
 
+test("density-global-compact-default-table-geometry", async ({ page }) => {
+  const scenario = {
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-system-clients",
+    viewport: desktop,
+    ready: "table",
+  };
+  await prepareLightFixture(page, scenario);
+
+  const html = page.locator("html");
+  const table = page
+    .locator('[data-slot="table-container"][data-density="default"]')
+    .first();
+  const firstHead = table.locator('[data-slot="table-head"]').nth(0);
+  const secondHead = table.locator('[data-slot="table-head"]').nth(1);
+
+  await expect(html).toHaveAttribute("data-density", "comfortable");
+
+  const measure = async () => ({
+    first: await firstHead.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return {
+        block: style.paddingTop,
+        inlineStart: style.paddingLeft,
+      };
+    }),
+    second: await secondHead.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return {
+        block: style.paddingTop,
+        inlineStart: style.paddingLeft,
+      };
+    }),
+  });
+
+  expect(await measure()).toEqual({
+    first: { block: "12px", inlineStart: "24px" },
+    second: { block: "12px", inlineStart: "16px" },
+  });
+
+  await html.evaluate((element) => {
+    element.dataset.density = "compact";
+  });
+  await expect(html).toHaveAttribute("data-density", "compact");
+
+  await expect
+    .poll(measure)
+    .toEqual({
+      first: { block: "8px", inlineStart: "16px" },
+      second: { block: "8px", inlineStart: "12px" },
+    });
+});
+
 const darkScenarios = [
   {
     name: "blog-home-desktop-dark",
