@@ -413,6 +413,10 @@ if (color?.status !== "planned") {
     "showcase/demos/products/gosso-admin/account-settings/mfa.tsx",
   );
   const mfaSource = readFileSync(mfaFile, "utf8");
+  const showcaseIndexSource = readFileSync(
+    resolve(root, "showcase/index.html"),
+    "utf8",
+  );
 
   for (const marker of [
     "--color-background: var(--background);",
@@ -436,6 +440,12 @@ if (color?.status !== "planned") {
       failures.push("color.guard: ThemeProvider missing token-driven browser color marker " + marker);
     }
   }
+  if (!showcaseIndexSource.includes('<meta name="theme-color" content="">')) {
+    failures.push(
+      "color.guard: canonical Showcase must provide the ThemeProvider browser theme-color target",
+    );
+  }
+
   if (/"#(?:11151b|ffffff)"/i.test(themeSource)) {
     failures.push(
       "color.guard: ThemeProvider must not duplicate light/dark background literals",
