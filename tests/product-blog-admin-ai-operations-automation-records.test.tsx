@@ -130,6 +130,8 @@ describe("Blog Admin AI Operations automation/records canonical modules", () => 
     expect(screen.queryByRole("heading", { level: 2, name: "旧文维护" })).toBeNull();
 
     fireEvent.click(screen.getByRole("button", { name: "创建 Workflow" }));
+    expect(screen.getByRole("button", { name: "返回 Workflow 列表" })).toBeTruthy();
+    expect(document.querySelector('[data-pattern="dedicated-list-editor"]')).toBeTruthy();
     fireEvent.change(screen.getByLabelText(/Workflow 名称/), { target: { value: "内容巡检" } });
     fireEvent.click(screen.getByRole("button", { name: "保存 Workflow" }));
     expect(screen.getByText("内容巡检 已保存，当前版本 v1。")).toBeTruthy();
