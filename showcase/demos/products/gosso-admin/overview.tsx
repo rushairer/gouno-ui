@@ -93,7 +93,7 @@ function QuickLinkCard({ link }: { link: QuickLink }) {
       title={migrated ? `真实产品目标：${link.href}；已由对应 Showcase 页面族覆盖` : `真实产品目标：${link.href}；该目标页面尚未迁入 Showcase`}
       aria-label={migrated ? `${link.title}，查看已迁移 Showcase 页面` : `${link.title}，目标页面尚未迁入 Showcase`}
       onClick={migrated ? undefined : (event) => event.preventDefault()}
-      className="group block rounded-lg no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      className="group block rounded-lg no-underline focus-standalone"
     >
       <Card
         interactive
