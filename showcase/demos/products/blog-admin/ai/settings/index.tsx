@@ -11,6 +11,7 @@ import {
 import { Alert, Button, Drawer, Modal, Segmented, TabPanel, Tabs, Text } from "../../../../../../src/core";
 import { PageHeader } from "../../../../../../src/gouno";
 import { FixtureDock } from "../../../../../components/fixture-dock";
+import { TabPanelLead } from "../../../../../components/tab-panel-lead";
 import {
   AISettingsEditor,
   getAISettingsEditorPresentation,
