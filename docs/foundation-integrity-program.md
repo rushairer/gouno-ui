@@ -126,14 +126,14 @@ Phase 2/3 exits are backed by exact-head CI, canonical visual browser checks and
 
 Phase 4 — Interaction Foundations is active:
 
-- **Responsive 7/7** — canonical `sm/md/lg/xl/2xl` tiers own responsive adaptation; the former Steps arbitrary `531px` authority is removed.
+- **Responsive reopened for FI-D001** — breakpoint authority remains canonical, but the earlier Steps proof checked only root flex direction. The full max-sm item/body/connector composition and desktop/vertical connector geometry are now under re-certification.
 - **Motion 7/7** — CSS and JavaScript share one reduced-motion policy across imperative scrolling and Carousel lifecycle/autoplay.
 - **Focus 7/7** — Base fallback and component-owned focus share canonical 2px geometry, 3px/direct-`focus:ring`/double-outline bypasses are zero, browser focus ownership is executable, and Blog/Gosso reciprocal consumer parity is green.
 - **Overlay/layering 7/7** — semantic `sticky / shell / floating / modal / popup / notice` roles own application-global stacking; nested popup portals are deterministically above modal surfaces; raw global layer bypasses are zero; Showcase tooling is isolated outside the product Layer scale.
 - **Interaction state 7/7** — semantic state/ARIA ownership, geometry preservation and gesture ownership are guarded. FI-D002 Carousel nested pointer ownership plus missing arrow semantic slots are fixed and proven in a real browser.
 - **Color re-certified after FI-D004** — Tag close hover now derives from current/semantic foreground; raw product palette bypasses remain zero under the expanded guard.
 
-The component defect queue remains binding. FI-D002 Carousel is resolved/certified; FI-D004 Tag state-color regression discovered during this audit is also resolved/certified. FI-D001 Steps connector/copy geometry and FI-D003 ConfigProvider demo proof quality remain reopened and must be cleared before final certification.
+The post-Foundation component defect sweep is active. FI-D002 Carousel and FI-D004 Tag are resolved/certified. FI-D001 Steps has a source fix plus strengthened Responsive/browser geometry contracts, and FI-D003 ConfigProvider now has simultaneous visible zh-CN/en-US proof plus a dedicated Showcase test; both reviews remain reopened until exact-head CI/visual/consumer gates pass.
 
 Focus certification is backed by CI run 35360452646 (#544), Canonical Visual Golden Smoke run 35360452819 (#461), Blog Consumer Parity run 35360452821 (#522), and Gosso Admin Consumer Parity run 35360452653 (#517).
 
