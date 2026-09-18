@@ -1,5 +1,5 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   BlogAdminAIOperationsDemo,
   formatAIOpsRoute,
@@ -38,6 +38,7 @@ describe("Blog Admin AI Operations route shell", () => {
   });
 
   it("exposes four operational surfaces and opens automation as list then dedicated detail", () => {
+    const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
     render(<BlogAdminAIOperationsDemo />);
 
     expect(screen.getByRole("heading", { level: 1, name: "AI 运营" })).toBeTruthy();
@@ -55,6 +56,7 @@ describe("Blog Admin AI Operations route shell", () => {
     expect(screen.queryByText("成功率")).toBeNull();
 
     fireEvent.click(screen.getByRole("button", { name: "打开 Workflow：旧文维护" }));
+    expect(scrollTo).toHaveBeenCalledWith({ top: 0, left: 0, behavior: "auto" });
     expect(screen.queryByRole("list", { name: "Workflow 列表" })).toBeNull();
     expect(screen.getByRole("heading", { level: 2, name: "旧文维护" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "返回 Workflow 列表" })).toBeTruthy();
