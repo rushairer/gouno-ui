@@ -398,6 +398,118 @@ if (radius?.status !== "planned") {
   }
 }
 
+const border = matrix.foundations.border;
+if (border?.status !== "planned") {
+  const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");
+  const baseSource = readFileSync(resolve(root, "src/base.css"), "utf8");
+  const spinnerSource = readFileSync(resolve(root, "src/core/spinner.tsx"), "utf8");
+  const timelineSource = readFileSync(resolve(root, "src/core/timeline.tsx"), "utf8");
+  const stepsSource = readFileSync(resolve(root, "src/core/steps.tsx"), "utf8");
+  const tableSource = readFileSync(
+    resolve(root, "src/components/primitives/table.tsx"),
+    "utf8",
+  );
+  const demoSectionSource = readFileSync(
+    resolve(root, "showcase/components/demo-section.tsx"),
+    "utf8",
+  );
+  const markdownSource = readFileSync(
+    resolve(root, "showcase/components/markdown-preview.tsx"),
+    "utf8",
+  );
+  const selectedRecordSource = readFileSync(
+    resolve(
+      root,
+      "showcase/demos/products/blog-admin/ai/operations/canonical-patterns.tsx",
+    ),
+    "utf8",
+  );
+
+  for (const marker of [
+    "--border-width-boundary: 1px;",
+    "--border-width-emphasis: 2px;",
+    "@utility border-emphasis",
+    "@utility border-bs-emphasis",
+    "@utility border-be-emphasis",
+    "@utility border-s-emphasis",
+    "@utility border-e-emphasis",
+  ]) {
+    if (!tokenSource.includes(marker)) {
+      failures.push("border.guard: missing canonical border marker " + marker);
+    }
+  }
+
+  if (!baseSource.includes("border-color: var(--border);")) {
+    failures.push(
+      "border.guard: ordinary border color must default to the semantic border token",
+    );
+  }
+
+  for (const [name, source, marker] of [
+    ["Spinner", spinnerSource, "border-emphasis border-current border-e-transparent"],
+    ["Timeline", timelineSource, "block size-3 rounded-full border-emphasis"],
+    ["Steps", stepsSource, "border-be-emphasis border-primary"],
+    ["Table", tableSource, "[&_tfoot_tr]:border-bs-emphasis"],
+    ["DemoSection", demoSectionSource, "border-be-emphasis"],
+    ["MarkdownPreview", markdownSource, "border-s-emphasis ps-4"],
+    ["SelectedRecord", selectedRecordSource, "border-s-emphasis"],
+  ]) {
+    if (!source.includes(marker)) {
+      failures.push(
+        "border.guard: " + name + " escaped the semantic emphasis-width authority",
+      );
+    }
+  }
+
+  const migratedSources =
+    spinnerSource +
+    timelineSource +
+    stepsSource +
+    tableSource +
+    demoSectionSource +
+    markdownSource +
+    selectedRecordSource;
+  if (/\bborder(?:-(?:t|r|b|l|x|y|s|e|bs|be))?-2\b/.test(migratedSources)) {
+    failures.push(
+      "border.guard: registered emphasis roles must not reintroduce raw 2px utilities",
+    );
+  }
+  if (
+    /\bborder-l-(?:primary|transparent)\b/.test(
+      markdownSource + selectedRecordSource,
+    )
+  ) {
+    failures.push(
+      "border.guard: directional emphasis leads must use logical inline-start semantics",
+    );
+  }
+
+  const numericBorderWidth =
+    /\bborder(?:-(?:t|r|b|l|x|y|s|e|bs|be))?-(?:[2-9]|[1-9]\d+)\b|\bborder(?:-(?:t|r|b|l|x|y|s|e|bs|be))?-\[(?:\d|calc\(|length:)[^\]]+\]/;
+  const hardCodedNeutralBorder =
+    /\bborder-(?:white|black|gray(?:-\d+)?|slate(?:-\d+)?|zinc(?:-\d+)?|neutral(?:-\d+)?|stone(?:-\d+)?)\b|\bborder-\[#[0-9a-fA-F]{3,8}\]/;
+
+  const numericWidthLeaks = filesMatching(numericBorderWidth);
+  const neutralColorLeaks = filesMatching(hardCodedNeutralBorder);
+  process.stdout.write(
+    "Border corpus audit: numericWidthBypasses=" +
+      numericWidthLeaks.length +
+      ", hardCodedNeutralColors=" +
+      neutralColorLeaks.length +
+      "\n",
+  );
+  if (numericWidthLeaks.length !== 0) {
+    failures.push(
+      "border.corpus: product fixtures must use semantic border emphasis instead of numeric/ad-hoc widths",
+    );
+  }
+  if (neutralColorLeaks.length !== 0) {
+    failures.push(
+      "border.corpus: product fixtures must use semantic border/state colors instead of hard-coded neutral colors",
+    );
+  }
+}
+
 const density = matrix.foundations.density;
 if (density?.status !== "planned") {
   const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");
