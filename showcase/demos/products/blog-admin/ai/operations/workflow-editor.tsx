@@ -202,14 +202,10 @@ export function WorkflowEditor({
       <DedicatedEditorLayout
         primary={(
           <>
-          <Card padding="none" className="overflow-hidden">
-            <CardHeader className="border-b p-6">
-              <div className="flex flex-col gap-1">
-                <CardTitle className="text-base">基础信息</CardTitle>
-                <Text size="xs" tone="muted">名称和职责面向运营人员；模板标识只用于稳定的产品绑定，不承担执行状态。</Text>
-              </div>
-            </CardHeader>
-            <CardContent className="p-6">
+          <DedicatedEditorSection
+            title="基础信息"
+            description="名称和职责面向运营人员；模板标识只用于稳定的产品绑定，不承担执行状态。"
+          >
               <div className="flex flex-col gap-5">
                 <FormGrid columns={2}>
                   <Field label="Workflow 名称" required>
@@ -226,37 +222,33 @@ export function WorkflowEditor({
                   <Input name="templateKey" defaultValue={initial?.templateKey} placeholder="daily-content-maintenance" />
                 </Field>
               </div>
-            </CardContent>
-          </Card>
+            </DedicatedEditorSection>
 
-          <Card padding="none" className="overflow-hidden">
-            <CardHeader className="border-b p-6">
-              <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-                <div>
-                  <CardTitle className="text-base">运行输入契约</CardTitle>
-                  <Text size="xs" tone="muted">输入字段定义运行表单和默认值；资源选择等复杂 Schema 在真实产品绑定层继续由业务实现。</Text>
-                </div>
-                <Button
-                  type="button"
-                  size="small"
-                  variant="outline"
-                  icon={<Plus />}
-                  onClick={() => setInputFields((current) => [
-                    ...current,
-                    {
-                      key: nextUniqueKey("input", current.map((field) => field.key)),
-                      label: "新输入字段",
-                      type: "string",
-                      required: false,
-                      defaultValue: "",
-                    },
-                  ])}
-                >
-                  添加字段
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="divide-y p-0">
+          <DedicatedEditorSection
+            title="运行输入契约"
+            description="输入字段定义运行表单和默认值；资源选择等复杂 Schema 在真实产品绑定层继续由业务实现。"
+            actions={(
+              <Button
+                type="button"
+                size="small"
+                variant="outline"
+                icon={<Plus />}
+                onClick={() => setInputFields((current) => [
+                  ...current,
+                  {
+                    key: nextUniqueKey("input", current.map((field) => field.key)),
+                    label: "新输入字段",
+                    type: "string",
+                    required: false,
+                    defaultValue: "",
+                  },
+                ])}
+              >
+                添加字段
+              </Button>
+            )}
+            contentClassName="divide-y p-0"
+          >
               {inputFields.map((field, index) => (
                 <div key={`${field.key}-${index}`} className="flex flex-col gap-4 p-6">
                   <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -323,33 +315,29 @@ export function WorkflowEditor({
                   </Field>
                 </div>
               ))}
-            </CardContent>
-          </Card>
+            </DedicatedEditorSection>
 
-          <Card padding="none" className="overflow-hidden">
-            <CardHeader className="border-b p-6">
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                <div>
-                  <CardTitle className="text-base">流程定义</CardTitle>
-                  <Text size="xs" tone="muted">步骤按实际执行顺序排列；动态资源筛选始终位于模型或逐项处理之前。</Text>
-                </div>
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                  <Select
-                    aria-label="新增步骤类型"
-                    value={newStepType}
-                    onChange={(next) => setNewStepType(String(next) as WorkflowStepFixture["type"])}
-                  >
-                    {Object.entries(stepTypeLabels).map(([type, label]) => (
-                      <option key={type} value={type}>{label}</option>
-                    ))}
-                  </Select>
-                  <Button type="button" size="small" variant="outline" icon={<Plus />} onClick={addStep}>
-                    添加步骤
-                  </Button>
-                </div>
+          <DedicatedEditorSection
+            title="流程定义"
+            description="步骤按实际执行顺序排列；动态资源筛选始终位于模型或逐项处理之前。"
+            actions={(
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <Select
+                  aria-label="新增步骤类型"
+                  value={newStepType}
+                  onChange={(next) => setNewStepType(String(next) as WorkflowStepFixture["type"])}
+                >
+                  {Object.entries(stepTypeLabels).map(([type, label]) => (
+                    <option key={type} value={type}>{label}</option>
+                  ))}
+                </Select>
+                <Button type="button" size="small" variant="outline" icon={<Plus />} onClick={addStep}>
+                  添加步骤
+                </Button>
               </div>
-            </CardHeader>
-            <CardContent className="divide-y p-0">
+            )}
+            contentClassName="divide-y p-0"
+          >
               {steps.map((step, index) => (
                 <div key={`${step.id}-${index}`} className="flex gap-4 p-6">
                   <div className="flex size-8 shrink-0 items-center justify-center rounded-full border text-xs font-semibold">
@@ -402,20 +390,15 @@ export function WorkflowEditor({
                   </div>
                 </div>
               ))}
-            </CardContent>
-          </Card>
+            </DedicatedEditorSection>
           </>
         )}
         secondary={(
           <>
-          <Card padding="none" className="overflow-hidden">
-            <CardHeader className="border-b p-6">
-              <div className="flex flex-col gap-1">
-                <CardTitle className="text-base">执行计划</CardTitle>
-                <Text size="xs" tone="muted">计划只决定何时进入 preflight；是否真正执行仍受启用状态和运行边界约束。</Text>
-              </div>
-            </CardHeader>
-            <CardContent className="p-6">
+          <DedicatedEditorSection
+            title="执行计划"
+            description="计划只决定何时进入 preflight；是否真正执行仍受启用状态和运行边界约束。"
+          >
               <FormGrid columns={2}>
                 <Field label="执行计划" hint="支持 Cron 表达式；手动 Workflow 可填写“手动”。">
                   <Input name="schedule" defaultValue={initial?.schedule || "手动"} placeholder="30 8 * * *" />
@@ -430,17 +413,12 @@ export function WorkflowEditor({
                   <strong className="mt-1 block text-sm">v{initial.currentVersion}</strong>
                 </div>
               ) : null}
-            </CardContent>
-          </Card>
+            </DedicatedEditorSection>
 
-          <Card padding="none" className="overflow-hidden">
-            <CardHeader className="border-b p-6">
-              <div className="flex flex-col gap-1">
-                <CardTitle className="text-base">运行边界</CardTitle>
-                <Text size="xs" tone="muted">明确资源选择、发现 Tool 和空结果策略，避免把“能发现”误解为“能修改”。</Text>
-              </div>
-            </CardHeader>
-            <CardContent className="p-6">
+          <DedicatedEditorSection
+            title="运行边界"
+            description="明确资源选择、发现 Tool 和空结果策略，避免把“能发现”误解为“能修改”。"
+          >
               <div className="flex flex-col gap-5">
                 <Field label="运行范围">
                   <Select name="scopeMode" defaultValue={initial?.scopeMode || "strict"}>
@@ -458,17 +436,12 @@ export function WorkflowEditor({
                   </Select>
                 </Field>
               </div>
-            </CardContent>
-          </Card>
+            </DedicatedEditorSection>
 
-          <Card padding="none" className="overflow-hidden">
-            <CardHeader className="border-b p-6">
-              <div className="flex flex-col gap-1">
-                <CardTitle className="text-base">默认运行输入</CardTitle>
-                <Text size="xs" tone="muted">定时运行读取输入契约里的默认值；人工执行可在自动化工作区临时覆盖。</Text>
-              </div>
-            </CardHeader>
-            <CardContent className="p-6">
+          <DedicatedEditorSection
+            title="默认运行输入"
+            description="定时运行读取输入契约里的默认值；人工执行可在自动化工作区临时覆盖。"
+          >
               <div className="flex flex-col gap-3">
                 {inputFields.map((field) => (
                   <div key={field.key} className="flex items-start justify-between gap-4 border-b pb-3 last:border-b-0 last:pb-0">
@@ -480,8 +453,7 @@ export function WorkflowEditor({
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </DedicatedEditorSection>
           </>
         )}
       />
