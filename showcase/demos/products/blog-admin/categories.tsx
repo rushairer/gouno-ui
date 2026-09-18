@@ -380,7 +380,7 @@ export function BlogAdminCategoriesDemo() {
           </>
         )}
       >
-        <div className="flex flex-col gap-5">
+        <div data-pattern="editor-form-composition" className="flex flex-col gap-5">
           <FormField label="分类名称" required>
             <Input
               aria-label="分类名称"
