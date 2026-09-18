@@ -174,16 +174,16 @@ for (const id of [
 }
 
 componentReviews["core-typography"] = {
-  status: "reopened",
-  scope: "FI-001: Typography Foundation reopened because semantic heading level and visual hierarchy remain coupled, PageHeader overrides the canonical H1 scale, and product corpora retain raw heading/text-size authority.",
-  evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "src/core/typography.tsx", "src/gouno/page-header.tsx"],
-  baseline: "FI-001 / 2026-09-18",
+  status: "reviewed",
+  scope: "FI-001 certified: semantic HTML heading level is decoupled from visual role, canonical Typography owns metric authority, and the completed product corpus is guarded against raw typography bypasses.",
+  evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "tests/typography-foundation-conformance.test.ts", "scripts/check-foundation-integrity.mjs"],
+  baseline: "FI-001 certified / 2026-09-18",
 };
 componentReviews["gouno-page-header"] = {
-  status: "reopened",
-  scope: "FI-001: PageHeader typography authority is reopened because its H1 overrides the Core Heading visual scale with a local text utility.",
-  evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "src/gouno/page-header.tsx"],
-  baseline: "FI-001 / 2026-09-18",
+  status: "reviewed",
+  scope: "FI-001 certified: PageHeader keeps route-level H1 semantics while consuming the canonical page-title visual role without local text-size authority.",
+  evidence: ["foundation-integrity.json", "src/gouno/page-header.tsx", "tests/typography-foundation-conformance.test.ts"],
+  baseline: "FI-001 certified / 2026-09-18",
 };
 for (const id of ["core-button", "core-segmented", "core-input-otp"]) {
   componentReviews[id] = {
@@ -211,10 +211,10 @@ componentReviews["gouno-page-container"] = {
 };
 
 componentReviews["pattern-dedicated-editor"] = {
-  status: "reopened",
-  scope: "FI-001: Dedicated Editor heading hierarchy is reopened until nested/standalone semantic levels and task-title visual roles are explicit and corpus-guarded.",
-  evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "docs/patterns/dedicated-editor.md", "showcase/components/patterns/dedicated-editor.tsx"],
-  baseline: "FI-001 / 2026-09-18",
+  status: "reviewed",
+  scope: "FI-001 certified: Dedicated Editor explicitly separates nested/standalone heading semantics from task-title visual hierarchy and stays under the canonical Typography guard.",
+  evidence: ["foundation-integrity.json", "docs/patterns/dedicated-editor.md", "showcase/components/patterns/dedicated-editor.tsx", "tests/typography-foundation-conformance.test.ts"],
+  baseline: "FI-001 certified / 2026-09-18",
 };
 
 export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
