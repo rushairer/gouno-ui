@@ -144,7 +144,7 @@ export function NotificationProvider({
                   type="button"
                   data-slot="notification-close"
                   aria-label={item.closable["aria-label"]}
-                  className="-mr-1 -mt-1 inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="-mr-1 -mt-1 inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-control"
                   onClick={() => dismiss(item.id)}
                 >
                   <X aria-hidden="true" className="size-4" />
