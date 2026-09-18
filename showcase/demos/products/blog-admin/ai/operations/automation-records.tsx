@@ -169,13 +169,13 @@ function WorkflowRunDetail({
                 key={`${step.id}-${step.iteration ?? 0}`}
                 className="flex gap-4 px-5 py-4"
               >
-                <span className="flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold">
+                <span className="flex size-7 shrink-0 items-center justify-center rounded-full border type-caption type-weight-semibold">
                   {index + 1}
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <strong className="text-sm">{step.name}</strong>
+                      <strong className="type-body-sm type-weight-semibold">{step.name}</strong>
                       <Text size="xs" tone="muted" className="mt-1">
                         {step.type ? `${step.type} · ` : ""}
                         {step.durationMs.toLocaleString()} ms
@@ -219,7 +219,7 @@ function WorkflowRunDetail({
                   className="flex items-start justify-between gap-4 px-5 py-4"
                 >
                   <div className="min-w-0">
-                    <strong className="text-sm">{resource.label}</strong>
+                    <strong className="type-body-sm type-weight-semibold">{resource.label}</strong>
                     <Text size="xs" tone="muted" className="mt-1">
                       {resource.type} · {resource.source || "snapshot"}
                     </Text>
@@ -263,7 +263,7 @@ function WorkflowRunDetail({
                   <div key={interaction.id || index} className="px-5 py-4">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <strong className="text-sm">{interaction.label}</strong>
+                        <strong className="type-body-sm type-weight-semibold">{interaction.label}</strong>
                         <Text size="xs" tone="muted" className="mt-1">
                           {interaction.type}
                           {interaction.stepId ? ` · ${interaction.stepId}` : ""}
@@ -335,7 +335,7 @@ function WorkflowRunDetail({
                 className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="min-w-0">
-                  <strong className="text-sm">
+                  <strong className="type-body-sm type-weight-semibold">
                     #{candidate.id} · {candidate.title}
                   </strong>
                   <Text size="xs" tone="muted" className="mt-1">
@@ -370,7 +370,7 @@ function WorkflowRunDetail({
 
       {run.events.length ? (
         <details className="rounded-lg border bg-background">
-          <summary className="cursor-pointer px-5 py-4 text-sm font-semibold">
+          <summary className="cursor-pointer px-5 py-4 type-body-sm type-weight-semibold">
             运行事件与技术证据 · {run.events.length}
           </summary>
           <div className="divide-y border-t">
@@ -379,7 +379,7 @@ function WorkflowRunDetail({
               .reverse()
               .map((event, index) => (
                 <div key={`${event.type}-${index}`} className="px-5 py-3">
-                  <strong className="font-mono text-xs">{event.type}</strong>
+                  <strong className="type-family-mono type-caption type-weight-semibold">{event.type}</strong>
                   <Text size="xs" tone="muted" className="mt-1">
                     {event.createdAt ? `${event.createdAt} · ` : ""}
                     {event.message}
@@ -466,7 +466,7 @@ function AgentRunDetail({ run }: { run: AgentRunFixture }) {
               <div key={`${call.tool}-${index}`} className="px-5 py-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <strong className="font-mono text-sm">{call.tool}</strong>
+                    <strong className="type-family-mono type-body-sm type-weight-semibold">{call.tool}</strong>
                     <Text size="xs" tone="muted" className="mt-1">
                       {call.detail}
                     </Text>
@@ -500,7 +500,7 @@ function AgentRunDetail({ run }: { run: AgentRunFixture }) {
                   </div>
                 </div>
                 {call.resultSummary ? (
-                  <div className="mt-3 rounded-md bg-muted/35 px-4 py-3 text-sm">
+                  <div className="mt-3 rounded-md bg-muted/35 px-4 py-3 type-body-sm type-weight-semibold">
                     {call.resultSummary}
                   </div>
                 ) : null}
@@ -531,7 +531,7 @@ function AgentRunDetail({ run }: { run: AgentRunFixture }) {
                 key={citation.title}
                 className="flex items-center justify-between gap-4 px-5 py-4"
               >
-                <strong className="text-sm">{citation.title}</strong>
+                <strong className="type-body-sm type-weight-semibold">{citation.title}</strong>
                 <div className="flex gap-2">
                   <Tag
                     color={
@@ -690,7 +690,7 @@ export function AIOpsRecordsPanel({
               aria-label="Workflow Runs"
             >
               <div className="shrink-0 border-b px-[18px] py-4">
-                <strong className="text-sm">Workflow Runs</strong>
+                <strong className="type-body-sm type-weight-semibold">Workflow Runs</strong>
                 <Text size="xs" tone="muted">
                   {workflowRuns.length} 条运行记录
                 </Text>
@@ -764,7 +764,7 @@ export function AIOpsRecordsPanel({
             aria-label="Agent Runs"
           >
             <div className="border-b px-[18px] py-4">
-              <strong className="text-sm">Agent Runs</strong>
+              <strong className="type-body-sm type-weight-semibold">Agent Runs</strong>
               <Text size="xs" tone="muted">
                 {fixture.agentRuns.length} 条运行记录
               </Text>

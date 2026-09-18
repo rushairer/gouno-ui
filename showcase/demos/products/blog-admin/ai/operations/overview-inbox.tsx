@@ -419,7 +419,7 @@ function DecisionWorkbench({
     );
 
   const context = (
-    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+    <div className="flex flex-wrap items-center gap-2 type-caption text-muted-foreground">
       <span>{item.meta}</span>
       {item.createdAt ? (
         <>
@@ -486,7 +486,7 @@ function DecisionWorkbench({
             </div>
           </section>
         )}
-        <div className="border-t pt-4 text-xs text-muted-foreground">
+        <div className="border-t pt-4 type-caption text-muted-foreground">
           安全边界：不会跳过后续审批、媒体选择或内容应用步骤。
         </div>
       </div>
@@ -526,18 +526,18 @@ function DecisionWorkbench({
           />
           <div className="mt-4 rounded-md bg-muted/35 p-4">
             {approval.proposal.title ? (
-              <strong className="text-sm">{approval.proposal.title}</strong>
+              <strong className="type-body-sm type-weight-semibold">{approval.proposal.title}</strong>
             ) : null}
             {approval.proposal.content ? (
-              <pre className="mt-3 whitespace-pre-wrap font-sans text-sm leading-6 text-muted-foreground">
+              <pre className="mt-3 whitespace-pre-wrap type-family-sans type-body-sm type-leading-relaxed text-muted-foreground">
                 {approval.proposal.content}
               </pre>
             ) : null}
             {approval.proposal.suggestions?.length ? (
-              <ol className="space-y-2 text-sm">
+              <ol className="space-y-2 type-body-sm type-weight-semibold">
                 {approval.proposal.suggestions.map((value, index) => (
                   <li key={value}>
-                    <span className="mr-2 text-xs text-muted-foreground">
+                    <span className="mr-2 type-caption text-muted-foreground">
                       {index + 1}.
                     </span>
                     {value}
@@ -552,13 +552,13 @@ function DecisionWorkbench({
             <Text size="xs" tone="muted">
               批准后会发生什么
             </Text>
-            <strong className="mt-1 block text-sm">{impact.happens}</strong>
+            <strong className="mt-1 block type-body-sm type-weight-semibold">{impact.happens}</strong>
           </div>
           <div>
             <Text size="xs" tone="muted">
               不会发生什么
             </Text>
-            <strong className="mt-1 block text-sm">{impact.safe}</strong>
+            <strong className="mt-1 block type-body-sm type-weight-semibold">{impact.safe}</strong>
           </div>
         </div>
         <div className="flex flex-wrap justify-end gap-2 border-t pt-5">
@@ -601,7 +601,7 @@ function DecisionWorkbench({
             title="AI 的判断依据"
             description="这是只读运营证据；创建编辑任务不会修改或发布内容。"
           />
-          <ul className="mt-4 space-y-2 text-sm">
+          <ul className="mt-4 space-y-2 type-body-sm type-weight-semibold">
             {suggestion.evidence.map((evidence) => (
               <li key={evidence} className="flex gap-2">
                 <Check className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
@@ -655,7 +655,7 @@ function DecisionWorkbench({
                 className="flex flex-col gap-3 rounded-md border p-4 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="min-w-0">
-                  <strong className="text-sm">{candidate.value}</strong>
+                  <strong className="type-body-sm type-weight-semibold">{candidate.value}</strong>
                   <Text size="xs" tone="muted" className="mt-1">
                     {candidate.rationale}
                   </Text>
@@ -834,7 +834,7 @@ export function AIOpsInboxPanel({
           <div className="shrink-0 border-b px-[18px] py-4">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <strong className="text-sm">决策队列</strong>
+                <strong className="type-body-sm type-weight-semibold">决策队列</strong>
                 <Text size="xs" tone="muted">
                   {items.length} 项符合当前筛选
                 </Text>

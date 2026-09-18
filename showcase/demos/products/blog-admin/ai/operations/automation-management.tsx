@@ -115,7 +115,7 @@ function WorkflowListRow({
         </span>
         <span className="min-w-0 flex-1">
           <span className="flex min-w-0 flex-wrap items-center gap-2">
-            <strong className="min-w-0 text-sm font-semibold text-foreground [overflow-wrap:anywhere]">
+            <strong className="min-w-0 type-body-sm type-weight-semibold text-foreground [overflow-wrap:anywhere]">
               {workflow.name}
             </strong>
             <Tag color={workflow.enabled ? "success" : undefined}>
@@ -135,7 +135,7 @@ function WorkflowListRow({
 
       <span className="min-w-0">
         <Text size="xs" tone="muted" className="xl:hidden">执行计划</Text>
-        <code className="mt-1 block font-mono text-xs font-medium text-foreground">
+        <code className="mt-1 block type-family-mono type-caption type-weight-medium text-foreground">
           {workflow.schedule}
         </code>
         <Text size="xs" tone="muted" className="mt-1">
@@ -159,7 +159,7 @@ function WorkflowListRow({
 
       <span className="min-w-0">
         <Text size="xs" tone="muted" className="xl:hidden">运行质量</Text>
-        <strong className="mt-1 block text-sm font-semibold">
+        <strong className="mt-1 block type-body-sm type-weight-semibold">
           {workflowSuccessRate(workflow)}%
         </strong>
         <Text
@@ -195,7 +195,7 @@ function WorkflowMetric({
       <Text size="xs" tone="muted">
         {label}
       </Text>
-      <strong className="mt-2 block text-2xl font-semibold tracking-tight">
+      <strong className="mt-2 block type-metric-value">
         {value}
       </strong>
       {progress !== undefined ? (
@@ -227,7 +227,7 @@ function ScheduleFact({
       <Text size="xs" tone="muted">
         {label}
       </Text>
-      <strong className="mt-1 block text-sm">{value}</strong>
+      <strong className="mt-1 block type-body-sm type-weight-semibold">{value}</strong>
       <Text size="xs" tone="muted" className="mt-1">
         {detail}
       </Text>
@@ -424,7 +424,7 @@ export function AutomationManagement({
 
               <div
                 aria-hidden="true"
-                className="hidden grid-cols-[minmax(17rem,1.45fr)_minmax(12rem,0.8fr)_minmax(16rem,1.15fr)_8rem_1.5rem] gap-4 border-b bg-muted/[0.18] px-5 py-2.5 text-xs font-medium text-muted-foreground xl:grid"
+                className="hidden grid-cols-[minmax(17rem,1.45fr)_minmax(12rem,0.8fr)_minmax(16rem,1.15fr)_8rem_1.5rem] gap-4 border-b bg-muted/[0.18] px-5 py-2.5 type-caption type-weight-medium text-muted-foreground xl:grid"
               >
                 <span>Workflow</span>
                 <span>执行计划</span>
@@ -447,7 +447,7 @@ export function AutomationManagement({
                 ) : (
                   <div className="flex flex-col items-center gap-2 px-6 py-10 text-center">
                     <Search className="size-5 text-muted-foreground" aria-hidden="true" />
-                    <strong className="text-sm">没有符合条件的 Workflow</strong>
+                    <strong className="type-body-sm type-weight-semibold">没有符合条件的 Workflow</strong>
                     <Text size="xs" tone="muted">
                       调整搜索词或状态筛选后再试，或使用上方“清除筛选”恢复全部资产。
                     </Text>
@@ -667,7 +667,7 @@ export function AutomationManagement({
                     onClick={() => onOpenRun?.(run)}
                     aria-label={`打开最近 Run #${run.id}`}
                   >
-                    <strong className="text-sm">Run #{run.id}</strong>
+                    <strong className="type-body-sm type-weight-semibold">Run #{run.id}</strong>
                     <span>{runStatusTag(run.status)}</span>
                     <Text size="xs" tone="muted">
                       {run.startedAt}
@@ -718,12 +718,12 @@ export function AutomationManagement({
               <ol className="divide-y">
                 {selected.steps.map((step, index) => (
                   <li key={step.id} className="flex gap-4 px-6 py-4">
-                    <span className="flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold">
+                    <span className="flex size-7 shrink-0 items-center justify-center rounded-full border type-caption type-weight-semibold">
                       {index + 1}
                     </span>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <strong className="text-sm">{step.name}</strong>
+                        <strong className="type-body-sm type-weight-semibold">{step.name}</strong>
                         <Tag>{stepLabels[step.type]}</Tag>
                       </div>
                       <Text size="xs" tone="muted" className="mt-1">
@@ -746,30 +746,30 @@ export function AutomationManagement({
                   title="运行边界"
                   description="决定 Workflow 可以发现什么、哪些对象可以成为目标，以及空查询时如何结束。"
                 />
-                <dl className="mt-4 space-y-4 text-sm">
+                <dl className="mt-4 space-y-4 type-body-sm type-weight-semibold">
                   <div>
-                    <dt className="text-xs text-muted-foreground">Scope</dt>
-                    <dd className="mt-1 font-medium">
+                    <dt className="type-caption text-muted-foreground">Scope</dt>
+                    <dd className="mt-1 type-body type-weight-medium">
                       {selected.scopeMode === "strict"
                         ? "严格限制目标资源"
                         : "Unscoped 兼容模式"}
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-xs text-muted-foreground">
+                    <dt className="type-caption text-muted-foreground">
                       Discovery tools
                     </dt>
-                    <dd className="mt-1 font-medium">
+                    <dd className="mt-1 type-body type-weight-medium">
                       {selected.discoveryTools.length
                         ? selected.discoveryTools.join(" · ")
                         : "无额外发现工具"}
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-xs text-muted-foreground">
+                    <dt className="type-caption text-muted-foreground">
                       资源查询为空
                     </dt>
-                    <dd className="mt-1 font-medium">
+                    <dd className="mt-1 type-body type-weight-medium">
                       {selected.resourceQueryEmptyPolicy === "succeed"
                         ? "正常结束，不产生后续动作"
                         : "视为运行失败"}
@@ -777,10 +777,10 @@ export function AutomationManagement({
                   </div>
                   {selected.resourceQueryLastCount !== undefined ? (
                     <div>
-                      <dt className="text-xs text-muted-foreground">
+                      <dt className="type-caption text-muted-foreground">
                         最近资源命中
                       </dt>
-                      <dd className="mt-1 font-medium">
+                      <dd className="mt-1 type-body type-weight-medium">
                         {selected.resourceQueryLastCount} 项 ·{" "}
                         {selected.resourceQueryLastRunAt}
                       </dd>
@@ -802,7 +802,7 @@ export function AutomationManagement({
                   {selected.inputFields.map((field) => (
                     <div key={field.key} className="py-3 first:pt-0 last:pb-0">
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <strong className="text-sm">{field.label}</strong>
+                        <strong className="type-body-sm type-weight-semibold">{field.label}</strong>
                         <Text size="xs" tone="muted">
                           {field.type}
                           {field.required ? " · 必填" : ""}
