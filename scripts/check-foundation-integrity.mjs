@@ -71,7 +71,10 @@ if (typography) {
     resolve(root, "showcase/demos/products/blog-admin"),
     resolve(root, "showcase/demos/products/gosso-admin"),
   ];
-  const files = applicationRoots.flatMap(collectTsx);
+  const publicRoot = resolve(root, "showcase/demos/products/blog");
+  const applicationFiles = applicationRoots.flatMap(collectTsx);
+  const publicFiles = collectTsx(publicRoot);
+  const allFiles = [...applicationFiles, ...publicFiles];
   const rawMetricUtility =
     /\b(?:text-(?:xs|sm|base|lg|xl|[2-9]xl|\[[^\]]+\])|font-(?:thin|extralight|light|normal|medium|semibold|bold|extrabold|black|mono|sans)|(?<!type-)tracking-[^\s"'\x60]+|(?<!type-)leading-[^\s"'\x60]+)/;
   const textTags = /<Text\b[\s\S]{0,500}?>/g;
@@ -80,53 +83,80 @@ if (typography) {
 
   let rawHeadings = 0;
   let textMetricOverrides = 0;
-  let nativeMetricBypasses = 0;
 
-  for (const file of files) {
+  for (const file of allFiles) {
     const source = readFileSync(file, "utf8");
     rawHeadings += (source.match(/<h[1-6]\b/g) ?? []).length;
     textMetricOverrides += (source.match(textTags) ?? []).filter((tag) =>
       rawMetricUtility.test(tag),
     ).length;
-    nativeMetricBypasses += (source.match(nativeTextTags) ?? []).filter((tag) =>
-      rawMetricUtility.test(tag),
-    ).length;
   }
+
+  const countNativeBypasses = (files) =>
+    files.reduce((count, file) => {
+      const source = readFileSync(file, "utf8");
+      return (
+        count +
+        (source.match(nativeTextTags) ?? []).filter((tag) =>
+          rawMetricUtility.test(tag),
+        ).length
+      );
+    }, 0);
+
+  const applicationNativeMetricBypasses = countNativeBypasses(applicationFiles);
+  const publicNativeMetricBypasses = countNativeBypasses(publicFiles);
 
   process.stdout.write(
     "Typography corpus audit: rawHeadings=" +
       rawHeadings +
       ", TextMetricOverrides=" +
       textMetricOverrides +
-      ", nativeMetricBypasses=" +
-      nativeMetricBypasses +
+      ", applicationNativeMetricBypasses=" +
+      applicationNativeMetricBypasses +
+      ", publicNativeMetricBypasses=" +
+      publicNativeMetricBypasses +
       "\n",
   );
 
   if (rawHeadings !== 0) {
-    failures.push("typography.guard: raw h1-h6 returned to the application corpus");
+    failures.push("typography.guard: raw h1-h6 returned to the product corpus");
   }
   if (textMetricOverrides !== 0) {
-    failures.push("typography.guard: Text metric overrides returned to the application corpus");
+    failures.push("typography.guard: Text metric overrides returned to the product corpus");
   }
 
   const corpusGate = typography.gates?.corpus;
   if (corpusGate?.status === "passed") {
-    if (nativeMetricBypasses !== 0) {
-      failures.push("typography.corpus: native typography utility bypasses remain in application corpus");
-    }
-  } else if (typeof corpusGate?.remainingNativeMetricBypasses === "number") {
-    if (nativeMetricBypasses !== corpusGate.remainingNativeMetricBypasses) {
-      failures.push(
-        "typography.corpus: native bypass ledger is stale; expected " +
-          corpusGate.remainingNativeMetricBypasses +
-          ", found " +
-          nativeMetricBypasses +
-          ". Update the corpus and ledger in the same stage.",
-      );
+    if (applicationNativeMetricBypasses !== 0 || publicNativeMetricBypasses !== 0) {
+      failures.push("typography.corpus: native typography utility bypasses remain in product corpora");
     }
   } else {
-    failures.push("typography.corpus: in-progress gate must record remainingNativeMetricBypasses");
+    const expectedApplication = corpusGate?.remainingNativeMetricBypasses;
+    const expectedPublic = corpusGate?.remainingPublicMetricBypasses;
+    if (typeof expectedApplication !== "number" || typeof expectedPublic !== "number") {
+      failures.push(
+        "typography.corpus: in-progress gate must record application and public-reading bypass counts",
+      );
+    } else {
+      if (applicationNativeMetricBypasses !== expectedApplication) {
+        failures.push(
+          "typography.corpus: application bypass ledger is stale; expected " +
+            expectedApplication +
+            ", found " +
+            applicationNativeMetricBypasses +
+            ". Update corpus and ledger in the same stage.",
+        );
+      }
+      if (publicNativeMetricBypasses !== expectedPublic) {
+        failures.push(
+          "typography.corpus: public-reading bypass ledger is stale; expected " +
+            expectedPublic +
+            ", found " +
+            publicNativeMetricBypasses +
+            ". Update corpus and ledger in the same stage.",
+        );
+      }
+    }
   }
 }
 

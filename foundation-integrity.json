@@ -54,14 +54,16 @@
           ]
         },
         "corpus": {
-          "status": "passed",
+          "status": "in_progress",
           "evidence": [
             "showcase/demos/products/blog-admin",
             "showcase/demos/products/gosso-admin",
+            "showcase/demos/products/blog",
             "tests/typography-foundation-conformance.test.ts",
             "scripts/check-foundation-integrity.mjs"
           ],
-          "remainingNativeMetricBypasses": 0
+          "remainingNativeMetricBypasses": 0,
+          "remainingPublicMetricBypasses": 61
         },
         "guard": {
           "status": "passed",
