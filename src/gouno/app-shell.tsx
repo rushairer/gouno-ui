@@ -42,11 +42,11 @@ export function AppShell({
     <div data-slot="app-shell" className="min-h-dvh bg-canvas text-foreground">
       <a
         href={`#${mainId}`}
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-popover focus:p-3"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:layer-popup focus:rounded-md focus:bg-popover focus:p-3"
       >
         跳至主要内容
       </a>
-      <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 lg:px-6">
+      <header className="sticky top-0 layer-shell flex h-16 items-center gap-4 border-b bg-background px-4 lg:px-6">
         <div className="flex min-w-0 items-center gap-3 lg:w-[264px]">
           <IconButton
             ref={navigationTrigger}
