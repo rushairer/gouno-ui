@@ -71,10 +71,11 @@
     "test": "vitest run --environment jsdom",
     "lint:microcopy": "node scripts/check-microcopy-contract.mjs",
     "lint:parity": "node scripts/check-parity-maintenance-contract.mjs",
-    "verify": "npm run lint:microcopy && npm run lint:parity && npm run typecheck && npm test && npm run build && npm run showcase:build",
+    "verify": "npm run lint:microcopy && npm run lint:parity && npm run lint:foundation && npm run typecheck && npm test && npm run build && npm run showcase:build",
     "package:check": "node scripts/package-check.mjs",
     "release:check": "npm run verify && npm run package:check",
-    "prepublishOnly": "npm run release:check"
+    "prepublishOnly": "npm run release:check",
+    "lint:foundation": "node scripts/check-foundation-integrity.mjs"
   },
   "peerDependencies": {
     "react": "^19.2.0",
