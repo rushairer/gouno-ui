@@ -1514,6 +1514,14 @@ if (accessibility?.status !== "planned") {
     resolve(root, "src/components/primitives/table.tsx"),
     "utf8",
   );
+  const appShellSource = readFileSync(
+    resolve(root, "src/gouno/app-shell.tsx"),
+    "utf8",
+  );
+  const pageSkeletonSource = readFileSync(
+    resolve(root, "src/gouno/page-skeleton.tsx"),
+    "utf8",
+  );
   const tagSource = readFileSync(resolve(root, "src/core/tag.tsx"), "utf8");
   const accessibilityTestSource = readFileSync(
     resolve(root, "tests/accessibility-foundation-conformance.test.tsx"),
@@ -1624,6 +1632,35 @@ if (accessibility?.status !== "planned") {
     if (!tableSource.includes(marker)) {
       failures.push(
         "accessibility.guard: primitive Table lost native semantic element " +
+          marker,
+      );
+    }
+  }
+
+  for (const marker of [
+    "<header",
+    "<nav",
+    "<main",
+    "tabIndex={-1}",
+    "跳至主要内容",
+  ]) {
+    if (!appShellSource.includes(marker)) {
+      failures.push(
+        "accessibility.guard: AppShell landmark/skip-link contract changed: " +
+          marker,
+      );
+    }
+  }
+
+  for (const marker of [
+    'role="status"',
+    'aria-live="polite"',
+    'aria-busy="true"',
+    'aria-hidden="true"',
+  ]) {
+    if (!pageSkeletonSource.includes(marker)) {
+      failures.push(
+        "accessibility.guard: PageSkeleton live/decorative semantics changed: " +
           marker,
       );
     }
