@@ -366,18 +366,26 @@ describe("design-language conformance", () => {
   });
 
   it("keeps top-level tab feedback between the panel lead and business content", () => {
+    const aiRoot = readFileSync(resolve(productsRoot, "blog-admin/ai/settings/index.tsx"), "utf8");
     const aiSettings = readFileSync(resolve(productsRoot, "blog-admin/ai/settings/sections.tsx"), "utf8");
-    const agentLead = aiSettings.indexOf('description="Skill Version + 模型连接 + 运行计划组成可审计的执行单元。"');
-    const agentFeedback = aiSettings.indexOf("<TabPanelFeedback>", agentLead);
+
+    const rootLead = aiRoot.indexOf("<AISettingsSectionLead");
+    const privilegedFeedback = aiRoot.indexOf("<PrivilegedAccessGate", rootLead);
+    const rootBody = aiRoot.indexOf("{sectionPanel}", privilegedFeedback);
+    expect(rootLead).toBeGreaterThanOrEqual(0);
+    expect(privilegedFeedback).toBeGreaterThan(rootLead);
+    expect(rootBody).toBeGreaterThan(privilegedFeedback);
+
+    const agentStart = aiSettings.indexOf("function AgentList");
+    const agentFeedback = aiSettings.indexOf("<TabPanelFeedback>", agentStart);
     const agentContent = aiSettings.indexOf('<Card padding="none" className="overflow-hidden">', agentFeedback);
-    expect(agentLead).toBeGreaterThanOrEqual(0);
-    expect(agentFeedback).toBeGreaterThan(agentLead);
+    expect(agentFeedback).toBeGreaterThan(agentStart);
     expect(agentContent).toBeGreaterThan(agentFeedback);
 
-    const knowledgeLead = aiSettings.indexOf('description="仅索引已发布文章；Embedding Profile 负责把内容转换为可检索知识库。"');
-    const knowledgeFeedback = aiSettings.indexOf("<TabPanelFeedback>", knowledgeLead);
+    const knowledgeStart = aiSettings.indexOf("function KnowledgePanel");
+    const knowledgeFeedback = aiSettings.indexOf("<TabPanelFeedback>", knowledgeStart);
     const knowledgeMetrics = aiSettings.indexOf('<div className="grid gap-4 sm:grid-cols-3">', knowledgeFeedback);
-    expect(knowledgeFeedback).toBeGreaterThan(knowledgeLead);
+    expect(knowledgeFeedback).toBeGreaterThan(knowledgeStart);
     expect(knowledgeMetrics).toBeGreaterThan(knowledgeFeedback);
   });
 
