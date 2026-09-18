@@ -14,8 +14,10 @@
   --text-section-title--line-height: 1.75rem;
   --text-subsection-title: 1.125rem;
   --text-subsection-title--line-height: 1.75rem;
-  --text-compact-title: 0.875rem;
-  --text-compact-title--line-height: 1.25rem;
+  --text-compact-title: 1rem;
+  --text-compact-title--line-height: 1.5rem;
+  --text-label-title: 0.875rem;
+  --text-label-title--line-height: 1.25rem;
   --text-body-lg: 1.125rem;
   --text-body-lg--line-height: 1.75rem;
   --text-body: 1rem;
