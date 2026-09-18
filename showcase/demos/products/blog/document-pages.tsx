@@ -5,6 +5,7 @@ import {
   Button,
   Card,
   CodeBlock,
+  Heading,
   Result,
   Segmented,
 } from "../../../../src/core";
@@ -63,14 +64,14 @@ function CustomPageBody() {
       <p>
         这个单页来自站点内容管理，而不是前端写死的路由组件。它和文章都需要 Markdown 阅读语义，但没有文章作者、阅读量、评论和相关阅读等内容模型。
       </p>
-      <h2 className="text-2xl font-semibold tracking-tight">为什么单页仍然是产品内容</h2>
+      <Heading level={2} variant="section-lg" >为什么单页仍然是产品内容</Heading>
       <p>
         隐私说明、项目介绍、使用指南等页面都可能由管理员持续维护。前台只负责把已经发布的内容稳定地呈现出来，加载、未找到和失败状态继续属于这个路由自己的生命周期。
       </p>
       <blockquote className="border-l-4 border-primary/40 bg-muted/40 px-5 py-4 text-muted-foreground">
         Markdown 能力可以复用，页面模型不能因为都叫“文档”就被强行合并。
       </blockquote>
-      <h2 className="text-2xl font-semibold tracking-tight">公共能力保持窄职责</h2>
+      <Heading level={2} variant="section-lg" >公共能力保持窄职责</Heading>
       <ul className="list-disc space-y-2 pl-6">
         <li>PageHeader 只表达标题与说明。</li>
         <li>CodeBlock 只表达只读代码与复制。</li>
@@ -167,7 +168,7 @@ export function BlogAboutDemo() {
           </p>
 
           <section aria-labelledby="about-topics" className="space-y-3">
-            <h2 id="about-topics" className="text-2xl font-semibold tracking-tight">主要内容</h2>
+            <Heading level={2} variant="section-lg" id="about-topics" >主要内容</Heading>
             <ul className="grid gap-3 sm:grid-cols-2">
               <li className="rounded-lg border p-4"><strong>工程实践</strong><p className="mt-1 text-sm text-muted-foreground">Go、React、Swift、Kubernetes、性能与安全。</p></li>
               <li className="rounded-lg border p-4"><strong>设计系统</strong><p className="mt-1 text-sm text-muted-foreground">从真实产品迁移反推组件 API 与设计语言。</p></li>
@@ -177,7 +178,7 @@ export function BlogAboutDemo() {
           </section>
 
           <section aria-labelledby="about-principles" className="space-y-3">
-            <h2 id="about-principles" className="text-2xl font-semibold tracking-tight">写作原则</h2>
+            <Heading level={2} variant="section-lg" id="about-principles" >写作原则</Heading>
             <ol className="list-decimal space-y-2 pl-6">
               <li>真实问题优先于完美故事。</li>
               <li>解释结果，也解释约束和取舍。</li>
@@ -186,7 +187,7 @@ export function BlogAboutDemo() {
           </section>
 
           <section aria-labelledby="about-links" className="space-y-3">
-            <h2 id="about-links" className="text-2xl font-semibold tracking-tight">继续了解</h2>
+            <Heading level={2} variant="section-lg" id="about-links" >继续了解</Heading>
             <div className="flex flex-wrap gap-2">
               <Button variant="outline" icon={<GitBranch />} onClick={() => setNotice("将打开 GitHub（Showcase 模拟）。")}>GitHub</Button>
               <Button variant="outline" icon={<Rss />} onClick={() => setNotice("将打开 /rss.xml（Showcase 模拟）。")}>RSS</Button>
