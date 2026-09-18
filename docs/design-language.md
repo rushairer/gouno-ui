@@ -521,3 +521,20 @@ Responsive behavior does not redefine ControlSize, Density, Spacing or informati
 
 The CSS reduced-motion override intentionally uses `!important` for animation/transition duration and delay so inline author styles cannot become a second authority.
 
+## DL-22 — Focus geometry has one contract
+
+Keyboard-visible focus uses one geometry contract: **2px indicator width**, semantic `ring` color, and **2px separation/offset** when the indicator sits outside the control.
+
+Two rendering mechanisms are allowed:
+
+- the Base `:focus-visible` outline as the native/global fallback;
+- a component-owned 2px semantic ring when component anatomy requires it.
+
+A component that owns a ring must suppress the global outline on that same visual control. Do not stack outline + ring to make focus “stronger”.
+
+Composite controls may use `focus-within` or peer focus so the visible wrapper/label can represent focus owned by an internal/native node. These are structural adaptations, not new geometry roles.
+
+Use `focus-visible` for keyboard focus indication. Do not use direct `focus:ring-*` on ordinary click-focusable controls merely because it is easier; mouse focus should not become a second interaction language.
+
+The canonical Focus inventory currently admits no 3px ring or extra 1px outline exception.
+
