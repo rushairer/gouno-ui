@@ -249,31 +249,38 @@
           ]
         },
         "corpus": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "showcase/demos/products/blog",
             "showcase/demos/products/blog-admin",
-            "showcase/demos/products/gosso-admin"
-          ]
+            "showcase/demos/products/gosso-admin",
+            "scripts/check-foundation-integrity.mjs: Radius corpus audit reports arbitraryRadiusBypasses=0",
+            "docs/foundation-geometry-inventory.md"
+          ],
+          "arbitraryRadiusBypasses": 0
         },
         "guard": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "tests/radius-foundation-conformance.test.ts",
-            "scripts/check-foundation-integrity.mjs"
+            "scripts/check-foundation-integrity.mjs",
+            "src/components/primitives/checkbox.tsx"
           ]
         },
         "visual": {
-          "status": "passed",
+          "status": "in_progress",
           "evidence": [
-            "Canonical Visual Golden Smoke run 35337030010 (#379): success"
+            "Canonical Visual Golden Smoke run 35337030010 (#379): success before Checkbox semantic-radius cleanup",
+            "Canonical Visual Golden Smoke run 35337669639 (#381): validating post-Checkbox cleanup"
           ]
         },
         "consumers": {
-          "status": "passed",
+          "status": "in_progress",
           "evidence": [
-            "Blog Consumer Parity run 35337030043 (#424): success",
-            "Gosso Admin Consumer Parity run 35337030001 (#419): success"
+            "Blog Consumer Parity run 35337030043 (#424): success before Checkbox semantic-radius cleanup",
+            "Gosso Admin Consumer Parity run 35337030001 (#419): success before Checkbox semantic-radius cleanup",
+            "Blog Consumer Parity run 35337723535 (#429): validating full Radius candidate",
+            "Gosso Admin Consumer Parity run 35337723638 (#424): validating full Radius candidate"
           ]
         }
       }
