@@ -35,10 +35,32 @@ describe("Table layout contract", () => {
       </Table>,
     );
     const table = screen.getByRole("table");
+    const container = table.closest('[data-slot="table-container"]');
+    expect(container?.getAttribute("data-density")).toBe("touch");
     expect(table.className).toContain("[&_tfoot_td]:align-middle");
-    expect(table.className).toContain("[&_td]:py-4");
     expect(table.className).toContain("[&_tfoot_tr]:border-t-2");
-    expect(table.className).toContain("[&_tfoot_td]:h-14");
+    expect(table.className).not.toContain("[&_td]:py-4");
+    expect(table.className).not.toContain("[&_tfoot_td]:h-14");
+  });
+
+  it("marks default density as the global-policy fallback and preserves explicit local density", () => {
+    render(
+      <>
+        <Table data-testid="default-table">
+          <TableBody><TableRow><TableCell>Default</TableCell></TableRow></TableBody>
+        </Table>
+        <Table density="compact" data-testid="compact-table">
+          <TableBody><TableRow><TableCell>Compact</TableCell></TableRow></TableBody>
+        </Table>
+      </>,
+    );
+
+    expect(
+      screen.getByTestId("default-table").closest('[data-slot="table-container"]')?.getAttribute("data-density"),
+    ).toBe("default");
+    expect(
+      screen.getByTestId("compact-table").closest('[data-slot="table-container"]')?.getAttribute("data-density"),
+    ).toBe("compact");
   });
 
   it("does not add vertical cell borders when bordered is false", () => {
