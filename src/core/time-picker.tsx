@@ -27,7 +27,7 @@ export const TimePicker = forwardRef<HTMLInputElement, TimePickerProps>(
         data-slot="time-picker"
         data-status={status}
         className={cn(
-          "w-full min-w-0 rounded-md border border-border bg-input px-3 text-foreground outline-none transition-[border-color,box-shadow] focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+          "w-full min-w-0 rounded-md border border-border bg-input px-3 text-foreground outline-none transition-[border-color,box-shadow] focus-control disabled:cursor-not-allowed disabled:opacity-50",
           controlSizeClass(size),
           status === "error" && "border-destructive",
           status === "warning" && "border-warning",
