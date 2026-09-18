@@ -19,7 +19,10 @@ import {
   Textarea,
   Upload,
 } from "../src/core";
-import { componentProgress } from "../showcase/catalog/component-progress";
+import {
+  componentProgress,
+  componentReviews,
+} from "../showcase/catalog/component-progress";
 import { dataEntryDocuments } from "../showcase/demos/core/data-entry";
 import { dataDisplayDocuments } from "../showcase/demos/core/data-display";
 import { feedbackDocuments } from "../showcase/demos/core/feedback";
@@ -204,7 +207,9 @@ describe("audited target components", () => {
       "core-qrcode",
       "core-statistic",
     ]) {
-      expect(componentProgress(id, 0)).toBe(100);
+      expect(componentProgress(id, 0), id).toBe(
+        componentReviews[id]?.status === "reviewed" ? 100 : 0,
+      );
     }
     expect(componentProgress("core-data-table", 0)).toBe(0);
   });
