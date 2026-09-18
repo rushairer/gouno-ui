@@ -88,7 +88,7 @@ describe("Core DateRangePicker 6C2", () => {
     const inputs = container.querySelectorAll<HTMLInputElement>('input[type="date"]');
     expect(inputs).toHaveLength(2);
     for (const input of inputs) {
-      expect(input.className).toContain("h-11");
+      expect(input.className).toContain("control-height-large");
       expect(input.getAttribute("aria-invalid")).toBe("true");
       expect(input.hasAttribute("aria-label")).toBe(false);
     }
