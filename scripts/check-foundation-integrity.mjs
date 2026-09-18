@@ -471,6 +471,15 @@ if (color?.status !== "planned") {
     );
   }
 
+  if (
+    !tagSource.includes("hover:bg-current/10") ||
+    /hover:bg-(?:black|white)\//.test(tagSource)
+  ) {
+    failures.push(
+      "color.guard: Tag close hover must derive from current/semantic foreground color",
+    );
+  }
+
   for (const [name, source, marker] of [
     ["QRCode foreground", qrcodeSource, 'color = "#000000"'],
     ["QRCode background", qrcodeSource, 'background = "#ffffff"'],
@@ -1326,6 +1335,140 @@ if (overlay?.status !== "planned") {
     failures.push(
       "overlay.corpus: default global zIndex numbers must not bypass Layer authority: " +
         numericGlobalInlineFiles.map(shortOverlayPath).join(", "),
+    );
+  }
+}
+
+const state = matrix.foundations.state;
+if (state?.status !== "planned") {
+  const designLanguageSource = readFileSync(
+    resolve(root, "docs/design-language.md"),
+    "utf8",
+  );
+  const carouselSource = readFileSync(
+    resolve(root, "src/core/carousel.tsx"),
+    "utf8",
+  );
+  const buttonSource = readFileSync(
+    resolve(root, "src/core/button.tsx"),
+    "utf8",
+  );
+  const inputSource = readFileSync(
+    resolve(root, "src/core/input.tsx"),
+    "utf8",
+  );
+  const selectSource = readFileSync(
+    resolve(root, "src/core/select.tsx"),
+    "utf8",
+  );
+  const tagSource = readFileSync(resolve(root, "src/core/tag.tsx"), "utf8");
+  const browserSource = readFileSync(
+    resolve(root, "showcase/e2e/canonical-visual-golden.pw.mjs"),
+    "utf8",
+  );
+
+  if (
+    !designLanguageSource.includes(
+      "DL-24 — Interaction state changes semantics and appearance, not ownership geometry",
+    )
+  ) {
+    failures.push("state.guard: missing canonical Interaction State authority");
+  }
+
+  for (const marker of [
+    "disabled={disabled || loading}",
+    "aria-busy={loading || undefined}",
+    "aria-pressed={selected}",
+  ]) {
+    if (!buttonSource.includes(marker)) {
+      failures.push("state.guard: Button state ownership changed: " + marker);
+    }
+  }
+
+  if (
+    !inputSource.includes(
+      'aria-invalid={status === "error" || props["aria-invalid"] || undefined}',
+    )
+  ) {
+    failures.push("state.guard: Input error state must own aria-invalid semantics");
+  }
+
+  for (const marker of [
+    'aria-expanded={open}',
+    'aria-invalid={status === "error" || props["aria-invalid"] || undefined}',
+    'aria-busy={loading || undefined}',
+    'aria-selected={checked}',
+  ]) {
+    if (!selectSource.includes(marker)) {
+      failures.push("state.guard: Select state ownership changed: " + marker);
+    }
+  }
+
+  for (const marker of [
+    "isInteractivePointerTarget(event.target)",
+    "event.button !== 0",
+    "!event.isPrimary",
+    "releasePointerCapture(event.pointerId)",
+    "onLostPointerCapture",
+    'data-slot="carousel-prev-arrow"',
+    'data-slot="carousel-next-arrow"',
+  ]) {
+    if (!carouselSource.includes(marker)) {
+      failures.push(
+        "state.guard: Carousel drag must preserve nested interactive pointer ownership: " +
+          marker,
+      );
+    }
+  }
+
+  if (
+    !tagSource.includes("hover:bg-current/10") ||
+    /hover:bg-(?:black|white)\//.test(tagSource)
+  ) {
+    failures.push(
+      "state.guard: Tag close hover must derive from current/semantic foreground",
+    );
+  }
+
+  if (
+    !browserSource.includes(
+      'test("interaction-carousel-arrows-remain-clickable-while-draggable"',
+    )
+  ) {
+    failures.push(
+      "state.guard: real-browser Carousel draggable/arrow contract is missing",
+    );
+  }
+
+  const governedStateFiles = [
+    "src/components/primitives/button.tsx",
+    "src/components/primitives/checkbox.tsx",
+    "src/components/primitives/radio-group.tsx",
+    "src/components/primitives/switch.tsx",
+    "src/components/primitives/tabs.tsx",
+    "src/components/primitives/table.tsx",
+    "src/core/button.tsx",
+    "src/core/input.tsx",
+    "src/core/select.tsx",
+    "src/core/segmented.tsx",
+    "src/core/tag.tsx",
+  ];
+  const stateGeometry =
+    /(?:disabled|aria-invalid|data-\[state=[^\]]+\]|peer-checked|peer-disabled):(?:h-|w-|min-h-|min-w-|max-h-|max-w-|p[trblxyse]?-|m[trblxyse]?-|border-(?:[2-9]|\[[^\]]+\]))/;
+  const stateGeometryBypasses = governedStateFiles.filter((file) =>
+    stateGeometry.test(readFileSync(resolve(root, file), "utf8")),
+  );
+
+  process.stdout.write(
+    "State corpus audit: stateGeometryBypasses=" +
+      stateGeometryBypasses.length +
+      "\n",
+  );
+
+  if (stateGeometryBypasses.length !== 0) {
+    failures.push(
+      "state.corpus: interaction state must not redefine canonical outer geometry: " +
+        stateGeometryBypasses.join(", "),
     );
   }
 }

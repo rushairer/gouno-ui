@@ -307,9 +307,7 @@
     "color": {
       "status": "certified",
       "affectedComponentReviews": [
-        "theme-system",
-        "core-alert",
-        "core-image"
+        "core-tag"
       ],
       "gates": {
         "inventory": {
@@ -350,8 +348,9 @@
             "showcase/demos/products/blog",
             "showcase/demos/products/blog-admin",
             "showcase/demos/products/gosso-admin",
+            "src/core/tag.tsx",
             "scripts/check-foundation-integrity.mjs",
-            "CI run 35347351003 (#458): Color corpus audit passed; only documented MFA QR bg-white fixed-media exception remains"
+            "CI run 35367064494 (#562): Color corpus audit unexpectedRawPaletteFiles=0; MFA fixed-color exception valid"
           ],
           "unexpectedRawPaletteFiles": 0,
           "fixedMediaException": "Gosso MFA QR bg-white quiet zone"
@@ -361,7 +360,7 @@
           "evidence": [
             "scripts/check-foundation-integrity.mjs",
             "tests/color-foundation-conformance.test.ts",
-            "CI run 35347351003 (#458): success; 161/161 test files, 832/832 tests"
+            "CI run 35367064494 (#562): success; Tag close hover currentColor guard active"
           ]
         },
         "visual": {
@@ -369,14 +368,15 @@
           "evidence": [
             "Canonical Visual Golden Smoke run 35347275527 (#422): success; 53/53 passed",
             "showcase/e2e/canonical-visual-golden.pw.mjs: color-browser-theme-meta-light passed",
-            "showcase/e2e/canonical-visual-golden.pw.mjs: color-browser-theme-meta-dark passed"
+            "showcase/e2e/canonical-visual-golden.pw.mjs: color-browser-theme-meta-dark passed",
+            "Canonical Visual Golden Smoke run 35367064504 (#479): success; 59/59 passed after FI-D004"
           ]
         },
         "consumers": {
           "status": "passed",
           "evidence": [
-            "Blog Consumer Parity run 35347312837 (#476): success",
-            "Gosso Admin Consumer Parity run 35347312859 (#471): success"
+            "Blog Consumer Parity run 35367064487 (#540): success after FI-D004",
+            "Gosso Admin Consumer Parity run 35367064636 (#535): success after FI-D004"
           ]
         }
       },
@@ -385,7 +385,8 @@
           "ThemeProvider hard-codes #ffffff/#11151b for browser theme-color instead of consuming --background.",
           "Canonical Showcase omitted the <meta name=\"theme-color\"> target, so its documented browser Theme side effect was not exercised.",
           "Alert close hover encodes raw black/white theme branches.",
-          "Image cover uses raw text-white over semantic overlay."
+          "Image cover uses raw text-white over semantic overlay.",
+          "Tag close hover encodes raw black alpha instead of deriving from current/semantic foreground."
         ],
         "functionalFixedColorExceptions": [
           "QRCode defaults to black modules on white background as generated/scannable media.",
@@ -395,6 +396,9 @@
           "Tag custom color prop renders caller-provided arbitrary background color.",
           "Badge custom color prop renders caller-provided arbitrary indicator color.",
           "Timeline item color is an explicit caller-provided semantic/content color API."
+        ],
+        "resolvedReopenings": [
+          "FI-D004: Tag close hover changed from raw black alpha to currentColor-derived hover feedback and is now guarded."
         ]
       }
     },
@@ -1210,37 +1214,94 @@
       }
     },
     "state": {
-      "status": "planned",
-      "affectedComponentReviews": [],
+      "status": "certified",
+      "affectedComponentReviews": [
+        "core-carousel",
+        "core-tag"
+      ],
       "gates": {
         "inventory": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/foundation-state-inventory.md",
+            "src/core/button.tsx",
+            "src/core/select.tsx",
+            "src/core/carousel.tsx",
+            "src/core/tag.tsx",
+            "src/components/primitives/checkbox.tsx",
+            "src/components/primitives/radio-group.tsx",
+            "src/components/primitives/switch.tsx",
+            "src/components/primitives/tabs.tsx",
+            "src/components/primitives/table.tsx"
+          ]
         },
         "tokens": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/design-language.md: F-04",
+            "docs/foundation-state-inventory.md",
+            "src/tokens.css",
+            "State reuses certified Color/Border/Focus/Sizing/Motion authorities; no parallel state token scale is admitted."
+          ]
         },
         "authority": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/design-language.md: DL-24",
+            "docs/foundation-state-inventory.md",
+            "src/core/carousel.tsx",
+            "src/core/tag.tsx"
+          ]
         },
         "corpus": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "src/core",
+            "src/components/primitives",
+            "showcase/demos/core",
+            "showcase/demos/products",
+            "CI run 35367064494 (#562): State corpus audit stateGeometryBypasses=0"
+          ],
+          "stateGeometryBypasses": 0
         },
         "guard": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "scripts/check-foundation-integrity.mjs",
+            "tests/state-foundation-conformance.test.tsx",
+            "CI run 35367064494 (#562): success; 167/167 test files, 864/864 tests"
+          ]
         },
         "visual": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "showcase/e2e/canonical-visual-golden.pw.mjs: interaction-carousel-arrows-remain-clickable-while-draggable",
+            "Canonical Visual Golden Smoke run 35367064504 (#479): success; 59/59 passed",
+            "Carousel draggable arrow click contract passed in 1.7s"
+          ]
         },
         "consumers": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Blog Consumer Parity run 35367064487 (#540): success",
+            "Gosso Admin Consumer Parity run 35367064636 (#535): success"
+          ]
         }
+      },
+      "inventory": {
+        "semanticStates": [
+          "disabled/unavailable",
+          "busy/loading/pending",
+          "selected/current/pressed/checked",
+          "open/expanded",
+          "validation error/warning",
+          "pointer/gesture ownership"
+        ],
+        "confirmedDefects": [
+          "FI-D002: draggable Carousel captures pointerdown from nested arrow buttons in real browsers.",
+          "FI-D004: Tag close hover uses raw black palette color instead of deriving from semantic/current foreground."
+        ],
+        "targetPolicy": "Role-correct DOM/ARIA owns state semantics; existing Foundation roles own visuals/geometry; gesture containers must preserve nested interactive pointer ownership."
       }
     },
     "accessibility": {

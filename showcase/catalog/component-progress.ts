@@ -293,11 +293,18 @@ componentReviews["core-steps"] = {
   baseline: "FI-D001 reopened / 2026-09-18",
 };
 
+componentReviews["core-tag"] = {
+  status: "reviewed",
+  scope: "FI-D004 certified: Tag close interaction feedback derives from current/semantic foreground instead of a raw palette color; Color and Interaction State exact-head guards/consumer parity are green.",
+  evidence: ["foundation-integrity.json", "docs/foundation-state-inventory.md", "docs/foundation-color-inventory.md", "src/core/tag.tsx", "tests/color-foundation-conformance.test.ts", "tests/state-foundation-conformance.test.tsx"],
+  baseline: "FI-D004 certified / 2026-09-19",
+};
+
 componentReviews["core-carousel"] = {
-  status: "reopened",
-  scope: "FI-D002: real Showcase arrow clicks are reported ineffective while JSDOM click tests pass; draggable viewport pointer capture is a browser-only event-ownership suspect and requires Playwright proof.",
-  evidence: ["docs/foundation-integrity-open-defects.md", "src/core/carousel.tsx", "showcase/demos/core/carousel/carousel-0.tsx", "tests/core-data-display-advanced.test.tsx"],
-  baseline: "FI-D002 reopened / 2026-09-18",
+  status: "reviewed",
+  scope: "FI-D002 certified: draggable Carousel preserves nested interactive pointer ownership, prev/next semantic slots are present on the real controls, and Playwright proves arrows navigate the canonical draggable Showcase.",
+  evidence: ["foundation-integrity.json", "docs/foundation-state-inventory.md", "src/core/carousel.tsx", "tests/state-foundation-conformance.test.tsx", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+  baseline: "FI-D002 certified / 2026-09-19",
 };
 
 componentReviews["core-config-provider"] = {
