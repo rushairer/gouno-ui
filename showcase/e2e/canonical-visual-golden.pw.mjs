@@ -124,6 +124,25 @@ async function prepareLightFixture(page, scenario) {
   });
 }
 
+async function prepareDarkFixture(page, scenario) {
+  await page.setViewportSize(scenario.viewport);
+  await page.addInitScript(() => {
+    localStorage.setItem("gouno-ui-showcase:theme", "dark");
+  });
+
+  await page.goto(
+    `/?embedded=1&workspace=${scenario.workspace}&brand=${scenario.brand}#${scenario.fixture}`,
+    { waitUntil: "networkidle" },
+  );
+
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(page.locator("html")).toHaveAttribute("data-brand", scenario.brand);
+  await expect(page.locator(scenario.ready).first()).toBeVisible();
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+  });
+}
+
 async function expectNoHorizontalDocumentOverflow(page) {
   const dimensions = await page.evaluate(() => ({
     viewport: window.innerWidth,
@@ -135,6 +154,55 @@ async function expectNoHorizontalDocumentOverflow(page) {
 for (const scenario of scenarios) {
   test(scenario.name, async ({ page }) => {
     await prepareLightFixture(page, scenario);
+
+    await expect(page).toHaveScreenshot(`${scenario.name}.png`, {
+      fullPage: true,
+      animations: "disabled",
+      caret: "hide",
+      maxDiffPixelRatio: 0.002,
+    });
+  });
+}
+
+const darkScenarios = [
+  {
+    name: "blog-admin-posts-desktop-dark",
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-posts",
+    viewport: desktop,
+    ready: '[data-slot="card"]',
+  },
+  {
+    name: "blog-admin-posts-mobile-dark",
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-posts",
+    viewport: mobile,
+    ready: '[data-slot="card"]',
+  },
+  {
+    name: "blog-admin-post-editor-desktop-dark",
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-post-editor",
+    viewport: desktop,
+    ready: '[data-slot="markdown-editor"]',
+  },
+  {
+    name: "gosso-site-settings-desktop-dark",
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-system-site-settings",
+    viewport: desktop,
+    ready: '[data-slot="card"]',
+  },
+];
+
+for (const scenario of darkScenarios) {
+  test(scenario.name, async ({ page }) => {
+    await prepareDarkFixture(page, scenario);
+    await expectNoHorizontalDocumentOverflow(page);
 
     await expect(page).toHaveScreenshot(`${scenario.name}.png`, {
       fullPage: true,
