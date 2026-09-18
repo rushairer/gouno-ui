@@ -43,6 +43,29 @@ describe("Editor Form composition contract", () => {
     expect(container.querySelector('[data-pattern="editor-form-actions"]')).toBeTruthy();
   });
 
+  it("binds real product editor surfaces to the same form grammar", () => {
+    const read = (path: string) =>
+      readFileSync(resolve(process.cwd(), "showcase/demos/products", path), "utf8");
+    const aiSettings = read("blog-admin/ai/settings/editors.tsx");
+    const workflow = read("blog-admin/ai/operations/workflow-editor.tsx");
+    const categories = read("blog-admin/categories.tsx");
+    const clients = read("gosso-admin/system-management/clients.tsx");
+
+    expect(aiSettings.match(/data-pattern="editor-form-composition"/g)).toHaveLength(5);
+    expect(categories).toContain('data-pattern="editor-form-composition"');
+    expect(clients).toContain('id="system-client-editor" data-pattern="editor-form-composition"');
+    expect(workflow).toContain(
+      '<div data-pattern="editor-form-composition" className="flex flex-col gap-5">',
+    );
+
+    const root = workflow.indexOf('data-pattern="editor-form-composition"');
+    const layout = workflow.indexOf("<DedicatedEditorLayout", root);
+    const actions = workflow.indexOf("<DedicatedEditorActions>", layout);
+    expect(root).toBeGreaterThanOrEqual(0);
+    expect(layout).toBeGreaterThan(root);
+    expect(actions).toBeGreaterThan(layout);
+  });
+
   it("documents the cross-surface ownership boundary", () => {
     const governance = readFileSync(resolve(process.cwd(), "docs/product-interface-governance.md"), "utf8");
     const design = readFileSync(resolve(process.cwd(), "docs/design-language.md"), "utf8");
