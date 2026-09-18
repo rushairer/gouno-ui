@@ -178,7 +178,7 @@ export function BlogAdminTagsDemo() {
       : null;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div data-pattern="collection-composition" className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/tags"
         note="保留真实标签卡片网格、重命名/合并、批量清洗、部分失败保留选择，以及 tag resource 的真实 WorkflowLauncher 资源输入与 Run 反馈；Fixture 不请求真实 Blog/AI API。"
