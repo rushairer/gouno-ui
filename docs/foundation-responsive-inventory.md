@@ -1,6 +1,6 @@
 # Responsive Foundation Inventory
 
-Status: FI-001 Phase 4 working inventory.
+Status: FI-001 Phase 4 certified inventory.
 Updated: 2026-09-19
 
 ## Canonical breakpoint authority
@@ -84,3 +84,5 @@ Responsive can be certified only when:
 4. Steps stacks below `sm` and remains horizontal above `sm`;
 5. representative mobile/desktop product goldens remain stable;
 6. Blog/Gosso reciprocal consumer parity passes.
+
+Re-certification evidence (2026-09-19): CI #568 passed the expanded Responsive guard with zero arbitrary responsive variants and zero px-width media queries; Canonical Visual Golden Smoke #485 passed the strengthened Steps geometry/browser contract (60/60); Blog parity #546 and Gosso parity #541 passed.
