@@ -373,7 +373,7 @@ const SplitterRoot = forwardRef<HTMLDivElement, SplitterProps>(function Splitter
                 onKeyDown={(event) => handleKeyDown(index, event)}
                 className={cn(
                   "relative shrink-0 bg-border outline-none transition-colors",
-                  "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
+                  "focus-control focus-visible:ring-offset-1",
                   disabled
                     ? "cursor-not-allowed opacity-50"
                     : "hover:bg-primary/60",
