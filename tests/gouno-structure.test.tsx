@@ -33,8 +33,9 @@ describe("Gouno application structure", () => {
     expect(container.getAttribute("data-slot")).toBe("page-container");
     expect(container.getAttribute("data-page")).toBe("settings");
     expect(container.getAttribute("id")).toBe("settings-page");
-    expect(container.className).toContain("max-w-[1440px]");
-    expect(container.className).toContain("gap-6");
+    expect(container.className).toContain("layout-page-container");
+    expect(container.className).not.toContain("gap-6");
+    expect(container.className).not.toContain("max-w-[1440px]");
     expect(container.className).toContain("custom-track");
   });
 
