@@ -749,7 +749,7 @@
       }
     },
     "responsive": {
-      "status": "in_progress",
+      "status": "certified",
       "affectedComponentReviews": [
         "theme-system",
         "core-steps",
@@ -769,34 +769,56 @@
           ]
         },
         "tokens": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
-            "src/tokens.css"
+            "src/tokens.css: --breakpoint-sm/md/lg/xl/2xl = 40/48/64/80/96rem",
+            "docs/foundation-responsive-inventory.md",
+            "tests/responsive-foundation-conformance.test.tsx"
           ]
         },
         "authority": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
+            "docs/design-language.md: DL-20",
             "src/tokens.css",
             "src/base.css",
-            "src/core/steps.tsx"
+            "src/core/steps.tsx",
+            "showcase/demos/core/steps-menu.tsx"
           ]
         },
         "corpus": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "scripts/check-foundation-integrity.mjs",
+            "src",
+            "showcase/demos/products",
+            "CI run 35352659898 (#492): Responsive corpus audit arbitraryResponsiveVariants=0, pxWidthMediaQueries=0"
+          ],
+          "arbitraryResponsiveVariants": 0,
+          "pxWidthMediaQueries": 0
         },
         "guard": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "scripts/check-foundation-integrity.mjs",
+            "tests/responsive-foundation-conformance.test.tsx",
+            "tests/component-progress.test.ts",
+            "CI run 35352659898 (#492): success; 163/163 test files, 842/842 tests"
+          ]
         },
         "visual": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Canonical Visual Golden Smoke run 35352659772 (#431): success; 55/55 passed",
+            "showcase/e2e/canonical-visual-golden.pw.mjs: responsive-steps-canonical-sm-stacking passed (600px column, 700px row)"
+          ]
         },
         "consumers": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Blog Consumer Parity run 35352659852 (#489): success",
+            "Gosso Admin Consumer Parity run 35352659789 (#484): success"
+          ]
         }
       },
       "inventory": {
@@ -808,10 +830,9 @@
           "2xl": "96rem"
         },
         "confirmedDefect": "Core Steps responsive=true used the only arbitrary max-[531px] breakpoint while its public API only promises narrow-screen stacking.",
-        "arbitraryResponsiveBreakpointUsages": [
-          "src/core/steps.tsx:max-[531px]"
-        ],
-        "productStepsConsumers": 0
+        "arbitraryResponsiveBreakpointUsages": [],
+        "productStepsConsumers": 0,
+        "currentPolicy": "Core/Gouno/Product responsive composition uses canonical sm/md/lg/xl/2xl tiers; no arbitrary min/max variant exception is admitted."
       }
     },
     "density": {
