@@ -8,23 +8,15 @@ describe("audited batch completion", () => {
       "core-kbd",
       "core-typography",
       "core-tag",
-      "core-input",
-      "core-textarea",
       "core-input-number",
-      "core-select",
       "core-form",
       "core-date-picker",
       "core-upload",
       "core-table",
-      "core-button",
       "core-input-otp",
       "core-segmented",
-      "core-radio",
-      "core-switch",
       "core-pagination",
       "core-alert",
-      "core-modal",
-      "core-drawer",
     ]) {
       expect(componentProgress(id, 0), id).toBe(100);
     }
@@ -46,6 +38,12 @@ describe("audited batch completion", () => {
       "core-image",
     ]) {
       expect(componentProgress(id, 0), id).toBe(100);
+    }
+  });
+
+  it("keeps Focus-owned reviews below certified completion", () => {
+    for (const id of ["core-button","core-input","core-textarea","core-checkbox","core-radio","core-switch","core-tabs","core-badge","core-select","core-modal","core-drawer"]) {
+      expect(componentProgress(id, 0), id).toBeLessThan(100);
     }
   });
 
