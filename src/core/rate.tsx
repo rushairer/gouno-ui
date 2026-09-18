@@ -100,7 +100,7 @@ export const Rate = forwardRef<HTMLDivElement, RateRuntimeProps>(function Rate(
             onClick={() => commit(itemValue)}
             onKeyDown={(event) => handleKeyDown(event, itemValue)}
             className={cn(
-              "inline-flex size-9 items-center justify-center rounded-md text-2xl outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+              "inline-flex size-9 items-center justify-center rounded-md text-2xl outline-none transition-colors focus-standalone disabled:cursor-not-allowed disabled:opacity-50",
               itemValue <= current
                 ? "text-warning"
                 : "text-muted-foreground/40",
