@@ -7,7 +7,7 @@ import {
   screen,
 } from "@testing-library/react";
 import { MessageProvider, useMessage } from "../src/core";
-import { componentProgress } from "../showcase/catalog/component-progress";
+import { componentReviews } from "../showcase/catalog/component-progress";
 import { messageReviewDocuments } from "../showcase/demos/core/feedback-review-6e2";
 
 function MessageProbe() {
@@ -98,6 +98,6 @@ describe("Message 6E2", () => {
     const document = messageReviewDocuments.message;
     expect(document.code).toContain("<MessageProvider");
     expect(document.code).toContain("useMessage");
-    expect(componentProgress("core-message", 75)).toBe(100);
+    expect(componentReviews["core-message"]?.evidence.length).toBeGreaterThan(0);
   });
 });
