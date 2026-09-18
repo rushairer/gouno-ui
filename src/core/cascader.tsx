@@ -111,7 +111,7 @@ export const Cascader = forwardRef<HTMLDivElement, CascaderProps>(
             aria-invalid={invalid}
             onChange={(event) => update(level, event.currentTarget.value)}
             className={cn(
-              "min-w-32 rounded-md border border-border bg-input px-3 outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+              "min-w-32 rounded-md border border-border bg-input px-3 outline-none focus-control disabled:cursor-not-allowed disabled:opacity-50",
               controlSizeClass(size),
               status === "error" &&
                 "border-destructive focus-visible:ring-destructive",
