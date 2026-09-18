@@ -414,6 +414,7 @@ export function AutomationManagement({
   return (
     <div className="flex flex-col gap-5">
       <TabPanelLead
+        title="自动化资产"
         description="Workflow 是持续运行的版本化自动化资产。左侧选择资产，右侧直接查看健康度、调度、运行记录、定义与人工执行。"
         actions={
           <Button
