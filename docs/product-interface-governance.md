@@ -213,6 +213,34 @@ Current automated checks should cover at least:
 - dense Table action geometry;
 - surface edge/radius/padding ownership.
 
+## PI-06 — Master-detail is a task pattern, not a generic list/detail default
+
+Use a persistent master-detail layout only when the list remains operationally important while the user inspects one item.
+
+Prefer master-detail when most of these are true:
+
+- users repeatedly switch among many peer objects in one session;
+- the selected detail is comparatively short or inspection-oriented;
+- keeping list position, filters or queue context visible materially improves the task;
+- the detail can remain legible without sacrificing the width required by its primary content.
+
+Prefer a list route followed by a dedicated detail route when most of these are true:
+
+- the object is an asset/configuration entity rather than an inbox item;
+- entering detail starts a deeper management, editing, execution or troubleshooting task;
+- the detail contains multiple dense regions, wide tables/grids or long-form controls;
+- the list no longer contributes meaningful context after an object is selected.
+
+Do not introduce a permanent rail merely because both a list and a detail exist.
+
+Current canonical examples:
+
+- **AI Operations / 待我处理** may use master-detail because users process a queue and repeatedly move between decisions.
+- **AI Operations / 自动化 / Workflow** uses `Workflow list → dedicated Workflow detail`; the detail owns the full content width and links to Run evidence in 运行中心.
+- **AI Operations / 运行中心** keeps master-detail for Workflow/Agent Run evidence because rapid evidence-to-evidence inspection is the task itself.
+
+A dedicated detail route should preserve stable deep-link state and an explicit return path to its parent list. Do not replace this with hidden local-only selection state.
+
 ## Review checklist
 
 Before accepting a normal Admin page or route family, ask:
@@ -229,6 +257,8 @@ Before accepting a normal Admin page or route family, ask:
 10. Is elevation being inferred merely from `sticky`/`fixed`/`absolute`? If yes, stop and classify the actual layer relationship.
 11. If a semantic overlay has a shadow, does it actually cover or float above peer content?
 12. Has the same rule been scanned across Gosso Admin + Blog Admin rather than fixed only where a screenshot exposed it?
-13. Is there a regression gate for the invariant, or a documented reason why only visual review can prove it?
+13. Is a master-detail layout actually supporting repeated peer switching, or is it stealing width from a deep asset-management task?
+14. If the detail is a dedicated route, does it preserve a deep link and an explicit return path to the parent list?
+15. Is there a regression gate for the invariant, or a documented reason why only visual review can prove it?
 
 A page that passes component API tests but fails these questions is not interface-conformant.
