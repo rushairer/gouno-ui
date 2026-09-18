@@ -986,24 +986,51 @@
       }
     },
     "focus": {
-      "status": "planned",
-      "affectedComponentReviews": [],
+      "status": "in_progress",
+      "affectedComponentReviews": [
+        "theme-system",
+        "core-button",
+        "core-input",
+        "core-tabs",
+        "core-modal",
+        "core-drawer"
+      ],
       "gates": {
         "inventory": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/foundation-focus-inventory.md",
+            "src/base.css",
+            "src/tokens.css",
+            "src/components/primitives/button.tsx",
+            "src/components/primitives/input.tsx",
+            "src/components/primitives/tabs.tsx",
+            "src/components/primitives/dialog.tsx",
+            "src/components/primitives/sheet.tsx"
+          ]
         },
         "tokens": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "docs/foundation-focus-inventory.md",
+            "src/tokens.css",
+            "src/base.css"
+          ]
         },
         "authority": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "docs/foundation-focus-inventory.md",
+            "src/tokens.css",
+            "src/base.css"
+          ]
         },
         "corpus": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "src",
+            "showcase/demos/products"
+          ]
         },
         "guard": {
           "status": "pending",
@@ -1017,6 +1044,18 @@
           "status": "pending",
           "evidence": []
         }
+      },
+      "inventory": {
+        "capturedFocusVisibleFiles": 45,
+        "capturedRing2Occurrences": 28,
+        "capturedRing3Occurrences": 9,
+        "capturedRingOffset2Occurrences": 8,
+        "confirmedDefects": [
+          "Focus geometry is split between 2px Core rings, 3px primitive rings and an independently encoded global outline fallback.",
+          "Dialog and Sheet close controls use focus: instead of focus-visible:.",
+          "Product Showcase composition can directly own focus ring geometry."
+        ],
+        "targetPolicy": "Named fallback/control/standalone/inset/within roles own focus geometry; local state may alter semantic color but not thickness or offset."
       }
     },
     "overlay": {
