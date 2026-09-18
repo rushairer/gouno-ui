@@ -130,7 +130,7 @@ Phase 4 — Interaction Foundations is active:
 - **Motion 7/7** — CSS and JavaScript share one reduced-motion policy across imperative scrolling and Carousel lifecycle/autoplay.
 - **Focus 7/7** — Base fallback and component-owned focus share canonical 2px geometry, 3px/direct-`focus:ring`/double-outline bypasses are zero, browser focus ownership is executable, and Blog/Gosso reciprocal consumer parity is green.
 - **Overlay/layering 7/7** — semantic `sticky / shell / floating / modal / popup / notice` roles own application-global stacking; nested popup portals are deterministically above modal surfaces; raw global layer bypasses are zero; Showcase tooling is isolated outside the product Layer scale.
-- **Interaction state** — next Foundation to inventory, with FI-D002 Carousel real-browser arrow ownership as the first mandatory defect probe.
+- **Interaction state in progress** — semantic state/ARIA ownership, geometry preservation and gesture ownership are now inventoried. FI-D002 Carousel drag capture is fixed in source with a real-browser arrow-navigation regression; FI-D004 reopened Color after the State audit found a raw Tag close-hover palette bypass.
 
 Three component defects discovered during visual review are now explicitly tracked in `docs/foundation-integrity-open-defects.md`: Steps connector/copy geometry (FI-D001), real-browser Carousel arrow navigation (FI-D002), and ConfigProvider demo proof quality (FI-D003). Their component reviews are reopened immediately; they must be resolved before final certification rather than deferred to a separate session.
 
