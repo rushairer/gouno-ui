@@ -51,7 +51,7 @@ describe("Accessibility Foundation", () => {
     expect(hiddenSelect?.id).not.toBe(combobox.id);
     expect(hiddenSelect?.hasAttribute("aria-labelledby")).toBe(false);
     expect(hiddenSelect?.hasAttribute("aria-describedby")).toBe(false);
-    expect(screen.getByLabelText("状态")).toBe(combobox);
+    expect(combobox.getAttribute("aria-labelledby")).toBe(fieldLabel.id);
     expect(combobox.getAttribute("aria-required")).toBe("true");
     expect(combobox.getAttribute("aria-invalid")).toBe("true");
     const describedBy = combobox.getAttribute("aria-describedby")?.split(" ") ?? [];
@@ -167,8 +167,9 @@ describe("Accessibility Foundation", () => {
     const table = source("src/components/primitives/table.tsx");
 
     expect(field).toContain('id={labelId}');
-    expect(field).toContain("childOwnsAccessibleName");
-    expect(field).toContain("htmlFor={childOwnsAccessibleName ? undefined : controlId}");
+    expect(field).toContain("childHasOwnAccessibleName");
+    expect(field).toContain("groupsIndependentControl");
+    expect(field).toContain("htmlFor={groupsIndependentControl ? undefined : controlId}");
     expect(select).toContain("const nativeSelectId =");
     expect(select).toContain("id={nativeSelectId}");
     expect(select).toContain("id={baseId} role=\"combobox\"");
