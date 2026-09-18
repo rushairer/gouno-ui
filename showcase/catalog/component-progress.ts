@@ -143,16 +143,7 @@ componentReviews["pattern-markdown-editor"] = {
   evidence: ["showcase/demos/patterns/markdown-editor.tsx", "tests/pattern-document-editor.test.tsx"],
   baseline: "2026-09-16",
 };
-componentReviews["pattern-dedicated-editor"] = {
-  status: "reviewed",
-  scope: "Showcase-only composition contract for deep Configuration and Workspace editors; no public runtime DedicatedEditor API is admitted.",
-  evidence: [
-    "docs/patterns/dedicated-editor.md",
-    "showcase/demos/patterns/dedicated-editor.tsx",
-    "tests/pattern-dedicated-editor-showcase.test.tsx",
-  ],
-  baseline: "2026-09-18",
-};
+
 componentReviews["pattern-editor-form-composition"] = {
   status: "reviewed",
   scope: "Showcase-only cross-surface editor-form composition contract for Modal, Drawer and Dedicated Editor internals; standardizes field, section, feedback and action rhythm without adding a public runtime API.",
@@ -181,6 +172,25 @@ for (const id of [
     baseline: "2026-09-18",
   };
 }
+
+componentReviews["core-typography"] = {
+  status: "reopened",
+  scope: "FI-001: Typography Foundation reopened because semantic heading level and visual hierarchy remain coupled, PageHeader overrides the canonical H1 scale, and product corpora retain raw heading/text-size authority.",
+  evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "src/core/typography.tsx", "src/gouno/page-header.tsx"],
+  baseline: "FI-001 / 2026-09-18",
+};
+componentReviews["gouno-page-header"] = {
+  status: "reopened",
+  scope: "FI-001: PageHeader typography authority is reopened because its H1 overrides the Core Heading visual scale with a local text utility.",
+  evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "src/gouno/page-header.tsx"],
+  baseline: "FI-001 / 2026-09-18",
+};
+componentReviews["pattern-dedicated-editor"] = {
+  status: "reopened",
+  scope: "FI-001: Dedicated Editor heading hierarchy is reopened until nested/standalone semantic levels and task-title visual roles are explicit and corpus-guarded.",
+  evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "docs/patterns/dedicated-editor.md", "showcase/components/patterns/dedicated-editor.tsx"],
+  baseline: "FI-001 / 2026-09-18",
+};
 
 export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
   return review?.status === "reviewed" ? 100 : Math.min(fallback, 99);
