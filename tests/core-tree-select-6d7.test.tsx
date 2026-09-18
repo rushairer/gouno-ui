@@ -125,7 +125,7 @@ describe("TreeSelect 6D7", () => {
     expect(select.getAttribute("name")).toBe("section");
     expect(select.hasAttribute("required")).toBe(true);
     expect(select.getAttribute("aria-invalid")).toBe("true");
-    expect(select.className).toContain("h-11");
+    expect(select.className).toContain("control-height-large");
   });
 
   it("keeps whole-control disabled semantics native", () => {
