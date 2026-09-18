@@ -190,7 +190,7 @@ test("blog-admin-ai-operations-overview-visual-evidence", async ({ page }, testI
     ready: '[role="tablist"]',
   });
 
-  await expect(page.getByRole("heading", { level: 2, name: "今天需要关注什么" })).toBeVisible();
+  await expect(page.getByText(/先处理失败与等待人工的运行/)).toBeVisible();
   await expect(page.getByRole("region", { name: "需要关注" })).toBeVisible();
   await expect(page.getByRole("region", { name: "自动化健康度" })).toBeVisible();
   await expectNoHorizontalDocumentOverflow(page);
