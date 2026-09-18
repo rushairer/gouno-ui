@@ -370,8 +370,9 @@ export function AutomationManagement({
               ]}
             />
 
-            <section
-              className="overflow-hidden rounded-xl border bg-background"
+            <Card
+              padding="none"
+              className="overflow-hidden"
               aria-label="Workflow 资产"
             >
               <div
@@ -451,7 +452,7 @@ export function AutomationManagement({
                   </div>
                 )}
               </div>
-            </section>
+            </Card>
           </div>
         ) : (
           <Card padding="base">
