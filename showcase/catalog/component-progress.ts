@@ -82,6 +82,7 @@ const completedComponents = new Set([
   "pattern-ai-suggestion-review",
   "pattern-markdown-editor",
   "pattern-dedicated-editor",
+  "pattern-editor-form-composition",
   "pattern-collection-composition",
   "pattern-record-detail-composition",
   "pattern-master-detail-composition",
@@ -149,6 +150,16 @@ componentReviews["pattern-dedicated-editor"] = {
     "docs/patterns/dedicated-editor.md",
     "showcase/demos/patterns/dedicated-editor.tsx",
     "tests/pattern-dedicated-editor-showcase.test.tsx",
+  ],
+  baseline: "2026-09-18",
+};
+componentReviews["pattern-editor-form-composition"] = {
+  status: "reviewed",
+  scope: "Showcase-only cross-surface editor-form composition contract for Modal, Drawer and Dedicated Editor internals; standardizes field, section, feedback and action rhythm without adding a public runtime API.",
+  evidence: [
+    "docs/patterns/editor-form-composition.md",
+    "showcase/demos/patterns/editor-form-composition.tsx",
+    "tests/pattern-editor-form-composition.test.tsx",
   ],
   baseline: "2026-09-18",
 };
