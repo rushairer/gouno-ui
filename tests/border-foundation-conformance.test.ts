@@ -12,11 +12,11 @@ describe("Border Foundation conformance", () => {
     expect(tokens).toContain("--border-width-boundary: 1px;");
     expect(tokens).toContain("--border-width-emphasis: 2px;");
     for (const utility of [
-      "@utility border-emphasis",
-      "@utility border-bs-emphasis",
-      "@utility border-be-emphasis",
-      "@utility border-s-emphasis",
-      "@utility border-e-emphasis",
+      "@utility edge-emphasis",
+      "@utility edge-bs-emphasis",
+      "@utility edge-be-emphasis",
+      "@utility edge-s-emphasis",
+      "@utility edge-e-emphasis",
     ]) {
       expect(tokens).toContain(utility);
     }
@@ -28,10 +28,10 @@ describe("Border Foundation conformance", () => {
     const steps = source("src/core/steps.tsx");
     const table = source("src/components/primitives/table.tsx");
 
-    expect(spinner).toContain("border-emphasis border-current border-e-transparent");
-    expect(timeline).toContain("block size-3 rounded-full border-emphasis");
-    expect(steps).toContain("border-be-emphasis border-primary");
-    expect(table).toContain("[&_tfoot_tr]:border-bs-emphasis");
+    expect(spinner).toContain("edge-emphasis border-current border-e-transparent");
+    expect(timeline).toContain("block size-3 rounded-full edge-emphasis");
+    expect(steps).toContain("edge-be-emphasis border-primary");
+    expect(table).toContain("[&_tfoot_tr]:edge-bs-emphasis");
 
     for (const implementation of [spinner, timeline, steps, table]) {
       expect(implementation).not.toMatch(/\bborder(?:-[trblxyse]|-(?:bs|be))?-2\b/);
@@ -45,9 +45,9 @@ describe("Border Foundation conformance", () => {
       "showcase/demos/products/blog-admin/ai/operations/canonical-patterns.tsx",
     );
 
-    expect(demo).toContain("border-be-emphasis");
-    expect(markdown).toContain("border-s-emphasis ps-4");
-    expect(selected).toContain("border-s-emphasis");
+    expect(demo).toContain("edge-be-emphasis");
+    expect(markdown).toContain("edge-s-emphasis ps-4");
+    expect(selected).toContain("edge-s-emphasis");
     expect(selected).toContain("border-s-primary");
     expect(selected).toContain("border-s-transparent");
 
@@ -61,6 +61,6 @@ describe("Border Foundation conformance", () => {
 
     expect(timeline).toContain('"--timeline-color": color');
     expect(timeline).toContain("border-[var(--timeline-color,var(--primary))]");
-    expect(timeline).toContain("border-emphasis");
+    expect(timeline).toContain("edge-emphasis");
   });
 });
