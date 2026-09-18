@@ -207,7 +207,7 @@ function ProviderList({ providers, actions }: { providers: ProviderFixture[]; ac
     <div className="flex flex-col gap-5">
       <Card padding="base">
         <div className="flex flex-col gap-4">
-          <div><Heading level={2} className="text-base">默认用途</Heading><Text size="sm" tone="muted">决定编辑器、运营分析与图片生成默认使用的模型。</Text></div>
+          <div><Heading level={2} variant="compact">默认用途</Heading><Text size="sm" tone="muted">决定编辑器、运营分析与图片生成默认使用的模型。</Text></div>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="flex flex-col gap-2"><Text size="sm">文本模型</Text><Select value={writing ? String(writing) : ""} onChange={(value) => actions.onSetDefaultProvider(Number(value), "writing")}><option value="">未设置</option>{providers.filter((item) => item.enabled).map((provider) => <option key={provider.id} value={String(provider.id)}>{provider.name} · {provider.model}</option>)}</Select></div>
             <div className="flex flex-col gap-2"><Text size="sm">图片生成</Text><Select value={image ? String(image) : ""} onChange={(value) => actions.onSetDefaultProvider(Number(value), "image")}><option value="">未设置</option>{providers.filter((item) => item.enabled).map((provider) => <option key={provider.id} value={String(provider.id)}>{provider.name} · {provider.model}</option>)}</Select></div>
