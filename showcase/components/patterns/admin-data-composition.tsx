@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Card, CardContent, CardHeader, CardTitle, Text } from "../../../src/core";
+import { Card, CardContent, CardHeader, CardTitle, Heading, Text } from "../../../src/core";
 
 export function CompositionContractLead({
   title,
@@ -16,8 +16,8 @@ export function CompositionContractLead({
       className="flex flex-col gap-3 border-b pb-5 sm:flex-row sm:items-start sm:justify-between"
     >
       <div className="min-w-0">
-        <h2 className="text-xl font-semibold tracking-tight text-foreground">{title}</h2>
-        <Text size="sm" tone="muted" className="mt-1 max-w-3xl leading-relaxed">
+        <Heading level={2} variant="section" className="text-foreground">{title}</Heading>
+        <Text size="sm" tone="muted" leading="relaxed" className="mt-1 max-w-3xl">
           {description}
         </Text>
       </div>
@@ -140,9 +140,9 @@ export function SettingsSection({
     <Card padding="none" data-pattern="settings-section" className="overflow-hidden">
       <CardHeader className="border-b p-6">
         <div className="min-w-0">
-          <CardTitle className="text-base">{title}</CardTitle>
+          <CardTitle>{title}</CardTitle>
           {description ? (
-            <Text size="xs" tone="muted" className="mt-1 leading-relaxed">
+            <Text size="xs" tone="muted" leading="relaxed" className="mt-1">
               {description}
             </Text>
           ) : null}
@@ -174,7 +174,7 @@ export function DataSummaryComposition({
           className="min-w-0 border-b p-4 last:border-b-0 sm:border-r sm:[&:nth-child(2n)]:border-r-0 xl:border-b-0 xl:[&:nth-child(2n)]:border-r xl:last:border-r-0"
         >
           <Text size="xs" tone="muted">{item.label}</Text>
-          <div className="mt-1 text-xl font-semibold tracking-tight">{item.value}</div>
+          <div data-typography-role="metric-compact" className="mt-1 type-metric-compact">{item.value}</div>
           {item.detail ? (
             <Text size="xs" tone="muted" className="mt-1">
               {item.detail}
