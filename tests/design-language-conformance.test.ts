@@ -452,6 +452,7 @@ describe("design-language conformance", () => {
     expect(governance).toContain("## PI-05 — New binding rules require a corpus pass, not screenshot patching");
     expect(governance).toContain("## PI-06 — Master-detail is a task pattern, not a generic list/detail default");
     expect(governance).toContain("## PI-07 — List-triggered create/edit uses complexity-based editor surfaces");
+    expect(governance).toContain("## PI-08 — Common admin data blocks use governed composition contracts");
     expect(governance).toContain("Configuration Editor");
     expect(governance).toContain("Workspace Editor");
     const dedicatedEditor = readFileSync(resolve(repoRoot, "docs/patterns/dedicated-editor.md"), "utf8");
