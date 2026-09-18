@@ -101,7 +101,7 @@ function WorkflowListRow({
       variant="ghost"
       block
       aria-label={`打开 Workflow：${workflow.name}`}
-      className="grid h-auto w-full min-w-0 grid-cols-1 gap-4 whitespace-normal rounded-none border-b px-5 py-4 text-left font-normal transition-colors last:border-b-0 hover:bg-muted/30 xl:grid-cols-[minmax(17rem,1.45fr)_minmax(12rem,0.8fr)_minmax(16rem,1.15fr)_8rem_1.5rem] xl:items-center [&>span]:contents"
+      className="group grid h-auto w-full min-w-0 grid-cols-1 gap-4 whitespace-normal rounded-none border-b px-5 py-4 text-left font-normal transition-colors last:border-b-0 hover:bg-muted/30 xl:grid-cols-[minmax(17rem,1.45fr)_minmax(12rem,0.8fr)_minmax(16rem,1.15fr)_8rem_1.5rem] xl:items-center [&>span]:contents"
       onClick={() => onSelect?.(workflow)}
     >
       <span className="flex min-w-0 items-start gap-3">
@@ -133,7 +133,9 @@ function WorkflowListRow({
 
       <span className="min-w-0">
         <Text size="xs" tone="muted" className="xl:hidden">执行计划</Text>
-        <strong className="mt-1 block text-sm font-medium">{workflow.schedule}</strong>
+        <code className="mt-1 block font-mono text-xs font-medium text-foreground">
+          {workflow.schedule}
+        </code>
         <Text size="xs" tone="muted" className="mt-1">
           {workflow.timezone}
         </Text>
@@ -155,15 +157,15 @@ function WorkflowListRow({
 
       <span className="min-w-0">
         <Text size="xs" tone="muted" className="xl:hidden">运行质量</Text>
-        <strong className="mt-1 block text-sm font-medium">
-          {workflow.metrics.runs} 次
+        <strong className="mt-1 block text-sm font-semibold">
+          {workflowSuccessRate(workflow)}%
         </strong>
         <Text
           size="xs"
           tone={workflow.metrics.failures ? "danger" : "muted"}
           className="mt-1"
         >
-          {workflow.metrics.failures} 次失败
+          {workflow.metrics.runs} 次运行 · {workflow.metrics.failures} 次失败
         </Text>
       </span>
 
