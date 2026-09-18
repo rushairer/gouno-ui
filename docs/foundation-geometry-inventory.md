@@ -61,6 +61,22 @@ Consumers reference those variables through Tailwind-recognized height/size util
 
 Different internal classes are acceptable only when they are mathematically derived from the same outer ControlSize authority and preserve normal caller override semantics.
 
+## Density inventory
+
+The audit confirmed a functional defect rather than a naming-only inconsistency. `ThemeProvider` publicly exposes `Density = comfortable | compact` and writes it to `documentElement.dataset.density`, while the canonical Theme Showcase describes it as global interaction density. Before FI-001, no root density selector consumed that value, so changing the global density had no visual effect.
+
+Table already owns a separate component-local vocabulary, `default | compact | touch`. These vocabularies serve different layers and are intentionally retained:
+
+- Theme `comfortable | compact` is the application-level default policy.
+- Table `default` inherits that policy.
+- Table `compact | touch` are explicit local overrides.
+
+Density does **not** redefine ControlSize or the named spacing scale. Table's stable geometry is owned by `--table-density-*` tokens, while CSS resolves the active policy from the root Theme density plus the Table's local `data-density` state. The Table implementation therefore no longer carries duplicate `density === ...` padding/height utility branches.
+
+The comfortable baseline preserves the previous default Table geometry: 16px inline / 12px block cell padding, 40px header height, 48px footer height and 24px bordered edge inset. Compact remains 12px / 8px with 36px header, 40px footer and 16px edge inset. Touch remains a deliberate local mode with 16px block/inline cell padding, 48px header, 56px footer and 24px edge inset.
+
+Product fixtures may select density through public component APIs but may not write the Foundation's `data-density` hook directly.
+
 ## Radius inventory
 
 The Radius audit confirmed a split numeric authority: `--radius-md`, `--radius` and `--radius-control` all independently encoded 6px even though default control surfaces already resolved through the medium radius path.
