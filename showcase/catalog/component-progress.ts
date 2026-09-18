@@ -234,10 +234,10 @@ for (const id of ["theme-system", "core-table"]) {
 
 for (const id of ["core-spin", "core-timeline", "core-steps", "core-table"]) {
   componentReviews[id] = {
-    status: "reopened",
-    scope: "FI-001 Phase 2: Border Foundation reopened to replace raw 2px border-width utilities with one semantic emphasis-width authority while preserving ordinary 1px boundaries and semantic border colors.",
-    evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "src/tokens.css", "src/core/spinner.tsx", "src/core/timeline.tsx", "src/core/steps.tsx", "src/components/primitives/table.tsx"],
-    baseline: "FI-001 Phase 2 / 2026-09-18",
+    status: "reviewed",
+    scope: "FI-001 Border certified: ordinary boundaries remain 1px semantic borders, 2px indicator/emphasis geometry resolves through edge-* roles, and stronger 4px reading accents are explicitly classified rather than encoded as raw numeric widths.",
+    evidence: ["foundation-integrity.json", "docs/design-language.md", "docs/foundation-geometry-inventory.md", "tests/border-foundation-conformance.test.ts", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "FI-001 Border certified / 2026-09-18",
   };
 }
 
