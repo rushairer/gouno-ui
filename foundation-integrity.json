@@ -1090,7 +1090,9 @@
     "overlay": {
       "status": "in_progress",
       "affectedComponentReviews": [
+        "theme-system",
         "gouno-app-shell",
+        "pattern-bulk-action-bar",
         "core-affix",
         "core-back-top",
         "core-float-button",
@@ -1127,33 +1129,43 @@
           ]
         },
         "tokens": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
-            "docs/foundation-overlay-inventory.md",
-            "src/tokens.css"
+            "src/tokens.css: --layer-sticky/shell/floating/modal/popup/notice",
+            "src/tokens.css: layer-* semantic utilities"
           ]
         },
         "authority": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
+            "docs/design-language.md: DL-23",
             "docs/foundation-overlay-inventory.md",
-            "src/tokens.css"
+            "src/tokens.css",
+            "showcase/styles/showcase.css: Showcase-only tooling layer"
           ]
         },
         "corpus": {
           "status": "in_progress",
           "evidence": [
             "src",
-            "showcase"
+            "showcase/components",
+            "showcase/demos/products",
+            "scripts/check-foundation-integrity.mjs"
           ]
         },
         "guard": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "scripts/check-foundation-integrity.mjs",
+            "tests/overlay-foundation-conformance.test.tsx"
+          ]
         },
         "visual": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "showcase/demos/core/modal/layering.tsx",
+            "showcase/e2e/canonical-visual-golden.pw.mjs: overlay-semantic-modal-popup-ordering"
+          ]
         },
         "consumers": {
           "status": "pending",
@@ -1162,11 +1174,23 @@
       },
       "inventory": {
         "observedGlobalLayers": {
-          "sticky": [20, 30],
-          "floating": [40],
-          "modalAndPopupCollision": [50],
-          "notice": [100],
-          "showcaseTooling": [60, 100]
+          "sticky": [
+            20,
+            30
+          ],
+          "floating": [
+            40
+          ],
+          "modalAndPopupCollision": [
+            50
+          ],
+          "notice": [
+            100
+          ],
+          "showcaseTooling": [
+            60,
+            100
+          ]
         },
         "confirmedDefects": [
           "Application-global z-index authority is encoded as raw component literals instead of semantic Layer roles.",
