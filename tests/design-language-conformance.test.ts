@@ -186,16 +186,22 @@ describe("design-language conformance", () => {
     ]);
   });
 
-  it("allows manual raised elevation only as the audited hover state of overview peer cards", () => {
-    const manualRaisedFiles = allProductFiles
-      .filter((file) => readFileSync(file, "utf8").includes("shadow-raised"))
+  it("keeps semantic surface and raised shadows component-owned across product fixtures", () => {
+    const manualSemanticShadowFiles = allProductFiles
+      .filter((file) =>
+        /\\bshadow-(?:control|surface|raised|overlay|modal)\\b/.test(
+          readFileSync(file, "utf8"),
+        ),
+      )
       .map((file) => relative(productsRoot, file).replaceAll("\\", "/"))
       .sort();
 
-    expect(manualRaisedFiles).toEqual(["gosso-admin/overview.tsx"]);
+    expect(manualSemanticShadowFiles).toEqual([]);
     const overview = readFileSync(resolve(productsRoot, "gosso-admin/overview.tsx"), "utf8");
-    expect(overview).toContain("shadow-surface");
-    expect(overview).toContain("hover:shadow-raised");
+    expect(overview).toContain("interactive");
+    expect(overview).toContain('padding="none"');
+    expect(overview).not.toContain("shadow-surface");
+    expect(overview).not.toContain("hover:shadow-raised");
   });
 
   it("keeps BulkActionBar sticky but contextual and ground-level by default", () => {
