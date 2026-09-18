@@ -1045,9 +1045,14 @@ if (motion?.status !== "planned") {
   const directSmoothScrollFiles = sourceFiles.filter((file) =>
     /behavior\s*:\s*["']smooth["']/.test(readFileSync(file, "utf8")),
   );
-  const directMotionQueryFiles = sourceFiles.filter((file) =>
-    /window\.matchMedia/.test(readFileSync(file, "utf8")),
-  );
+  const directMotionQueryFiles = sourceFiles.filter((file) => {
+    const source = readFileSync(file, "utf8");
+    return (
+      /matchMedia/.test(source) &&
+      (/REDUCED_MOTION_QUERY/.test(source) ||
+        /prefers-reduced-motion:\s*reduce/.test(source))
+    );
+  });
   const allowedMotionQueryFiles = new Set([
     resolve(root, "src/lib/motion.ts"),
     resolve(root, "src/hooks/use-reduced-motion.ts"),
