@@ -351,6 +351,23 @@ Rules:
 
 This slot model applies recursively: a Card or bounded task can have its own local heading, feedback and content regions, but local regions do not compete with route- or Tab-level slots.
 
+## DL-16 — Bounded business sections use canonical surface anatomy
+
+A business section that needs a persistent boundary is a semantic surface, not a bundle of page-local border/radius/background classes.
+
+For normal application content:
+
+- prefer Core `Card` anatomy for a bounded section with a title, description, actions or content inset;
+- prefer a self-surfaced Table/List when the collection itself is the section;
+- prefer open content with spacing/dividers when a second boundary would only duplicate the parent surface;
+- product pages must not repeatedly recreate the normal application surface with combinations such as `rounded-xl border bg-background p-6` when canonical Card anatomy expresses the same role;
+- a custom semantic section may remain product-local when its layout genuinely differs from Card, but it must declare that semantic reason through structure/data attributes and keep the shared 24px edge axis;
+- nested sections inside an existing surface should use open structure, dividers or subtle treatment before adding another bounded Card.
+
+For editor forms, this rule combines with PI-09: the editor surface owns its outer boundary while form sections own only the grouping needed inside that editor.
+
+This rule does not require a public `SectionSurface` component. Showcase-private composition helpers may encode the canonical anatomy for validation.
+
 ## Review checklist
 
 When a page looks inconsistent, ask in this order:
@@ -369,5 +386,7 @@ When a page looks inconsistent, ask in this order:
 12. If a Table has repeated row actions, do they remain one structural family on one line while Table overflow owns width pressure?
 13. Can selected/count/error/loading state change without altering sibling control geometry?
 14. If this rule just changed, have all already-migrated governed surfaces been scanned and migrated or explicitly documented as intentional exceptions?
+15. Is a bounded business section using canonical Card/Table/List anatomy rather than recreating the same border/radius/background recipe locally?
+16. Inside an editor, does the owning surface control outer padding while the form composition owns field/section rhythm?
 
 These rules are design-language invariants, not permission to create new Pattern/Gouno components. Public abstraction still requires the product-driven admission process.
