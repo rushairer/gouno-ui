@@ -63,9 +63,20 @@ Different internal classes are acceptable only when they are mathematically deri
 
 ## Radius inventory
 
-Current control surfaces predominantly use the medium radius path (`rounded-md` / 6px). `--radius-control` is also 6px and currently has a narrower explicit consumer in base control styling.
+The Radius audit confirmed a split numeric authority: `--radius-md`, `--radius` and `--radius-control` all independently encoded 6px even though default control surfaces already resolved through the medium radius path.
 
-This is a split authority candidate, not yet a certified defect. Radius work must determine whether `radius-control` is the intended semantic owner and, if so, migrate controls without changing established geometry accidentally.
+The canonical numeric authority is now the Theme radius scale:
+
+- `--radius-sm: 4px`
+- `--radius-md: 6px`
+- `--radius-lg: 10px`
+- `--radius-xl: 10px`
+
+`--radius` and `--radius-control` remain compatibility/semantic aliases, but both resolve to `var(--radius-md)` and therefore no longer own numeric values. Existing `rounded-md` consumers remain correct and do not need mechanical replacement.
+
+The audit also found one real Core bypass: Checkbox encoded `rounded-[4px]` even though the semantic small radius already exists. Checkbox now consumes `rounded-sm` with no visual geometry change.
+
+Arbitrary radii are not globally forbidden. The Tooltip arrow keeps `rounded-[2px]` as an explicit local shape exception: it is a rotated arrow primitive, not a control or surface radius contract. Product fixtures may not introduce arbitrary `rounded-[...]` values; new Foundation/Core exceptions require inventory review.
 
 ## Audit rules
 
