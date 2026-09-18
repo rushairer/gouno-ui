@@ -259,6 +259,15 @@ for (const id of ["theme-system", "core-steps", "core-grid"]) {
   };
 }
 
+for (const id of ["core-anchor", "core-back-top", "core-carousel"]) {
+  componentReviews[id] = {
+    status: "reopened",
+    scope: "FI-001 Phase 4: Motion Foundation reopened because CSS reduced-motion did not govern imperative smooth scroll, and Carousel inline/lifecycle motion could bypass the global preference.",
+    evidence: ["docs/foundation-motion-inventory.md", "foundation-integrity.json", "src/base.css", "src/lib/motion.ts", "src/hooks/use-reduced-motion.ts", "src/core/anchor.tsx", "src/core/affix.tsx", "src/core/carousel.tsx"],
+    baseline: "FI-001 Phase 4 Motion / 2026-09-18",
+  };
+}
+
 componentReviews["pattern-dedicated-editor"] = {
   status: "reviewed",
   scope: "FI-001 certified: Dedicated Editor explicitly separates nested/standalone heading semantics from task-title visual hierarchy and stays under the canonical Typography guard.",
