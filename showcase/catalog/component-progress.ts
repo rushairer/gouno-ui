@@ -185,14 +185,18 @@ componentReviews["gouno-page-header"] = {
   evidence: ["foundation-integrity.json", "src/gouno/page-header.tsx", "tests/typography-foundation-conformance.test.ts"],
   baseline: "FI-001 certified / 2026-09-18",
 };
-for (const id of ["theme-system", "core-checkbox"]) {
-  componentReviews[id] = {
-    status: "reopened",
-    scope: "FI-001 Phase 2: Radius Foundation reopened because 6px control radius had duplicate numeric authorities and Checkbox bypassed the semantic radius scale with a raw 4px utility.",
-    evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "docs/foundation-geometry-inventory.md", "src/tokens.css"],
-    baseline: "FI-001 Phase 2 / 2026-09-18",
-  };
-}
+componentReviews["theme-system"] = {
+  status: "reviewed",
+  scope: "FI-001 Radius certified: Theme owns the canonical numeric radius scale; compatibility/control aliases no longer duplicate 6px authority.",
+  evidence: ["foundation-integrity.json", "src/tokens.css", "tests/radius-foundation-conformance.test.ts", "scripts/check-foundation-integrity.mjs"],
+  baseline: "FI-001 Radius certified / 2026-09-18",
+};
+componentReviews["core-checkbox"] = {
+  status: "reviewed",
+  scope: "FI-001 Radius certified: Checkbox consumes the semantic small radius instead of a raw 4px value.",
+  evidence: ["foundation-integrity.json", "src/components/primitives/checkbox.tsx", "tests/radius-foundation-conformance.test.ts"],
+  baseline: "FI-001 Radius certified / 2026-09-18",
+};
 
 for (const id of ["core-button", "core-segmented", "core-input-otp"]) {
   componentReviews[id] = {
