@@ -54,6 +54,12 @@ describe("Core Avatar/Grid batch 6B1", () => {
     expect(grid.style.gap).toBe("11px");
   });
 
+
+  it("uses the shared semantic scale for named Grid gaps", () => {
+    render(<Grid columns={2} gap="md" data-testid="named-grid"><div>A</div><div>B</div></Grid>);
+    expect(screen.getByTestId("named-grid").className).toContain("gap-space-md");
+  });
+
   it("maps Row gutter and cumulative responsive 24-grid Col variables", () => {
     render(
       <Row gutter={[16, 8]} data-testid="row">
