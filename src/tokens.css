@@ -165,6 +165,26 @@
     --control-height-small: 2rem;
     --control-height-middle: 2.25rem;
     --control-height-large: 2.75rem;
+
+    /* Density-aware component geometry. Theme density selects the default policy;
+       explicit component density remains a local override. */
+    --table-density-comfortable-cell-block: 0.75rem;
+    --table-density-comfortable-cell-inline: 1rem;
+    --table-density-comfortable-head-height: 2.5rem;
+    --table-density-comfortable-footer-height: 3rem;
+    --table-density-comfortable-edge-inset: 1.5rem;
+
+    --table-density-compact-cell-block: 0.5rem;
+    --table-density-compact-cell-inline: 0.75rem;
+    --table-density-compact-head-height: 2.25rem;
+    --table-density-compact-footer-height: 2.5rem;
+    --table-density-compact-edge-inset: 1rem;
+
+    --table-density-touch-cell-block: 1rem;
+    --table-density-touch-cell-inline: 1rem;
+    --table-density-touch-head-height: 3rem;
+    --table-density-touch-footer-height: 3.5rem;
+    --table-density-touch-edge-inset: 1.5rem;
     --chart-1: var(--primary);
     --chart-2: var(--success);
     --chart-3: var(--warning);
