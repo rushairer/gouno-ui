@@ -3,6 +3,13 @@
     "Inter Variable", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
+  /* Canonical responsive tiers. Keep all breakpoint-aware Core/Gouno behavior on this scale. */
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 96rem;
+
   --color-background: var(--background);
   --color-canvas: var(--canvas);
   --color-foreground: var(--foreground);
