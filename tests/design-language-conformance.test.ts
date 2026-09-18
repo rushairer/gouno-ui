@@ -461,4 +461,16 @@ describe("design-language conformance", () => {
     const designLanguage = readFileSync(resolve(repoRoot, "docs/design-language.md"), "utf8");
     expect(designLanguage).toContain("## DL-15 — Page composition uses ordered semantic slots");
   });
+  it("keeps editor forms and Workflow detail on canonical section surfaces", () => {
+    const aiEditors = readFileSync(resolve(productsRoot, "blog-admin/ai/settings/editors.tsx"), "utf8");
+    const automation = readFileSync(resolve(productsRoot, "blog-admin/ai/operations/automation-management.tsx"), "utf8");
+
+    expect(aiEditors).toContain("EditorFormSurfaceSection");
+    expect(aiEditors).not.toContain("function EditorSection(");
+    expect(automation).not.toContain("rounded-xl border bg-background");
+    expect(automation).toContain('<Card\n              padding="none"\n              className="overflow-hidden"\n              aria-label="Workflow 资产"');
+    expect(automation).toContain('aria-label="最近运行"');
+    expect(automation).toContain('aria-label="Workflow 流程定义"');
+  });
+
 });
