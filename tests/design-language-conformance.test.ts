@@ -411,20 +411,34 @@ describe("design-language conformance", () => {
     expect(audit.indexOf("<ManagementPanelFeedback")).toBeLessThan(audit.indexOf('<Card padding="sm">'));
   });
 
-  it("binds AI list CRUD to the governed editor surface classes", () => {
+  it("binds list CRUD and Dedicated Editor subtypes to the governed composition grammar", () => {
     const aiSettings = readFileSync(resolve(productsRoot, "blog-admin/ai/settings/index.tsx"), "utf8");
     const aiEditors = readFileSync(resolve(productsRoot, "blog-admin/ai/settings/editors.tsx"), "utf8");
     const automation = readFileSync(resolve(productsRoot, "blog-admin/ai/operations/automation-management.tsx"), "utf8");
+    const workflowEditor = readFileSync(resolve(productsRoot, "blog-admin/ai/operations/workflow-editor.tsx"), "utf8");
+    const postEditor = readFileSync(resolve(productsRoot, "blog-admin/post-editor.tsx"), "utf8");
+    const pageEditor = readFileSync(resolve(productsRoot, "blog-admin/page-editor.tsx"), "utf8");
 
     expect(aiSettings).toContain('data-pattern="dedicated-list-editor"');
+    expect(aiSettings).toContain("<DedicatedEditorLead");
     expect(aiSettings).toContain('data-pattern="contextual-list-editor"');
     expect(aiSettings).toContain("<Drawer");
+    expect(aiEditors).toContain("DedicatedEditorLayout");
+    expect(aiEditors).toContain("DedicatedEditorSection");
+    expect(aiEditors).toContain("DedicatedEditorActions");
     expect(aiEditors).toContain('surface?: AISettingsEditorSurface');
     expect(aiEditors).toContain('id="ai-settings-provider-editor"');
     expect(aiEditors).toContain('id="ai-settings-embedding-editor"');
     expect(aiEditors).toContain('id="ai-settings-connector-editor"');
     expect(automation).toContain('data-pattern="dedicated-list-editor"');
+    expect(automation).toContain("<DedicatedEditorLead");
     expect(automation).toContain("返回 Workflow 详情");
+    expect(workflowEditor).toContain("DedicatedEditorLayout");
+    expect(workflowEditor).toContain("DedicatedEditorSection");
+    expect(workflowEditor).toContain("DedicatedEditorActions");
+    expect(workflowEditor).not.toContain("<CardTitle");
+    expect(postEditor).toContain('data-pattern="dedicated-workspace-editor"');
+    expect(pageEditor).toContain('data-pattern="dedicated-workspace-editor"');
   });
 
   it("keeps product interface governance discoverable and machine-enforced", () => {
@@ -438,6 +452,11 @@ describe("design-language conformance", () => {
     expect(governance).toContain("## PI-05 — New binding rules require a corpus pass, not screenshot patching");
     expect(governance).toContain("## PI-06 — Master-detail is a task pattern, not a generic list/detail default");
     expect(governance).toContain("## PI-07 — List-triggered create/edit uses complexity-based editor surfaces");
+    expect(governance).toContain("Configuration Editor");
+    expect(governance).toContain("Workspace Editor");
+    const dedicatedEditor = readFileSync(resolve(repoRoot, "docs/patterns/dedicated-editor.md"), "utf8");
+    expect(dedicatedEditor).toContain("Dedicated Editor is a **composition pattern**");
+    expect(dedicatedEditor).toContain("Do not add `DedicatedEditor` to `src/patterns`");
     const designLanguage = readFileSync(resolve(repoRoot, "docs/design-language.md"), "utf8");
     expect(designLanguage).toContain("## DL-15 — Page composition uses ordered semantic slots");
   });
