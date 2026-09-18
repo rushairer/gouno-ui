@@ -1,5 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 import type { MouseEvent } from "react";
+import { Heading } from "../../../../src/core";
 
 export type BlogPostFixture = {
   id: number;
@@ -205,11 +206,13 @@ export function BlogArticleTeaser({
           className="inline-flex items-start gap-2 text-left"
           onClick={(event) => navigate(event, articlePath)}
         >
-          <h2
-            className={`${featured ? "text-2xl md:text-3xl" : compact ? "text-base" : "text-xl"} break-words font-semibold leading-snug tracking-tight group-hover:text-primary`}
+          <Heading
+            level={2}
+            variant={featured ? "hero" : compact ? "compact" : "section"}
+            className="break-words group-hover:text-primary"
           >
             {post.title}
-          </h2>
+          </Heading>
           <ArrowUpRight
             aria-hidden="true"
             className="mt-1 size-4 shrink-0 text-muted-foreground"
