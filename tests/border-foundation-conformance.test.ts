@@ -11,8 +11,10 @@ describe("Border Foundation conformance", () => {
 
     expect(tokens).toContain("--border-width-boundary: 1px;");
     expect(tokens).toContain("--border-width-emphasis: 2px;");
+    expect(tokens).toContain("--border-width-accent: 4px;");
     for (const utility of [
       "@utility edge-emphasis",
+      "@utility edge-s-accent",
       "@utility edge-bs-emphasis",
       "@utility edge-be-emphasis",
       "@utility edge-s-emphasis",
@@ -54,6 +56,18 @@ describe("Border Foundation conformance", () => {
     expect(markdown).not.toContain("border-l-2");
     expect(selected).not.toContain("border-l-2");
     expect(selected).not.toContain("border-l-primary");
+  });
+
+  it("preserves the stronger Public Blog reading quote as an explicit content accent", () => {
+    const article = source("showcase/demos/products/blog/article-detail.tsx");
+    const documentPage = source("showcase/demos/products/blog/document-pages.tsx");
+
+    for (const implementation of [article, documentPage]) {
+      expect(implementation).toContain(
+        "edge-s-accent border-s-primary/40 bg-muted/40",
+      );
+      expect(implementation).not.toContain("border-l-4");
+    }
   });
 
   it("keeps dynamic Timeline color separate from border-width authority", () => {
