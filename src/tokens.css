@@ -151,8 +151,8 @@
     --accent: oklch(0.96 0.018 var(--brand-hue));
     --accent-foreground: oklch(0.4 0.12 var(--brand-hue));
     --ring: var(--primary);
-    --radius: 6px;
-    --radius-control: 6px;
+    --radius: var(--radius-md);
+    --radius-control: var(--radius-md);
     --content-width: 1200px;
     --reading-width: 720px;
     --layout-page-max-width: 90rem;
