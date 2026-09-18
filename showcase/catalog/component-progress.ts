@@ -314,6 +314,16 @@ componentReviews["core-config-provider"] = {
   baseline: "FI-D003 certified / 2026-09-19",
 };
 
+
+for (const id of ["core-form", "core-select", "core-collapse", "core-tree", "core-modal", "core-drawer", "core-tag"]) {
+  componentReviews[id] = {
+    status: "reopened",
+    scope: "FI-001 Accessibility in progress: semantic-owner audit found form-label/composite-control, contextual disclosure naming, overlay close naming, or nested-interaction defects in this family. Exact defect ownership is tracked in docs/foundation-accessibility-inventory.md.",
+    evidence: ["foundation-integrity.json", "docs/foundation-accessibility-inventory.md", "docs/design-language.md: DL-25"],
+    baseline: "FI-001 Accessibility reopened / 2026-09-19",
+  };
+}
+
 componentReviews["pattern-dedicated-editor"] = {
   status: "reviewed",
   scope: "FI-001 certified: Dedicated Editor explicitly separates nested/standalone heading semantics from task-title visual hierarchy and stays under the canonical Typography guard.",
