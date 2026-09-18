@@ -250,6 +250,15 @@ for (const id of ["theme-system", "core-alert", "core-image"]) {
   };
 }
 
+for (const id of ["theme-system", "core-steps", "core-grid"]) {
+  componentReviews[id] = {
+    status: "reopened",
+    scope: "FI-001 Phase 4: Responsive Foundation reopened because canonical breakpoint tiers were implicit/duplicated across Tailwind and base CSS while Steps carried the only arbitrary 531px breakpoint.",
+    evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "src/tokens.css", "src/base.css", "src/core/steps.tsx", "src/core/layout.tsx"],
+    baseline: "FI-001 Phase 4 / 2026-09-18",
+  };
+}
+
 componentReviews["pattern-dedicated-editor"] = {
   status: "reviewed",
   scope: "FI-001 certified: Dedicated Editor explicitly separates nested/standalone heading semantics from task-title visual hierarchy and stays under the canonical Typography guard.",
