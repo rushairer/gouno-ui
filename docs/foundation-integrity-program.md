@@ -105,15 +105,15 @@ Run corpus-wide guards, Golden matrix, Blog Consumer Parity and Gosso Admin Cons
 
 ## Current execution
 
-Typography is the first reopened Foundation. Inventory is already proven by current source, while tokens, authority and corpus are actively being corrected. All other Foundations remain deliberately unclaimed until their own inventory pass is performed.
+Phase 1 Typography is certified 7/7.
 
-The first concrete defect set is:
+Phase 2 Geometry has completed and certified:
 
-- Core `Heading.level` currently couples semantic element and visual scale.
-- Gouno `PageHeader` overrides an H1 from Core `text-3xl` to `text-2xl`.
-- Dedicated Editor relies on H2 default scale but has no explicit nested/standalone title-role contract.
-- Product fixtures still contain raw `h1/h2/h3 + text-*` heading authority.
-- `CardTitle` and product-local region headings express useful visual roles but those roles are not yet named in the Typography system.
-- Existing Typography tests prove rendering/API behavior but do not prevent canonical role bypass.
+- **Spacing 7/7** — named Space/Flex/Grid gaps share one semantic scale; numeric gaps remain an explicit precision escape hatch.
+- **Sizing 7/7** — public ControlSize resolves to one 32/36/44px token authority, including Button, InputOTP and Segmented, while Tailwind-compatible classes preserve caller overrides such as `h-auto`.
+- **Radius 7/7** — the numeric radius scale owns values; compatibility/control aliases no longer duplicate 6px authority; Checkbox consumes `rounded-sm`; the Tooltip arrow is the documented local-shape exception.
+- **Layout 7/7** — canonical PageContainer width and page-stack rhythm are owned by the semantic page-track contract.
+- **Density 7/7** — Theme `comfortable | compact` is an application-level default policy for density-aware components; Table `default` follows it while explicit `compact | touch` remains local authority. Browser evidence proves the global compact policy changes resolved Table geometry.
 
-These findings reopen Typography certification immediately.
+**Border** is the remaining Phase 2 workstream. The initial read-only inventory shows no arbitrary 1px/2px product border widths or hard-coded neutral border colors. Ordinary boundaries predominantly use the semantic `border`/divider grammar; 2px treatments are currently limited to indicator/emphasis roles such as Spinner, Timeline markers, Steps active navigation, Table summary separation and selected-record leads. Border must still complete its own seven gates before Phase 2 can close.
+
