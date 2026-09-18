@@ -292,7 +292,7 @@ if (sizing?.status !== "planned") {
   if (!coreButtonSource.includes("export type ButtonSize = ControlSize;")) {
     failures.push("sizing.guard: ButtonSize must reuse ControlSize");
   }
-  if (/\bcontrol-(?:height|square|inset-height)-(?:small|middle|large)\b/.test(
+  if (/[\\"'\`\\s]control-(?:height|square|inset-height)-(?:small|middle|large)\\b/.test(
     controlTypesSource + primitiveButtonSource + otpSource + segmentedSource,
   )) {
     failures.push(
