@@ -35,7 +35,6 @@ describe("audited batch completion", () => {
       "core-avatar",
       "core-space",
       "core-flex",
-      "core-grid",
       "core-separator",
       "core-splitter",
       "core-card",
@@ -50,8 +49,14 @@ describe("audited batch completion", () => {
     }
   });
 
-  it("reports Theme complete only after the active Foundation reviews are certified", () => {
-    expect(componentProgress("theme-system", 0)).toBe(100);
+  it("keeps Theme below certified completion while Responsive is reopened", () => {
+    expect(componentProgress("theme-system", 0)).toBeLessThan(100);
+  });
+
+  it("keeps Responsive-owned reviews below certified completion", () => {
+    for (const id of ["theme-system", "core-steps", "core-grid"]) {
+      expect(componentProgress(id, 0), id).toBeLessThan(100);
+    }
   });
 
 
