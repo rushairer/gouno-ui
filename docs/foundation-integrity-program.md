@@ -114,8 +114,14 @@ Phase 2 Geometry is fully certified:
 - **Radius 7/7** — the numeric radius scale owns values; compatibility/control aliases no longer duplicate 6px authority; Checkbox consumes `rounded-sm`; the Tooltip arrow is the documented local-shape exception.
 - **Border 7/7** — ordinary boundaries retain the canonical 1px substrate, 2px indicators/separators consume semantic `edge-*` emphasis roles, and long-form Public Blog blockquotes use the explicit 4px reading-accent role. Product corpus raw numeric-width and hard-coded-neutral-color bypasses are both zero.
 - **Layout 7/7** — canonical PageContainer width and page-stack rhythm are owned by the semantic page-track contract.
-- **Density 7/7** — Theme `comfortable | compact` is an application-level default policy for density-aware components; Table `default` follows it while explicit `compact | touch` remains local authority. Browser evidence proves the global compact policy changes resolved Table geometry.
+- **Density 7/7** — Theme `comfortable | compact` is an application-level default policy for density-aware components; Table `default` follows it while explicit `compact | touch` remains local authority.
 
-Phase 2 exit evidence includes exact-head CI, canonical visual golden geometry checks, and reciprocal Blog/Gosso consumer parity. Geometry Foundations therefore no longer depend on developers remembering local conventions; the known bypass classes are guarded in CI.
+Phase 3 Visual Semantic Foundations is fully certified:
 
-The next execution stage is **Phase 3 — Visual Semantic Foundations**: Color, Elevation and Surface. Existing DL-10/DL-16 rules and elevation tests are inputs only; each Foundation must still complete its own seven gates and may reopen previously reviewed components if the inventory exposes split authority or corpus bypasses.
+- **Color 7/7** — semantic Theme roles own application UI color, browser `theme-color` follows computed background, overlay copy uses `overlay-foreground`, and fixed/generated-media color exceptions are classified and guarded.
+- **Elevation 7/7** — `control / surface / raised / overlay / modal` are the only runtime depth roles; raw size aliases remain flat compatibility vocabulary; direct product semantic-shadow ownership is zero.
+- **Surface 7/7** — Card/Table/transient-layer components own canonical surface anatomy. Gosso Overview Quick Links retain link semantics while `Card interactive` owns surface/elevation; the product-side reverse migration is verified by Gosso CI/browser/parity and reciprocal Gouno UI parity.
+
+Phase 2/3 exits are backed by exact-head CI, canonical visual browser checks and reciprocal Blog/Gosso consumer parity rather than historical completion claims.
+
+The next execution stage is **Phase 4 — Interaction Foundations**. Audit Responsive behavior, Motion, Focus, Overlay/layering and Interaction state. The first read-only Responsive inventory has already identified one split-authority candidate: Core Steps uses an arbitrary `531px` responsive cutoff while the rest of the system predominantly follows canonical Tailwind breakpoints. This must be proven as intentional or replaced by a canonical responsive contract before Responsive can be certified.
