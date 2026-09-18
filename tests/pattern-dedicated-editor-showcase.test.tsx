@@ -27,7 +27,7 @@ describe("Dedicated Editor composition pattern", () => {
     expect(screen.getByText("Showcase-only")).toBeTruthy();
     expect(container.querySelector('[data-pattern="dedicated-editor-lead"]')).toBeTruthy();
     expect(container.querySelector('[data-pattern="dedicated-editor-layout"]')).toBeTruthy();
-    expect(container.querySelectorAll('[data-slot="showcase-dedicated-editor-section"]').length).toBeGreaterThanOrEqual(4);
+    expect(container.querySelectorAll('[data-pattern="dedicated-editor-section"]').length).toBeGreaterThanOrEqual(4);
     expect(screen.getByRole("button", { name: "返回资产详情" })).toBeTruthy();
   });
 
