@@ -28,8 +28,17 @@ export function Field({ label, children, id, hint, error, required = false, clas
   }>(children) ? children : null;
   const controlId = id || child?.props.id || `field-${generated}`;
   const labelId = `${controlId}-label`;
+  const fieldLabelText =
+    typeof label === "string" || typeof label === "number"
+      ? String(label)
+      : undefined;
+  const childAriaLabel = child?.props["aria-label"];
+  const redundantChildAriaLabel =
+    typeof childAriaLabel === "string" &&
+    fieldLabelText !== undefined &&
+    childAriaLabel.trim() === fieldLabelText.trim();
   const childOwnsAccessibleName = Boolean(
-    child?.props["aria-label"] ||
+    (!redundantChildAriaLabel && childAriaLabel) ||
       child?.props["aria-labelledby"] ||
       child?.props.label,
   );
@@ -51,6 +60,9 @@ export function Field({ label, children, id, hint, error, required = false, clas
       {child ? cloneElement(child, {
         id: controlId,
         required: child.props.required ?? required,
+        "aria-label": redundantChildAriaLabel
+          ? undefined
+          : child.props["aria-label"],
         "aria-labelledby": childOwnsAccessibleName
           ? child.props["aria-labelledby"]
           : labelId,
