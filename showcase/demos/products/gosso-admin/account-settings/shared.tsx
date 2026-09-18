@@ -27,7 +27,7 @@ export interface ConfirmActionProps {
 
 export function Section({ description, actions, feedback, surface = "card", children }: SectionProps) {
   return (
-    <div className="flex flex-col gap-5">
+    <div data-pattern="settings-composition" className="flex flex-col gap-5">
       <TabPanelLead description={description} actions={actions} />
       <TabPanelFeedback>{feedback}</TabPanelFeedback>
       {children ? (
