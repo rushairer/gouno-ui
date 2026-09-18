@@ -241,6 +241,48 @@ Current canonical examples:
 
 A dedicated detail route should preserve stable deep-link state and an explicit return path to its parent list. Do not replace this with hidden local-only selection state.
 
+## PI-07 — List-triggered create/edit uses complexity-based editor surfaces
+
+Create/edit interactions launched from collections must use a predictable surface chosen by task complexity, not by whichever overlay a page author happens to prefer.
+
+Use three editor classes:
+
+1. **Modal — lightweight mutation**
+   - one focused decision or a compact form;
+   - usually a few fields;
+   - little or no need to inspect the list while editing;
+   - the task should complete without scrolling through multiple conceptual sections.
+
+2. **Drawer — contextual CRUD**
+   - the edited object still belongs clearly to the current list;
+   - preserving list context is useful;
+   - the form is medium complexity but still one bounded object;
+   - the form may scroll vertically, but should not require a wide multi-column workspace.
+
+3. **Dedicated editor — deep asset configuration**
+   - the object has multiple conceptual sections, governance rules, schemas, workflow definitions, permissions, budgets or execution boundaries;
+   - the editor benefits from full content width;
+   - creation/editing becomes a distinct task context rather than a quick list mutation;
+   - the editor must provide an explicit return path and should reset the product viewport to the top when entered.
+
+Rules:
+
+- Create and edit for the same object family use the same editor class.
+- Do not use inline page replacement as an accidental fourth pattern. If the collection disappears and a deep editor takes over the content area, treat it explicitly as a dedicated editor with its own lead, return action and state transition.
+- Do not put large multi-section editors inside narrow Modals or Drawers merely for consistency.
+- Do not promote small CRUD forms to full-page editors merely because another object family is complex.
+- Destructive confirmation remains a Modal even when creation/editing uses Drawer or Dedicated Editor.
+- Row-level toggles and tiny reversible actions may remain inline when no additional form is required.
+- The list itself should stay mounted behind a Drawer, but a Dedicated Editor replaces the collection as a new task context.
+
+Current canonical examples:
+
+- Blog Admin Categories: contextual CRUD → Drawer.
+- Gosso Admin OAuth2 Clients: bounded CRUD → Modal.
+- Blog Admin AI Settings Agent / Skill: deep configuration → Dedicated Editor.
+- Blog Admin AI Settings Provider / Embedding / Connector: contextual configuration → Drawer.
+- Blog Admin AI Operations Workflow: deep asset configuration → Dedicated Editor.
+
 ## Review checklist
 
 Before accepting a normal Admin page or route family, ask:
@@ -259,6 +301,9 @@ Before accepting a normal Admin page or route family, ask:
 12. Has the same rule been scanned across Gosso Admin + Blog Admin rather than fixed only where a screenshot exposed it?
 13. Is a master-detail layout actually supporting repeated peer switching, or is it stealing width from a deep asset-management task?
 14. If the detail is a dedicated route, does it preserve a deep link and an explicit return path to the parent list?
-15. Is there a regression gate for the invariant, or a documented reason why only visual review can prove it?
+15. Does each list-triggered create/edit flow use Modal, Drawer or Dedicated Editor according to task complexity rather than page-local preference?
+16. Do create and edit for one object family use the same editor class?
+17. If a Dedicated Editor replaces the collection, does it have an explicit return path and reset the product viewport on entry?
+18. Is there a regression gate for the invariant, or a documented reason why only visual review can prove it?
 
 A page that passes component API tests but fails these questions is not interface-conformant.
