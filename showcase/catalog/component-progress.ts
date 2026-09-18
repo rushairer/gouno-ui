@@ -309,9 +309,9 @@ componentReviews["core-carousel"] = {
 
 componentReviews["core-config-provider"] = {
   status: "reopened",
-  scope: "FI-D003: localization implementation has unit evidence, but the canonical Showcase demo does not visibly demonstrate provider effects strongly enough to serve as product/design evidence.",
-  evidence: ["docs/foundation-integrity-open-defects.md", "showcase/demos/core/config-provider/localized.tsx", "tests/core-localization.test.tsx"],
-  baseline: "FI-D003 reopened / 2026-09-18",
+  scope: "FI-D003: locale runtime behavior was already unit-covered, but canonical Showcase evidence hid most effects behind aria labels/secondary interactions. The demo now exposes simultaneous zh-CN/en-US Select/Pagination copy plus explicit caller override precedence; exact-head gates remain pending.",
+  evidence: ["docs/foundation-integrity-open-defects.md", "showcase/demos/core/config-provider/localized.tsx", "tests/core-localization.test.tsx", "tests/showcase-config-provider-demo.test.tsx"],
+  baseline: "FI-D003 visible-proof fix pending certification / 2026-09-19",
 };
 
 componentReviews["pattern-dedicated-editor"] = {
