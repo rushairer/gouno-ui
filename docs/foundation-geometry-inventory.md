@@ -63,7 +63,7 @@ Different internal classes are acceptable only when they are mathematically deri
 
 ## Border inventory
 
-The Border audit found no arbitrary numeric 1px/2px product widths, no `border-4/8` geometry, and no hard-coded neutral border colors in the canonical product corpus. Ordinary surfaces already converge on the semantic `--border` color because `base.css` assigns that token as the default border color.
+The Border audit found no hard-coded neutral border colors. It found two raw `border-l-4` product sites, both long-form Public Blog blockquotes; these are now classified as the 4px reading content accent instead of being flattened into the 2px control/indicator emphasis role. Ordinary surfaces already converge on the semantic `--border` color because `base.css` assigns that token as the default border color.
 
 The actual split-authority risk was **2px emphasis width**. Before FI-001, several independent sites encoded `border-2`, `border-b-2` or `border-l-2` directly:
 
@@ -75,7 +75,7 @@ The actual split-authority risk was **2px emphasis width**. Before FI-001, sever
 - Markdown blockquote lead;
 - Blog Admin selected-record lead.
 
-Those sites now resolve through `--border-width-emphasis: 2px` and semantic emphasis utilities. Directional emphasis uses logical block/inline directions, so selected/quote leads no longer assume a physical left side.
+Those 2px sites now resolve through `--border-width-emphasis: 2px` and semantic emphasis utilities. The two Public Blog reading blockquotes resolve through `--border-width-accent: 4px` / `edge-s-accent`. Directional emphasis uses logical block/inline directions, so selected/quote leads no longer assume a physical left side.
 
 The ordinary 1px boundary stays intentionally compatible with Tailwind's standard `border` / directional `border-*` / `divide-*` substrate. `--border-width-boundary: 1px` records the Gouno invariant, while guards reject wider numeric/ad-hoc product borders. This avoids a mechanical rewrite of every ordinary boundary into a duplicate Gouno-specific alias.
 
