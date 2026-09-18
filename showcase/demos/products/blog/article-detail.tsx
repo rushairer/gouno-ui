@@ -13,6 +13,7 @@ import {
   Button,
   Card,
   CodeBlock,
+  Heading,
   Result,
   Segmented,
 } from "../../../../src/core";
@@ -138,12 +139,12 @@ function ReadingBody() {
       </p>
 
       <section aria-labelledby="boundary-first" className="space-y-4">
-        <h2
+        <Heading level={2} variant="section-lg"
           id="boundary-first"
-          className="scroll-mt-24 text-2xl font-semibold tracking-tight"
+          className="scroll-mt-24"
         >
           先画边界，再谈组件
-        </h2>
+        </Heading>
         <p>
           公开 Blog、Blog Admin 与 GOSSO
           控制台可以共享视觉语言，但它们不是同一种应用壳。公开站点首先是阅读和发现系统；后台才需要持续的应用导航、任务操作和权限上下文。
@@ -152,12 +153,12 @@ function ReadingBody() {
           共享设计语言，不等于共享所有页面结构。真正稳定的抽象必须来自相同的用户意图与交互责任。
         </blockquote>
 
-        <h3
+        <Heading level={3} variant="section"
           id="browser-session"
-          className="scroll-mt-24 text-xl font-semibold tracking-tight"
+          className="scroll-mt-24"
         >
           浏览器只持有本域会话
-        </h3>
+        </Heading>
         <p>
           当 Token exchange、refresh、userinfo 与 revoke 都收回
           BFF，浏览器只需要理解自己的业务会话。这样做降低了跨域凭证暴露面，也让前端错误状态更接近用户真正能理解的“登录态是否可恢复”。
@@ -170,12 +171,12 @@ function ReadingBody() {
       </section>
 
       <section aria-labelledby="reading-contract" className="space-y-4">
-        <h2
+        <Heading level={2} variant="section-lg"
           id="reading-contract"
-          className="scroll-mt-24 text-2xl font-semibold tracking-tight"
+          className="scroll-mt-24"
         >
           把安全约束翻译成阅读体验
-        </h2>
+        </Heading>
         <p>
           对公开文章页而言，真正重要的是稳定标题层级、可复制的深链接、窄而可读的正文宽度，以及在移动端仍然可访问的目录。TOC
           本身不应该发明第二套滚动系统。
@@ -211,12 +212,12 @@ function ReadingBody() {
           </table>
         </div>
 
-        <h3
+        <Heading level={3} variant="section"
           id="single-source-code"
-          className="scroll-mt-24 text-xl font-semibold tracking-tight"
+          className="scroll-mt-24"
         >
           代码展示也需要单一来源
-        </h3>
+        </Heading>
         <p>
           高亮器可以不同，但展示和复制不能来自两份字符串。下面的静态示例用产品局部
           token 呈现模拟高亮，而复制仍然只读取同一个 canonical code。
@@ -255,12 +256,12 @@ function ReadingBody() {
       </figure>
 
       <section aria-labelledby="product-validation" className="space-y-4">
-        <h2
+        <Heading level={2} variant="section-lg"
           id="product-validation"
-          className="scroll-mt-24 text-2xl font-semibold tracking-tight"
+          className="scroll-mt-24"
         >
           让真实产品反向验证设计系统
-        </h2>
+        </Heading>
         <p>
           同一套规则先被后台产品验证，再来到公开内容站点，才能看出哪些能力是真正产品无关的。PageHeader
           在公开文章标题语义下仍然成立；AppShell 则不成立。Anchor 与 CodeBlock
@@ -410,12 +411,12 @@ export function BlogArticleDetailDemo({
               className="mx-auto mt-12 w-full max-w-[900px]"
             >
               <div className="border-b pb-3">
-                <h2
+                <Heading level={2} variant="section"
                   id="related-reading"
-                  className="text-xl font-semibold tracking-tight"
+                  
                 >
                   相关阅读
-                </h2>
+                </Heading>
                 <p className="mt-1 text-sm text-muted-foreground">
                   继续沿着架构与设计系统的阅读路径向下探索。
                 </p>
