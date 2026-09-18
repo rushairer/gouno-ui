@@ -906,28 +906,55 @@
       }
     },
     "motion": {
-      "status": "planned",
-      "affectedComponentReviews": [],
+      "status": "in_progress",
+      "affectedComponentReviews": [
+        "core-anchor",
+        "core-back-top",
+        "core-carousel"
+      ],
       "gates": {
         "inventory": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/foundation-motion-inventory.md",
+            "src/base.css",
+            "src/lib/motion.ts",
+            "src/hooks/use-reduced-motion.ts",
+            "src/core/anchor.tsx",
+            "src/core/affix.tsx",
+            "src/core/carousel.tsx"
+          ]
         },
         "tokens": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "src/lib/motion.ts: REDUCED_MOTION_QUERY",
+            "src/base.css: zero-duration/zero-delay reduced-motion policy",
+            "docs/design-language.md: DL-21"
+          ]
         },
         "authority": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/design-language.md: DL-21",
+            "docs/foundation-motion-inventory.md",
+            "src/lib/motion.ts",
+            "src/hooks/use-reduced-motion.ts"
+          ]
         },
         "corpus": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "scripts/check-foundation-integrity.mjs",
+            "src"
+          ]
         },
         "guard": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "scripts/check-foundation-integrity.mjs",
+            "tests/motion-foundation-conformance.test.tsx"
+          ]
         },
         "visual": {
           "status": "pending",
@@ -937,6 +964,15 @@
           "status": "pending",
           "evidence": []
         }
+      },
+      "inventory": {
+        "confirmedDefects": [
+          "Anchor/BackTop imperative smooth scroll bypassed CSS reduced-motion.",
+          "Carousel inline transition duration and change lifecycle could bypass global reduced-motion."
+        ],
+        "currentPolicy": "CSS and JavaScript share one prefers-reduced-motion authority; no direct imperative smooth-scroll or local matchMedia exception is admitted.",
+        "directSmoothScrollTarget": 0,
+        "unexpectedMotionQueryTarget": 0
       }
     },
     "focus": {
