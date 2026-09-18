@@ -101,7 +101,7 @@ describe("Core InputOTP 6D3", () => {
       expect(input.type).toBe("password");
       expect(input.disabled).toBe(true);
       expect(input.getAttribute("aria-invalid")).toBe("true");
-      expect(input.className).toContain("size-11");
+      expect(input.className).toContain("control-square-large");
     }
   });
 
