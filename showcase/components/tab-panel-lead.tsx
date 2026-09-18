@@ -24,11 +24,8 @@ export function TabPanelLead({
           <Text
             tone="muted"
             size="sm"
-            className={
-              title
-                ? "mt-1 max-w-3xl leading-relaxed"
-                : "max-w-3xl leading-relaxed"
-            }
+            leading="relaxed"
+            className={title ? "mt-1 max-w-3xl" : "max-w-3xl"}
           >
             {description}
           </Text>
