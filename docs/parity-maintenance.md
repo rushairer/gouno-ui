@@ -78,17 +78,25 @@ Paired product/Showcase screenshots remain diagnostic review evidence. Pixel gol
 
 `.github/workflows/canonical-visual-golden.yml` runs a deterministic Playwright visual gate against accepted Showcase fixtures. The golden set is intentionally **representative rather than exhaustive**: it covers stable product archetypes and adds dark/mobile counterparts only where they materially prove a design-language contract.
 
-The current accepted baseline set contains **23 PNGs**:
+The current accepted baseline set contains **43 PNGs**:
 
-- **19 light-theme baselines**
-  - Blog: Home, Article Detail, Search, Account Settings;
-  - Blog Admin: Dashboard, Posts desktop/mobile, Post Editor;
-  - Blog Admin AI Operations: Overview, Inbox, Workflow List, Workflow Detail desktop/mobile, Workflow Editor and Run Center;
-  - Gosso Admin: Overview, OAuth2 Clients, Site Settings and Account Settings.
-- **4 dark-theme baselines**
+- **26 light-theme baselines**
+  - Blog: Home desktop/mobile, Article Detail, Search, Account Settings;
+  - Blog Admin: Dashboard, Posts desktop/mobile, Post Editor and Categories Drawer;
+  - Blog Admin AI Operations: Overview, Inbox, Workflow List, Workflow Detail desktop/mobile, Workflow Editor desktop/mobile and Run Center;
+  - Gosso Admin: Overview, OAuth2 Clients page + opened Modal, Site Settings desktop/mobile, Account Settings and Login desktop/mobile.
+- **17 dark-theme baselines**
+  - Blog Home desktop/mobile;
+  - Blog Admin Dashboard;
   - Blog Admin Posts desktop/mobile;
   - Blog Admin Post Editor desktop;
-  - Gosso Admin Site Settings desktop.
+  - Blog Admin AI Operations Inbox;
+  - Blog Admin AI Operations Workflow Detail desktop/mobile;
+  - Blog Admin AI Operations Workflow Editor desktop/mobile;
+  - Blog Admin Categories opened Drawer;
+  - Gosso Admin Site Settings desktop/mobile;
+  - Gosso Admin Login desktop/mobile;
+  - Gosso Admin OAuth2 Clients opened Modal.
 
 The dark set is deliberately a **semantic cross-section**, not a second copy of every light screenshot. New dual-theme baselines are added when a design-language rule depends on surface, border, elevation, focus or state contrast and computed-style parity alone is insufficient evidence.
 
