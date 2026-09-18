@@ -7,6 +7,7 @@ import { MfaPanel } from "./mfa";
 import { PasswordPanel } from "./password";
 import { ProfilePanel } from "./profile";
 import { PasskeysPanel, SessionsPanel } from "./security";
+import { Section } from "./shared";
 
 export type AccountSettingsTab = "profile" | "password" | "mfa" | "passkeys" | "sessions";
 type AccountFixtureScenario = "ready" | "loading" | "empty" | "error" | "recent-auth";
@@ -42,6 +43,13 @@ const passwordOptions = [
   { value: "error", label: "服务异常" },
 ] as const;
 
+const accountTabDescriptions: Record<Exclude<AccountSettingsTab, "mfa">, string> = {
+  profile: "查看并维护账户基础资料、联系邮箱与身份标识。",
+  password: "使用当前密码验证身份，并设置新的登录密码。",
+  passkeys: "使用设备生物识别或安全密钥完成抗钓鱼登录。",
+  sessions: "查看当前登录设备、IP 地址与最后活动时间，并终止异常会话。",
+};
+
 function LoadingAccountPanel({ label }: { label: string }) {
   return (
     <Card padding="base" role="status" aria-label={`${label}加载中`}>
@@ -66,25 +74,43 @@ function renderReadyPanel(tab: Exclude<AccountSettingsTab, "mfa">) {
 
 function AccountFixturePanel({ tab, scenario }: { tab: Exclude<AccountSettingsTab, "mfa">; scenario: AccountFixtureScenario }) {
   const label = accountTabDefinitions.find((item) => item.key === tab)?.label ?? "账户设置";
+  const description = accountTabDescriptions[tab];
 
   if (scenario === "loading") {
-    if (tab === "profile") {
-      return <PageSkeleton layout="form" aria-label="个人资料加载中" fields={3} />;
-    }
-    return <LoadingAccountPanel label={label} />;
+    return (
+      <Section description={description} surface="direct">
+        {tab === "profile"
+          ? <PageSkeleton layout="form" aria-label="个人资料加载中" fields={3} />
+          : <LoadingAccountPanel label={label} />}
+      </Section>
+    );
   }
   if (scenario === "error") {
-    return <Alert type="error" showIcon title={`${label}加载失败`} description="身份服务暂时无法返回该账户设置。真实产品会保留当前路由并提供重试。" />;
+    return (
+      <Section
+        description={description}
+        surface="direct"
+        feedback={<Alert type="error" showIcon title={`${label}加载失败`} description="身份服务暂时无法返回该账户设置。真实产品会保留当前路由并提供重试。" />}
+      />
+    );
   }
   if (scenario === "recent-auth") {
-    return <Alert type="warning" showIcon title="需要近期强认证" description="修改密码属于高风险操作。真实产品会先完成 Sudo / recent-MFA 验证，再允许提交新凭据。" />;
+    return (
+      <Section
+        description={description}
+        surface="direct"
+        feedback={<Alert type="warning" showIcon title="需要近期强认证" description="修改密码属于高风险操作。真实产品会先完成 Sudo / recent-MFA 验证，再允许提交新凭据。" />}
+      />
+    );
   }
   if (scenario === "empty") {
     return (
-      <Empty
-        title={tab === "passkeys" ? "还没有通行密钥" : "没有其他活跃会话"}
-        description={tab === "passkeys" ? "添加可信设备后，可使用 WebAuthn 完成抗钓鱼登录。" : "除当前浏览器外，身份服务没有返回其他登录会话。"}
-      />
+      <Section description={description} surface="direct">
+        <Empty
+          title={tab === "passkeys" ? "还没有通行密钥" : "没有其他活跃会话"}
+          description={tab === "passkeys" ? "添加可信设备后，可使用 WebAuthn 完成抗钓鱼登录。" : "除当前浏览器外，身份服务没有返回其他登录会话。"}
+        />
+      </Section>
     );
   }
   return renderReadyPanel(tab);
