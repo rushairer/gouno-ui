@@ -61,6 +61,26 @@ Consumers reference those variables through Tailwind-recognized height/size util
 
 Different internal classes are acceptable only when they are mathematically derived from the same outer ControlSize authority and preserve normal caller override semantics.
 
+## Border inventory
+
+The Border audit found no arbitrary numeric 1px/2px product widths, no `border-4/8` geometry, and no hard-coded neutral border colors in the canonical product corpus. Ordinary surfaces already converge on the semantic `--border` color because `base.css` assigns that token as the default border color.
+
+The actual split-authority risk was **2px emphasis width**. Before FI-001, several independent sites encoded `border-2`, `border-b-2` or `border-l-2` directly:
+
+- Spinner ring;
+- Timeline marker;
+- Steps active navigation indicator;
+- Table summary separator;
+- Showcase DemoSection active tab indicator;
+- Markdown blockquote lead;
+- Blog Admin selected-record lead.
+
+Those sites now resolve through `--border-width-emphasis: 2px` and semantic emphasis utilities. Directional emphasis uses logical block/inline directions, so selected/quote leads no longer assume a physical left side.
+
+The ordinary 1px boundary stays intentionally compatible with Tailwind's standard `border` / directional `border-*` / `divide-*` substrate. `--border-width-boundary: 1px` records the Gouno invariant, while guards reject wider numeric/ad-hoc product borders. This avoids a mechanical rewrite of every ordinary boundary into a duplicate Gouno-specific alias.
+
+Timeline's caller-owned dynamic item color remains an explicit color API exception; it does not own border width.
+
 ## Density inventory
 
 The audit confirmed a functional defect rather than a naming-only inconsistency. `ThemeProvider` publicly exposes `Density = comfortable | compact` and writes it to `documentElement.dataset.density`, while the canonical Theme Showcase describes it as global interaction density. Before FI-001, no root density selector consumed that value, so changing the global density had no visual effect.
