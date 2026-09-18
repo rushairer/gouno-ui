@@ -11,6 +11,7 @@ import {
   Tag,
   Tree,
 } from "../src/core";
+import { AppShell, PageSkeleton } from "../src/gouno";
 
 const root = resolve(process.cwd());
 const source = (path: string) => readFileSync(resolve(root, path), "utf8");
@@ -106,6 +107,41 @@ describe("Accessibility Foundation", () => {
     expect(checkbox.contains(close)).toBe(false);
     expect(checkbox.parentElement).toBe(close.parentElement);
     expect(checkbox.parentElement?.querySelector("button button")).toBeNull();
+  });
+
+  it("keeps AppShell landmarks and skip target semantically connected", () => {
+    render(
+      <AppShell
+        brand="Admin"
+        navigationLabel="Primary navigation"
+        navigation={() => <a href="#one">One</a>}
+      >
+        <h1>Dashboard</h1>
+      </AppShell>,
+    );
+
+    expect(
+      screen.getByRole("navigation", { name: "Primary navigation" }),
+    ).toBeTruthy();
+
+    const main = screen.getByRole("main");
+    expect(main.id).toMatch(/^app-shell-main-/);
+    expect(main.getAttribute("tabindex")).toBe("-1");
+
+    const skip = screen.getByRole("link", { name: "跳至主要内容" });
+    expect(skip.getAttribute("href")).toBe(`#${main.id}`);
+  });
+
+  it("keeps PageSkeleton as one named busy live region while placeholders stay decorative", () => {
+    const { container } = render(
+      <PageSkeleton layout="collection" aria-label="资源列表加载中" />,
+    );
+
+    const status = screen.getByRole("status", { name: "资源列表加载中" });
+    expect(status.getAttribute("aria-live")).toBe("polite");
+    expect(status.getAttribute("aria-busy")).toBe("true");
+    expect(container.querySelectorAll('[aria-hidden="true"]').length).toBeGreaterThan(0);
+    expect(screen.queryByRole("columnheader")).toBeNull();
   });
 
   it("keeps core semantic source contracts explicit", () => {
