@@ -7,6 +7,7 @@ import {
   type Ref,
 } from "react";
 import { ArrowUp } from "lucide-react";
+import { preferredScrollBehavior } from "../lib/motion";
 import { cn } from "../lib/utils";
 
 export interface AffixProps
@@ -89,7 +90,7 @@ export function BackTop({
       onClick={(event) => {
         onClick?.(event);
         if (event.defaultPrevented) return;
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        window.scrollTo({ top: 0, behavior: preferredScrollBehavior() });
       }}
     >
       {children ?? <ArrowUp aria-hidden="true" />}
