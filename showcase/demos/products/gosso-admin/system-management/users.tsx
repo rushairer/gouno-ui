@@ -125,7 +125,7 @@ export function UsersPanel() {
       </ManagementPanelFeedback>
 
 
-      {scenario === "loading" ? (
+      {scenario === "error" ? null : scenario === "loading" ? (
         <PageSkeleton layout="collection" aria-label="用户目录加载中" />
       ) : visibleUsers.length === 0 ? (
         <Empty title="还没有用户" description="创建第一个本地身份账户，或等待外部身份同步。" action={<Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={() => setCreateOpen(true)}>添加用户</Button>} />
