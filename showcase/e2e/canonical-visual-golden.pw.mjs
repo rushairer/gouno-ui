@@ -447,12 +447,57 @@ test("accessibility-form-select-and-overlay-ownership", async ({ page }) => {
 
   const dialog = page.getByRole("dialog", { name: "编辑资料" });
   await expect(dialog).toBeVisible();
+
+  await expect
+    .poll(() =>
+      dialog.evaluate((element) =>
+        element.contains(document.activeElement),
+      ),
+    )
+    .toBe(true);
+
+  for (let index = 0; index < 5; index += 1) {
+    await page.keyboard.press("Tab");
+    await expect
+      .poll(() =>
+        dialog.evaluate((element) =>
+          element.contains(document.activeElement),
+        ),
+      )
+      .toBe(true);
+  }
+
   const close = dialog.getByRole("button", { name: "关闭" });
   await expect(close).toBeVisible();
   await close.click();
 
   await expect(dialog).toBeHidden();
   await expect(trigger).toBeFocused();
+});
+
+test("accessibility-app-shell-skip-link-and-landmarks", async ({ page }) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "gouno-app-shell",
+    viewport: desktop,
+    ready: '[data-slot="app-shell"]',
+  });
+
+  const shell = page.locator('[data-slot="app-shell"]').first();
+  const navigation = shell.getByRole("navigation", {
+    name: "示例应用导航",
+  });
+  await expect(navigation).toBeVisible();
+
+  const main = shell.getByRole("main");
+  await expect(main).toHaveAttribute("tabindex", "-1");
+
+  const skip = shell.getByRole("link", { name: "跳至主要内容" });
+  await skip.focus();
+  await expect(skip).toBeFocused();
+  await skip.press("Enter");
+  await expect(main).toBeFocused();
 });
 
 test("showcase-config-provider-visibly-proves-locale-ownership", async ({ page }) => {
