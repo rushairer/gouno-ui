@@ -120,7 +120,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
             {maxTagCount !== undefined && selectedOptions.length > maxTagCount ? <span className="text-xs text-muted-foreground">+{selectedOptions.length - maxTagCount}</span> : null}
           </div> : null}
           <PopoverTrigger asChild>
-            <button ref={triggerRef} type="button" id={`${baseId}-trigger`} role="combobox" aria-haspopup="listbox" aria-label={props["aria-label"]} aria-labelledby={props["aria-labelledby"]} aria-describedby={props["aria-describedby"]} aria-expanded={open} aria-controls={listboxId} aria-activedescendant={!searchable ? activeOptionId : undefined} aria-invalid={status === "error" || props["aria-invalid"] || undefined} aria-busy={loading || undefined} disabled={disabled || loading}
+            <button ref={triggerRef} type="button" id={`${baseId}-trigger`} role="combobox" aria-haspopup="listbox" aria-label={props["aria-label"]} aria-labelledby={props["aria-labelledby"]} aria-describedby={props["aria-describedby"]} aria-expanded={open} aria-controls={listboxId} aria-activedescendant={!searchable ? activeOptionId : undefined} aria-invalid={status === "error" || props["aria-invalid"] || undefined} aria-required={required || props["aria-required"] || undefined} aria-busy={loading || undefined} disabled={disabled || loading}
               onKeyDown={(event) => {
                 if (event.key === "ArrowDown" || event.key === "ArrowUp") { event.preventDefault(); if (!open) setOpen(true); else moveActive(event.key === "ArrowDown" ? 1 : -1); }
                 else if (event.key === "Enter" || event.key === " ") { event.preventDefault(); if (open) selectActive(); else setOpen(true); }
