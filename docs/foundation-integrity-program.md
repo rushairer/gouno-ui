@@ -129,9 +129,11 @@ Phase 4 — Interaction Foundations is active:
 - **Responsive 7/7** — canonical `sm/md/lg/xl/2xl` tiers own responsive adaptation; the former Steps arbitrary `531px` authority is removed.
 - **Motion 7/7** — CSS and JavaScript share one reduced-motion policy across imperative scrolling and Carousel lifecycle/autoplay.
 - **Focus 7/7** — Base fallback and component-owned focus share canonical 2px geometry, 3px/direct-`focus:ring`/double-outline bypasses are zero, browser focus ownership is executable, and Blog/Gosso reciprocal consumer parity is green.
-- **Overlay/layering in progress** — inventory confirms an implicit 20/30/40/50/100 stacking ladder with no semantic Layer authority; modal and popup portals collide at 50, while Showcase chrome needs tooling-only isolation.
-- **Interaction state** — remains planned after Overlay.
+- **Overlay/layering 7/7** — semantic `sticky / shell / floating / modal / popup / notice` roles own application-global stacking; nested popup portals are deterministically above modal surfaces; raw global layer bypasses are zero; Showcase tooling is isolated outside the product Layer scale.
+- **Interaction state** — next Foundation to inventory, with FI-D002 Carousel real-browser arrow ownership as the first mandatory defect probe.
 
 Three component defects discovered during visual review are now explicitly tracked in `docs/foundation-integrity-open-defects.md`: Steps connector/copy geometry (FI-D001), real-browser Carousel arrow navigation (FI-D002), and ConfigProvider demo proof quality (FI-D003). Their component reviews are reopened immediately; they must be resolved before final certification rather than deferred to a separate session.
 
 Focus certification is backed by CI run 35360452646 (#544), Canonical Visual Golden Smoke run 35360452819 (#461), Blog Consumer Parity run 35360452821 (#522), and Gosso Admin Consumer Parity run 35360452653 (#517).
+
+Overlay certification is backed by CI run 35364329607 (#555), Canonical Visual Golden Smoke run 35364330737 (#472), Blog Consumer Parity run 35364330586 (#533), and Gosso Admin Consumer Parity run 35364329528 (#528).
