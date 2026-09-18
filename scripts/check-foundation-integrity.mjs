@@ -913,6 +913,20 @@ if (responsive?.status !== "planned") {
       "responsive.guard: Steps responsive stacking must consume canonical max-sm",
     );
   }
+
+  for (const marker of [
+    "max-sm:w-full max-sm:min-w-0 max-sm:flex-none max-sm:pb-3",
+    "max-sm:flex-row max-sm:items-start",
+    'data-layout="mobile-vertical"',
+    'data-layout="desktop-inline"',
+  ]) {
+    if (!stepsSource.includes(marker)) {
+      failures.push(
+        "responsive.guard: Steps responsive composition lost connector/body geometry marker " +
+          marker,
+      );
+    }
+  }
   if (/max-\[[^\]]+\]:|min-\[[^\]]+\]:/.test(stepsSource)) {
     failures.push(
       "responsive.guard: Steps reintroduced an arbitrary responsive threshold",
