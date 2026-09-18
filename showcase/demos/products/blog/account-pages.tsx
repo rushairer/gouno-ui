@@ -13,6 +13,7 @@ import {
   Button,
   Card,
   Empty,
+  Heading,
   Segmented,
 } from "../../../../src/core";
 import { PageHeader } from "../../../../src/gouno";
@@ -357,13 +358,15 @@ export function BlogAccountSettingsDemo({
           <Card as="section" aria-labelledby="identity-boundary-title">
             <div className="flex min-w-0 flex-col gap-6">
               <div className="flex flex-col gap-4">
-                <h2
+                <Heading
                   id="identity-boundary-title"
-                  className="flex items-center gap-2 text-lg font-semibold"
+                  level={2}
+                  variant="subsection"
+                  className="flex items-center gap-2"
                 >
                   <Shield size={18} aria-hidden="true" />
                   账户安全由 GOSSO Admin 管理
-                </h2>
+                </Heading>
                 <p className="text-sm leading-7 text-muted-foreground">
                   Blog 仅维护博客侧资料、成员关系和权限，不直接提供密码、邮箱、MFA、Passkey
                   或身份会话管理。需要修改登录安全设置时，请前往身份管理中心完成近期强认证。
