@@ -58,6 +58,8 @@ describe("Interaction State Foundation", () => {
     expect(carousel).toContain("!event.isPrimary");
     expect(carousel).toContain("releasePointerCapture(event.pointerId)");
     expect(carousel).toContain("onLostPointerCapture");
+    expect(carousel).toContain('data-slot="carousel-prev-arrow"');
+    expect(carousel).toContain('data-slot="carousel-next-arrow"');
   });
 
   it("keeps Tag close hover on semantic/current foreground color", () => {
