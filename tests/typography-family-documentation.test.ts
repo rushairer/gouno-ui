@@ -16,14 +16,16 @@ describe("Typography family documentation", () => {
 
   it("keeps every Typography Preview backed by executable raw source", () => {
     const document = typographyDocuments.typography;
-    expect(document.code).toContain("<Heading level={2}>");
+    expect(document.code).toContain('<Heading level={2} variant="section">');
     expect(document.code).toContain("<Text size=\"lg\">");
 
     const semantics = document.demos?.find(
       (demo) => demo.title === "语义宿主与原生属性",
     );
     expect(semantics).toBeTruthy();
-    expect(semantics?.code).toContain('<Heading level={1} id="page-title"');
+    expect(semantics?.code).toContain('<Heading level={1} variant="page" id="page-title"');
+    expect(semantics?.code).toContain('<Heading level={2} variant="task">');
+    expect(semantics?.code).toContain('<Heading level={1} variant="task">');
     expect(semantics?.code).toContain('<Text as="span" size="sm" tone="muted"');
     expect(semantics?.code).toContain('<Typography as="small" data-kind="primitive"');
     expect(semantics?.render).toBeTypeOf("function");
@@ -40,6 +42,7 @@ describe("Typography family documentation", () => {
     expect(sections.get("Heading API")?.map((row) => row.name)).toEqual(
       expect.arrayContaining([
         "level",
+        "variant",
         "children",
         "className",
         "...heading props",
