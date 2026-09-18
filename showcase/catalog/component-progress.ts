@@ -243,10 +243,10 @@ for (const id of ["core-spin", "core-timeline", "core-steps", "core-table"]) {
 
 for (const id of ["theme-system", "core-alert", "core-image"]) {
   componentReviews[id] = {
-    status: "reopened",
-    scope: "FI-001 Phase 3: Color Foundation reopened because browser theme-color duplicates Theme background literals, Alert close hover uses raw black/white theme branches, and Image cover text uses raw white instead of an overlay foreground role.",
-    evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "src/tokens.css", "src/theme/provider.tsx", "src/core/alert.tsx", "src/core/image.tsx"],
-    baseline: "FI-001 Phase 3 / 2026-09-18",
+    status: "reviewed",
+    scope: "FI-001 Color certified: application UI color consumes semantic Theme roles, browser theme-color follows computed background, overlay copy uses overlay-foreground, and fixed/caller-owned color exceptions are explicitly classified and guarded.",
+    evidence: ["foundation-integrity.json", "docs/foundation-color-inventory.md", "docs/design-language.md", "tests/color-foundation-conformance.test.ts", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "FI-001 Color certified / 2026-09-18",
   };
 }
 
