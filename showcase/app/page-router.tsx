@@ -35,6 +35,9 @@ const PatternMarkdownEditorDemo = lazy(() =>
 const PatternDedicatedEditorDemo = lazy(() =>
   import("../demos/patterns/dedicated-editor").then((module) => ({ default: module.PatternDedicatedEditorDemo })),
 );
+const PatternEditorFormCompositionDemo = lazy(() =>
+  import("../demos/patterns/editor-form-composition").then((module) => ({ default: module.PatternEditorFormCompositionDemo })),
+);
 const PatternCollectionCompositionDemo = lazy(() =>
   import("../demos/patterns/admin-data-composition").then((module) => ({ default: module.PatternCollectionCompositionDemo })),
 );
@@ -216,6 +219,8 @@ export function ShowcasePage({ page, workspace }: { page: string; workspace: Sho
       return <Suspense fallback={loading}><PatternMarkdownEditorDemo /></Suspense>;
     case "pattern-dedicated-editor":
       return <Suspense fallback={loading}><PatternDedicatedEditorDemo /></Suspense>;
+    case "pattern-editor-form-composition":
+      return <Suspense fallback={loading}><PatternEditorFormCompositionDemo /></Suspense>;
     case "pattern-collection-composition":
       return <Suspense fallback={loading}><PatternCollectionCompositionDemo /></Suspense>;
     case "pattern-record-detail-composition":
