@@ -90,6 +90,7 @@ export function OpsSummaryStrip({
 }) {
   return (
     <dl
+      data-pattern="data-summary-composition"
       className="grid border-y py-3 sm:grid-cols-2 xl:grid-cols-4 xl:divide-x"
       aria-label={ariaLabel}
     >
