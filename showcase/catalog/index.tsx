@@ -224,6 +224,7 @@ export const showcaseCatalog: ShowcaseGroup[] = [
   ]},
   { workspace: "gouno-ui", layer: "patterns", group: "Composition Contracts 组合契约", items: [
     item("pattern-dedicated-editor", "DedicatedEditor", "专用编辑器", 100, <LayoutTemplate />),
+    item("pattern-editor-form-composition", "EditorForm", "编辑表单组合", 100, <ClipboardList />),
     item("pattern-collection-composition", "Collection", "数据集合", 100, <Table2 />),
     item("pattern-record-detail-composition", "RecordDetail", "记录详情", 100, <FileText />),
     item("pattern-master-detail-composition", "MasterDetail", "主从详情", 100, <Columns2 />),
