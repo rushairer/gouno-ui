@@ -294,7 +294,7 @@ export function BlogAdminMediaLibraryDemo() {
       : null;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div data-pattern="collection-composition" className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/media"
         note="保留真实媒体 Card Grid、上传/AI/Alt Text Drawers、图片格式契约、AI 风格预设、引用感知删除、批量部分失败，以及 media_asset resource 的 WorkflowLauncher 资源输入与 Run 反馈；Fixture 不请求真实 media/AI API。"
