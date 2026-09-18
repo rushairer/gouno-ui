@@ -49,8 +49,26 @@ const textApi: ApiRow[] = [
     type: '"default" | "muted" | "danger" | "success"',
     defaultValue: '"default"',
   },
+  {
+    name: "weight",
+    description: "正文强调权重；使用 Typography token，不通过 className 写 font-*。",
+    type: '"regular" | "medium" | "semibold"',
+    defaultValue: "继承宿主语义",
+  },
+  {
+    name: "family",
+    description: "字体族语义；代码/标识使用 mono，普通正文保持 sans/继承。",
+    type: '"sans" | "mono"',
+    defaultValue: "继承",
+  },
+  {
+    name: "leading",
+    description: "正文行高节奏；relaxed 用于需要更高可读性的说明/长句。",
+    type: '"default" | "relaxed"',
+    defaultValue: '"default"',
+  },
   { name: "children", description: "文本内容。", type: "ReactNode" },
-  { name: "className", description: "扩展 canonical 文本 token。", type: "string" },
+  { name: "className", description: "仅扩展布局、颜色、measure、truncate 等非排版度量；canonical 产品不得用它改写字号、行高、字重或字体族。", type: "string" },
   {
     name: "...element props",
     description: "透传通用 HTML 属性，包括 id、data-*、aria-* 与事件。",
