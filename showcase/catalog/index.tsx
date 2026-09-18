@@ -222,6 +222,9 @@ export const showcaseCatalog: ShowcaseGroup[] = [
     item("pattern-ai-suggestion-review", "AISuggestionReview", "AI 建议审阅器", 100, <SquareCheckBig />),
     item("pattern-markdown-editor", "MarkdownEditor", "Markdown 编辑器", 100, <FileText />),
   ]},
+  { workspace: "gouno-ui", layer: "patterns", group: "Composition Contracts 组合契约", items: [
+    item("pattern-dedicated-editor", "DedicatedEditor", "专用编辑器", 100, <LayoutTemplate />),
+  ]},
   { workspace: "gouno-ui", layer: "gouno", group: "Application Structure 应用结构", items: [
     item("gouno-app-shell", "AppShell", "应用框架", 90, <PanelsTopLeft />),
     item("gouno-page-container", "PageContainer", "页面容器", 90, <Frame />),
