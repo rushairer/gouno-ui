@@ -273,7 +273,7 @@ export function Breadcrumb({
                       <button
                         type="button"
                         aria-label={item.menu["aria-label"] ?? "Open breadcrumb menu"}
-                        className="inline-flex size-6 shrink-0 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        className="inline-flex size-6 shrink-0 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-control"
                       >
                         <span className="flex size-4 items-center justify-center [&_svg]:size-3.5">
                           {dropdownIcon}
