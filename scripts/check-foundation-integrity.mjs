@@ -1542,25 +1542,30 @@ if (accessibility?.status !== "planned") {
 
   for (const marker of [
     "const labelId =",
-    "id={labelId}",
-    '"aria-labelledby": [labelId, child.props["aria-labelledby"]]',
+    "childOwnsAccessibleName",
+    "aria-labelledby={childOwnsAccessibleName ? labelId : undefined}",
+    "htmlFor={childOwnsAccessibleName ? undefined : controlId}",
+    '"aria-labelledby": childOwnsAccessibleName',
   ]) {
     if (!fieldSource.includes(marker)) {
       failures.push(
-        "accessibility.guard: FormField lost visible-label ownership marker " +
+        "accessibility.guard: FormField lost semantic-name ownership marker " +
           marker,
       );
     }
   }
 
-  if (
-    !selectSource.includes(
-      'aria-required={required || props["aria-required"] || undefined}',
-    )
-  ) {
-    failures.push(
-      "accessibility.guard: visible Select combobox must expose required state",
-    );
+  for (const marker of [
+    "const nativeSelectId =",
+    "id={nativeSelectId}",
+    'id={baseId} role="combobox"',
+    'aria-required={required || props["aria-required"] || undefined}',
+  ]) {
+    if (!selectSource.includes(marker)) {
+      failures.push(
+        "accessibility.guard: visible Select semantic owner changed: " + marker,
+      );
+    }
   }
 
   if (
