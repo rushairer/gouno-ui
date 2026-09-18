@@ -321,6 +321,62 @@ for (const mode of ["light", "dark"]) {
   });
 }
 
+test("focus-canonical-fallback-and-component-ring", async ({ page }) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-button",
+    viewport: desktop,
+    ready: '[data-slot="button"]',
+  });
+
+  await page.keyboard.press("Tab");
+
+  const owned = page.locator('[data-slot="button"]').first();
+  await owned.focus();
+  const ownedStyle = await owned.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      focusVisible: element.matches(":focus-visible"),
+      outlineStyle: style.outlineStyle,
+      outlineWidth: style.outlineWidth,
+      boxShadow: style.boxShadow,
+    };
+  });
+
+  expect(ownedStyle.focusVisible).toBe(true);
+  expect(ownedStyle.outlineStyle).toBe("none");
+  expect(ownedStyle.boxShadow).not.toBe("none");
+
+  await page.evaluate(() => {
+    const probe = document.createElement("button");
+    probe.id = "focus-foundation-fallback";
+    probe.type = "button";
+    probe.textContent = "Focus fallback probe";
+    probe.style.position = "fixed";
+    probe.style.left = "16px";
+    probe.style.bottom = "16px";
+    document.body.appendChild(probe);
+  });
+
+  const fallback = page.locator("#focus-foundation-fallback");
+  await fallback.focus();
+  const fallbackStyle = await fallback.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      focusVisible: element.matches(":focus-visible"),
+      outlineStyle: style.outlineStyle,
+      outlineWidth: style.outlineWidth,
+      outlineOffset: style.outlineOffset,
+    };
+  });
+
+  expect(fallbackStyle.focusVisible).toBe(true);
+  expect(fallbackStyle.outlineStyle).toBe("solid");
+  expect(fallbackStyle.outlineWidth).toBe("2px");
+  expect(fallbackStyle.outlineOffset).toBe("2px");
+});
+
 test("motion-reduced-preference-collapses-carousel-movement", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await prepareLightFixture(page, {
