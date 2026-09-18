@@ -467,7 +467,7 @@ These rules are design-language invariants, not permission to create new Pattern
 Border **color** and border **width** answer different questions.
 
 - Ordinary component/surface boundaries and dividers use the canonical 1px boundary substrate (`border`, directional `border-*`, or `divide-*`) with semantic color ownership from `--border` or an explicit semantic state color.
-- A 2px edge is not a stronger generic border. It is the **emphasis/indicator** role owned by `--border-width-emphasis` and the semantic utilities `border-emphasis`, `border-bs-emphasis`, `border-be-emphasis`, `border-s-emphasis`, or `border-e-emphasis`.
+- A 2px edge is not a stronger generic border. It is the **emphasis/indicator** role owned by `--border-width-emphasis` and the semantic utilities `edge-emphasis`, `edge-bs-emphasis`, `edge-be-emphasis`, `edge-s-emphasis`, or `edge-e-emphasis`.
 - New product code must not introduce numeric `border-2/4/...` widths or arbitrary numeric border-width classes. Use the semantic emphasis utility only when a stronger separator/indicator is part of the component anatomy.
 - Directional emphasis uses logical block/inline sides rather than physical left/right assumptions.
 - Dynamic semantic color remains allowed when it is an explicit component API (for example Timeline item color); width authority still stays semantic.
