@@ -27,7 +27,7 @@ export const ColorPicker = forwardRef<HTMLInputElement, ColorPickerProps>(
         data-slot="color-picker"
         data-status={status}
         className={cn(
-          "inline-block w-14 cursor-pointer rounded-md border border-border bg-input p-1 outline-none transition-[border-color,box-shadow] focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+          "inline-block w-14 cursor-pointer rounded-md border border-border bg-input p-1 outline-none transition-[border-color,box-shadow] focus-control disabled:cursor-not-allowed disabled:opacity-50",
           controlSizeClass(size),
           status === "error" && "border-destructive",
           status === "warning" && "border-warning",
