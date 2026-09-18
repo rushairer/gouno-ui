@@ -66,6 +66,10 @@
     outline: var(--focus-ring-width) solid var(--ring) !important;
     outline-offset: var(--focus-ring-offset-control) !important;
   }
+  .peer:focus-visible ~ .focus-peer-control {
+    outline: var(--focus-ring-width) solid var(--ring) !important;
+    outline-offset: var(--focus-ring-offset-control) !important;
+  }
   ::selection {
     background: var(--accent);
     color: var(--accent-foreground);
