@@ -1,4 +1,4 @@
-import { useTheme } from "../src/theme/provider";
+import { syncBrowserThemeColor, useTheme } from "../src/theme/provider";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { ThemeProvider } from "../src/theme/provider";
@@ -47,6 +47,7 @@ afterEach(() => {
   delete document.documentElement.dataset.theme;
   delete document.documentElement.dataset.density;
   document.documentElement.style.colorScheme = "";
+  document.documentElement.style.removeProperty("--background");
   document.head.querySelectorAll('meta[name="theme-color"][data-theme-test]').forEach((node) => node.remove());
 });
 
@@ -95,13 +96,24 @@ describe("ThemeProvider", () => {
     },
   );
 
-  it("persists explicit mode and synchronizes browser theme side effects", () => {
-    setSystemDark(false);
+  it("syncs browser theme color from the computed semantic background token", () => {
+    const root = document.documentElement;
     const meta = document.createElement("meta");
     meta.name = "theme-color";
     meta.dataset.themeTest = "true";
     document.head.append(meta);
 
+    root.style.setProperty("--background", "#123456");
+    syncBrowserThemeColor(root);
+    expect(meta.getAttribute("content")).toBe("#123456");
+
+    root.style.setProperty("--background", "oklch(0.42 0.03 260)");
+    syncBrowserThemeColor(root);
+    expect(meta.getAttribute("content")).toBe("oklch(0.42 0.03 260)");
+  });
+
+  it("persists explicit mode and synchronizes browser theme side effects", () => {
+    setSystemDark(false);
     render(
       <ThemeProvider brand="blog-admin" storageKey="theme-persist" density="compact">
         <InteractiveProbe />
@@ -112,19 +124,16 @@ describe("ThemeProvider", () => {
     expect(document.documentElement.dataset.theme).toBe("light");
     expect(document.documentElement.dataset.density).toBe("compact");
     expect(document.documentElement.style.colorScheme).toBe("light");
-    expect(meta.getAttribute("content")).toBe("#ffffff");
 
     fireEvent.click(screen.getByRole("button", { name: "Dark" }));
     expect(screen.getByText("dark:dark")).toBeTruthy();
     expect(localStorage.getItem("theme-persist")).toBe("dark");
     expect(document.documentElement.dataset.theme).toBe("dark");
     expect(document.documentElement.style.colorScheme).toBe("dark");
-    expect(meta.getAttribute("content")).toBe("#11151b");
 
     fireEvent.click(screen.getByRole("button", { name: "Light" }));
     expect(screen.getByText("light:light")).toBeTruthy();
     expect(localStorage.getItem("theme-persist")).toBe("light");
     expect(document.documentElement.dataset.theme).toBe("light");
-    expect(meta.getAttribute("content")).toBe("#ffffff");
   });
 });
