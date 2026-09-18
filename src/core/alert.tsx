@@ -131,7 +131,7 @@ const AlertBase = forwardRef<HTMLDivElement, AlertProps>(function Alert(
           {...closeAria}
           data-slot="alert-close"
           aria-label={(closeAria as AriaAttributes)["aria-label"] ?? "Close alert"}
-          className={cn("-mr-1 inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-white/10", rich && "-mt-0.5", semanticClassNames.close)}
+          className={cn("-mr-1 inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-foreground/10", rich && "-mt-0.5", semanticClassNames.close)}
           style={semanticStyles.close}
           onClick={(event) => {
             closableConfig?.onClose?.(event);
