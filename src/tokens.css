@@ -157,6 +157,11 @@
     --reading-width: 720px;
     --layout-page-max-width: 90rem;
     --layout-page-gap: 1.5rem;
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 0.75rem;
+    --space-lg: 1rem;
+    --space-xl: 1.5rem;
     --chart-1: var(--primary);
     --chart-2: var(--success);
     --chart-3: var(--warning);
@@ -217,6 +222,12 @@
     max-width: var(--layout-page-max-width);
     gap: var(--layout-page-gap);
   }
+
+  .gap-space-xs { gap: var(--space-xs); }
+  .gap-space-sm { gap: var(--space-sm); }
+  .gap-space-md { gap: var(--space-md); }
+  .gap-space-lg { gap: var(--space-lg); }
+  .gap-space-xl { gap: var(--space-xl); }
 
   .type-display-title {
     font-size: var(--type-page-title-size);
