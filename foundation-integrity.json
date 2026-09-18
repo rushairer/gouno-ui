@@ -1332,7 +1332,10 @@
             "src/core/tree.tsx",
             "src/core/modal.tsx",
             "src/core/drawer.tsx",
-            "src/core/tag.tsx"
+            "src/core/tag.tsx",
+            "src/gouno/app-shell.tsx",
+            "src/gouno/page-skeleton.tsx",
+            "src/components/primitives/table.tsx"
           ]
         },
         "tokens": {
@@ -1344,26 +1347,45 @@
           ]
         },
         "authority": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
-            "docs/design-language.md: DL-25"
+            "docs/design-language.md: DL-25",
+            "docs/foundation-accessibility-inventory.md",
+            "src/core/field.tsx",
+            "src/core/select.tsx",
+            "src/core/collapse.tsx",
+            "src/core/tree.tsx",
+            "src/core/modal.tsx",
+            "src/core/drawer.tsx",
+            "src/core/tag.tsx",
+            "src/gouno/app-shell.tsx",
+            "src/gouno/page-skeleton.tsx"
           ]
         },
         "corpus": {
           "status": "in_progress",
           "evidence": [
-            "src/core",
-            "src/components/primitives",
-            "showcase/demos/products"
+            "showcase/demos/products/blog",
+            "showcase/demos/products/blog-admin",
+            "showcase/demos/products/gosso-admin",
+            "scripts/check-foundation-integrity.mjs"
           ]
         },
         "guard": {
           "status": "in_progress",
-          "evidence": []
+          "evidence": [
+            "scripts/check-foundation-integrity.mjs",
+            "tests/accessibility-foundation-conformance.test.tsx",
+            "tests/core-form-family.test.tsx",
+            "tests/gouno-page-skeleton.test.tsx"
+          ]
         },
         "visual": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "showcase/e2e/canonical-visual-golden.pw.mjs: accessibility-form-select-and-overlay-ownership",
+            "showcase/e2e/canonical-visual-golden.pw.mjs: accessibility-app-shell-skip-link-and-landmarks"
+          ]
         },
         "consumers": {
           "status": "pending",
