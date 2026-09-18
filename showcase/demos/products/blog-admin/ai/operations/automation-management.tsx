@@ -500,8 +500,9 @@ export function AutomationManagement({
         data-slot="workflow-detail"
         className="flex min-w-0 flex-col gap-5"
       >
-          <section
-            className="overflow-hidden rounded-xl border bg-background"
+          <Card
+            padding="none"
+            className="overflow-hidden"
             aria-label={`${selected.name} Workflow 概览`}
           >
             <div className="flex flex-col gap-4 border-b p-6 lg:flex-row lg:items-start lg:justify-between">
@@ -625,10 +626,11 @@ export function AutomationManagement({
                 detail={`${selected.inputFields.length} 项运行输入`}
               />
             </div>
-          </section>
+          </Card>
 
-          <section
-            className="overflow-hidden rounded-xl border bg-background"
+          <Card
+            padding="none"
+            className="overflow-hidden"
             aria-label="最近运行"
           >
             <div className="border-b px-6 py-4">
@@ -688,11 +690,12 @@ export function AutomationManagement({
                 <Text tone="muted">这个 Workflow 暂无运行记录。</Text>
               </div>
             )}
-          </section>
+          </Card>
 
           <div className="grid gap-5 2xl:grid-cols-[minmax(0,1.15fr)_minmax(19rem,0.85fr)]">
-            <section
-              className="overflow-hidden rounded-xl border bg-background"
+            <Card
+              padding="none"
+              className="overflow-hidden"
               aria-label="Workflow 流程定义"
             >
               <div className="border-b px-6 py-4">
@@ -725,11 +728,11 @@ export function AutomationManagement({
                   </li>
                 ))}
               </ol>
-            </section>
+            </Card>
 
             <div className="flex min-w-0 flex-col gap-5">
-              <section
-                className="rounded-xl border bg-background p-6"
+              <Card
+                padding="base"
                 aria-label="Workflow 运行边界"
               >
                 <OpsRegionHeading
@@ -777,10 +780,10 @@ export function AutomationManagement({
                     </div>
                   ) : null}
                 </dl>
-              </section>
+              </Card>
 
-              <section
-                className="rounded-xl border bg-background p-6"
+              <Card
+                padding="base"
                 aria-label="Workflow 输入契约"
               >
                 <OpsRegionHeading
@@ -804,7 +807,7 @@ export function AutomationManagement({
                     </div>
                   ))}
                 </div>
-              </section>
+              </Card>
             </div>
           </div>
 
