@@ -1,4 +1,5 @@
 import type { HTMLAttributes, MouseEvent, ReactNode } from "react";
+import { preferredScrollBehavior } from "../lib/motion";
 import { cn } from "../lib/utils";
 
 export interface AnchorItem {
@@ -40,7 +41,7 @@ export function Anchor({
 
     event.preventDefault();
     const top = window.scrollY + target.getBoundingClientRect().top - offset;
-    window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    window.scrollTo({ top: Math.max(0, top), behavior: preferredScrollBehavior() });
 
     if (window.location.hash !== href) {
       window.history.pushState(null, "", href);
