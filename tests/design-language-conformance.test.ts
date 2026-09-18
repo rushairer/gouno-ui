@@ -352,12 +352,33 @@ describe("design-language conformance", () => {
     const aiSettings = readFileSync(resolve(productsRoot, "blog-admin/ai/settings/sections.tsx"), "utf8");
 
     expect(lead).toContain('data-slot="showcase-tab-panel-lead"');
+    expect(lead).toContain("min-h-9");
+    expect(lead).toContain('size="sm"');
+    expect(lead).toContain('data-slot="showcase-tab-panel-feedback"');
     expect(lead).not.toContain("<Card");
     expect(account).toContain("<TabPanelLead");
+    expect(account).toContain("<TabPanelFeedback>{feedback}</TabPanelFeedback>");
     expect(system).toContain("ManagementPanelLead = TabPanelLead");
     expect(blogSettings).toContain("<TabPanelLead description={description} />");
     expect(blogSettings).not.toMatch(/<SettingsSurface\b[^>]*\btitle=/);
     expect(aiSettings).toContain("<TabPanelLead");
+    expect(aiSettings).toContain("<TabPanelFeedback>");
+  });
+
+  it("keeps top-level tab feedback between the panel lead and business content", () => {
+    const aiSettings = readFileSync(resolve(productsRoot, "blog-admin/ai/settings/sections.tsx"), "utf8");
+    const agentLead = aiSettings.indexOf('description="Skill Version + 模型连接 + 运行计划组成可审计的执行单元。"');
+    const agentFeedback = aiSettings.indexOf("<TabPanelFeedback>", agentLead);
+    const agentContent = aiSettings.indexOf('<Card padding="none" className="overflow-hidden">', agentFeedback);
+    expect(agentLead).toBeGreaterThanOrEqual(0);
+    expect(agentFeedback).toBeGreaterThan(agentLead);
+    expect(agentContent).toBeGreaterThan(agentFeedback);
+
+    const knowledgeLead = aiSettings.indexOf('description="仅索引已发布文章；Embedding Profile 负责把内容转换为可检索知识库。"');
+    const knowledgeFeedback = aiSettings.indexOf("<TabPanelFeedback>", knowledgeLead);
+    const knowledgeMetrics = aiSettings.indexOf('<div className="grid gap-4 sm:grid-cols-3">', knowledgeFeedback);
+    expect(knowledgeFeedback).toBeGreaterThan(knowledgeLead);
+    expect(knowledgeMetrics).toBeGreaterThan(knowledgeFeedback);
   });
 
   it("keeps product interface governance discoverable and machine-enforced", () => {
@@ -369,5 +390,7 @@ describe("design-language conformance", () => {
     expect(governance).toContain("## PI-02 — Tabs name the panel; the panel lead adds context");
     expect(governance).toContain("## PI-04 — Visible elevation uses semantic roles only");
     expect(governance).toContain("## PI-05 — New binding rules require a corpus pass, not screenshot patching");
+    const designLanguage = readFileSync(resolve(repoRoot, "docs/design-language.md"), "utf8");
+    expect(designLanguage).toContain("## DL-15 — Page composition uses ordered semantic slots");
   });
 });
