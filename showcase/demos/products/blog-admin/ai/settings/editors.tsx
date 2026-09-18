@@ -11,6 +11,7 @@ import {
   Form,
   FormActions,
   FormGrid,
+  Heading,
   Input,
   Select,
   Switch,
@@ -123,6 +124,28 @@ function objectSchema(values: Record<string, FormDataEntryValue>, key: string, f
   } catch {
     return fallback ?? { type: "object", additionalProperties: false };
   }
+}
+
+function ContextualEditorHeader({
+  title,
+  description,
+  icon,
+}: {
+  title: string;
+  description: string;
+  icon: ReactNode;
+}) {
+  return (
+    <div className="flex items-start gap-3">
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent text-primary" aria-hidden="true">
+        {icon}
+      </span>
+      <div className="min-w-0">
+        <Heading level={2} className="text-lg">{title}</Heading>
+        <Text size="sm" tone="muted">{description}</Text>
+      </div>
+    </div>
+  );
 }
 
 function EditorSection({
@@ -504,7 +527,7 @@ function ProviderEditor({ value, onSave, onCancel, surface = "page" }: { value: 
     >
       <div className="flex flex-col gap-5">
         {surface === "page" ? (
-          <EditorHeader
+          <ContextualEditorHeader
             title={initial ? `编辑模型连接：${initial.name}` : "添加模型连接"}
             description="连接身份、端点与凭据状态分组展示；真实 API Key 仍由服务端加密保存。"
             icon={<KeyRound />}
@@ -580,7 +603,7 @@ function EmbeddingEditor({ value, onSave, onCancel, surface = "page" }: { value:
     >
       <div className="flex flex-col gap-5">
         {surface === "page" ? (
-          <EditorHeader
+          <ContextualEditorHeader
             title={initial ? `编辑 Embedding：${initial.name}` : "添加 Embedding 模型"}
             description="Embedding Profile 负责把已发布内容转换为可检索知识索引。"
             icon={<DatabaseZap />}
@@ -640,7 +663,7 @@ function ConnectorEditor({ value, onSave, onCancel, surface = "page" }: { value:
     >
       <div className="flex flex-col gap-5">
         {surface === "page" ? (
-          <EditorHeader
+          <ContextualEditorHeader
             title={initial ? `编辑 Connector：${initial.name}` : "添加 Connector Profile"}
             description="连接器只暴露显式授权能力；真实 OAuth、凭据和网络调用不进入 Showcase。"
             icon={<LockKeyhole />}
