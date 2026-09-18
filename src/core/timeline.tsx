@@ -194,7 +194,7 @@ export function Timeline({
                 ) : (
                   <span
                     className={cn(
-                      "block size-3 rounded-full border-emphasis",
+                      "block size-3 rounded-full edge-emphasis",
                       variant === "filled"
                         ? "border-[var(--timeline-color,var(--primary))] bg-[var(--timeline-color,var(--primary))]"
                         : "border-[var(--timeline-color,var(--primary))] bg-background",
