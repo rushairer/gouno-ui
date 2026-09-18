@@ -331,6 +331,7 @@ export const feedbackDocuments: Record<string, ComponentDocument> = {
       { name: "extra", description: "恢复、返回或下一步操作区域", type: "ReactNode" },
       { name: "children", description: "可选结果详情内容", type: "ReactNode" },
       { name: "headingLevel", description: "结果标题语义层级；页面主结果显式使用 1", type: "HeadingLevel", defaultValue: "2" },
+      { name: "titleVariant", description: "结果标题视觉 Typography role；与 headingLevel 独立，页面嵌入结果可按信息层级选择 task / section 等角色", type: "HeadingVariant", defaultValue: 'headingLevel=1 时 "task"，否则 "section"' },
       { name: "className", description: "根 section 附加类名", type: "string" },
       { name: "role", description: "标准 ARIA role；动态结果需要播报时按语义选择 status/alert", type: "AriaRole" },
       { name: "aria-live", description: "标准 live-region 策略；组件不提供默认值", type: '"off" | "assertive" | "polite"' },
