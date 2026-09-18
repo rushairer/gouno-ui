@@ -4,6 +4,12 @@ import { describe, expect, it } from "vitest";
 
 const root = process.cwd();
 const productsRoot = resolve(root, "showcase/demos/products");
+const canonicalCompositionFiles = [
+  resolve(root, "showcase/components/tab-panel-lead.tsx"),
+  resolve(root, "showcase/components/patterns/dedicated-editor.tsx"),
+  resolve(root, "showcase/components/patterns/editor-form-composition.tsx"),
+  resolve(root, "showcase/components/patterns/admin-data-composition.tsx"),
+];
 const bannedVisualUtility =
   /\b(?:text-(?:xs|sm|base|lg|xl|[2-9]xl|\[[^\]]+\])|font-(?:thin|extralight|light|normal|medium|semibold|bold|extrabold|black)|(?<!type-)tracking-[^\s"'\x60]+|(?<!type-)leading-[^\s"'\x60]+)/;
 
@@ -50,6 +56,26 @@ describe("Typography Foundation conformance", () => {
       return openingTags(source, "Text")
         .map((tag) => ({ path, component: "Text", tag }))
         .filter((entry) => bannedVisualUtility.test(entry.tag));
+    });
+
+    expect(offenders).toEqual([]);
+  });
+
+  it("keeps canonical composition helpers under Typography authority", () => {
+    const offenders = canonicalCompositionFiles.flatMap((path) => {
+      const source = readFileSync(path, "utf8");
+      const rawHeadings = (source.match(/<h[1-6]\\b/g) ?? []).map((tag) => ({
+        path,
+        component: "native-heading",
+        tag,
+      }));
+      const componentOverrides = (["Heading", "CardTitle", "Text"] as const).flatMap(
+        (component) =>
+          openingTags(source, component)
+            .filter((tag) => bannedVisualUtility.test(tag))
+            .map((tag) => ({ path, component, tag })),
+      );
+      return [...rawHeadings, ...componentOverrides];
     });
 
     expect(offenders).toEqual([]);
