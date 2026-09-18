@@ -57,7 +57,7 @@ export function MfaPanel() {
         {status ? <StatusMessage message={status} type={status.startsWith("请输入") ? "error" : "success"} /> : null}
         {preview === "disabled" ? (
           <div className="flex flex-col items-start gap-4 py-2">
-            <Text tone="muted" size="sm" className="max-w-2xl leading-relaxed">当前账户尚未绑定身份验证器。启用后，登录时除密码外还需要一次性动态验证码。</Text>
+            <Text tone="muted" size="sm" leading="relaxed" className="max-w-2xl">当前账户尚未绑定身份验证器。启用后，登录时除密码外还需要一次性动态验证码。</Text>
             <Button variant="solid" color="primary" icon={<QrCode />} onClick={() => setPreview("enrolling")}>配置身份验证器</Button>
           </div>
         ) : null}
@@ -70,7 +70,7 @@ export function MfaPanel() {
               <div className="flex flex-col gap-4">
                 <div>
                   <Heading level={2} variant="compact">使用身份验证器扫描二维码</Heading>
-                  <Text size="sm" tone="muted" className="mt-1 leading-relaxed">如果无法扫描，可以手动输入下面的密钥。真实产品中的密钥由服务端临时生成。</Text>
+                  <Text size="sm" tone="muted" leading="relaxed" className="mt-1">如果无法扫描，可以手动输入下面的密钥。真实产品中的密钥由服务端临时生成。</Text>
                 </div>
                 <div className="flex max-w-lg items-center justify-between gap-3 rounded-md border bg-muted/30 p-3">
                   <code className="min-w-0 truncate font-mono text-xs">SHOWCASE-DEMO-KEY</code>

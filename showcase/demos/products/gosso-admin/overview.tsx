@@ -136,7 +136,7 @@ export function GossoOverviewDemo() {
             </div>
           </div>
 
-          <Text tone="muted" className="max-w-3xl leading-relaxed">
+          <Text tone="muted" leading="relaxed" className="max-w-3xl">
             {isAdmin
               ? "欢迎使用自托管 OpenID Connect / OAuth 2.0 身份提供者管理界面。管理安全凭据、客户端、用户范围及活跃会话。"
               : "欢迎使用身份管理账户中心。您可以在此更新个人基本信息、管理多因素身份验证与通行密钥，并监控活跃登录会话。"}

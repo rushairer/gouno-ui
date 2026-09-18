@@ -17,7 +17,7 @@ export function GossoNotFoundDemo() {
             </div>
           }
         >
-          <Text as="div" size="sm" tone="muted" className="font-mono">/unknown-route</Text>
+          <Text as="div" size="sm" tone="muted" family="mono">/unknown-route</Text>
         </Result>
       </Card>
     </div>

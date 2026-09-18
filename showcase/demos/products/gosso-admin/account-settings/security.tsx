@@ -93,7 +93,7 @@ export function PasskeysPanel() {
                     <Key aria-hidden="true" className="size-4" />
                   </span>
                   <div className="min-w-0">
-                    <Text as="div" className="truncate font-semibold">{passkey.name}</Text>
+                    <Text as="div" weight="semibold" className="truncate">{passkey.name}</Text>
                     <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
                       <span>{passkey.detail}</span>
                       <span className="flex items-center gap-1"><Calendar aria-hidden="true" className="size-3" />{passkey.createdAt}</span>

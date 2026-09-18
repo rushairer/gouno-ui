@@ -30,7 +30,7 @@ export function AuthSurface({
           <div className="mb-7 text-center">
             <BrandMark src={gossoLogo} className="mx-auto mb-4 size-14 text-primary" />
             <Heading level={1} variant="task">{title}</Heading>
-            {description ? <Text tone="muted" size="sm" className="mt-2 leading-relaxed">{description}</Text> : null}
+            {description ? <Text tone="muted" size="sm" leading="relaxed" className="mt-2">{description}</Text> : null}
           </div>
           {children}
         </Card>

@@ -100,7 +100,7 @@ export function SiteSettingsPanel() {
 
           <div className="xl:sticky xl:top-4 xl:self-start">
             <Card padding="base" className="overflow-hidden">
-              <div className="mb-4 flex items-center gap-2"><Image aria-hidden="true" className="size-4 text-muted-foreground" /><Text size="sm" className="font-medium">登录页预览</Text></div>
+              <div className="mb-4 flex items-center gap-2"><Image aria-hidden="true" className="size-4 text-muted-foreground" /><Text size="sm" weight="medium">登录页预览</Text></div>
               <div data-slot="site-settings-login-preview" aria-label="登录页预览" className="relative min-h-[430px] overflow-hidden rounded-xl border bg-muted/30 p-6">
                 <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-muted/60" />
                 <div className="relative mx-auto mt-12 max-w-sm rounded-xl border bg-background/95 p-6">
@@ -109,7 +109,7 @@ export function SiteSettingsPanel() {
                     <div><div className="font-semibold">{settings.productName || "GOSSO"}</div><Text size="xs" tone="muted">Identity Provider</Text></div>
                   </div>
                   <div className="text-xl font-semibold">{settings.loginTitle || settings.productName || "登录"}</div>
-                  <Text size="sm" tone="muted" className="mt-2 leading-relaxed">{settings.loginDescription || "安全登录并继续。"}</Text>
+                  <Text size="sm" tone="muted" leading="relaxed" className="mt-2">{settings.loginDescription || "安全登录并继续。"}</Text>
                   <div className="mt-6 grid gap-3"><div className="h-9 rounded-md border bg-muted/30" /><div className="h-9 rounded-md border bg-muted/30" /><div className="h-9 rounded-md bg-primary" /></div>
                 </div>
               </div>
