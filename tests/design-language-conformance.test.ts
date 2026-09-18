@@ -359,6 +359,7 @@ describe("design-language conformance", () => {
     expect(account).toContain("<TabPanelLead");
     expect(account).toContain("<TabPanelFeedback>{feedback}</TabPanelFeedback>");
     expect(system).toContain("ManagementPanelLead = TabPanelLead");
+    expect(system).toContain("ManagementPanelFeedback = TabPanelFeedback");
     expect(blogSettings).toContain("<TabPanelLead description={description} />");
     expect(blogSettings).not.toMatch(/<SettingsSurface\b[^>]*\btitle=/);
     expect(aiSettings).toContain("<TabPanelLead");
@@ -387,6 +388,27 @@ describe("design-language conformance", () => {
     const knowledgeMetrics = aiSettings.indexOf('<div className="grid gap-4 sm:grid-cols-3">', knowledgeFeedback);
     expect(knowledgeFeedback).toBeGreaterThan(knowledgeStart);
     expect(knowledgeMetrics).toBeGreaterThan(knowledgeFeedback);
+  });
+
+  it("keeps governed management alerts in the shared feedback slot", () => {
+    const files = [
+      "gosso-admin/system-management/clients.tsx",
+      "gosso-admin/system-management/users.tsx",
+      "gosso-admin/system-management/audit-logs.tsx",
+      "gosso-admin/system-management/site-settings.tsx",
+      "gosso-admin/system-management/system-status.tsx",
+    ];
+
+    for (const path of files) {
+      const source = readFileSync(resolve(productsRoot, path), "utf8");
+      const lead = source.indexOf("<ManagementPanelLead");
+      const feedback = source.indexOf("<ManagementPanelFeedback", lead);
+      expect(lead, path).toBeGreaterThanOrEqual(0);
+      expect(feedback, path).toBeGreaterThan(lead);
+    }
+
+    const audit = readFileSync(resolve(productsRoot, "gosso-admin/system-management/audit-logs.tsx"), "utf8");
+    expect(audit.indexOf("<ManagementPanelFeedback")).toBeLessThan(audit.indexOf('<Card padding="sm">'));
   });
 
   it("keeps product interface governance discoverable and machine-enforced", () => {
