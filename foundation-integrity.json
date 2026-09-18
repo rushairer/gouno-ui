@@ -493,28 +493,56 @@
       }
     },
     "surface": {
-      "status": "planned",
+      "status": "in_progress",
       "affectedComponentReviews": [],
       "gates": {
         "inventory": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/foundation-surface-inventory.md",
+            "docs/design-language.md: DL-16",
+            "docs/product-interface-governance.md: PI-04",
+            "docs/product-surface-elevation-audit.md",
+            "src/core/card.tsx",
+            "src/components/primitives/table.tsx",
+            "showcase/demos/products/gosso-admin/overview.tsx"
+          ]
         },
         "tokens": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "src/tokens.css: canvas/card/raised/popover semantic color roles",
+            "src/tokens.css: surface/raised/overlay/modal elevation roles",
+            "Certified Color, Border, Radius and Elevation Foundations"
+          ]
         },
         "authority": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/design-language.md: DL-16",
+            "docs/foundation-surface-inventory.md",
+            "src/core/card.tsx",
+            "src/components/primitives/table.tsx",
+            "showcase/demos/products/gosso-admin/overview.tsx"
+          ]
         },
         "corpus": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "scripts/check-foundation-integrity.mjs",
+            "showcase/demos/products/blog",
+            "showcase/demos/products/blog-admin",
+            "showcase/demos/products/gosso-admin"
+          ]
         },
         "guard": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "scripts/check-foundation-integrity.mjs",
+            "tests/surface-foundation-conformance.test.ts",
+            "tests/design-language-conformance.test.ts",
+            "tests/product-overview.test.tsx"
+          ]
         },
         "visual": {
           "status": "pending",
@@ -524,6 +552,18 @@
           "status": "pending",
           "evidence": []
         }
+      },
+      "inventory": {
+        "confirmedDefect": "Gosso Overview Quick Links manually duplicated the default Card surface/elevation bundle.",
+        "remediation": "Anchor retains navigation/focus semantics; Card interactive owns visual Surface/elevation.",
+        "legitimateNestedGrouping": [
+          "border-only lists",
+          "muted/subtle grouped fields",
+          "preview/media frames",
+          "icon wells",
+          "code/value boxes"
+        ],
+        "directSemanticShadowTarget": 0
       }
     },
     "border": {
