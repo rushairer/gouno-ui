@@ -72,7 +72,7 @@ export function GossoLoginDemo() {
           <FormField label="密码" required>
             <Input type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" />
           </FormField>
-          <div className="text-right"><a className="text-xs font-medium text-primary hover:underline" href="#gosso-forgot-password">忘记密码？</a></div>
+          <div className="text-right"><a className="type-caption type-weight-medium text-primary hover:underline" href="#gosso-forgot-password">忘记密码？</a></div>
           <Button type="submit" variant="solid" color="primary" className="w-full">登录</Button>
           <DividerLabel>或</DividerLabel>
           <Button type="button" icon={<KeyRound />} className="w-full" onClick={() => setFeedback({ type: "success", message: "通行密钥登录成功（Showcase 模拟）。" })}>使用通行密钥登录</Button>
@@ -81,7 +81,7 @@ export function GossoLoginDemo() {
         <form onSubmit={submitMfa} className="flex flex-col gap-4">
           {scenario === "sudo" ? (
             <div className="rounded-lg border bg-muted/30 p-4">
-              <div className="flex items-center gap-2 font-medium"><Shield aria-hidden="true" className="size-4 text-primary" />Administrator</div>
+              <div className="flex items-center gap-2 type-weight-medium"><Shield aria-hidden="true" className="size-4 text-primary" />Administrator</div>
               <Text size="sm" tone="muted" className="mt-2">当前会话已登录；请输入身份验证器动态码或使用通行密钥完成 step-up。</Text>
             </div>
           ) : <Alert type="info" showIcon title="需要多因素认证" description="当前账号已通过密码验证，请完成第二因素。" />}

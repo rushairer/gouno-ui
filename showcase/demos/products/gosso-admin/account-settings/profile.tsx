@@ -26,7 +26,7 @@ export function ProfilePanel() {
       <div className="flex flex-col gap-4">
         {status ? <StatusMessage message={status} /> : null}
         <dl>
-          <SettingRow label="用户名"><span className="font-medium">demo-user</span></SettingRow>
+          <SettingRow label="用户名"><span className="type-weight-medium">demo-user</span></SettingRow>
           <SettingRow label="显示名称">
             {editingName ? (
               <form onSubmit={saveDisplayName} className="flex max-w-xl flex-wrap items-center gap-2">
@@ -36,27 +36,27 @@ export function ProfilePanel() {
               </form>
             ) : (
               <div className="flex max-w-xl items-center justify-between gap-4">
-                <span className="min-w-0 truncate font-medium">{displayName}</span>
+                <span className="min-w-0 truncate type-weight-medium">{displayName}</span>
                 <Button size="small" icon={<Edit2 />} onClick={() => { setDraftName(displayName); setEditingName(true); setStatus(null); }}>编辑</Button>
               </div>
             )}
           </SettingRow>
           <SettingRow label="邮箱">
             <div className="flex max-w-xl items-center justify-between gap-4">
-              <span className="flex min-w-0 items-center gap-2"><Mail aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" /><span className="truncate font-medium">{email}</span></span>
+              <span className="flex min-w-0 items-center gap-2"><Mail aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" /><span className="truncate type-weight-medium">{email}</span></span>
               <Button size="small" icon={<Edit2 />} onClick={() => { setDraftEmail(email); setEmailOpen(true); setStatus(null); }}>编辑</Button>
             </div>
           </SettingRow>
           <SettingRow label="安全角色"><div className="flex flex-wrap gap-2"><Tag color="primary">user</Tag><Tag>self-service</Tag></div></SettingRow>
           <SettingRow label="Subject ID">
             <div className="flex max-w-xl items-center justify-between gap-4">
-              <code className="min-w-0 truncate rounded bg-muted px-2 py-1 font-mono text-xs">01J7M4D9YQK2G7N9F8C3A6X1PB</code>
+              <code className="min-w-0 truncate rounded bg-muted px-2 py-1 type-family-mono type-caption">01J7M4D9YQK2G7N9F8C3A6X1PB</code>
               <Button size="small" icon={<Copy />} onClick={() => setStatus("Subject ID 已复制（Showcase 模拟）。")}>复制</Button>
             </div>
           </SettingRow>
           <SettingRow label="SSO Issuer">
             <div className="flex max-w-xl items-center justify-between gap-4">
-              <code className="min-w-0 truncate rounded bg-muted px-2 py-1 font-mono text-xs">https://sso.io84.com</code>
+              <code className="min-w-0 truncate rounded bg-muted px-2 py-1 type-family-mono type-caption">https://sso.io84.com</code>
               <Button size="small" icon={<Copy />} onClick={() => setStatus("SSO Issuer 已复制（Showcase 模拟）。")}>复制</Button>
             </div>
           </SettingRow>

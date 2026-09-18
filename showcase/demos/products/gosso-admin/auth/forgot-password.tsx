@@ -44,7 +44,7 @@ export function GossoForgotPasswordDemo() {
           <Button type="submit" variant="solid" color="primary" disabled={!email.trim()} className="w-full">发送重置链接</Button>
         </form>
       )}
-      <div className="mt-5 text-center"><a href="#gosso-login" className="text-sm font-medium text-primary hover:underline">返回登录</a></div>
+      <div className="mt-5 text-center"><a href="#gosso-login" className="type-body-sm type-weight-medium text-primary hover:underline">返回登录</a></div>
     </AuthSurface>
   );
 }

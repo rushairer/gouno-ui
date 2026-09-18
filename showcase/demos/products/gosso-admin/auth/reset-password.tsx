@@ -80,7 +80,7 @@ export function GossoResetPasswordDemo() {
           <Button type="submit" variant="solid" color="primary" icon={<Lock />} className="w-full">重置密码</Button>
         </form>
       ) : null}
-      <div className="mt-5 text-center"><a href="#gosso-login" className="text-sm font-medium text-primary hover:underline">返回登录</a></div>
+      <div className="mt-5 text-center"><a href="#gosso-login" className="type-body-sm type-weight-medium text-primary hover:underline">返回登录</a></div>
     </AuthSurface>
   );
 }
