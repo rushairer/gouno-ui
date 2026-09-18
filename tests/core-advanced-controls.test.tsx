@@ -61,7 +61,10 @@ describe("additional Core controls", () => {
         <Menu items={[{ key: "home", label: "Home" }]} />
       </>,
     );
-    fireEvent.click(screen.getByRole("button", { name: "Expand" }));
+    const switcher = screen.getByRole("button", { name: "Root" });
+    expect(switcher.getAttribute("aria-expanded")).toBe("false");
+    fireEvent.click(switcher);
+    expect(switcher.getAttribute("aria-expanded")).toBe("true");
     expect(screen.getByText("Child")).toBeTruthy();
     expect(screen.getByRole("menuitem", { name: "Home" })).toBeTruthy();
   });
