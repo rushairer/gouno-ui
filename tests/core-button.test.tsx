@@ -31,6 +31,8 @@ describe("Core Button", () => {
     expect(action.className).toContain("border-dashed");
     expect(action.className).toContain("rounded-full");
     expect(action.className).toContain("w-full");
+    expect(action.className).toContain("control-height-large");
+    expect(action.className).not.toContain("h-10");
     const loading = screen.getByRole("button", { name: "Saving" }) as HTMLButtonElement;
     expect(loading.disabled).toBe(true);
     expect(loading.getAttribute("aria-busy")).toBe("true");
