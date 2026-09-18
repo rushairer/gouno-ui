@@ -22,6 +22,7 @@ describe("audited batch completion", () => {
       "core-radio",
       "core-switch",
       "core-pagination",
+      "core-alert",
       "core-modal",
       "core-drawer",
     ]) {
@@ -43,20 +44,16 @@ describe("audited batch completion", () => {
       "core-anchor",
       "core-qrcode",
       "core-statistic",
+      "core-image",
     ]) {
       expect(componentProgress(id, 0), id).toBe(100);
     }
   });
 
-  it("keeps Theme below certified completion while Color is reopened", () => {
-    expect(componentProgress("theme-system", 0)).toBeLessThan(100);
+  it("reports Theme complete only after the active Foundation reviews are certified", () => {
+    expect(componentProgress("theme-system", 0)).toBe(100);
   });
 
-  it("keeps Color-owned reviews below certified completion", () => {
-    for (const id of ["theme-system", "core-alert", "core-image"]) {
-      expect(componentProgress(id, 0), id).toBeLessThan(100);
-    }
-  });
 
   it("reports admitted Patterns complete only after focused review", () => {
     for (const id of [
