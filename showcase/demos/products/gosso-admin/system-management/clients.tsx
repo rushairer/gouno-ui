@@ -162,7 +162,7 @@ export function ClientsPanel() {
       )}
 
       <Modal open={editorOpen} maxWidth="620px" title={editing ? "编辑 OAuth2 客户端" : "注册 OAuth2 客户端"} description="配置客户端身份、回调地址、授权类型与访问范围。" onOpenChange={setEditorOpen} footer={<><Button onClick={() => setEditorOpen(false)}>取消</Button><Button form="system-client-editor" type="submit" variant="solid" color="primary">{editing ? "保存修改" : "注册客户端"}</Button></>}>
-        <form id="system-client-editor" onSubmit={save} className="flex flex-col gap-5">
+        <form id="system-client-editor" data-pattern="editor-form-composition" onSubmit={save} className="flex flex-col gap-5">
           <FormField label="客户端名称" required><Input value={name} onChange={(event) => setName(event.target.value)} placeholder="例如：Gouno Blog BFF" /></FormField>
           <FormField label="描述"><Input value={description} onChange={(event) => setDescription(event.target.value)} /></FormField>
           <FormField label="Redirect URI" hint="多个地址使用逗号分隔" required><Input value={redirectUris} onChange={(event) => setRedirectUris(event.target.value)} placeholder="https://example.com/auth/callback" /></FormField>
