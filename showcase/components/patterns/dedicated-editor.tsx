@@ -107,6 +107,7 @@ export function DedicatedEditorSection({
     <Card
       padding="none"
       data-slot="showcase-dedicated-editor-section"
+      data-pattern="dedicated-editor-section"
       className="overflow-hidden"
     >
       <CardHeader className="border-b p-6">
