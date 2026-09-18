@@ -68,10 +68,6 @@
   [data-slot="table-cell"],
   [data-slot="table-head"] {
     box-sizing: border-box;
-    padding: 12px 16px;
-  }
-  [data-slot="table-head"] {
-    height: 40px;
   }
   [data-slot="table-row"]:hover {
     background: var(--muted);
@@ -153,21 +149,62 @@
       text-align: start;
     }
   }
-  [data-slot="table-container"][data-density="compact"]
-    [data-slot="table-head"] {
-    height: 36px;
-    padding: 8px 12px;
+  /*
+   * Density policy:
+   * - ThemeProvider writes comfortable|compact to <html>.
+   * - Table density="default" follows that global policy.
+   * - Explicit compact|touch remains a component-local override.
+   * Geometry values are Foundation-owned in tokens.css.
+   */
+  [data-slot="table-container"] {
+    --table-cell-block: var(--table-density-comfortable-cell-block);
+    --table-cell-inline: var(--table-density-comfortable-cell-inline);
+    --table-head-height: var(--table-density-comfortable-head-height);
+    --table-footer-height: var(--table-density-comfortable-footer-height);
+    --table-edge-inset: var(--table-density-comfortable-edge-inset);
   }
-  [data-slot="table-container"][data-density="compact"]
-    [data-slot="table-cell"] {
-    padding: 8px 12px;
+
+  html[data-density="compact"]
+    [data-slot="table-container"][data-density="default"],
+  [data-slot="table-container"][data-density="compact"] {
+    --table-cell-block: var(--table-density-compact-cell-block);
+    --table-cell-inline: var(--table-density-compact-cell-inline);
+    --table-head-height: var(--table-density-compact-head-height);
+    --table-footer-height: var(--table-density-compact-footer-height);
+    --table-edge-inset: var(--table-density-compact-edge-inset);
   }
-  [data-slot="table-container"][data-density="touch"] [data-slot="table-head"] {
-    height: 48px;
-    padding: 14px 16px;
+
+  [data-slot="table-container"][data-density="touch"] {
+    --table-cell-block: var(--table-density-touch-cell-block);
+    --table-cell-inline: var(--table-density-touch-cell-inline);
+    --table-head-height: var(--table-density-touch-head-height);
+    --table-footer-height: var(--table-density-touch-footer-height);
+    --table-edge-inset: var(--table-density-touch-edge-inset);
   }
-  [data-slot="table-container"][data-density="touch"] [data-slot="table-cell"] {
-    padding: 14px 16px;
+
+  [data-slot="table-container"] [data-slot="table-head"],
+  [data-slot="table-container"] [data-slot="table-cell"] {
+    padding-block: var(--table-cell-block);
+    padding-inline: var(--table-cell-inline);
+  }
+
+  [data-slot="table-container"] [data-slot="table-head"] {
+    height: var(--table-head-height);
+  }
+
+  [data-slot="table-container"] [data-slot="table-footer"] [data-slot="table-head"],
+  [data-slot="table-container"] [data-slot="table-footer"] [data-slot="table-cell"] {
+    height: var(--table-footer-height);
+  }
+
+  [data-slot="table-container"][data-bordered="true"]
+    [data-slot="table-row"] > :first-child {
+    padding-inline-start: var(--table-edge-inset);
+  }
+
+  [data-slot="table-container"][data-bordered="true"]
+    [data-slot="table-row"] > :last-child {
+    padding-inline-end: var(--table-edge-inset);
   }
 
   /* Icon-only actions share one size, optical center, and state treatment. */
