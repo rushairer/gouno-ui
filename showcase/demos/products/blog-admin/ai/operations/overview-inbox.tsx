@@ -270,7 +270,6 @@ export function AIOpsOverviewPanel({
   return (
     <div className="flex flex-col gap-6" aria-label="AI 运营概览">
       <TabPanelLead
-        title="今天需要关注什么"
         description="先处理失败与等待人工的运行，再决定建议、候选和后续编辑任务；AI 不会绕过人工边界直接发布内容。"
         actions={
           <>
@@ -798,7 +797,6 @@ export function AIOpsInboxPanel({
   return (
     <div className="flex flex-col gap-5" aria-label="待我处理">
       <TabPanelLead
-        title="人工决策队列"
         description="把审批、选择、确认、运营建议和后续编辑任务放进同一人工决策队列，而不是分散成多个互不相关的卡片区。"
       />
       <div className="flex flex-wrap gap-2" aria-label="决策队列筛选">
