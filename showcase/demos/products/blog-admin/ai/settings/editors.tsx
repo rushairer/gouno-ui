@@ -193,7 +193,7 @@ function AgentEditor({
         });
       }}
     >
-      <div className="flex flex-col gap-5">
+      <div data-pattern="editor-form-composition" className="flex flex-col gap-5">
 
         <DedicatedEditorLayout
           primary={(
@@ -357,7 +357,7 @@ function SkillEditor({
         });
       }}
     >
-      <div className="flex flex-col gap-5">
+      <div data-pattern="editor-form-composition" className="flex flex-col gap-5">
 
         <DedicatedEditorLayout
           primary={(
@@ -501,7 +501,7 @@ function ProviderEditor({ value, onSave, onCancel, surface = "page" }: { value: 
         });
       }}
     >
-      <div className="flex flex-col gap-5">
+      <div data-pattern="editor-form-composition" className="flex flex-col gap-5">
         {surface === "page" ? (
           <ContextualEditorHeader
             title={initial ? `编辑模型连接：${initial.name}` : "添加模型连接"}
@@ -577,7 +577,7 @@ function EmbeddingEditor({ value, onSave, onCancel, surface = "page" }: { value:
         });
       }}
     >
-      <div className="flex flex-col gap-5">
+      <div data-pattern="editor-form-composition" className="flex flex-col gap-5">
         {surface === "page" ? (
           <ContextualEditorHeader
             title={initial ? `编辑 Embedding：${initial.name}` : "添加 Embedding 模型"}
@@ -637,7 +637,7 @@ function ConnectorEditor({ value, onSave, onCancel, surface = "page" }: { value:
         });
       }}
     >
-      <div className="flex flex-col gap-5">
+      <div data-pattern="editor-form-composition" className="flex flex-col gap-5">
         {surface === "page" ? (
           <ContextualEditorHeader
             title={initial ? `编辑 Connector：${initial.name}` : "添加 Connector Profile"}
