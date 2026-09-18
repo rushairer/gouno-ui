@@ -19,7 +19,7 @@
   ],
   "foundations": {
     "typography": {
-      "status": "in_progress",
+      "status": "certified",
       "affectedComponentReviews": [
         "core-typography",
         "gouno-page-header",
@@ -82,13 +82,16 @@
           ]
         },
         "consumers": {
-          "status": "blocked",
+          "status": "passed",
           "evidence": [
             ".github/workflows/blog-consumer-parity.yml",
             ".github/workflows/gosso-admin-consumer-parity.yml",
-            "Blog Consumer Parity run 35320174721: current Blog npm dependency renders PageHeader at 24/30 while candidate page role is 30/36"
-          ],
-          "blocker": "Publish the completed Typography Foundation as the next @gouno/ui npm release, then upgrade gouno-blog and re-run reciprocal parity."
+            "@gouno/ui v0.4.6 stable registry release",
+            "gouno-blog commit f3e0150: @gouno/ui 0.4.6",
+            "gosso-admin commit 2b5741a: @gouno/ui 0.4.6",
+            "Blog Consumer Parity run 35335918592 (#416): success",
+            "Gosso Admin Consumer Parity run 35335918594 (#411): success"
+          ]
         }
       }
     },
