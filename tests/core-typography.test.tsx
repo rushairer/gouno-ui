@@ -34,7 +34,7 @@ describe("Core Typography family", () => {
     expect(pageTitle.getAttribute("data-slot")).toBe("heading");
     expect(pageTitle.getAttribute("data-context")).toBe("page");
     expect(pageTitle.getAttribute("data-typography-role")).toBe("page");
-    expect(pageTitle.className).toContain("text-page-title");
+    expect(pageTitle.className).toContain("type-page-title");
     expect(pageTitle.className).toContain("font-title");
     expect(pageTitle.className).toContain("custom-heading");
 
@@ -48,8 +48,8 @@ describe("Core Typography family", () => {
     });
     expect(nestedTask.getAttribute("data-typography-role")).toBe("task");
     expect(standaloneTask.getAttribute("data-typography-role")).toBe("task");
-    expect(nestedTask.className).toContain("text-task-title");
-    expect(standaloneTask.className).toContain("text-task-title");
+    expect(nestedTask.className).toContain("type-task-title");
+    expect(standaloneTask.className).toContain("type-task-title");
   });
 
   it("keeps level-based visual defaults only as a compatibility fallback", () => {
@@ -86,7 +86,7 @@ describe("Core Typography family", () => {
     expect(text.getAttribute("data-slot")).toBe("text");
     expect(text.getAttribute("data-kind")).toBe("metadata");
     expect(text.getAttribute("data-typography-role")).toBe("body-sm");
-    expect(text.className).toContain("text-body-sm");
+    expect(text.className).toContain("type-body-sm");
     expect(text.className).toContain("text-muted-foreground");
     expect(text.className).toContain("custom-text");
   });
@@ -125,7 +125,7 @@ describe("Core Typography family", () => {
     expect(primitive.getAttribute("data-typography-role")).toBe("body-sm");
     expect(primitive.getAttribute("id")).toBe("primitive-copy");
     expect(primitive.getAttribute("data-kind")).toBe("primitive");
-    expect(primitive.className).toContain("text-body-sm");
+    expect(primitive.className).toContain("type-body-sm");
     expect(primitive.className).toContain("text-foreground");
     expect(primitive.className).toContain("custom-primitive");
   });
