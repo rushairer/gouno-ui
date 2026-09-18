@@ -36,14 +36,14 @@ Collection Toolbar
 ├─ View controls?
 └─ Result count / secondary actions?
         ↓
+Selection Context / Bulk Action?
+        ↓
 Data View
 ├─ Table
 ├─ List
 └─ Grid
         ↓
 Pagination?
-        ↓
-Selection Context / Bulk Action?
 ```
 
 Rules:
@@ -54,7 +54,7 @@ Rules:
 - Loading keeps the outer composition stable when filters or route identity remain meaningful.
 - Page-level read failure appears before the toolbar/data view and must not render stale editable data.
 - Pagination belongs to the collection, not to an arbitrary Card or table row.
-- Bulk actions belong to current selection context, not the ordinary toolbar.
+- Bulk actions belong to current selection context, not the ordinary toolbar; when present they sit between the ordinary toolbar and the data view they act on.
 - Responsive Table → List/Card adaptation may change the renderer, not the semantic order.
 
 Corpus evidence:
