@@ -19,6 +19,7 @@ describe("Core Result", () => {
 
     const heading = screen.getByRole("heading", { level: 2, name: "Saved" });
     expect(heading).toBeTruthy();
+    expect(heading.getAttribute("data-slot")).toBe("result-title");
     expect(heading.getAttribute("data-typography-role")).toBe("section");
     expect(heading.className).toContain("type-section-title");
     expect(screen.getByText("Changes are persisted.")).toBeTruthy();

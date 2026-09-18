@@ -99,6 +99,26 @@ describe("Core Typography family", () => {
     expect(text.className).toContain("custom-text");
   });
 
+  it("lets composition owners override the default data slot without losing Typography roles", () => {
+    render(
+      <>
+        <Heading level={2} variant="section" data-slot="result-title">
+          组合标题
+        </Heading>
+        <Text size="sm" data-slot="result-description">
+          组合说明
+        </Text>
+      </>,
+    );
+
+    const heading = screen.getByRole("heading", { level: 2, name: "组合标题" });
+    const description = screen.getByText("组合说明");
+    expect(heading.getAttribute("data-slot")).toBe("result-title");
+    expect(heading.getAttribute("data-typography-role")).toBe("section");
+    expect(description.getAttribute("data-slot")).toBe("result-description");
+    expect(description.getAttribute("data-typography-role")).toBe("body-sm");
+  });
+
   it("keeps danger and success tones semantic and independent of the host element", () => {
     render(
       <>

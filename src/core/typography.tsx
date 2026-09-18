@@ -20,12 +20,14 @@ export type TextFamily = "sans" | "mono";
 export type TextLeading = "default" | "relaxed";
 
 export interface HeadingProps extends HTMLAttributes<HTMLHeadingElement> {
+  "data-slot"?: string;
   level?: HeadingLevel;
   variant?: HeadingVariant;
   children?: ReactNode;
 }
 
 export interface TextProps extends HTMLAttributes<HTMLElement> {
+  "data-slot"?: string;
   as?: ElementType;
   size?: TextSize;
   tone?: TextTone;
@@ -36,6 +38,7 @@ export interface TextProps extends HTMLAttributes<HTMLElement> {
 }
 
 export interface TypographyProps extends HTMLAttributes<HTMLElement> {
+  "data-slot"?: string;
   as?: ElementType;
 }
 
@@ -91,6 +94,7 @@ export function Heading({
   variant,
   children,
   className,
+  "data-slot": dataSlot = "heading",
   ...props
 }: HeadingProps) {
   const Tag = `h${level}` as ElementType;
@@ -99,7 +103,7 @@ export function Heading({
   return (
     <Tag
       {...props}
-      data-slot="heading"
+      data-slot={dataSlot}
       data-typography-role={resolvedVariant}
       className={cn(headingVariantClass[resolvedVariant], className)}
     >
@@ -117,12 +121,13 @@ export function Text({
   leading = "default",
   children,
   className,
+  "data-slot": dataSlot = "text",
   ...props
 }: TextProps) {
   return (
     <Component
       {...props}
-      data-slot="text"
+      data-slot={dataSlot}
       data-typography-role={textSizeRole[size]}
       data-typography-weight={weight}
       data-typography-family={family}
@@ -151,12 +156,13 @@ export function Text({
 export function Typography({
   as: Component = "p",
   className,
+  "data-slot": dataSlot = "typography",
   ...props
 }: TypographyProps) {
   return (
     <Component
       {...props}
-      data-slot="typography"
+      data-slot={dataSlot}
       data-typography-role="body-sm"
       className={cn("type-body-sm text-foreground", className)}
     />
