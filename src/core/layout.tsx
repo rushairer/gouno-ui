@@ -60,7 +60,7 @@ export const Space = forwardRef<HTMLDivElement, SpaceProps>(function Space(
   const gap =
     typeof gapValue === "number"
       ? `[gap:${gapValue}px]`
-      : ({ xs: "gap-1", sm: "gap-2", md: "gap-3", lg: "gap-4", xl: "gap-6" } as const)[gapValue];
+      : ({ xs: "gap-space-xs", sm: "gap-space-sm", md: "gap-space-md", lg: "gap-space-lg", xl: "gap-space-xl" } as const)[gapValue];
   const items = Array.isArray(children) ? children : [children];
   const content = split
     ? items.flatMap((child, index) =>
@@ -112,11 +112,11 @@ export interface FlexProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const flexGapClass: Record<Exclude<FlexGap, number>, string> = {
-  xs: "gap-1",
-  sm: "gap-2",
-  md: "gap-3",
-  lg: "gap-4",
-  xl: "gap-6",
+  xs: "gap-space-xs",
+  sm: "gap-space-sm",
+  md: "gap-space-md",
+  lg: "gap-space-lg",
+  xl: "gap-space-xl",
 };
 
 export const Flex = forwardRef<HTMLDivElement, FlexProps>(function Flex(
@@ -197,7 +197,7 @@ export const Grid = forwardRef<HTMLDivElement, GridProps>(function Grid(
         columns === "auto"
           ? "grid-cols-[repeat(auto-fit,minmax(180px,1fr))]"
           : `grid-cols-${columns}`,
-        typeof gap === "number" ? undefined : gap === "sm" ? "gap-2" : gap === "lg" ? "gap-6" : "gap-4",
+        typeof gap === "number" ? undefined : gap === "sm" ? "gap-space-sm" : gap === "lg" ? "gap-space-lg" : "gap-space-md",
         className,
       )}
       style={{ ...style, ...(numericGap !== undefined ? { gap: numericGap } : undefined) }}
