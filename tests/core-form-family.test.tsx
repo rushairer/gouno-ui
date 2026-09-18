@@ -11,6 +11,7 @@ import {
   FormGrid,
   Input,
   OverlayForm,
+  Select,
 } from "../src/core";
 
 afterEach(cleanup);
@@ -38,6 +39,35 @@ describe("Core Form family", () => {
     expect(describedBy).toContain(hint.id);
     expect(describedBy).toContain(error.id);
     expect(error.textContent).toBe("邮箱格式无效");
+  });
+
+  it("binds FormField semantics to a composite Select's visible combobox", () => {
+    render(
+      <FormField
+        label="发布状态"
+        hint="选择当前发布状态。"
+        error="请选择状态"
+        required
+      >
+        <Select defaultValue="draft">
+          <option value="draft">草稿</option>
+          <option value="published">已发布</option>
+        </Select>
+      </FormField>,
+    );
+
+    const combobox = screen.getByRole("combobox", { name: "发布状态" });
+    expect(combobox.getAttribute("aria-required")).toBe("true");
+    expect(combobox.getAttribute("aria-invalid")).toBe("true");
+
+    const describedBy = combobox.getAttribute("aria-describedby")?.split(" ") ?? [];
+    expect(describedBy).toContain(screen.getByText("选择当前发布状态。").id);
+    expect(describedBy).toContain(screen.getByRole("alert").id);
+
+    const hiddenSelect = document.querySelector(
+      '[data-slot="select"] select[aria-hidden="true"]',
+    );
+    expect(hiddenSelect?.getAttribute("tabindex")).toBe("-1");
   });
 
   it("keeps a visually hidden FormField label as the accessible control name", () => {
