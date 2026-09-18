@@ -304,6 +304,11 @@ This rule standardizes hierarchy and information density, not implementation. It
 
 Reusable controls own their outer block size. Auxiliary content such as icons, counts, status dots, badges or metadata may fit _inside_ that geometry but must not silently enlarge one sibling control.
 
+For the shared `ControlSize = small | middle | large` vocabulary, the canonical outer block heights are **32 / 36 / 44px**. Those values are Foundation-owned by `--control-height-small/middle/large`; a component that advertises `ControlSize` must derive its resolved outer geometry from that authority rather than defining another height table.
+
+Compound controls may derive internal geometry from the same outer height. For example, Segmented subtracts its 2px top and bottom track inset from the label height, while InputOTP uses a square cell whose width and height both derive from the control height. Internal structure may differ; the public size meaning may not.
+
+
 For Tabs specifically:
 
 - public Tab sizes have deterministic block heights;
