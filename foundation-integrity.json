@@ -1046,7 +1046,7 @@
           "status": "in_progress",
           "evidence": [
             "scripts/check-foundation-integrity.mjs",
-            "tests/focus-foundation-conformance.test.tsx"
+            "tests/focus-foundation-conformance.test.ts"
           ]
         },
         "visual": {
