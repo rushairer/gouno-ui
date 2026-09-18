@@ -460,3 +460,17 @@ When a page looks inconsistent, ask in this order:
 17. Does every visible heading separate document level from visual typography role, without page-local size/weight/tracking overrides?
 
 These rules are design-language invariants, not permission to create new Pattern/Gouno components. Public abstraction still requires the product-driven admission process.
+
+
+## DL-18 — Border width expresses boundary versus emphasis
+
+Border **color** and border **width** answer different questions.
+
+- Ordinary component/surface boundaries and dividers use the canonical 1px boundary substrate (`border`, directional `border-*`, or `divide-*`) with semantic color ownership from `--border` or an explicit semantic state color.
+- A 2px edge is not a stronger generic border. It is the **emphasis/indicator** role owned by `--border-width-emphasis` and the semantic utilities `border-emphasis`, `border-bs-emphasis`, `border-be-emphasis`, `border-s-emphasis`, or `border-e-emphasis`.
+- New product code must not introduce numeric `border-2/4/...` widths or arbitrary numeric border-width classes. Use the semantic emphasis utility only when a stronger separator/indicator is part of the component anatomy.
+- Directional emphasis uses logical block/inline sides rather than physical left/right assumptions.
+- Dynamic semantic color remains allowed when it is an explicit component API (for example Timeline item color); width authority still stays semantic.
+- State colors such as primary, warning, destructive or transparent may change border color without changing border width unless the component contract explicitly owns the emphasis role.
+
+The current registered emphasis roles are Spinner ring, Timeline marker, Steps active-navigation indicator, Table summary separator, Showcase DemoSection active tab, Markdown blockquote lead, and Blog Admin selected-record lead. Adding a new role requires Border inventory review rather than copying `border-2`.
