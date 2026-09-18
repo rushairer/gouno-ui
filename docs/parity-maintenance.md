@@ -76,15 +76,25 @@ Paired product/Showcase screenshots remain diagnostic review evidence. Pixel gol
 
 ## Canonical visual golden smoke
 
-`.github/workflows/canonical-visual-golden.yml` runs a read-only Playwright visual smoke against accepted Showcase fixtures. The suite intentionally contains exactly **12** light-theme PNG baselines:
+`.github/workflows/canonical-visual-golden.yml` runs a deterministic Playwright visual gate against accepted Showcase fixtures. The golden set is intentionally **representative rather than exhaustive**: it covers stable product archetypes and adds dark/mobile counterparts only where they materially prove a design-language contract.
 
-- Blog: Home, Article Detail, Search, Account Settings;
-- Blog Admin: Dashboard, Posts desktop, Posts mobile, Post Editor;
-- Gosso Admin: Overview, Clients, Site Settings, Account Settings.
+The current accepted baseline set contains **23 PNGs**:
 
-The suite also performs a Gosso Account Settings → MFA Tab interaction smoke without creating another pixel baseline. This keeps interaction health covered without multiplying image churn.
+- **19 light-theme baselines**
+  - Blog: Home, Article Detail, Search, Account Settings;
+  - Blog Admin: Dashboard, Posts desktop/mobile, Post Editor;
+  - Blog Admin AI Operations: Overview, Inbox, Workflow List, Workflow Detail desktop/mobile, Workflow Editor and Run Center;
+  - Gosso Admin: Overview, OAuth2 Clients, Site Settings and Account Settings.
+- **4 dark-theme baselines**
+  - Blog Admin Posts desktop/mobile;
+  - Blog Admin Post Editor desktop;
+  - Gosso Admin Site Settings desktop.
 
-The visual environment is intentionally deterministic and narrow:
+The dark set is deliberately a **semantic cross-section**, not a second copy of every light screenshot. New dual-theme baselines are added when a design-language rule depends on surface, border, elevation, focus or state contrast and computed-style parity alone is insufficient evidence.
+
+The suite also performs behavior-only interaction checks, such as Gosso Account Settings → MFA Tab and narrow/mobile Markdown editor round-trips, without creating a PNG for every interaction state.
+
+The visual environment is deterministic:
 
 - GitHub Actions Ubuntu runner;
 - Node.js 24;
@@ -92,15 +102,35 @@ The visual environment is intentionally deterministic and narrow:
 - pinned Chromium from that Playwright release;
 - `zh-CN` locale and `Asia/Shanghai` timezone;
 - device scale factor `1`;
-- desktop `1440×900` and one mobile `390×844` canonical viewport;
-- light theme only;
+- desktop `1440×900`, narrow `782×900` and mobile `390×844` canonical viewports;
+- explicit Light or Dark theme initialization before navigation;
 - `maxDiffPixelRatio: 0.002`.
 
-Dark mode remains covered by the existing product ↔ Showcase computed-style / geometry parity matrix. Duplicating every golden in dark mode would add baseline cost without equivalent diagnostic value.
+### Golden matrix policy
+
+Use the smallest matrix that proves the current contract:
+
+- **Collection**: at least one desktop + mobile pair; when selection/surface contrast is binding, include Light + Dark.
+- **Settings**: at least one representative page in both Light + Dark; add mobile when layout collapse is non-trivial.
+- **Master-Detail / Record Detail**: keep desktop evidence and add mobile where the single-pane collapse is a governed behavior.
+- **Dedicated Configuration Editor / Workspace Editor**: keep at least one representative of each editor subtype; add Dark when section/surface hierarchy changed.
+- **Modal / Drawer**: add an opened-overlay golden when overlay geometry, safe-area or internal form rhythm changes.
+- **Public / Auth**: retain representative standalone/public surfaces when theme hierarchy differs materially from Admin application shells.
+
+Do **not** multiply every route by Desktop × Mobile × Light × Dark. A new baseline must correspond to a governed visual invariant or a recurring regression class.
 
 ### Baseline update rule
 
-Normal CI **must never** run `--update-snapshots` and keeps `contents: read`. A baseline update is an explicit review action after an intentional canonical visual change.
+Normal comparison CI remains read-only and **must never** run `--update-snapshots`.
+
+Baseline regeneration is an explicit, separately gated refresh path in the same workflow:
+
+1. an intentional canonical visual change is reviewed;
+2. a commit with the exact message `chore(showcase): refresh canonical visual goldens` triggers the refresh job;
+3. only that refresh job receives narrowly scoped `contents: write`;
+4. the pinned Playwright environment regenerates snapshots;
+5. the workflow commits generated PNGs with `test(showcase): refresh canonical visual goldens`;
+6. that follow-up commit re-enters the normal read-only comparison path and must pass.
 
 Before accepting new PNGs:
 
@@ -108,12 +138,12 @@ Before accepting new PNGs:
 2. review the visual diff rather than accepting changed pixels mechanically;
 3. require the normal static/type/unit/build/Showcase gates;
 4. require Blog and Gosso reciprocal consumer parity where applicable;
-5. regenerate only the affected accepted golden baselines using the pinned Playwright environment;
-6. commit the reviewed PNG changes together with the canonical change or a focused follow-up commit.
+5. regenerate only through the explicit refresh job;
+6. require the resulting verification commit to pass the normal Golden comparison.
 
 On CI failure, the HTML report and `test-results/canonical-visual-golden` evidence are retained for 14 days. Product-only routing, authentication, authorization, persistence, API state and security policy are outside the golden contract.
 
-`scripts/check-parity-maintenance-contract.mjs` seals the permanent workflow semantics, deterministic runner markers, pixel tolerance, interaction proof, and the exact 12-file accepted PNG set so the visual gate cannot silently disappear or expand.
+`scripts/check-parity-maintenance-contract.mjs` seals the reciprocal-parity workflow markers, deterministic visual environment, pixel tolerance, accepted baseline set, normal read-only comparison path and the single explicit write-enabled refresh path so the visual gate cannot silently disappear, broaden write permissions or drift away from documentation.
 
 ## Release and consumer upgrade rule
 
