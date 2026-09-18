@@ -82,6 +82,18 @@ Canonical responsibilities remain:
 
 Workspace Editor does **not** have to share the Configuration Editor's Card-section layout.
 
+### Heading hierarchy
+
+Dedicated Editor title semantics are independent from its visual task-title role:
+
+- when the editor is nested under an existing route/page H1, the editor lead is `Heading level={2} variant="task"`;
+- when the editor is the standalone page identity and no higher page title exists, the same lead may use `Heading level={1} variant="task"`;
+- switching between nested and standalone contexts changes the document outline only; it must not change the visual task-title scale;
+- editor sections continue below the task title using the appropriate semantic level and compact/section visual role;
+- callers must not resize the editor title with raw `text-*`, font-weight or tracking utilities.
+
+The Showcase-private `DedicatedEditorLead` therefore exposes `headingLevel` for semantic context while retaining the canonical task visual role.
+
 ## Relationship to list-triggered CRUD
 
 Follow PI-07 in `docs/product-interface-governance.md`:
