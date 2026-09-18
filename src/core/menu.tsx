@@ -525,7 +525,7 @@ export function Menu({
                 if (triggerSubMenuAction === "click") toggleOpen(node.key);
               }}
               className={cn(
-                "flex min-h-9 w-full min-w-0 items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+                "flex min-h-9 w-full min-w-0 items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-control disabled:pointer-events-none disabled:opacity-50",
                 open && "bg-accent/70 text-accent-foreground",
                 collapsedInline && "justify-center px-2",
                 semanticClassNames.item,
@@ -590,7 +590,7 @@ export function Menu({
             onFocus={() => setFocusKey(node.key)}
             onClick={(event) => activateItem(node, keyPath, event)}
             className={cn(
-              "flex min-h-9 w-full min-w-0 items-center gap-2 rounded-md px-3 py-2 text-left text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+              "flex min-h-9 w-full min-w-0 items-center gap-2 rounded-md px-3 py-2 text-left text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-control disabled:pointer-events-none disabled:opacity-50",
               selected ? "bg-accent text-accent-foreground" : "text-foreground",
               collapsedInline && "justify-center px-2",
               semanticClassNames.item,
