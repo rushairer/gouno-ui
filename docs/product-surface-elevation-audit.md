@@ -58,7 +58,7 @@ A border or rounded box is evidence for a boundary, not automatically for `raise
 | Blog Admin PostEditor / PageEditor outer frames | surface | default Card | editor workspace is a bounded persistent work surface |
 | Gosso Account Settings / System Management Cards and bordered Tables | surface | Core-owned default depth | normal task/settings surfaces on canvas |
 | Gosso embedded compact bordered lists inside an existing panel | ground/border-only | no page-local shadow | nested grouping should not recursively manufacture elevation |
-| Gosso Overview quick links | surface → raised on hover | `shadow-surface`, `hover:shadow-raised` | repeated peer navigation cards rest quietly and lift only when interaction is communicated |
+| Gosso Overview quick links | surface → raised on hover | `Card interactive` owns surface depth and hover lift | repeated peer navigation links keep anchor semantics while Core Card owns the visual surface contract |
 | Gosso Overview focal Hero | raised | `Card variant="elevated"` | one intentionally promoted route-level focal region |
 | Gosso standalone authentication card | raised | `Card variant="elevated"` | centered primary task detached from open standalone background |
 | Gosso Not Found result card | raised | `Card variant="elevated"` | standalone centered result is the sole task surface and should share the auth/result hierarchy rather than looking accidentally flatter |
@@ -111,9 +111,9 @@ Persistent business-product `Card variant="elevated"` is intentionally scarce an
 2. `showcase/demos/products/gosso-admin/auth/shared.tsx` — standalone authentication shell;
 3. `showcase/demos/products/gosso-admin/auth/not-found.tsx` — standalone Not Found result surface.
 
-Manual `shadow-raised` in product fixtures is currently allowed only in `gosso-admin/overview.tsx`, where a peer Quick Link transitions from `surface` to `raised` on hover.
+Direct product-owned semantic shadow utilities are currently **zero**. Gosso Overview Quick Links previously duplicated `shadow-surface` / `hover:shadow-raised`; they now keep the semantic `<a>` host and delegate the visual surface to `Card interactive`.
 
-Adding another persistent raised surface or page-local raised utility is a corpus-level design decision and must update this audit and automated conformance.
+Adding a direct product `shadow-surface`, `shadow-raised`, `shadow-overlay` or `shadow-modal` utility is a corpus-level design decision and must update this audit and automated conformance. Persistent `Card variant="elevated"` remains governed by the explicit whitelist above.
 
 ## Nested surface rule
 
@@ -153,7 +153,7 @@ A future change passes the elevation audit only when:
 - normal top-level bounded Cards/Tables obtain low depth through canonical `surface` behavior, not page-local classes;
 - nested grouping does not recursively manufacture unnecessary surface shadows;
 - any persistent `raised` product surface is on the explicit whitelist with a product-level reason;
-- any manual product `shadow-raised` use is explicitly audited and interaction-driven;
+- product fixtures do not manually reproduce semantic `surface` / `raised` / `overlay` / `modal` shadows; they select the owning component/variant instead;
 - overlays/modals obtain depth from canonical Core behavior;
 - raw size shadow utilities and arbitrary/page-local box shadows do not return to canonical/product source;
 - `sticky`/`fixed`/`absolute` are not treated as automatic elevation;
