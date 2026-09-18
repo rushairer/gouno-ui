@@ -1559,7 +1559,8 @@ if (accessibility?.status !== "planned") {
     "const nativeSelectId =",
     "id={nativeSelectId}",
     'id={baseId} role="combobox"',
-    'aria-required={required || props["aria-required"] || undefined}',
+    '"aria-labelledby": ariaLabelledBy',
+    'aria-required={required || ariaRequired || undefined}',
   ]) {
     if (!selectSource.includes(marker)) {
       failures.push(
