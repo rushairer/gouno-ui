@@ -10,6 +10,7 @@ import {
   type Ref,
 } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useReducedMotionPreference } from "../hooks/use-reduced-motion";
 import { cn } from "../lib/utils";
 import { IconButton } from "./icon-button";
 
@@ -132,6 +133,7 @@ export function Carousel({
     count,
     infinite,
   );
+  const reducedMotion = useReducedMotionPreference();
   const [animating, setAnimating] = useState(false);
   const [paused, setPaused] = useState(false);
   const pointerStart = useRef<{ id: number; x: number; y: number } | null>(null);
@@ -151,7 +153,7 @@ export function Carousel({
     if (!controlled) setInternalIndex(nextIndex);
     onChange?.(nextIndex);
 
-    if (dontAnimate || speed <= 0) {
+    if (dontAnimate || speed <= 0 || reducedMotion) {
       setAnimating(false);
       afterChange?.(nextIndex);
       return;
@@ -182,15 +184,10 @@ export function Carousel({
 
   useEffect(() => {
     if (!autoplay || paused || count < 2) return;
-    if (
-      typeof window !== "undefined" &&
-      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
-    ) {
-      return;
-    }
+    if (reducedMotion) return;
     const timer = window.setInterval(next, Math.max(250, autoplaySpeed));
     return () => window.clearInterval(timer);
-  }, [autoplay, autoplaySpeed, paused, current, count, infinite, animating]);
+  }, [autoplay, autoplaySpeed, paused, current, count, infinite, animating, reducedMotion]);
 
   if (!count) return null;
 
@@ -270,7 +267,7 @@ export function Carousel({
             )}
             style={semanticStyles.dot}
           >
-            {selected && autoplay && autoplayConfig?.dotDuration ? (
+            {selected && autoplay && autoplayConfig?.dotDuration && !reducedMotion ? (
               <span
                 aria-hidden="true"
                 className="absolute inset-y-0 left-0 bg-primary-foreground/50"
@@ -369,7 +366,7 @@ export function Carousel({
                   width: `${count * 100}%`,
                   transform: `translateX(-${(current * 100) / count}%)`,
                   transitionProperty: "transform",
-                  transitionDuration: `${speed}ms`,
+                  transitionDuration: reducedMotion ? "0ms" : `${speed}ms`,
                   transitionTimingFunction: easing,
                 }
               : undefined),
