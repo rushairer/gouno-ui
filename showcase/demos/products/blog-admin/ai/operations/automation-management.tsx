@@ -18,6 +18,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  Heading,
   IconButton,
   Input,
   Modal,
@@ -515,9 +516,9 @@ export function AutomationManagement({
                 </div>
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="text-xl font-semibold tracking-tight">
+                    <Heading level={2} variant="section">
                       {selected.name}
-                    </h2>
+                    </Heading>
                     <Tag color={selected.enabled ? "success" : undefined}>
                       {selected.enabled ? "已启用" : "已停用"}
                     </Tag>
