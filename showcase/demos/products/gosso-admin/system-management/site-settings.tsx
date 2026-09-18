@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Image, Save } from "lucide-react";
 import { Alert, Button, Card, CardContent, CardFooter, FormField, Input, Segmented, Skeleton, Text, Textarea } from "../../../../../src/core";
-import { FixtureBanner, FixtureMessage, ManagementPanelLead } from "./shared";
+import { FixtureBanner, FixtureMessage, ManagementPanelFeedback, ManagementPanelLead } from "./shared";
 
 type FixtureScenario = "data" | "loading" | "error";
 type Branding = {
@@ -70,9 +70,14 @@ export function SiteSettingsPanel() {
       <ManagementPanelLead description="维护 GOSSO 登录入口的产品名称、品牌资源和登录页文案，并在保存前预览结果。" />
       {saved ? <FixtureMessage>站点设置已保存（Showcase 模拟）。</FixtureMessage> : null}
 
-      {scenario === "error" ? (
-        <Alert type="error" showIcon title="站点设置加载失败" description="无法读取当前品牌与登录页配置。真实产品会提供重试入口而不渲染过期表单。" action={<Button size="small" onClick={() => changeScenario("data")}>重新载入</Button>} />
-      ) : scenario === "loading" ? (
+      <ManagementPanelFeedback>
+        {scenario === "error" ? <Alert type="error" showIcon title="站点设置加载失败" description="无法读取当前品牌与登录页配置。真实产品会提供重试入口而不渲染过期表单。" action={<Button size="small" onClick={() => changeScenario("data")}>重新载入</Button>} /> : null}
+
+
+      </ManagementPanelFeedback>
+
+
+      {scenario === "loading" ? (
         <LoadingSiteSettings />
       ) : (
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
