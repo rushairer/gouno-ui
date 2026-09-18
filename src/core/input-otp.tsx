@@ -24,9 +24,9 @@ interface InputOTPRuntimeProps extends Omit<
 }
 
 const inputSizeClass: Record<ControlSize, string> = {
-  small: "size-8 text-sm",
-  middle: "size-9 text-base",
-  large: "size-11 text-lg",
+  small: "control-square-small text-sm",
+  middle: "control-square-middle text-base",
+  large: "control-square-large text-lg",
 };
 
 export const InputOTP = forwardRef<HTMLDivElement, InputOTPRuntimeProps>(
