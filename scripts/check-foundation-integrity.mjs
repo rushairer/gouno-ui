@@ -1487,6 +1487,214 @@ if (state?.status !== "planned") {
   }
 }
 
+const accessibility = matrix.foundations.accessibility;
+if (accessibility?.status !== "planned") {
+  const designLanguageSource = readFileSync(
+    resolve(root, "docs/design-language.md"),
+    "utf8",
+  );
+  const fieldSource = readFileSync(resolve(root, "src/core/field.tsx"), "utf8");
+  const selectSource = readFileSync(resolve(root, "src/core/select.tsx"), "utf8");
+  const collapseSource = readFileSync(
+    resolve(root, "src/core/collapse.tsx"),
+    "utf8",
+  );
+  const treeSource = readFileSync(resolve(root, "src/core/tree.tsx"), "utf8");
+  const modalSource = readFileSync(resolve(root, "src/core/modal.tsx"), "utf8");
+  const drawerSource = readFileSync(resolve(root, "src/core/drawer.tsx"), "utf8");
+  const dialogSource = readFileSync(
+    resolve(root, "src/components/primitives/dialog.tsx"),
+    "utf8",
+  );
+  const sheetSource = readFileSync(
+    resolve(root, "src/components/primitives/sheet.tsx"),
+    "utf8",
+  );
+  const tableSource = readFileSync(
+    resolve(root, "src/components/primitives/table.tsx"),
+    "utf8",
+  );
+  const tagSource = readFileSync(resolve(root, "src/core/tag.tsx"), "utf8");
+  const accessibilityTestSource = readFileSync(
+    resolve(root, "tests/accessibility-foundation-conformance.test.tsx"),
+    "utf8",
+  );
+  const browserSource = readFileSync(
+    resolve(root, "showcase/e2e/canonical-visual-golden.pw.mjs"),
+    "utf8",
+  );
+
+  if (
+    !designLanguageSource.includes(
+      "DL-25 — Accessibility semantics belong to the interactive owner",
+    )
+  ) {
+    failures.push("accessibility.guard: missing semantic-owner authority");
+  }
+
+  for (const marker of [
+    "const labelId =",
+    "id={labelId}",
+    '"aria-labelledby": [labelId, child.props["aria-labelledby"]]',
+  ]) {
+    if (!fieldSource.includes(marker)) {
+      failures.push(
+        "accessibility.guard: FormField lost visible-label ownership marker " +
+          marker,
+      );
+    }
+  }
+
+  if (
+    !selectSource.includes(
+      'aria-required={required || props["aria-required"] || undefined}',
+    )
+  ) {
+    failures.push(
+      "accessibility.guard: visible Select combobox must expose required state",
+    );
+  }
+
+  if (
+    !collapseSource.includes("aria-labelledby={labelId}") ||
+    collapseSource.includes('"Expand panel"') ||
+    collapseSource.includes('"Collapse panel"')
+  ) {
+    failures.push(
+      "accessibility.guard: Collapse icon disclosure must use contextual visible-label naming",
+    );
+  }
+
+  if (
+    !treeSource.includes("aria-labelledby={nodeTitleId}") ||
+    treeSource.includes('aria-label={expanded ? "Collapse" : "Expand"}')
+  ) {
+    failures.push(
+      "accessibility.guard: Tree switcher must use contextual visible-node naming",
+    );
+  }
+
+  for (const [name, source, markers] of [
+    [
+      "Modal",
+      modalSource,
+      ["closeLabel={closeText()}", 'localizedText("Dialog", "对话框")'],
+    ],
+    [
+      "Drawer",
+      drawerSource,
+      ["closeLabel={closeText()}", 'localizedText("Drawer", "抽屉")'],
+    ],
+  ]) {
+    for (const marker of markers) {
+      if (!source.includes(marker)) {
+        failures.push(
+          "accessibility.guard: " + name + " lost overlay naming marker " + marker,
+        );
+      }
+    }
+  }
+
+  if (
+    dialogSource.includes('<span className="sr-only">Close</span>') ||
+    sheetSource.includes('<span className="sr-only">Close</span>')
+  ) {
+    failures.push(
+      "accessibility.guard: Dialog/Sheet close affordance must consume an owned label",
+    );
+  }
+
+  for (const marker of [
+    'data-slot="checkable-closable-tag"',
+    'role="checkbox"',
+  ]) {
+    if (!tagSource.includes(marker)) {
+      failures.push(
+        "accessibility.guard: Tag sibling interaction contract missing " + marker,
+      );
+    }
+  }
+  if (!accessibilityTestSource.includes("checkbox.contains(close)")) {
+    failures.push(
+      "accessibility.guard: Tag nested-interaction regression proof is missing",
+    );
+  }
+
+  for (const marker of ["<table", "<th", "<td"]) {
+    if (!tableSource.includes(marker)) {
+      failures.push(
+        "accessibility.guard: primitive Table lost native semantic element " +
+          marker,
+      );
+    }
+  }
+
+  if (
+    !browserSource.includes(
+      'test("accessibility-form-select-and-overlay-ownership"',
+    )
+  ) {
+    failures.push(
+      "accessibility.guard: representative real-browser semantic/focus contract is missing",
+    );
+  }
+
+  const nonSemanticClickFiles = canonicalProductFiles.filter((file) =>
+    /<(?:div|span|li)\b[^>]*\bonClick\s*=/.test(readFileSync(file, "utf8")),
+  );
+  const missingAltImageFiles = canonicalProductFiles.filter((file) => {
+    const tags = readFileSync(file, "utf8").match(/<img\b[^>]*>/g) ?? [];
+    return tags.some((tag) => !/\balt\s*=/.test(tag));
+  });
+  const focusableAriaHiddenFiles = canonicalProductFiles.filter((file) => {
+    const tags =
+      readFileSync(file, "utf8").match(
+        /<[^>]+\baria-hidden\s*=\s*(?:"true"|'true'|\{true\})[^>]*>/g,
+      ) ?? [];
+    return tags.some((tag) => {
+      if (/\btabIndex\s*=\s*(?:\{\s*-1\s*\}|"-1"|'\-1')/.test(tag)) {
+        return false;
+      }
+      if (/^<(?:button|input|select|textarea)\b/.test(tag)) return true;
+      if (/^<a\b/.test(tag) && /\bhref\s*=/.test(tag)) return true;
+      return /\btabIndex\s*=\s*(?:\{\s*[0-9]+\s*\}|"[0-9]+"|'[0-9]+')/.test(
+        tag,
+      );
+    });
+  });
+
+  const shortAccessibilityPath = (file) =>
+    file.startsWith(root) ? file.slice(root.length + 1) : file;
+  process.stdout.write(
+    "Accessibility corpus audit: nonSemanticClickFiles=" +
+      nonSemanticClickFiles.length +
+      ", missingAltImageFiles=" +
+      missingAltImageFiles.length +
+      ", focusableAriaHiddenFiles=" +
+      focusableAriaHiddenFiles.length +
+      "\n",
+  );
+
+  if (nonSemanticClickFiles.length !== 0) {
+    failures.push(
+      "accessibility.corpus: clickable product div/span/li nodes require semantic controls: " +
+        nonSemanticClickFiles.map(shortAccessibilityPath).join(", "),
+    );
+  }
+  if (missingAltImageFiles.length !== 0) {
+    failures.push(
+      "accessibility.corpus: product img elements require alt ownership: " +
+        missingAltImageFiles.map(shortAccessibilityPath).join(", "),
+    );
+  }
+  if (focusableAriaHiddenFiles.length !== 0) {
+    failures.push(
+      "accessibility.corpus: aria-hidden product nodes must not remain focusable: " +
+        focusableAriaHiddenFiles.map(shortAccessibilityPath).join(", "),
+    );
+  }
+}
+
 const density = matrix.foundations.density;
 if (density?.status !== "planned") {
   const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");
