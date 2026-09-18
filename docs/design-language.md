@@ -509,3 +509,15 @@ A behavior-specific threshold outside the scale is allowed only when the compone
 
 Responsive behavior does not redefine ControlSize, Density, Spacing or information hierarchy. It changes composition at a documented viewport tier; explicit component opt-outs such as `responsive={false}` remain local behavior controls.
 
+## DL-21 — Reduced motion is a cross-runtime Foundation policy
+
+`prefers-reduced-motion: reduce` is authoritative across both CSS and JavaScript.
+
+- CSS transitions/animations collapse to zero duration and CSS scrolling becomes automatic.
+- Imperative JavaScript scrolling must resolve through the shared Motion authority; do not hard-code `behavior: "smooth"`.
+- React components that schedule or render movement must consume the live reduced-motion hook rather than creating local media-query logic.
+- Reduced motion suppresses visual movement. It does not automatically shorten semantic persistence timers such as notification lifetime.
+- Component speed/duration APIs remain valid in normal motion mode, but may not override the user's reduced-motion preference.
+
+The CSS reduced-motion override intentionally uses `!important` for animation/transition duration and delay so inline author styles cannot become a second authority.
+
