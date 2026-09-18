@@ -380,6 +380,41 @@ test("focus-canonical-fallback-and-component-ring", async ({ page }) => {
   expect(fallbackStyle.outlineOffset).toBe("2px");
 });
 
+test("overlay-semantic-modal-popup-ordering", async ({ page }) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-modal",
+    viewport: desktop,
+    ready: '[data-slot="button"]:visible',
+  });
+
+  await page.getByRole("button", { name: "打开嵌套层级示例" }).click();
+  const dialog = page.getByRole("dialog", { name: "Modal 内嵌浮层" });
+  await expect(dialog).toBeVisible();
+
+  const overlay = page.locator('[data-slot="dialog-overlay"]').last();
+  await expect(overlay).toBeVisible();
+
+  const modalLayers = await Promise.all([
+    dialog.evaluate((element) => Number(getComputedStyle(element).zIndex)),
+    overlay.evaluate((element) => Number(getComputedStyle(element).zIndex)),
+  ]);
+  expect(modalLayers).toEqual([50, 50]);
+
+  await dialog
+    .getByRole("button", { name: "打开 Modal 内 Popover" })
+    .click();
+  const popover = page.locator('[data-slot="popover-content"]').last();
+  await expect(popover).toBeVisible();
+
+  const popupLayer = await popover.evaluate((element) =>
+    Number(getComputedStyle(element).zIndex),
+  );
+  expect(popupLayer).toBe(60);
+  expect(popupLayer).toBeGreaterThan(modalLayers[0]);
+});
+
 test("motion-reduced-preference-collapses-carousel-movement", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await prepareLightFixture(page, {
