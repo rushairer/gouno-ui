@@ -305,20 +305,37 @@
       }
     },
     "color": {
-      "status": "planned",
-      "affectedComponentReviews": [],
+      "status": "in_progress",
+      "affectedComponentReviews": [
+        "theme-system",
+        "core-alert",
+        "core-image"
+      ],
       "gates": {
         "inventory": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "src/tokens.css",
+            "src/theme/provider.tsx",
+            "src/core/alert.tsx",
+            "src/core/image.tsx",
+            "src/core/tag.tsx",
+            "src/core/qrcode.tsx",
+            "showcase/demos/products/gosso-admin/account-settings/mfa.tsx"
+          ]
         },
         "tokens": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "src/tokens.css"
+          ]
         },
         "authority": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "src/tokens.css",
+            "src/theme/provider.tsx"
+          ]
         },
         "corpus": {
           "status": "pending",
@@ -336,6 +353,22 @@
           "status": "pending",
           "evidence": []
         }
+      },
+      "inventory": {
+        "confirmedDefects": [
+          "ThemeProvider hard-codes #ffffff/#11151b for browser theme-color instead of consuming --background.",
+          "Alert close hover encodes raw black/white theme branches.",
+          "Image cover uses raw text-white over semantic overlay."
+        ],
+        "functionalFixedColorExceptions": [
+          "QRCode defaults to black modules on white background as generated/scannable media.",
+          "Gosso MFA QR quiet-zone wrapper stays white for scan reliability."
+        ],
+        "callerOwnedColorExceptions": [
+          "Tag custom color prop renders caller-provided arbitrary background color.",
+          "Badge custom color prop renders caller-provided arbitrary indicator color.",
+          "Timeline item color is an explicit caller-provided semantic/content color API."
+        ]
       }
     },
     "elevation": {
