@@ -499,16 +499,16 @@ export function BlogAdminPostsDemo() {
                       ) : null}
                       <TableCell className="min-w-72 whitespace-normal">
                         <div className="flex flex-col gap-1">
-                          <span className="font-semibold leading-snug">{post.title}</span>
-                          <span className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                            <code className="font-mono">/{post.slug}</code>
+                          <span className="type-weight-semibold">{post.title}</span>
+                          <span className="flex flex-wrap items-center gap-2 type-caption text-muted-foreground">
+                            <code className="type-family-mono">/{post.slug}</code>
                             <Tag bordered={false}>{post.category}</Tag>
                           </span>
                         </div>
                       </TableCell>
                       <TableCell><StatusTag status={post.status} /></TableCell>
-                      <TableCell><time className="font-mono text-xs text-muted-foreground">{post.updatedAt}</time></TableCell>
-                      <TableCell className="text-right font-mono text-xs text-muted-foreground">{post.views.toLocaleString()}</TableCell>
+                      <TableCell><time className="type-family-mono type-caption text-muted-foreground">{post.updatedAt}</time></TableCell>
+                      <TableCell className="text-right type-family-mono type-caption text-muted-foreground">{post.views.toLocaleString()}</TableCell>
                       <TableCell><RowActions post={post} canEdit={canEdit} canDelete={isManager} onNotice={setNotice} onDelete={(id) => setDeleteTarget({ kind: "single", id })} /></TableCell>
                     </TableRow>
                   );
@@ -527,13 +527,13 @@ export function BlogAdminPostsDemo() {
                       {isManager ? <Checkbox aria-label={`选择文章 ${post.title}`} checked={selected.includes(post.id)} onChange={(event) => setSelection(post.id, event.target.checked)} /> : null}
                       <div className="min-w-0 flex-1">
                         <div className="flex items-start justify-between gap-3">
-                          <span className="font-semibold leading-snug">{post.title}</span>
+                          <span className="type-weight-semibold">{post.title}</span>
                           <StatusTag status={post.status} />
                         </div>
-                        <code className="mt-1 block break-all font-mono text-xs text-muted-foreground">/{post.slug}</code>
+                        <code className="mt-1 block break-all type-family-mono type-caption text-muted-foreground">/{post.slug}</code>
                       </div>
                     </div>
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 type-caption text-muted-foreground">
                       <span>{post.category}</span>
                       <time>更新于 {post.updatedAt}</time>
                       <span>{post.views.toLocaleString()} 次阅读</span>

@@ -333,15 +333,15 @@ export function BlogAdminPagesDemo() {
                     </TableCell>
                     <TableCell className="min-w-72 whitespace-normal">
                       <div className="flex flex-col gap-1">
-                        <strong className="text-sm font-semibold leading-snug text-foreground">{item.title}</strong>
-                        {item.summary ? <span className="line-clamp-1 text-xs text-muted-foreground">{item.summary}</span> : <span className="text-xs italic text-muted-foreground/60">无摘要</span>}
+                        <strong className="type-body-sm type-weight-semibold text-foreground">{item.title}</strong>
+                        {item.summary ? <span className="line-clamp-1 type-caption text-muted-foreground">{item.summary}</span> : <span className="type-caption italic text-muted-foreground/60">无摘要</span>}
                       </div>
                     </TableCell>
-                    <TableCell><code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-muted-foreground">/{item.slug}</code></TableCell>
+                    <TableCell><code className="rounded bg-muted px-1.5 py-0.5 type-family-mono type-caption text-muted-foreground">/{item.slug}</code></TableCell>
                     <TableCell><Tag>{item.template || "default"}</Tag></TableCell>
                     <TableCell>{item.showInNav ? <Tag color="success">主导航 · {item.sortOrder}</Tag> : <Text size="xs" tone="muted">隐藏</Text>}</TableCell>
                     <TableCell><PageStatusTag status={item.status} /></TableCell>
-                    <TableCell><time className="font-mono text-xs text-muted-foreground">{item.updatedAt}</time></TableCell>
+                    <TableCell><time className="type-family-mono type-caption text-muted-foreground">{item.updatedAt}</time></TableCell>
                     <TableCell><PageActions page={item} onNotice={setNotice} onDelete={(id) => setDeleteTarget({ kind: "single", id })} /></TableCell>
                   </TableRow>
                 ))}
@@ -357,14 +357,14 @@ export function BlogAdminPagesDemo() {
                     <Checkbox aria-label={`选择单页 ${item.title}`} checked={selected.includes(item.id)} onChange={(event) => setSelection(item.id, event.target.checked)} />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-start justify-between gap-3">
-                        <strong className="min-w-0 break-words text-sm font-semibold leading-snug">{item.title}</strong>
+                        <strong className="min-w-0 break-words type-body-sm type-weight-semibold">{item.title}</strong>
                         <PageStatusTag status={item.status} />
                       </div>
-                      <code className="mt-1 block break-all font-mono text-xs text-muted-foreground">/{item.slug}</code>
+                      <code className="mt-1 block break-all type-family-mono type-caption text-muted-foreground">/{item.slug}</code>
                       {item.summary ? <Text size="xs" tone="muted" className="mt-2 line-clamp-2">{item.summary}</Text> : null}
                     </div>
                   </div>
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                  <div className="flex flex-wrap items-center gap-2 type-caption text-muted-foreground">
                     <Tag>{item.template || "default"}</Tag>
                     <span>{item.showInNav ? `主导航 · ${item.sortOrder}` : "导航隐藏"}</span>
                     <time>更新于 {item.updatedAt}</time>

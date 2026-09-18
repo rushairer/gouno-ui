@@ -203,16 +203,16 @@ export function BlogAdminCommentsDemo() {
                   <div className="pt-0.5">
                     <Checkbox aria-label={`选择评论 ${comment.id}`} checked={selected.includes(comment.id)} onChange={(event) => setSelection(comment.id, event.target.checked)} />
                   </div>
-                  <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">{comment.author.slice(0, 1).toUpperCase()}</div>
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 type-body-sm type-weight-semibold text-primary">{comment.author.slice(0, 1).toUpperCase()}</div>
                   <div className="min-w-0 flex-1 space-y-2">
                     <div className="flex flex-wrap items-center gap-2">
-                      <strong className="text-sm font-semibold text-foreground">{comment.author}</strong>
-                      <time className="font-mono text-xs text-muted-foreground">{new Date(comment.createdAt).toLocaleString("zh-CN")}</time>
+                      <strong className="type-body-sm type-weight-semibold text-foreground">{comment.author}</strong>
+                      <time className="type-family-mono type-caption text-muted-foreground">{new Date(comment.createdAt).toLocaleString("zh-CN")}</time>
                       <Tag color={statusColor(comment.status)}>{statusLabels[comment.status]}</Tag>
                       {comment.reportCount > 0 ? <Badge status="error" text={`被举报 ${comment.reportCount} 次`} /> : null}
-                      <span className="font-mono text-xs text-muted-foreground">文章 #{comment.postId}</span>
+                      <span className="type-family-mono type-caption text-muted-foreground">文章 #{comment.postId}</span>
                     </div>
-                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">{comment.content}</p>
+                    <p className="whitespace-pre-wrap type-body-sm type-leading-relaxed text-foreground/90">{comment.content}</p>
                   </div>
                 </div>
 

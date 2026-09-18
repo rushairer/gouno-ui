@@ -295,15 +295,15 @@ export function BlogAdminCategoriesDemo() {
                     <TableCell className="text-center">
                       <Checkbox aria-label={`选择分类 ${category.name}`} checked={selected.includes(category.id)} onChange={(event) => setSelection(category.id, event.target.checked)} />
                     </TableCell>
-                    <TableCell><span className="font-mono text-xs text-muted-foreground">{category.sortOrder}</span></TableCell>
+                    <TableCell><span className="type-family-mono type-caption text-muted-foreground">{category.sortOrder}</span></TableCell>
                     <TableCell className="min-w-72 whitespace-normal">
                       <div className="flex flex-col gap-1">
-                        <strong className="text-sm font-semibold text-foreground">{category.name}</strong>
-                        <span className="text-xs leading-relaxed text-muted-foreground">{category.description}</span>
+                        <strong className="type-body-sm type-weight-semibold text-foreground">{category.name}</strong>
+                        <span className="type-caption type-leading-relaxed text-muted-foreground">{category.description}</span>
                       </div>
                     </TableCell>
-                    <TableCell><code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-muted-foreground">{category.slug}</code></TableCell>
-                    <TableCell className="text-right font-mono text-xs text-muted-foreground">{category.postCount}</TableCell>
+                    <TableCell><code className="rounded bg-muted px-1.5 py-0.5 type-family-mono type-caption text-muted-foreground">{category.slug}</code></TableCell>
+                    <TableCell className="text-right type-family-mono type-caption text-muted-foreground">{category.postCount}</TableCell>
                     <TableCell>
                       <CategoryActions
                         category={category}
@@ -329,22 +329,22 @@ export function BlogAdminCategoriesDemo() {
                   <div className="flex min-w-0 items-start gap-3">
                     <Checkbox aria-label={`选择分类 ${category.name}`} checked={selected.includes(category.id)} onChange={(event) => setSelection(category.id, event.target.checked)} />
                     <div className="min-w-0 flex-1">
-                      <strong className="block text-sm font-semibold text-foreground">{category.name}</strong>
+                      <strong className="block type-body-sm type-weight-semibold text-foreground">{category.name}</strong>
                       <Text size="xs" tone="muted" leading="relaxed" className="mt-1">{category.description}</Text>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-3 rounded-md bg-muted/35 p-3 text-xs">
+                  <div className="grid grid-cols-2 gap-3 rounded-md bg-muted/35 p-3 type-caption">
                     <div>
                       <Text as="div" size="xs" tone="muted">排序</Text>
-                      <span className="mt-1 block font-mono text-foreground">{category.sortOrder}</span>
+                      <span className="mt-1 block type-family-mono text-foreground">{category.sortOrder}</span>
                     </div>
                     <div>
                       <Text as="div" size="xs" tone="muted">文章数</Text>
-                      <span className="mt-1 block font-mono text-foreground">{category.postCount}</span>
+                      <span className="mt-1 block type-family-mono text-foreground">{category.postCount}</span>
                     </div>
                     <div className="col-span-2 min-w-0">
                       <Text as="div" size="xs" tone="muted">Slug 标识</Text>
-                      <code className="mt-1 block break-all font-mono text-xs text-foreground">{category.slug}</code>
+                      <code className="mt-1 block break-all type-family-mono type-caption text-foreground">{category.slug}</code>
                     </div>
                   </div>
                   <div className="flex justify-end border-t pt-3">
