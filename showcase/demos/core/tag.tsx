@@ -67,7 +67,7 @@ export const tagDocuments: Record<string, ComponentDocument> = {
       },
       {
         name: "closable",
-        description: "是否显示关闭按钮",
+        description: "是否显示独立关闭按钮；与 checkable 同时使用时保持同级交互而非嵌套按钮",
         type: "boolean",
         defaultValue: "false",
       },
