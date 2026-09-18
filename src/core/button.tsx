@@ -10,10 +10,11 @@ import {
 import { LoaderCircle } from "lucide-react";
 import { Button as PrimitiveButton } from "../components/primitives/button";
 import { cn } from "../lib/utils";
+import type { ControlSize } from "./control-types";
 
 export type ButtonVariant = "solid" | "outline" | "ghost" | "link" | "text" | "dashed";
 export type ButtonColor = "default" | "primary" | "success" | "warning" | "error" | "info";
-export type ButtonSize = "small" | "middle" | "large";
+export type ButtonSize = ControlSize;
 export type ButtonIconPlacement = "start" | "end";
 export type ButtonShape = "default" | "round" | "circle";
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
