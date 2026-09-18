@@ -47,6 +47,22 @@ describe("Responsive Foundation conformance", () => {
     expect(root?.className).toContain("max-sm:flex-col");
     expect(root?.className).toContain("max-sm:overflow-visible");
     expect(root?.className).not.toContain("max-[531px]");
+
+
+    const firstItem = document.querySelector('[data-slot="steps-item"]');
+    expect(firstItem?.className).toContain("max-sm:w-full");
+    expect(firstItem?.className).toContain("max-sm:min-w-0");
+    expect(firstItem?.className).toContain("max-sm:flex-none");
+    expect(firstItem?.className).toContain("max-sm:pb-3");
+
+    const body = firstItem?.querySelector('[aria-current="step"]') ??
+      firstItem?.querySelector("div.relative");
+    expect(body?.className).toContain("max-sm:flex-row");
+    expect(body?.className).toContain("max-sm:items-start");
+
+    expect(
+      firstItem?.querySelector('[data-layout="mobile-vertical"]'),
+    ).toBeTruthy();
   });
 
   it("preserves the explicit responsive opt-out", () => {
