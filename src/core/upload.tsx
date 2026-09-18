@@ -145,7 +145,7 @@ export function Upload({
             : undefined
         }
         className={cn(
-          "inline-flex min-h-9 cursor-pointer items-center rounded-md border bg-background px-3 py-2 text-sm font-medium transition-colors hover:bg-muted focus-within:ring-2 focus-within:ring-ring",
+          "inline-flex min-h-9 cursor-pointer items-center rounded-md border bg-background px-3 py-2 text-sm font-medium transition-colors hover:bg-muted focus-within-owner",
           drag &&
             "flex min-h-36 w-full flex-col justify-center gap-2 border-dashed text-center",
           (disabled || readOnly) &&
