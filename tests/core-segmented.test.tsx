@@ -59,7 +59,7 @@ describe("Core Segmented", () => {
     expect(group.getAttribute("data-shape")).toBe("round");
     expect(group.className.includes("w-full")).toBe(true);
     expect(screen.getByTestId("list-icon")).toBeTruthy();
-    expect(screen.getByText("列表").closest('[data-slot="segmented-label"]')?.className).toContain("control-inset-height-large");
+    expect(screen.getByText("列表").closest('[data-slot="segmented-label"]')?.className).toContain("h-[calc(var(--control-height-large)-0.25rem)]");
     expect((screen.getByRole("radio", { name: "看板" }) as HTMLInputElement).disabled).toBe(true);
   });
 
