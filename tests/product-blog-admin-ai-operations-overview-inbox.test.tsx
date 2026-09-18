@@ -26,7 +26,7 @@ describe("Blog Admin AI Operations overview/inbox canonical modules", () => {
       />,
     );
 
-    expect(screen.getByRole("heading", { level: 2, name: "今天需要关注什么" })).toBeTruthy();
+    expect(screen.getByText(/先处理失败与等待人工的运行/)).toBeTruthy();
     expect(screen.getByText("执行中")).toBeTruthy();
     expect(screen.getByText("失败运行")).toBeTruthy();
     expect(screen.getByText("等待人工")).toBeTruthy();
