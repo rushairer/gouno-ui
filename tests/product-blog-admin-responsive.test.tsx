@@ -16,11 +16,15 @@ afterEach(cleanup);
     );
 
     const list = screen.getByRole("list", { name: "Workflow 列表" });
+    const firstRow = screen.getByRole("button", { name: "打开 Workflow：旧文维护" });
     expect(container.querySelector('[data-slot="ops-rail"]')).toBeNull();
     expect(container.querySelector('[data-slot="ops-rail-body"]')).toBeNull();
+    expect(container.querySelector('[data-slot="workflow-list-toolbar"]')).toBeTruthy();
     expect(list.className).toContain("overflow-hidden");
     expect(list.className).not.toContain("overflow-y-auto");
     expect(list.className).not.toContain("max-h-[");
+    expect(firstRow.className).toContain("grid-cols-1");
+    expect(firstRow.className).toContain("xl:grid-cols-[");
   });
 
 describe("Blog Admin responsive product structure", () => {
