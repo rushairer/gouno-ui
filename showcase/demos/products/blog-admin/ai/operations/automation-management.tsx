@@ -423,18 +423,8 @@ export function AutomationManagement({
                     <Search className="size-5 text-muted-foreground" aria-hidden="true" />
                     <strong className="text-sm">没有符合条件的 Workflow</strong>
                     <Text size="xs" tone="muted">
-                      调整搜索词或状态筛选后再试。
+                      调整搜索词或状态筛选后再试，或使用上方“清除筛选”恢复全部资产。
                     </Text>
-                    <Button
-                      size="small"
-                      variant="ghost"
-                      onClick={() => {
-                        setQuery("");
-                        setStatus("all");
-                      }}
-                    >
-                      清除筛选
-                    </Button>
                   </div>
                 )}
               </div>
