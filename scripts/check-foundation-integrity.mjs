@@ -424,11 +424,21 @@ if (border?.status !== "planned") {
     ),
     "utf8",
   );
+  const articleDetailSource = readFileSync(
+    resolve(root, "showcase/demos/products/blog/article-detail.tsx"),
+    "utf8",
+  );
+  const documentPageSource = readFileSync(
+    resolve(root, "showcase/demos/products/blog/document-pages.tsx"),
+    "utf8",
+  );
 
   for (const marker of [
     "--border-width-boundary: 1px;",
     "--border-width-emphasis: 2px;",
+    "--border-width-accent: 4px;",
     "@utility edge-emphasis",
+    "@utility edge-s-accent",
     "@utility edge-bs-emphasis",
     "@utility edge-be-emphasis",
     "@utility edge-s-emphasis",
@@ -453,6 +463,8 @@ if (border?.status !== "planned") {
     ["DemoSection", demoSectionSource, "edge-be-emphasis"],
     ["MarkdownPreview", markdownSource, "edge-s-emphasis ps-4"],
     ["SelectedRecord", selectedRecordSource, "edge-s-emphasis"],
+    ["ArticleQuote", articleDetailSource, "edge-s-accent border-s-primary/40"],
+    ["DocumentQuote", documentPageSource, "edge-s-accent border-s-primary/40"],
   ]) {
     if (!source.includes(marker)) {
       failures.push(
@@ -505,7 +517,7 @@ if (border?.status !== "planned") {
   );
   if (numericWidthLeaks.length !== 0) {
     failures.push(
-      "border.corpus: product fixtures must use semantic border emphasis instead of numeric/ad-hoc widths",
+      "border.corpus: product fixtures must use admitted semantic border-width roles instead of numeric/ad-hoc widths",
     );
   }
   if (neutralColorLeaks.length !== 0) {
