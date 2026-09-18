@@ -55,9 +55,11 @@ The existing generic form-control baseline is `ControlSize = small | middle | la
 
 The inventory found a real divergence: public `Button size="large"` resolved to 40px while `controlSizeClass("large")` and InputOTP resolved to 44px. Sizing is therefore reopened.
 
-The canonical scale is now owned by `--control-height-small/middle/large` and semantic height/square/inset utilities. Standard controls consume `controlSizeClass`; Button reuses `ControlSize`; InputOTP derives square cells from the same heights; Segmented derives its inner label height by subtracting the 4px total track inset. The resulting outer geometry remains 32 / 36 / 44px across these families.
+The canonical scale is now owned by `--control-height-small/middle/large`. Standard controls consume `controlSizeClass`; Button reuses `ControlSize`; InputOTP derives square cells from the same heights; Segmented derives its inner label height by subtracting the 4px total track inset. The resulting outer geometry remains 32 / 36 / 44px across these families.
 
-Different internal classes are acceptable only when they are mathematically derived from the same outer ControlSize authority.
+Consumers reference those variables through Tailwind-recognized height/size utilities such as `h-[var(--control-height-middle)]` and `size-[var(--control-height-middle)]`. This is intentional: caller overrides such as `h-auto` must remain in the same Tailwind Merge conflict group. Bespoke classes like `control-height-middle` are forbidden because they can coexist with `h-auto` and silently win in CSS order, collapsing auto-height compound controls.
+
+Different internal classes are acceptable only when they are mathematically derived from the same outer ControlSize authority and preserve normal caller override semantics.
 
 ## Radius inventory
 
