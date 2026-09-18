@@ -1,7 +1,7 @@
 # Color Foundation Inventory
 
 Status: FI-001 Phase 3 working inventory.
-Updated: 2026-09-18
+Updated: 2026-09-19
 
 ## Canonical authority
 
@@ -42,3 +42,11 @@ These exceptions are narrow. They do not permit page-level raw palette utilities
 ## Corpus policy
 
 Canonical Blog, Blog Admin and Gosso Admin fixtures use semantic color utilities. The only admitted raw palette utility is the Gosso MFA QR `bg-white` quiet-zone wrapper. CI scans for additional raw palette/arbitrary color utilities and fails when new UI color bypasses appear.
+
+## 2026-09-19 reopening — Tag interaction hover
+
+Interaction State inventory found one Core-level bypass that the original product-corpus Color scan did not cover: the close action inside `Tag` used `hover:bg-black/10`.
+
+That close affordance is application UI chrome, not the caller-owned arbitrary `Tag.color` background exception. It now derives feedback from `currentColor` through `hover:bg-current/10`, so semantic Tags and custom-color Tags both inherit hover feedback from their actual foreground instead of hard-coding a palette color.
+
+The Color guard and focused conformance test now cover this Core Tag state directly. Color remains reopened until exact-head CI, visual smoke and reciprocal consumer parity pass with the expanded guard.
