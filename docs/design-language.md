@@ -164,6 +164,20 @@ This rule and the surface rules are complementary:
 
 Do not solve a defect in one level by adding arbitrary margin/padding at another level.
 
+When a generic layout API exposes a **named gap scale**, the name has one Foundation-owned meaning across Core. The canonical scale is:
+
+| name | value |
+| --- | ---: |
+| `xs` | 4px |
+| `sm` | 8px |
+| `md` | 12px |
+| `lg` | 16px |
+| `xl` | 24px |
+
+`Space`, `Flex` and other generic layout helpers must consume this shared semantic scale rather than assigning component-local values to the same names. A numeric gap remains an explicit precision escape hatch; using a number means the caller is deliberately opting out of the named semantic scale.
+
+Likewise, Gouno application pages use the semantic `layout-page-container` track for canonical maximum width and page-stack rhythm. `PageContainer` must not reintroduce local `max-w-[...]` or `gap-*` authority for those two decisions. Product-local content width (for example a reading column) remains a separate semantic responsibility.
+
 ## DL-07 — Binding design changes require corpus conformance
 
 A new or changed binding design-language rule is not complete when only the triggering page is fixed. The change must be migrated through the existing product evidence corpus before normal page migration continues.
