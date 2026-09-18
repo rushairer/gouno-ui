@@ -175,7 +175,7 @@ export function Steps({
   ref,
   ...props
 }: StepsProps) {
-  const effectiveTitlePlacement = type === "dot" ? "vertical" : titlePlacement;
+  const effectiveTitlePlacement = orientation === "vertical" ? "horizontal" : type === "dot" ? "vertical" : titlePlacement;
   const semanticInfo: StepsSemanticInfo = {
     props: {
       orientation,
@@ -249,7 +249,32 @@ export function Steps({
           itemStatus === "process" &&
           type === "default" &&
           normalizedPercent !== undefined;
-        const hasConnector = visibleIndex < entries.length - 1;
+        const hasConnector =
+          visibleIndex < entries.length - 1 &&
+          type !== "panel" &&
+          type !== "navigation" &&
+          type !== "inline";
+        const inlineHorizontalConnector =
+          hasConnector &&
+          orientation === "horizontal" &&
+          effectiveTitlePlacement === "horizontal";
+
+        const connectorClass = (
+          axis: "horizontal" | "vertical",
+        ) => {
+          if (axis === "horizontal") {
+            if (type === "dot") return "left-3 top-2.5 right-0 h-px";
+            return cn(
+              size === "small" ? "left-5 top-2.5" : "left-7 top-3.5",
+              "right-0 h-px",
+            );
+          }
+          if (type === "dot") return "left-1 top-4 bottom-0 w-px";
+          return cn(
+            size === "small" ? "left-2.5 top-6" : "left-3.5 top-8",
+            "bottom-0 w-px",
+          );
+        };
 
         const body = (
           <>
@@ -282,28 +307,50 @@ export function Steps({
             </div>
 
             <div className="min-w-0 flex-1">
-              <div className="flex min-w-0 items-baseline gap-2">
-                <span
-                  data-slot="steps-title"
-                  className={cn(
-                    "min-w-0 truncate font-medium",
-                    size === "small" ? "text-xs" : "text-sm",
-                    itemStatus === "wait" ? "text-muted-foreground" : "text-foreground",
-                    itemStatus === "error" && "text-destructive",
-                    semanticClassNames.title,
-                  )}
-                  style={semanticStyles.title}
-                >
-                  {item.title}
-                </span>
-                {item.subTitle !== undefined ? (
+              <div
+                className={cn(
+                  "flex min-w-0 gap-2",
+                  inlineHorizontalConnector
+                    ? cn("items-center", size === "small" ? "min-h-5" : "min-h-7")
+                    : "items-baseline",
+                )}
+              >
+                <span className="flex min-w-0 items-baseline gap-2">
                   <span
-                    data-slot="steps-subtitle"
-                    className={cn("shrink-0 text-xs text-muted-foreground", semanticClassNames.subTitle)}
-                    style={semanticStyles.subTitle}
+                    data-slot="steps-title"
+                    className={cn(
+                      "min-w-0 truncate font-medium",
+                      size === "small" ? "text-xs" : "text-sm",
+                      itemStatus === "wait" ? "text-muted-foreground" : "text-foreground",
+                      itemStatus === "error" && "text-destructive",
+                      semanticClassNames.title,
+                    )}
+                    style={semanticStyles.title}
                   >
-                    {item.subTitle}
+                    {item.title}
                   </span>
+                  {item.subTitle !== undefined ? (
+                    <span
+                      data-slot="steps-subtitle"
+                      className={cn("shrink-0 text-xs text-muted-foreground", semanticClassNames.subTitle)}
+                      style={semanticStyles.subTitle}
+                    >
+                      {item.subTitle}
+                    </span>
+                  ) : null}
+                </span>
+                {inlineHorizontalConnector ? (
+                  <span
+                    aria-hidden="true"
+                    data-slot="steps-connector"
+                    data-layout="desktop-inline"
+                    className={cn(
+                      "h-px min-w-4 flex-1 bg-border",
+                      responsive && "max-sm:hidden",
+                      semanticClassNames.connector,
+                    )}
+                    style={semanticStyles.connector}
+                  />
                 ) : null}
               </div>
               {item.content !== undefined ? (
@@ -343,7 +390,12 @@ export function Steps({
             data-active={active ? "true" : undefined}
             className={cn(
               "relative min-w-0",
-              orientation === "horizontal" ? "min-w-36 flex-1" : "w-full pb-3",
+              orientation === "horizontal"
+                ? cn(
+                    "min-w-36 flex-1",
+                    responsive && "max-sm:w-full max-sm:min-w-0 max-sm:flex-none max-sm:pb-3",
+                  )
+                : "w-full pb-3",
               type === "panel" && "rounded-lg border border-border p-3",
               type === "navigation" && active && "edge-be-emphasis border-primary",
               item.disabled && "opacity-60",
@@ -351,21 +403,41 @@ export function Steps({
             )}
             style={semanticStyles.item}
           >
-            {hasConnector && type !== "panel" && type !== "navigation" && type !== "inline" ? (
+            {hasConnector &&
+            (orientation === "vertical" ||
+              effectiveTitlePlacement === "vertical") ? (
               <span
                 aria-hidden="true"
                 data-slot="steps-connector"
+                data-layout={
+                  orientation === "vertical"
+                    ? "vertical"
+                    : "desktop-stacked"
+                }
                 className={cn(
                   "absolute bg-border",
-                  orientation === "horizontal"
-                    ? cn(
-                        size === "small" ? "left-5 top-2.5" : "left-7 top-3.5",
-                        "right-0 h-px",
-                      )
-                    : cn(
-                        size === "small" ? "left-2.5 top-5" : "left-3.5 top-7",
-                        "bottom-0 w-px",
-                      ),
+                  connectorClass(
+                    orientation === "vertical" ? "vertical" : "horizontal",
+                  ),
+                  responsive &&
+                    orientation === "horizontal" &&
+                    "max-sm:hidden",
+                  semanticClassNames.connector,
+                )}
+                style={semanticStyles.connector}
+              />
+            ) : null}
+
+            {hasConnector &&
+            responsive &&
+            orientation === "horizontal" ? (
+              <span
+                aria-hidden="true"
+                data-slot="steps-connector"
+                data-layout="mobile-vertical"
+                className={cn(
+                  "absolute hidden bg-border max-sm:block",
+                  connectorClass("vertical"),
                   semanticClassNames.connector,
                 )}
                 style={semanticStyles.connector}
@@ -383,6 +455,9 @@ export function Steps({
                 className={cn(
                   "relative z-[2] flex w-full min-w-0 items-start gap-2 rounded-md text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                   effectiveTitlePlacement === "vertical" && "flex-col items-start",
+                  responsive &&
+                    orientation === "horizontal" &&
+                    "max-sm:flex-row max-sm:items-start",
                   type === "inline" && "items-center py-1",
                 )}
               >
@@ -395,6 +470,9 @@ export function Steps({
                 className={cn(
                   "relative z-[2] flex min-w-0 items-start gap-2",
                   effectiveTitlePlacement === "vertical" && "flex-col items-start",
+                  responsive &&
+                    orientation === "horizontal" &&
+                    "max-sm:flex-row max-sm:items-start",
                   type === "inline" && "items-center py-1",
                 )}
               >
