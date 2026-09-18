@@ -81,7 +81,8 @@ For a normal route-family task/settings page, use:
 PageHeader (route-family H1)
 Tabs
 Active TabPanel
-├─ optional open lead: description / status / actions
+├─ open lead: description / active-panel actions
+├─ optional panel feedback: Alert / status that applies to the whole Tab
 └─ content surfaces
 ```
 
@@ -91,9 +92,11 @@ The active Tab is already the panel identity. Therefore:
 - do not wrap the repeated Tab label + description inside the first Card just to make the Card look complete;
 - place concise panel context in an **open lead outside Card/Table/List boundaries**;
 - keep active-panel actions in that lead when they apply to the whole panel;
-- omit the lead entirely when it adds no information.
+- omit the lead entirely when it adds no information;
+- keep one-line lead geometry stable when actions appear or disappear; sibling panels use the same description typography and action alignment;
+- put Tab-wide feedback immediately after the lead and before the first content surface; keep record/form/task-local feedback with the region that owns it.
 
-The lead is presentation grammar, not a public component contract. Showcase may use a private helper to enforce the grammar; real products may compose it directly.
+The lead and feedback positions are presentation grammar, not public component contracts. Showcase may use a private helper to enforce the grammar; real products may compose it directly.
 
 ## PI-03 — Surface-local titles must name surface-local concepts
 
