@@ -142,7 +142,7 @@ export function BlogAdminCommentsDemo() {
     : "确认永久删除这条评论？此操作无法撤销。";
 
   return (
-    <div className="flex flex-col gap-6">
+    <div data-pattern="collection-composition" className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/comments"
         note="保留真实审核队列、举报筛选、批量部分失败保留选择，以及 comment resource 的 WorkflowLauncher 资源输入与 Run 反馈；Fixture 不请求真实 Blog/AI API。"
