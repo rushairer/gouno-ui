@@ -81,6 +81,7 @@ const completedComponents = new Set([
   "pattern-ai-suggestion-picker",
   "pattern-ai-suggestion-review",
   "pattern-markdown-editor",
+  "pattern-dedicated-editor",
   "gouno-app-shell",
   "gouno-page-container",
   "gouno-page-header",
@@ -135,6 +136,16 @@ componentReviews["pattern-markdown-editor"] = {
   scope: "Shared Markdown edit/split/preview, formatting commands, cursor/selection ref API, and product-owned toolbar extension slot.",
   evidence: ["showcase/demos/patterns/markdown-editor.tsx", "tests/pattern-document-editor.test.tsx"],
   baseline: "2026-09-16",
+};
+componentReviews["pattern-dedicated-editor"] = {
+  status: "reviewed",
+  scope: "Showcase-only composition contract for deep Configuration and Workspace editors; no public runtime DedicatedEditor API is admitted.",
+  evidence: [
+    "docs/patterns/dedicated-editor.md",
+    "showcase/demos/patterns/dedicated-editor.tsx",
+    "tests/pattern-dedicated-editor-showcase.test.tsx",
+  ],
+  baseline: "2026-09-18",
 };
 
 export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
