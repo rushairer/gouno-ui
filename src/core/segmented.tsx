@@ -138,7 +138,7 @@ function SegmentedInner<T extends SegmentedValue>(
               className={cn(
                 "flex min-w-0 items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-[background-color,color,box-shadow]",
                 "peer-checked:bg-background peer-checked:text-foreground peer-checked:shadow-control",
-                "peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-1 peer-focus-visible:ring-offset-muted",
+                "peer-focus-visible:outline-none focus-control",
                 !optionDisabled && "hover:text-foreground",
                 shape === "round" ? "rounded-full" : "rounded-md",
                 sizeClasses[size],
