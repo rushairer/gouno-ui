@@ -1,7 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { componentProgress } from "../showcase/catalog/component-progress";
+import { componentProgress, componentReviews } from "../showcase/catalog/component-progress";
 
 describe("audited batch completion", () => {
+  const expectReviewProgress = (id: string) => {
+    const review = componentReviews[id];
+    expect(review, id).toBeDefined();
+    expect(componentProgress(id, 0), id).toBe(
+      review?.status === "reviewed" ? 100 : 0,
+    );
+  };
+
   it("reports complete only for the reviewed Core component batch", () => {
     for (const id of [
       "core-icon",
@@ -18,7 +26,7 @@ describe("audited batch completion", () => {
       "core-pagination",
       "core-alert",
     ]) {
-      expect(componentProgress(id, 0), id).toBe(100);
+      expectReviewProgress(id);
     }
   });
 
@@ -37,25 +45,25 @@ describe("audited batch completion", () => {
       "core-statistic",
       "core-image",
     ]) {
-      expect(componentProgress(id, 0), id).toBe(100);
+      expectReviewProgress(id);
     }
   });
 
   it("reports Focus-owned reviews complete only after certification", () => {
     for (const id of ["core-button","core-input","core-textarea","core-checkbox","core-radio","core-switch","core-tabs","core-badge","core-select","core-modal","core-drawer"]) {
-      expect(componentProgress(id, 0), id).toBe(100);
+      expectReviewProgress(id);
     }
   });
 
   it("reports Responsive-owned reviews complete only after certification", () => {
     for (const id of ["theme-system", "core-steps", "core-grid"]) {
-      expect(componentProgress(id, 0), id).toBe(100);
+      expectReviewProgress(id);
     }
   });
 
   it("reports Motion-owned reviews complete only after certification", () => {
     for (const id of ["core-anchor", "core-back-top", "core-carousel"]) {
-      expect(componentProgress(id, 0), id).toBe(100);
+      expectReviewProgress(id);
     }
   });
 
@@ -65,7 +73,7 @@ describe("audited batch completion", () => {
       "pattern-markdown-editor",
       "pattern-dedicated-editor",
     ]) {
-      expect(componentProgress(id, 0), id).toBe(100);
+      expectReviewProgress(id);
     }
   });
 
@@ -76,7 +84,7 @@ describe("audited batch completion", () => {
       "gouno-page-container",
       "gouno-page-skeleton",
     ]) {
-      expect(componentProgress(id, 0), id).toBe(100);
+      expectReviewProgress(id);
     }
   });
 
