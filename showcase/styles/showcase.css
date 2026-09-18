@@ -77,3 +77,20 @@
 .demo-block__content [data-slot="space"][data-direction="vertical"] {
   width: 100%;
 }
+
+
+/* Showcase chrome lives outside the product viewport. Portaled Sheets must
+   start below that chrome instead of hiding their header underneath it. */
+body:has([data-showcase-product-preview]) [data-slot="sheet-overlay"] {
+  top: var(--showcase-tools-inset-top, 3rem);
+}
+
+body:has([data-showcase-product-preview]) [data-slot="sheet-content"][data-side="right"],
+body:has([data-showcase-product-preview]) [data-slot="sheet-content"][data-side="left"] {
+  top: var(--showcase-tools-inset-top, 3rem);
+  height: calc(100dvh - var(--showcase-tools-inset-top, 3rem));
+}
+
+body:has([data-showcase-product-preview]) [data-slot="sheet-content"][data-side="top"] {
+  top: var(--showcase-tools-inset-top, 3rem);
+}
