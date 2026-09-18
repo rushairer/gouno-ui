@@ -68,6 +68,10 @@
   border-width: var(--border-width-emphasis);
 }
 
+@utility edge-s-accent {
+  border-inline-start-width: var(--border-width-accent);
+}
+
 @utility edge-bs-emphasis {
   border-block-start-width: var(--border-width-emphasis);
 }
@@ -190,6 +194,7 @@
        substrate; stronger separators/indicators use the semantic emphasis width. */
     --border-width-boundary: 1px;
     --border-width-emphasis: 2px;
+    --border-width-accent: 4px;
 
     /* Density-aware component geometry. Theme density selects the default policy;
        explicit component density remains a local override. */
