@@ -381,7 +381,7 @@ export function Steps({
                   if (index !== current) onChange?.(index);
                 }}
                 className={cn(
-                  "relative z-[2] flex w-full min-w-0 items-start gap-2 rounded-md text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  "relative z-[2] flex w-full min-w-0 items-start gap-2 rounded-md text-left focus-control",
                   effectiveTitlePlacement === "vertical" && "flex-col items-start",
                   type === "inline" && "items-center py-1",
                 )}
