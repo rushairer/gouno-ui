@@ -39,7 +39,7 @@ export const stepsMenuDocuments: Record<string, ComponentDocument> = {
       { name: "status", description: "当前步骤状态；item.status 可覆盖单项", type: '"wait" | "process" | "finish" | "error"', defaultValue: '"process"' },
       { name: "percent", description: "当前 process 步骤的 0–100 进度，非法值会归一化", type: "number" },
       { name: "maxCount", description: "长流程最多显示的槽位数；至少 3 才启用收敛", type: "number" },
-      { name: "responsive", description: "窄屏时将 horizontal 流程切为纵向排列", type: "boolean", defaultValue: "true" },
+      { name: "responsive", description: "低于 canonical sm（40rem / 640px）时将 horizontal 流程切为纵向排列", type: "boolean", defaultValue: "true" },
       { name: "iconRender", description: "统一替换步骤 marker 内容", type: "(origin: ReactNode, info: StepsIconRenderInfo) => ReactNode" },
       { name: "onChange", description: "提供后步骤项成为可点击导航，回传目标零基索引", type: "(current: number) => void" },
       { name: "classNames", description: "按稳定语义槽追加 className", type: "StepsClassNames" },
