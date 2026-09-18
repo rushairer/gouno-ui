@@ -1,5 +1,6 @@
 import { useMemo, useState, type ReactNode } from "react";
 import {
+  ArrowLeft,
   Clock3,
   Edit2,
   GitBranch,
@@ -80,106 +81,6 @@ function runDuration(run: WorkflowRunFixture) {
   return `${(duration / 1000).toFixed(duration >= 10000 ? 0 : 1)} s`;
 }
 
-function WorkflowRail({
-  workflows,
-  selected,
-  query,
-  status,
-  onQueryChange,
-  onStatusChange,
-  onSelect,
-}: {
-  workflows: WorkflowFixture[];
-  selected: WorkflowFixture | null;
-  query: string;
-  status: "all" | "enabled" | "disabled";
-  onQueryChange: (value: string) => void;
-  onStatusChange: (value: "all" | "enabled" | "disabled") => void;
-  onSelect?: (workflow: WorkflowFixture) => void;
-}) {
-  return (
-    <aside
-      data-slot="ops-rail"
-      className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-xl border bg-background"
-      aria-label="Workflow 导航"
-    >
-      <div className="shrink-0 border-b bg-muted/20 p-4">
-        <div className="mb-3 flex items-center justify-between gap-3">
-          <div>
-            <strong className="text-sm">Workflows</strong>
-            <Text size="xs" tone="muted" className="mt-0.5">
-              {workflows.length} 项自动化资产
-            </Text>
-          </div>
-          <Tag>
-            {workflows.filter((workflow) => workflow.enabled).length} 已启用
-          </Tag>
-        </div>
-        <div className="flex flex-col gap-2">
-          <Input
-            aria-label="搜索 Workflow"
-            prefix={<Search className="size-4" />}
-            placeholder="搜索 Workflow"
-            value={query}
-            onChange={(event) => onQueryChange(event.target.value)}
-          />
-          <Select
-            aria-label="按状态筛选 Workflow"
-            value={status}
-            onChange={(value) =>
-              onStatusChange(String(value) as "all" | "enabled" | "disabled")
-            }
-          >
-            <option value="all">全部状态</option>
-            <option value="enabled">已启用</option>
-            <option value="disabled">已停用</option>
-          </Select>
-        </div>
-      </div>
-
-      <div
-        data-slot="ops-rail-body"
-        role="list"
-        aria-label="Workflow 列表"
-        className="min-h-0 flex-1 overflow-y-auto overscroll-contain"
-      >
-        {workflows.length ? (
-          workflows.map((workflow) => (
-            <div key={workflow.id} role="listitem">
-              <OpsObjectRow
-                leading={<GitBranch className="size-4" />}
-                title={workflow.name}
-                status={
-                  <Tag color={workflow.enabled ? "success" : undefined}>
-                    {workflow.enabled ? "已启用" : "已停用"}
-                  </Tag>
-                }
-                meta={`${workflow.schedule} · v${workflow.currentVersion}`}
-                summary={workflow.description}
-                signals={
-                  <>
-                    <OpsMeta>下次 {workflow.nextRunAt}</OpsMeta>
-                    <OpsMeta>
-                      最近 {runStatusLabel(workflow.latestRun?.status)}
-                    </OpsMeta>
-                  </>
-                }
-                selected={selected?.id === workflow.id}
-                onClick={() => onSelect?.(workflow)}
-                ariaLabel={`打开 Workflow：${workflow.name}`}
-              />
-            </div>
-          ))
-        ) : (
-          <div className="p-6">
-            <Text tone="muted">没有符合条件的 Workflow。</Text>
-          </div>
-        )}
-      </div>
-    </aside>
-  );
-}
-
 function WorkflowMetric({
   label,
   value,
@@ -245,6 +146,7 @@ export function AutomationManagement({
   onDelete,
   onToggle,
   onSelect,
+  onBackToList,
   onOpenRecords,
   onOpenRun,
 }: {
@@ -256,6 +158,7 @@ export function AutomationManagement({
   onDelete: (workflow: WorkflowFixture) => void;
   onToggle: (workflow: WorkflowFixture) => void;
   onSelect?: (workflow: WorkflowFixture) => void;
+  onBackToList?: () => void;
   onOpenRecords?: (workflow: WorkflowFixture) => void;
   onOpenRun?: (run: WorkflowRunFixture) => void;
 }) {
@@ -268,12 +171,9 @@ export function AutomationManagement({
 
   const nextId =
     workflows.reduce((highest, item) => Math.max(highest, item.id), 0) + 1;
-  const useListRoute = selectedWorkflowId === undefined && Boolean(onSelect);
   const selected = selectedWorkflowId
     ? (workflows.find((item) => item.id === selectedWorkflowId) ?? null)
-    : useListRoute
-      ? null
-      : (workflows[0] ?? null);
+    : null;
   const visible = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     return workflows.filter((workflow) => {
@@ -412,38 +312,36 @@ export function AutomationManagement({
   return (
     <div className="flex flex-col gap-5">
       <TabPanelLead
-        description="Workflow 是持续运行的版本化自动化资产。左侧选择资产，右侧直接查看健康度、调度、运行记录、定义与人工执行。"
+        description="查看当前 Workflow 的健康度、调度、最近运行、流程定义、运行边界与人工执行；需要切换资产时返回 Workflow 列表。"
         actions={
-          <Button
-            size="small"
-            variant="solid"
-            color="primary"
-            icon={<Plus />}
-            onClick={() => setEditing("new")}
-          >
-            创建 Workflow
-          </Button>
+          <>
+            {onBackToList ? (
+              <Button
+                size="small"
+                variant="outline"
+                icon={<ArrowLeft />}
+                onClick={onBackToList}
+              >
+                返回 Workflow 列表
+              </Button>
+            ) : null}
+            <Button
+              size="small"
+              variant="solid"
+              color="primary"
+              icon={<Plus />}
+              onClick={() => setEditing("new")}
+            >
+              创建 Workflow
+            </Button>
+          </>
         }
       />
 
       <div
-        data-slot="ops-master-detail"
-        className="grid min-w-0 items-stretch gap-5 xl:grid-cols-[21rem_minmax(0,1fr)]"
+        data-slot="workflow-detail"
+        className="flex min-w-0 flex-col gap-5"
       >
-        <WorkflowRail
-          workflows={visible}
-          selected={selected}
-          query={query}
-          status={status}
-          onQueryChange={setQuery}
-          onStatusChange={setStatus}
-          onSelect={onSelect}
-        />
-
-        <div
-          data-slot="ops-detail-stack"
-          className="flex min-w-0 flex-col gap-5"
-        >
           <section
             className="overflow-hidden rounded-xl border bg-background"
             aria-label={`${selected.name} Workflow 概览`}
@@ -752,8 +650,7 @@ export function AutomationManagement({
             </div>
           </div>
 
-          {detailContent}
-        </div>
+        {detailContent}
       </div>
 
       <Modal
