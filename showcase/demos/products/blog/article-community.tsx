@@ -7,6 +7,7 @@ import {
   Card,
   Empty,
   Field,
+  Heading,
   Input,
   Modal,
   Textarea,
@@ -203,7 +204,7 @@ export function BlogArticleCommunity({
     <section aria-labelledby="article-community" className="mx-auto mt-12 w-full max-w-[900px] space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4 border-b pb-4">
         <div>
-          <h2 id="article-community" className="text-xl font-semibold tracking-tight">讨论</h2>
+          <Heading id="article-community" level={2} variant="section">讨论</Heading>
           <p className="mt-1 text-sm text-muted-foreground">围绕文章内容继续交流；回复只保留一层，举报流程保持独立。</p>
         </div>
         <Button
@@ -259,7 +260,7 @@ export function BlogArticleCommunity({
 
       <Card as="section" variant="subtle" aria-labelledby="comment-form-title">
         <div>
-          <h3 id="comment-form-title" className="text-base font-semibold">留下评论</h3>
+          <Heading id="comment-form-title" level={3} variant="compact">留下评论</Heading>
           <p className="mt-1 text-sm text-muted-foreground">
             {mode === "guest" ? "访客留言需要填写昵称。" : "当前以 Paw 身份参与讨论。"}
           </p>
