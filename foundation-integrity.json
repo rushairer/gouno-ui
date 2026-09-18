@@ -1311,27 +1311,54 @@
       }
     },
     "accessibility": {
-      "status": "planned",
-      "affectedComponentReviews": [],
+      "status": "in_progress",
+      "affectedComponentReviews": [
+        "core-form",
+        "core-select",
+        "core-collapse",
+        "core-tree",
+        "core-modal",
+        "core-drawer",
+        "core-tag"
+      ],
       "gates": {
         "inventory": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/foundation-accessibility-inventory.md",
+            "src/core/field.tsx",
+            "src/core/select.tsx",
+            "src/core/collapse.tsx",
+            "src/core/tree.tsx",
+            "src/core/modal.tsx",
+            "src/core/drawer.tsx",
+            "src/core/tag.tsx"
+          ]
         },
         "tokens": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/design-language.md: DL-25",
+            "docs/foundation-accessibility-inventory.md",
+            "Accessibility introduces no parallel visual token scale; it consumes certified Focus/Typography/Interaction State/Responsive/Motion/Color/Sizing authority."
+          ]
         },
         "authority": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "docs/design-language.md: DL-25"
+          ]
         },
         "corpus": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "src/core",
+            "src/components/primitives",
+            "showcase/demos/products"
+          ]
         },
         "guard": {
-          "status": "pending",
+          "status": "in_progress",
           "evidence": []
         },
         "visual": {
@@ -1342,6 +1369,16 @@
           "status": "pending",
           "evidence": []
         }
+      },
+      "inventory": {
+        "confirmedDefects": [
+          "A11Y-D001: FormField labels hidden Select instead of visible combobox; visible required state is missing.",
+          "A11Y-D002: Collapse icon-only switchers use duplicate generic English names.",
+          "A11Y-D003: Tree switchers inject generic English Expand/Collapse names.",
+          "A11Y-D004: Modal/Drawer primitive close buttons hard-code English Close and Modal fallback title reuses close-action copy.",
+          "A11Y-D005: Tag permits checkable+closable nested native buttons."
+        ],
+        "targetPolicy": "Native semantics first; the actual interactive owner carries name/state/relationships; no focusable aria-hidden or nested native interactive controls."
       }
     }
   }
