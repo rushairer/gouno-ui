@@ -340,8 +340,8 @@ describe("design-language conformance", () => {
     expect(aiSettings).not.toContain("<CardTitle>Tools</CardTitle>");
 
     const systemStatus = readFileSync(resolve(productsRoot, "gosso-admin/system-management/system-status.tsx"), "utf8");
-    expect(systemStatus).toContain('<Heading level={2} className="text-base">基础设施健康</Heading>');
-    expect(systemStatus).toContain('return <Card padding="base"><Heading level={2}');
+    expect(systemStatus).toContain('<Heading level={2} variant="compact">基础设施健康</Heading>');
+    expect(systemStatus).toContain('return <Card padding="base"><Heading level={2} variant="compact"');
   });
 
   it("uses one open content-lead grammar across governed settings and management pages", () => {
