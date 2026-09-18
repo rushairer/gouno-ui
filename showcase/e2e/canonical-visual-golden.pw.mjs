@@ -321,6 +321,54 @@ for (const mode of ["light", "dark"]) {
   });
 }
 
+test("motion-reduced-preference-collapses-carousel-movement", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-carousel",
+    viewport: desktop,
+    ready: '[data-slot="carousel"]',
+  });
+
+  const carousels = page.locator('[data-slot="carousel"]');
+  await expect(carousels).toHaveCount(2);
+
+  const scrollTrack = carousels
+    .nth(0)
+    .locator('[data-slot="carousel-track"]');
+  const fadeSlides = carousels
+    .nth(1)
+    .locator('[data-slot="carousel-slide"]');
+  const autoplayTabs = carousels
+    .nth(1)
+    .locator('[data-slot="carousel-dot"]');
+
+  expect(
+    await scrollTrack.evaluate(
+      (element) => getComputedStyle(element).transitionDuration,
+    ),
+  ).toBe("0s");
+  expect(
+    await fadeSlides
+      .first()
+      .evaluate((element) => getComputedStyle(element).transitionDuration),
+  ).toBe("0s");
+
+  const selectedBefore = await autoplayTabs.evaluateAll((nodes) =>
+    nodes.findIndex((node) => node.getAttribute("aria-selected") === "true"),
+  );
+  expect(selectedBefore).toBeGreaterThanOrEqual(0);
+  await page.waitForTimeout(4200);
+  const selectedAfter = await autoplayTabs.evaluateAll((nodes) =>
+    nodes.findIndex((node) => node.getAttribute("aria-selected") === "true"),
+  );
+  expect(selectedAfter).toBe(selectedBefore);
+  await expect(
+    carousels.nth(1).locator('[data-slot="carousel-dot"] > span'),
+  ).toHaveCount(0);
+});
+
 test("responsive-steps-canonical-sm-stacking", async ({ page }) => {
   const scenario = {
     workspace: "gouno-ui",
