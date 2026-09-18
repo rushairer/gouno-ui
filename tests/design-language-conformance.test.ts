@@ -69,8 +69,11 @@ describe("design-language conformance", () => {
     const overview = readFileSync(resolve(productsRoot, "gosso-admin/overview.tsx"), "utf8");
     expect(overview).toContain("px-6 py-5");
     expect(overview).toContain('<Card padding="base" variant="elevated"');
-    expect(overview).toContain("shadow-surface");
-    expect(overview).toContain("hover:shadow-raised");
+    expect(overview).toContain("<Card");
+    expect(overview).toContain("interactive");
+    expect(overview).toContain('padding="none"');
+    expect(overview).not.toContain("shadow-surface");
+    expect(overview).not.toContain("hover:shadow-raised");
     expect(overview).not.toContain("shadow-sm");
     expect(overview).not.toContain("shadow-md");
   });
