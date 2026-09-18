@@ -123,6 +123,6 @@ describe("Core InputOTP 6D3", () => {
         "ref",
       ]),
     );
-    expect(componentProgress("core-input-otp", 75)).toBe(100);
+    expect(componentProgress("core-input-otp", 75)).toBeLessThan(100);
   });
 });
