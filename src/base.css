@@ -44,8 +44,27 @@
     cursor: pointer;
   }
   :focus-visible {
-    outline: 2px solid var(--ring);
-    outline-offset: 3px;
+    outline: var(--focus-ring-width) solid var(--ring);
+    outline-offset: var(--focus-ring-offset-control);
+  }
+
+  /* Focus role classes override utility-level outline suppression and keep
+     geometry centralized. Components choose a role; they do not choose pixels. */
+  .focus-control:focus-visible {
+    outline: var(--focus-ring-width) solid var(--ring) !important;
+    outline-offset: var(--focus-ring-offset-control) !important;
+  }
+  .focus-standalone:focus-visible {
+    outline: var(--focus-ring-width) solid var(--ring) !important;
+    outline-offset: var(--focus-ring-offset-standalone) !important;
+  }
+  .focus-inset:focus-visible {
+    outline: var(--focus-ring-width) solid var(--ring) !important;
+    outline-offset: var(--focus-ring-offset-inset) !important;
+  }
+  .focus-within-owner:has(:focus-visible) {
+    outline: var(--focus-ring-width) solid var(--ring) !important;
+    outline-offset: var(--focus-ring-offset-control) !important;
   }
   ::selection {
     background: var(--accent);
