@@ -406,7 +406,7 @@ export function Calendar({
                       onClick={() => selectDate(date, "date")}
                       onKeyDown={(event) => moveFocus(event, date)}
                       className={cn(
-                        "flex min-h-20 w-full flex-col items-end rounded-none bg-background p-2 text-left outline-none transition-colors hover:bg-accent focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40",
+                        "flex min-h-20 w-full flex-col items-end rounded-none bg-background p-2 text-left outline-none transition-colors hover:bg-accent focus-visible:z-10 focus-inset disabled:cursor-not-allowed disabled:opacity-40",
                         outside && "text-muted-foreground/60",
                         selected && "bg-primary/10",
                       )}
@@ -464,7 +464,7 @@ export function Calendar({
                   aria-selected={selected}
                   aria-label={format(date, { month: "long" })}
                   className={cn(
-                    "min-h-20 w-full rounded-md border bg-background p-3 text-left outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40",
+                    "min-h-20 w-full rounded-md border bg-background p-3 text-left outline-none transition-colors hover:bg-accent focus-control disabled:cursor-not-allowed disabled:opacity-40",
                     selected && "border-primary bg-primary/10",
                   )}
                   onClick={() => {
