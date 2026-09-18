@@ -49,7 +49,7 @@ export function StandaloneNavigation({
           title="返回应用页"
           disabled={!firstApplicationPage || currentPage === firstApplicationPage}
           onClick={() => firstApplicationPage && onNavigate(firstApplicationPage)}
-          className="inline-flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40"
+          className="inline-flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-control disabled:pointer-events-none disabled:opacity-40"
         >
           <ArrowLeft aria-hidden="true" className="size-4" />
         </button>
@@ -62,7 +62,7 @@ export function StandaloneNavigation({
           aria-expanded={open}
           aria-controls="standalone-showcase-menu"
           onClick={() => setOpen((value) => !value)}
-          className="inline-flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="inline-flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-control"
         >
           {open ? <X aria-hidden="true" className="size-4" /> : <Menu aria-hidden="true" className="size-4" />}
         </button>
@@ -85,7 +85,7 @@ export function StandaloneNavigation({
                     type="button"
                     aria-current={item.id === currentPage ? "page" : undefined}
                     onClick={() => onNavigate(item.id)}
-                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring aria-[current=page]:bg-accent aria-[current=page]:text-primary"
+                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-control aria-[current=page]:bg-accent aria-[current=page]:text-primary"
                   >
                     <span aria-hidden="true" className="[&_svg]:size-4">
                       {item.icon}
