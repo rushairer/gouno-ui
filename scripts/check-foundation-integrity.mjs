@@ -398,6 +398,91 @@ if (radius?.status !== "planned") {
   }
 }
 
+const density = matrix.foundations.density;
+if (density?.status !== "planned") {
+  const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");
+  const themeSource = readFileSync(resolve(root, "src/theme/provider.tsx"), "utf8");
+  const baseSource = readFileSync(resolve(root, "src/base.css"), "utf8");
+  const tableSource = readFileSync(
+    resolve(root, "src/components/primitives/table.tsx"),
+    "utf8",
+  );
+
+  for (const marker of [
+    "--table-density-comfortable-cell-block: 0.75rem;",
+    "--table-density-comfortable-cell-inline: 1rem;",
+    "--table-density-comfortable-head-height: 2.5rem;",
+    "--table-density-comfortable-footer-height: 3rem;",
+    "--table-density-comfortable-edge-inset: 1.5rem;",
+    "--table-density-compact-cell-block: 0.5rem;",
+    "--table-density-compact-cell-inline: 0.75rem;",
+    "--table-density-compact-head-height: 2.25rem;",
+    "--table-density-compact-footer-height: 2.5rem;",
+    "--table-density-compact-edge-inset: 1rem;",
+    "--table-density-touch-cell-block: 1rem;",
+    "--table-density-touch-cell-inline: 1rem;",
+    "--table-density-touch-head-height: 3rem;",
+    "--table-density-touch-footer-height: 3.5rem;",
+    "--table-density-touch-edge-inset: 1.5rem;",
+  ]) {
+    if (!tokenSource.includes(marker)) {
+      failures.push("density.guard: missing canonical Table density token " + marker);
+    }
+  }
+
+  if (!themeSource.includes('export type Density = "comfortable" | "compact";')) {
+    failures.push("density.guard: Theme Density vocabulary changed without Foundation review");
+  }
+  if (!themeSource.includes("root.dataset.density = density;")) {
+    failures.push("density.guard: ThemeProvider must publish the global density policy");
+  }
+  if (
+    !baseSource.includes(
+      'html[data-density="compact"]\n    [data-slot="table-container"][data-density="default"]',
+    )
+  ) {
+    failures.push(
+      "density.guard: global compact policy must affect default density-aware Tables",
+    );
+  }
+  for (const marker of [
+    '[data-slot="table-container"][data-density="compact"]',
+    '[data-slot="table-container"][data-density="touch"]',
+    "padding-block: var(--table-cell-block);",
+    "padding-inline: var(--table-cell-inline);",
+    "height: var(--table-footer-height);",
+    "padding-inline-start: var(--table-edge-inset);",
+  ]) {
+    if (!baseSource.includes(marker)) {
+      failures.push("density.guard: missing Table density authority marker " + marker);
+    }
+  }
+
+  if (!tableSource.includes("data-density={density}")) {
+    failures.push("density.guard: Table must expose its local density policy hook");
+  }
+  if (/density\s*===/.test(tableSource)) {
+    failures.push(
+      "density.guard: Table reintroduced component-local density geometry branches",
+    );
+  }
+  if (/\[&_t[hd]\]:p[xy]-|\[&_tfoot_(?:th|td)\]:h-/.test(tableSource)) {
+    failures.push(
+      "density.guard: Table reintroduced utility-owned density geometry",
+    );
+  }
+
+  const densityLeaks = filesMatching(/\bdata-density\s*=/);
+  process.stdout.write(
+    "Density corpus audit: directDensityPolicyBypasses=" + densityLeaks.length + "\n",
+  );
+  if (densityLeaks.length !== 0) {
+    failures.push(
+      "density.corpus: product fixtures must use component density APIs instead of writing Foundation data-density hooks",
+    );
+  }
+}
+
 const layout = matrix.foundations.layout;
 if (layout?.status !== "planned") {
   const pageContainerSource = readFileSync(
