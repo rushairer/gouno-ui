@@ -105,10 +105,10 @@ export function SiteSettingsPanel() {
                 <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-muted/60" />
                 <div className="relative mx-auto mt-12 max-w-sm rounded-xl border bg-background/95 p-6">
                   <div className="mb-5 flex items-center gap-3">
-                    <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-sm font-bold text-primary">{settings.productName.slice(0, 2).toUpperCase()}</div>
-                    <div><div className="font-semibold">{settings.productName || "GOSSO"}</div><Text size="xs" tone="muted">Identity Provider</Text></div>
+                    <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 type-body-sm type-weight-semibold text-primary">{settings.productName.slice(0, 2).toUpperCase()}</div>
+                    <div><div className="type-weight-semibold">{settings.productName || "GOSSO"}</div><Text size="xs" tone="muted">Identity Provider</Text></div>
                   </div>
-                  <div className="text-xl font-semibold">{settings.loginTitle || settings.productName || "登录"}</div>
+                  <div className="type-section-title">{settings.loginTitle || settings.productName || "登录"}</div>
                   <Text size="sm" tone="muted" leading="relaxed" className="mt-2">{settings.loginDescription || "安全登录并继续。"}</Text>
                   <div className="mt-6 grid gap-3"><div className="h-9 rounded-md border bg-muted/30" /><div className="h-9 rounded-md border bg-muted/30" /><div className="h-9 rounded-md bg-primary" /></div>
                 </div>

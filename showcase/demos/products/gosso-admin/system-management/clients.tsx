@@ -134,9 +134,9 @@ export function ClientsPanel() {
           <TableHeader><TableRow><TableHead>客户端</TableHead><TableHead>类型</TableHead><TableHead>Redirect URI</TableHead><TableHead>Grant Types</TableHead><TableHead>Scopes</TableHead><TableHead className="text-right">操作</TableHead></TableRow></TableHeader>
           <TableBody>{clients.map((client) => (
             <TableRow key={client.id}>
-              <TableCell className="min-w-56 whitespace-normal"><div className="font-semibold">{client.name}</div><code className="mt-1 block text-xs text-muted-foreground">{client.id}</code>{client.description ? <Text size="xs" tone="muted" className="mt-1">{client.description}</Text> : null}</TableCell>
+              <TableCell className="min-w-56 whitespace-normal"><div className="type-weight-semibold">{client.name}</div><code className="mt-1 block type-family-mono type-caption text-muted-foreground">{client.id}</code>{client.description ? <Text size="xs" tone="muted" className="mt-1">{client.description}</Text> : null}</TableCell>
               <TableCell><Tag color={client.confidential ? "warning" : "success"}>{client.confidential ? "Confidential" : "Public"}</Tag></TableCell>
-              <TableCell className="min-w-72 whitespace-normal"><div className="flex flex-col gap-2">{client.redirectUris.map((uri) => <div key={uri} className="flex items-center gap-2 rounded-md bg-muted/60 px-2 py-1.5"><code className="min-w-0 flex-1 truncate text-xs">{uri}</code><IconButton label={`复制重定向 URI：${uri}`} size="small" icon={<Copy />} onClick={() => setStatus(`已复制 ${uri}（Showcase 模拟）。`)} /></div>)}</div></TableCell>
+              <TableCell className="min-w-72 whitespace-normal"><div className="flex flex-col gap-2">{client.redirectUris.map((uri) => <div key={uri} className="flex items-center gap-2 rounded-md bg-muted/60 px-2 py-1.5"><code className="min-w-0 flex-1 truncate type-family-mono type-caption">{uri}</code><IconButton label={`复制重定向 URI：${uri}`} size="small" icon={<Copy />} onClick={() => setStatus(`已复制 ${uri}（Showcase 模拟）。`)} /></div>)}</div></TableCell>
               <TableCell className="min-w-48 whitespace-normal"><div className="flex flex-wrap gap-1.5">{client.grants.map((grant) => <Tag key={grant}>{grant.replace("_", " ")}</Tag>)}</div></TableCell>
               <TableCell className="min-w-40 whitespace-normal"><div className="flex flex-wrap gap-1.5">{client.scopes.map((scope) => <Tag key={scope} color={scope === "admin" ? "warning" : "primary"}>{scope}</Tag>)}</div></TableCell>
               <TableCell>
@@ -174,7 +174,7 @@ export function ClientsPanel() {
       </Modal>
 
       <Modal open={Boolean(secret)} title="客户端密钥" description="密钥只在创建或轮换时展示一次。" onOpenChange={(next) => { if (!next) setSecret(null); }} footer={<Button variant="solid" color="primary" onClick={() => setSecret(null)}>完成</Button>}>
-        {secret ? <div className="flex flex-col gap-4"><Alert type="warning" showIcon icon={<KeyRound />} title="请立即安全保存该密钥" description="关闭后无法再次查看。" /><FormField label="Client ID"><code className="block rounded-md bg-muted p-3 text-xs">{secret.id}</code></FormField><FormField label="Client Secret"><div className="flex items-center gap-2 rounded-md bg-muted p-3"><code className="min-w-0 flex-1 break-all text-xs">{secret.value}</code><Button size="small" icon={<Copy />} onClick={() => setStatus("客户端密钥已复制（Showcase 模拟）。")}>复制</Button></div></FormField></div> : null}
+        {secret ? <div className="flex flex-col gap-4"><Alert type="warning" showIcon icon={<KeyRound />} title="请立即安全保存该密钥" description="关闭后无法再次查看。" /><FormField label="Client ID"><code className="block rounded-md bg-muted p-3 type-family-mono type-caption">{secret.id}</code></FormField><FormField label="Client Secret"><div className="flex items-center gap-2 rounded-md bg-muted p-3"><code className="min-w-0 flex-1 break-all type-family-mono type-caption">{secret.value}</code><Button size="small" icon={<Copy />} onClick={() => setStatus("客户端密钥已复制（Showcase 模拟）。")}>复制</Button></div></FormField></div> : null}
       </Modal>
     </div>
   );
