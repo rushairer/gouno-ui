@@ -1666,14 +1666,16 @@ if (accessibility?.status !== "planned") {
     }
   }
 
-  if (
-    !browserSource.includes(
-      'test("accessibility-form-select-and-overlay-ownership"',
-    )
-  ) {
-    failures.push(
-      "accessibility.guard: representative real-browser semantic/focus contract is missing",
-    );
+  for (const marker of [
+    'test("accessibility-form-select-and-overlay-ownership"',
+    'test("accessibility-app-shell-skip-link-and-landmarks"',
+  ]) {
+    if (!browserSource.includes(marker)) {
+      failures.push(
+        "accessibility.guard: representative real-browser semantic/focus contract is missing " +
+          marker,
+      );
+    }
   }
 
   const nonSemanticClickFiles = canonicalProductFiles.filter((file) =>
