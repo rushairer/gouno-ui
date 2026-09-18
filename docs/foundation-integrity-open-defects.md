@@ -6,7 +6,7 @@ This queue records defects discovered while the Foundation Integrity Program is 
 
 ## FI-D001 — Steps connector / copy geometry
 
-**Status:** open  
+**Status:** fix implemented; Responsive re-certification pending  
 **Component:** `core-steps`  
 **Observed evidence:** Showcase Steps variant screenshot, 2026-09-18.
 
@@ -18,6 +18,8 @@ Next action:
 - determine whether this is a local Steps composition defect or evidence of a broader Layout/Spacing authority gap;
 - if local, fix Steps and add geometry/browser regression evidence;
 - if systemic, reopen the owning Foundation before recertification.
+
+Finding: this is a local Steps connector-geometry defect plus a Responsive implementation gap. Responsive is reopened only for `core-steps`; canonical breakpoint/Layout/Spacing authority remains unchanged. The source fix gives horizontal copy an independent connector lane, gives dot markers their own offsets, and converts the complete max-sm item/body/connector composition rather than only the root flex direction.
 
 ## FI-D002 — Carousel arrows do not navigate in the real Showcase
 
