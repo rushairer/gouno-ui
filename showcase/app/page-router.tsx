@@ -32,6 +32,9 @@ const PatternAISuggestionReviewDemo = lazy(() =>
 const PatternMarkdownEditorDemo = lazy(() =>
   import("../demos/patterns/markdown-editor").then((module) => ({ default: module.PatternMarkdownEditorDemo })),
 );
+const PatternDedicatedEditorDemo = lazy(() =>
+  import("../demos/patterns/dedicated-editor").then((module) => ({ default: module.PatternDedicatedEditorDemo })),
+);
 const BlogHomeDemo = lazy(() =>
   import("../demos/products/blog/home").then((module) => ({ default: module.BlogHomeDemo })),
 );
@@ -196,6 +199,8 @@ export function ShowcasePage({ page, workspace }: { page: string; workspace: Sho
       return <Suspense fallback={loading}><PatternAISuggestionReviewDemo /></Suspense>;
     case "pattern-markdown-editor":
       return <Suspense fallback={loading}><PatternMarkdownEditorDemo /></Suspense>;
+    case "pattern-dedicated-editor":
+      return <Suspense fallback={loading}><PatternDedicatedEditorDemo /></Suspense>;
     case "gouno-app-shell":
       return <GounoComponentDemo component="app-shell" />;
     case "gouno-page-container":
