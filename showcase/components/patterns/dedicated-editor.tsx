@@ -51,7 +51,7 @@ export function DedicatedEditorLead({
             <Heading level={headingLevel} variant="task">{title}</Heading>
             {status}
           </div>
-          <Text size="sm" tone="muted" className="mt-1 max-w-3xl leading-relaxed">
+          <Text size="sm" tone="muted" leading="relaxed" className="mt-1 max-w-3xl">
             {description}
           </Text>
         </div>
@@ -117,7 +117,7 @@ export function DedicatedEditorSection({
           <div className="min-w-0">
             <CardTitle>{title}</CardTitle>
             {description ? (
-              <Text size="xs" tone="muted" className="mt-1 leading-relaxed">
+              <Text size="xs" tone="muted" leading="relaxed" className="mt-1">
                 {description}
               </Text>
             ) : null}
