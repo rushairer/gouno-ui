@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+// Canonical baselines are refreshed only by the explicitly gated CI refresh path.
+
 const desktop = { width: 1440, height: 900 };
 const narrow = { width: 782, height: 900 };
 const mobile = { width: 390, height: 844 };
