@@ -443,7 +443,7 @@
             "showcase/demos/products/blog",
             "showcase/demos/products/blog-admin",
             "showcase/demos/products/gosso-admin",
-            "CI run 35350436397 (#464): Elevation corpus audit rawShadowBypasses=0, unexpectedSemanticShadowFiles=0, unexpectedElevatedFiles=0"
+            "Surface migration removes the former Gosso Overview manual shadow-surface/hover:shadow-raised exception; final exact-head CI must report unexpectedSemanticShadowFiles=0"
           ],
           "rawShadowBypasses": 0,
           "unexpectedSemanticShadowFiles": 0,
@@ -483,14 +483,13 @@
           "modal",
           "overflow"
         ],
-        "productSemanticShadowWhitelist": [
-          "showcase/demos/products/gosso-admin/overview.tsx"
-        ],
+        "productSemanticShadowWhitelist": [],
         "persistentElevatedCardWhitelist": [
           "showcase/demos/products/gosso-admin/overview.tsx",
           "showcase/demos/products/gosso-admin/auth/shared.tsx",
           "showcase/demos/products/gosso-admin/auth/not-found.tsx"
-        ]
+        ],
+        "productSemanticShadowPolicy": "zero direct product shadow-control/surface/raised/overlay/modal utilities; product pages select component/variant ownership"
       }
     },
     "surface": {
