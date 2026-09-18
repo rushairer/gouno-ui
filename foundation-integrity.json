@@ -305,7 +305,7 @@
       }
     },
     "color": {
-      "status": "reopened",
+      "status": "certified",
       "affectedComponentReviews": [
         "core-tag"
       ],
@@ -343,22 +343,24 @@
           ]
         },
         "corpus": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "showcase/demos/products/blog",
             "showcase/demos/products/blog-admin",
             "showcase/demos/products/gosso-admin",
+            "src/core/tag.tsx",
             "scripts/check-foundation-integrity.mjs",
-            "CI run 35347351003 (#458): Color corpus audit passed; only documented MFA QR bg-white fixed-media exception remains",
-            "FI-D004 reopened: Core Tag close hover raw palette bypass discovered during Interaction State audit."
-          ]
+            "CI run 35367064494 (#562): Color corpus audit unexpectedRawPaletteFiles=0; MFA fixed-color exception valid"
+          ],
+          "unexpectedRawPaletteFiles": 0,
+          "fixedMediaException": "Gosso MFA QR bg-white quiet zone"
         },
         "guard": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "scripts/check-foundation-integrity.mjs",
             "tests/color-foundation-conformance.test.ts",
-            "FI-D004 adds explicit Tag close hover guard."
+            "CI run 35367064494 (#562): success; Tag close hover currentColor guard active"
           ]
         },
         "visual": {
@@ -366,14 +368,15 @@
           "evidence": [
             "Canonical Visual Golden Smoke run 35347275527 (#422): success; 53/53 passed",
             "showcase/e2e/canonical-visual-golden.pw.mjs: color-browser-theme-meta-light passed",
-            "showcase/e2e/canonical-visual-golden.pw.mjs: color-browser-theme-meta-dark passed"
+            "showcase/e2e/canonical-visual-golden.pw.mjs: color-browser-theme-meta-dark passed",
+            "Canonical Visual Golden Smoke run 35367064504 (#479): success; 59/59 passed after FI-D004"
           ]
         },
         "consumers": {
           "status": "passed",
           "evidence": [
-            "Blog Consumer Parity run 35347312837 (#476): success",
-            "Gosso Admin Consumer Parity run 35347312859 (#471): success"
+            "Blog Consumer Parity run 35367064487 (#540): success after FI-D004",
+            "Gosso Admin Consumer Parity run 35367064636 (#535): success after FI-D004"
           ]
         }
       },
@@ -393,6 +396,9 @@
           "Tag custom color prop renders caller-provided arbitrary background color.",
           "Badge custom color prop renders caller-provided arbitrary indicator color.",
           "Timeline item color is an explicit caller-provided semantic/content color API."
+        ],
+        "resolvedReopenings": [
+          "FI-D004: Tag close hover changed from raw black alpha to currentColor-derived hover feedback and is now guarded."
         ]
       }
     },
@@ -1208,7 +1214,7 @@
       }
     },
     "state": {
-      "status": "in_progress",
+      "status": "certified",
       "affectedComponentReviews": [
         "core-carousel",
         "core-tag"
@@ -1239,36 +1245,47 @@
           ]
         },
         "authority": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
+            "docs/design-language.md: DL-24",
             "docs/foundation-state-inventory.md",
             "src/core/carousel.tsx",
             "src/core/tag.tsx"
           ]
         },
         "corpus": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "src/core",
             "src/components/primitives",
             "showcase/demos/core",
-            "showcase/demos/products"
-          ]
+            "showcase/demos/products",
+            "CI run 35367064494 (#562): State corpus audit stateGeometryBypasses=0"
+          ],
+          "stateGeometryBypasses": 0
         },
         "guard": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
-            "showcase/e2e/canonical-visual-golden.pw.mjs: interaction-carousel-arrows-remain-clickable-while-draggable",
-            "scripts/check-foundation-integrity.mjs"
+            "scripts/check-foundation-integrity.mjs",
+            "tests/state-foundation-conformance.test.tsx",
+            "CI run 35367064494 (#562): success; 167/167 test files, 864/864 tests"
           ]
         },
         "visual": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "showcase/e2e/canonical-visual-golden.pw.mjs: interaction-carousel-arrows-remain-clickable-while-draggable",
+            "Canonical Visual Golden Smoke run 35367064504 (#479): success; 59/59 passed",
+            "Carousel draggable arrow click contract passed in 1.7s"
+          ]
         },
         "consumers": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Blog Consumer Parity run 35367064487 (#540): success",
+            "Gosso Admin Consumer Parity run 35367064636 (#535): success"
+          ]
         }
       },
       "inventory": {
