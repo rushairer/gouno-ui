@@ -185,6 +185,15 @@ componentReviews["gouno-page-header"] = {
   evidence: ["foundation-integrity.json", "src/gouno/page-header.tsx", "tests/typography-foundation-conformance.test.ts"],
   baseline: "FI-001 certified / 2026-09-18",
 };
+for (const id of ["theme-system", "core-checkbox"]) {
+  componentReviews[id] = {
+    status: "reopened",
+    scope: "FI-001 Phase 2: Radius Foundation reopened because 6px control radius had duplicate numeric authorities and Checkbox bypassed the semantic radius scale with a raw 4px utility.",
+    evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "docs/foundation-geometry-inventory.md", "src/tokens.css"],
+    baseline: "FI-001 Phase 2 / 2026-09-18",
+  };
+}
+
 for (const id of ["core-button", "core-segmented", "core-input-otp"]) {
   componentReviews[id] = {
     status: "reopened",
