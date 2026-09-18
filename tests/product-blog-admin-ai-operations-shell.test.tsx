@@ -38,8 +38,15 @@ describe("Blog Admin AI Operations route shell", () => {
   });
 
   it("exposes four operational surfaces and opens automation as list then dedicated detail", () => {
-    const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
-    render(<BlogAdminAIOperationsDemo />);
+    const windowScrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+    const viewportScrollTo = vi.fn();
+    const originalElementScrollTo = HTMLElement.prototype.scrollTo;
+    HTMLElement.prototype.scrollTo = viewportScrollTo;
+    render(
+      <div data-showcase-product-viewport>
+        <BlogAdminAIOperationsDemo />
+      </div>,
+    );
 
     expect(screen.getByRole("heading", { level: 1, name: "AI 运营" })).toBeTruthy();
     expect(screen.getAllByRole("tablist")).toHaveLength(1);
@@ -56,8 +63,10 @@ describe("Blog Admin AI Operations route shell", () => {
     expect(screen.queryByText("成功率")).toBeNull();
 
     fireEvent.click(screen.getByRole("button", { name: "打开 Workflow：旧文维护" }));
-    expect(scrollTo).toHaveBeenCalledWith({ top: 0, left: 0, behavior: "auto" });
+    expect(viewportScrollTo).toHaveBeenCalledWith({ top: 0, left: 0, behavior: "auto" });
+    expect(windowScrollTo).toHaveBeenCalledWith({ top: 0, left: 0, behavior: "auto" });
     expect(screen.queryByRole("list", { name: "Workflow 列表" })).toBeNull();
+    HTMLElement.prototype.scrollTo = originalElementScrollTo;
     expect(screen.getByRole("heading", { level: 2, name: "旧文维护" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "返回 Workflow 列表" })).toBeTruthy();
     expect(screen.getByText("成功率")).toBeTruthy();
