@@ -16,11 +16,13 @@ import { useOverlayBody } from "../hooks/use-overlay-body";
 import { cn } from "../lib/utils";
 import type { ModalProps } from "./modal";
 
-const closeText = () =>
+const localizedText = (en: string, zh: string) =>
   typeof document !== "undefined" &&
   document.documentElement.lang.startsWith("en")
-    ? "Close"
-    : "关闭";
+    ? en
+    : zh;
+const closeText = () => localizedText("Close", "关闭");
+const drawerText = () => localizedText("Drawer", "抽屉");
 export type DrawerPlacement = "top" | "right" | "bottom" | "left";
 
 export interface DrawerProps extends Omit<
@@ -104,6 +106,7 @@ export function Drawer({
         <SheetContent
           side={placement}
           showCloseButton={showCloseButton}
+          closeLabel={closeText()}
           className={cn(
             "flex flex-col gap-0",
             sidePlacement ? "max-w-[calc(100vw-1rem)]" : "max-w-none",
@@ -134,7 +137,9 @@ export function Drawer({
         >
           <SheetHeader className="border-b p-5 pr-12" style={styles?.header}>
             {extra && <div className="flex justify-end">{extra}</div>}
-            <SheetTitle>{title || ariaLabel || closeText()}</SheetTitle>
+            <SheetTitle className={title ? undefined : "sr-only"}>
+              {title || ariaLabel || drawerText()}
+            </SheetTitle>
             {description ? (
               <SheetDescription>{description}</SheetDescription>
             ) : null}
