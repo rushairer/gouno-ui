@@ -151,28 +151,56 @@
       }
     },
     "sizing": {
-      "status": "planned",
-      "affectedComponentReviews": [],
+      "status": "in_progress",
+      "affectedComponentReviews": [
+        "core-button",
+        "core-segmented",
+        "core-input-otp"
+      ],
       "gates": {
         "inventory": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "docs/foundation-geometry-inventory.md",
+            "src/core/control-types.ts",
+            "src/core/button.tsx",
+            "src/components/primitives/button.tsx",
+            "src/core/input-otp.tsx",
+            "src/core/segmented.tsx"
+          ]
         },
         "tokens": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "src/tokens.css",
+            "docs/design-language.md",
+            "docs/foundation-geometry-inventory.md"
+          ]
         },
         "authority": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "src/tokens.css",
+            "src/core/control-types.ts",
+            "src/core/button.tsx",
+            "src/components/primitives/button.tsx",
+            "src/core/input-otp.tsx",
+            "src/core/segmented.tsx"
+          ]
         },
         "corpus": {
           "status": "pending",
           "evidence": []
         },
         "guard": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "scripts/check-foundation-integrity.mjs",
+            "tests/sizing-foundation-conformance.test.ts",
+            "tests/core-button.test.tsx",
+            "tests/core-segmented.test.tsx",
+            "tests/core-input-otp-6d3.test.tsx"
+          ]
         },
         "visual": {
           "status": "pending",
