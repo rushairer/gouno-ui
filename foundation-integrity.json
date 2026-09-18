@@ -443,7 +443,7 @@
             "showcase/demos/products/blog",
             "showcase/demos/products/blog-admin",
             "showcase/demos/products/gosso-admin",
-            "Surface migration removes the former Gosso Overview manual shadow-surface/hover:shadow-raised exception; final exact-head CI must report unexpectedSemanticShadowFiles=0"
+            "CI run 35351699247 (#478): Elevation corpus audit rawShadowBypasses=0, unexpectedSemanticShadowFiles=0, unexpectedElevatedFiles=0 after Surface migration"
           ],
           "rawShadowBypasses": 0,
           "unexpectedSemanticShadowFiles": 0,
@@ -455,21 +455,21 @@
             "scripts/check-foundation-integrity.mjs",
             "tests/elevation-system.test.ts",
             "tests/design-language-conformance.test.ts",
-            "CI run 35350436397 (#464): success; 161/161 test files, 832/832 tests"
+            "CI run 35351699247 (#478): success after Surface ownership migration"
           ]
         },
         "visual": {
           "status": "passed",
           "evidence": [
-            "Canonical Visual Golden Smoke run 35350247144 (#423): success",
-            "Elevation certification commits after this visual run changed only Foundation guards/tests/ledger; runtime elevation source remained unchanged"
+            "Canonical Visual Golden Smoke run 35351626846 (#425): success after Surface ownership migration",
+            "Surface ownership browser contract confirms anchor/Card split without visual regression"
           ]
         },
         "consumers": {
           "status": "passed",
           "evidence": [
-            "Blog Consumer Parity run 35350401151 (#478): success",
-            "Gosso Admin Consumer Parity run 35350401096 (#473): success"
+            "Blog Consumer Parity run 35351627074 (#482): success after Surface ownership migration",
+            "Gosso Admin Consumer Parity run 35351626869 (#477): success after product Surface reverse migration"
           ]
         }
       },
@@ -493,7 +493,7 @@
       }
     },
     "surface": {
-      "status": "in_progress",
+      "status": "certified",
       "affectedComponentReviews": [],
       "gates": {
         "inventory": {
@@ -527,30 +527,45 @@
           ]
         },
         "corpus": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "scripts/check-foundation-integrity.mjs",
+            "docs/foundation-surface-inventory.md",
             "showcase/demos/products/blog",
             "showcase/demos/products/blog-admin",
-            "showcase/demos/products/gosso-admin"
-          ]
+            "showcase/demos/products/gosso-admin",
+            "CI run 35351699247 (#478): Surface corpus audit directSemanticShadowBypasses=0, duplicatedCardSurfaceBundles=0"
+          ],
+          "directSemanticShadowBypasses": 0,
+          "duplicatedCardSurfaceBundles": 0
         },
         "guard": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "scripts/check-foundation-integrity.mjs",
             "tests/surface-foundation-conformance.test.ts",
             "tests/design-language-conformance.test.ts",
-            "tests/product-overview.test.tsx"
+            "tests/product-overview.test.tsx",
+            "CI run 35351699247 (#478): success; 162/162 test files, 837/837 tests"
           ]
         },
         "visual": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Canonical Visual Golden Smoke run 35351626846 (#425): success; 54/54 passed",
+            "showcase/e2e/canonical-visual-golden.pw.mjs: surface-gosso-overview-quick-link-card-ownership passed"
+          ]
         },
         "consumers": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Blog Consumer Parity run 35351627074 (#482): success",
+            "Gosso Admin Consumer Parity run 35351626869 (#477): success",
+            "gosso-admin commit a650a20: refactor(surface): align overview Quick Links with Card",
+            "gosso-admin CI run 35351492610 (#468): success",
+            "gosso-admin UI Browser Acceptance run 35351492835 (#71): success",
+            "gosso-admin Gosso Showcase Parity run 35351492555 (#65): success"
+          ]
         }
       },
       "inventory": {
