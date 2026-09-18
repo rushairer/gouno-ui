@@ -36,7 +36,6 @@ describe("audited batch completion", () => {
       "core-separator",
       "core-splitter",
       "core-card",
-      "core-typography",
       "core-progress",
       "core-code-block",
       "core-anchor",
@@ -61,10 +60,19 @@ describe("audited batch completion", () => {
     for (const id of [
       "gouno-app-shell",
       "gouno-page-container",
-      "gouno-page-header",
       "gouno-page-skeleton",
     ]) {
       expect(componentProgress(id, 0), id).toBe(100);
+    }
+  });
+
+  it("keeps Foundation-reopened component reviews below certified completion", () => {
+    for (const id of [
+      "core-typography",
+      "gouno-page-header",
+      "pattern-dedicated-editor",
+    ]) {
+      expect(componentProgress(id, 0), id).toBeLessThan(100);
     }
   });
 
