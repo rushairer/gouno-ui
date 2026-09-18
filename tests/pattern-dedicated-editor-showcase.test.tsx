@@ -16,8 +16,8 @@ describe("Dedicated Editor composition pattern", () => {
     const publicPatterns = readFileSync(resolve(process.cwd(), "src/patterns/index.ts"), "utf8");
 
     expect(ids).toContain("pattern-dedicated-editor");
-    expect(componentReviews["pattern-dedicated-editor"]?.status).toBe("reopened");
-    expect(componentProgress("pattern-dedicated-editor", 0)).toBeLessThan(100);
+    expect(componentReviews["pattern-dedicated-editor"]?.status).toBe("reviewed");
+    expect(componentProgress("pattern-dedicated-editor", 0)).toBe(100);
     expect(publicPatterns).not.toContain("DedicatedEditor");
   });
 
