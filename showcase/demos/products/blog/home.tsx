@@ -1,6 +1,6 @@
 import { useMemo, useState, type MouseEvent } from "react";
 import { ArrowRight, GitBranch, Mail, Rss } from "lucide-react";
-import { Alert, Button, Empty, Segmented } from "../../../../src/core";
+import { Alert, Button, Empty, Heading, Segmented } from "../../../../src/core";
 import { FixtureDock } from "../../../components/fixture-dock";
 import {
   BlogArticleTeaser,
@@ -73,9 +73,9 @@ export function BlogHomeDemo({
           <div className="flex flex-col gap-12 md:gap-16">
             <section className="grid items-center gap-8 border-b pb-10 md:grid-cols-[minmax(0,1fr)_320px]">
               <div>
-                <h1 className="max-w-3xl whitespace-pre-line text-3xl font-semibold leading-tight tracking-tight md:text-[40px]">
+                <Heading level={1} variant="display" className="max-w-3xl whitespace-pre-line">
                   把真实工程问题，写成可以长期复用的知识。
-                </h1>
+                </Heading>
                 <p className="mt-5 max-w-2xl text-base leading-8 text-muted-foreground">
                   记录架构、安全、AI、Go
                   与产品设计中的真实判断、失败和复盘，而不是只整理漂亮答案。
@@ -118,7 +118,7 @@ export function BlogHomeDemo({
                   {secondary.length ? (
                     <section className="mt-10">
                       <div className="mb-2 flex items-center justify-between gap-4">
-                        <h2 className="text-lg font-semibold">精选文章</h2>
+                        <Heading level={2} variant="subsection">精选文章</Heading>
                         <a
                           href="/articles"
                           className="inline-flex items-center gap-2 text-sm text-primary"
@@ -143,9 +143,9 @@ export function BlogHomeDemo({
 
                 <aside className="flex flex-col gap-8 lg:sticky lg:top-24">
                   <section>
-                    <h2 className="mb-5 text-sm font-semibold">主题索引</h2>
+                    <Heading level={2} variant="label" className="mb-5">主题索引</Heading>
                     <div className="flex flex-col gap-3">
-                      <h3 className="text-xs text-muted-foreground">核心分类</h3>
+                      <Heading level={3} variant="micro" className="text-muted-foreground">核心分类</Heading>
                       {blogCategories.map((category) => {
                         const target = `/categories/${category.slug}`;
                         return (
@@ -164,9 +164,9 @@ export function BlogHomeDemo({
                       })}
                     </div>
                     <div className="mt-6">
-                      <h3 className="mb-3 text-xs text-muted-foreground">
+                      <Heading level={3} variant="micro" className="mb-3 text-muted-foreground">
                         热门标签
-                      </h3>
+                      </Heading>
                       <div className="flex flex-wrap gap-2">
                         {blogTags.slice(0, 6).map((tag) => {
                           const target = `/tags/${encodeURIComponent(tag)}`;
@@ -189,7 +189,7 @@ export function BlogHomeDemo({
                     <span className="mb-4 flex size-10 items-center justify-center rounded-md bg-accent font-semibold text-primary">
                       PW
                     </span>
-                    <h2 className="font-semibold">Paw</h2>
+                    <Heading level={2} variant="compact">Paw</Heading>
                     <p className="mt-2 text-sm leading-7 text-muted-foreground">
                       Full Stack Developer。关注工程、产品与 AI
                       在真实团队中的长期实践。
@@ -217,7 +217,7 @@ export function BlogHomeDemo({
 
             {scenario !== "error" && latest.length ? (
               <section>
-                <h2 className="mb-2 text-lg font-semibold">最新文章</h2>
+                <Heading level={2} variant="subsection" className="mb-2">最新文章</Heading>
                 <div className="grid gap-x-10 md:grid-cols-2">
                   {latest.map((post) => (
                     <BlogArticleTeaser
@@ -233,7 +233,7 @@ export function BlogHomeDemo({
 
             <section className="flex flex-col justify-between gap-5 border-t pt-8 sm:flex-row sm:items-center">
               <div>
-                <h2 className="text-lg font-semibold">订阅更新</h2>
+                <Heading level={2} variant="subsection">订阅更新</Heading>
                 <p className="mt-2 text-sm text-muted-foreground">
                   每当有新文章发布，都可以通过你熟悉的方式收到。
                 </p>
