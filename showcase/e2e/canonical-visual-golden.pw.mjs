@@ -16,6 +16,14 @@ const scenarios = [
     ready: "#public-main",
   },
   {
+    name: "blog-home-mobile-light",
+    workspace: "blog",
+    brand: "blog",
+    fixture: "blog-home",
+    viewport: mobile,
+    ready: "#public-main",
+  },
+  {
     name: "blog-article-detail-desktop-light",
     workspace: "blog",
     brand: "blog",
@@ -96,12 +104,36 @@ const scenarios = [
     ready: "[data-slot=\"card\"]",
   },
   {
+    name: "gosso-site-settings-mobile-light",
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-system-site-settings",
+    viewport: mobile,
+    ready: "[data-slot=\"card\"]",
+  },
+  {
     name: "gosso-account-settings-desktop-light",
     workspace: "gosso-admin",
     brand: "gosso-admin",
     fixture: "gosso-account-settings",
     viewport: desktop,
     ready: "[data-slot=\"card\"]",
+  },
+  {
+    name: "gosso-login-desktop-light",
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-login",
+    viewport: desktop,
+    ready: "form",
+  },
+  {
+    name: "gosso-login-mobile-light",
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-login",
+    viewport: mobile,
+    ready: "form",
   },
 ];
 
@@ -166,6 +198,30 @@ for (const scenario of scenarios) {
 
 const darkScenarios = [
   {
+    name: "blog-home-desktop-dark",
+    workspace: "blog",
+    brand: "blog",
+    fixture: "blog-home",
+    viewport: desktop,
+    ready: "#public-main",
+  },
+  {
+    name: "blog-home-mobile-dark",
+    workspace: "blog",
+    brand: "blog",
+    fixture: "blog-home",
+    viewport: mobile,
+    ready: "#public-main",
+  },
+  {
+    name: "blog-admin-dashboard-desktop-dark",
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-dashboard",
+    viewport: desktop,
+    ready: '[data-slot="card"]',
+  },
+  {
     name: "blog-admin-posts-desktop-dark",
     workspace: "blog-admin",
     brand: "blog-admin",
@@ -196,6 +252,30 @@ const darkScenarios = [
     fixture: "gosso-system-site-settings",
     viewport: desktop,
     ready: '[data-slot="card"]',
+  },
+  {
+    name: "gosso-site-settings-mobile-dark",
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-system-site-settings",
+    viewport: mobile,
+    ready: '[data-slot="card"]',
+  },
+  {
+    name: "gosso-login-desktop-dark",
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-login",
+    viewport: desktop,
+    ready: "form",
+  },
+  {
+    name: "gosso-login-mobile-dark",
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-login",
+    viewport: mobile,
+    ready: "form",
   },
 ];
 
@@ -532,6 +612,150 @@ test("blog-admin-ai-settings-skill-editor-visual-evidence", async ({ page }, tes
     caret: "hide",
   });
 });
+
+
+test("blog-admin-ai-operations-inbox-desktop-dark", async ({ page }) => {
+  await prepareDarkFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-ai-operations",
+    viewport: desktop,
+    ready: '[role="tablist"]',
+  });
+  await page.getByRole("tab", { name: /待我处理/ }).click();
+  await expect(page.getByRole("region", { name: "Decision Workbench" })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+  await expect(page).toHaveScreenshot("blog-admin-ai-operations-inbox-desktop-dark.png", {
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+    maxDiffPixelRatio: 0.002,
+  });
+});
+
+for (const scenario of [
+  {
+    name: "blog-admin-ai-operations-workflow-detail-desktop-dark",
+    viewport: desktop,
+    theme: "dark",
+  },
+  {
+    name: "blog-admin-ai-operations-workflow-detail-mobile-dark",
+    viewport: mobile,
+    theme: "dark",
+  },
+]) {
+  test(scenario.name, async ({ page }) => {
+    await prepareDarkFixture(page, {
+      workspace: "blog-admin",
+      brand: "blog-admin",
+      fixture: "blog-admin-ai-operations",
+      viewport: scenario.viewport,
+      ready: '[role="tablist"]',
+    });
+    await page.getByRole("tab", { name: "自动化" }).click();
+    await page.getByRole("button", { name: "打开 Workflow：旧文维护" }).click();
+    await expect(page.getByRole("heading", { level: 2, name: "旧文维护" })).toBeVisible();
+    await expectNoHorizontalDocumentOverflow(page);
+    await expect(page).toHaveScreenshot(`${scenario.name}.png`, {
+      fullPage: true,
+      animations: "disabled",
+      caret: "hide",
+      maxDiffPixelRatio: 0.002,
+    });
+  });
+}
+
+for (const scenario of [
+  {
+    name: "blog-admin-ai-operations-workflow-editor-mobile-light",
+    viewport: mobile,
+    theme: "light",
+  },
+  {
+    name: "blog-admin-ai-operations-workflow-editor-desktop-dark",
+    viewport: desktop,
+    theme: "dark",
+  },
+  {
+    name: "blog-admin-ai-operations-workflow-editor-mobile-dark",
+    viewport: mobile,
+    theme: "dark",
+  },
+]) {
+  test(scenario.name, async ({ page }) => {
+    const prepare = scenario.theme === "dark" ? prepareDarkFixture : prepareLightFixture;
+    await prepare(page, {
+      workspace: "blog-admin",
+      brand: "blog-admin",
+      fixture: "blog-admin-ai-operations",
+      viewport: scenario.viewport,
+      ready: '[role="tablist"]',
+    });
+    await page.getByRole("tab", { name: "自动化" }).click();
+    await page.getByRole("button", { name: "打开 Workflow：旧文维护" }).click();
+    await page.getByRole("button", { name: "编辑", exact: true }).click();
+    await expect(page.getByText("基础信息", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "保存 Workflow" })).toBeVisible();
+    await expectNoHorizontalDocumentOverflow(page);
+    await expect(page).toHaveScreenshot(`${scenario.name}.png`, {
+      fullPage: true,
+      animations: "disabled",
+      caret: "hide",
+      maxDiffPixelRatio: 0.002,
+    });
+  });
+}
+
+for (const scenario of [
+  { name: "blog-admin-categories-drawer-desktop-light", theme: "light" },
+  { name: "blog-admin-categories-drawer-desktop-dark", theme: "dark" },
+]) {
+  test(scenario.name, async ({ page }) => {
+    const prepare = scenario.theme === "dark" ? prepareDarkFixture : prepareLightFixture;
+    await prepare(page, {
+      workspace: "blog-admin",
+      brand: "blog-admin",
+      fixture: "blog-admin-categories",
+      viewport: desktop,
+      ready: "table",
+    });
+    await page.getByRole("button", { name: "新建分类" }).click();
+    await expect(page.getByRole("dialog", { name: "新建分类" })).toBeVisible();
+    await expectNoHorizontalDocumentOverflow(page);
+    await expect(page).toHaveScreenshot(`${scenario.name}.png`, {
+      fullPage: true,
+      animations: "disabled",
+      caret: "hide",
+      maxDiffPixelRatio: 0.002,
+    });
+  });
+}
+
+for (const scenario of [
+  { name: "gosso-system-clients-modal-desktop-light", theme: "light" },
+  { name: "gosso-system-clients-modal-desktop-dark", theme: "dark" },
+]) {
+  test(scenario.name, async ({ page }) => {
+    const prepare = scenario.theme === "dark" ? prepareDarkFixture : prepareLightFixture;
+    await prepare(page, {
+      workspace: "gosso-admin",
+      brand: "gosso-admin",
+      fixture: "gosso-system-clients",
+      viewport: desktop,
+      ready: "table",
+    });
+    await page.getByRole("button", { name: "注册客户端" }).first().click();
+    await expect(page.getByRole("dialog", { name: "注册 OAuth2 客户端" })).toBeVisible();
+    await expectNoHorizontalDocumentOverflow(page);
+    await expect(page).toHaveScreenshot(`${scenario.name}.png`, {
+      fullPage: true,
+      animations: "disabled",
+      caret: "hide",
+      maxDiffPixelRatio: 0.002,
+    });
+  });
+}
 
 test("gosso-account-settings-mfa-tab-interaction", async ({ page }) => {
   const scenario = scenarios.find(
