@@ -588,7 +588,7 @@ Accessibility is part of component ownership, not a product-side repair layer.
 
 - Use native semantic elements whenever the platform already owns the behavior.
 - The element that users actually focus or activate owns its accessible name, state and relationships. Hidden compatibility/form elements do not satisfy this contract for a visible composite control.
-- Field labels, hints, validation errors and required state must reach the real interactive owner. Composite controls expose standard ARIA on that owner while preserving native form participation separately.
+- Field labels, hints, validation errors and required state must reach the real interactive owner. A Field fills missing naming relationships; it does not overwrite an explicit child-owned `aria-label`, `aria-labelledby` or component label. Composite controls expose standard ARIA and the public `id` on the visible owner while preserving native form participation through a separate internal control when necessary.
 - Icon-only controls derive names from explicit caller copy or a stable visible label relationship. Do not inject generic action text when a contextual visible label already exists.
 - Dialog/Drawer close actions must be named in the active language; focus containment, Escape policy and focus return remain part of the overlay interaction contract.
 - Decorative content uses `aria-hidden` only when it is not keyboard-focusable.
