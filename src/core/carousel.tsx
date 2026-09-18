@@ -219,6 +219,7 @@ export function Carousel({
       style={semanticStyles.arrows}
     >
       <IconButton
+        data-slot="carousel-prev-arrow"
         variant="outline"
         size="small"
         label={localizedLabel("Previous slide", "上一张")}
@@ -229,6 +230,7 @@ export function Carousel({
         style={semanticStyles.prevArrow}
       />
       <IconButton
+        data-slot="carousel-next-arrow"
         variant="outline"
         size="small"
         label={localizedLabel("Next slide", "下一张")}
