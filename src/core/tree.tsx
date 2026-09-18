@@ -693,7 +693,7 @@ export function Tree({
                   shape="circle"
                   size="small"
                   tabIndex={-1}
-                  aria-label={expanded ? "Collapse" : "Expand"}
+                  aria-labelledby={nodeTitleId}
                   aria-expanded={expanded}
                   disabled={nodeDisabled}
                   onClick={(event) => {
