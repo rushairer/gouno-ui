@@ -958,6 +958,7 @@ return;
       {error ? <Alert type="error" showIcon title={error} closable={{ onClose: () => setError(null) }} /> : null}
 
       <DocumentEditorShell
+        data-pattern="dedicated-workspace-editor"
         aria-label="文章编辑器"
         header={commandBar}
         navigator={navigator}
