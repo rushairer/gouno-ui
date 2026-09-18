@@ -48,9 +48,9 @@ function normalizeOption<T extends SegmentedValue>(option: T | SegmentedOption<T
 }
 
 const sizeClasses: Record<ControlSize, string> = {
-  small: "h-7 px-2 text-sm",
-  middle: "h-8 px-3 text-sm",
-  large: "h-10 px-4 text-base",
+  small: "control-inset-height-small px-2 text-sm",
+  middle: "control-inset-height-middle px-3 text-sm",
+  large: "control-inset-height-large px-4 text-base",
 };
 
 function SegmentedInner<T extends SegmentedValue>(
