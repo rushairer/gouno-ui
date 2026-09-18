@@ -17,7 +17,7 @@ export const Spinner = forwardRef<HTMLSpanElement, SpinnerProps>(function Spinne
       aria-hidden={ariaHidden}
       data-slot="spinner"
       className={cn(
-        "inline-block size-4 animate-spin rounded-full border-emphasis border-current border-e-transparent",
+        "inline-block size-4 animate-spin rounded-full edge-emphasis border-current border-e-transparent",
         className,
       )}
     />
