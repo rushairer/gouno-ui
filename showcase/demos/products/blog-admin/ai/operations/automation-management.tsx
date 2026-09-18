@@ -371,6 +371,7 @@ export function AutomationManagement({
             />
 
             <Card
+              role="region"
               padding="none"
               className="overflow-hidden"
               aria-label="Workflow 资产"
@@ -502,6 +503,7 @@ export function AutomationManagement({
         className="flex min-w-0 flex-col gap-5"
       >
           <Card
+            role="region"
             padding="none"
             className="overflow-hidden"
             aria-label={`${selected.name} Workflow 概览`}
@@ -630,6 +632,7 @@ export function AutomationManagement({
           </Card>
 
           <Card
+              role="region"
             padding="none"
             className="overflow-hidden"
             aria-label="最近运行"
@@ -695,6 +698,7 @@ export function AutomationManagement({
 
           <div className="grid gap-5 2xl:grid-cols-[minmax(0,1.15fr)_minmax(19rem,0.85fr)]">
             <Card
+              role="region"
               padding="none"
               className="overflow-hidden"
               aria-label="Workflow 流程定义"
@@ -733,6 +737,7 @@ export function AutomationManagement({
 
             <div className="flex min-w-0 flex-col gap-5">
               <Card
+              role="region"
                 padding="base"
                 aria-label="Workflow 运行边界"
               >
@@ -784,6 +789,7 @@ export function AutomationManagement({
               </Card>
 
               <Card
+              role="region"
                 padding="base"
                 aria-label="Workflow 输入契约"
               >
