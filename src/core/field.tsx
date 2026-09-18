@@ -33,26 +33,28 @@ export function Field({ label, children, id, hint, error, required = false, clas
       ? String(label)
       : undefined;
   const childAriaLabel = child?.props["aria-label"];
-  const redundantChildAriaLabel =
+  const childNameMatchesField =
     typeof childAriaLabel === "string" &&
     fieldLabelText !== undefined &&
     childAriaLabel.trim() === fieldLabelText.trim();
-  const childOwnsAccessibleName = Boolean(
-    (!redundantChildAriaLabel && childAriaLabel) ||
+  const childHasOwnAccessibleName = Boolean(
+    childAriaLabel ||
       child?.props["aria-labelledby"] ||
       child?.props.label,
   );
+  const groupsIndependentControl =
+    childHasOwnAccessibleName && !childNameMatchesField;
   const hintId = hint ? `${controlId}-hint` : undefined;
   const errorId = error ? `${controlId}-error` : undefined;
   return (
     <FieldRoot
       data-invalid={error ? true : undefined}
-      aria-labelledby={childOwnsAccessibleName ? labelId : undefined}
+      aria-labelledby={groupsIndependentControl ? labelId : undefined}
       className={cn("field min-w-0", className)}
     >
       <FieldLabel
         id={labelId}
-        htmlFor={childOwnsAccessibleName ? undefined : controlId}
+        htmlFor={groupsIndependentControl ? undefined : controlId}
         className={hideLabel ? "sr-only" : undefined}
       >
         {label}{required ? <span aria-hidden="true" className="text-destructive">*</span> : null}
@@ -60,12 +62,9 @@ export function Field({ label, children, id, hint, error, required = false, clas
       {child ? cloneElement(child, {
         id: controlId,
         required: child.props.required ?? required,
-        "aria-label": redundantChildAriaLabel
-          ? undefined
-          : child.props["aria-label"],
-        "aria-labelledby": childOwnsAccessibleName
-          ? child.props["aria-labelledby"]
-          : labelId,
+        "aria-labelledby":
+          child.props["aria-labelledby"] ??
+          (childHasOwnAccessibleName ? undefined : labelId),
         "aria-describedby": [child.props["aria-describedby"], hintId, errorId].filter(Boolean).join(" ") || undefined,
         "aria-invalid": child.props["aria-invalid"] || Boolean(error) || undefined,
       }) : children}
