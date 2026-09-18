@@ -23,7 +23,7 @@ export default function ModalLayeringExample() {
         onClose={() => setOpen(false)}
         footer={<Button onClick={() => setOpen(false)}>关闭</Button>}
       >
-        <Space direction="vertical" size="middle" className="w-full">
+        <Space orientation="vertical" gap="md" className="w-full">
           <Popover>
             <PopoverTrigger asChild>
               <Button>打开 Modal 内 Popover</Button>
