@@ -749,20 +749,38 @@
       }
     },
     "responsive": {
-      "status": "planned",
-      "affectedComponentReviews": [],
+      "status": "in_progress",
+      "affectedComponentReviews": [
+        "theme-system",
+        "core-steps",
+        "core-grid"
+      ],
       "gates": {
         "inventory": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "src/tokens.css",
+            "src/base.css",
+            "src/core/steps.tsx",
+            "src/core/layout.tsx",
+            "src/core/form.tsx",
+            "src/core/descriptions.tsx",
+            "showcase/demos/core/steps-menu.tsx"
+          ]
         },
         "tokens": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "src/tokens.css"
+          ]
         },
         "authority": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "src/tokens.css",
+            "src/base.css",
+            "src/core/steps.tsx"
+          ]
         },
         "corpus": {
           "status": "pending",
@@ -780,6 +798,20 @@
           "status": "pending",
           "evidence": []
         }
+      },
+      "inventory": {
+        "canonicalTiers": {
+          "sm": "40rem",
+          "md": "48rem",
+          "lg": "64rem",
+          "xl": "80rem",
+          "2xl": "96rem"
+        },
+        "confirmedDefect": "Core Steps responsive=true used the only arbitrary max-[531px] breakpoint while its public API only promises narrow-screen stacking.",
+        "arbitraryResponsiveBreakpointUsages": [
+          "src/core/steps.tsx:max-[531px]"
+        ],
+        "productStepsConsumers": 0
       }
     },
     "density": {
