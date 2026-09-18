@@ -35,11 +35,11 @@ export function OpsObjectRow({
       aria-label={ariaLabel}
       aria-pressed={selected}
       className={[
-        "group relative h-auto items-stretch justify-start whitespace-normal rounded-none border-b border-l-2 px-4 py-4 text-left transition-colors last:border-b-0",
+        "group relative h-auto items-stretch justify-start whitespace-normal rounded-none border-b border-s-emphasis px-4 py-4 text-left transition-colors last:border-b-0",
         "focus-visible:ring-inset",
         selected
-          ? "border-l-primary bg-primary/[0.08] hover:bg-primary/[0.08]"
-          : "border-l-transparent hover:bg-muted/45",
+          ? "border-s-primary bg-primary/[0.08] hover:bg-primary/[0.08]"
+          : "border-s-transparent hover:bg-muted/45",
       ].join(" ")}
       onClick={onClick}
     >
