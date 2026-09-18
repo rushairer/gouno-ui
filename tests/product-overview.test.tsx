@@ -5,6 +5,20 @@ import { GossoOverviewDemo } from "../showcase/demos/products/gosso-admin/overvi
 afterEach(cleanup);
 
 describe("Gosso Admin Overview product language", () => {
+  it("keeps Quick Link navigation semantic while Card owns the visual surface", () => {
+    render(<GossoOverviewDemo />);
+
+    const link = screen.getByRole("link", {
+      name: "客户端注册，查看已迁移 Showcase 页面",
+    });
+    const card = link.querySelector('[data-slot="card"]');
+
+    expect(card).toBeTruthy();
+    expect(card?.classList.contains("shadow-surface")).toBe(true);
+    expect(card?.classList.contains("bg-card")).toBe(true);
+    expect(link.classList.contains("shadow-surface")).toBe(false);
+  });
+
   it("keeps Showcase scenario controls outside product flow while preserving semantic feedback", () => {
     render(<GossoOverviewDemo />);
     expect(screen.queryByRole("radio", { name: "普通用户" })).toBeNull();
