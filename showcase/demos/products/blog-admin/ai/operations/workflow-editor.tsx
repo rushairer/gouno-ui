@@ -2,14 +2,9 @@ import { useState } from "react";
 import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
 import {
   Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
   Checkbox,
   Field,
   Form,
-  FormActions,
   FormGrid,
   IconButton,
   Input,
@@ -24,6 +19,11 @@ import type {
   WorkflowInputFieldFixture,
   WorkflowStepFixture,
 } from "./automation-records-fixtures";
+import {
+  DedicatedEditorActions,
+  DedicatedEditorLayout,
+  DedicatedEditorSection,
+} from "../../../../../components/patterns/dedicated-editor";
 
 const stepTypeLabels: Record<WorkflowStepFixture["type"], string> = {
   resource_query: "动态资源筛选",
@@ -199,8 +199,9 @@ export function WorkflowEditor({
         });
       }}
     >
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.25fr)_minmax(20rem,0.75fr)]">
-        <div className="flex min-w-0 flex-col gap-5">
+      <DedicatedEditorLayout
+        primary={(
+          <>
           <Card padding="none" className="overflow-hidden">
             <CardHeader className="border-b p-6">
               <div className="flex flex-col gap-1">
@@ -403,9 +404,10 @@ export function WorkflowEditor({
               ))}
             </CardContent>
           </Card>
-        </div>
-
-        <div className="flex min-w-0 flex-col gap-5">
+          </>
+        )}
+        secondary={(
+          <>
           <Card padding="none" className="overflow-hidden">
             <CardHeader className="border-b p-6">
               <div className="flex flex-col gap-1">
@@ -480,15 +482,16 @@ export function WorkflowEditor({
               </div>
             </CardContent>
           </Card>
-        </div>
-      </div>
+          </>
+        )}
+      />
 
-      <FormActions>
+      <DedicatedEditorActions>
         <Button type="button" variant="outline" onClick={onCancel}>取消</Button>
         <Button type="submit" variant="solid" color="primary" disabled={steps.length === 0 || inputFields.length === 0}>
           保存 Workflow
         </Button>
-      </FormActions>
+      </DedicatedEditorActions>
     </Form>
   );
 }
