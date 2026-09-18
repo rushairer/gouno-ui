@@ -282,20 +282,20 @@ function ConnectorList({ fixture, actions }: { fixture: AISettingsFixture; actio
   );
 }
 
-export function AISettingsSectionLead({ section, actions }: { section: AISettingsSection; actions: AISettingsSectionActions }) {
+export function AISettingsSectionLead({ section, actions, disabled = false }: { section: AISettingsSection; actions: AISettingsSectionActions; disabled?: boolean }) {
   switch (section) {
     case "agents":
       return <TabPanelLead
         description="Skill Version + 模型连接 + 运行计划组成可审计的执行单元。"
-        actions={<Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={actions.onCreateAgent}>创建 Agent</Button>}
+        actions={<Button size="small" variant="solid" color="primary" icon={<Plus />} disabled={disabled} onClick={actions.onCreateAgent}>创建 Agent</Button>}
       />;
     case "skills":
       return <TabPanelLead
         description="管理可复用、可版本化的 AI 能力定义；系统 Skill 与团队副本保持清晰边界。"
         actions={(
           <>
-            <Button size="small" variant="outline" icon={<Upload />} onClick={actions.onImportSkill}>导入 Skill</Button>
-            <Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={actions.onCreateSkill}>创建 Skill</Button>
+            <Button size="small" variant="outline" icon={<Upload />} disabled={disabled} onClick={actions.onImportSkill}>导入 Skill</Button>
+            <Button size="small" variant="solid" color="primary" icon={<Plus />} disabled={disabled} onClick={actions.onCreateSkill}>创建 Skill</Button>
           </>
         )}
       />;
@@ -306,9 +306,9 @@ export function AISettingsSectionLead({ section, actions }: { section: AISetting
         description="仅索引已发布文章；Embedding Profile 负责把内容转换为可检索知识库。"
         actions={(
           <>
-            <Button size="small" variant="outline" icon={<RefreshCw />} onClick={actions.onRetryIndex}>重试失败任务</Button>
-            <Button size="small" variant="outline" icon={<DatabaseZap />} onClick={actions.onRebuildIndex}>全量重建</Button>
-            <Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={actions.onCreateEmbedding}>添加 Embedding 模型</Button>
+            <Button size="small" variant="outline" icon={<RefreshCw />} disabled={disabled} onClick={actions.onRetryIndex}>重试失败任务</Button>
+            <Button size="small" variant="outline" icon={<DatabaseZap />} disabled={disabled} onClick={actions.onRebuildIndex}>全量重建</Button>
+            <Button size="small" variant="solid" color="primary" icon={<Plus />} disabled={disabled} onClick={actions.onCreateEmbedding}>添加 Embedding 模型</Button>
           </>
         )}
       />;
@@ -317,16 +317,16 @@ export function AISettingsSectionLead({ section, actions }: { section: AISetting
         description="管理模型连接、密钥状态以及文本与图片生成的默认用途。"
         actions={(
           <>
-            <Button size="small" variant="outline" icon={<Download />} onClick={actions.onExportProviders}>导出模型连接</Button>
-            <Button size="small" variant="outline" icon={<Upload />} onClick={actions.onImportProviders}>导入模型连接</Button>
-            <Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={actions.onCreateProvider}>添加模型连接</Button>
+            <Button size="small" variant="outline" icon={<Download />} disabled={disabled} onClick={actions.onExportProviders}>导出模型连接</Button>
+            <Button size="small" variant="outline" icon={<Upload />} disabled={disabled} onClick={actions.onImportProviders}>导入模型连接</Button>
+            <Button size="small" variant="solid" color="primary" icon={<Plus />} disabled={disabled} onClick={actions.onCreateProvider}>添加模型连接</Button>
           </>
         )}
       />;
     case "connectors":
       return <TabPanelLead
         description="管理 Agent 可访问的 Sandbox 外部能力、OAuth 边界与 Outbox 审批链路。"
-        actions={<Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={actions.onCreateConnector}>添加 Connector Profile</Button>}
+        actions={<Button size="small" variant="solid" color="primary" icon={<Plus />} disabled={disabled} onClick={actions.onCreateConnector}>添加 Connector Profile</Button>}
       />;
   }
 }
