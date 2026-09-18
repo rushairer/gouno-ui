@@ -1088,24 +1088,64 @@
       }
     },
     "overlay": {
-      "status": "planned",
-      "affectedComponentReviews": [],
+      "status": "in_progress",
+      "affectedComponentReviews": [
+        "gouno-app-shell",
+        "core-affix",
+        "core-back-top",
+        "core-float-button",
+        "core-modal",
+        "core-drawer",
+        "core-popconfirm",
+        "core-popover",
+        "core-tooltip",
+        "core-dropdown",
+        "core-select",
+        "core-menu",
+        "core-autocomplete",
+        "core-mentions",
+        "core-message",
+        "core-notification"
+      ],
       "gates": {
         "inventory": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/foundation-overlay-inventory.md",
+            "src/gouno/app-shell.tsx",
+            "src/core/affix.tsx",
+            "src/core/modal.tsx",
+            "src/core/drawer.tsx",
+            "src/core/message.tsx",
+            "src/core/notification.tsx",
+            "src/components/primitives/dialog.tsx",
+            "src/components/primitives/sheet.tsx",
+            "src/components/primitives/popover.tsx",
+            "src/components/primitives/dropdown-menu.tsx",
+            "src/components/primitives/tooltip.tsx",
+            "src/components/primitives/select.tsx"
+          ]
         },
         "tokens": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "docs/foundation-overlay-inventory.md",
+            "src/tokens.css"
+          ]
         },
         "authority": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "docs/foundation-overlay-inventory.md",
+            "src/tokens.css"
+          ]
         },
         "corpus": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "src",
+            "showcase"
+          ]
         },
         "guard": {
           "status": "pending",
@@ -1119,6 +1159,22 @@
           "status": "pending",
           "evidence": []
         }
+      },
+      "inventory": {
+        "observedGlobalLayers": {
+          "sticky": [20, 30],
+          "floating": [40],
+          "modalAndPopupCollision": [50],
+          "notice": [100],
+          "showcaseTooling": [60, 100]
+        },
+        "confirmedDefects": [
+          "Application-global z-index authority is encoded as raw component literals instead of semantic Layer roles.",
+          "Blocking modal surfaces and nested transient popup portals collide at z=50 and may rely on DOM insertion order.",
+          "Message and Notification use an unowned z-[100] emergency layer.",
+          "Showcase tooling uses product-adjacent layer numbers and needs an explicit tooling-only exception."
+        ],
+        "targetPolicy": "Local stacking stays component-owned; sticky/floating/modal/popup/notice become semantic runtime layers; Showcase tooling remains isolated from product Layer authority."
       }
     },
     "state": {
