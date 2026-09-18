@@ -72,6 +72,30 @@
   --shadow-xl: 0 0 #0000;
   --shadow-2xl: 0 0 #0000;
 }
+@utility layer-sticky {
+  z-index: var(--layer-sticky);
+}
+
+@utility layer-shell {
+  z-index: var(--layer-shell);
+}
+
+@utility layer-floating {
+  z-index: var(--layer-floating);
+}
+
+@utility layer-modal {
+  z-index: var(--layer-modal);
+}
+
+@utility layer-popup {
+  z-index: var(--layer-popup);
+}
+
+@utility layer-notice {
+  z-index: var(--layer-notice);
+}
+
 @utility edge-emphasis {
   border-width: var(--border-width-emphasis);
 }
@@ -101,6 +125,15 @@
     /* Canonical Focus geometry. Component rings are machine-guarded to the same 2px contract. */
     --focus-ring-width: 2px;
     --focus-ring-offset: 2px;
+
+    /* Canonical application-global stacking roles. Component-local z-index is
+       intentionally outside this scale and must stay inside its own stacking context. */
+    --layer-sticky: 20;
+    --layer-shell: 30;
+    --layer-floating: 40;
+    --layer-modal: 50;
+    --layer-popup: 60;
+    --layer-notice: 100;
 
     /* Semantic typography tokens. Visual roles are intentionally outside Tailwind text-* utilities. */
     --type-display-title-size: 2.5rem;
