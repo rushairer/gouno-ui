@@ -223,6 +223,15 @@ componentReviews["gouno-page-container"] = {
   baseline: "FI-001 Layout certified / 2026-09-18",
 };
 
+for (const id of ["theme-system", "core-table"]) {
+  componentReviews[id] = {
+    status: "reopened",
+    scope: "FI-001 Phase 2: Density Foundation reopened because ThemeProvider publishes a global comfortable/compact policy to documentElement, but current component CSS does not consume that root policy; Table also duplicates density geometry in component-local utility branches.",
+    evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "src/theme/provider.tsx", "src/base.css", "src/components/primitives/table.tsx"],
+    baseline: "FI-001 Phase 2 / 2026-09-18",
+  };
+}
+
 componentReviews["pattern-dedicated-editor"] = {
   status: "reviewed",
   scope: "FI-001 certified: Dedicated Editor explicitly separates nested/standalone heading semantics from task-title visual hierarchy and stays under the canonical Typography guard.",
