@@ -268,6 +268,15 @@ for (const id of ["core-anchor", "core-back-top", "core-carousel"]) {
   };
 }
 
+for (const id of ["theme-system", "core-button", "core-input", "core-tabs", "core-modal", "core-drawer"]) {
+  componentReviews[id] = {
+    status: "reopened",
+    scope: "FI-001 Focus reopened: focus-indicator geometry is split across global fallback, Core 2px rings, primitive 3px rings and generic focus behavior on overlay close controls.",
+    evidence: ["foundation-integrity.json", "docs/foundation-focus-inventory.md"],
+    baseline: "FI-001 Focus reopened / 2026-09-18",
+  };
+}
+
 componentReviews["pattern-dedicated-editor"] = {
   status: "reviewed",
   scope: "FI-001 certified: Dedicated Editor explicitly separates nested/standalone heading semantics from task-title visual hierarchy and stays under the canonical Typography guard.",
