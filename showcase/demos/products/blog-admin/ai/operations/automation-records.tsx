@@ -80,6 +80,7 @@ function WorkflowRunDetail({
 
   return (
     <div
+      data-pattern="record-detail-composition"
       className="flex min-w-0 flex-col gap-6"
       aria-label={`Workflow Run #${run.id} 详情`}
     >
@@ -395,6 +396,7 @@ function WorkflowRunDetail({
 function AgentRunDetail({ run }: { run: AgentRunFixture }) {
   return (
     <div
+      data-pattern="record-detail-composition"
       className="flex min-w-0 flex-col gap-6"
       aria-label={`Agent Run #${run.id} 详情`}
     >
@@ -679,6 +681,7 @@ export function AIOpsRecordsPanel({
 
           <div
             data-slot="ops-master-detail"
+            data-pattern="master-detail-composition"
             className="grid items-stretch gap-6 xl:grid-cols-[19rem_minmax(0,1fr)]"
           >
             <section
