@@ -18,13 +18,14 @@ The current role families include:
 
 ## Confirmed defects
 
-The Phase 3 audit confirmed three Color defects:
+The Phase 3 audit confirmed four Color defects:
 
 1. `ThemeProvider` duplicated the light/dark `--background` literals as `#ffffff / #11151b` when updating browser `theme-color`.
-2. Core Alert close hover encoded light/dark raw black/white alpha utilities instead of deriving the tint from semantic foreground.
-3. Core Image cover used raw `text-white` on the semantic overlay without an overlay foreground role.
+2. Canonical Showcase did not include a `<meta name="theme-color">` target, so the documented browser-side Theme effect was not actually exercised by the reference application.
+3. Core Alert close hover encoded light/dark raw black/white alpha utilities instead of deriving the tint from semantic foreground.
+4. Core Image cover used raw `text-white` on the semantic overlay without an overlay foreground role.
 
-The implementation now reads browser theme color from computed `--background`, uses semantic foreground alpha for Alert hover, and defines/consumes `overlay-foreground`.
+The implementation now reads browser theme color from computed `--background`, Canonical Showcase provides the real meta target, Alert hover derives from semantic foreground alpha, and Image cover consumes `overlay-foreground`.
 
 ## Explicit non-Theme color APIs
 
