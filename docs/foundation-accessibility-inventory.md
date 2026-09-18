@@ -57,8 +57,9 @@ Canonical Blog, Blog Admin and Gosso Admin fixtures are scanned for:
 
 Resolution:
 - give the visible Field label a stable id;
-- compose that id into the child `aria-labelledby`;
-- keep existing caller-provided labelled-by references;
+- when a child has no explicit accessible name, bind that Field label to the actual interactive owner;
+- when a child already owns an explicit `aria-label`, `aria-labelledby` or component-level `label`, preserve that child-owned name and use the outer Field label as group context instead of overriding it;
+- move Select's public `id` to the visible combobox and give the hidden native form select an internal id, so `label[for]`, focus and ARIA all resolve to the same interactive owner;
 - expose Select `required` as `aria-required` on the visible combobox.
 
 ### A11Y-D002 — Collapse icon-only disclosure buttons have duplicate generic names
@@ -92,7 +93,7 @@ Resolution: preserve the existing admitted combination without nesting: when bot
 
 Accessibility can be certified only when:
 
-1. composite form controls inherit visible Field naming/description/error/required semantics on the real interactive owner;
+1. composite form controls inherit missing Field naming/description/error/required semantics on the real interactive owner without erasing an explicit child-owned accessible name;
 2. icon-only disclosure/switcher controls have contextual names without injected generic English copy;
 3. Modal/Drawer retain dialog naming, focus containment/return and locale-correct close naming;
 4. Core Tag never nests native interactive elements; combined check + close behavior uses sibling semantic owners;
