@@ -104,13 +104,18 @@ describe("Blog Admin AI Operations automation/records canonical modules", () => 
     expect(onRollback).toHaveBeenCalledWith(42, 3);
   });
 
-  it("uses a Workflow master-detail workspace and keeps secondary management actions in one menu", () => {
+  it("uses a Workflow list route and a dedicated full-width detail route", () => {
     render(<BlogAdminAIOperationsDemo initialRoute={{ tab: "automation", record: "workflow" }} />);
 
     expect(screen.getByRole("button", { name: "创建 Workflow" })).toBeTruthy();
     expect(screen.getByRole("list", { name: "Workflow 列表" })).toBeTruthy();
+    expect(screen.queryByRole("heading", { level: 2, name: "旧文维护" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "编辑" })).toBeNull();
+
+    openFirstWorkflow();
+    expect(screen.queryByRole("list", { name: "Workflow 列表" })).toBeNull();
     expect(screen.getByRole("heading", { level: 2, name: "旧文维护" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "打开 Workflow：旧文维护" }).getAttribute("aria-pressed")).toBe("true");
+    expect(screen.getByRole("button", { name: "返回 Workflow 列表" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "编辑" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "运行记录" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "更多 Workflow 操作" })).toBeTruthy();
@@ -120,11 +125,16 @@ describe("Blog Admin AI Operations automation/records canonical modules", () => 
     expect(recentRunRows.length).toBeGreaterThan(0);
     expect(recentRunRows[0].className).toContain("[&>span]:contents");
 
+    fireEvent.click(screen.getByRole("button", { name: "返回 Workflow 列表" }));
+    expect(screen.getByRole("list", { name: "Workflow 列表" })).toBeTruthy();
+    expect(screen.queryByRole("heading", { level: 2, name: "旧文维护" })).toBeNull();
+
     fireEvent.click(screen.getByRole("button", { name: "创建 Workflow" }));
     fireEvent.change(screen.getByLabelText(/Workflow 名称/), { target: { value: "内容巡检" } });
     fireEvent.click(screen.getByRole("button", { name: "保存 Workflow" }));
     expect(screen.getByText("内容巡检 已保存，当前版本 v1。")).toBeTruthy();
     expect(screen.getByRole("heading", { level: 2, name: "内容巡检" })).toBeTruthy();
+    expect(screen.queryByRole("list", { name: "Workflow 列表" })).toBeNull();
 
     openWorkflowMenu();
     fireEvent.click(screen.getByRole("menuitem", { name: "启用 Workflow" }));
