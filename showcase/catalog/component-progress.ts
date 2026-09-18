@@ -277,7 +277,7 @@ for (const id of ["core-button","core-input","core-textarea","core-checkbox","co
   };
 }
 
-for (const id of ["gouno-app-shell","core-affix","core-back-top","core-float-button","core-modal","core-drawer","core-popconfirm","core-popover","core-tooltip","core-dropdown","core-select","core-menu","core-autocomplete","core-mentions","core-message","core-notification"]) {
+for (const id of ["theme-system","gouno-app-shell","pattern-bulk-action-bar","core-affix","core-back-top","core-float-button","core-modal","core-drawer","core-popconfirm","core-popover","core-tooltip","core-dropdown","core-select","core-menu","core-autocomplete","core-mentions","core-message","core-notification"]) {
   componentReviews[id] = {
     status: "reopened",
     scope: "FI-001 Overlay reopened: application-global sticky/floating/modal/popup/notice precedence is encoded through raw z-index literals, modal and popup portals currently collide at z=50, and Showcase tooling needs an explicit isolation contract.",
