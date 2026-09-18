@@ -42,8 +42,8 @@ describe("audited batch completion", () => {
     }
   });
 
-  it("reports Theme complete only after persistence and browser-side effects are reviewed", () => {
-    expect(componentProgress("theme-system", 0)).toBe(100);
+  it("keeps Theme below certified completion while a Foundation review is reopened", () => {
+    expect(componentProgress("theme-system", 0)).toBeLessThan(100);
   });
 
   it("reports admitted Patterns complete only after focused review", () => {
