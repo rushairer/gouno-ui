@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-// Canonical baselines are refreshed only by the explicitly gated CI refresh workflow.
+// Canonical baselines use an explicit refresh workflow; ordinary CI always compares.
 
 const desktop = { width: 1440, height: 900 };
 const narrow = { width: 782, height: 900 };
