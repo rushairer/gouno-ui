@@ -66,25 +66,27 @@ describe("Typography Foundation conformance", () => {
     const typography = readFileSync(resolve(root, "src/core/typography.tsx"), "utf8");
 
     for (const token of [
-      "--text-display-title",
-      "--text-page-title",
-      "--text-task-title",
-      "--text-section-title",
-      "--text-subsection-title",
-      "--text-compact-title",
-      "--text-label-title",
-      "--text-body",
-      "--text-body-sm",
-      "--text-caption",
-      "--font-weight-title",
-      "--tracking-title",
+      "--type-display-title-size",
+      "--type-page-title-size",
+      "--type-task-title-size",
+      "--type-section-title-size",
+      "--type-subsection-title-size",
+      "--type-compact-title-size",
+      "--type-label-title-size",
+      "--type-body-size",
+      "--type-body-sm-size",
+      "--type-caption-size",
+      "--type-title-weight",
+      "--type-title-tracking",
     ]) {
       expect(tokens).toContain(token);
     }
 
     expect(typography).toContain("export type HeadingVariant");
     expect(typography).toContain("data-typography-role={resolvedVariant}");
-    expect(typography).toContain('page: "text-page-title font-title tracking-title"');
-    expect(typography).toContain('task: "text-task-title font-title tracking-title"');
+    expect(typography).toContain('page: "type-page-title"');
+    expect(typography).toContain('task: "type-task-title"');
+    expect(tokens).toContain(".type-page-title {");
+    expect(tokens).toContain(".type-body-sm {");
   });
 });
