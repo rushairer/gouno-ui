@@ -31,11 +31,16 @@ describe("Core Button", () => {
     expect(action.className).toContain("border-dashed");
     expect(action.className).toContain("rounded-full");
     expect(action.className).toContain("w-full");
-    expect(action.className).toContain("control-height-large");
+    expect(action.className).toContain("h-[var(--control-height-large)]");
     expect(action.className).not.toContain("h-10");
     const loading = screen.getByRole("button", { name: "Saving" }) as HTMLButtonElement;
     expect(loading.disabled).toBe(true);
     expect(loading.getAttribute("aria-busy")).toBe("true");
+
+    render(<Button className="h-auto">Auto height</Button>);
+    const autoHeight = screen.getByRole("button", { name: "Auto height" });
+    expect(autoHeight.className).toContain("h-auto");
+    expect(autoHeight.className).not.toContain("h-[var(--control-height-middle)]");
   });
 
   it("maps semantic colors to canonical utility classes instead of dead migration hooks", () => {
