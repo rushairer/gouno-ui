@@ -124,4 +124,10 @@ Phase 3 Visual Semantic Foundations is fully certified:
 
 Phase 2/3 exits are backed by exact-head CI, canonical visual browser checks and reciprocal Blog/Gosso consumer parity rather than historical completion claims.
 
-The next execution stage is **Phase 4 — Interaction Foundations**. Audit Responsive behavior, Motion, Focus, Overlay/layering and Interaction state. The first read-only Responsive inventory has already identified one split-authority candidate: Core Steps uses an arbitrary `531px` responsive cutoff while the rest of the system predominantly follows canonical Tailwind breakpoints. This must be proven as intentional or replaced by a canonical responsive contract before Responsive can be certified.
+Phase 4 — Interaction Foundations is active:
+
+- **Responsive 7/7** — canonical `sm/md/lg/xl/2xl` tiers own responsive adaptation; the former Steps `531px` split authority is removed.
+- **Motion 7/7** — CSS and JavaScript share one reduced-motion policy; imperative scroll and Carousel lifecycle/autoplay no longer bypass the user preference.
+- **Focus in progress** — the initial inventory confirmed split 2px/3px focus geometry, an independently encoded global fallback and generic `focus:` behavior on Dialog/Sheet close controls. Focus reviews are reopened until the semantic geometry roles, corpus guard, browser evidence and consumer parity are complete.
+
+Overlay/layering and Interaction state remain planned after Focus.
