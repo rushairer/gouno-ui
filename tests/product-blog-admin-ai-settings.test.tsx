@@ -105,6 +105,7 @@ describe("Blog Admin AI Settings route family", () => {
     fireEvent.click(screen.getByRole("button", { name: "添加模型连接" }));
     const providerDrawer = screen.getByRole("dialog", { name: "添加模型连接" });
     expect(within(providerDrawer).getByRole("button", { name: "保存模型连接" })).toBeTruthy();
+    fireEvent.click(within(providerDrawer).getByRole("button", { name: "取消" }));
     expect(screen.getByRole("heading", { level: 2, name: "默认用途" })).toBeTruthy();
   });
 
@@ -158,6 +159,7 @@ describe("Blog Admin AI Settings route family", () => {
     fireEvent.click(screen.getByRole("button", { name: "添加 Embedding 模型" }));
     const embeddingDrawer = screen.getByRole("dialog", { name: "添加 Embedding 模型" });
     expect(within(embeddingDrawer).getByRole("button", { name: "保存 Embedding" })).toBeTruthy();
+    fireEvent.click(within(embeddingDrawer).getByRole("button", { name: "取消" }));
     expect(screen.getByRole("button", { name: "测试 Blog Knowledge" })).toBeTruthy();
   });
 
@@ -173,8 +175,8 @@ describe("Blog Admin AI Settings route family", () => {
     fireEvent.click(screen.getByRole("button", { name: "添加 Connector Profile" }));
     const connectorDrawer = screen.getByRole("dialog", { name: "添加 Connector Profile" });
     expect(within(connectorDrawer).getByRole("button", { name: "保存 Connector" })).toBeTruthy();
-    expect(screen.getByRole("heading", { level: 2, name: "Outbox 沙箱" })).toBeTruthy();
     fireEvent.click(within(connectorDrawer).getByRole("button", { name: "取消" }));
+    expect(screen.getByRole("heading", { level: 2, name: "Outbox 沙箱" })).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "加入 Outbox" }));
     expect(screen.getByText("#304 · fixture-304", { selector: "strong" })).toBeTruthy();
