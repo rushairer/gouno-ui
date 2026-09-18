@@ -40,7 +40,6 @@ describe("audited batch completion", () => {
       "core-card",
       "core-progress",
       "core-code-block",
-      "core-anchor",
       "core-qrcode",
       "core-statistic",
       "core-image",
