@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-// Canonical baselines use an explicit refresh workflow; ordinary CI always compares. FI-001 composition-helper typography re-certification uses this controlled path.
+// Canonical baselines use an explicit refresh workflow; ordinary CI always compares.
 
 const desktop = { width: 1440, height: 900 };
 const narrow = { width: 782, height: 900 };
