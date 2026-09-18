@@ -15,7 +15,6 @@ describe("audited batch completion", () => {
       "core-form",
       "core-date-picker",
       "core-upload",
-      "core-table",
       "core-button",
       "core-input-otp",
       "core-segmented",
@@ -70,6 +69,12 @@ describe("audited batch completion", () => {
       "gouno-page-skeleton",
     ]) {
       expect(componentProgress(id, 0), id).toBe(100);
+    }
+  });
+
+  it("keeps Border-owned reviews below certified completion", () => {
+    for (const id of ["core-spin", "core-timeline", "core-steps", "core-table"]) {
+      expect(componentProgress(id, 0), id).toBeLessThan(100);
     }
   });
 
