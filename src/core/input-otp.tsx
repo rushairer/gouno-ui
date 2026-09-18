@@ -141,7 +141,7 @@ export const InputOTP = forwardRef<HTMLDivElement, InputOTPRuntimeProps>(
             onPaste={(event) => pasteAt(event, index)}
             onKeyDown={(event) => handleKeyDown(event, index)}
             className={cn(
-              "rounded-md border bg-input text-center outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+              "rounded-md border bg-input text-center outline-none transition-colors focus-standalone disabled:cursor-not-allowed disabled:opacity-50",
               inputSizeClass[size],
               status === "error" &&
                 "border-destructive focus-visible:ring-destructive/30",
