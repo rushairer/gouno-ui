@@ -232,6 +232,15 @@ for (const id of ["theme-system", "core-table"]) {
   };
 }
 
+for (const id of ["core-spin", "core-timeline", "core-steps", "core-table"]) {
+  componentReviews[id] = {
+    status: "reopened",
+    scope: "FI-001 Phase 2: Border Foundation reopened to replace raw 2px border-width utilities with one semantic emphasis-width authority while preserving ordinary 1px boundaries and semantic border colors.",
+    evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "src/tokens.css", "src/core/spinner.tsx", "src/core/timeline.tsx", "src/core/steps.tsx", "src/components/primitives/table.tsx"],
+    baseline: "FI-001 Phase 2 / 2026-09-18",
+  };
+}
+
 componentReviews["pattern-dedicated-editor"] = {
   status: "reviewed",
   scope: "FI-001 certified: Dedicated Editor explicitly separates nested/standalone heading semantics from task-title visual hierarchy and stays under the canonical Typography guard.",
