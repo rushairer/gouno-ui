@@ -540,20 +540,38 @@
       }
     },
     "density": {
-      "status": "planned",
-      "affectedComponentReviews": [],
+      "status": "in_progress",
+      "affectedComponentReviews": [
+        "theme-system",
+        "core-table"
+      ],
       "gates": {
         "inventory": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "src/theme/provider.tsx",
+            "showcase/demos/theme/system.tsx",
+            "src/components/primitives/table.tsx",
+            "src/base.css",
+            "docs/design-language.md",
+            "docs/api-specification.md"
+          ]
         },
         "tokens": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "src/theme/provider.tsx",
+            "src/base.css",
+            "src/components/primitives/table.tsx"
+          ]
         },
         "authority": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "src/theme/provider.tsx",
+            "src/components/primitives/table.tsx",
+            "src/base.css"
+          ]
         },
         "corpus": {
           "status": "pending",
@@ -561,7 +579,10 @@
         },
         "guard": {
           "status": "pending",
-          "evidence": []
+          "evidence": [
+            "tests/theme.test.tsx",
+            "tests/table-layout.test.tsx"
+          ]
         },
         "visual": {
           "status": "pending",
@@ -571,7 +592,8 @@
           "status": "pending",
           "evidence": []
         }
-      }
+      },
+      "confirmedDefect": "ThemeProvider density writes documentElement.dataset.density, but no global density selector consumes it. Table separately duplicates compact/touch geometry in local utility branches."
     },
     "motion": {
       "status": "planned",
