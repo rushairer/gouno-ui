@@ -4,7 +4,6 @@ import { componentProgress } from "../showcase/catalog/component-progress";
 describe("audited batch completion", () => {
   it("reports complete only for the reviewed Core component batch", () => {
     for (const id of [
-      "core-button",
       "core-icon",
       "core-kbd",
       "core-tag",
@@ -71,6 +70,9 @@ describe("audited batch completion", () => {
       "core-space",
       "core-flex",
       "core-grid",
+      "core-button",
+      "core-segmented",
+      "core-input-otp",
     ]) {
       expect(componentProgress(id, 0), id).toBeLessThan(100);
     }
