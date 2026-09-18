@@ -155,6 +155,8 @@
     --radius-control: 6px;
     --content-width: 1200px;
     --reading-width: 720px;
+    --layout-page-max-width: 90rem;
+    --layout-page-gap: 1.5rem;
     --chart-1: var(--primary);
     --chart-2: var(--success);
     --chart-3: var(--warning);
@@ -211,6 +213,11 @@
 }
 
 @layer utilities {
+  .layout-page-container {
+    max-width: var(--layout-page-max-width);
+    gap: var(--layout-page-gap);
+  }
+
   .type-display-title {
     font-size: var(--type-page-title-size);
     line-height: var(--type-page-title-line-height);
