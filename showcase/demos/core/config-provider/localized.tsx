@@ -1,20 +1,104 @@
-import { useState } from "react";
-import { ConfigProvider, enUS, zhCN, Input, InputNumber, DatePicker, Select, Upload, Pagination, Button } from "../../../../src/core";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  ConfigProvider,
+  Pagination,
+  Select,
+  Space,
+  Text,
+  enUS,
+  zhCN,
+  type ComponentLocale,
+} from "../../../../src/core";
+
+interface LocalePanelProps {
+  locale: ComponentLocale;
+  title: string;
+  description: string;
+  selectLabel: string;
+  overrideLabel: string;
+  overridePlaceholder: string;
+  paginationLabel: string;
+}
+
+function LocalePanel({
+  locale,
+  title,
+  description,
+  selectLabel,
+  overrideLabel,
+  overridePlaceholder,
+  paginationLabel,
+}: LocalePanelProps) {
+  return (
+    <ConfigProvider locale={locale}>
+      <Card padding="sm">
+        <CardHeader title={title} description={description} />
+        <CardContent>
+          <Space orientation="vertical" gap="md" className="w-full">
+            <div className="flex flex-col gap-1">
+              <Text size="sm" weight="medium">
+                Provider 默认 Select 文案
+              </Text>
+              <Select aria-label={selectLabel}>
+                <option value="draft">Draft / 草稿</option>
+                <option value="ready">Ready / 已准备</option>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <Text size="sm" weight="medium">
+                显式业务 placeholder 优先
+              </Text>
+              <Select
+                aria-label={overrideLabel}
+                placeholder={overridePlaceholder}
+              >
+                <option value="draft">Draft / 草稿</option>
+                <option value="ready">Ready / 已准备</option>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <Text size="sm" weight="medium">
+                Pagination 通用操作文案
+              </Text>
+              <Pagination
+                total={200}
+                showQuickJumper
+                showSizeChanger
+                ariaLabel={paginationLabel}
+              />
+            </div>
+          </Space>
+        </CardContent>
+      </Card>
+    </ConfigProvider>
+  );
+}
 
 export default function LocalizedControlsExample() {
-  const [chinese, setChinese] = useState(true);
-  return <div className="flex w-full min-w-0 flex-col gap-4">
-    <Button onClick={() => setChinese((value) => !value)}>切换语言 / Switch language</Button>
-    <ConfigProvider locale={chinese ? zhCN : enUS}>
-      <Input aria-label="Title / 标题" defaultValue="Long input text with suffix" suffix="字符" allowClear />
-      <Input aria-label="Custom / 自定义" defaultValue="Local override" allowClear locale={{ clearLabel: "重置标题" }} />
-      <InputNumber aria-label="Count / 数量" defaultValue={1} />
-      <DatePicker aria-label="Date / 日期" defaultValue="2026-09-12" />
-      <Select aria-label="Status / 状态" allowClear showSearch defaultValue="draft">
-        <option value="draft">Draft / 草稿</option><option value="ready">Ready / 已准备</option>
-      </Select>
-      <Upload aria-label="Files / 文件"><span>Choose files / 选择文件</span></Upload>
-      <Pagination total={200} showQuickJumper showSizeChanger />
-    </ConfigProvider>
-  </div>;
+  return (
+    <div className="grid w-full min-w-0 gap-4 lg:grid-cols-2">
+      <LocalePanel
+        locale={zhCN}
+        title="zh-CN Provider"
+        description="无需交互即可看到“请选择 / 上一页 / 下一页 / 跳至”等中文组件文案。"
+        selectLabel="中文 Provider 默认 Select"
+        overrideLabel="中文 Provider 业务覆盖 Select"
+        overridePlaceholder="业务自定义占位文案"
+        paginationLabel="中文 Provider 分页"
+      />
+      <LocalePanel
+        locale={enUS}
+        title="en-US Provider"
+        description="The same controls visibly render Please select, Previous, Next and Go to."
+        selectLabel="English provider default Select"
+        overrideLabel="English provider product override Select"
+        overridePlaceholder="Product-owned placeholder"
+        paginationLabel="English provider pagination"
+      />
+    </div>
+  );
 }
