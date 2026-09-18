@@ -1,6 +1,6 @@
 # Foundation Integrity Open Defects
 
-Updated: 2026-09-18
+Updated: 2026-09-19
 
 This queue records defects discovered while the Foundation Integrity Program is active. A defect does not silently remain under a `reviewed` component entry. It is either resolved in the relevant Foundation or explicitly carried into the final defect sweep.
 
@@ -21,7 +21,7 @@ Next action:
 
 ## FI-D002 — Carousel arrows do not navigate in the real Showcase
 
-**Status:** open / high priority  
+**Status:** fix implemented; browser gate pending  
 **Component:** `core-carousel`  
 **Observed evidence:** Showcase Carousel screenshot and manual click report, 2026-09-18.
 
@@ -48,3 +48,18 @@ Next action:
 - expose visible localized component copy/states without requiring source inspection;
 - preserve explicit local override precedence in the example;
 - add Showcase contract coverage for the visible proof.
+
+
+## FI-D004 — Tag close hover bypasses semantic Color
+
+**Status:** fix implemented; certification pending  
+**Component:** `core-tag`  
+**Foundation impact:** Interaction State + reopened Color.
+
+Interaction State inventory exposed `hover:bg-black/10` on Tag's close action. That close action is UI chrome; it is not covered by the caller-owned arbitrary Tag background-color exception.
+
+Resolution:
+
+- derive hover feedback from `currentColor` instead of a fixed raw palette color;
+- expand the Color guard and focused conformance test to cover Tag close hover;
+- keep `core-tag` reopened until exact-head CI/visual/consumer gates confirm the correction.
