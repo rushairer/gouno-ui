@@ -2,6 +2,32 @@
   --font-sans:
     "Inter Variable", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Semantic typography scale. HTML heading level does not choose these roles. */
+  --text-display-title: 2.5rem;
+  --text-display-title--line-height: 2.75rem;
+  --text-page-title: 1.875rem;
+  --text-page-title--line-height: 2.25rem;
+  --text-task-title: 1.5rem;
+  --text-task-title--line-height: 2rem;
+  --text-section-title: 1.25rem;
+  --text-section-title--line-height: 1.75rem;
+  --text-subsection-title: 1.125rem;
+  --text-subsection-title--line-height: 1.75rem;
+  --text-compact-title: 0.875rem;
+  --text-compact-title--line-height: 1.25rem;
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.75rem;
+  --text-body: 1rem;
+  --text-body--line-height: 1.5rem;
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.25rem;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1rem;
+  --font-weight-title: 600;
+  --font-weight-label: 500;
+  --tracking-title: -0.02em;
+  --tracking-section-title: -0.01em;
   --color-background: var(--background);
   --color-canvas: var(--canvas);
   --color-foreground: var(--foreground);
