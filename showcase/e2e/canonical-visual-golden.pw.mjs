@@ -415,6 +415,44 @@ test("overlay-semantic-modal-popup-ordering", async ({ page }) => {
   expect(popupLayer).toBeGreaterThan(modalLayers[0]);
 });
 
+test("showcase-config-provider-visibly-proves-locale-ownership", async ({ page }) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-config-provider",
+    viewport: desktop,
+    ready: '[data-slot="card"]',
+  });
+
+  await expect(page.getByText("zh-CN Provider", { exact: true })).toBeVisible();
+  await expect(page.getByText("en-US Provider", { exact: true })).toBeVisible();
+
+  const zhSelect = page.getByRole("combobox", {
+    name: "中文 Provider 默认 Select",
+  });
+  const enSelect = page.getByRole("combobox", {
+    name: "English provider default Select",
+  });
+  await expect(zhSelect).toContainText("请选择");
+  await expect(enSelect).toContainText("Please select");
+
+  await expect(page.getByRole("button", { name: "上一页" })).toContainText(
+    "上一页",
+  );
+  await expect(page.getByRole("button", { name: "Previous" })).toContainText(
+    "Previous",
+  );
+
+  await expect(
+    page.getByRole("combobox", { name: "中文 Provider 业务覆盖 Select" }),
+  ).toContainText("业务自定义占位文案");
+  await expect(
+    page.getByRole("combobox", {
+      name: "English provider product override Select",
+    }),
+  ).toContainText("Product-owned placeholder");
+});
+
 test("interaction-carousel-arrows-remain-clickable-while-draggable", async ({ page }) => {
   await prepareLightFixture(page, {
     workspace: "gouno-ui",
