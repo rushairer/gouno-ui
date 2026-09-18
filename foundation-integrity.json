@@ -331,20 +331,32 @@
       }
     },
     "layout": {
-      "status": "planned",
-      "affectedComponentReviews": [],
+      "status": "in_progress",
+      "affectedComponentReviews": [
+        "gouno-page-container"
+      ],
       "gates": {
         "inventory": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "src/tokens.css",
+            "src/core/layout.tsx",
+            "src/gouno/page-container.tsx",
+            "showcase/demos/gouno/examples/page-container.tsx",
+            "tests/gouno-structure.test.tsx"
+          ]
         },
         "tokens": {
           "status": "pending",
           "evidence": []
         },
         "authority": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "src/tokens.css",
+            "src/gouno/page-container.tsx",
+            "tests/gouno-structure.test.tsx"
+          ]
         },
         "corpus": {
           "status": "pending",
