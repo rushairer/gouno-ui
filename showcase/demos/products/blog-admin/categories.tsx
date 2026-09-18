@@ -223,7 +223,7 @@ export function BlogAdminCategoriesDemo() {
       : null;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div data-pattern="collection-composition" className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/categories"
         note="保留真实分类数据与操作语义，并用桌面 Table / 移动 Card 双呈现承载响应式布局；批量部分失败保留选择、Drawer 编辑、AISuggestion Slug 与 category WorkflowLauncher 均保持一致。Fixture 不请求真实 Blog/AI API。"
