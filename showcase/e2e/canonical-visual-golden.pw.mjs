@@ -287,6 +287,40 @@ test("border-semantic-width-geometry", async ({ page }) => {
   ).toBe("4px");
 });
 
+for (const mode of ["light", "dark"]) {
+  test(`color-browser-theme-meta-${mode}`, async ({ page }) => {
+    const scenario = {
+      workspace: "blog",
+      brand: "blog",
+      fixture: "blog-home",
+      viewport: desktop,
+      ready: "#public-main",
+    };
+
+    if (mode === "light") {
+      await prepareLightFixture(page, scenario);
+    } else {
+      await prepareDarkFixture(page, scenario);
+    }
+
+    const colors = await page.evaluate(() => {
+      const root = document.documentElement;
+      return {
+        meta:
+          document
+            .querySelector('meta[name="theme-color"]')
+            ?.getAttribute("content") ?? "",
+        background: getComputedStyle(root)
+          .getPropertyValue("--background")
+          .trim(),
+      };
+    });
+
+    expect(colors.background).not.toBe("");
+    expect(colors.meta).toBe(colors.background);
+  });
+}
+
 const darkScenarios = [
   {
     name: "blog-home-desktop-dark",
