@@ -1085,6 +1085,97 @@ if (motion?.status !== "planned") {
   }
 }
 
+const focus = matrix.foundations.focus;
+if (focus?.status !== "planned") {
+  const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");
+  const baseSource = readFileSync(resolve(root, "src/base.css"), "utf8");
+  const dialogSource = readFileSync(
+    resolve(root, "src/components/primitives/dialog.tsx"),
+    "utf8",
+  );
+  const sheetSource = readFileSync(
+    resolve(root, "src/components/primitives/sheet.tsx"),
+    "utf8",
+  );
+  const segmentedSource = readFileSync(
+    resolve(root, "src/core/segmented.tsx"),
+    "utf8",
+  );
+
+  for (const marker of [
+    "--focus-ring-width: 2px;",
+    "--focus-ring-offset-control: 2px;",
+    "--focus-ring-offset-standalone: 3px;",
+    "--focus-ring-offset-inset: -2px;",
+  ]) {
+    if (!tokenSource.includes(marker)) {
+      failures.push("focus.guard: missing canonical Focus geometry token " + marker);
+    }
+  }
+
+  for (const marker of [
+    "outline: var(--focus-ring-width) solid var(--ring);",
+    ".focus-control:focus-visible",
+    ".focus-standalone:focus-visible",
+    ".focus-inset:focus-visible",
+    ".focus-within-owner:has(:focus-visible)",
+    ".peer:focus-visible ~ .focus-peer-control",
+  ]) {
+    if (!baseSource.includes(marker)) {
+      failures.push("focus.guard: missing semantic Focus role " + marker);
+    }
+  }
+
+  for (const [name, source] of [
+    ["Dialog", dialogSource],
+    ["Sheet", sheetSource],
+  ]) {
+    if (!source.includes("focus-control")) {
+      failures.push("focus.guard: " + name + " close control must consume focus-control");
+    }
+    if (/\bfocus:ring-|\bfocus:outline-/.test(source)) {
+      failures.push(
+        "focus.guard: " + name + " close control reintroduced pointer-visible focus geometry",
+      );
+    }
+  }
+
+  if (!segmentedSource.includes("focus-peer-control")) {
+    failures.push(
+      "focus.guard: Segmented must preserve peer-owned keyboard focus through the semantic role",
+    );
+  }
+
+  const focusCorpusFiles = [
+    ...collectTsx(resolve(root, "src")),
+    ...collectTsx(resolve(root, "showcase/components")),
+    ...canonicalProductFiles,
+  ];
+  const rawFocusGeometry =
+    /\b(?:focus-visible|peer-focus-visible|focus-within|focus):(?:ring-(?:\d+|\[[^\]]+\])|ring-offset-(?:\d+|\[[^\]]+\])|ring-inset)\b/;
+  const rawFocusGeometryFiles = focusCorpusFiles.filter((file) =>
+    rawFocusGeometry.test(readFileSync(file, "utf8")),
+  );
+
+  const shortFocusPath = (file) =>
+    file.startsWith(root) ? file.slice(root.length + 1) : file;
+  process.stdout.write(
+    "Focus corpus audit: rawFocusGeometryFiles=" +
+      rawFocusGeometryFiles.length +
+      (rawFocusGeometryFiles.length
+        ? " [" + rawFocusGeometryFiles.map(shortFocusPath).join(", ") + "]"
+        : "") +
+      "\n",
+  );
+
+  if (rawFocusGeometryFiles.length !== 0) {
+    failures.push(
+      "focus.corpus: components/products must select semantic Focus roles instead of raw ring geometry: " +
+        rawFocusGeometryFiles.map(shortFocusPath).join(", "),
+    );
+  }
+}
+
 const density = matrix.foundations.density;
 if (density?.status !== "planned") {
   const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");
