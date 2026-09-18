@@ -55,6 +55,12 @@ describe("audited batch completion", () => {
     }
   });
 
+  it("keeps Motion-owned reviews below certified completion", () => {
+    for (const id of ["core-anchor", "core-back-top", "core-carousel"]) {
+      expect(componentProgress(id, 0), id).toBeLessThan(100);
+    }
+  });
+
   it("reports admitted Patterns complete only after focused review", () => {
     for (const id of [
       "pattern-bulk-action-bar",
