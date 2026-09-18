@@ -7,7 +7,7 @@ import {
   ListChecks,
   LockKeyhole,
 } from "lucide-react";
-import { Alert, Modal, Segmented, Tabs, Text } from "../../../../../../src/core";
+import { Alert, Modal, Segmented, TabPanel, Tabs, Text } from "../../../../../../src/core";
 import { PageHeader } from "../../../../../../src/gouno";
 import { FixtureDock } from "../../../../../components/fixture-dock";
 import { AISettingsEditor, type AISettingsEditorResult, type AISettingsEditorState } from "./editors";
@@ -22,7 +22,7 @@ import {
   type ProviderFixture,
   type SkillFixture,
 } from "./fixtures";
-import { AISettingsSectionPanel, type AISettingsSectionActions } from "./sections";
+import { AISettingsSectionLead, AISettingsSectionPanel, type AISettingsSectionActions } from "./sections";
 import { FixtureNotification } from "../../fixture-notification";
 import {
   PrivilegedAccessGate,
@@ -336,20 +336,26 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
         )}
       />
       <PageHeader title="AI 设置" description="管理 Agent、Skill、Tool、知识索引、模型连接与 Sandbox 连接器。" />
-      <Tabs<AISettingsSection> activeKey={section} items={tabs} onChange={changeSection} ariaLabel="AI 设置栏目" />
-      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
-      {privilegedPolicy && !editor ? (
-        <PrivilegedAccessGate
-          state={security}
-          policyTitle={privilegedPolicy.title}
-          policyDescription={privilegedPolicy.description}
-          actionLabel={privilegedPolicy.actionLabel}
-          onUnlock={() => setSecurity("unlocked")}
-          onRelock={() => setSecurity("locked")}
-        >
-          {sectionPanel}
-        </PrivilegedAccessGate>
-      ) : sectionPanel}
+      <Tabs<AISettingsSection> activeKey={section} items={tabs} onChange={changeSection} ariaLabel="AI 设置栏目">
+        <TabPanel value={section}>
+          <div className="flex flex-col gap-5">
+            <AISettingsSectionLead section={section} actions={actions} disabled={Boolean(editor)} />
+            <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
+            {privilegedPolicy && !editor ? (
+              <PrivilegedAccessGate
+                state={security}
+                policyTitle={privilegedPolicy.title}
+                policyDescription={privilegedPolicy.description}
+                actionLabel={privilegedPolicy.actionLabel}
+                onUnlock={() => setSecurity("unlocked")}
+                onRelock={() => setSecurity("locked")}
+              >
+                {sectionPanel}
+              </PrivilegedAccessGate>
+            ) : sectionPanel}
+          </div>
+        </TabPanel>
+      </Tabs>
       <Modal
         open={Boolean(deleteTarget)}
         title="确认删除"
