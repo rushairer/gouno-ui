@@ -21,7 +21,7 @@ import {
   Text,
 } from "../../../../../src/core";
 import { PageSkeleton } from "../../../../../src/gouno";
-import { ConfirmAction, FixtureBanner, ManagementPanelLead, StatusNotice } from "./shared";
+import { ConfirmAction, FixtureBanner, ManagementPanelFeedback, ManagementPanelLead, StatusNotice } from "./shared";
 
 type FixtureScenario = "data" | "loading" | "empty" | "error";
 type ClientFixture = {
@@ -118,9 +118,14 @@ export function ClientsPanel() {
       <ManagementPanelLead description="注册与维护 OAuth 2.0 / OpenID Connect 客户端、回调地址、授权类型和访问范围。" actions={<Button variant="solid" color="primary" icon={<Plus />} onClick={() => openEditor()}>注册客户端</Button>} />
       {status ? <StatusNotice>{status}</StatusNotice> : null}
 
-      {scenario === "error" ? (
-        <Alert type="error" showIcon title="OAuth2 客户端加载失败" description="无法读取客户端目录。真实产品会保留当前页面并允许重新请求。" action={<Button size="small" onClick={() => changeScenario("data")}>重新载入</Button>} />
-      ) : scenario === "loading" ? (
+      <ManagementPanelFeedback>
+        {scenario === "error" ? <Alert type="error" showIcon title="OAuth2 客户端加载失败" description="无法读取客户端目录。真实产品会保留当前页面并允许重新请求。" action={<Button size="small" onClick={() => changeScenario("data")}>重新载入</Button>} /> : null}
+
+
+      </ManagementPanelFeedback>
+
+
+      {scenario === "loading" ? (
         <PageSkeleton layout="collection" aria-label="OAuth2 客户端加载中" />
       ) : scenario === "empty" ? (
         <Empty title="还没有 OAuth2 客户端" description="注册第一个客户端以接入授权流程。" action={<Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={() => openEditor()}>注册客户端</Button>} />
