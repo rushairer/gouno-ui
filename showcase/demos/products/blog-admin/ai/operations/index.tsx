@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   Clock3,
   GitBranch,
@@ -185,6 +185,12 @@ export function BlogAdminAIOperationsDemo({
   const [automationRecordsFixture, setAutomationRecordsFixture] = useState(cloneAutomationFixture);
   const [selectedApprovalId, setSelectedApprovalId] = useState<number | null>(decisionFixture.approvals[0]?.id ?? null);
   const [notice, setNotice] = useState<Notice>(null);
+
+  useEffect(() => {
+    if (route.tab !== "automation" || !route.workflow) return;
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    document.scrollingElement?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [route.tab, route.workflow]);
 
   const selectTab = (tab: AIOpsTab) => {
     setRoute((current) => ({ ...current, tab }));
