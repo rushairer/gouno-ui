@@ -77,7 +77,7 @@ export function SiteSettingsPanel() {
       </ManagementPanelFeedback>
 
 
-      {scenario === "loading" ? (
+      {scenario === "error" ? null : scenario === "loading" ? (
         <LoadingSiteSettings />
       ) : (
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
