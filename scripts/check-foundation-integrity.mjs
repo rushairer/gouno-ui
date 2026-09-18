@@ -855,6 +855,111 @@ if (surface?.status !== "planned") {
   }
 }
 
+const responsive = matrix.foundations.responsive;
+if (responsive?.status !== "planned") {
+  const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");
+  const baseSource = readFileSync(resolve(root, "src/base.css"), "utf8");
+  const stepsSource = readFileSync(resolve(root, "src/core/steps.tsx"), "utf8");
+  const stepsDocSource = readFileSync(
+    resolve(root, "showcase/demos/core/steps-menu.tsx"),
+    "utf8",
+  );
+
+  for (const marker of [
+    "--breakpoint-sm: 40rem;",
+    "--breakpoint-md: 48rem;",
+    "--breakpoint-lg: 64rem;",
+    "--breakpoint-xl: 80rem;",
+    "--breakpoint-2xl: 96rem;",
+  ]) {
+    if (!tokenSource.includes(marker)) {
+      failures.push("responsive.guard: missing canonical breakpoint " + marker);
+    }
+  }
+
+  for (const marker of [
+    "@media (width < 48rem)",
+    "@media (width >= 40rem)",
+    "@media (width >= 48rem)",
+    "@media (width >= 64rem)",
+    "@media (width >= 80rem)",
+    "@media (width >= 96rem)",
+  ]) {
+    if (!baseSource.includes(marker)) {
+      failures.push("responsive.guard: Base CSS escaped canonical tier " + marker);
+    }
+  }
+  if (/@media\s*\((?:min|max)-width:\s*\d+px/.test(baseSource)) {
+    failures.push(
+      "responsive.guard: Base CSS reintroduced px copies of canonical breakpoints",
+    );
+  }
+
+  if (
+    !stepsSource.includes(
+      '"max-sm:flex-col max-sm:overflow-visible"',
+    )
+  ) {
+    failures.push(
+      "responsive.guard: Steps responsive stacking must consume canonical max-sm",
+    );
+  }
+  if (/max-\[[^\]]+\]:|min-\[[^\]]+\]:/.test(stepsSource)) {
+    failures.push(
+      "responsive.guard: Steps reintroduced an arbitrary responsive threshold",
+    );
+  }
+  if (
+    !stepsDocSource.includes(
+      "低于 canonical sm（40rem / 640px）时将 horizontal 流程切为纵向排列",
+    )
+  ) {
+    failures.push(
+      "responsive.guard: Steps public docs must name the canonical responsive threshold",
+    );
+  }
+
+  const sourceResponsiveFiles = collectTsx(resolve(root, "src"));
+  const responsiveCorpusFiles = [
+    ...sourceResponsiveFiles,
+    ...canonicalProductFiles,
+  ];
+  const arbitraryResponsiveFiles = responsiveCorpusFiles.filter((file) =>
+    /(?:^|\s)(?:min|max)-\[[^\]]+\]:/.test(
+      readFileSync(file, "utf8"),
+    ),
+  );
+  const pxWidthMediaQueries = [
+    ["src/base.css", baseSource],
+    ["src/tokens.css", tokenSource],
+  ].filter(([, source]) =>
+    /@media\s*\((?:min|max)-width:\s*\d+px/.test(source),
+  );
+
+  const shortResponsivePath = (file) =>
+    file.startsWith(root) ? file.slice(root.length + 1) : file;
+  process.stdout.write(
+    "Responsive corpus audit: arbitraryResponsiveVariants=" +
+      arbitraryResponsiveFiles.length +
+      ", pxWidthMediaQueries=" +
+      pxWidthMediaQueries.length +
+      "\n",
+  );
+
+  if (arbitraryResponsiveFiles.length !== 0) {
+    failures.push(
+      "responsive.corpus: arbitrary min/max responsive variants require an admitted Foundation exception: " +
+        arbitraryResponsiveFiles.map(shortResponsivePath).join(", "),
+    );
+  }
+  if (pxWidthMediaQueries.length !== 0) {
+    failures.push(
+      "responsive.corpus: px-based width media queries duplicate canonical breakpoint authority: " +
+        pxWidthMediaQueries.map(([file]) => file).join(", "),
+    );
+  }
+}
+
 const density = matrix.foundations.density;
 if (density?.status !== "planned") {
   const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");
