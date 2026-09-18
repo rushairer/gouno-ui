@@ -179,7 +179,7 @@ export function Carousel({
   useImperativeHandle(
     ref,
     () => ({ goTo, next, prev }),
-    [current, count, infinite, animating],
+    [current, count, infinite, animating, reducedMotion],
   );
 
   useEffect(() => {
@@ -398,7 +398,7 @@ export function Carousel({
                   ...(effect === "scrollx" ? { width: `${100 / count}%` } : undefined),
                   ...(effect === "fade"
                     ? {
-                        transitionDuration: `${speed}ms`,
+                        transitionDuration: reducedMotion ? "0ms" : `${speed}ms`,
                         transitionTimingFunction: easing,
                       }
                     : undefined),
