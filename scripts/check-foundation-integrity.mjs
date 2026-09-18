@@ -428,11 +428,11 @@ if (border?.status !== "planned") {
   for (const marker of [
     "--border-width-boundary: 1px;",
     "--border-width-emphasis: 2px;",
-    "@utility border-emphasis",
-    "@utility border-bs-emphasis",
-    "@utility border-be-emphasis",
-    "@utility border-s-emphasis",
-    "@utility border-e-emphasis",
+    "@utility edge-emphasis",
+    "@utility edge-bs-emphasis",
+    "@utility edge-be-emphasis",
+    "@utility edge-s-emphasis",
+    "@utility edge-e-emphasis",
   ]) {
     if (!tokenSource.includes(marker)) {
       failures.push("border.guard: missing canonical border marker " + marker);
@@ -446,13 +446,13 @@ if (border?.status !== "planned") {
   }
 
   for (const [name, source, marker] of [
-    ["Spinner", spinnerSource, "border-emphasis border-current border-e-transparent"],
-    ["Timeline", timelineSource, "block size-3 rounded-full border-emphasis"],
-    ["Steps", stepsSource, "border-be-emphasis border-primary"],
-    ["Table", tableSource, "[&_tfoot_tr]:border-bs-emphasis"],
-    ["DemoSection", demoSectionSource, "border-be-emphasis"],
-    ["MarkdownPreview", markdownSource, "border-s-emphasis ps-4"],
-    ["SelectedRecord", selectedRecordSource, "border-s-emphasis"],
+    ["Spinner", spinnerSource, "edge-emphasis border-current border-e-transparent"],
+    ["Timeline", timelineSource, "block size-3 rounded-full edge-emphasis"],
+    ["Steps", stepsSource, "edge-be-emphasis border-primary"],
+    ["Table", tableSource, "[&_tfoot_tr]:edge-bs-emphasis"],
+    ["DemoSection", demoSectionSource, "edge-be-emphasis"],
+    ["MarkdownPreview", markdownSource, "edge-s-emphasis ps-4"],
+    ["SelectedRecord", selectedRecordSource, "edge-s-emphasis"],
   ]) {
     if (!source.includes(marker)) {
       failures.push(
@@ -491,12 +491,17 @@ if (border?.status !== "planned") {
 
   const numericWidthLeaks = filesMatching(numericBorderWidth);
   const neutralColorLeaks = filesMatching(hardCodedNeutralBorder);
+  const shortPath = (file) => file.startsWith(root) ? file.slice(root.length + 1) : file;
   process.stdout.write(
     "Border corpus audit: numericWidthBypasses=" +
       numericWidthLeaks.length +
-      ", hardCodedNeutralColors=" +
+      " [" +
+      numericWidthLeaks.map(shortPath).join(", ") +
+      "], hardCodedNeutralColors=" +
       neutralColorLeaks.length +
-      "\n",
+      " [" +
+      neutralColorLeaks.map(shortPath).join(", ") +
+      "]\n",
   );
   if (numericWidthLeaks.length !== 0) {
     failures.push(
