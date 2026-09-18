@@ -270,10 +270,10 @@ for (const id of ["core-anchor", "core-back-top", "core-carousel"]) {
 
 for (const id of ["core-button","core-input","core-textarea","core-checkbox","core-radio","core-switch","core-tabs","core-badge","core-select","core-modal","core-drawer"]) {
   componentReviews[id] = {
-    status: "reopened",
-    scope: "FI-001 Phase 4: Focus Foundation reopened because Base fallback, Core and primitive controls used split 2px/3px geometry, Tabs could double-render outline + ring, and Dialog/Sheet close controls used focus instead of focus-visible.",
-    evidence: ["docs/foundation-focus-inventory.md", "foundation-integrity.json", "src/tokens.css", "src/base.css", "src/components/primitives"],
-    baseline: "FI-001 Phase 4 Focus / 2026-09-18",
+    status: "reviewed",
+    scope: "FI-001 Focus certified: Base fallback and component-owned focus share canonical 2px geometry, owned rings suppress duplicate outlines, and Dialog/Sheet close controls use keyboard-visible focus semantics.",
+    evidence: ["foundation-integrity.json", "docs/foundation-focus-inventory.md", "docs/design-language.md", "tests/focus-foundation-conformance.test.ts", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "FI-001 Focus certified / 2026-09-18",
   };
 }
 
