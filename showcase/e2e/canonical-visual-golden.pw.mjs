@@ -415,6 +415,46 @@ test("overlay-semantic-modal-popup-ordering", async ({ page }) => {
   expect(popupLayer).toBeGreaterThan(modalLayers[0]);
 });
 
+test("accessibility-form-select-and-overlay-ownership", async ({ page }) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-form",
+    viewport: desktop,
+    ready: '[data-slot="select"]',
+  });
+
+  const status = page.getByRole("combobox", { name: "发布状态" });
+  await expect(status).toHaveAttribute("aria-required", "true");
+  await expect(status).toHaveAttribute("aria-labelledby", /-label(?:\s|$)/);
+  await expect(status).toHaveAttribute("aria-describedby", /-hint/);
+
+  await status.click();
+  await page.getByRole("option", { name: "已发布" }).click();
+  await expect(status).toContainText("已发布");
+
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-modal",
+    viewport: desktop,
+    ready: 'button:has-text("打开 Modal")',
+  });
+
+  const trigger = page.getByRole("button", { name: "打开 Modal" });
+  await trigger.focus();
+  await trigger.click();
+
+  const dialog = page.getByRole("dialog", { name: "编辑资料" });
+  await expect(dialog).toBeVisible();
+  const close = dialog.getByRole("button", { name: "关闭" });
+  await expect(close).toBeVisible();
+  await close.click();
+
+  await expect(dialog).toBeHidden();
+  await expect(trigger).toBeFocused();
+});
+
 test("showcase-config-provider-visibly-proves-locale-ownership", async ({ page }) => {
   await prepareLightFixture(page, {
     workspace: "gouno-ui",
