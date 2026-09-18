@@ -399,7 +399,7 @@
       }
     },
     "elevation": {
-      "status": "in_progress",
+      "status": "certified",
       "affectedComponentReviews": [],
       "gates": {
         "inventory": {
@@ -436,30 +436,41 @@
           ]
         },
         "corpus": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "scripts/check-foundation-integrity.mjs",
             "docs/product-surface-elevation-audit.md",
             "showcase/demos/products/blog",
             "showcase/demos/products/blog-admin",
-            "showcase/demos/products/gosso-admin"
-          ]
+            "showcase/demos/products/gosso-admin",
+            "CI run 35350436397 (#464): Elevation corpus audit rawShadowBypasses=0, unexpectedSemanticShadowFiles=0, unexpectedElevatedFiles=0"
+          ],
+          "rawShadowBypasses": 0,
+          "unexpectedSemanticShadowFiles": 0,
+          "unexpectedElevatedFiles": 0
         },
         "guard": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "scripts/check-foundation-integrity.mjs",
             "tests/elevation-system.test.ts",
-            "tests/design-language-conformance.test.ts"
+            "tests/design-language-conformance.test.ts",
+            "CI run 35350436397 (#464): success; 161/161 test files, 832/832 tests"
           ]
         },
         "visual": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Canonical Visual Golden Smoke run 35350247144 (#423): success",
+            "Elevation certification commits after this visual run changed only Foundation guards/tests/ledger; runtime elevation source remained unchanged"
+          ]
         },
         "consumers": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Blog Consumer Parity run 35350401151 (#478): success",
+            "Gosso Admin Consumer Parity run 35350401096 (#473): success"
+          ]
         }
       },
       "inventory": {
