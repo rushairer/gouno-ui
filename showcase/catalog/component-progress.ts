@@ -252,10 +252,10 @@ for (const id of ["theme-system", "core-alert", "core-image"]) {
 
 for (const id of ["theme-system", "core-steps", "core-grid"]) {
   componentReviews[id] = {
-    status: "reopened",
-    scope: "FI-001 Phase 4: Responsive Foundation reopened because canonical breakpoint tiers were implicit/duplicated across Tailwind and base CSS while Steps carried the only arbitrary 531px breakpoint.",
-    evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "src/tokens.css", "src/base.css", "src/core/steps.tsx", "src/core/layout.tsx"],
-    baseline: "FI-001 Phase 4 / 2026-09-18",
+    status: "reviewed",
+    scope: "FI-001 Responsive certified: Theme owns the canonical sm/md/lg/xl/2xl scale, Base CSS mirrors the same rem tiers under guard, Row/Col stays aligned, and Steps responsive stacking resolves through canonical max-sm with no arbitrary breakpoint exception.",
+    evidence: ["foundation-integrity.json", "docs/foundation-responsive-inventory.md", "docs/design-language.md", "tests/responsive-foundation-conformance.test.tsx", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "FI-001 Responsive certified / 2026-09-18",
   };
 }
 
