@@ -286,6 +286,35 @@ Rules:
 
 This rule standardizes hierarchy and information density, not implementation. It does not create a `TabbedPage`, `TabPanelHeader` or `PanelLead` public Pattern.
 
+## DL-15 — Page composition uses ordered semantic slots
+
+Normal task/settings pages are composed from semantic regions, not page-local margin decisions. For a tabbed route family the canonical vertical order is:
+
+```text
+PageHeader
+Tabs
+Active TabPanel
+├─ PanelLead      description / active-panel actions
+├─ PanelFeedback  current-panel Alert/status feedback
+└─ Content        Card / Table / List / task surfaces
+```
+
+The slots define layout grammar even when their implementation remains product-local or Showcase-private.
+
+Rules:
+
+- A normal top-level panel lead is **description-first**. The active Tab already names the panel, so do not add an H2 merely to make the lead look substantial. A visible H2 is reserved for a genuinely distinct task concept or subsection.
+- Panel-lead description typography is one shared role: small muted body text with the same line-height and maximum reading width across sibling panels.
+- The lead owns a stable minimum block size matching the normal action-control row. Adding or removing actions must not make a one-line description row jump vertically. Longer copy may expand naturally; never clip it merely to preserve a fixed height.
+- Actions align to the lead and do not own extra outer margin. The panel stack owns the gap from Tabs → Lead → Feedback → Content.
+- A feedback message that applies to the whole active Tab belongs in **PanelFeedback**, immediately after the lead and before the first business-content surface. Do not insert a Tab-wide Alert between arbitrary metric cards, filters or collections.
+- A route-wide Alert belongs directly after the route-level PageHeader and before page-local navigation/content. A surface-, form-, record- or operation-specific Alert stays inside the semantic region that owns that state. Moving every Alert to the page top would destroy ownership rather than improve consistency.
+- An absent feedback slot collapses; pages do not reserve blank Alert height. What is fixed is the semantic position and spacing rule, not permanent empty chrome.
+- Loading/error/empty variants preserve the same outer slot order whenever the route/Tab identity remains available. State must not silently replace the page's composition grammar with a different one.
+- This rule does not admit a public `TabbedPage`, `PanelLead` or `PanelFeedback` API. Private composition helpers may enforce the grammar while product evidence remains under review.
+
+This slot model applies recursively: a Card or bounded task can have its own local heading, feedback and content regions, but local regions do not compete with route- or Tab-level slots.
+
 ## DL-12 — Stateful decoration must not change control geometry
 
 Reusable controls own their outer block size. Auxiliary content such as icons, counts, status dots, badges or metadata may fit _inside_ that geometry but must not silently enlarge one sibling control.
