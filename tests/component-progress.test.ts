@@ -59,7 +59,6 @@ describe("audited batch completion", () => {
   it("reports admitted Gouno structure complete only after family API and behavior review", () => {
     for (const id of [
       "gouno-app-shell",
-      "gouno-page-container",
       "gouno-page-skeleton",
     ]) {
       expect(componentProgress(id, 0), id).toBe(100);
@@ -71,6 +70,7 @@ describe("audited batch completion", () => {
       "core-typography",
       "gouno-page-header",
       "pattern-dedicated-editor",
+      "gouno-page-container",
     ]) {
       expect(componentProgress(id, 0), id).toBeLessThan(100);
     }
