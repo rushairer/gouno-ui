@@ -26,7 +26,11 @@ describe("Typography family documentation", () => {
     expect(semantics?.code).toContain('<Heading level={1} variant="page" id="page-title"');
     expect(semantics?.code).toContain('<Heading level={2} variant="task">');
     expect(semantics?.code).toContain('<Heading level={1} variant="task">');
-    expect(semantics?.code).toContain('<Text as="span" size="sm" tone="muted"');
+    expect(semantics?.code).toContain('<Text');
+    expect(semantics?.code).toContain('size="sm"');
+    expect(semantics?.code).toContain('weight="medium"');
+    expect(semantics?.code).toContain('family="mono"');
+    expect(semantics?.code).toContain('leading="relaxed"');
     expect(semantics?.code).toContain('<Typography as="small" data-kind="primitive"');
     expect(semantics?.render).toBeTypeOf("function");
   });
@@ -53,6 +57,9 @@ describe("Typography family documentation", () => {
         "as",
         "size",
         "tone",
+        "weight",
+        "family",
+        "leading",
         "children",
         "className",
         "...element props",
