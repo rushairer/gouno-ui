@@ -475,3 +475,18 @@ Border **color** and border **width** answer different questions.
 - State colors such as primary, warning, destructive or transparent may change border color without changing border width unless the component contract explicitly owns the emphasis role.
 
 The current registered emphasis roles are Spinner ring, Timeline marker, Steps active-navigation indicator, Table summary separator, Showcase DemoSection active tab, Markdown blockquote lead, and Blog Admin selected-record lead. Adding a new role requires Border inventory review rather than copying `border-2`.
+
+
+## DL-19 — UI color is semantic; fixed media color is explicit
+
+Application UI color is owned by semantic Theme roles rather than raw palette utilities or duplicated literals.
+
+- Canvas, surface, text, border, state, focus, overlay and chart color consume semantic tokens such as `background`, `foreground`, `card`, `border`, `primary`, `success`, `warning`, `destructive`, `info`, `ring`, `overlay` and their foreground/subtle companions.
+- Browser chrome is part of the same color contract. `<meta name="theme-color">` follows the computed `--background` token; JavaScript must not duplicate the light/dark background literals.
+- Text rendered on the semantic overlay uses `overlay-foreground` rather than a page-local `text-white`.
+- Theme-dependent interaction tints derive from semantic foreground/background roles. Do not pair raw `black/*` and `white/*` utilities to simulate light/dark semantics.
+- Canonical product fixtures must not introduce raw Tailwind palette colors or arbitrary CSS color utilities for UI chrome. Add or reuse a semantic role instead.
+
+Fixed-color **content/media** is a separate category and must be explicit. QR modules/background remain black/white by default, and the Gosso MFA QR quiet zone remains white for scanning reliability. These values do not represent the application surface Theme.
+
+Caller-owned custom color APIs are also explicit exceptions: Tag custom color, Badge custom color and Timeline item color may render caller-provided values because the color itself is component data/configuration. Those APIs do not authorize product pages to bypass semantic UI colors elsewhere.
