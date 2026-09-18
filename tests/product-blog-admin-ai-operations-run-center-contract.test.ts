@@ -39,6 +39,13 @@ describe("Blog Admin AI Operations canonical run-center contract", () => {
     ).toBe(2);
   });
 
+  it("contains unbroken run evidence inside canonical object rows", () => {
+    const patterns = read(
+      "showcase/demos/products/blog-admin/ai/operations/canonical-patterns.tsx",
+    );
+    expect(patterns.match(/\[overflow-wrap:anywhere\]/g)?.length).toBeGreaterThanOrEqual(4);
+  });
+
   it("keeps Recent Runs on the canonical five-column responsive row", () => {
     const automation = read(
       "showcase/demos/products/blog-admin/ai/operations/automation-management.tsx",
