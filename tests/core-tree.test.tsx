@@ -32,6 +32,14 @@ function checkboxNamed(name: string) {
 }
 
 describe("Core Tree", () => {
+  it("names switchers from visible node titles rather than generic English actions", () => {
+    render(<Tree treeData={treeData} />);
+    const switcher = screen.getByRole("button", { name: "Root" });
+    expect(switcher.getAttribute("aria-expanded")).toBe("false");
+    expect(screen.queryByRole("button", { name: "Expand" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Collapse" })).toBeNull();
+  });
+
   it("expands, selects and exposes hierarchical ARIA metadata", () => {
     const onSelect = vi.fn();
     render(<Tree treeData={treeData} onSelect={onSelect} />);
@@ -40,7 +48,7 @@ describe("Core Tree", () => {
     expect(root.getAttribute("aria-level")).toBe("1");
     expect(root.getAttribute("aria-expanded")).toBe("false");
 
-    fireEvent.click(screen.getByRole("button", { name: "Expand" }));
+    fireEvent.click(screen.getByRole("button", { name: "Root" }));
 
     expect(itemNamed("Root").getAttribute("aria-expanded")).toBe("true");
     const alpha = itemNamed("Alpha");
@@ -150,7 +158,7 @@ describe("Core Tree", () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Expand" }));
+    fireEvent.click(screen.getByRole("button", { name: "Remote" }));
     expect(itemNamed("Remote").getAttribute("aria-busy")).toBe("true");
 
     resolveLoad();
@@ -160,8 +168,8 @@ describe("Core Tree", () => {
     expect(loadData).toHaveBeenCalledTimes(1);
     expect(itemNamed("Remote").getAttribute("aria-busy")).toBeNull();
 
-    fireEvent.click(screen.getByRole("button", { name: "Collapse" }));
-    fireEvent.click(screen.getByRole("button", { name: "Expand" }));
+    fireEvent.click(screen.getByRole("button", { name: "Remote" }));
+    fireEvent.click(screen.getByRole("button", { name: "Root" }));
     expect(loadData).toHaveBeenCalledTimes(1);
   });
 });
