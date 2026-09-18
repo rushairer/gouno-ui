@@ -5,6 +5,15 @@
 @source "../../src";
 @source "../";
 
+:root {
+  /* Showcase chrome is outside the product layer scale by contract. */
+  --showcase-layer-tools: 1000;
+}
+
+.showcase-layer-tools {
+  z-index: var(--showcase-layer-tools);
+}
+
 @layer components {
   .code-block__pre {
     margin: 0;
