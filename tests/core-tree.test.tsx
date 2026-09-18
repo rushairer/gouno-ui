@@ -169,7 +169,7 @@ describe("Core Tree", () => {
     expect(itemNamed("Remote").getAttribute("aria-busy")).toBeNull();
 
     fireEvent.click(screen.getByRole("button", { name: "Remote" }));
-    fireEvent.click(screen.getByRole("button", { name: "Root" }));
+    fireEvent.click(screen.getByRole("button", { name: "Remote" }));
     expect(loadData).toHaveBeenCalledTimes(1);
   });
 });
