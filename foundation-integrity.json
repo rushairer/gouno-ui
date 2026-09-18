@@ -60,7 +60,7 @@
             "showcase/demos/products/gosso-admin",
             "scripts/check-foundation-integrity.mjs"
           ],
-          "remainingNativeMetricBypasses": 91
+          "remainingNativeMetricBypasses": 73
         },
         "guard": {
           "status": "passed",

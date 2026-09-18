@@ -175,7 +175,7 @@ function FieldActionHeader({
 }) {
   return (
     <div className="mb-2 flex min-h-8 items-center justify-between gap-3">
-      <div className="text-sm font-medium">
+      <div className="type-body-sm type-weight-medium">
         {label}{required ? <span aria-hidden="true" className="text-destructive">*</span> : null}
       </div>
       <Button
@@ -479,7 +479,7 @@ export function BlogAdminPageEditorDemo({
         返回单页列表
       </Button>
 
-      <div className="flex min-w-0 flex-1 items-center gap-2 text-sm text-muted-foreground" role="status" aria-live="polite">
+      <div className="flex min-w-0 flex-1 items-center gap-2 type-body-sm text-muted-foreground" role="status" aria-live="polite">
         {savedAt ? (
           <><Check className="size-4" /> 已于 {savedAt} 保存</>
         ) : dirty ? (
@@ -876,7 +876,7 @@ setSelectedSummaryCandidate(null);
                       <Button size="small" variant="text" onClick={() => setGeneratedContent(null)}>放弃</Button>
                     </div>
                   </div>
-                  <pre className="mt-3 max-h-56 overflow-auto whitespace-pre-wrap text-sm">{generatedContent}</pre>
+                  <pre className="mt-3 max-h-56 overflow-auto whitespace-pre-wrap type-body-sm type-family-mono">{generatedContent}</pre>
                 </div>
               ) : null}
             </div>
@@ -918,11 +918,11 @@ setSelectedSummaryCandidate(null);
               </div>
               {generatedImage ? (
                 <div className="grid gap-4 rounded-md border bg-background p-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
-                  <div className="flex min-h-40 items-center justify-center rounded-md border border-dashed bg-muted/30 text-center text-sm text-muted-foreground">
+                  <div className="flex min-h-40 items-center justify-center rounded-md border border-dashed bg-muted/30 text-center type-body-sm text-muted-foreground">
                     AI 生成插图预览
                   </div>
                   <div className="flex min-w-0 flex-col gap-3">
-                    <code className="overflow-x-auto rounded bg-muted px-3 py-2 text-xs">![{imageAlt || "单页插图"}](/media/ai-generated-page.webp)</code>
+                    <code className="overflow-x-auto rounded bg-muted px-3 py-2 type-family-mono type-caption">![{imageAlt || "单页插图"}](/media/ai-generated-page.webp)</code>
                     <div className="flex flex-wrap gap-2">
                       <Button size="small" variant="solid" color="primary" onClick={insertGeneratedImageAtCursor}>插入光标位置</Button>
                       <Button size="small" variant="text" onClick={() => setGeneratedImage(false)}>放弃</Button>

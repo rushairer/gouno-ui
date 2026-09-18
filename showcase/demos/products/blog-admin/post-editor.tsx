@@ -239,7 +239,7 @@ function FieldActionHeader({
 }) {
   return (
     <div className="mb-2 flex min-h-8 items-center justify-between gap-3">
-      <div className="text-sm font-medium">
+      <div className="type-body-sm type-weight-medium">
         {label}{required ? <span aria-hidden="true" className="text-destructive">*</span> : null}
       </div>
       <Button
@@ -605,7 +605,7 @@ export function BlogAdminPostEditorDemo({
         返回文章列表
       </Button>
 
-      <div className="flex min-w-0 flex-1 items-center gap-2 text-sm text-muted-foreground" role="status" aria-live="polite">
+      <div className="flex min-w-0 flex-1 items-center gap-2 type-body-sm text-muted-foreground" role="status" aria-live="polite">
         {readOnly ? (
           <><Eye className="size-4" /> 只读模式（他人文章）</>
         ) : savedAt ? (
@@ -660,7 +660,7 @@ export function BlogAdminPostEditorDemo({
   <ChoiceButton
     type="button"
     aria-label={`跳转到 ${item.text}`}
-    className="w-full min-w-0 overflow-hidden rounded-md px-2 py-1.5 text-left text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground [&>span]:min-w-0 [&>span]:w-full"
+    className="w-full min-w-0 overflow-hidden rounded-md px-2 py-1.5 text-left type-body-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground [&>span]:min-w-0 [&>span]:w-full"
     style={{ paddingLeft: `${8 + Math.max(0, item.level - 2) * 12}px` }}
     onClick={() => focusOutlineItem(item)}
   >
@@ -688,10 +688,10 @@ export function BlogAdminPostEditorDemo({
               >
                 <span className="flex min-w-0 w-full flex-col gap-1">
                   <span className="flex w-full items-baseline justify-between gap-2">
-                    <span className="font-medium text-foreground">版本 {version.id}</span>
-                    <span className="shrink-0 text-[11px] font-normal text-muted-foreground">{version.createdAt.slice(5)}</span>
+                    <span className="type-weight-medium text-foreground">版本 {version.id}</span>
+                    <span className="shrink-0 type-caption type-weight-regular text-muted-foreground">{version.createdAt.slice(5)}</span>
                   </span>
-                  <span className="line-clamp-2 text-xs font-normal leading-5 text-muted-foreground">
+                  <span className="line-clamp-2 type-caption type-weight-regular type-leading-relaxed text-muted-foreground">
                     {versionExcerpt(version.content)}
                   </span>
                 </span>
@@ -1141,7 +1141,7 @@ setSelectedSummaryCandidate(null);
                       <Button size="small" variant="text" onClick={() => setGeneratedContent(null)}>放弃</Button>
                     </div>
                   </div>
-                  <pre className="mt-3 max-h-56 overflow-auto whitespace-pre-wrap text-sm">{generatedContent}</pre>
+                  <pre className="mt-3 max-h-56 overflow-auto whitespace-pre-wrap type-body-sm type-family-mono">{generatedContent}</pre>
                 </div>
               ) : null}
             </div>
@@ -1185,11 +1185,11 @@ setSelectedSummaryCandidate(null);
               </div>
               {generatedImage ? (
                 <div className="grid gap-4 rounded-md border bg-background p-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
-                  <div className="flex min-h-40 items-center justify-center rounded-md border border-dashed bg-muted/30 text-center text-sm text-muted-foreground">
+                  <div className="flex min-h-40 items-center justify-center rounded-md border border-dashed bg-muted/30 text-center type-body-sm text-muted-foreground">
                     {aiPanel === "cover-image" ? "AI 生成封面预览" : "AI 生成插图预览"}
                   </div>
                   <div className="flex min-w-0 flex-col gap-3">
-                    <code className="overflow-x-auto rounded bg-muted px-3 py-2 text-xs">
+                    <code className="overflow-x-auto rounded bg-muted px-3 py-2 type-family-mono type-caption">
                       {aiPanel === "cover-image"
                         ? "/media/ai-generated-agent-workflow.webp"
                         : `![${imageAlt || "文章插图"}](/media/ai-generated-agent-workflow.webp)`}
@@ -1252,7 +1252,7 @@ setSelectedSummaryCandidate(null);
         {restoreTarget ? (
           <div className="max-h-72 overflow-auto rounded-md border bg-muted/20 p-4">
             <Text weight="semibold">{restoreTarget.title}</Text>
-            <pre className="mt-3 whitespace-pre-wrap text-sm leading-6 text-muted-foreground">{restoreTarget.content}</pre>
+            <pre className="mt-3 whitespace-pre-wrap type-body-sm type-family-mono type-leading-relaxed text-muted-foreground">{restoreTarget.content}</pre>
           </div>
         ) : null}
       </Modal>

@@ -331,7 +331,7 @@ export function BlogAdminNotificationsDemo() {
       <Card padding="base">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <div className="flex items-center gap-2 type-caption type-weight-semibold uppercase type-tracking-label text-muted-foreground">
               <Filter className="size-3.5" />
               <span>筛选</span>
             </div>
@@ -379,7 +379,7 @@ export function BlogAdminNotificationsDemo() {
           </div>
 
           {filtered.length > 0 && scenario === "data" ? (
-            <label className="flex items-center gap-2 text-xs text-muted-foreground">
+            <label className="flex items-center gap-2 type-caption text-muted-foreground">
               <Checkbox
                 aria-label="全选当前通知列表"
                 checked={allFilteredSelected}
@@ -454,10 +454,10 @@ export function BlogAdminNotificationsDemo() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <strong className="text-sm font-semibold text-foreground">{item.title}</strong>
+                        <strong className="type-body-sm type-weight-semibold text-foreground">{item.title}</strong>
                         <Tag color={presentation.color}>{presentation.tag}</Tag>
                         {unread ? <span className="size-2 rounded-full bg-primary" aria-label="未读" /> : null}
-                        <time className="font-mono text-xs text-muted-foreground">{item.createdAt}</time>
+                        <time className="type-family-mono type-caption text-muted-foreground">{item.createdAt}</time>
                       </div>
                       <Text size="xs" tone="muted" leading="relaxed" className="mt-1 line-clamp-2">{item.body}</Text>
                       {item.relatedTitle ? <Text size="xs" tone="muted" className="mt-1">关联内容：{item.relatedTitle}</Text> : null}

@@ -94,6 +94,7 @@ describe("Typography Foundation conformance", () => {
       "--type-metric-value-size",
       "--type-metric-compact-size",
       "--type-relaxed-line-height",
+      "--type-label-tracking",
       "--type-title-tracking",
     ]) {
       expect(tokens).toContain(token);
@@ -110,5 +111,6 @@ describe("Typography Foundation conformance", () => {
     expect(tokens).toContain(".type-weight-medium {");
     expect(tokens).toContain(".type-family-mono {");
     expect(tokens).toContain(".type-leading-relaxed {");
+    expect(tokens).toContain(".type-tracking-label {");
   });
 });
