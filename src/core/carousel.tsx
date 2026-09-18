@@ -94,6 +94,15 @@ function normalizeIndex(index: number, count: number, infinite: boolean) {
   return Math.min(count - 1, Math.max(0, index));
 }
 
+function isInteractivePointerTarget(target: EventTarget | null) {
+  if (!(target instanceof Element)) return false;
+  return Boolean(
+    target.closest(
+      'button, a[href], input, select, textarea, [role="button"], [role="tab"], [role="checkbox"], [role="radio"], [role="switch"], [contenteditable="true"]',
+    ),
+  );
+}
+
 export function Carousel({
   items,
   activeIndex,
@@ -331,7 +340,14 @@ export function Carousel({
         )}
         style={semanticStyles.viewport}
         onPointerDown={(event: ReactPointerEvent<HTMLDivElement>) => {
-          if (!draggable) return;
+          if (
+            !draggable ||
+            event.button !== 0 ||
+            !event.isPrimary ||
+            isInteractivePointerTarget(event.target)
+          ) {
+            return;
+          }
           pointerStart.current = {
             id: event.pointerId,
             x: event.clientX,
@@ -342,6 +358,11 @@ export function Carousel({
         onPointerUp={(event: ReactPointerEvent<HTMLDivElement>) => {
           const start = pointerStart.current;
           pointerStart.current = null;
+          if (
+            event.currentTarget.hasPointerCapture?.(event.pointerId)
+          ) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+          }
           if (!draggable || !start || start.id !== event.pointerId) return;
           const dx = event.clientX - start.x;
           const dy = event.clientY - start.y;
@@ -349,7 +370,15 @@ export function Carousel({
           if (dx < 0) next();
           else prev();
         }}
-        onPointerCancel={() => {
+        onPointerCancel={(event: ReactPointerEvent<HTMLDivElement>) => {
+          pointerStart.current = null;
+          if (
+            event.currentTarget.hasPointerCapture?.(event.pointerId)
+          ) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+          }
+        }}
+        onLostPointerCapture={() => {
           pointerStart.current = null;
         }}
       >
