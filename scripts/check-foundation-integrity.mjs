@@ -1401,7 +1401,7 @@ if (state?.status !== "planned") {
 
   if (
     !inputSource.includes(
-      'aria-invalid={status === "error" || props["aria-invalid"] || undefined}',
+      'aria-invalid={status === "error" || ariaInvalid || undefined}',
     )
   ) {
     failures.push("state.guard: Input error state must own aria-invalid semantics");
