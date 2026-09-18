@@ -10,7 +10,7 @@ export default function GounoPageContainerExample() {
       >
         <Text size="sm">PageContainer content track</Text>
         <Text size="xs" tone="muted">
-          max-width 1440px · width 100% · vertical gap 24px
+          semantic page track · width 100% · governed vertical rhythm
         </Text>
       </PageContainer>
     </div>
