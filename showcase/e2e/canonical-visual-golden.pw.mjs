@@ -274,7 +274,7 @@ test("blog-admin-ai-operations-workflow-detail-visual-evidence", async ({ page }
   await page.getByRole("tab", { name: "自动化" }).click();
   await page.getByRole("button", { name: "打开 Workflow：旧文维护" }).click();
   await expect(page.getByRole("heading", { level: 2, name: "旧文维护" })).toBeVisible();
-  await expect(page.getByText("流程定义")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "流程定义" })).toBeVisible();
   await expect(page.getByText("运行当前 Workflow")).toBeVisible();
   await expectNoHorizontalDocumentOverflow(page);
   await page.screenshot({
