@@ -22,7 +22,7 @@ export function FixtureDock({ route, note, controls }: FixtureDockProps) {
           <button
             type="button"
             aria-label="打开 Fixture 控制"
-            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-full border px-3 border-border/70 bg-popover/90 text-xs font-medium text-muted-foreground shadow-overlay backdrop-blur-xl transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-full border px-3 border-border/70 bg-popover/90 text-xs font-medium text-muted-foreground shadow-overlay backdrop-blur-xl transition-colors hover:bg-muted hover:text-foreground focus-control"
           >
             <FlaskConical aria-hidden="true" className="size-3.5" />
             <span className="inline">Fixture</span>
