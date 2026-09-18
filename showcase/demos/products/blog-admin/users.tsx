@@ -283,7 +283,7 @@ export function BlogAdminUsersDemo() {
     <Button
       variant="ghost"
       size="small"
-      className="font-mono text-xs"
+      className="type-family-mono type-caption"
       title={`点击复制完整 Subject ID: ${member.subject}`}
       aria-label={`复制 ${member.displayName} 完整 Subject ID`}
       onClick={() => copySubject(member)}
@@ -311,9 +311,9 @@ export function BlogAdminUsersDemo() {
               <TableRow key={member.id}>
                 <TableCell className="min-w-64 whitespace-normal">
                   <div className="flex items-center gap-3">
-                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">{member.displayName.slice(0, 2).toUpperCase()}</div>
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 type-body-sm type-weight-semibold text-primary">{member.displayName.slice(0, 2).toUpperCase()}</div>
                     <div className="min-w-0">
-                      <div className="flex flex-wrap items-center gap-2"><span className="font-semibold">{member.displayName}</span>{member.current ? <Tag color="primary">当前用户</Tag> : null}</div>
+                      <div className="flex flex-wrap items-center gap-2"><span className="type-weight-semibold">{member.displayName}</span>{member.current ? <Tag color="primary">当前用户</Tag> : null}</div>
                       <Text size="xs" tone="muted" className="break-all">{member.email}</Text>
                     </div>
                   </div>
@@ -333,9 +333,9 @@ export function BlogAdminUsersDemo() {
           <Card key={member.id} padding="base" role="listitem">
             <div className="flex flex-col gap-4">
               <div className="flex items-start gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">{member.displayName.slice(0, 2).toUpperCase()}</div>
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 type-body-sm type-weight-semibold text-primary">{member.displayName.slice(0, 2).toUpperCase()}</div>
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-start justify-between gap-3"><span className="font-semibold">{member.displayName}</span><StatusTag status={member.status} /></div>
+                  <div className="flex items-start justify-between gap-3"><span className="type-weight-semibold">{member.displayName}</span><StatusTag status={member.status} /></div>
                   <Text size="xs" tone="muted" className="mt-1 break-all">{member.email}</Text>
                   <div className="mt-2 flex flex-wrap items-center gap-2"><RoleTag role={member.role} />{subjectAction(member)}</div>
                 </div>

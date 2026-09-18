@@ -46,7 +46,7 @@ export function PrivilegedAccessGate({
         title={title}
         description={(
           <span>
-            <strong className="font-medium">{policyTitle}</strong>
+            <strong className="type-weight-medium">{policyTitle}</strong>
             ：{policyDescription} {sessionDescription}
           </span>
         )}

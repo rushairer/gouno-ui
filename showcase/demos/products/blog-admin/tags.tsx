@@ -246,7 +246,7 @@ export function BlogAdminTagsDemo() {
                     checked={selected.includes(tag.name)}
                     onChange={(event) => setSelection(tag.name, event.target.checked)}
                   />
-                  <strong className="truncate text-sm font-semibold text-foreground">{tag.name}</strong>
+                  <strong className="truncate type-body-sm type-weight-semibold text-foreground">{tag.name}</strong>
                 </div>
                 <Tag color="default" className="shrink-0 font-mono">{tag.postCount} 篇</Tag>
               </div>

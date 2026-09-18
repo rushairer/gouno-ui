@@ -357,7 +357,7 @@ export function BlogAdminMediaLibraryDemo() {
                 <li key={`${reference.postId}-${reference.title}`}>
                   <a
                     href={`/admin/posts/${reference.postId}/edit`}
-                    className="font-medium text-primary underline-offset-4 hover:underline"
+                    className="type-weight-medium text-primary underline-offset-4 hover:underline"
                     onClick={(event) => {
                       event.preventDefault();
                       setFeedback({ type: "info", text: `将进入 /admin/posts/${reference.postId}/edit（Showcase 模拟）。` });
@@ -440,13 +440,13 @@ export function BlogAdminMediaLibraryDemo() {
               </div>
               <div className="flex flex-1 flex-col gap-2 p-4">
                 <div className="flex items-start justify-between gap-2">
-                  <strong className="min-w-0 truncate text-sm font-semibold" title={asset.filename}>{asset.filename}</strong>
+                  <strong className="min-w-0 truncate type-body-sm type-weight-semibold" title={asset.filename}>{asset.filename}</strong>
                   <Tag>{typeLabel(asset.contentType)}</Tag>
                 </div>
-                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-muted-foreground">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 type-family-mono type-caption text-muted-foreground">
                   <span>{Math.max(1, Math.ceil(asset.sizeBytes / 1024))} KB</span>
                   <time>{asset.createdAt}</time>
-                  {asset.usageCount > 0 ? <span className="font-sans text-primary">引用 {asset.usageCount}</span> : null}
+                  {asset.usageCount > 0 ? <span className="type-family-sans text-primary">引用 {asset.usageCount}</span> : null}
                 </div>
                 <Text size="xs" tone="muted" className="truncate" title={asset.altText || undefined}>
                   Alt Text：{asset.altText || <span className="italic opacity-70">未设置</span>}
