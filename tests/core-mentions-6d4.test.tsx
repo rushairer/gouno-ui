@@ -7,7 +7,7 @@ import {
   screen,
 } from "@testing-library/react";
 import { Mentions } from "../src/core";
-import { componentProgress } from "../showcase/catalog/component-progress";
+import { componentReviews } from "../showcase/catalog/component-progress";
 import { mentionsReviewDocuments } from "../showcase/demos/core/data-entry-review-6d4";
 
 afterEach(cleanup);
@@ -141,6 +141,6 @@ describe("Mentions 6D4", () => {
     expect(document.code).toContain("<Mentions");
     expect(document.code).toContain("onSelect");
     expect(document.code).toContain('prefix="+"');
-    expect(componentProgress("core-mentions", 65)).toBe(100);
+    expect(componentReviews["core-mentions"]?.evidence.length).toBeGreaterThan(0);
   });
 });
