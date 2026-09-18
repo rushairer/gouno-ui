@@ -24,7 +24,7 @@ export function PageHeader({
       )}
     >
       <div className="min-w-0">
-        <Heading level={1} className="text-2xl leading-tight tracking-tight">
+        <Heading level={1} variant="page">
           {title}
         </Heading>
         {description ? (
