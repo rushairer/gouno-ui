@@ -48,6 +48,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
   const text = useComponentLocale("select", locale);
   const generatedId = React.useId();
   const baseId = id ?? `select-${generatedId}`;
+  const nativeSelectId = `${baseId}-native`;
   const listboxId = `${baseId}-listbox`;
   const searchRef = React.useRef<HTMLInputElement>(null);
   const searchable = showSearch || mode === "tags";
@@ -108,7 +109,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
   const selectActive = () => { const option = filteredOptions[activeIndex]; if (option) choose(option); };
   const resolvedPlaceholder = placeholder ?? text.placeholder;
   return <div className="relative min-w-0" data-slot="select">
-    <select {...props} id={id} name={name} required={required} disabled={disabled || loading} multiple={multi} value={hiddenValue} onChange={() => undefined} ref={selectRef} aria-hidden="true" tabIndex={-1} className="pointer-events-none absolute inset-0 h-full w-full opacity-0">{children}{selectedValues.filter((item) => !options.some((option) => option.value === item)).map((item) => <option key={item} value={item}>{item}</option>)}</select>
+    <select {...props} id={nativeSelectId} name={name} required={required} disabled={disabled || loading} multiple={multi} value={hiddenValue} onChange={() => undefined} ref={selectRef} aria-hidden="true" tabIndex={-1} className="pointer-events-none absolute inset-0 h-full w-full opacity-0">{children}{selectedValues.filter((item) => !options.some((option) => option.value === item)).map((item) => <option key={item} value={item}>{item}</option>)}</select>
     <Popover open={open} onOpenChange={(next) => { if (!disabled && !loading) setOpen(next); }}>
       <PopoverAnchor asChild>
         <div data-slot="select-control" className={cn("flex w-full min-w-0 items-center gap-2 rounded-md border border-border bg-input px-3 text-foreground focus-within:ring-2 focus-within:ring-ring", controlSizeClass(size), multi && "h-auto min-h-9 py-1", status === "error" && "border-destructive focus-within:ring-destructive", status === "warning" && "border-warning focus-within:ring-warning", (disabled || loading) && "cursor-not-allowed opacity-50", className)}>
@@ -120,7 +121,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
             {maxTagCount !== undefined && selectedOptions.length > maxTagCount ? <span className="text-xs text-muted-foreground">+{selectedOptions.length - maxTagCount}</span> : null}
           </div> : null}
           <PopoverTrigger asChild>
-            <button ref={triggerRef} type="button" id={`${baseId}-trigger`} role="combobox" aria-haspopup="listbox" aria-label={props["aria-label"]} aria-labelledby={props["aria-labelledby"]} aria-describedby={props["aria-describedby"]} aria-expanded={open} aria-controls={listboxId} aria-activedescendant={!searchable ? activeOptionId : undefined} aria-invalid={status === "error" || props["aria-invalid"] || undefined} aria-required={required || props["aria-required"] || undefined} aria-busy={loading || undefined} disabled={disabled || loading}
+            <button ref={triggerRef} type="button" id={baseId} role="combobox" aria-haspopup="listbox" aria-label={props["aria-label"]} aria-labelledby={props["aria-labelledby"]} aria-describedby={props["aria-describedby"]} aria-expanded={open} aria-controls={listboxId} aria-activedescendant={!searchable ? activeOptionId : undefined} aria-invalid={status === "error" || props["aria-invalid"] || undefined} aria-required={required || props["aria-required"] || undefined} aria-busy={loading || undefined} disabled={disabled || loading}
               onKeyDown={(event) => {
                 if (event.key === "ArrowDown" || event.key === "ArrowUp") { event.preventDefault(); if (!open) setOpen(true); else moveActive(event.key === "ArrowDown" ? 1 : -1); }
                 else if (event.key === "Enter" || event.key === " ") { event.preventDefault(); if (open) selectActive(); else setOpen(true); }
