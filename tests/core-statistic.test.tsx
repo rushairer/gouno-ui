@@ -26,12 +26,14 @@ describe("Core Statistic", () => {
     expect(root.getAttribute("data-slot")).toBe("statistic");
     expect(root.getAttribute("data-state")).toBe("ready");
     expect(root.className).toContain("min-w-0");
-    expect(root.querySelector('[data-slot="statistic-title"]')?.textContent).toBe(
-      "文章总数",
-    );
-    expect(root.querySelector('[data-slot="statistic-value"]')?.textContent).toBe(
-      "86",
-    );
+    const title = root.querySelector('[data-slot="statistic-title"]');
+    const value = root.querySelector('[data-slot="statistic-value"]');
+    expect(title?.textContent).toBe("文章总数");
+    expect(title?.getAttribute("data-typography-role")).toBe("body-sm");
+    expect(title?.className).toContain("type-body-sm");
+    expect(value?.textContent).toBe("86");
+    expect(value?.getAttribute("data-typography-role")).toBe("metric-value");
+    expect(value?.className).toContain("type-metric-value");
   });
 
   it("keeps zero values plus prefix and suffix caller-owned", () => {

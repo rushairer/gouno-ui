@@ -32,10 +32,10 @@ export const Statistic = forwardRef<HTMLDivElement, StatisticProps>(
         data-slot="statistic"
         className={cn("space-y-1", className)}
       >
-        <div data-slot="statistic-title" className="text-sm text-muted-foreground">
+        <div data-slot="statistic-title" data-typography-role="body-sm" className="type-body-sm text-muted-foreground">
           {title}
         </div>
-        <div data-slot="statistic-value" className="text-2xl font-semibold">
+        <div data-slot="statistic-value" data-typography-role="metric-value" className="type-metric-value">
           {prefix}
           {value}
           {suffix}

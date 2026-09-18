@@ -89,6 +89,10 @@
     --type-body-sm-line-height: 1.25rem;
     --type-caption-size: 0.75rem;
     --type-caption-line-height: 1rem;
+    --type-metric-value-size: 1.5rem;
+    --type-metric-value-line-height: 2rem;
+    --type-metric-compact-size: 1.25rem;
+    --type-metric-compact-line-height: 1.75rem;
     --type-title-weight: 600;
     --type-body-weight: 400;
     --type-medium-weight: 500;
@@ -282,6 +286,18 @@
   .type-caption {
     font-size: var(--type-caption-size);
     line-height: var(--type-caption-line-height);
+  }
+
+  .type-metric-value {
+    font-size: var(--type-metric-value-size);
+    line-height: var(--type-metric-value-line-height);
+    font-weight: var(--type-emphasis-weight);
+  }
+
+  .type-metric-compact {
+    font-size: var(--type-metric-compact-size);
+    line-height: var(--type-metric-compact-line-height);
+    font-weight: var(--type-emphasis-weight);
   }
 
   .type-weight-regular {
