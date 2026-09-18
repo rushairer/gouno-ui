@@ -468,7 +468,8 @@ Border **color** and border **width** answer different questions.
 
 - Ordinary component/surface boundaries and dividers use the canonical 1px boundary substrate (`border`, directional `border-*`, or `divide-*`) with semantic color ownership from `--border` or an explicit semantic state color.
 - A 2px edge is not a stronger generic border. It is the **emphasis/indicator** role owned by `--border-width-emphasis` and the semantic utilities `edge-emphasis`, `edge-bs-emphasis`, `edge-be-emphasis`, `edge-s-emphasis`, or `edge-e-emphasis`.
-- New product code must not introduce numeric `border-2/4/...` widths or arbitrary numeric border-width classes. Use the semantic emphasis utility only when a stronger separator/indicator is part of the component anatomy.
+- A 4px inline-start edge is reserved for the **reading content accent** role owned by `--border-width-accent` / `edge-s-accent`. Current use is limited to long-form Public Blog blockquotes; compact editor Markdown preview deliberately remains on the 2px emphasis role.
+- New product code must not introduce numeric `border-2/4/...` widths or arbitrary numeric border-width classes. Use an admitted semantic width role only when the component/content anatomy requires it.
 - Directional emphasis uses logical block/inline sides rather than physical left/right assumptions.
 - Dynamic semantic color remains allowed when it is an explicit component API (for example Timeline item color); width authority still stays semantic.
 - State colors such as primary, warning, destructive or transparent may change border color without changing border width unless the component contract explicitly owns the emphasis role.
