@@ -199,6 +199,7 @@ export function WorkflowEditor({
         });
       }}
     >
+      <div data-pattern="editor-form-composition" className="flex flex-col gap-5">
       <DedicatedEditorLayout
         primary={(
           <>
@@ -464,6 +465,7 @@ export function WorkflowEditor({
           保存 Workflow
         </Button>
       </DedicatedEditorActions>
+      </div>
     </Form>
   );
 }
