@@ -420,6 +420,7 @@ describe("design-language conformance", () => {
     expect(governance).toContain("## PI-02 — Tabs name the panel; the panel lead adds context");
     expect(governance).toContain("## PI-04 — Visible elevation uses semantic roles only");
     expect(governance).toContain("## PI-05 — New binding rules require a corpus pass, not screenshot patching");
+    expect(governance).toContain("## PI-06 — Master-detail is a task pattern, not a generic list/detail default");
     const designLanguage = readFileSync(resolve(repoRoot, "docs/design-language.md"), "utf8");
     expect(designLanguage).toContain("## DL-15 — Page composition uses ordered semantic slots");
   });
