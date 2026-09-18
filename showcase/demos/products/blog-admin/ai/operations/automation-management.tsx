@@ -26,6 +26,7 @@ import {
   Text,
 } from "../../../../../../src/core";
 import { TabPanelLead } from "../../../../../components/tab-panel-lead";
+import { DedicatedEditorLead } from "../../../../../components/patterns/dedicated-editor";
 import type {
   WorkflowFixture,
   WorkflowRunFixture,
@@ -298,22 +299,17 @@ export function AutomationManagement({
   }, [query, status, workflows]);
 
   if (editing) {
+    const editingWorkflow = editing === "new" ? null : editing;
     return (
       <div data-pattern="dedicated-list-editor" className="flex flex-col gap-5">
-        <TabPanelLead
-          description={editing === "new"
-            ? "创建 Workflow 是独立的资产配置任务：定义输入契约、流程步骤、执行计划与运行边界。"
-            : "编辑 Workflow 是独立的资产配置任务：保存形成新版本，运行证据继续进入运行中心。"}
-          actions={(
-            <Button
-              size="small"
-              variant="outline"
-              icon={<ArrowLeft />}
-              onClick={() => setEditing(null)}
-            >
-              {editing === "new" ? "返回 Workflow 列表" : "返回 Workflow 详情"}
-            </Button>
-          )}
+        <DedicatedEditorLead
+          title={editingWorkflow ? `编辑 Workflow：${editingWorkflow.name}` : "创建 Workflow"}
+          description={editingWorkflow
+            ? "编辑 Workflow 是独立的资产配置任务：保存形成新版本，运行证据继续进入运行中心。"
+            : "创建 Workflow 是独立的资产配置任务：定义输入契约、流程步骤、执行计划与运行边界。"}
+          backLabel={editingWorkflow ? "返回 Workflow 详情" : "返回 Workflow 列表"}
+          onBack={() => setEditing(null)}
+          status={editingWorkflow ? <Tag>v{editingWorkflow.currentVersion}</Tag> : null}
         />
         <WorkflowEditor
           value={editing}
