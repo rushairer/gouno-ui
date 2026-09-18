@@ -9,7 +9,8 @@ export type HeadingVariant =
   | "task"
   | "section"
   | "subsection"
-  | "compact";
+  | "compact"
+  | "label";
 export type TextSize = "xs" | "sm" | "md" | "lg";
 export type TextTone = "default" | "muted" | "danger" | "success";
 
@@ -38,6 +39,7 @@ const headingVariantClass: Record<HeadingVariant, string> = {
   section: "text-section-title font-title tracking-section-title",
   subsection: "text-subsection-title font-title",
   compact: "text-compact-title font-title",
+  label: "text-label-title font-title",
 };
 
 const defaultHeadingVariant: Record<HeadingLevel, HeadingVariant> = {
