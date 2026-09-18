@@ -243,7 +243,15 @@ export function BlogAdminPagesDemo() {
         )}
       />
 
-      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
+      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />\n\n      {scenario === "error" ? (
+        <Alert
+          type="error"
+          showIcon
+          title="单页加载失败"
+          description="无法读取单页列表。真实产品会保留筛选条件并允许重新请求。"
+          action={<Button size="small" onClick={() => setScenario("data")}>重新载入</Button>}
+        />
+      ) : null}
 
       <Card padding="base">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
@@ -277,15 +285,7 @@ export function BlogAdminPagesDemo() {
         </BulkActionBar>
       ) : null}
 
-      {scenario === "error" ? (
-        <Alert
-          type="error"
-          showIcon
-          title="单页加载失败"
-          description="无法读取单页列表。真实产品会保留筛选条件并允许重新请求。"
-          action={<Button size="small" onClick={() => setScenario("data")}>重新载入</Button>}
-        />
-      ) : scenario === "loading" ? (
+      {scenario === "error" ? null : scenario === "loading" ? (
         <PageSkeleton layout="collection" aria-label="单页加载中" />
       ) : visiblePages.length === 0 ? (
         <Card padding="lg">
