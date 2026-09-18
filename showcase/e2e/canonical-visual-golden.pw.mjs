@@ -490,10 +490,16 @@ test("accessibility-app-shell-skip-link-and-landmarks", async ({ page }) => {
   });
   await expect(navigation).toBeVisible();
 
-  const main = shell.getByRole("main");
+  const skip = shell
+    .locator('a[href^="#app-shell-main-"]')
+    .filter({ hasText: "跳至主要内容" })
+    .first();
+  const href = await skip.getAttribute("href");
+  expect(href).toMatch(/^#app-shell-main-/);
+
+  const main = shell.locator(href).first();
   await expect(main).toHaveAttribute("tabindex", "-1");
 
-  const skip = shell.getByRole("link", { name: "跳至主要内容" });
   await skip.focus();
   await expect(skip).toBeFocused();
   await skip.press("Enter");
