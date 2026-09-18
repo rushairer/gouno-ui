@@ -44,8 +44,8 @@
     cursor: pointer;
   }
   :focus-visible {
-    outline: 2px solid var(--ring);
-    outline-offset: 3px;
+    outline: var(--focus-ring-width) solid var(--ring);
+    outline-offset: var(--focus-ring-offset);
   }
   ::selection {
     background: var(--accent);
