@@ -6,7 +6,7 @@ This queue records defects discovered while the Foundation Integrity Program is 
 
 ## FI-D001 — Steps connector / copy geometry
 
-**Status:** fix implemented; Responsive re-certification pending  
+**Status:** resolved / certified 2026-09-19  
 **Component:** `core-steps`  
 **Observed evidence:** Showcase Steps variant screenshot, 2026-09-18.
 
@@ -20,6 +20,8 @@ Next action:
 - if systemic, reopen the owning Foundation before recertification.
 
 Finding: this is a local Steps connector-geometry defect plus a Responsive implementation gap. Responsive is reopened only for `core-steps`; canonical breakpoint/Layout/Spacing authority remains unchanged. The source fix gives horizontal copy an independent connector lane, gives dot markers their own offsets, and converts the complete max-sm item/body/connector composition rather than only the root flex direction.
+
+Resolution evidence: CI #568 reports zero arbitrary responsive variants and zero px-width media queries with 168/168 test files and 866/866 tests passing. Canonical Visual Golden Smoke #485 passed the strengthened Steps geometry contract and all 60 browser tests. Blog parity #546 and Gosso parity #541 are green. Responsive is re-certified.
 
 ## FI-D002 — Carousel arrows do not navigate in the real Showcase
 
@@ -41,7 +43,7 @@ Resolution evidence: Carousel now ignores interactive descendants when beginning
 
 ## FI-D003 — ConfigProvider Showcase does not visibly prove localization
 
-**Status:** fix implemented; Showcase certification pending  
+**Status:** resolved / certified 2026-09-19  
 **Component:** `core-config-provider`  
 **Observed evidence:** Showcase review, 2026-09-18.
 
@@ -55,6 +57,8 @@ Next action:
 - add Showcase contract coverage for the visible proof.
 
 Implementation: the localized demo now renders zh-CN and en-US Providers simultaneously. An empty Select visibly shows `请选择` versus `Please select`; Pagination visibly shows localized previous/next/page-size/jump copy; a second Select proves an explicit product `placeholder` overrides Provider defaults. `tests/showcase-config-provider-demo.test.tsx` guards these visible differences.
+
+Resolution evidence: focused Showcase tests pass in CI #568, and Canonical Visual Golden Smoke #485 directly exercises `showcase-config-provider-visibly-proves-locale-ownership` in a real browser. Blog parity #546 and Gosso parity #541 are green.
 
 
 ## FI-D004 — Tag close hover bypasses semantic Color
