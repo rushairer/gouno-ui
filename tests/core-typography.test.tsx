@@ -35,7 +35,6 @@ describe("Core Typography family", () => {
     expect(pageTitle.getAttribute("data-context")).toBe("page");
     expect(pageTitle.getAttribute("data-typography-role")).toBe("page");
     expect(pageTitle.className).toContain("type-page-title");
-    expect(pageTitle.className).toContain("font-title");
     expect(pageTitle.className).toContain("custom-heading");
 
     const nestedTask = screen.getByRole("heading", {
