@@ -112,7 +112,7 @@ export function AuditLogsPanel() {
         </form>
       </Card>
 
-      {scenario === "loading" ? (
+      {scenario === "error" ? null : scenario === "loading" ? (
         <PageSkeleton
           layout="collection"
           aria-label="审计日志加载中"
