@@ -241,6 +241,15 @@ for (const id of ["core-spin", "core-timeline", "core-steps", "core-table"]) {
   };
 }
 
+for (const id of ["theme-system", "core-alert", "core-image"]) {
+  componentReviews[id] = {
+    status: "reopened",
+    scope: "FI-001 Phase 3: Color Foundation reopened because browser theme-color duplicates Theme background literals, Alert close hover uses raw black/white theme branches, and Image cover text uses raw white instead of an overlay foreground role.",
+    evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "src/tokens.css", "src/theme/provider.tsx", "src/core/alert.tsx", "src/core/image.tsx"],
+    baseline: "FI-001 Phase 3 / 2026-09-18",
+  };
+}
+
 componentReviews["pattern-dedicated-editor"] = {
   status: "reviewed",
   scope: "FI-001 certified: Dedicated Editor explicitly separates nested/standalone heading semantics from task-title visual hierarchy and stays under the canonical Typography guard.",
