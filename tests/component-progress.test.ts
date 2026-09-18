@@ -15,6 +15,9 @@ describe("audited batch completion", () => {
       "core-form",
       "core-date-picker",
       "core-upload",
+      "core-button",
+      "core-input-otp",
+      "core-segmented",
       "core-radio",
       "core-switch",
       "core-table",
@@ -29,6 +32,9 @@ describe("audited batch completion", () => {
   it("reports the completed same-source and reading-evidence Core batch as complete", () => {
     for (const id of [
       "core-avatar",
+      "core-space",
+      "core-flex",
+      "core-grid",
       "core-separator",
       "core-splitter",
       "core-card",
@@ -60,23 +66,10 @@ describe("audited batch completion", () => {
     for (const id of [
       "gouno-app-shell",
       "gouno-page-header",
+      "gouno-page-container",
       "gouno-page-skeleton",
     ]) {
       expect(componentProgress(id, 0), id).toBe(100);
-    }
-  });
-
-  it("keeps Foundation-reopened component reviews below certified completion", () => {
-    for (const id of [
-      "gouno-page-container",
-      "core-space",
-      "core-flex",
-      "core-grid",
-      "core-button",
-      "core-segmented",
-      "core-input-otp",
-    ]) {
-      expect(componentProgress(id, 0), id).toBeLessThan(100);
     }
   });
 
