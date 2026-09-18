@@ -38,7 +38,7 @@ export interface DateRangePickerProps
 }
 
 const dateInputClass =
-  "min-w-0 flex-1 rounded-md border border-border bg-input px-3 text-foreground outline-none transition-[border-color,box-shadow] focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50";
+  "min-w-0 flex-1 rounded-md border border-border bg-input px-3 text-foreground outline-none transition-[border-color,box-shadow] focus-control disabled:cursor-not-allowed disabled:opacity-50";
 
 export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
   function DateRangePicker(
