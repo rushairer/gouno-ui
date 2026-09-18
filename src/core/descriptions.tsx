@@ -247,7 +247,7 @@ export function Descriptions({
         >
           <div
             data-slot="descriptions-title"
-            className={cn("min-w-0 text-base font-semibold", semanticClassNames.title)}
+            className={cn("min-w-0 type-compact-title", semanticClassNames.title)}
             style={semanticStyles.title}
           >
             {title}
@@ -296,7 +296,7 @@ export function Descriptions({
               data-slot="descriptions-label"
               className={cn(
                 "min-w-0 text-muted-foreground",
-                bordered ? cn(padding, "bg-muted/50 font-medium") : "font-medium",
+                bordered ? cn(padding, "bg-muted/50 type-body type-weight-medium") : "type-body type-weight-medium",
                 layout === "vertical" && !bordered && "mb-1",
                 semanticClassNames.label,
               )}
@@ -308,7 +308,7 @@ export function Descriptions({
             <dd
               data-slot="descriptions-content"
               className={cn(
-                "min-w-0 break-words text-foreground",
+                "min-w-0 break-words type-body text-foreground",
                 bordered && padding,
                 semanticClassNames.content,
               )}

@@ -1,7 +1,7 @@
-import type { ElementType, HTMLAttributes, ReactNode } from "react";
+import type { HTMLAttributes, ReactNode } from "react";
 import { CircleCheck, CircleX, Info, TriangleAlert } from "lucide-react";
 import { cn } from "../lib/utils";
-import type { HeadingLevel } from "./typography";
+import { Heading, Text, type HeadingLevel, type HeadingVariant } from "./typography";
 
 export type ResultStatus = "success" | "error" | "info" | "warning";
 
@@ -13,6 +13,8 @@ export interface ResultProps
   extra?: ReactNode;
   children?: ReactNode;
   headingLevel?: HeadingLevel;
+  /** Visual title role, independent from the document heading level. */
+  titleVariant?: HeadingVariant;
 }
 
 const statusIcons: Record<ResultStatus, ReactNode> = {
@@ -36,10 +38,11 @@ export function Result({
   extra,
   children,
   headingLevel = 2,
+  titleVariant,
   className,
   ...props
 }: ResultProps) {
-  const Title = `h${headingLevel}` as ElementType;
+  const resolvedTitleVariant = titleVariant ?? (headingLevel === 1 ? "task" : "section");
 
   return (
     <section
@@ -61,22 +64,24 @@ export function Result({
       >
         {statusIcons[status]}
       </div>
-      <Title
+      <Heading
+        level={headingLevel}
+        variant={resolvedTitleVariant}
         data-slot="result-title"
-        className={cn(
-          "font-semibold tracking-tight text-foreground",
-          headingLevel === 1 ? "text-2xl" : "text-xl",
-        )}
+        className="text-foreground"
       >
         {title}
-      </Title>
+      </Heading>
       {description != null ? (
-        <div
+        <Text
+          as="div"
+          size="sm"
+          tone="muted"
           data-slot="result-description"
-          className="max-w-xl text-sm text-muted-foreground"
+          className="max-w-xl"
         >
           {description}
-        </div>
+        </Text>
       ) : null}
       {extra != null ? <div data-slot="result-extra">{extra}</div> : null}
       {children != null ? (

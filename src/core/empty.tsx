@@ -27,14 +27,14 @@ export function Empty({
     >
       {icon ? <div data-slot="empty-icon">{icon}</div> : null}
       {title != null ? (
-        <div data-slot="empty-title" className="font-semibold text-foreground">
+        <div data-slot="empty-title" className="type-compact-title text-foreground">
           {title}
         </div>
       ) : null}
       {description != null ? (
         <div
           data-slot="empty-description"
-          className="max-w-lg text-sm text-muted-foreground"
+          className="max-w-lg type-body-sm text-muted-foreground"
         >
           {description}
         </div>

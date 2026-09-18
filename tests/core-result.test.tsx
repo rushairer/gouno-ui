@@ -17,7 +17,10 @@ describe("Core Result", () => {
       </Result>,
     );
 
-    expect(screen.getByRole("heading", { level: 2, name: "Saved" })).toBeTruthy();
+    const heading = screen.getByRole("heading", { level: 2, name: "Saved" });
+    expect(heading).toBeTruthy();
+    expect(heading.getAttribute("data-typography-role")).toBe("section");
+    expect(heading.className).toContain("type-section-title");
     expect(screen.getByText("Changes are persisted.")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Continue" })).toBeTruthy();
     expect(screen.getByText("Reference: 42")).toBeTruthy();
@@ -35,7 +38,23 @@ describe("Core Result", () => {
 
     const result = container.querySelector('[data-slot="result"]');
     expect(result?.getAttribute("role")).toBeNull();
-    expect(screen.getByRole("heading", { level: 1, name: "Page not found" })).toBeTruthy();
+    const heading = screen.getByRole("heading", { level: 1, name: "Page not found" });
+    expect(heading).toBeTruthy();
+    expect(heading.getAttribute("data-typography-role")).toBe("task");
+  });
+
+  it("keeps title visual role independent from heading level", () => {
+    render(
+      <Result
+        headingLevel={1}
+        titleVariant="section"
+        title="Embedded not found"
+      />,
+    );
+
+    const heading = screen.getByRole("heading", { level: 1, name: "Embedded not found" });
+    expect(heading.getAttribute("data-typography-role")).toBe("section");
+    expect(heading.className).toContain("type-section-title");
   });
 
   it("allows callers to opt into standard announcement semantics", () => {
