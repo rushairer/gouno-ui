@@ -15,7 +15,7 @@ export const tableApiSections: ComponentDocument["apiSections"] = [
     description: "语义主体为 table；滚动容器通过 containerClassName 定制。",
     rows: [
       ...native("Table", "HTMLTableElement", "caption 与表格分组"),
-      { name: "density", type: '"default" | "compact" | "touch"', defaultValue: '"default"', description: "数据密度" },
+      { name: "density", type: '"default" | "compact" | "touch"', defaultValue: '"default"', description: "表格数据密度；default 继承 ThemeProvider 的全局 comfortable/compact 默认策略，compact/touch 为显式局部覆盖。" },
       { name: "bordered", type: "boolean", defaultValue: "false", description: "显示外框和列分隔线" },
       { name: "fixed", type: "boolean", defaultValue: "false", description: "使用固定表格布局" },
       { name: "stickyHeader", type: "boolean", defaultValue: "false", description: "固定表头" },
