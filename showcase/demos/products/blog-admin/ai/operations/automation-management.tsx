@@ -290,7 +290,6 @@ export function AutomationManagement({
     return (
       <div className="flex flex-col gap-5">
         <TabPanelLead
-          title="编辑自动化"
           description="编辑 Workflow 的输入契约、流程定义、执行计划与运行边界；保存形成新版本，运行证据继续进入运行中心。"
         />
         <WorkflowEditor
@@ -310,7 +309,6 @@ export function AutomationManagement({
     return (
       <div className="flex flex-col gap-5">
         <TabPanelLead
-          title="自动化资产"
           description="Workflow 是持续运行的版本化自动化资产。先从列表判断状态与最近结果，再进入定义、边界和人工执行。"
           actions={
             <Button
