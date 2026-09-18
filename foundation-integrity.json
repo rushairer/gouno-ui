@@ -986,28 +986,68 @@
       }
     },
     "focus": {
-      "status": "planned",
-      "affectedComponentReviews": [],
+      "status": "in_progress",
+      "affectedComponentReviews": [
+        "core-button",
+        "core-input",
+        "core-textarea",
+        "core-checkbox",
+        "core-radio",
+        "core-switch",
+        "core-tabs",
+        "core-badge",
+        "core-select",
+        "core-modal",
+        "core-drawer"
+      ],
       "gates": {
         "inventory": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/foundation-focus-inventory.md",
+            "src/tokens.css",
+            "src/base.css",
+            "src/components/primitives/button.tsx",
+            "src/components/primitives/input.tsx",
+            "src/components/primitives/textarea.tsx",
+            "src/components/primitives/checkbox.tsx",
+            "src/components/primitives/radio-group.tsx",
+            "src/components/primitives/switch.tsx",
+            "src/components/primitives/select.tsx",
+            "src/components/primitives/tabs.tsx",
+            "src/components/primitives/badge.tsx",
+            "src/components/primitives/dialog.tsx",
+            "src/components/primitives/sheet.tsx"
+          ]
         },
         "tokens": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "src/tokens.css: --focus-ring-width=2px, --focus-ring-offset=2px",
+            "src/base.css: Base :focus-visible fallback consumes Focus geometry tokens"
+          ]
         },
         "authority": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/design-language.md: DL-22",
+            "docs/foundation-focus-inventory.md",
+            "src/base.css"
+          ]
         },
         "corpus": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "scripts/check-foundation-integrity.mjs",
+            "src"
+          ]
         },
         "guard": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "scripts/check-foundation-integrity.mjs",
+            "tests/focus-foundation-conformance.test.tsx"
+          ]
         },
         "visual": {
           "status": "pending",
@@ -1017,6 +1057,23 @@
           "status": "pending",
           "evidence": []
         }
+      },
+      "inventory": {
+        "canonicalGeometry": {
+          "width": "2px",
+          "offset": "2px",
+          "color": "ring",
+          "trigger": "focus-visible"
+        },
+        "confirmedDefects": [
+          "Base fallback used 2px outline with 3px offset while primitives used a separate 3px ring convention.",
+          "Primitive Tabs layered a 3px ring and 1px outline.",
+          "Primitive Badge could stack its explicit ring with the global fallback outline.",
+          "Dialog/Sheet close controls used focus:ring instead of focus-visible:ring."
+        ],
+        "forbiddenDirectFocusRing3pxTarget": 0,
+        "directFocusRingTriggerTarget": 0,
+        "tabsDoubleIndicatorTarget": 0
       }
     },
     "overlay": {
