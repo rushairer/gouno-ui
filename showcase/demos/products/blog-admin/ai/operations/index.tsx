@@ -12,11 +12,13 @@ import {
   Card,
   Segmented,
   Skeleton,
+  TabPanel,
   Tabs,
   Tag,
 } from "../../../../../../src/core";
 import { PageHeader } from "../../../../../../src/gouno";
 import { FixtureDock } from "../../../../../components/fixture-dock";
+import { TabPanelFeedback, TabPanelLead } from "../../../../../components/tab-panel-lead";
 import { AutomationManagement } from "./automation-management";
 import {
   AIOpsRecordsPanel,
@@ -154,12 +156,9 @@ function pendingDecisionCount(fixture: AIOpsDecisionFixture) {
 
 function LoadingSurface() {
   return (
-    <div className="flex flex-col gap-6" aria-label="AI 运营加载中">
-      <div className="border-y py-4"><Skeleton className="h-16 w-full" /></div>
-      <div className="grid gap-6 xl:grid-cols-[19rem_minmax(0,1fr)]">
-        <Card padding="base"><Skeleton className="h-80 w-full" /></Card>
-        <Card padding="base"><Skeleton className="h-80 w-full" /></Card>
-      </div>
+    <div className="grid gap-6 xl:grid-cols-[19rem_minmax(0,1fr)]" aria-label="AI 运营加载中">
+      <Card padding="base"><Skeleton className="h-80 w-full" /></Card>
+      <Card padding="base"><Skeleton className="h-80 w-full" /></Card>
     </div>
   );
 }
@@ -366,11 +365,30 @@ export function BlogAdminAIOperationsDemo({
       }
     : automationRecordsFixture;
 
+  const panelDescriptions: Record<AIOpsTab, string> = {
+    overview: "先处理失败与等待人工的运行，再决定建议、候选和后续编辑任务；AI 不会绕过人工边界直接发布内容。",
+    inbox: "把审批、选择、确认、运营建议和后续编辑任务放进同一人工决策队列，而不是分散成多个互不相关的卡片区。",
+    automation: "Workflow 是持续运行的版本化自动化资产。先判断状态与最近结果，再进入定义、边界和人工执行。",
+    records: "从一次 Run 追溯执行步骤、资源边界、人工交互、媒体候选、Tool Call 与持久化事件；这里是证据中心，不是 Workflow 配置页。",
+  };
+
   let content: ReactNode = null;
   if (scenario === "loading") {
-    content = <LoadingSurface />;
+    content = (
+      <div className="flex flex-col gap-5">
+        <TabPanelLead description={panelDescriptions[route.tab]} />
+        <LoadingSurface />
+      </div>
+    );
   } else if (scenario === "error") {
-    content = <Alert type="error" showIcon title="AI 运营数据加载失败" description="Showcase 模拟真实聚合请求失败；刷新后可重新加载，不会丢失产品数据。" />;
+    content = (
+      <div className="flex flex-col gap-5">
+        <TabPanelLead description={panelDescriptions[route.tab]} />
+        <TabPanelFeedback>
+          <Alert type="error" showIcon title="AI 运营数据加载失败" description="Showcase 模拟真实聚合请求失败；刷新后可重新加载，不会丢失产品数据。" />
+        </TabPanelFeedback>
+      </div>
+    );
   } else if (route.tab === "overview") {
     content = <AIOpsOverviewPanel fixture={decisionFixture} automation={automationRecordsFixture} onNavigate={selectTab} />;
   } else if (route.tab === "inbox") {
@@ -456,9 +474,12 @@ export function BlogAdminAIOperationsDemo({
         description="观察运营信号、处理人工决策、管理自动化，并从 Run 追溯真实执行证据。"
         actions={<Button variant="outline" icon={<RefreshCw />} onClick={() => { setScenario("data"); setNotice({ type: "success", text: "AI 运营数据已刷新。" }); }}>刷新</Button>}
       />
-      <Tabs<AIOpsTab> activeKey={route.tab} items={tabs} onChange={selectTab} ariaLabel="AI 运营工作区" />
-      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
-      {content}
+      <Tabs<AIOpsTab> activeKey={route.tab} items={tabs} onChange={selectTab} ariaLabel="AI 运营工作区">
+        <TabPanel value={route.tab}>
+          <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
+          {content}
+        </TabPanel>
+      </Tabs>
     </div>
   );
 }
