@@ -35,6 +35,21 @@ const PatternMarkdownEditorDemo = lazy(() =>
 const PatternDedicatedEditorDemo = lazy(() =>
   import("../demos/patterns/dedicated-editor").then((module) => ({ default: module.PatternDedicatedEditorDemo })),
 );
+const PatternCollectionCompositionDemo = lazy(() =>
+  import("../demos/patterns/admin-data-composition").then((module) => ({ default: module.PatternCollectionCompositionDemo })),
+);
+const PatternRecordDetailCompositionDemo = lazy(() =>
+  import("../demos/patterns/admin-data-composition").then((module) => ({ default: module.PatternRecordDetailCompositionDemo })),
+);
+const PatternMasterDetailCompositionDemo = lazy(() =>
+  import("../demos/patterns/admin-data-composition").then((module) => ({ default: module.PatternMasterDetailCompositionDemo })),
+);
+const PatternSettingsCompositionDemo = lazy(() =>
+  import("../demos/patterns/admin-data-composition").then((module) => ({ default: module.PatternSettingsCompositionDemo })),
+);
+const PatternDataSummaryCompositionDemo = lazy(() =>
+  import("../demos/patterns/admin-data-composition").then((module) => ({ default: module.PatternDataSummaryCompositionDemo })),
+);
 const BlogHomeDemo = lazy(() =>
   import("../demos/products/blog/home").then((module) => ({ default: module.BlogHomeDemo })),
 );
@@ -201,6 +216,16 @@ export function ShowcasePage({ page, workspace }: { page: string; workspace: Sho
       return <Suspense fallback={loading}><PatternMarkdownEditorDemo /></Suspense>;
     case "pattern-dedicated-editor":
       return <Suspense fallback={loading}><PatternDedicatedEditorDemo /></Suspense>;
+    case "pattern-collection-composition":
+      return <Suspense fallback={loading}><PatternCollectionCompositionDemo /></Suspense>;
+    case "pattern-record-detail-composition":
+      return <Suspense fallback={loading}><PatternRecordDetailCompositionDemo /></Suspense>;
+    case "pattern-master-detail-composition":
+      return <Suspense fallback={loading}><PatternMasterDetailCompositionDemo /></Suspense>;
+    case "pattern-settings-composition":
+      return <Suspense fallback={loading}><PatternSettingsCompositionDemo /></Suspense>;
+    case "pattern-data-summary-composition":
+      return <Suspense fallback={loading}><PatternDataSummaryCompositionDemo /></Suspense>;
     case "gouno-app-shell":
       return <GounoComponentDemo component="app-shell" />;
     case "gouno-page-container":
