@@ -86,7 +86,7 @@ Resolution:
 
 A checkable Tag renders a native button. Its closable content renders another native button inside it. No canonical product requires this combination.
 
-Resolution: make checkable and closable Tag behavior mutually exclusive in the public type contract and guard the runtime implementation. If a future product requires both selection and removal, it must provide evidence for a sibling-control composition rather than nesting actions.
+Resolution: preserve the existing admitted combination without nesting: when both behaviors are requested, the visual Tag becomes a neutral wrapper containing a checkbox-like selection button and an independent close button as sibling interactive owners. Each action keeps its own accessible name/state and focus treatment.
 
 ## Acceptance
 
@@ -95,7 +95,7 @@ Accessibility can be certified only when:
 1. composite form controls inherit visible Field naming/description/error/required semantics on the real interactive owner;
 2. icon-only disclosure/switcher controls have contextual names without injected generic English copy;
 3. Modal/Drawer retain dialog naming, focus containment/return and locale-correct close naming;
-4. Core does not admit nested native interactive elements in Tag;
+4. Core Tag never nests native interactive elements; combined check + close behavior uses sibling semantic owners;
 5. product corpus non-semantic click targets, focusable `aria-hidden` nodes and unlabelled product images are zero or explicitly documented;
 6. representative keyboard/browser tests prove form naming, overlay focus/close and composite interaction;
 7. heading/table/list/landmark structure remains covered by existing semantic contracts and representative product checks;
