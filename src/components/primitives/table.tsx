@@ -47,21 +47,7 @@ function Table({
         data-slot="table"
         className={cn(
           "w-full caption-bottom text-sm text-foreground",
-          density === "compact"
-            ? "[&_th]:px-3 [&_th]:py-2 [&_td]:px-3 [&_td]:py-2"
-            : density === "touch"
-              ? "[&_th]:px-4 [&_th]:py-4 [&_td]:px-4 [&_td]:py-4"
-              : "[&_th]:px-4 [&_th]:py-3 [&_td]:px-4 [&_td]:py-3",
-          bordered &&
-            (density === "compact"
-              ? "[&_tr>*:first-child]:pl-4 [&_tr>*:last-child]:pr-4"
-              : "[&_tr>*:first-child]:pl-6 [&_tr>*:last-child]:pr-6"),
           "[&_tfoot_th]:align-middle [&_tfoot_td]:align-middle",
-          density === "compact"
-            ? "[&_tfoot_th]:h-10 [&_tfoot_td]:h-10"
-            : density === "touch"
-              ? "[&_tfoot_th]:h-14 [&_tfoot_td]:h-14"
-              : "[&_tfoot_th]:h-12 [&_tfoot_td]:h-12",
           "[&_tfoot_tr]:border-t-2 [&_tfoot_tr]:border-border/80",
           fixed && "table-fixed",
           bordered &&
