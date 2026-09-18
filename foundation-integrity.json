@@ -113,7 +113,8 @@
         "tokens": {
           "status": "in_progress",
           "evidence": [
-            "src/tokens.css"
+            "src/tokens.css",
+            "docs/design-language.md"
           ]
         },
         "authority": {
@@ -133,6 +134,7 @@
         "guard": {
           "status": "in_progress",
           "evidence": [
+            "scripts/check-foundation-integrity.mjs",
             "tests/core-feedback-layout.test.tsx",
             "tests/core-general-layout-6a.test.tsx",
             "tests/core-avatar-grid-6b1.test.tsx"
@@ -369,15 +371,19 @@
           ]
         },
         "tokens": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "src/tokens.css",
+            "docs/design-language.md"
+          ]
         },
         "authority": {
           "status": "in_progress",
           "evidence": [
             "src/tokens.css",
             "src/gouno/page-container.tsx",
-            "tests/gouno-structure.test.tsx"
+            "tests/gouno-structure.test.tsx",
+            "docs/design-language.md"
           ]
         },
         "corpus": {
