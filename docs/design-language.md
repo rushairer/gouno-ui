@@ -135,6 +135,20 @@ Do not increase every Table cell to 24px merely to align the outer content axis.
 
 Unbordered/open Tables are allowed to follow their local/open-layout density because no explicit surface boundary exists to align against.
 
+### DL-03A — Global density is a default policy, not a second size system
+
+`ThemeProvider density="comfortable" | "compact"` owns the application-level **default density policy** through `documentElement.dataset.density`. Density-aware components may opt into that policy when their local density is `default`.
+
+A component's explicit local density remains authoritative. For Table:
+
+- `density="default"` follows the Theme policy;
+- `density="compact"` stays compact even under a comfortable Theme;
+- `density="touch"` stays touch-sized even under a compact Theme.
+
+Global density must not mutate the meanings of `ControlSize = small | middle | large`, rewrite the shared spacing scale, or create another hidden size table. Density chooses among a component's documented density modes; Sizing and Spacing continue to own their own semantic values.
+
+Density geometry belongs to Foundation/theme tokens plus the density-aware component contract. Product pages must use the public component API rather than writing `data-density` hooks or copying the Foundation's internal density selectors.
+
 ## DL-04 — Standalone list rows follow the same edge axis
 
 When a List is itself the surface (border/radius/background/dividers), its rows should place the first and last primary content on the same edge inset as peer normal surfaces: `24px` by default, `16px` for an explicitly compact surface.
