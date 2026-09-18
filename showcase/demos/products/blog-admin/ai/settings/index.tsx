@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+  ArrowLeft,
   Bot,
   DatabaseZap,
   GitBranch,
@@ -7,10 +8,15 @@ import {
   ListChecks,
   LockKeyhole,
 } from "lucide-react";
-import { Alert, Modal, Segmented, TabPanel, Tabs, Text } from "../../../../../../src/core";
+import { Alert, Button, Drawer, Modal, Segmented, TabPanel, Tabs, Text } from "../../../../../../src/core";
 import { PageHeader } from "../../../../../../src/gouno";
 import { FixtureDock } from "../../../../../components/fixture-dock";
-import { AISettingsEditor, type AISettingsEditorResult, type AISettingsEditorState } from "./editors";
+import {
+  AISettingsEditor,
+  getAISettingsEditorPresentation,
+  type AISettingsEditorResult,
+  type AISettingsEditorState,
+} from "./editors";
 import {
   aiSettingsFixture,
   type AgentFixture,
@@ -307,9 +313,12 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
         }
       : null;
 
-  const sectionPanel = editor
-    ? <AISettingsEditor editor={editor} fixture={fixture} onSave={saveEditor} onCancel={() => setEditor(null)} />
-    : <AISettingsSectionPanel fixture={fixture} section={section} actions={actions} />;
+  const pageEditor = editor && (editor.kind === "agent" || editor.kind === "skill") ? editor : null;
+  const drawerEditor = editor && editor.kind !== "agent" && editor.kind !== "skill" ? editor : null;
+  const pageEditorPresentation = pageEditor ? getAISettingsEditorPresentation(pageEditor) : null;
+  const drawerEditorPresentation = drawerEditor ? getAISettingsEditorPresentation(drawerEditor) : null;
+  const sectionPanel = <AISettingsSectionPanel fixture={fixture} section={section} actions={actions} />;
+  const privilegedLocked = Boolean(privilegedPolicy && security !== "unlocked");
 
   return (
     <div className="flex flex-col gap-6">
@@ -339,23 +348,88 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
       <Tabs<AISettingsSection> activeKey={section} items={tabs} onChange={changeSection} ariaLabel="AI 设置栏目">
         <TabPanel value={section}>
           <div className="flex flex-col gap-5">
-            <AISettingsSectionLead section={section} actions={actions} disabled={Boolean(editor)} />
-            <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
-            {privilegedPolicy && !editor ? (
-              <PrivilegedAccessGate
-                state={security}
-                policyTitle={privilegedPolicy.title}
-                policyDescription={privilegedPolicy.description}
-                actionLabel={privilegedPolicy.actionLabel}
-                onUnlock={() => setSecurity("unlocked")}
-                onRelock={() => setSecurity("locked")}
-              >
-                {sectionPanel}
-              </PrivilegedAccessGate>
-            ) : sectionPanel}
+            {pageEditor && pageEditorPresentation ? (
+              <>
+                <TabPanelLead
+                  description={pageEditorPresentation.description}
+                  actions={(
+                    <Button
+                      size="small"
+                      variant="outline"
+                      icon={<ArrowLeft />}
+                      onClick={() => setEditor(null)}
+                    >
+                      返回{section === "agents" ? " Agent 列表" : " Skill 列表"}
+                    </Button>
+                  )}
+                />
+                <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
+                <AISettingsEditor
+                  editor={pageEditor}
+                  fixture={fixture}
+                  onSave={saveEditor}
+                  onCancel={() => setEditor(null)}
+                  surface="page"
+                />
+              </>
+            ) : (
+              <>
+                <AISettingsSectionLead
+                  section={section}
+                  actions={actions}
+                  disabled={Boolean(drawerEditor) || privilegedLocked}
+                />
+                <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
+                {privilegedPolicy ? (
+                  <PrivilegedAccessGate
+                    state={security}
+                    policyTitle={privilegedPolicy.title}
+                    policyDescription={privilegedPolicy.description}
+                    actionLabel={privilegedPolicy.actionLabel}
+                    onUnlock={() => setSecurity("unlocked")}
+                    onRelock={() => setSecurity("locked")}
+                  >
+                    {sectionPanel}
+                  </PrivilegedAccessGate>
+                ) : sectionPanel}
+              </>
+            )}
           </div>
         </TabPanel>
       </Tabs>
+      <Drawer
+        open={Boolean(drawerEditor)}
+        width={720}
+        title={drawerEditorPresentation?.title}
+        description={drawerEditorPresentation?.description}
+        onOpenChange={(open) => {
+          if (!open) setEditor(null);
+        }}
+        footer={drawerEditor && drawerEditorPresentation ? (
+          <>
+            <Button onClick={() => setEditor(null)}>取消</Button>
+            <Button
+              form={drawerEditorPresentation.formId}
+              type="submit"
+              variant="solid"
+              color="primary"
+            >
+              {drawerEditorPresentation.submitLabel}
+            </Button>
+          </>
+        ) : null}
+      >
+        {drawerEditor ? (
+          <AISettingsEditor
+            editor={drawerEditor}
+            fixture={fixture}
+            onSave={saveEditor}
+            onCancel={() => setEditor(null)}
+            surface="drawer"
+          />
+        ) : null}
+      </Drawer>
+
       <Modal
         open={Boolean(deleteTarget)}
         title="确认删除"
