@@ -10,7 +10,7 @@ export const configProviderDocuments: Record<string, ComponentDocument> = {
     title: "ConfigProvider 组件语言",
     description: "通用操作文案默认英文；完整语言包按 React 子树配置，组件局部覆盖优先。业务内容仍由产品提供。",
     code: canonicalExampleSource(BasicSource), render: () => <Basic />,
-    demos: [{ title: "中文、局部覆盖与动态切换", code: canonicalExampleSource(LocalizedSource), render: () => <Localized /> }],
+    demos: [{ title: "中英文 Provider 可见对照与显式覆盖", description: "中英文语言包并排展示 Select 与 Pagination 的可见默认文案；第二个 Select 同时证明显式业务 placeholder 高于 Provider 默认值。", code: canonicalExampleSource(LocalizedSource), render: () => <Localized /> }],
     api: [
       { name: "locale", type: "ComponentLocale", description: "完整语言包；enUS 或 zhCN。省略时继承最近 Provider，最外层回退 enUS。", defaultValue: "继承 / enUS" },
       { name: "children", type: "ReactNode", description: "配置生效的 React 子树，包括通过 Portal 渲染的浮层。" },

@@ -287,10 +287,10 @@ for (const id of ["theme-system","gouno-app-shell","pattern-bulk-action-bar","co
 }
 
 componentReviews["core-steps"] = {
-  status: "reopened",
-  scope: "FI-D001: Showcase review found connector/title/content geometry with incorrect visual spacing/relationship; must be revalidated in browser and either fixed locally or traced to a Foundation authority gap.",
-  evidence: ["docs/foundation-integrity-open-defects.md", "src/core/steps.tsx", "showcase/demos/core/steps/steps-1.tsx"],
-  baseline: "FI-D001 reopened / 2026-09-18",
+  status: "reviewed",
+  scope: "FI-D001 certified: connector and copy occupy distinct desktop lanes, vertical dot geometry uses dot-specific marker offsets, and max-sm converts the complete item/body/connector composition rather than only the root flex axis.",
+  evidence: ["foundation-integrity.json", "docs/foundation-responsive-inventory.md", "src/core/steps.tsx", "tests/responsive-foundation-conformance.test.tsx", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+  baseline: "FI-D001 certified / 2026-09-19",
 };
 
 componentReviews["core-tag"] = {
@@ -308,10 +308,10 @@ componentReviews["core-carousel"] = {
 };
 
 componentReviews["core-config-provider"] = {
-  status: "reopened",
-  scope: "FI-D003: localization implementation has unit evidence, but the canonical Showcase demo does not visibly demonstrate provider effects strongly enough to serve as product/design evidence.",
-  evidence: ["docs/foundation-integrity-open-defects.md", "showcase/demos/core/config-provider/localized.tsx", "tests/core-localization.test.tsx"],
-  baseline: "FI-D003 reopened / 2026-09-18",
+  status: "reviewed",
+  scope: "FI-D003 certified: canonical Showcase visibly proves simultaneous zh-CN/en-US Provider effects on Select/Pagination and explicit caller-copy precedence; focused DOM and real-browser contracts protect the evidence.",
+  evidence: ["docs/component-localization.md", "showcase/demos/core/config-provider/localized.tsx", "tests/core-localization.test.tsx", "tests/showcase-config-provider-demo.test.tsx", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+  baseline: "FI-D003 certified / 2026-09-19",
 };
 
 componentReviews["pattern-dedicated-editor"] = {

@@ -1,7 +1,7 @@
 # Responsive Foundation Inventory
 
-Status: FI-001 Phase 4 working inventory.
-Updated: 2026-09-18
+Status: FI-001 Phase 4 certified inventory.
+Updated: 2026-09-19
 
 ## Canonical breakpoint authority
 
@@ -61,6 +61,19 @@ Behavior-specific thresholds outside the canonical tier scale are not forbidden 
 
 There are currently no admitted arbitrary responsive breakpoint exceptions in Core/Gouno/Product code.
 
+## 2026-09-19 reopening — Steps composition geometry
+
+FI-D001 showed that the original Responsive certification proved only the root axis switch. At widths below `sm`, a horizontal Steps root became `flex-col`, but the child item width/flex policy, title-placement layout and connector axis were still derived from the desktop `orientation="horizontal"` prop.
+
+The same audit also exposed two non-responsive local geometry defects in the same owner:
+
+- horizontal default connectors started at the marker and visually ran behind the title/copy lane;
+- vertical dot connectors reused small/middle marker offsets instead of the dot marker's actual center.
+
+The correction keeps the canonical breakpoint authority unchanged. At `max-sm`, the **entire** horizontal Steps composition switches to a vertical lane: full-width items, marker + copy in a row, and a connector centered under the marker. Above `sm`, horizontal title-inline Steps place the connector after title/subtitle copy; horizontal stacked-title Steps keep a marker-centered horizontal connector. Explicit vertical Steps use a marker-centered vertical connector, with dot-specific geometry.
+
+This is therefore a Responsive component-implementation reopening, not a new breakpoint, Layout, Spacing or Sizing authority. Browser evidence must now validate connector/copy geometry on both sides of `sm`, not only `flex-direction`.
+
 ## Acceptance
 
 Responsive can be certified only when:
@@ -71,3 +84,5 @@ Responsive can be certified only when:
 4. Steps stacks below `sm` and remains horizontal above `sm`;
 5. representative mobile/desktop product goldens remain stable;
 6. Blog/Gosso reciprocal consumer parity passes.
+
+Re-certification evidence (2026-09-19): CI #568 passed the expanded Responsive guard with zero arbitrary responsive variants and zero px-width media queries; Canonical Visual Golden Smoke #485 passed the strengthened Steps geometry/browser contract (60/60); Blog parity #546 and Gosso parity #541 passed.

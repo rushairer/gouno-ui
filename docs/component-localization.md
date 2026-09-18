@@ -64,7 +64,7 @@ Select clear/tag controls are independent native buttons; clearing calls the exi
 
 - `tests/core-localization.test.tsx`: defaults, nested providers, overrides, dynamic changes, portal copy, dynamic labels and ReactNode navigation text.
 - `tests/core-select-interaction.test.tsx`: keyboard clear, controlled requests, disabled tag removal, unique ARIA associations, search focus and input clearing.
-- `showcase/demos/core/config-provider/`: same-source default and bilingual interactive examples.
+- `showcase/demos/core/config-provider/`: same-source defaults plus a simultaneous zh-CN/en-US visible comparison. Select placeholder and Pagination copy make Provider effects directly observable, while an explicit Select placeholder demonstrates caller-copy precedence.
 - `docs/ui-interaction-review.md`: actual browser matrix and limitations, updated after validation.
 
 Public API default changes are documented in Unreleased. This change does not publish a package or assign a new release tag.

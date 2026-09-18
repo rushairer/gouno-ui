@@ -126,17 +126,19 @@ Phase 2/3 exits are backed by exact-head CI, canonical visual browser checks and
 
 Phase 4 — Interaction Foundations is active:
 
-- **Responsive 7/7** — canonical `sm/md/lg/xl/2xl` tiers own responsive adaptation; the former Steps arbitrary `531px` authority is removed.
+- **Responsive 7/7 (re-certified after FI-D001)** — canonical breakpoint authority remains unchanged; Steps now converts the complete max-sm composition and keeps connector geometry separate from copy across desktop horizontal and vertical-dot layouts.
 - **Motion 7/7** — CSS and JavaScript share one reduced-motion policy across imperative scrolling and Carousel lifecycle/autoplay.
 - **Focus 7/7** — Base fallback and component-owned focus share canonical 2px geometry, 3px/direct-`focus:ring`/double-outline bypasses are zero, browser focus ownership is executable, and Blog/Gosso reciprocal consumer parity is green.
 - **Overlay/layering 7/7** — semantic `sticky / shell / floating / modal / popup / notice` roles own application-global stacking; nested popup portals are deterministically above modal surfaces; raw global layer bypasses are zero; Showcase tooling is isolated outside the product Layer scale.
 - **Interaction state 7/7** — semantic state/ARIA ownership, geometry preservation and gesture ownership are guarded. FI-D002 Carousel nested pointer ownership plus missing arrow semantic slots are fixed and proven in a real browser.
 - **Color re-certified after FI-D004** — Tag close hover now derives from current/semantic foreground; raw product palette bypasses remain zero under the expanded guard.
 
-The component defect queue remains binding. FI-D002 Carousel is resolved/certified; FI-D004 Tag state-color regression discovered during this audit is also resolved/certified. FI-D001 Steps connector/copy geometry and FI-D003 ConfigProvider demo proof quality remain reopened and must be cleared before final certification.
+The post-Foundation component defect sweep is complete: FI-D001 Steps, FI-D002 Carousel, FI-D003 ConfigProvider and FI-D004 Tag are all resolved and their component reviews are restored to certified/reviewed state.
 
 Focus certification is backed by CI run 35360452646 (#544), Canonical Visual Golden Smoke run 35360452819 (#461), Blog Consumer Parity run 35360452821 (#522), and Gosso Admin Consumer Parity run 35360452653 (#517).
 
 Overlay certification is backed by CI run 35364329607 (#555), Canonical Visual Golden Smoke run 35364330737 (#472), Blog Consumer Parity run 35364330586 (#533), and Gosso Admin Consumer Parity run 35364329528 (#528).
 
 Interaction State certification and FI-D004 Color re-certification are backed by CI run 35367064494 (#562), Canonical Visual Golden Smoke run 35367064504 (#479), Blog Consumer Parity run 35367064487 (#540), and Gosso Admin Consumer Parity run 35367064636 (#535).
+
+FI-D001 Responsive re-certification and FI-D003 ConfigProvider Showcase certification are backed by CI run 35370575584 (#568), Canonical Visual Golden Smoke run 35370575666 (#485), Blog Consumer Parity run 35370575614 (#546), and Gosso Admin Consumer Parity run 35370575622 (#541).
