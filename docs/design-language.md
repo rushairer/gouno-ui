@@ -490,3 +490,22 @@ Application UI color is owned by semantic Theme roles rather than raw palette ut
 Fixed-color **content/media** is a separate category and must be explicit. QR modules/background remain black/white by default, and the Gosso MFA QR quiet zone remains white for scanning reliability. These values do not represent the application surface Theme.
 
 Caller-owned custom color APIs are also explicit exceptions: Tag custom color, Badge custom color and Timeline item color may render caller-provided values because the color itself is component data/configuration. Those APIs do not authorize product pages to bypass semantic UI colors elsewhere.
+
+## DL-20 — Responsive breakpoints are Foundation-owned
+
+Responsive composition uses one canonical tier scale:
+
+- `sm = 40rem`
+- `md = 48rem`
+- `lg = 64rem`
+- `xl = 80rem`
+- `2xl = 96rem`
+
+Core, Gouno, Patterns and product fixtures should express viewport adaptation through these named tiers. A raw arbitrary responsive variant such as `max-[531px]:...` is not a local styling detail: it creates a second responsive authority.
+
+CSS media queries that cannot directly consume Tailwind's breakpoint variables must mirror the same rem values and remain under Foundation guard. Do not introduce px-based copies of canonical breakpoints.
+
+A behavior-specific threshold outside the scale is allowed only when the component contract genuinely requires it, the exception is recorded in the Responsive inventory, and browser tests cover both sides of the threshold. No such exception is currently admitted.
+
+Responsive behavior does not redefine ControlSize, Density, Spacing or information hierarchy. It changes composition at a documented viewport tier; explicit component opt-outs such as `responsive={false}` remain local behavior controls.
+
