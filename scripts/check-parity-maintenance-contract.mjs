@@ -84,7 +84,6 @@ for (const workflow of workflows) {
 }
 
 const aiOpsAdaptiveRailFiles = [
-  "showcase/demos/products/blog-admin/ai/operations/automation-management.tsx",
   "showcase/demos/products/blog-admin/ai/operations/overview-inbox.tsx",
   "showcase/demos/products/blog-admin/ai/operations/automation-records.tsx",
 ];
@@ -102,6 +101,28 @@ for (const path of aiOpsAdaptiveRailFiles) {
       `${path}: missing adaptive master-detail rail marker ${marker}`,
     );
   }
+}
+
+const workflowManagementPath =
+  "showcase/demos/products/blog-admin/ai/operations/automation-management.tsx";
+const workflowManagementSource = await source(workflowManagementPath);
+for (const forbidden of ['data-slot="ops-rail"', 'data-slot="ops-rail-body"']) {
+  if (workflowManagementSource.includes(forbidden)) {
+    failures.push(
+      `${workflowManagementPath}: Workflow assets use list → dedicated detail under PI-06 and must not regress to a persistent master-detail rail (${forbidden})`,
+    );
+  }
+}
+for (const required of [
+  'aria-label="Workflow 列表"',
+  'data-slot="workflow-detail"',
+  '返回 Workflow 列表',
+]) {
+  requireText(
+    workflowManagementSource,
+    required,
+    `${workflowManagementPath}: missing dedicated Workflow list/detail contract marker ${required}`,
+  );
 }
 
 const goldenWorkflowPath = ".github/workflows/canonical-visual-golden.yml";
