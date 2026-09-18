@@ -5,6 +5,7 @@ import {
   Button,
   Empty,
   Field,
+  Heading,
   Pagination,
   SearchField,
   Segmented,
@@ -152,7 +153,7 @@ export function BlogArticleIndexDemo({
         ) : null}
         <div className="flex flex-col gap-8">
           <header>
-            <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
+            <Heading level={1} variant="page">{title}</Heading>
             <p className="mt-3 text-sm text-muted-foreground">
               {total} 篇文章，持续记录问题、选择与实现。
             </p>
