@@ -2,8 +2,8 @@ export type ControlSize = "small" | "middle" | "large";
 
 export function controlSizeClass(size: ControlSize) {
   return {
-    small: "h-8 text-sm",
-    middle: "h-9 text-sm",
-    large: "h-11 text-base",
+    small: "control-height-small text-sm",
+    middle: "control-height-middle text-sm",
+    large: "control-height-large text-base",
   }[size];
 }
