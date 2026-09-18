@@ -397,7 +397,7 @@ Rules:
 - A standalone Dedicated Editor without another page identity may use `level={1}` with the same `variant="task"`; changing semantic level must not change task-title size.
 - Card/region headings choose their semantic level from the document outline and their visual role from the region hierarchy. Do not use a smaller HTML level merely to get a smaller font.
 - Public reading/marketing surfaces may choose `display`/`hero` roles, but still use the canonical `Heading` scale rather than raw product-local font-size utilities.
-- `Text.size` continues to express body-density choices, but its implementation resolves through semantic body/caption tokens instead of Tailwind's raw default scale.
+- `Text.size` expresses body-density choices through semantic body/caption tokens. `Text.weight`, `Text.family` and `Text.leading` own canonical emphasis, font-family and readable line-height choices; product code must not recreate those metrics with `font-*`, `leading-*`, raw size utilities or font-family utilities in `className`.
 - Product code may extend color, measure, alignment and interaction styling through `className`, but canonical headings must not override font size, line-height, weight or tracking ad hoc.
 - Core compatibility may continue to infer a default visual variant from `level`, but admitted Gouno/Pattern compositions should state the intended visual role explicitly whenever the role is part of their contract.
 
