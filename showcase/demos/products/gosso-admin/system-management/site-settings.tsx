@@ -101,7 +101,7 @@ export function SiteSettingsPanel() {
           <div className="xl:sticky xl:top-4 xl:self-start">
             <Card padding="base" className="overflow-hidden">
               <div className="mb-4 flex items-center gap-2"><Image aria-hidden="true" className="size-4 text-muted-foreground" /><Text size="sm" className="font-medium">登录页预览</Text></div>
-              <div className="relative min-h-[430px] overflow-hidden rounded-xl border bg-muted/30 p-6">
+              <div data-slot="site-settings-login-preview" aria-label="登录页预览" className="relative min-h-[430px] overflow-hidden rounded-xl border bg-muted/30 p-6">
                 <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-muted/60" />
                 <div className="relative mx-auto mt-12 max-w-sm rounded-xl border bg-background/95 p-6">
                   <div className="mb-5 flex items-center gap-3">
