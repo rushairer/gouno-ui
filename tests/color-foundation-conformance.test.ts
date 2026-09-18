@@ -15,6 +15,12 @@ describe("Color Foundation conformance", () => {
     expect(provider).not.toContain('"#ffffff"');
   });
 
+  it("keeps a real browser theme-color target in the canonical Showcase", () => {
+    const index = source("showcase/index.html");
+
+    expect(index).toContain('<meta name="theme-color" content="">');
+  });
+
   it("defines an overlay foreground role for copy rendered on the overlay", () => {
     const tokens = source("src/tokens.css");
     const image = source("src/core/image.tsx");
