@@ -19,7 +19,7 @@
   ],
   "foundations": {
     "typography": {
-      "status": "reopened",
+      "status": "in_progress",
       "affectedComponentReviews": [
         "core-typography",
         "gouno-page-header",
@@ -36,27 +36,38 @@
           ]
         },
         "tokens": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
-            "src/tokens.css"
+            "src/tokens.css",
+            "src/core/typography.tsx",
+            "tests/core-typography.test.tsx",
+            "tests/typography-foundation-conformance.test.ts"
           ]
         },
         "authority": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "src/core/typography.tsx",
-            "src/gouno/page-header.tsx"
+            "src/gouno/page-header.tsx",
+            "showcase/components/patterns/dedicated-editor.tsx",
+            "docs/design-language.md"
           ]
         },
         "corpus": {
           "status": "in_progress",
           "evidence": [
-            "showcase/demos/products"
-          ]
+            "showcase/demos/products/blog-admin",
+            "showcase/demos/products/gosso-admin",
+            "scripts/check-foundation-integrity.mjs"
+          ],
+          "remainingNativeMetricBypasses": 173
         },
         "guard": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "tests/typography-foundation-conformance.test.ts",
+            "scripts/check-foundation-integrity.mjs"
+          ]
         },
         "visual": {
           "status": "pending",
