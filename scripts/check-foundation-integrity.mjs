@@ -960,6 +960,126 @@ if (responsive?.status !== "planned") {
   }
 }
 
+const motion = matrix.foundations.motion;
+if (motion?.status !== "planned") {
+  const baseSource = readFileSync(resolve(root, "src/base.css"), "utf8");
+  const motionSource = readFileSync(resolve(root, "src/lib/motion.ts"), "utf8");
+  const hookSource = readFileSync(
+    resolve(root, "src/hooks/use-reduced-motion.ts"),
+    "utf8",
+  );
+  const anchorSource = readFileSync(resolve(root, "src/core/anchor.tsx"), "utf8");
+  const affixSource = readFileSync(resolve(root, "src/core/affix.tsx"), "utf8");
+  const carouselSource = readFileSync(
+    resolve(root, "src/core/carousel.tsx"),
+    "utf8",
+  );
+
+  for (const marker of [
+    "@media (prefers-reduced-motion: reduce)",
+    "animation-duration: 0s !important;",
+    "animation-delay: 0s !important;",
+    "transition-duration: 0s !important;",
+    "transition-delay: 0s !important;",
+    "scroll-behavior: auto !important;",
+  ]) {
+    if (!baseSource.includes(marker)) {
+      failures.push("motion.guard: reduced-motion CSS authority changed: " + marker);
+    }
+  }
+
+  if (
+    !motionSource.includes(
+      'REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)"',
+    ) ||
+    !motionSource.includes("preferredScrollBehavior")
+  ) {
+    failures.push("motion.guard: shared JavaScript reduced-motion authority changed");
+  }
+  if (!hookSource.includes("window.matchMedia(REDUCED_MOTION_QUERY)")) {
+    failures.push("motion.guard: live reduced-motion hook escaped shared query authority");
+  }
+
+  for (const [name, source] of [
+    ["Anchor", anchorSource],
+    ["BackTop", affixSource],
+  ]) {
+    if (!source.includes("behavior: preferredScrollBehavior()")) {
+      failures.push("motion.guard: " + name + " escaped preferred scroll behavior");
+    }
+    if (/behavior\s*:\s*["']smooth["']/.test(source)) {
+      failures.push("motion.guard: " + name + " reintroduced hard-coded smooth scroll");
+    }
+  }
+
+  if (!carouselSource.includes("useReducedMotionPreference()")) {
+    failures.push("motion.guard: Carousel must consume live reduced-motion preference");
+  }
+  if (
+    (carouselSource.match(/transitionDuration: reducedMotion \? "0ms"/g) ?? [])
+      .length !== 2
+  ) {
+    failures.push(
+      "motion.guard: Carousel scrollx and fade inline transitions must both collapse under reduced motion",
+    );
+  }
+  if (
+    !carouselSource.includes(
+      "selected && autoplay && autoplayConfig?.dotDuration && !reducedMotion",
+    )
+  ) {
+    failures.push("motion.guard: Carousel autoplay-dot animation escaped reduced motion");
+  }
+  if (/matchMedia\?\.\(["']\(prefers-reduced-motion: reduce\)/.test(carouselSource)) {
+    failures.push("motion.guard: Carousel reintroduced a local reduced-motion query");
+  }
+
+  const collectMotionSources = (directory) =>
+    readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+      const file = join(directory, entry.name);
+      if (entry.isDirectory()) return collectMotionSources(file);
+      return entry.isFile() && /\.tsx?$/.test(file) ? [file] : [];
+    });
+
+  const sourceFiles = collectMotionSources(resolve(root, "src"));
+  const directSmoothScrollFiles = sourceFiles.filter((file) =>
+    /behavior\s*:\s*["']smooth["']/.test(readFileSync(file, "utf8")),
+  );
+  const directMotionQueryFiles = sourceFiles.filter((file) =>
+    /window\.matchMedia/.test(readFileSync(file, "utf8")),
+  );
+  const allowedMotionQueryFiles = new Set([
+    resolve(root, "src/lib/motion.ts"),
+    resolve(root, "src/hooks/use-reduced-motion.ts"),
+  ]);
+  const unexpectedMotionQueryFiles = directMotionQueryFiles.filter(
+    (file) => !allowedMotionQueryFiles.has(file),
+  );
+
+  const shortMotionPath = (file) =>
+    file.startsWith(root) ? file.slice(root.length + 1) : file;
+  process.stdout.write(
+    "Motion corpus audit: directSmoothScrollBypasses=" +
+      directSmoothScrollFiles.length +
+      ", unexpectedMotionQueryFiles=" +
+      unexpectedMotionQueryFiles.length +
+      "\n",
+  );
+
+  if (directSmoothScrollFiles.length !== 0) {
+    failures.push(
+      "motion.corpus: imperative smooth scroll must resolve through Motion authority: " +
+        directSmoothScrollFiles.map(shortMotionPath).join(", "),
+    );
+  }
+  if (unexpectedMotionQueryFiles.length !== 0) {
+    failures.push(
+      "motion.corpus: reduced-motion matchMedia queries must use shared authority: " +
+        unexpectedMotionQueryFiles.map(shortMotionPath).join(", "),
+    );
+  }
+}
+
 const density = matrix.foundations.density;
 if (density?.status !== "planned") {
   const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");
