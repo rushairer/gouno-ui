@@ -107,6 +107,6 @@ describe("Affix and BackTop 6F3", () => {
       expect.arrayContaining(["aria-label", "visibilityHeight", "onClick", "ref"]),
     );
     expect(componentProgress("core-affix", 62)).toBe(100);
-    expect(componentProgress("core-back-top", 68)).toBeLessThan(100);
+    expect(componentProgress("core-back-top", 68)).toBe(100);
   });
 });
