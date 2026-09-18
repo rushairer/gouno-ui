@@ -73,7 +73,7 @@ export function MfaPanel() {
                   <Text size="sm" tone="muted" leading="relaxed" className="mt-1">如果无法扫描，可以手动输入下面的密钥。真实产品中的密钥由服务端临时生成。</Text>
                 </div>
                 <div className="flex max-w-lg items-center justify-between gap-3 rounded-md border bg-muted/30 p-3">
-                  <code className="min-w-0 truncate font-mono text-xs">SHOWCASE-DEMO-KEY</code>
+                  <code className="min-w-0 truncate type-family-mono type-caption">SHOWCASE-DEMO-KEY</code>
                   <IconButton label="复制 MFA 密钥" icon={<Copy />} onClick={() => setStatus("MFA 密钥已复制（Showcase 模拟）。")} />
                 </div>
               </div>
@@ -118,7 +118,7 @@ export function MfaPanel() {
             <Heading id="gosso-backup-codes-heading" level={2} variant="compact">恢复备用代码</Heading>
             <Text size="sm" tone="muted">每个代码只能使用一次。请保存到与主身份验证器分离的安全位置。</Text>
             <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-              {backupCodes.map((code) => <code key={code} className="rounded-md border bg-muted/30 px-3 py-2 text-center font-mono text-sm">{code}</code>)}
+              {backupCodes.map((code) => <code key={code} className="rounded-md border bg-muted/30 px-3 py-2 text-center type-family-mono type-body-sm">{code}</code>)}
             </div>
             <div><Button size="small" icon={<Copy />} onClick={() => setStatus("备用代码已复制（Showcase 模拟）。")}>复制全部代码</Button></div>
           </section>

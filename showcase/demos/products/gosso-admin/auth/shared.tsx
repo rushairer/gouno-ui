@@ -43,7 +43,7 @@ export function DividerLabel({ children }: { children: ReactNode }) {
   return (
     <div className="relative my-5 flex items-center justify-center">
       <div className="absolute inset-x-0 border-t" />
-      <span className="relative bg-card px-2 text-xs uppercase text-muted-foreground">{children}</span>
+      <span className="relative bg-card px-2 type-caption uppercase text-muted-foreground">{children}</span>
     </div>
   );
 }

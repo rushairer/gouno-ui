@@ -43,7 +43,7 @@ export function SettingRow({ label, children }: SettingRowProps) {
   return (
     <div className="grid gap-2 border-t py-4 first:border-t-0 first:pt-0 last:pb-0 sm:grid-cols-[180px_minmax(0,1fr)] sm:gap-6">
       <dt className="type-body-sm type-weight-medium text-muted-foreground">{label}</dt>
-      <dd className="m-0 min-w-0 text-sm">{children}</dd>
+      <dd className="m-0 min-w-0 type-body-sm">{children}</dd>
     </div>
   );
 }

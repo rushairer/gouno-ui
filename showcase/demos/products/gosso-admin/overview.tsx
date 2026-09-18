@@ -99,8 +99,8 @@ function QuickLinkCard({ link }: { link: QuickLink }) {
         {link.icon}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-base font-semibold">{link.title}</span>
-        <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">{link.description}</span>
+        <span className="block type-body type-weight-semibold">{link.title}</span>
+        <span className="mt-1 block type-caption type-leading-relaxed text-muted-foreground">{link.description}</span>
       </span>
       <ArrowRight aria-hidden="true" className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
     </a>

@@ -127,10 +127,10 @@ export function AuditLogsPanel() {
             <TableBody>
               {visible.map((log) => (
                 <TableRow key={log.id}>
-                  <TableCell className="font-mono text-xs text-muted-foreground">{log.time}</TableCell>
+                  <TableCell className="type-family-mono type-caption text-muted-foreground">{log.time}</TableCell>
                   <TableCell><Tag color={log.action.includes("reset") || log.action.includes("rotate") ? "warning" : "default"}>{log.action}</Tag></TableCell>
-                  <TableCell className="font-mono text-xs">{log.actor}</TableCell>
-                  <TableCell className="font-mono text-xs text-muted-foreground">{log.accountId}</TableCell>
+                  <TableCell className="type-family-mono type-caption">{log.actor}</TableCell>
+                  <TableCell className="type-family-mono type-caption text-muted-foreground">{log.accountId}</TableCell>
                   <TableCell className="text-right"><Button size="small" onClick={() => setSelected(log)}>查看</Button></TableCell>
                 </TableRow>
               ))}
@@ -149,12 +149,12 @@ export function AuditLogsPanel() {
       <Modal open={Boolean(selected)} title="审计事件详情" onOpenChange={(next) => { if (!next) setSelected(null); }} footer={<Button onClick={() => setSelected(null)}>关闭</Button>}>
         {selected ? (
           <dl className="grid gap-3 text-sm sm:grid-cols-[120px_1fr]">
-            <dt className="text-muted-foreground">Event ID</dt><dd className="font-mono">{selected.id}</dd>
+            <dt className="text-muted-foreground">Event ID</dt><dd className="type-family-mono">{selected.id}</dd>
             <dt className="text-muted-foreground">时间</dt><dd>{selected.time}</dd>
-            <dt className="text-muted-foreground">Action</dt><dd className="font-mono">{selected.action}</dd>
-            <dt className="text-muted-foreground">Actor</dt><dd className="font-mono">{selected.actor}</dd>
-            <dt className="text-muted-foreground">Target</dt><dd className="font-mono">{selected.accountId}</dd>
-            <dt className="text-muted-foreground">IP</dt><dd className="font-mono">{selected.ip}</dd>
+            <dt className="text-muted-foreground">Action</dt><dd className="type-family-mono">{selected.action}</dd>
+            <dt className="text-muted-foreground">Actor</dt><dd className="type-family-mono">{selected.actor}</dd>
+            <dt className="text-muted-foreground">Target</dt><dd className="type-family-mono">{selected.accountId}</dd>
+            <dt className="text-muted-foreground">IP</dt><dd className="type-family-mono">{selected.ip}</dd>
             <dt className="text-muted-foreground">Details</dt><dd>{selected.details}</dd>
           </dl>
         ) : null}

@@ -94,7 +94,7 @@ export function PasskeysPanel() {
                   </span>
                   <div className="min-w-0">
                     <Text as="div" weight="semibold" className="truncate">{passkey.name}</Text>
-                    <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                    <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 type-caption text-muted-foreground">
                       <span>{passkey.detail}</span>
                       <span className="flex items-center gap-1"><Calendar aria-hidden="true" className="size-3" />{passkey.createdAt}</span>
                     </div>
@@ -159,11 +159,11 @@ export function SessionsPanel() {
                   <TableCell>
                     <div className="flex min-w-52 items-center gap-2">
                       <Laptop aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
-                      <span className="font-medium">{session.device}</span>
+                      <span className="type-weight-medium">{session.device}</span>
                       {session.current ? <Tag color="success">当前会话</Tag> : null}
                     </div>
                   </TableCell>
-                  <TableCell><span className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground"><MapPin aria-hidden="true" className="size-3" />{session.ip}</span></TableCell>
+                  <TableCell><span className="flex items-center gap-1.5 type-family-mono type-caption text-muted-foreground"><MapPin aria-hidden="true" className="size-3" />{session.ip}</span></TableCell>
                   <TableCell className="whitespace-nowrap text-sm text-muted-foreground">{session.lastActive}</TableCell>
                   <TableCell className="text-right">
                     {session.current ? (
