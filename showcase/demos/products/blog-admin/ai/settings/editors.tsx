@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Bot, DatabaseZap, KeyRound, ListChecks, LockKeyhole } from "lucide-react";
+import { DatabaseZap, KeyRound, LockKeyhole } from "lucide-react";
 import {
   Button,
   Card,
@@ -11,7 +11,6 @@ import {
   Form,
   FormActions,
   FormGrid,
-  Heading,
   Input,
   Select,
   Switch,
@@ -26,6 +25,11 @@ import type {
   ProviderFixture,
   SkillFixture,
 } from "./fixtures";
+import {
+  DedicatedEditorActions,
+  DedicatedEditorLayout,
+  DedicatedEditorSection,
+} from "../../../../../components/patterns/dedicated-editor";
 
 export type AISettingsEditorState =
   | { kind: "agent"; value: AgentFixture | "new" }
@@ -121,20 +125,6 @@ function objectSchema(values: Record<string, FormDataEntryValue>, key: string, f
   }
 }
 
-function EditorHeader({ title, description, icon }: { title: string; description: string; icon: ReactNode }) {
-  return (
-    <div className="flex items-start gap-3">
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent text-primary" aria-hidden="true">
-        {icon}
-      </span>
-      <div className="min-w-0">
-        <Heading level={2} className="text-lg">{title}</Heading>
-        <Text size="sm" tone="muted">{description}</Text>
-      </div>
-    </div>
-  );
-}
-
 function EditorSection({
   title,
   description,
@@ -205,15 +195,11 @@ function AgentEditor({
       }}
     >
       <div className="flex flex-col gap-5">
-        <EditorHeader
-          title={initial ? `编辑 Agent：${initial.name}` : "创建 Agent"}
-          description="Agent 只绑定稳定的模型与 Skill Version；调度、预算和限制覆盖属于运行治理，不复制 Skill 的安全边界。"
-          icon={<Bot />}
-        />
 
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1.12fr)_minmax(20rem,0.88fr)]">
-          <div className="flex min-w-0 flex-col gap-5">
-            <EditorSection title="基础信息" description="名称、说明与启停状态表达这个 Agent 在运营中的职责。">
+        <DedicatedEditorLayout
+          primary={(
+            <>
+            <DedicatedEditorSection title="基础信息" description="名称、说明与启停状态表达这个 Agent 在运营中的职责。">
               <div className="flex flex-col gap-5">
                 <Field label="Agent 名称" required>
                   <Input name="name" defaultValue={initial?.name} placeholder="Content Maintainer" />
@@ -225,9 +211,9 @@ function AgentEditor({
                   <Switch name="enabled" defaultChecked={initial?.enabled ?? false} label="启用 Agent" />
                 </Field>
               </div>
-            </EditorSection>
+            </DedicatedEditorSection>
 
-            <EditorSection title="能力绑定" description="模型可以跟随默认连接；行为、Tool 授权、发布策略与安全上限由绑定的 Skill Version 固定。">
+            <DedicatedEditorSection title="能力绑定" description="模型可以跟随默认连接；行为、Tool 授权、发布策略与安全上限由绑定的 Skill Version 固定。">
               <div className="flex flex-col gap-5">
                 <FormGrid columns={2}>
                   <Field label="模型连接">
@@ -254,11 +240,12 @@ function AgentEditor({
                   </div>
                 ) : null}
               </div>
-            </EditorSection>
-          </div>
-
-          <div className="flex min-w-0 flex-col gap-5">
-            <EditorSection title="运行计划" description="触发方式决定何时发起运行；正式执行仍受权限、审批和运行状态约束。">
+            </DedicatedEditorSection>
+            </>
+          )}
+          secondary={(
+            <>
+            <DedicatedEditorSection title="运行计划" description="触发方式决定何时发起运行；正式执行仍受权限、审批和运行状态约束。">
               <div className="flex flex-col gap-5">
                 <Field label="触发方式">
                   <Select name="triggerType" defaultValue={initial?.triggerType || (initial?.schedule && initial.schedule !== "手动" ? "cron" : "manual")}>
@@ -279,9 +266,9 @@ function AgentEditor({
                   </div>
                 ) : null}
               </div>
-            </EditorSection>
+            </DedicatedEditorSection>
 
-            <EditorSection title="运行治理" description="Agent 可以设置运行次数和月度预算，并只允许把 Skill 的最大限制向下收紧。">
+            <DedicatedEditorSection title="运行治理" description="Agent 可以设置运行次数和月度预算，并只允许把 Skill 的最大限制向下收紧。">
               <div className="flex flex-col gap-5">
                 <FormGrid columns={2}>
                   <Field label="日运行上限">
@@ -307,14 +294,15 @@ function AgentEditor({
                   </Field>
                 </FormGrid>
               </div>
-            </EditorSection>
-          </div>
-        </div>
+            </DedicatedEditorSection>
+            </>
+          )}
+        />
 
-        <FormActions>
+        <DedicatedEditorActions>
           <Button type="button" variant="outline" onClick={onCancel}>取消</Button>
           <Button type="submit" variant="solid" color="primary">保存 Agent</Button>
-        </FormActions>
+        </DedicatedEditorActions>
       </div>
     </Form>
   );
@@ -371,15 +359,11 @@ function SkillEditor({
       }}
     >
       <div className="flex flex-col gap-5">
-        <EditorHeader
-          title={initial ? `编辑 Skill：${initial.name}` : "创建 Skill"}
-          description="Skill Version 是行为与安全边界的稳定合同：固定指令、Tool 授权、发布策略、触发器和默认治理限制都在这里定义。"
-          icon={<ListChecks />}
-        />
 
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1.16fr)_minmax(21rem,0.84fr)]">
-          <div className="flex min-w-0 flex-col gap-5">
-            <EditorSection title="能力定义" description="先定义职责和固定指令，再决定允许它调用哪些 Tool。">
+        <DedicatedEditorLayout
+          primary={(
+            <>
+            <DedicatedEditorSection title="能力定义" description="先定义职责和固定指令，再决定允许它调用哪些 Tool。">
               <div className="flex flex-col gap-5">
                 <Field label="Skill 名称" required>
                   <Input name="name" defaultValue={initial?.name} placeholder="SEO Review" />
@@ -391,9 +375,9 @@ function SkillEditor({
                   <Textarea name="systemPrompt" defaultValue={initial?.systemPrompt} rows={7} className="font-mono" />
                 </Field>
               </div>
-            </EditorSection>
+            </DedicatedEditorSection>
 
-            <EditorSection title="Tool 授权" description="只勾选这项能力真正需要的 Tool；建议模式应避免写入型能力。">
+            <DedicatedEditorSection title="Tool 授权" description="只勾选这项能力真正需要的 Tool；建议模式应避免写入型能力。">
               <div className="grid gap-3 sm:grid-cols-2">
                 {fixture.tools.map((tool) => (
                   <label key={tool.name} className="flex items-start gap-3 rounded-md border p-4">
@@ -409,9 +393,9 @@ function SkillEditor({
                   </label>
                 ))}
               </div>
-            </EditorSection>
+            </DedicatedEditorSection>
 
-            <EditorSection title="输入契约" description="输入 Schema 是 Skill Version 的一部分，用来约束 Workflow 或人工运行传入的数据。">
+            <DedicatedEditorSection title="输入契约" description="输入 Schema 是 Skill Version 的一部分，用来约束 Workflow 或人工运行传入的数据。">
               <Field label="输入 JSON Schema（Draft 2020-12）">
                 <Textarea
                   name="inputSchema"
@@ -420,11 +404,12 @@ function SkillEditor({
                   className="font-mono"
                 />
               </Field>
-            </EditorSection>
-          </div>
-
-          <div className="flex min-w-0 flex-col gap-5">
-            <EditorSection title="执行与发布边界" description="执行模式、发布策略与允许触发器属于 Skill Version，不由 Agent 临时放宽。">
+            </DedicatedEditorSection>
+            </>
+          )}
+          secondary={(
+            <>
+            <DedicatedEditorSection title="执行与发布边界" description="执行模式、发布策略与允许触发器属于 Skill Version，不由 Agent 临时放宽。">
               <div className="flex flex-col gap-5">
                 <Field label="执行模式">
                   <Select name="executionMode" defaultValue={initial?.executionMode || "advisory"}>
@@ -459,9 +444,9 @@ function SkillEditor({
                   </div>
                 ) : null}
               </div>
-            </EditorSection>
+            </DedicatedEditorSection>
 
-            <EditorSection title="默认治理限制" description="这些是 Skill 的安全与成本上限；Agent 只能继承或进一步调低，不能放宽。">
+            <DedicatedEditorSection title="默认治理限制" description="这些是 Skill 的安全与成本上限；Agent 只能继承或进一步调低，不能放宽。">
               <div className="flex flex-col gap-5">
                 <FormGrid columns={2}>
                   <Field label="Max steps">
@@ -481,14 +466,15 @@ function SkillEditor({
                   <Input name="defaultMonthlyTokenBudget" type="number" min={1} defaultValue={String(initial?.defaultMonthlyTokenBudget ?? 1000000)} />
                 </Field>
               </div>
-            </EditorSection>
-          </div>
-        </div>
+            </DedicatedEditorSection>
+            </>
+          )}
+        />
 
-        <FormActions>
+        <DedicatedEditorActions>
           <Button type="button" variant="outline" onClick={onCancel}>取消</Button>
           <Button type="submit" variant="solid" color="primary">保存 Skill</Button>
-        </FormActions>
+        </DedicatedEditorActions>
       </div>
     </Form>
   );
