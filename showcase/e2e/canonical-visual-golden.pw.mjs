@@ -250,6 +250,43 @@ test("density-global-compact-default-table-geometry", async ({ page }) => {
     });
 });
 
+test("border-semantic-width-geometry", async ({ page }) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-ai-operations",
+    viewport: desktop,
+    ready: '[role="tablist"]',
+  });
+
+  await page.getByRole("tab", { name: "运行中心" }).click();
+  const selectedRun = page
+    .locator('[data-slot="ops-rail"] button[aria-pressed="true"]')
+    .first();
+  await expect(selectedRun).toBeVisible();
+  expect(
+    await selectedRun.evaluate(
+      (element) => getComputedStyle(element).borderInlineStartWidth,
+    ),
+  ).toBe("2px");
+
+  await prepareLightFixture(page, {
+    workspace: "blog",
+    brand: "blog",
+    fixture: "blog-article-detail",
+    viewport: desktop,
+    ready: "#public-main",
+  });
+
+  const readingQuote = page.locator("#public-main blockquote").first();
+  await expect(readingQuote).toBeVisible();
+  expect(
+    await readingQuote.evaluate(
+      (element) => getComputedStyle(element).borderInlineStartWidth,
+    ),
+  ).toBe("4px");
+});
+
 const darkScenarios = [
   {
     name: "blog-home-desktop-dark",
