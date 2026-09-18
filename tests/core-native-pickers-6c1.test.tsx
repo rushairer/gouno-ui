@@ -37,7 +37,7 @@ describe("Core native pickers 6C1", () => {
     expect(input.getAttribute("data-slot")).toBe("time-picker");
     expect(input.getAttribute("data-status")).toBe("error");
     expect(input.getAttribute("aria-invalid")).toBe("true");
-    expect(input.className).toContain("control-height-large");
+    expect(input.className).toContain("h-[var(--control-height-large)]");
 
     fireEvent.change(input, { target: { value: "10:15" } });
     expect(onChange).toHaveBeenCalled();
@@ -82,7 +82,7 @@ describe("Core native pickers 6C1", () => {
     expect(input.getAttribute("data-slot")).toBe("color-picker");
     expect(input.getAttribute("data-status")).toBe("error");
     expect(input.getAttribute("aria-invalid")).toBe("true");
-    expect(input.className).toContain("control-height-small");
+    expect(input.className).toContain("h-[var(--control-height-small)]");
 
     fireEvent.change(input, { target: { value: "#ff0000" } });
     expect(onChange).toHaveBeenCalled();
