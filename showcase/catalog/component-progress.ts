@@ -268,6 +268,15 @@ for (const id of ["core-anchor", "core-back-top", "core-carousel"]) {
   };
 }
 
+for (const id of ["core-button","core-input","core-textarea","core-checkbox","core-radio","core-switch","core-tabs","core-badge","core-select","core-modal","core-drawer"]) {
+  componentReviews[id] = {
+    status: "reopened",
+    scope: "FI-001 Phase 4: Focus Foundation reopened because Base fallback, Core and primitive controls used split 2px/3px geometry, Tabs could double-render outline + ring, and Dialog/Sheet close controls used focus instead of focus-visible.",
+    evidence: ["docs/foundation-focus-inventory.md", "foundation-integrity.json", "src/tokens.css", "src/base.css", "src/components/primitives"],
+    baseline: "FI-001 Phase 4 Focus / 2026-09-18",
+  };
+}
+
 componentReviews["pattern-dedicated-editor"] = {
   status: "reviewed",
   scope: "FI-001 certified: Dedicated Editor explicitly separates nested/standalone heading semantics from task-title visual hierarchy and stays under the canonical Typography guard.",
