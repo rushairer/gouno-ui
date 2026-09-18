@@ -31,6 +31,7 @@ Next action:
 
 - reproduce through Playwright pointer/click behavior;
 - ensure drag gesture ownership ignores interactive descendants or otherwise separates arrow hit targets from draggable pointer capture;
+- restore the documented `carousel-prev-arrow` / `carousel-next-arrow` semantic slots on the real buttons;
 - add a browser contract proving previous/next buttons change the active slide;
 - close during Interaction State Foundation at the latest.
 
