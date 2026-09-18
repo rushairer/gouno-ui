@@ -321,7 +321,7 @@ export function BlogAdminSiteSettingsDemo() {
                   <div className="flex items-center gap-3 rounded-lg border bg-muted/30 p-4">
                     <div className="flex size-10 items-center justify-center rounded-lg border bg-background text-sm font-bold text-primary">GB</div>
                     <div className="min-w-0">
-                      <Text size="sm" className="font-medium">Favicon 预览</Text>
+                      <Text size="sm" weight="medium">Favicon 预览</Text>
                       <code className="mt-1 block truncate text-xs text-muted-foreground">{settings.favicon_url || "未配置"}</code>
                     </div>
                   </div>
@@ -365,7 +365,7 @@ export function BlogAdminSiteSettingsDemo() {
                   {settings.hero_image_url ? (
                     <div className="flex items-center justify-between gap-3 rounded-lg border bg-muted/30 p-4">
                       <div className="min-w-0">
-                        <Text size="sm" className="font-medium">Hero 插图</Text>
+                        <Text size="sm" weight="medium">Hero 插图</Text>
                         <code className="mt-1 block truncate text-xs text-muted-foreground">{settings.hero_image_url}</code>
                       </div>
                       <Button size="small" variant="ghost" onClick={() => field("hero_image_url", "")}>清空插图</Button>

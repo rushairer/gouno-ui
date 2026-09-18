@@ -525,7 +525,7 @@ export function BlogAdminPostEditorDemo({
   const fixtureControls = (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-1.5">
-        <Text size="sm" className="font-medium">路由状态</Text>
+        <Text size="sm" weight="medium">路由状态</Text>
         <Segmented<EditorRoute>
           aria-label="PostEditor 路由状态"
           options={routeOptions}
@@ -535,7 +535,7 @@ export function BlogAdminPostEditorDemo({
         />
       </div>
       <div className="flex flex-col gap-1.5">
-        <Text size="sm" className="font-medium">请求状态</Text>
+        <Text size="sm" weight="medium">请求状态</Text>
         <Segmented<FixtureScenario>
           aria-label="PostEditor Fixture 状态"
           options={scenarioOptions}
@@ -770,7 +770,7 @@ export function BlogAdminPostEditorDemo({
   const inspector = (
   <fieldset disabled={readOnly} className="min-w-0 border-0 p-0">
     <div className="min-h-9 border-b pb-3">
-      <Text className="font-semibold">属性</Text>
+      <Text weight="semibold">属性</Text>
       <Text size="xs" tone="muted" className="mt-0.5 block">发布、组织、封面与 SEO。</Text>
     </div>
 
@@ -1075,7 +1075,7 @@ setSelectedSummaryCandidate(null);
 
           <div>
             <div className="mb-2">
-              <Text className="font-medium">正文</Text>
+              <Text weight="medium">正文</Text>
               <Text size="xs" tone="muted" className="mt-1 block">Markdown 编辑、分屏与预览共用同一编辑器。</Text>
             </div>
             <MarkdownEditor
@@ -1129,7 +1129,7 @@ setSelectedSummaryCandidate(null);
               {generatedContent ? (
                 <div className="rounded-md border bg-background p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <Text className="font-semibold">生成结果预览</Text>
+                    <Text weight="semibold">生成结果预览</Text>
                     <div className="flex flex-wrap gap-2">
                       {editorSelection?.text ? (
                         <Button size="small" variant="solid" color="primary" onClick={() => applyGeneratedContent("replace-selection")}>替换所选</Button>
@@ -1251,7 +1251,7 @@ setSelectedSummaryCandidate(null);
       >
         {restoreTarget ? (
           <div className="max-h-72 overflow-auto rounded-md border bg-muted/20 p-4">
-            <Text className="font-semibold">{restoreTarget.title}</Text>
+            <Text weight="semibold">{restoreTarget.title}</Text>
             <pre className="mt-3 whitespace-pre-wrap text-sm leading-6 text-muted-foreground">{restoreTarget.content}</pre>
           </div>
         ) : null}

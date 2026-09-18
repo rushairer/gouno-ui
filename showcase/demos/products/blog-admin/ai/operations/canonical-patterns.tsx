@@ -132,7 +132,7 @@ export function OpsRegionHeading({
       <div className="min-w-0">
         <Heading level={3} variant="label">{title}</Heading>
         {description ? (
-          <Text size="xs" tone="muted" className="mt-1 max-w-3xl leading-5">
+          <Text size="xs" tone="muted" leading="relaxed" className="mt-1 max-w-3xl">
             {description}
           </Text>
         ) : null}

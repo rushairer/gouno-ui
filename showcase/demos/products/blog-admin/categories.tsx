@@ -330,7 +330,7 @@ export function BlogAdminCategoriesDemo() {
                     <Checkbox aria-label={`选择分类 ${category.name}`} checked={selected.includes(category.id)} onChange={(event) => setSelection(category.id, event.target.checked)} />
                     <div className="min-w-0 flex-1">
                       <strong className="block text-sm font-semibold text-foreground">{category.name}</strong>
-                      <Text size="xs" tone="muted" className="mt-1 leading-relaxed">{category.description}</Text>
+                      <Text size="xs" tone="muted" leading="relaxed" className="mt-1">{category.description}</Text>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-3 rounded-md bg-muted/35 p-3 text-xs">

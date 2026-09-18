@@ -459,7 +459,7 @@ export function BlogAdminNotificationsDemo() {
                         {unread ? <span className="size-2 rounded-full bg-primary" aria-label="未读" /> : null}
                         <time className="font-mono text-xs text-muted-foreground">{item.createdAt}</time>
                       </div>
-                      <Text size="xs" tone="muted" className="mt-1 line-clamp-2 leading-relaxed">{item.body}</Text>
+                      <Text size="xs" tone="muted" leading="relaxed" className="mt-1 line-clamp-2">{item.body}</Text>
                       {item.relatedTitle ? <Text size="xs" tone="muted" className="mt-1">关联内容：{item.relatedTitle}</Text> : null}
                     </div>
                   </div>
