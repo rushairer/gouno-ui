@@ -1,10 +1,11 @@
 import { useState, type ReactNode } from "react";
 import { Alert, Button, Card, Modal, Text } from "../../../../../src/core";
-import { TabPanelLead } from "../../../../components/tab-panel-lead";
+import { TabPanelFeedback, TabPanelLead } from "../../../../components/tab-panel-lead";
 
 export interface SectionProps {
   description?: ReactNode;
   actions?: ReactNode;
+  feedback?: ReactNode;
   surface?: "card" | "direct";
   children: ReactNode;
 }
@@ -24,10 +25,11 @@ export interface ConfirmActionProps {
   onConfirm: () => void;
 }
 
-export function Section({ description, actions, surface = "card", children }: SectionProps) {
+export function Section({ description, actions, feedback, surface = "card", children }: SectionProps) {
   return (
     <div className="flex flex-col gap-5">
       <TabPanelLead description={description} actions={actions} />
+      <TabPanelFeedback>{feedback}</TabPanelFeedback>
       {surface === "card" ? (
         <Card padding="base" className="overflow-hidden">{children}</Card>
       ) : children}
