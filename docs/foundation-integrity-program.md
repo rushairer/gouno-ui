@@ -135,6 +135,8 @@ Phase 4 — Interaction Foundations is active:
 
 The post-Foundation component defect sweep is complete: FI-D001 Steps, FI-D002 Carousel, FI-D003 ConfigProvider and FI-D004 Tag are all resolved and their component reviews are restored to certified/reviewed state.
 
+Phase 5 — Accessibility Foundation is active. The semantic-owner audit has identified and corrected five Core defects: FormField → composite Select naming/required propagation, contextual Collapse switcher naming, contextual Tree switcher naming, localized Modal/Drawer surface + close naming, and Tag checkable+closable nested interaction. Landmark/skip-link, PageSkeleton live-region, native Table semantics and real-browser overlay focus containment are now part of the certification evidence.
+
 Focus certification is backed by CI run 35360452646 (#544), Canonical Visual Golden Smoke run 35360452819 (#461), Blog Consumer Parity run 35360452821 (#522), and Gosso Admin Consumer Parity run 35360452653 (#517).
 
 Overlay certification is backed by CI run 35364329607 (#555), Canonical Visual Golden Smoke run 35364330737 (#472), Blog Consumer Parity run 35364330586 (#533), and Gosso Admin Consumer Parity run 35364329528 (#528).
