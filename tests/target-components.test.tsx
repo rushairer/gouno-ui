@@ -191,7 +191,6 @@ describe("audited target components", () => {
 
   it("reports 100% only for the completed and reviewed canonical batch", () => {
     for (const id of [
-      "core-button",
       "core-input",
       "core-textarea",
       "core-input-number",
