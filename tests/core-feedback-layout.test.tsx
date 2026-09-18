@@ -22,6 +22,7 @@ describe("Core layout and feedback", () => {
     expect(root.getAttribute("data-slot")).toBe("space");
     expect(root.getAttribute("data-block")).toBe("true");
     expect(root.className).toContain("w-full");
+    expect(root.className).toContain("gap-space-md");
     expect(root.querySelectorAll("button")).toHaveLength(2);
     expect(root.textContent).toContain("|");
     expect(root.className).not.toContain("items-start");
