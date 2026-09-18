@@ -55,13 +55,16 @@ describe("semantic elevation system", () => {
     expect(button).toContain('link: "text-primary underline-offset-4 hover:underline"');
     expect(segmented).toContain("peer-checked:shadow-control");
   });
-  it("keeps product-owned elevation on the audited whitelist", () => {
+  it("keeps product elevation component-owned and raised Cards on the audited whitelist", () => {
     const overview = source("showcase/demos/products/gosso-admin/overview.tsx");
     const auth = source("showcase/demos/products/gosso-admin/auth/shared.tsx");
     const notFound = source("showcase/demos/products/gosso-admin/auth/not-found.tsx");
 
-    expect(overview).toContain("shadow-surface");
-    expect(overview).toContain("hover:shadow-raised");
+    expect(overview).toContain("<Card");
+    expect(overview).toContain("interactive");
+    expect(overview).toContain('padding="none"');
+    expect(overview).not.toContain("shadow-surface");
+    expect(overview).not.toContain("hover:shadow-raised");
     expect(overview).toContain('variant="elevated"');
     expect(auth).toContain('variant="elevated"');
     expect(notFound).toContain('variant="elevated"');
