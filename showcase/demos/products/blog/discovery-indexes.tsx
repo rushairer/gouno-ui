@@ -5,7 +5,7 @@ import {
   type ReactNode,
 } from "react";
 import { ArrowRight } from "lucide-react";
-import { Alert, Button, Card, Empty, Segmented } from "../../../../src/core";
+import { Alert, Button, Card, Empty, Heading, Segmented } from "../../../../src/core";
 import { PageHeader } from "../../../../src/gouno";
 import { FixtureDock } from "../../../components/fixture-dock";
 import { blogCategories, blogPosts, blogTags } from "./public-content";
@@ -94,9 +94,9 @@ function CategoriesBody({ onNavigate }: { onNavigate: (target: string) => void }
             <span className="text-xs font-mono text-primary">
               {String(index + 1).padStart(2, "0")}
             </span>
-            <h2 className="mt-3 text-lg font-semibold tracking-tight group-hover:text-primary">
+            <Heading level={2} variant="subsection" className="mt-3 group-hover:text-primary">
               {item.name}
-            </h2>
+            </Heading>
             <p className="mt-2 min-h-12 text-sm leading-6 text-muted-foreground">
               {item.description}
             </p>
@@ -166,12 +166,12 @@ function ArchiveBody({ onNavigate }: { onNavigate: (target: string) => void }) {
           key={period}
           className="border-t pt-5 first:border-0 first:pt-0"
         >
-          <h2 className="flex items-baseline gap-3 text-lg font-semibold tracking-tight">
+          <Heading level={2} variant="subsection" className="flex items-baseline gap-3">
             {period}
             <small className="text-xs font-normal text-muted-foreground">
               {items.length}
             </small>
-          </h2>
+          </Heading>
           <div className="mt-3 divide-y">
             {items.map((post) => {
               const target = `/articles/${post.slug}`;
