@@ -330,9 +330,12 @@ test("focus-canonical-fallback-and-component-ring", async ({ page }) => {
     ready: '[data-slot="button"]',
   });
 
-  await page.keyboard.press("Tab");
-
   const owned = page.locator('[data-slot="button"]').first();
+  const restingBoxShadow = await owned.evaluate(
+    (element) => getComputedStyle(element).boxShadow,
+  );
+
+  await page.keyboard.press("Tab");
   await owned.focus();
   const ownedStyle = await owned.evaluate((element) => {
     const style = getComputedStyle(element);
@@ -346,7 +349,7 @@ test("focus-canonical-fallback-and-component-ring", async ({ page }) => {
 
   expect(ownedStyle.focusVisible).toBe(true);
   expect(ownedStyle.outlineStyle).toBe("none");
-  expect(ownedStyle.boxShadow).not.toBe("none");
+  expect(ownedStyle.boxShadow).not.toBe(restingBoxShadow);
 
   await page.evaluate(() => {
     const probe = document.createElement("button");
