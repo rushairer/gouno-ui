@@ -76,11 +76,13 @@
           ]
         },
         "consumers": {
-          "status": "pending",
+          "status": "blocked",
           "evidence": [
             ".github/workflows/blog-consumer-parity.yml",
-            ".github/workflows/gosso-consumer-parity.yml"
-          ]
+            ".github/workflows/gosso-admin-consumer-parity.yml",
+            "Blog Consumer Parity run 35320174721: current Blog npm dependency renders PageHeader at 24/30 while candidate page role is 30/36"
+          ],
+          "blocker": "Publish the completed Typography Foundation as the next @gouno/ui npm release, then upgrade gouno-blog and re-run reciprocal parity."
         }
       }
     },
