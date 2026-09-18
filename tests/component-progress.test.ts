@@ -30,9 +30,6 @@ describe("audited batch completion", () => {
   it("reports the completed same-source and reading-evidence Core batch as complete", () => {
     for (const id of [
       "core-avatar",
-      "core-space",
-      "core-flex",
-      "core-grid",
       "core-separator",
       "core-splitter",
       "core-card",
@@ -71,6 +68,9 @@ describe("audited batch completion", () => {
       "gouno-page-header",
       "pattern-dedicated-editor",
       "gouno-page-container",
+      "core-space",
+      "core-flex",
+      "core-grid",
     ]) {
       expect(componentProgress(id, 0), id).toBeLessThan(100);
     }
