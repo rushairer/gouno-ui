@@ -1542,10 +1542,11 @@ if (accessibility?.status !== "planned") {
 
   for (const marker of [
     "const labelId =",
-    "childOwnsAccessibleName",
-    "aria-labelledby={childOwnsAccessibleName ? labelId : undefined}",
-    "htmlFor={childOwnsAccessibleName ? undefined : controlId}",
-    '"aria-labelledby": childOwnsAccessibleName',
+    "childHasOwnAccessibleName",
+    "groupsIndependentControl",
+    "aria-labelledby={groupsIndependentControl ? labelId : undefined}",
+    "htmlFor={groupsIndependentControl ? undefined : controlId}",
+    '"aria-labelledby":',
   ]) {
     if (!fieldSource.includes(marker)) {
       failures.push(
