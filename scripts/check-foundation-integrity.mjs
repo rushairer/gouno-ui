@@ -190,6 +190,30 @@ if (typography) {
 }
 
 
+const spacing = matrix.foundations.spacing;
+if (spacing?.status !== "planned") {
+  const layoutSource = readFileSync(resolve(root, "src/core/layout.tsx"), "utf8");
+  const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");
+  for (const name of ["xs", "sm", "md", "lg", "xl"]) {
+    if (!tokenSource.includes("--space-" + name + ":")) {
+      failures.push("spacing.guard: missing semantic spacing token " + name);
+    }
+    if (!tokenSource.includes(".gap-space-" + name)) {
+      failures.push("spacing.guard: missing semantic gap utility " + name);
+    }
+  }
+  for (const name of ["xs", "sm", "md", "lg", "xl"]) {
+    if (!layoutSource.includes('"gap-space-' + name + '"')) {
+      failures.push("spacing.guard: layout helpers do not consume semantic gap " + name);
+    }
+  }
+  if (/\b(?:xs|sm|md|lg|xl):\s*"gap-\d/.test(layoutSource)) {
+    failures.push(
+      "spacing.guard: named layout gaps reintroduced component-local Tailwind scales",
+    );
+  }
+}
+
 const layout = matrix.foundations.layout;
 if (layout?.status !== "planned") {
   const pageContainerSource = readFileSync(
