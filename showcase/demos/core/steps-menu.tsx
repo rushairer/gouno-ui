@@ -32,7 +32,7 @@ export const stepsMenuDocuments: Record<string, ComponentDocument> = {
       { name: "current", description: "当前步骤的零基索引", type: "number", defaultValue: "0" },
       { name: "initial", description: "默认数字标记的起始偏移", type: "number", defaultValue: "0" },
       { name: "orientation", description: "步骤流程布局轴", type: '"horizontal" | "vertical"', defaultValue: '"horizontal"' },
-      { name: "titlePlacement", description: "marker 与标题的相对布局；dot 强制 vertical", type: '"horizontal" | "vertical"', defaultValue: '"horizontal"' },
+      { name: "titlePlacement", description: "horizontal 流程中 marker 与标题的相对布局；dot 在横向流程中使用 vertical，纵向/响应式堆叠保持 marker 与文字并排以保留连接线独立轨道", type: '"horizontal" | "vertical"', defaultValue: '"horizontal"' },
       { name: "type", description: "步骤条结构类型", type: '"default" | "dot" | "inline" | "navigation" | "panel"', defaultValue: '"default"' },
       { name: "variant", description: "marker 的 filled/outlined 视觉形态", type: '"filled" | "outlined"', defaultValue: '"filled"' },
       { name: "size", description: "步骤 marker/文字尺寸", type: '"small" | "middle"', defaultValue: '"middle"' },
