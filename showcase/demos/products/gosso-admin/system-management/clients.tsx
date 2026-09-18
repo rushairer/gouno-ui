@@ -125,7 +125,7 @@ export function ClientsPanel() {
       </ManagementPanelFeedback>
 
 
-      {scenario === "loading" ? (
+      {scenario === "error" ? null : scenario === "loading" ? (
         <PageSkeleton layout="collection" aria-label="OAuth2 客户端加载中" />
       ) : scenario === "empty" ? (
         <Empty title="还没有 OAuth2 客户端" description="注册第一个客户端以接入授权流程。" action={<Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={() => openEditor()}>注册客户端</Button>} />
