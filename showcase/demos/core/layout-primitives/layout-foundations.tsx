@@ -16,7 +16,7 @@ export default function LayoutFoundationsDemo() {
       <Container
         ref={containerRef}
         tabIndex={-1}
-        className="max-w-2xl px-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="max-w-2xl px-0 focus-control"
       >
         <Space orientation="vertical" block>
           <AspectRatio ratio={16 / 9} className="overflow-hidden rounded-md border bg-muted">
