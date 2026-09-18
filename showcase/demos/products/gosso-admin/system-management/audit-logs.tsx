@@ -84,7 +84,7 @@ export function AuditLogsPanel() {
   };
 
   return (
-    <div className="flex flex-col gap-5">
+    <div data-pattern="collection-composition" className="flex flex-col gap-5">
       <FixtureBanner
         route="/system-management/audit-logs"
         note="审计日志 Fixture 覆盖数据、加载、空态与读取失败；筛选无结果仍由真实页面筛选交互触发。"
