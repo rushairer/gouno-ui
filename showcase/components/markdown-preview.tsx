@@ -217,7 +217,7 @@ export function MarkdownPreview({ value, emptyLabel = "开始写作后，预览�
         index += 1;
       }
       blocks.push(
-        <blockquote key={key} className="border-s-emphasis ps-4 text-sm leading-7 text-muted-foreground">
+        <blockquote key={key} className="edge-s-emphasis ps-4 text-sm leading-7 text-muted-foreground">
           {quoteLines.flatMap((quoteLine, quoteIndex) => [
             ...renderInline(quoteLine, `${key}-${quoteIndex}`),
             quoteIndex < quoteLines.length - 1 ? <br key={`${key}-br-${quoteIndex}`} /> : null,
