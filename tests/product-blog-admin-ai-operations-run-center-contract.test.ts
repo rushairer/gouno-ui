@@ -39,6 +39,18 @@ describe("Blog Admin AI Operations canonical run-center contract", () => {
     ).toBe(2);
   });
 
+  it("reserves persistent master-detail navigation for run evidence, not Workflow asset management", () => {
+    const automation = read(
+      "showcase/demos/products/blog-admin/ai/operations/automation-management.tsx",
+    );
+
+    expect(automation).not.toContain("WorkflowRail");
+    expect(automation).not.toContain('data-slot="ops-master-detail"');
+    expect(automation).not.toContain('data-slot="ops-rail"');
+    expect(automation).toContain('data-slot="workflow-detail"');
+    expect(automation).toContain("返回 Workflow 列表");
+  });
+
   it("contains unbroken run evidence inside canonical object rows", () => {
     const patterns = read(
       "showcase/demos/products/blog-admin/ai/operations/canonical-patterns.tsx",
