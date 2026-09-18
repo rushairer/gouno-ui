@@ -185,6 +185,15 @@ componentReviews["gouno-page-header"] = {
   evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "src/gouno/page-header.tsx"],
   baseline: "FI-001 / 2026-09-18",
 };
+for (const id of ["core-button", "core-segmented", "core-input-otp"]) {
+  componentReviews[id] = {
+    status: "reopened",
+    scope: "FI-001 Phase 2: Sizing Foundation reopened because the shared small/middle/large ControlSize vocabulary did not resolve to one outer-height authority; Button large diverged from standard controls.",
+    evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "docs/foundation-geometry-inventory.md", "src/tokens.css", "src/core/control-types.ts"],
+    baseline: "FI-001 Phase 2 / 2026-09-18",
+  };
+}
+
 for (const id of ["core-space", "core-flex", "core-grid"]) {
   componentReviews[id] = {
     status: "reopened",
