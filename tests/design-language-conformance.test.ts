@@ -411,6 +411,22 @@ describe("design-language conformance", () => {
     expect(audit.indexOf("<ManagementPanelFeedback")).toBeLessThan(audit.indexOf('<Card padding="sm">'));
   });
 
+  it("binds AI list CRUD to the governed editor surface classes", () => {
+    const aiSettings = readFileSync(resolve(productsRoot, "blog-admin/ai/settings/index.tsx"), "utf8");
+    const aiEditors = readFileSync(resolve(productsRoot, "blog-admin/ai/settings/editors.tsx"), "utf8");
+    const automation = readFileSync(resolve(productsRoot, "blog-admin/ai/operations/automation-management.tsx"), "utf8");
+
+    expect(aiSettings).toContain('data-pattern="dedicated-list-editor"');
+    expect(aiSettings).toContain('data-pattern="contextual-list-editor"');
+    expect(aiSettings).toContain("<Drawer");
+    expect(aiEditors).toContain('surface?: AISettingsEditorSurface');
+    expect(aiEditors).toContain('id="ai-settings-provider-editor"');
+    expect(aiEditors).toContain('id="ai-settings-embedding-editor"');
+    expect(aiEditors).toContain('id="ai-settings-connector-editor"');
+    expect(automation).toContain('data-pattern="dedicated-list-editor"');
+    expect(automation).toContain("返回 Workflow 详情");
+  });
+
   it("keeps product interface governance discoverable and machine-enforced", () => {
     const agents = readFileSync(resolve(repoRoot, "AGENTS.md"), "utf8");
     const governance = readFileSync(resolve(repoRoot, "docs/product-interface-governance.md"), "utf8");
@@ -421,6 +437,7 @@ describe("design-language conformance", () => {
     expect(governance).toContain("## PI-04 — Visible elevation uses semantic roles only");
     expect(governance).toContain("## PI-05 — New binding rules require a corpus pass, not screenshot patching");
     expect(governance).toContain("## PI-06 — Master-detail is a task pattern, not a generic list/detail default");
+    expect(governance).toContain("## PI-07 — List-triggered create/edit uses complexity-based editor surfaces");
     const designLanguage = readFileSync(resolve(repoRoot, "docs/design-language.md"), "utf8");
     expect(designLanguage).toContain("## DL-15 — Page composition uses ordered semantic slots");
   });
