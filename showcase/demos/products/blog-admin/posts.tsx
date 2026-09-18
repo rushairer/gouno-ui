@@ -383,7 +383,15 @@ export function BlogAdminPostsDemo() {
         )}
       />
 
-      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
+      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />\n\n      {scenario === "error" ? (
+        <Alert
+          type="error"
+          showIcon
+          title="文章加载失败"
+          description="无法读取文章列表。真实产品会保留筛选条件并允许重新请求。"
+          action={<Button size="small" onClick={() => setScenario("data")}>重新载入</Button>}
+        />
+      ) : null}
 
       <Card padding="base">
         <div className="flex flex-col gap-3 xl:flex-row xl:items-center">
@@ -437,15 +445,7 @@ export function BlogAdminPostsDemo() {
         </BulkActionBar>
       ) : null}
 
-      {scenario === "error" ? (
-        <Alert
-          type="error"
-          showIcon
-          title="文章加载失败"
-          description="无法读取文章列表。真实产品会保留筛选条件并允许重新请求。"
-          action={<Button size="small" onClick={() => setScenario("data")}>重新载入</Button>}
-        />
-      ) : scenario === "loading" ? (
+      {scenario === "error" ? null : scenario === "loading" ? (
         <PageSkeleton layout="collection" aria-label="文章加载中" />
       ) : visiblePosts.length === 0 ? (
         <Card padding="lg">
