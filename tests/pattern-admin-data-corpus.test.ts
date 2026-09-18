@@ -77,12 +77,15 @@ describe("admin data composition product corpus", () => {
     expect(records.match(/data-pattern="master-detail-composition"/g)?.length).toBeGreaterThanOrEqual(2);
   });
 
-  it("binds run evidence to Record Detail and operational metrics to Data Summary", () => {
+  it("binds run evidence and dashboard metrics to the governed summary/detail grammar", () => {
     const records = read("blog-admin/ai/operations/automation-records.tsx");
     const patterns = read("blog-admin/ai/operations/canonical-patterns.tsx");
+    const dashboard = read("blog-admin/dashboard.tsx");
 
     expect(records.match(/data-pattern="record-detail-composition"/g)?.length).toBeGreaterThanOrEqual(2);
     expect(patterns).toContain('data-pattern="data-summary-composition"');
+    expect(dashboard).toContain('data-pattern="data-summary-composition"');
+    expect(dashboard).toContain('aria-label="站点运营摘要"');
   });
 
   it("keeps the composition contracts documented as Showcase-only design grammar", () => {
