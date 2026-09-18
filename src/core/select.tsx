@@ -42,7 +42,7 @@ function readOptions(children: React.ReactNode): SelectOption[] {
 }
 
 export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function Select(
-  { locale, size = "middle", status, loading = false, placeholder, allowClear = false, onClear, mode = "single", showSearch = false, optionFilterProp = "label", maxTagCount, value, defaultValue, onChange, onSearch, name, id, required, disabled, children, className, ...props },
+  { locale, size = "middle", status, loading = false, placeholder, allowClear = false, onClear, mode = "single", showSearch = false, optionFilterProp = "label", maxTagCount, value, defaultValue, onChange, onSearch, name, id, required, disabled, children, className, "aria-label": ariaLabel, "aria-labelledby": ariaLabelledBy, "aria-describedby": ariaDescribedBy, "aria-invalid": ariaInvalid, "aria-required": ariaRequired, ...props },
   ref,
 ) {
   const text = useComponentLocale("select", locale);
@@ -121,7 +121,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
             {maxTagCount !== undefined && selectedOptions.length > maxTagCount ? <span className="text-xs text-muted-foreground">+{selectedOptions.length - maxTagCount}</span> : null}
           </div> : null}
           <PopoverTrigger asChild>
-            <button ref={triggerRef} type="button" id={baseId} role="combobox" aria-haspopup="listbox" aria-label={props["aria-label"]} aria-labelledby={props["aria-labelledby"]} aria-describedby={props["aria-describedby"]} aria-expanded={open} aria-controls={listboxId} aria-activedescendant={!searchable ? activeOptionId : undefined} aria-invalid={status === "error" || props["aria-invalid"] || undefined} aria-required={required || props["aria-required"] || undefined} aria-busy={loading || undefined} disabled={disabled || loading}
+            <button ref={triggerRef} type="button" id={baseId} role="combobox" aria-haspopup="listbox" aria-label={ariaLabel} aria-labelledby={ariaLabelledBy} aria-describedby={ariaDescribedBy} aria-expanded={open} aria-controls={listboxId} aria-activedescendant={!searchable ? activeOptionId : undefined} aria-invalid={status === "error" || ariaInvalid || undefined} aria-required={required || ariaRequired || undefined} aria-busy={loading || undefined} disabled={disabled || loading}
               onKeyDown={(event) => {
                 if (event.key === "ArrowDown" || event.key === "ArrowUp") { event.preventDefault(); if (!open) setOpen(true); else moveActive(event.key === "ArrowDown" ? 1 : -1); }
                 else if (event.key === "Enter" || event.key === " ") { event.preventDefault(); if (open) selectActive(); else setOpen(true); }
@@ -141,7 +141,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
           else if (event.key === "Enter") { event.preventDefault(); if (mode === "tags" && search.trim() && !filteredOptions.length) addTag(); else selectActive(); }
           else if (event.key === "Escape") { event.preventDefault(); setOpen(false); }
         }} placeholder={text.searchPlaceholder} aria-label={text.searchLabel} className="h-8 w-full rounded border border-border bg-input px-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring" /></div> : null}
-        <div id={listboxId} role="listbox" aria-label={props["aria-label"] ?? text.searchLabel} aria-labelledby={props["aria-labelledby"]} aria-multiselectable={multi || undefined} className="max-h-60 overflow-y-auto" data-slot="select-list">
+        <div id={listboxId} role="listbox" aria-label={ariaLabel ?? text.searchLabel} aria-labelledby={ariaLabelledBy} aria-multiselectable={multi || undefined} className="max-h-60 overflow-y-auto" data-slot="select-list">
           {filteredOptions.map((option, optionIndex) => { const checked = selectedValues.includes(option.value); const active = optionIndex === activeIndex; return <div key={option.value} id={`${baseId}-option-${optionIndex}`} role="option" aria-selected={checked} aria-disabled={option.disabled || undefined} onMouseDown={(event) => event.preventDefault()} onMouseEnter={() => { if (!option.disabled) setActiveIndex(optionIndex); }} onClick={() => choose(option)} className={cn("flex w-full cursor-default items-center gap-2 rounded px-2 py-1.5 text-left text-sm", !option.disabled && "hover:bg-accent", option.disabled && "opacity-50", active && "bg-accent", checked && "bg-accent/60")}>{multi ? <span className={cn("flex size-4 items-center justify-center rounded border", checked && "border-primary bg-primary text-primary-foreground")}>{checked ? <Check aria-hidden="true" className="size-3" /> : null}</span> : null}<span className="min-w-0 flex-1 truncate">{option.label}</span></div>; })}
         </div>
         {filteredOptions.length === 0 ? <div role="status" className="px-2 py-3 text-center text-sm text-muted-foreground">{text.emptyText}</div> : null}
