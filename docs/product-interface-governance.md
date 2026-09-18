@@ -283,6 +283,13 @@ Current canonical examples:
 - Blog Admin AI Settings Provider / Embedding / Connector: contextual configuration → Drawer.
 - Blog Admin AI Operations Workflow: deep asset configuration → Dedicated Editor.
 
+Dedicated Editor has two governed subtypes:
+
+- **Configuration Editor** — deep asset configuration such as Agent, Skill and Workflow. Use one editor identity region, explicit Back, optional task-level feedback, canonical section/layout rhythm and one action boundary.
+- **Workspace Editor** — sustained creation/editing such as Post and Page. A purpose-built workspace shell may own navigator/canvas/inspector, but the upper-level Dedicated Editor responsibilities remain: explicit return path, stable task identity, predictable feedback and entry scroll reset.
+
+The canonical contract and Showcase-only helper composition are documented in `docs/patterns/dedicated-editor.md`. This does **not** admit a public `DedicatedEditor` runtime component.
+
 ## Review checklist
 
 Before accepting a normal Admin page or route family, ask:
