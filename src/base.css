@@ -96,7 +96,7 @@
     height: 16px;
     flex-shrink: 0;
   }
-  @media (max-width: 767px) {
+  @media (width < 48rem) {
     [data-slot="button"],
     [data-slot="input"],
     [data-slot="select-trigger"] {
@@ -138,7 +138,7 @@
   .form-layout--horizontal .field > [data-slot="field-error"] {
     grid-column: 2;
   }
-  @media (max-width: 767px) {
+  @media (width < 48rem) {
     .form-layout--horizontal .field {
       display: flex;
       flex-direction: column;
@@ -248,27 +248,27 @@
     order: var(--gouno-col-order);
   }
   [data-slot="col"][data-span="0"] { display: none; }
-  @media (min-width: 640px) {
+  @media (width >= 40rem) {
     [data-slot="col"] { flex-basis: var(--gouno-col-sm-basis); max-width: var(--gouno-col-sm-basis); margin-inline-start: var(--gouno-col-sm-offset); inset-inline-start: var(--gouno-col-sm-shift); order: var(--gouno-col-sm-order); }
     [data-slot="col"][data-sm-span="0"] { display: none; }
     [data-slot="col"]:not([data-sm-span="0"]) { display: block; }
   }
-  @media (min-width: 768px) {
+  @media (width >= 48rem) {
     [data-slot="col"] { flex-basis: var(--gouno-col-md-basis); max-width: var(--gouno-col-md-basis); margin-inline-start: var(--gouno-col-md-offset); inset-inline-start: var(--gouno-col-md-shift); order: var(--gouno-col-md-order); }
     [data-slot="col"][data-md-span="0"] { display: none; }
     [data-slot="col"]:not([data-md-span="0"]) { display: block; }
   }
-  @media (min-width: 1024px) {
+  @media (width >= 64rem) {
     [data-slot="col"] { flex-basis: var(--gouno-col-lg-basis); max-width: var(--gouno-col-lg-basis); margin-inline-start: var(--gouno-col-lg-offset); inset-inline-start: var(--gouno-col-lg-shift); order: var(--gouno-col-lg-order); }
     [data-slot="col"][data-lg-span="0"] { display: none; }
     [data-slot="col"]:not([data-lg-span="0"]) { display: block; }
   }
-  @media (min-width: 1280px) {
+  @media (width >= 80rem) {
     [data-slot="col"] { flex-basis: var(--gouno-col-xl-basis); max-width: var(--gouno-col-xl-basis); margin-inline-start: var(--gouno-col-xl-offset); inset-inline-start: var(--gouno-col-xl-shift); order: var(--gouno-col-xl-order); }
     [data-slot="col"][data-xl-span="0"] { display: none; }
     [data-slot="col"]:not([data-xl-span="0"]) { display: block; }
   }
-  @media (min-width: 1536px) {
+  @media (width >= 96rem) {
     [data-slot="col"] { flex-basis: var(--gouno-col-xxl-basis); max-width: var(--gouno-col-xxl-basis); margin-inline-start: var(--gouno-col-xxl-offset); inset-inline-start: var(--gouno-col-xxl-shift); order: var(--gouno-col-xxl-order); }
     [data-slot="col"][data-xxl-span="0"] { display: none; }
     [data-slot="col"]:not([data-xxl-span="0"]) { display: block; }
