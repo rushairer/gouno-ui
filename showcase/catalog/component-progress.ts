@@ -185,6 +185,13 @@ componentReviews["gouno-page-header"] = {
   evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "src/gouno/page-header.tsx"],
   baseline: "FI-001 / 2026-09-18",
 };
+componentReviews["gouno-page-container"] = {
+  status: "reopened",
+  scope: "FI-001 Phase 2: PageContainer Layout Foundation reopened because canonical page width and vertical rhythm were encoded as local utility literals instead of a semantic geometry authority.",
+  evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "src/tokens.css", "src/gouno/page-container.tsx", "tests/gouno-structure.test.tsx"],
+  baseline: "FI-001 Phase 2 / 2026-09-18",
+};
+
 componentReviews["pattern-dedicated-editor"] = {
   status: "reopened",
   scope: "FI-001: Dedicated Editor heading hierarchy is reopened until nested/standalone semantic levels and task-title visual roles are explicit and corpus-guarded.",
