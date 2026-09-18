@@ -48,7 +48,7 @@ function Table({
         className={cn(
           "w-full caption-bottom text-sm text-foreground",
           "[&_tfoot_th]:align-middle [&_tfoot_td]:align-middle",
-          "[&_tfoot_tr]:border-t-2 [&_tfoot_tr]:border-border/80",
+          "[&_tfoot_tr]:border-bs-emphasis [&_tfoot_tr]:border-border/80",
           fixed && "table-fixed",
           bordered &&
             "[&_td]:border-r [&_th]:border-r [&_tr>*:last-child]:border-r-0",
