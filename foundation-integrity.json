@@ -753,11 +753,9 @@
       }
     },
     "responsive": {
-      "status": "certified",
+      "status": "reopened",
       "affectedComponentReviews": [
-        "theme-system",
-        "core-steps",
-        "core-grid"
+        "core-steps"
       ],
       "gates": {
         "inventory": {
@@ -769,7 +767,9 @@
             "src/core/layout.tsx",
             "src/core/form.tsx",
             "src/core/descriptions.tsx",
-            "showcase/demos/core/steps-menu.tsx"
+            "showcase/demos/core/steps-menu.tsx",
+            "docs/foundation-responsive-inventory.md: 2026-09-19 Steps geometry reopening",
+            "FI-D001: root flex-direction changed at max-sm while item/body/connector geometry remained desktop-owned"
           ]
         },
         "tokens": {
@@ -791,38 +791,29 @@
           ]
         },
         "corpus": {
-          "status": "passed",
+          "status": "in_progress",
           "evidence": [
             "scripts/check-foundation-integrity.mjs",
-            "src",
-            "showcase/demos/products",
-            "CI run 35352659898 (#492): Responsive corpus audit arbitraryResponsiveVariants=0, pxWidthMediaQueries=0"
-          ],
-          "arbitraryResponsiveVariants": 0,
-          "pxWidthMediaQueries": 0
+            "src/core/steps.tsx",
+            "showcase/demos/core/steps-menu.tsx"
+          ]
         },
         "guard": {
-          "status": "passed",
+          "status": "in_progress",
           "evidence": [
             "scripts/check-foundation-integrity.mjs",
-            "tests/responsive-foundation-conformance.test.tsx",
-            "tests/component-progress.test.ts",
-            "CI run 35352659898 (#492): success; 163/163 test files, 842/842 tests"
+            "tests/responsive-foundation-conformance.test.tsx"
           ]
         },
         "visual": {
-          "status": "passed",
+          "status": "in_progress",
           "evidence": [
-            "Canonical Visual Golden Smoke run 35352659772 (#431): success; 55/55 passed",
-            "showcase/e2e/canonical-visual-golden.pw.mjs: responsive-steps-canonical-sm-stacking passed (600px column, 700px row)"
+            "showcase/e2e/canonical-visual-golden.pw.mjs: responsive-steps-canonical-sm-stacking now checks connector/copy geometry"
           ]
         },
         "consumers": {
-          "status": "passed",
-          "evidence": [
-            "Blog Consumer Parity run 35352659852 (#489): success",
-            "Gosso Admin Consumer Parity run 35352659789 (#484): success"
-          ]
+          "status": "pending",
+          "evidence": []
         }
       },
       "inventory": {
@@ -836,7 +827,13 @@
         "confirmedDefect": "Core Steps responsive=true used the only arbitrary max-[531px] breakpoint while its public API only promises narrow-screen stacking.",
         "arbitraryResponsiveBreakpointUsages": [],
         "productStepsConsumers": 0,
-        "currentPolicy": "Core/Gouno/Product responsive composition uses canonical sm/md/lg/xl/2xl tiers; no arbitrary min/max variant exception is admitted."
+        "currentPolicy": "Core/Gouno/Product responsive composition uses canonical sm/md/lg/xl/2xl tiers; no arbitrary min/max variant exception is admitted.",
+        "reopening20260919": {
+          "defect": "FI-D001",
+          "finding": "The previous responsive proof checked only root flex-direction. Below sm, horizontal Steps became a column while item sizing, body title placement and connector axis still followed the desktop orientation prop.",
+          "classification": "Responsive component implementation defect; canonical breakpoint tokens, Layout and Spacing authority remain valid.",
+          "target": "At max-sm the full Steps composition becomes vertical: full-width items, marker/text row, vertical connector lane. Desktop horizontal and explicit vertical layouts keep their own connector geometry."
+        }
       }
     },
     "density": {
