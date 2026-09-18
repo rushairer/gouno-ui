@@ -65,7 +65,8 @@ describe("admin data composition product corpus", () => {
 
     expectBefore(account, "<TabPanelLead", "<TabPanelFeedback>");
     expectBefore(site, "<TabPanelLead", '<Card padding="none"');
-    expectBefore(ai, "<AISettingsSectionLead", "<FixtureNotification");
+    const aiSettingsBranch = ai.slice(ai.indexOf('data-pattern="settings-composition"'));
+    expectBefore(aiSettingsBranch, "<AISettingsSectionLead", "<FixtureNotification");
   });
 
   it("binds AI operational peer navigation to the Master-Detail contract", () => {
