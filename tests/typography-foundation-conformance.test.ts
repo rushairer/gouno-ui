@@ -88,6 +88,10 @@ describe("Typography Foundation conformance", () => {
       "--type-body-sm-size",
       "--type-caption-size",
       "--type-title-weight",
+      "--type-body-weight",
+      "--type-medium-weight",
+      "--type-emphasis-weight",
+      "--type-relaxed-line-height",
       "--type-title-tracking",
     ]) {
       expect(tokens).toContain(token);
@@ -99,5 +103,8 @@ describe("Typography Foundation conformance", () => {
     expect(typography).toContain('task: "type-task-title"');
     expect(tokens).toContain(".type-page-title {");
     expect(tokens).toContain(".type-body-sm {");
+    expect(tokens).toContain(".type-weight-medium {");
+    expect(tokens).toContain(".type-family-mono {");
+    expect(tokens).toContain(".type-leading-relaxed {");
   });
 });
