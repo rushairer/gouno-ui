@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
   Bot,
@@ -121,6 +121,7 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
   const [mutationScenario, setMutationScenario] = useState<MutationScenario>("success");
   const [security, setSecurity] = useState<PrivilegedAccessState>("unlocked");
+  const rootRef = useRef<HTMLDivElement>(null);
 
   const changeSection = (next: AISettingsSection) => {
     setSection(next);
@@ -320,8 +321,22 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
   const sectionPanel = <AISettingsSectionPanel fixture={fixture} section={section} actions={actions} />;
   const privilegedLocked = Boolean(privilegedPolicy && security !== "unlocked");
 
+  useEffect(() => {
+    if (!pageEditor) return;
+    const frame = window.requestAnimationFrame(() => {
+      rootRef.current?.closest<HTMLElement>("[data-showcase-product-viewport]")?.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "auto",
+      });
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      document.scrollingElement?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [pageEditor]);
+
   return (
-    <div className="flex flex-col gap-6">
+    <div ref={rootRef} className="flex flex-col gap-6">
       <FixtureDock
         route={formatAISettingsRoute(section)}
         note="AI 设置是独立的管理路由族；Showcase 模拟 CRUD、保存/删除/连接失败、MFA 后配置、OAuth 与 Outbox 状态，但不保存真实凭证或调用真实 Agent/Connector API。"
@@ -349,7 +364,7 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
         <TabPanel value={section}>
           <div className="flex flex-col gap-5">
             {pageEditor && pageEditorPresentation ? (
-              <>
+              <div data-pattern="dedicated-list-editor" className="contents">
                 <TabPanelLead
                   description={pageEditorPresentation.description}
                   actions={(
@@ -371,7 +386,7 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
                   onCancel={() => setEditor(null)}
                   surface="page"
                 />
-              </>
+              </div>
             ) : (
               <>
                 <AISettingsSectionLead
@@ -420,13 +435,15 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
         ) : null}
       >
         {drawerEditor ? (
-          <AISettingsEditor
-            editor={drawerEditor}
-            fixture={fixture}
-            onSave={saveEditor}
-            onCancel={() => setEditor(null)}
-            surface="drawer"
-          />
+          <div data-pattern="contextual-list-editor">
+            <AISettingsEditor
+              editor={drawerEditor}
+              fixture={fixture}
+              onSave={saveEditor}
+              onCancel={() => setEditor(null)}
+              surface="drawer"
+            />
+          </div>
         ) : null}
       </Drawer>
 
