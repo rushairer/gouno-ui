@@ -471,6 +471,15 @@ if (color?.status !== "planned") {
     );
   }
 
+  if (
+    !tagSource.includes("hover:bg-current/10") ||
+    /hover:bg-(?:black|white)\//.test(tagSource)
+  ) {
+    failures.push(
+      "color.guard: Tag close hover must derive from current/semantic foreground color",
+    );
+  }
+
   for (const [name, source, marker] of [
     ["QRCode foreground", qrcodeSource, 'color = "#000000"'],
     ["QRCode background", qrcodeSource, 'background = "#ffffff"'],
