@@ -72,6 +72,12 @@ if (typography) {
     resolve(root, "showcase/demos/products/gosso-admin"),
   ];
   const publicRoot = resolve(root, "showcase/demos/products/blog");
+  const canonicalCompositionFiles = [
+    resolve(root, "showcase/components/tab-panel-lead.tsx"),
+    resolve(root, "showcase/components/patterns/dedicated-editor.tsx"),
+    resolve(root, "showcase/components/patterns/editor-form-composition.tsx"),
+    resolve(root, "showcase/components/patterns/admin-data-composition.tsx"),
+  ];
   const applicationFiles = applicationRoots.flatMap(collectTsx);
   const publicFiles = collectTsx(publicRoot);
   const allFiles = [...applicationFiles, ...publicFiles];
@@ -105,6 +111,22 @@ if (typography) {
 
   const applicationNativeMetricBypasses = countNativeBypasses(applicationFiles);
   const publicNativeMetricBypasses = countNativeBypasses(publicFiles);
+  const compositionMetricBypasses = canonicalCompositionFiles.reduce(
+    (count, file) => {
+      const source = readFileSync(file, "utf8");
+      const componentTags = [
+        ...(source.match(/<Heading\\b[\\s\\S]{0,500}?>/g) ?? []),
+        ...(source.match(/<CardTitle\\b[\\s\\S]{0,500}?>/g) ?? []),
+        ...(source.match(textTags) ?? []),
+      ];
+      return (
+        count +
+        (source.match(/<h[1-6]\\b/g) ?? []).length +
+        componentTags.filter((tag) => rawMetricUtility.test(tag)).length
+      );
+    },
+    0,
+  );
 
   process.stdout.write(
     "Typography corpus audit: rawHeadings=" +
@@ -115,6 +137,8 @@ if (typography) {
       applicationNativeMetricBypasses +
       ", publicNativeMetricBypasses=" +
       publicNativeMetricBypasses +
+      ", compositionMetricBypasses=" +
+      compositionMetricBypasses +
       "\n",
   );
 
@@ -123,6 +147,11 @@ if (typography) {
   }
   if (textMetricOverrides !== 0) {
     failures.push("typography.guard: Text metric overrides returned to the product corpus");
+  }
+  if (compositionMetricBypasses !== 0) {
+    failures.push(
+      "typography.guard: canonical composition helpers bypass Typography authority",
+    );
   }
 
   const corpusGate = typography.gates?.corpus;
