@@ -30,6 +30,13 @@ export function readMode(key: string): ThemeMode {
     return "system";
   }
 }
+export function syncBrowserThemeColor(root: HTMLElement) {
+  const themeColor = getComputedStyle(root).getPropertyValue("--background").trim();
+  if (!themeColor) return;
+  document
+    .querySelector('meta[name="theme-color"]')
+    ?.setAttribute("content", themeColor);
+}
 interface ThemeContextValue {
   mode: ThemeMode;
   resolvedMode: "light" | "dark";
@@ -85,12 +92,7 @@ export function ThemeProvider({
     root.dataset.theme = resolvedMode;
     root.dataset.density = density;
     root.style.colorScheme = resolvedMode;
-    document
-      .querySelector('meta[name="theme-color"]')
-      ?.setAttribute(
-        "content",
-        resolvedMode === "dark" ? "#11151b" : "#ffffff",
-      );
+    syncBrowserThemeColor(root);
   }, [resolvedMode, density]);
   useLayoutEffect(() => {
     document.documentElement.dataset.brand = brand;
