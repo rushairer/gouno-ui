@@ -755,6 +755,7 @@ export function AIOpsRecordsPanel({
       ) : (
         <div
           data-slot="ops-master-detail"
+          data-pattern="master-detail-composition"
           className="grid min-w-0 items-stretch gap-6 xl:grid-cols-[19rem_minmax(0,1fr)]"
         >
           <section
