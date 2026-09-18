@@ -290,6 +290,33 @@ Dedicated Editor has two governed subtypes:
 
 The canonical contract and Showcase-only helper composition are documented in `docs/patterns/dedicated-editor.md`. This does **not** admit a public `DedicatedEditor` runtime component.
 
+## PI-08 — Common admin data blocks use governed composition contracts
+
+Blog Admin and Gosso Admin repeat the same semantic data arrangements often enough that component-level consistency is insufficient.
+
+The governed composition family is:
+
+- **Collection** — lead/feedback/summary/toolbar/selection/data/pagination.
+- **Record Detail** — identity/feedback/summary/sections/local actions.
+- **Master-Detail** — peer navigation + selected detail for repeated inspection/processing.
+- **Settings** — active panel lead/feedback/sections/save boundary.
+- **Data Summary** — compact decision-oriented metrics before the detailed data they summarize.
+
+Rules:
+
+- Use the semantic contract that matches the task, not whichever product page happens to look similar.
+- The parent composition owns spacing between peer blocks. Child components must not compensate with arbitrary outer margins.
+- Page- or panel-wide read errors appear before toolbar/data surfaces and must not leave stale editable data visible.
+- Selection actions belong to the current collection selection context and sit between the normal toolbar and the data view they affect.
+- Empty and loading states replace the data region while preserving meaningful route/filter context.
+- Settings feedback appears after the active panel lead and before editable sections.
+- Data Summary is optional and must answer a decision/status question; do not add KPI strips for visual symmetry.
+- Record-wide feedback belongs before record sections; operation-local feedback remains local.
+- Master-Detail continues to obey PI-06 and must collapse to an explicit single-pane navigation model on narrow viewports.
+- These contracts are Showcase composition contracts, not public page-level runtime components.
+
+The canonical contract is documented in `docs/patterns/admin-data-composition.md`.
+
 ## Review checklist
 
 Before accepting a normal Admin page or route family, ask:
@@ -311,6 +338,9 @@ Before accepting a normal Admin page or route family, ask:
 15. Does each list-triggered create/edit flow use Modal, Drawer or Dedicated Editor according to task complexity rather than page-local preference?
 16. Do create and edit for one object family use the same editor class?
 17. If a Dedicated Editor replaces the collection, does it have an explicit return path and reset the product viewport on entry?
-18. Is there a regression gate for the invariant, or a documented reason why only visual review can prove it?
+18. Does the page map to Collection, Record Detail, Master-Detail, Settings or Data Summary composition instead of inventing a page-local block order?
+19. Is page/panel-wide feedback positioned before toolbar/data/settings sections according to its semantic scope?
+20. Does the semantic parent own spacing between peer data blocks rather than child components adding compensating margins?
+21. Is there a regression gate for the invariant, or a documented reason why only visual review can prove it?
 
 A page that passes component API tests but fails these questions is not interface-conformant.
