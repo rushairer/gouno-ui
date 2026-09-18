@@ -106,7 +106,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(
         data-slot="input-number"
         data-status={status}
         className={cn(
-          "relative inline-flex w-full min-w-0 overflow-hidden rounded-md border border-border bg-input focus-within:ring-2 focus-within:ring-ring",
+          "relative inline-flex w-full min-w-0 overflow-hidden rounded-md border border-border bg-input focus-within-owner",
           status === "error" && "border-destructive",
           status === "warning" && "border-warning",
           disabled && "cursor-not-allowed opacity-50",
