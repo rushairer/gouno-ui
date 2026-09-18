@@ -23,9 +23,13 @@ describe("canonical reviewed-completion sealing", () => {
   });
 
   it("allows a reviewed family to reopen without losing its evidence or catalog entry", () => {
-    const previous = componentReviews["core-select"];
-    expect(reviewedProgress({ ...previous, status: "reopened" }, 100)).toBe(99);
-    expect(reviewedProgress(previous, 0)).toBe(100);
+    const current = componentReviews["core-select"];
+    const reviewed = { ...current, status: "reviewed" as const };
+    const reopened = { ...current, status: "reopened" as const };
+
+    expect(reviewedProgress(reopened, 100)).toBe(99);
+    expect(reviewedProgress(reviewed, 0)).toBe(100);
+    expect(reopened.evidence).toEqual(reviewed.evidence);
     expect(showcaseCatalog.flatMap((group) => group.items).some((page) => page.id === "core-select")).toBe(true);
   });
 

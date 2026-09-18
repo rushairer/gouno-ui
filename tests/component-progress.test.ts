@@ -41,9 +41,9 @@ describe("audited batch completion", () => {
     }
   });
 
-  it("keeps Focus-owned reviews below certified completion", () => {
+  it("reports Focus-owned reviews complete only after certification", () => {
     for (const id of ["core-button","core-input","core-textarea","core-checkbox","core-radio","core-switch","core-tabs","core-badge","core-select","core-modal","core-drawer"]) {
-      expect(componentProgress(id, 0), id).toBeLessThan(100);
+      expect(componentProgress(id, 0), id).toBe(100);
     }
   });
 
