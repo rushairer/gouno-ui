@@ -399,28 +399,59 @@
       }
     },
     "elevation": {
-      "status": "planned",
+      "status": "in_progress",
       "affectedComponentReviews": [],
       "gates": {
         "inventory": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/product-surface-elevation-audit.md",
+            "docs/design-language.md: DL-10",
+            "docs/product-interface-governance.md: PI-04",
+            "src/tokens.css",
+            "src/core/card.tsx",
+            "src/components/primitives/table.tsx",
+            "src/components/primitives/button.tsx",
+            "src/core/segmented.tsx",
+            "src/components/primitives/dialog.tsx",
+            "src/components/primitives/popover.tsx",
+            "src/components/primitives/sheet.tsx"
+          ]
         },
         "tokens": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "src/tokens.css: control/surface/raised/overlay/modal semantic shadow roles",
+            "src/tokens.css: raw size shadow aliases remain zero-value compatibility vocabulary",
+            "tests/elevation-system.test.ts"
+          ]
         },
         "authority": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/design-language.md: DL-10",
+            "docs/product-interface-governance.md: PI-04",
+            "docs/product-surface-elevation-audit.md",
+            "tests/elevation-system.test.ts"
+          ]
         },
         "corpus": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "scripts/check-foundation-integrity.mjs",
+            "docs/product-surface-elevation-audit.md",
+            "showcase/demos/products/blog",
+            "showcase/demos/products/blog-admin",
+            "showcase/demos/products/gosso-admin"
+          ]
         },
         "guard": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "scripts/check-foundation-integrity.mjs",
+            "tests/elevation-system.test.ts",
+            "tests/design-language-conformance.test.ts"
+          ]
         },
         "visual": {
           "status": "pending",
@@ -430,6 +461,25 @@
           "status": "pending",
           "evidence": []
         }
+      },
+      "inventory": {
+        "roles": [
+          "canvas",
+          "control",
+          "surface",
+          "raised",
+          "overlay",
+          "modal",
+          "overflow"
+        ],
+        "productSemanticShadowWhitelist": [
+          "showcase/demos/products/gosso-admin/overview.tsx"
+        ],
+        "persistentElevatedCardWhitelist": [
+          "showcase/demos/products/gosso-admin/overview.tsx",
+          "showcase/demos/products/gosso-admin/auth/shared.tsx",
+          "showcase/demos/products/gosso-admin/auth/not-found.tsx"
+        ]
       }
     },
     "surface": {
