@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Clock3,
   GitBranch,
@@ -185,9 +185,12 @@ export function BlogAdminAIOperationsDemo({
   const [automationRecordsFixture, setAutomationRecordsFixture] = useState(cloneAutomationFixture);
   const [selectedApprovalId, setSelectedApprovalId] = useState<number | null>(decisionFixture.approvals[0]?.id ?? null);
   const [notice, setNotice] = useState<Notice>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (route.tab !== "automation" || !route.workflow) return;
+    const viewport = rootRef.current?.closest<HTMLElement>("[data-showcase-product-viewport]");
+    viewport?.scrollTo({ top: 0, left: 0, behavior: "auto" });
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     document.scrollingElement?.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [route.tab, route.workflow]);
@@ -452,7 +455,7 @@ export function BlogAdminAIOperationsDemo({
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div ref={rootRef} className="flex flex-col gap-6">
       <FixtureDock
         route={formatAIOpsRoute(route)}
         note="AI 运营 Fixture 已按 Blog Admin 当前真实对象与 API 能力重建：人工决策、Workflow 资产、异步 Run 与证据链保持同一产品语义。"
