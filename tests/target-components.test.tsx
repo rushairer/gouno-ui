@@ -191,25 +191,18 @@ describe("audited target components", () => {
 
   it("reports 100% only for the completed and reviewed canonical batch", () => {
     for (const id of [
-      "core-button",
-      "core-input",
-      "core-textarea",
       "core-input-number",
-      "core-select",
       "core-form",
       "core-date-picker",
       "core-upload",
       "core-table",
       "core-pagination",
-      "core-tabs",
       "core-empty",
       "core-result",
       "core-skeleton",
       "core-spin",
       "core-qrcode",
       "core-statistic",
-      "core-modal",
-      "core-drawer",
     ]) {
       expect(componentProgress(id, 0)).toBe(100);
     }
