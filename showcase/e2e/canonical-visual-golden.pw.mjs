@@ -415,6 +415,27 @@ test("overlay-semantic-modal-popup-ordering", async ({ page }) => {
   expect(popupLayer).toBeGreaterThan(modalLayers[0]);
 });
 
+test("interaction-carousel-arrows-remain-clickable-while-draggable", async ({ page }) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-carousel",
+    viewport: desktop,
+    ready: '[data-slot="carousel"]',
+  });
+
+  const carousel = page.locator('[data-slot="carousel"]').first();
+  const dots = carousel.locator('[data-slot="carousel-dot"]');
+  await expect(dots).toHaveCount(3);
+  await expect(dots.nth(0)).toHaveAttribute("aria-selected", "true");
+
+  await carousel.locator('[data-slot="carousel-next-arrow"]').click();
+  await expect(dots.nth(1)).toHaveAttribute("aria-selected", "true");
+
+  await carousel.locator('[data-slot="carousel-prev-arrow"]').click();
+  await expect(dots.nth(0)).toHaveAttribute("aria-selected", "true");
+});
+
 test("motion-reduced-preference-collapses-carousel-movement", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await prepareLightFixture(page, {
