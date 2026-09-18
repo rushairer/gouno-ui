@@ -139,7 +139,7 @@ describe("Cascader 6D6", () => {
     expect(root.getAttribute("data-slot")).toBe("cascader");
     expect(root.getAttribute("aria-invalid")).toBe("true");
     expect(select.getAttribute("aria-invalid")).toBe("true");
-    expect(select.className).toContain("control-height-large");
+    expect(select.className).toContain("h-[var(--control-height-large)]");
   });
 
   it("keeps the empty placeholder caller-owned", () => {
