@@ -107,13 +107,15 @@ Run corpus-wide guards, Golden matrix, Blog Consumer Parity and Gosso Admin Cons
 
 Phase 1 Typography is certified 7/7.
 
-Phase 2 Geometry has completed and certified:
+Phase 2 Geometry is fully certified:
 
 - **Spacing 7/7** — named Space/Flex/Grid gaps share one semantic scale; numeric gaps remain an explicit precision escape hatch.
 - **Sizing 7/7** — public ControlSize resolves to one 32/36/44px token authority, including Button, InputOTP and Segmented, while Tailwind-compatible classes preserve caller overrides such as `h-auto`.
 - **Radius 7/7** — the numeric radius scale owns values; compatibility/control aliases no longer duplicate 6px authority; Checkbox consumes `rounded-sm`; the Tooltip arrow is the documented local-shape exception.
+- **Border 7/7** — ordinary boundaries retain the canonical 1px substrate, 2px indicators/separators consume semantic `edge-*` emphasis roles, and long-form Public Blog blockquotes use the explicit 4px reading-accent role. Product corpus raw numeric-width and hard-coded-neutral-color bypasses are both zero.
 - **Layout 7/7** — canonical PageContainer width and page-stack rhythm are owned by the semantic page-track contract.
 - **Density 7/7** — Theme `comfortable | compact` is an application-level default policy for density-aware components; Table `default` follows it while explicit `compact | touch` remains local authority. Browser evidence proves the global compact policy changes resolved Table geometry.
 
-**Border** is the remaining Phase 2 workstream. The initial read-only inventory shows no arbitrary 1px/2px product border widths or hard-coded neutral border colors. Ordinary boundaries predominantly use the semantic `border`/divider grammar; 2px treatments are currently limited to indicator/emphasis roles such as Spinner, Timeline markers, Steps active navigation, Table summary separation and selected-record leads. Border must still complete its own seven gates before Phase 2 can close.
+Phase 2 exit evidence includes exact-head CI, canonical visual golden geometry checks, and reciprocal Blog/Gosso consumer parity. Geometry Foundations therefore no longer depend on developers remembering local conventions; the known bypass classes are guarded in CI.
 
+The next execution stage is **Phase 3 — Visual Semantic Foundations**: Color, Elevation and Surface. Existing DL-10/DL-16 rules and elevation tests are inputs only; each Foundation must still complete its own seven gates and may reopen previously reviewed components if the inventory exposes split authority or corpus bypasses.
