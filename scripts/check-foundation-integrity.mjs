@@ -103,10 +103,30 @@ if (typography) {
       "\n",
   );
 
-  if (typography.gates?.corpus?.status === "passed") {
-    if (rawHeadings !== 0) failures.push("typography.corpus: raw h1-h6 remain in application corpus");
-    if (textMetricOverrides !== 0) failures.push("typography.corpus: Text metric overrides remain in application corpus");
-    if (nativeMetricBypasses !== 0) failures.push("typography.corpus: native typography utility bypasses remain in application corpus");
+  if (rawHeadings !== 0) {
+    failures.push("typography.guard: raw h1-h6 returned to the application corpus");
+  }
+  if (textMetricOverrides !== 0) {
+    failures.push("typography.guard: Text metric overrides returned to the application corpus");
+  }
+
+  const corpusGate = typography.gates?.corpus;
+  if (corpusGate?.status === "passed") {
+    if (nativeMetricBypasses !== 0) {
+      failures.push("typography.corpus: native typography utility bypasses remain in application corpus");
+    }
+  } else if (typeof corpusGate?.remainingNativeMetricBypasses === "number") {
+    if (nativeMetricBypasses !== corpusGate.remainingNativeMetricBypasses) {
+      failures.push(
+        "typography.corpus: native bypass ledger is stale; expected " +
+          corpusGate.remainingNativeMetricBypasses +
+          ", found " +
+          nativeMetricBypasses +
+          ". Update the corpus and ledger in the same stage.",
+      );
+    }
+  } else {
+    failures.push("typography.corpus: in-progress gate must record remainingNativeMetricBypasses");
   }
 }
 
