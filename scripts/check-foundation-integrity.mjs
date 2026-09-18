@@ -343,6 +343,61 @@ if (sizing?.status !== "planned") {
   }
 }
 
+const radius = matrix.foundations.radius;
+if (radius?.status !== "planned") {
+  const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");
+  const baseSource = readFileSync(resolve(root, "src/base.css"), "utf8");
+  const checkboxSource = readFileSync(
+    resolve(root, "src/components/primitives/checkbox.tsx"),
+    "utf8",
+  );
+  const tooltipSource = readFileSync(
+    resolve(root, "src/components/primitives/tooltip.tsx"),
+    "utf8",
+  );
+
+  for (const marker of [
+    "--radius-sm: 4px;",
+    "--radius-md: 6px;",
+    "--radius-lg: 10px;",
+    "--radius-xl: 10px;",
+    "--radius: var(--radius-md);",
+    "--radius-control: var(--radius-md);",
+  ]) {
+    if (!tokenSource.includes(marker)) {
+      failures.push("radius.guard: missing canonical radius marker " + marker);
+    }
+  }
+  if (/--radius(?:-control)?:\s*6px;/.test(tokenSource)) {
+    failures.push(
+      "radius.guard: compatibility/control radius aliases must not own duplicate numeric values",
+    );
+  }
+  if (!baseSource.includes("border-radius: var(--radius-control);")) {
+    failures.push("radius.guard: Button base radius escaped the control alias");
+  }
+  if (!checkboxSource.includes("rounded-sm") || checkboxSource.includes("rounded-[4px]")) {
+    failures.push("radius.guard: Checkbox must consume the semantic small radius");
+  }
+  if (!tooltipSource.includes("rounded-[2px]")) {
+    failures.push(
+      "radius.guard: documented Tooltip arrow shape exception changed without inventory review",
+    );
+  }
+
+  const arbitraryProductRadius = filesMatching(/\brounded-\[[^\]]+\]/);
+  process.stdout.write(
+    "Radius corpus audit: arbitraryRadiusBypasses=" +
+      arbitraryProductRadius.length +
+      "\n",
+  );
+  if (arbitraryProductRadius.length !== 0) {
+    failures.push(
+      "radius.corpus: product fixtures must not define arbitrary radius values",
+    );
+  }
+}
+
 const layout = matrix.foundations.layout;
 if (layout?.status !== "planned") {
   const pageContainerSource = readFileSync(
