@@ -727,9 +727,7 @@ if (elevation?.status !== "planned") {
     root,
     "showcase/demos/products/gosso-admin/overview.tsx",
   );
-  const unexpectedSemanticShadowFiles = semanticShadowFiles.filter(
-    (file) => file !== overviewFile,
-  );
+  const unexpectedSemanticShadowFiles = semanticShadowFiles;
 
   const elevatedVariantFiles = canonicalProductFiles.filter((file) =>
     /variant=["']elevated["']/.test(readFileSync(file, "utf8")),
