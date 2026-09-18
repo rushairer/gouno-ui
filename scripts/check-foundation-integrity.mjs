@@ -65,6 +65,19 @@ function collectTsx(directory) {
   });
 }
 
+const canonicalProductRoots = [
+  resolve(root, "showcase/demos/products/blog-admin"),
+  resolve(root, "showcase/demos/products/gosso-admin"),
+  resolve(root, "showcase/demos/products/blog"),
+];
+const canonicalProductFiles = canonicalProductRoots.flatMap(collectTsx);
+
+function filesMatching(pattern) {
+  return canonicalProductFiles.filter((file) =>
+    pattern.test(readFileSync(file, "utf8")),
+  );
+}
+
 const typography = matrix.foundations.typography;
 if (typography) {
   const applicationRoots = [
@@ -212,6 +225,16 @@ if (spacing?.status !== "planned") {
       "spacing.guard: named layout gaps reintroduced component-local Tailwind scales",
     );
   }
+
+  const spacingLeaks = filesMatching(/\bgap-space-(?:xs|sm|md|lg|xl)\b/);
+  process.stdout.write(
+    "Spacing corpus audit: foundationUtilityLeaks=" + spacingLeaks.length + "\n",
+  );
+  if (spacingLeaks.length !== 0) {
+    failures.push(
+      "spacing.corpus: product fixtures must not copy Foundation gap utility classes directly",
+    );
+  }
 }
 
 const sizing = matrix.foundations.sizing;
@@ -296,6 +319,18 @@ if (sizing?.status !== "planned") {
       break;
     }
   }
+
+  const sizingLeaks = filesMatching(
+    /\b(?:control-height|control-square|control-inset-height)-(?:small|middle|large)\b/,
+  );
+  process.stdout.write(
+    "Sizing corpus audit: foundationUtilityLeaks=" + sizingLeaks.length + "\n",
+  );
+  if (sizingLeaks.length !== 0) {
+    failures.push(
+      "sizing.corpus: product fixtures must use component size semantics instead of Foundation geometry classes",
+    );
+  }
 }
 
 const layout = matrix.foundations.layout;
@@ -324,6 +359,16 @@ if (layout?.status !== "planned") {
     if (!tokenSource.includes(marker)) {
       failures.push("layout.guard: missing semantic page track marker " + marker);
     }
+  }
+
+  const layoutLeaks = filesMatching(/\blayout-page-container\b/);
+  process.stdout.write(
+    "Layout corpus audit: foundationUtilityLeaks=" + layoutLeaks.length + "\n",
+  );
+  if (layoutLeaks.length !== 0) {
+    failures.push(
+      "layout.corpus: product fixtures must consume PageContainer semantics instead of its Foundation class",
+    );
   }
 }
 
