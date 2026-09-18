@@ -319,7 +319,7 @@ for (const id of ["core-form", "core-select", "core-collapse", "core-tree", "cor
   componentReviews[id] = {
     status: "reopened",
     scope: "FI-001 Accessibility in progress: semantic-owner audit found form-label/composite-control, contextual disclosure naming, overlay close naming, or nested-interaction defects in this family. Exact defect ownership is tracked in docs/foundation-accessibility-inventory.md.",
-    evidence: ["foundation-integrity.json", "docs/foundation-accessibility-inventory.md", "docs/design-language.md: DL-25"],
+    evidence: ["foundation-integrity.json", "docs/foundation-accessibility-inventory.md", "docs/design-language.md"],
     baseline: "FI-001 Accessibility reopened / 2026-09-19",
   };
 }
