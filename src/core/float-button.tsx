@@ -28,7 +28,7 @@ export interface FloatButtonProps
 }
 
 const floatButtonClass =
-  "fixed right-6 bottom-6 z-40 inline-flex size-12 items-center justify-center rounded-full border bg-popover text-foreground shadow-overlay transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+  "fixed right-6 bottom-6 z-40 inline-flex size-12 items-center justify-center rounded-full border bg-popover text-foreground shadow-overlay transition-colors hover:bg-accent hover:text-accent-foreground focus-standalone";
 
 function withTooltip(trigger: ReactElement, tooltip: ReactNode | undefined) {
   if (tooltip === undefined || tooltip === null) return trigger;
