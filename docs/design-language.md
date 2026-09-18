@@ -437,6 +437,22 @@ Rules:
 
 Typography tokens own size, line-height, title weight and title tracking. Tailwind utility names are an implementation detail; product pages do not own those numeric choices.
 
+## DL-22 — Focus geometry is a semantic Foundation contract
+
+Keyboard focus visibility is not a component-local styling choice.
+
+The Focus Foundation owns one canonical indicator thickness and named geometry roles:
+
+- `focus-control` for ordinary buttons, fields, menu items and compact controls;
+- `focus-standalone` for floating controls and interactive surfaces that need extra separation;
+- `focus-inset` for dense cell/grid interactions where an outward indicator would clip;
+- `focus-within-owner` for composite controls whose container owns the visible focus boundary;
+- `focus-peer-control` for peer-driven controls such as Segmented where the real focus target and visual owner differ.
+
+The global `:focus-visible` rule is the fallback for native/unowned focusables and consumes the same thickness token. Components may own semantic validation/state color, but they must not independently choose focus-ring width, offset or switch to generic `focus:` styling that leaks keyboard treatment into pointer interaction.
+
+Product compositions select an owning focus role; they do not write raw `focus-visible:ring-2`, `ring-[3px]`, ring offsets or other pixel geometry.
+
 ## Review checklist
 
 When a page looks inconsistent, ask in this order:
