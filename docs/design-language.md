@@ -368,6 +368,41 @@ For editor forms, this rule combines with PI-09: the editor surface owns its out
 
 This rule does not require a public `SectionSurface` component. Showcase-private composition helpers may encode the canonical anatomy for validation.
 
+## DL-17 — Semantic heading level and visual typography role are independent contracts
+
+HTML heading level and visual hierarchy answer different questions:
+
+- `level` defines document outline and accessibility semantics (`h1`–`h6`);
+- Typography `variant` defines the visual role (display, hero, page, task, section, subsection, compact or label).
+
+Canonical product code must not recover visual hierarchy by attaching raw size utilities such as `text-2xl`, `text-xl`, `text-base` or arbitrary `text-[...]` to `Heading` or native heading elements.
+
+Binding roles:
+
+| Visual role | Typical semantic use |
+| --- | --- |
+| `display` | public/marketing hero that intentionally exceeds route-title scale |
+| `hero` | prominent product hero that grows responsively without changing document level |
+| `page` | route-family identity / normal PageHeader |
+| `task` | deep task identity such as Dedicated Editor |
+| `section` | major subsection inside a page/task |
+| `subsection` | secondary subsection |
+| `compact` | compact bounded-surface title |
+| `label` | structurally meaningful but deliberately quiet heading |
+
+Rules:
+
+- Normal application routes have one route-level `Heading level={1} variant="page"`.
+- A Dedicated Editor nested below an existing route H1 uses `level={2}` with `variant="task"`.
+- A standalone Dedicated Editor without another page identity may use `level={1}` with the same `variant="task"`; changing semantic level must not change task-title size.
+- Card/region headings choose their semantic level from the document outline and their visual role from the region hierarchy. Do not use a smaller HTML level merely to get a smaller font.
+- Public reading/marketing surfaces may choose `display`/`hero` roles, but still use the canonical `Heading` scale rather than raw product-local font-size utilities.
+- `Text.size` continues to express body-density choices, but its implementation resolves through semantic body/caption tokens instead of Tailwind's raw default scale.
+- Product code may extend color, measure, alignment and interaction styling through `className`, but canonical headings must not override font size, line-height, weight or tracking ad hoc.
+- Core compatibility may continue to infer a default visual variant from `level`, but admitted Gouno/Pattern compositions should state the intended visual role explicitly whenever the role is part of their contract.
+
+Typography tokens own size, line-height, title weight and title tracking. Tailwind utility names are an implementation detail; product pages do not own those numeric choices.
+
 ## Review checklist
 
 When a page looks inconsistent, ask in this order:
@@ -388,5 +423,6 @@ When a page looks inconsistent, ask in this order:
 14. If this rule just changed, have all already-migrated governed surfaces been scanned and migrated or explicitly documented as intentional exceptions?
 15. Is a bounded business section using canonical Card/Table/List anatomy rather than recreating the same border/radius/background recipe locally?
 16. Inside an editor, does the owning surface control outer padding while the form composition owns field/section rhythm?
+17. Does every visible heading separate document level from visual typography role, without page-local size/weight/tracking overrides?
 
 These rules are design-language invariants, not permission to create new Pattern/Gouno components. Public abstraction still requires the product-driven admission process.
