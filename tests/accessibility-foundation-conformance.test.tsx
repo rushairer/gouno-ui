@@ -41,6 +41,14 @@ describe("Accessibility Foundation", () => {
     );
 
     const combobox = screen.getByRole("combobox", { name: "状态" });
+    expect(combobox.id).toMatch(/^field-/);
+    const fieldLabel = screen.getByText("状态");
+    expect(fieldLabel.getAttribute("for")).toBe(combobox.id);
+    const hiddenSelect = document.querySelector(
+      '[data-slot="select"] select[aria-hidden="true"]',
+    );
+    expect(hiddenSelect?.id).toBe(`${combobox.id}-native`);
+    expect(hiddenSelect?.id).not.toBe(combobox.id);
     expect(combobox.getAttribute("aria-required")).toBe("true");
     expect(combobox.getAttribute("aria-invalid")).toBe("true");
     const describedBy = combobox.getAttribute("aria-describedby")?.split(" ") ?? [];
@@ -156,7 +164,11 @@ describe("Accessibility Foundation", () => {
     const table = source("src/components/primitives/table.tsx");
 
     expect(field).toContain('id={labelId}');
-    expect(field).toContain('"aria-labelledby": [labelId, child.props["aria-labelledby"]]');
+    expect(field).toContain("childOwnsAccessibleName");
+    expect(field).toContain("htmlFor={childOwnsAccessibleName ? undefined : controlId}");
+    expect(select).toContain("const nativeSelectId =");
+    expect(select).toContain("id={nativeSelectId}");
+    expect(select).toContain("id={baseId} role=\"combobox\"");
     expect(select).toContain('aria-required={required || props["aria-required"] || undefined}');
 
     expect(collapse).toContain("aria-labelledby={labelId}");
