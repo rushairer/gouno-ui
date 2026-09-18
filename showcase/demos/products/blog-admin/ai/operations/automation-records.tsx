@@ -618,7 +618,6 @@ export function AIOpsRecordsPanel({
   return (
     <div className="flex flex-col gap-5" aria-label="运行中心">
       <TabPanelLead
-        title="运行证据中心"
         description="从一次 Run 追溯执行步骤、资源边界、人工交互、媒体候选、Tool Call 与持久化事件；这里是证据中心，不是 Workflow 配置页。"
         actions={
           <div className="flex flex-wrap gap-2" aria-label="运行中心类型">
