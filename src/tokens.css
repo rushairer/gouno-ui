@@ -3,33 +3,6 @@
     "Inter Variable", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
-  /* Semantic typography scale. HTML heading level does not choose these roles. */
-  --text-display-title: 2.5rem;
-  --text-display-title--line-height: 2.75rem;
-  --text-page-title: 1.875rem;
-  --text-page-title--line-height: 2.25rem;
-  --text-task-title: 1.5rem;
-  --text-task-title--line-height: 2rem;
-  --text-section-title: 1.25rem;
-  --text-section-title--line-height: 1.75rem;
-  --text-subsection-title: 1.125rem;
-  --text-subsection-title--line-height: 1.75rem;
-  --text-compact-title: 1rem;
-  --text-compact-title--line-height: 1.5rem;
-  --text-label-title: 0.875rem;
-  --text-label-title--line-height: 1.25rem;
-  --text-body-lg: 1.125rem;
-  --text-body-lg--line-height: 1.75rem;
-  --text-body: 1rem;
-  --text-body--line-height: 1.5rem;
-  --text-body-sm: 0.875rem;
-  --text-body-sm--line-height: 1.25rem;
-  --text-caption: 0.75rem;
-  --text-caption--line-height: 1rem;
-  --font-weight-title: 600;
-  --font-weight-label: 500;
-  --tracking-title: -0.02em;
-  --tracking-section-title: -0.01em;
   --color-background: var(--background);
   --color-canvas: var(--canvas);
   --color-foreground: var(--foreground);
@@ -92,6 +65,34 @@
   --shadow-2xl: 0 0 #0000;
 }
 @layer base {
+  :root {
+    /* Semantic typography tokens. Visual roles are intentionally outside Tailwind text-* utilities. */
+    --type-display-title-size: 2.5rem;
+    --type-display-title-line-height: 2.75rem;
+    --type-page-title-size: 1.875rem;
+    --type-page-title-line-height: 2.25rem;
+    --type-task-title-size: 1.5rem;
+    --type-task-title-line-height: 2rem;
+    --type-section-title-size: 1.25rem;
+    --type-section-title-line-height: 1.75rem;
+    --type-subsection-title-size: 1.125rem;
+    --type-subsection-title-line-height: 1.75rem;
+    --type-compact-title-size: 1rem;
+    --type-compact-title-line-height: 1.5rem;
+    --type-label-title-size: 0.875rem;
+    --type-label-title-line-height: 1.25rem;
+    --type-body-lg-size: 1.125rem;
+    --type-body-lg-line-height: 1.75rem;
+    --type-body-size: 1rem;
+    --type-body-line-height: 1.5rem;
+    --type-body-sm-size: 0.875rem;
+    --type-body-sm-line-height: 1.25rem;
+    --type-caption-size: 0.75rem;
+    --type-caption-line-height: 1rem;
+    --type-title-weight: 600;
+    --type-title-tracking: -0.02em;
+    --type-section-title-tracking: -0.01em;
+  }
   :root,
   [data-theme="light"] {
     --background: #ffffff;
@@ -188,5 +189,108 @@
   }
   [data-brand="gosso-admin"] {
     --brand-hue: 295;
+  }
+}
+
+@layer utilities {
+  .type-display-title {
+    font-size: var(--type-page-title-size);
+    line-height: var(--type-page-title-line-height);
+    font-weight: var(--type-title-weight);
+    letter-spacing: var(--type-title-tracking);
+  }
+
+  .type-hero-title {
+    font-size: var(--type-task-title-size);
+    line-height: var(--type-task-title-line-height);
+    font-weight: var(--type-title-weight);
+    letter-spacing: var(--type-title-tracking);
+  }
+
+  .type-page-title {
+    font-size: var(--type-page-title-size);
+    line-height: var(--type-page-title-line-height);
+    font-weight: var(--type-title-weight);
+    letter-spacing: var(--type-title-tracking);
+  }
+
+  .type-task-title,
+  .type-section-lg-title {
+    font-size: var(--type-task-title-size);
+    line-height: var(--type-task-title-line-height);
+    font-weight: var(--type-title-weight);
+  }
+
+  .type-task-title {
+    letter-spacing: var(--type-title-tracking);
+  }
+
+  .type-section-lg-title {
+    letter-spacing: var(--type-section-title-tracking);
+  }
+
+  .type-section-title {
+    font-size: var(--type-section-title-size);
+    line-height: var(--type-section-title-line-height);
+    font-weight: var(--type-title-weight);
+    letter-spacing: var(--type-section-title-tracking);
+  }
+
+  .type-subsection-title {
+    font-size: var(--type-subsection-title-size);
+    line-height: var(--type-subsection-title-line-height);
+    font-weight: var(--type-title-weight);
+  }
+
+  .type-compact-title {
+    font-size: var(--type-compact-title-size);
+    line-height: var(--type-compact-title-line-height);
+    font-weight: var(--type-title-weight);
+  }
+
+  .type-label-title {
+    font-size: var(--type-label-title-size);
+    line-height: var(--type-label-title-line-height);
+    font-weight: var(--type-title-weight);
+  }
+
+  .type-micro-title {
+    font-size: var(--type-caption-size);
+    line-height: var(--type-caption-line-height);
+    font-weight: var(--type-title-weight);
+  }
+
+  .type-body-lg {
+    font-size: var(--type-body-lg-size);
+    line-height: var(--type-body-lg-line-height);
+  }
+
+  .type-body {
+    font-size: var(--type-body-size);
+    line-height: var(--type-body-line-height);
+  }
+
+  .type-body-sm {
+    font-size: var(--type-body-sm-size);
+    line-height: var(--type-body-sm-line-height);
+  }
+
+  .type-caption {
+    font-size: var(--type-caption-size);
+    line-height: var(--type-caption-line-height);
+  }
+
+  @media (min-width: 40rem) {
+    .type-hero-title {
+      font-size: var(--type-page-title-size);
+      line-height: var(--type-page-title-line-height);
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .type-display-title {
+      font-size: var(--type-display-title-size);
+      line-height: var(--type-display-title-line-height);
+    }
   }
 }
