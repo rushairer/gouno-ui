@@ -2,6 +2,7 @@ import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   Button,
+  Checkbox,
   FieldGroup,
   FieldLabel,
   FieldLegend,
@@ -68,6 +69,32 @@ describe("Core Form family", () => {
       '[data-slot="select"] select[aria-hidden="true"]',
     );
     expect(hiddenSelect?.getAttribute("tabindex")).toBe("-1");
+  });
+
+  it("fills missing names without overriding an explicitly named child control", () => {
+    const { rerender } = render(
+      <FormField label="成员角色">
+        <Select aria-label="Blog 角色分配" defaultValue="editor">
+          <option value="editor">编辑</option>
+        </Select>
+      </FormField>,
+    );
+
+    expect(
+      screen.getByRole("combobox", { name: "Blog 角色分配" }),
+    ).toBeTruthy();
+    expect(screen.getByRole("group", { name: "成员角色" })).toBeTruthy();
+
+    rerender(
+      <FormField label="导航设置">
+        <Checkbox label="显示在顶部主导航栏" defaultChecked />
+      </FormField>,
+    );
+
+    expect(
+      screen.getByRole("checkbox", { name: "显示在顶部主导航栏" }),
+    ).toBeTruthy();
+    expect(screen.getByRole("group", { name: "导航设置" })).toBeTruthy();
   });
 
   it("keeps a visually hidden FormField label as the accessible control name", () => {
