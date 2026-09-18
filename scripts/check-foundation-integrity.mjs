@@ -277,21 +277,12 @@ if (sizing?.status !== "planned") {
         "sizing.guard: missing canonical control height " + name + "=" + value,
       );
     }
-    for (const prefix of [
-      ".control-height-",
-      ".control-square-",
-      ".control-inset-height-",
-    ]) {
-      if (!tokenSource.includes(prefix + name)) {
-        failures.push("sizing.guard: missing semantic control utility " + prefix + name);
-      }
-    }
   }
 
   for (const marker of [
-    'small: "control-height-small text-sm"',
-    'middle: "control-height-middle text-sm"',
-    'large: "control-height-large text-base"',
+    'small: "h-[var(--control-height-small)] text-sm"',
+    'middle: "h-[var(--control-height-middle)] text-sm"',
+    'large: "h-[var(--control-height-large)] text-base"',
   ]) {
     if (!controlTypesSource.includes(marker)) {
       failures.push("sizing.guard: ControlSize escaped semantic height authority");
@@ -301,10 +292,17 @@ if (sizing?.status !== "planned") {
   if (!coreButtonSource.includes("export type ButtonSize = ControlSize;")) {
     failures.push("sizing.guard: ButtonSize must reuse ControlSize");
   }
+  if (/\bcontrol-(?:height|square|inset-height)-(?:small|middle|large)\b/.test(
+    controlTypesSource + primitiveButtonSource + otpSource + segmentedSource,
+  )) {
+    failures.push(
+      "sizing.guard: bespoke sizing utility classes break Tailwind height override semantics",
+    );
+  }
   for (const marker of [
-    'sm: "control-height-small',
-    'default: "control-height-middle',
-    'lg: "control-height-large',
+    'sm: "h-[var(--control-height-small)]',
+    'default: "h-[var(--control-height-middle)]',
+    'lg: "h-[var(--control-height-large)]',
   ]) {
     if (!primitiveButtonSource.includes(marker)) {
       failures.push("sizing.guard: Button primitive escaped ControlSize geometry");
@@ -312,9 +310,9 @@ if (sizing?.status !== "planned") {
     }
   }
   for (const marker of [
-    'small: "control-square-small',
-    'middle: "control-square-middle',
-    'large: "control-square-large',
+    'small: "size-[var(--control-height-small)]',
+    'middle: "size-[var(--control-height-middle)]',
+    'large: "size-[var(--control-height-large)]',
   ]) {
     if (!otpSource.includes(marker)) {
       failures.push("sizing.guard: InputOTP escaped ControlSize geometry");
@@ -322,9 +320,9 @@ if (sizing?.status !== "planned") {
     }
   }
   for (const marker of [
-    'small: "control-inset-height-small',
-    'middle: "control-inset-height-middle',
-    'large: "control-inset-height-large',
+    'small: "h-[calc(var(--control-height-small)-0.25rem)]',
+    'middle: "h-[calc(var(--control-height-middle)-0.25rem)]',
+    'large: "h-[calc(var(--control-height-large)-0.25rem)]',
   ]) {
     if (!segmentedSource.includes(marker)) {
       failures.push("sizing.guard: Segmented escaped derived ControlSize geometry");
@@ -333,7 +331,7 @@ if (sizing?.status !== "planned") {
   }
 
   const sizingLeaks = filesMatching(
-    /\b(?:control-height|control-square|control-inset-height)-(?:small|middle|large)\b/,
+    /\b(?:h|size)-\[(?:var\(|calc\(var\()--control-height-(?:small|middle|large)/,
   );
   process.stdout.write(
     "Sizing corpus audit: foundationUtilityLeaks=" + sizingLeaks.length + "\n",
