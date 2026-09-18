@@ -288,9 +288,9 @@ for (const id of ["theme-system","gouno-app-shell","pattern-bulk-action-bar","co
 
 componentReviews["core-steps"] = {
   status: "reopened",
-  scope: "FI-D001: Showcase review found connector/title/content geometry with incorrect visual spacing/relationship; must be revalidated in browser and either fixed locally or traced to a Foundation authority gap.",
-  evidence: ["docs/foundation-integrity-open-defects.md", "src/core/steps.tsx", "showcase/demos/core/steps/steps-1.tsx"],
-  baseline: "FI-D001 reopened / 2026-09-18",
+  scope: "FI-D001 / Responsive reopening: horizontal connector crossed the copy lane, vertical dot connector ignored dot-marker geometry, and max-sm changed only the root axis while item/body/connector geometry stayed desktop-owned. Fix is implemented; exact-head browser geometry and consumer gates are pending.",
+  evidence: ["foundation-integrity.json", "docs/foundation-integrity-open-defects.md", "docs/foundation-responsive-inventory.md", "src/core/steps.tsx", "tests/responsive-foundation-conformance.test.tsx", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+  baseline: "FI-D001 responsive reopening / 2026-09-19",
 };
 
 componentReviews["core-tag"] = {
