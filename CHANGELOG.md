@@ -4,6 +4,17 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.4.6] - 2026-09-18
+
+### Changed
+- Canonical Showcase composition helpers now consume semantic Typography props and roles directly, including TabPanelLead, Dedicated Editor, Editor Form, Admin Data Composition, and Data Summary surfaces.
+- Foundation integrity checks now guard canonical composition helpers in addition to product corpora so Showcase patterns cannot reintroduce raw heading or text-metric authority.
+
+### Fixed
+- Preserve caller-owned `data-slot` values through Core `Heading`, `Text`, and `Typography` composition so wrappers such as `Result` retain stable structural selectors instead of being overwritten by the inner Typography primitive.
+- Re-certified canonical visual goldens after composition-helper Typography closure across responsive light/dark representatives.
+
+
 ## [0.4.5] - 2026-09-18
 
 ### Added
