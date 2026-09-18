@@ -48,9 +48,9 @@ export function CollectionComposition({
       {feedback ? <div data-slot="collection-feedback">{feedback}</div> : null}
       {summary ? <div data-slot="collection-summary">{summary}</div> : null}
       <div data-slot="collection-toolbar">{toolbar}</div>
+      {selection ? <div data-slot="collection-selection">{selection}</div> : null}
       <div data-slot="collection-data-view">{data}</div>
       {pagination ? <div data-slot="collection-pagination">{pagination}</div> : null}
-      {selection ? <div data-slot="collection-selection">{selection}</div> : null}
     </section>
   );
 }
