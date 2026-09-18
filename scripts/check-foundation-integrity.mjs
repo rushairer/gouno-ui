@@ -189,6 +189,36 @@ if (typography) {
   }
 }
 
+
+const layout = matrix.foundations.layout;
+if (layout?.status !== "planned") {
+  const pageContainerSource = readFileSync(
+    resolve(root, "src/gouno/page-container.tsx"),
+    "utf8",
+  );
+  const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");
+
+  if (!pageContainerSource.includes("layout-page-container")) {
+    failures.push(
+      "layout.guard: PageContainer must consume the semantic page track authority",
+    );
+  }
+  if (/max-w-\[[^\]]+\]|\bgap-\d+\b/.test(pageContainerSource)) {
+    failures.push(
+      "layout.guard: PageContainer reintroduced local width or vertical-rhythm utilities",
+    );
+  }
+  for (const marker of [
+    "--layout-page-max-width:",
+    "--layout-page-gap:",
+    ".layout-page-container",
+  ]) {
+    if (!tokenSource.includes(marker)) {
+      failures.push("layout.guard: missing semantic page track marker " + marker);
+    }
+  }
+}
+
 const percentage = total ? ((passed / total) * 100).toFixed(1) : "0.0";
 const active = Object.entries(matrix.foundations)
   .filter(([, foundation]) => foundation.status !== "planned")
