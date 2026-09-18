@@ -60,7 +60,7 @@ export function SystemStatusPanel() {
             </div>
           </Card>
           <DefinitionCard title="OpenID Connect 配置" rows={oidcRows} />
-          <Card padding="base"><div className="mb-4 flex items-center gap-2"><ShieldCheck aria-hidden="true" className="size-5 text-primary" /><Heading level={2} className="text-base">支持能力</Heading></div><div className="grid gap-4 md:grid-cols-2"><div><Text size="xs" tone="muted" className="mb-2">Scopes</Text><div className="flex flex-wrap gap-2">{["openid", "profile", "email", "admin"].map((item) => <Tag key={item} color={item === "admin" ? "warning" : "primary"}>{item}</Tag>)}</div></div><div><Text size="xs" tone="muted" className="mb-2">Grant Types</Text><div className="flex flex-wrap gap-2">{["authorization_code", "refresh_token", "client_credentials", "device_code"].map((item) => <Tag key={item}>{item}</Tag>)}</div></div></div></Card>
+          <Card padding="base"><div className="mb-4 flex items-center gap-2"><ShieldCheck aria-hidden="true" className="size-5 text-primary" /><Heading level={2} variant="compact">支持能力</Heading></div><div className="grid gap-4 md:grid-cols-2"><div><Text size="xs" tone="muted" className="mb-2">Scopes</Text><div className="flex flex-wrap gap-2">{["openid", "profile", "email", "admin"].map((item) => <Tag key={item} color={item === "admin" ? "warning" : "primary"}>{item}</Tag>)}</div></div><div><Text size="xs" tone="muted" className="mb-2">Grant Types</Text><div className="flex flex-wrap gap-2">{["authorization_code", "refresh_token", "client_credentials", "device_code"].map((item) => <Tag key={item}>{item}</Tag>)}</div></div></div></Card>
           <DefinitionCard title="安全策略" rows={policyRows} />
         </>
       )}
