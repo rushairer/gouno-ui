@@ -73,10 +73,6 @@ export interface AISettingsSectionActions {
 function AgentList({ fixture, actions }: { fixture: AISettingsFixture; actions: AISettingsSectionActions }) {
   return (
     <div className="flex flex-col gap-5">
-      <TabPanelLead
-        description="Skill Version + 模型连接 + 运行计划组成可审计的执行单元。"
-        actions={<Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={actions.onCreateAgent}>创建 Agent</Button>}
-      />
       <TabPanelFeedback>
         {fixture.providers.length === 0 ? (
           <Alert type="warning" showIcon title="先添加模型连接" description="保存首个可用模型连接后再创建 Agent。" />
@@ -120,15 +116,6 @@ function AgentList({ fixture, actions }: { fixture: AISettingsFixture; actions: 
 function SkillList({ skills, actions }: { skills: SkillFixture[]; actions: AISettingsSectionActions }) {
   return (
     <div className="flex flex-col gap-5">
-      <TabPanelLead
-        description="管理可复用、可版本化的 AI 能力定义；系统 Skill 与团队副本保持清晰边界。"
-        actions={(
-          <>
-            <Button size="small" variant="outline" icon={<Upload />} onClick={actions.onImportSkill}>导入 Skill</Button>
-            <Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={actions.onCreateSkill}>创建 Skill</Button>
-          </>
-        )}
-      />
       <div className="grid gap-4 lg:grid-cols-2">
         {skills.map((skill) => (
           <Card key={skill.id} padding="base">
@@ -164,7 +151,6 @@ function SkillList({ skills, actions }: { skills: SkillFixture[]; actions: AISet
 function ToolList({ fixture }: { fixture: AISettingsFixture }) {
   return (
     <div className="flex flex-col gap-5">
-      <TabPanelLead description="由代码发布的受控能力目录；Workflow 不直接调用 Tool，必须经过 Skill/Agent 授权。" />
       <Card padding="none" className="overflow-hidden">
         <CardContent className="divide-y p-0">
           {fixture.tools.map((tool) => (
@@ -183,16 +169,6 @@ function ToolList({ fixture }: { fixture: AISettingsFixture }) {
 function KnowledgePanel({ fixture, actions }: { fixture: AISettingsFixture["knowledge"]; actions: AISettingsSectionActions }) {
   return (
     <div className="flex flex-col gap-5">
-      <TabPanelLead
-        description="仅索引已发布文章；Embedding Profile 负责把内容转换为可检索知识库。"
-        actions={(
-          <>
-            <Button size="small" variant="outline" icon={<RefreshCw />} onClick={actions.onRetryIndex}>重试失败任务</Button>
-            <Button size="small" variant="outline" icon={<DatabaseZap />} onClick={actions.onRebuildIndex}>全量重建</Button>
-            <Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={actions.onCreateEmbedding}>添加 Embedding 模型</Button>
-          </>
-        )}
-      />
       <TabPanelFeedback>
         {fixture.index.failed ? <Alert type="warning" showIcon title="知识索引存在失败任务" description="优先重试失败项；只有索引结构变化或一致性异常时才执行全量重建。" /> : null}
       </TabPanelFeedback>
@@ -229,16 +205,6 @@ function ProviderList({ providers, actions }: { providers: ProviderFixture[]; ac
   const image = providers.find((item) => item.defaultImage)?.id;
   return (
     <div className="flex flex-col gap-5">
-      <TabPanelLead
-        description="管理模型连接、密钥状态以及文本与图片生成的默认用途。"
-        actions={(
-          <>
-            <Button size="small" variant="outline" icon={<Download />} onClick={actions.onExportProviders}>导出模型连接</Button>
-            <Button size="small" variant="outline" icon={<Upload />} onClick={actions.onImportProviders}>导入模型连接</Button>
-            <Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={actions.onCreateProvider}>添加模型连接</Button>
-          </>
-        )}
-      />
       <Card padding="base">
         <div className="flex flex-col gap-4">
           <div><Heading level={2} className="text-base">默认用途</Heading><Text size="sm" tone="muted">决定编辑器、运营分析与图片生成默认使用的模型。</Text></div>
@@ -288,10 +254,6 @@ function ConnectorList({ fixture, actions }: { fixture: AISettingsFixture; actio
   const connectorMap = new Map(fixture.connectors.map((item) => [item.id, item]));
   return (
     <div className="flex flex-col gap-5">
-      <TabPanelLead
-        description="管理 Agent 可访问的 Sandbox 外部能力、OAuth 边界与 Outbox 审批链路。"
-        actions={<Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={actions.onCreateConnector}>添加 Connector Profile</Button>}
-      />
       <TabPanelFeedback>
         <Alert type="info" showIcon title="Sandbox connector 边界" description="Showcase 只模拟 Profile、OAuth 状态和 Outbox 状态迁移；不保存真实凭据，也不执行真实网络投递。" />
       </TabPanelFeedback>
@@ -318,6 +280,55 @@ function ConnectorList({ fixture, actions }: { fixture: AISettingsFixture; actio
       </Card>
     </div>
   );
+}
+
+export function AISettingsSectionLead({ section, actions }: { section: AISettingsSection; actions: AISettingsSectionActions }) {
+  switch (section) {
+    case "agents":
+      return <TabPanelLead
+        description="Skill Version + 模型连接 + 运行计划组成可审计的执行单元。"
+        actions={<Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={actions.onCreateAgent}>创建 Agent</Button>}
+      />;
+    case "skills":
+      return <TabPanelLead
+        description="管理可复用、可版本化的 AI 能力定义；系统 Skill 与团队副本保持清晰边界。"
+        actions={(
+          <>
+            <Button size="small" variant="outline" icon={<Upload />} onClick={actions.onImportSkill}>导入 Skill</Button>
+            <Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={actions.onCreateSkill}>创建 Skill</Button>
+          </>
+        )}
+      />;
+    case "tools":
+      return <TabPanelLead description="由代码发布的受控能力目录；Workflow 不直接调用 Tool，必须经过 Skill/Agent 授权。" />;
+    case "knowledge":
+      return <TabPanelLead
+        description="仅索引已发布文章；Embedding Profile 负责把内容转换为可检索知识库。"
+        actions={(
+          <>
+            <Button size="small" variant="outline" icon={<RefreshCw />} onClick={actions.onRetryIndex}>重试失败任务</Button>
+            <Button size="small" variant="outline" icon={<DatabaseZap />} onClick={actions.onRebuildIndex}>全量重建</Button>
+            <Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={actions.onCreateEmbedding}>添加 Embedding 模型</Button>
+          </>
+        )}
+      />;
+    case "providers":
+      return <TabPanelLead
+        description="管理模型连接、密钥状态以及文本与图片生成的默认用途。"
+        actions={(
+          <>
+            <Button size="small" variant="outline" icon={<Download />} onClick={actions.onExportProviders}>导出模型连接</Button>
+            <Button size="small" variant="outline" icon={<Upload />} onClick={actions.onImportProviders}>导入模型连接</Button>
+            <Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={actions.onCreateProvider}>添加模型连接</Button>
+          </>
+        )}
+      />;
+    case "connectors":
+      return <TabPanelLead
+        description="管理 Agent 可访问的 Sandbox 外部能力、OAuth 边界与 Outbox 审批链路。"
+        actions={<Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={actions.onCreateConnector}>添加 Connector Profile</Button>}
+      />;
+  }
 }
 
 export function AISettingsSectionPanel({ fixture, section, actions }: { fixture: AISettingsFixture; section: AISettingsSection; actions: AISettingsSectionActions }) {
