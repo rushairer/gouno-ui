@@ -321,6 +321,61 @@ for (const mode of ["light", "dark"]) {
   });
 }
 
+test("surface-gosso-overview-quick-link-card-ownership", async ({ page }) => {
+  const scenario = {
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-overview",
+    viewport: desktop,
+    ready: '[data-slot="card"]',
+  };
+  await prepareLightFixture(page, scenario);
+
+  const link = page
+    .getByText("客户端注册", { exact: true })
+    .locator("xpath=ancestor::a[1]");
+  const card = link.locator('[data-slot="card"]');
+
+  const [linkStyle, cardStyle, linkBox, cardBox] = await Promise.all([
+    link.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return {
+        backgroundColor: style.backgroundColor,
+        borderTopWidth: style.borderTopWidth,
+        boxShadow: style.boxShadow,
+        display: style.display,
+      };
+    }),
+    card.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return {
+        backgroundColor: style.backgroundColor,
+        borderTopWidth: style.borderTopWidth,
+        boxShadow: style.boxShadow,
+        display: style.display,
+      };
+    }),
+    link.boundingBox(),
+    card.boundingBox(),
+  ]);
+
+  expect(linkStyle).toEqual({
+    backgroundColor: "rgba(0, 0, 0, 0)",
+    borderTopWidth: "0px",
+    boxShadow: "none",
+    display: "block",
+  });
+  expect(cardStyle.backgroundColor).not.toBe("rgba(0, 0, 0, 0)");
+  expect(cardStyle.borderTopWidth).toBe("1px");
+  expect(cardStyle.boxShadow).not.toBe("none");
+  expect(cardStyle.display).toBe("flex");
+
+  expect(linkBox).not.toBeNull();
+  expect(cardBox).not.toBeNull();
+  expect(cardBox?.width).toBeCloseTo(linkBox?.width ?? 0, 1);
+  expect(cardBox?.height).toBeCloseTo(linkBox?.height ?? 0, 1);
+});
+
 const darkScenarios = [
   {
     name: "blog-home-desktop-dark",
