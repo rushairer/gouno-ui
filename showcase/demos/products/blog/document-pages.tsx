@@ -68,7 +68,7 @@ function CustomPageBody() {
       <p>
         隐私说明、项目介绍、使用指南等页面都可能由管理员持续维护。前台只负责把已经发布的内容稳定地呈现出来，加载、未找到和失败状态继续属于这个路由自己的生命周期。
       </p>
-      <blockquote className="border-l-4 border-primary/40 bg-muted/40 px-5 py-4 text-muted-foreground">
+      <blockquote className="edge-s-accent border-s-primary/40 bg-muted/40 px-5 py-4 text-muted-foreground">
         Markdown 能力可以复用，页面模型不能因为都叫“文档”就被强行合并。
       </blockquote>
       <Heading level={2} variant="section-lg" >公共能力保持窄职责</Heading>
