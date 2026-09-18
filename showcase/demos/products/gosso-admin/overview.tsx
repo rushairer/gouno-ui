@@ -131,7 +131,7 @@ export function GossoOverviewDemo() {
               {isAdmin ? <ShieldCheck className="size-7" aria-hidden="true" /> : <UserCheck className="size-7" aria-hidden="true" />}
             </div>
             <div className="flex min-w-0 flex-wrap items-center gap-3 sm:gap-4">
-              <Heading level={1} className="text-2xl sm:text-3xl">{isAdmin ? "身份管理控制台" : "个人账户与安全中心"}</Heading>
+              <Heading level={1} variant="hero">{isAdmin ? "身份管理控制台" : "个人账户与安全中心"}</Heading>
               <Tag color="success">当前登录：{userName}（{isAdmin ? "管理员" : "普通用户"}）</Tag>
             </div>
           </div>
@@ -166,7 +166,7 @@ export function GossoOverviewDemo() {
       ) : null}
 
       <section aria-labelledby="gosso-overview-quick-navigation" className="flex flex-col gap-5">
-        <Heading id="gosso-overview-quick-navigation" level={2} className="text-sm font-semibold text-muted-foreground">快速导航</Heading>
+        <Heading id="gosso-overview-quick-navigation" level={2} variant="label" className="text-muted-foreground">快速导航</Heading>
         <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
           {quickLinks.map((link) => <QuickLinkCard key={`${role}-${link.title}`} link={link} />)}
         </div>
