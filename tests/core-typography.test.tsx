@@ -5,18 +5,24 @@ import { Heading, Text, Typography } from "../src/core";
 afterEach(cleanup);
 
 describe("Core Typography family", () => {
-  it("renders Heading with the requested native heading level and forwards HTML props", () => {
+  it("renders Heading semantic level independently from its visual role", () => {
     render(
       <>
         <Heading
           level={1}
+          variant="page"
           id="page-title"
           data-context="page"
           className="custom-heading"
         >
           页面主标题
         </Heading>
-        <Heading level={6}>细节标题</Heading>
+        <Heading level={2} variant="task">
+          嵌套编辑任务
+        </Heading>
+        <Heading level={1} variant="task">
+          独立编辑任务
+        </Heading>
       </>,
     );
 
@@ -27,18 +33,42 @@ describe("Core Typography family", () => {
     expect(pageTitle.tagName).toBe("H1");
     expect(pageTitle.getAttribute("data-slot")).toBe("heading");
     expect(pageTitle.getAttribute("data-context")).toBe("page");
-    expect(pageTitle.className).toContain("text-3xl");
+    expect(pageTitle.getAttribute("data-typography-role")).toBe("page");
+    expect(pageTitle.className).toContain("text-page-title");
+    expect(pageTitle.className).toContain("font-title");
     expect(pageTitle.className).toContain("custom-heading");
 
-    const detail = screen.getByRole("heading", {
-      level: 6,
-      name: "细节标题",
+    const nestedTask = screen.getByRole("heading", {
+      level: 2,
+      name: "嵌套编辑任务",
     });
-    expect(detail.tagName).toBe("H6");
-    expect(detail.className).toContain("text-lg");
+    const standaloneTask = screen.getByRole("heading", {
+      level: 1,
+      name: "独立编辑任务",
+    });
+    expect(nestedTask.getAttribute("data-typography-role")).toBe("task");
+    expect(standaloneTask.getAttribute("data-typography-role")).toBe("task");
+    expect(nestedTask.className).toContain("text-task-title");
+    expect(standaloneTask.className).toContain("text-task-title");
   });
 
-  it("lets Text change semantic host without losing size, tone or native attributes", () => {
+  it("keeps level-based visual defaults only as a compatibility fallback", () => {
+    render(
+      <>
+        <Heading level={1}>默认页面标题</Heading>
+        <Heading level={2}>默认任务标题</Heading>
+        <Heading level={3}>默认区块标题</Heading>
+        <Heading level={6}>默认次级标题</Heading>
+      </>,
+    );
+
+    expect(screen.getByText("默认页面标题").getAttribute("data-typography-role")).toBe("page");
+    expect(screen.getByText("默认任务标题").getAttribute("data-typography-role")).toBe("task");
+    expect(screen.getByText("默认区块标题").getAttribute("data-typography-role")).toBe("section");
+    expect(screen.getByText("默认次级标题").getAttribute("data-typography-role")).toBe("subsection");
+  });
+
+  it("lets Text change semantic host without losing semantic body scale, tone or native attributes", () => {
     render(
       <Text
         as="span"
@@ -55,7 +85,8 @@ describe("Core Typography family", () => {
     expect(text.tagName).toBe("SPAN");
     expect(text.getAttribute("data-slot")).toBe("text");
     expect(text.getAttribute("data-kind")).toBe("metadata");
-    expect(text.className).toContain("text-sm");
+    expect(text.getAttribute("data-typography-role")).toBe("body-sm");
+    expect(text.className).toContain("text-body-sm");
     expect(text.className).toContain("text-muted-foreground");
     expect(text.className).toContain("custom-text");
   });
@@ -76,7 +107,7 @@ describe("Core Typography family", () => {
     expect(screen.getByText("配置已保存").className).toContain("text-success");
   });
 
-  it("keeps Typography as a light base host with forwarded native props", () => {
+  it("keeps Typography only as a compatibility base host", () => {
     render(
       <Typography
         as="small"
@@ -91,9 +122,10 @@ describe("Core Typography family", () => {
     const primitive = screen.getByText("轻量文字");
     expect(primitive.tagName).toBe("SMALL");
     expect(primitive.getAttribute("data-slot")).toBe("typography");
+    expect(primitive.getAttribute("data-typography-role")).toBe("body-sm");
     expect(primitive.getAttribute("id")).toBe("primitive-copy");
     expect(primitive.getAttribute("data-kind")).toBe("primitive");
-    expect(primitive.className).toContain("text-sm");
+    expect(primitive.className).toContain("text-body-sm");
     expect(primitive.className).toContain("text-foreground");
     expect(primitive.className).toContain("custom-primitive");
   });
