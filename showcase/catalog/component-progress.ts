@@ -82,6 +82,11 @@ const completedComponents = new Set([
   "pattern-ai-suggestion-review",
   "pattern-markdown-editor",
   "pattern-dedicated-editor",
+  "pattern-collection-composition",
+  "pattern-record-detail-composition",
+  "pattern-master-detail-composition",
+  "pattern-settings-composition",
+  "pattern-data-summary-composition",
   "gouno-app-shell",
   "gouno-page-container",
   "gouno-page-header",
@@ -147,6 +152,24 @@ componentReviews["pattern-dedicated-editor"] = {
   ],
   baseline: "2026-09-18",
 };
+for (const id of [
+  "pattern-collection-composition",
+  "pattern-record-detail-composition",
+  "pattern-master-detail-composition",
+  "pattern-settings-composition",
+  "pattern-data-summary-composition",
+]) {
+  componentReviews[id] = {
+    status: "reviewed",
+    scope: "Showcase-only Blog Admin / Gosso Admin data composition contract; standardizes semantic ordering, spacing ownership and state placement without admitting a public page-level runtime API.",
+    evidence: [
+      "docs/patterns/admin-data-composition.md",
+      "showcase/demos/patterns/admin-data-composition.tsx",
+      "tests/pattern-admin-data-composition.test.tsx",
+    ],
+    baseline: "2026-09-18",
+  };
+}
 
 export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
   return review?.status === "reviewed" ? 100 : Math.min(fallback, 99);
