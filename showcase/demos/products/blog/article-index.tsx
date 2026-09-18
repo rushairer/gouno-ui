@@ -154,7 +154,7 @@ export function BlogArticleIndexDemo({
         <div className="flex flex-col gap-8">
           <header>
             <Heading level={1} variant="page">{title}</Heading>
-            <p className="mt-3 text-sm text-muted-foreground">
+            <p className="mt-3 type-body-sm text-muted-foreground">
               {total} 篇文章，持续记录问题、选择与实现。
             </p>
           </header>
@@ -178,10 +178,10 @@ export function BlogArticleIndexDemo({
               </Button>
             </form>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="mr-2 text-sm text-muted-foreground">标签</span>
+              <span className="mr-2 type-body-sm text-muted-foreground">标签</span>
               <a
                 href="/articles"
-                className="rounded-md border px-3 py-1 text-sm hover:bg-accent"
+                className="rounded-md border px-3 py-1 type-body-sm hover:bg-accent"
                 onClick={(event) => navigateLink(event, "/articles")}
               >
                 全部
@@ -193,7 +193,7 @@ export function BlogArticleIndexDemo({
                     href={target}
                     key={tag}
                     aria-current={tag === defaults.tag ? "page" : undefined}
-                    className="rounded-md border px-3 py-1 text-sm hover:bg-accent aria-[current=page]:border-primary aria-[current=page]:bg-accent"
+                    className="rounded-md border px-3 py-1 type-body-sm hover:bg-accent aria-[current=page]:border-primary aria-[current=page]:bg-accent"
                     onClick={(event) => navigateLink(event, target)}
                   >
                     {tag}

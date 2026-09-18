@@ -231,7 +231,7 @@ export function BlogAccountNotificationsDemo({
                 value={filter}
                 onChange={setFilter}
               />
-              <span className="text-sm text-muted-foreground">
+              <span className="type-body-sm text-muted-foreground">
                 {unreadCount} 条未读
               </span>
             </div>
@@ -265,17 +265,17 @@ export function BlogAccountNotificationsDemo({
                     </div>
                     <div className="min-w-0 flex-1 space-y-2">
                       <div className="flex flex-wrap items-start gap-2">
-                        <strong className="min-w-0 flex-1 text-sm text-foreground">
+                        <strong className="min-w-0 flex-1 type-body-sm type-weight-semibold text-foreground">
                           {item.title}
                         </strong>
                         {!item.read ? (
                           <Badge status="processing" text="未读" />
                         ) : null}
                       </div>
-                      <p className="text-sm leading-6 text-muted-foreground">
+                      <p className="type-reading-summary text-muted-foreground">
                         {item.detail}
                       </p>
-                      <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                      <div className="flex flex-wrap items-center gap-2 type-caption text-muted-foreground">
                         <span>{item.createdAt}</span>
                         <Button
                           variant="text"
@@ -367,11 +367,11 @@ export function BlogAccountSettingsDemo({
                   <Shield size={18} aria-hidden="true" />
                   账户安全由 GOSSO Admin 管理
                 </Heading>
-                <p className="text-sm leading-7 text-muted-foreground">
+                <p className="type-reading-sm text-muted-foreground">
                   Blog 仅维护博客侧资料、成员关系和权限，不直接提供密码、邮箱、MFA、Passkey
                   或身份会话管理。需要修改登录安全设置时，请前往身份管理中心完成近期强认证。
                 </p>
-                <div className="text-sm">
+                <div className="type-body-sm">
                   <span className="text-muted-foreground">当前身份：</span>
                   <strong>paw@example.test</strong>
                 </div>

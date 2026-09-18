@@ -49,7 +49,7 @@ const pageMeta: Record<
 function PageDescription({ meta, children }: { meta: string; children: string }) {
   return (
     <span>
-      <span className="mr-2 text-xs font-medium uppercase tracking-wider text-primary">
+      <span className="mr-2 type-caption type-weight-medium uppercase type-tracking-label text-primary">
         {meta}
       </span>
       {children}
@@ -91,16 +91,16 @@ function CategoriesBody({ onNavigate }: { onNavigate: (target: string) => void }
             onNavigate={onNavigate}
             className="group rounded-lg border p-5 text-left transition-colors hover:border-primary hover:bg-accent/40"
           >
-            <span className="text-xs font-mono text-primary">
+            <span className="type-caption type-family-mono text-primary">
               {String(index + 1).padStart(2, "0")}
             </span>
             <Heading level={2} variant="subsection" className="mt-3 group-hover:text-primary">
               {item.name}
             </Heading>
-            <p className="mt-2 min-h-12 text-sm leading-6 text-muted-foreground">
+            <p className="mt-2 min-h-12 type-reading-summary text-muted-foreground">
               {item.description}
             </p>
-            <span className="mt-5 flex items-center justify-between text-sm text-primary">
+            <span className="mt-5 flex items-center justify-between type-body-sm text-primary">
               {item.postCount} 篇文章
               <ArrowRight
                 className="size-4 transition-transform group-hover:translate-x-1"
@@ -133,13 +133,13 @@ function TagsBody({ onNavigate }: { onNavigate: (target: string) => void }) {
             onNavigate={onNavigate}
             className="group flex items-center gap-4 rounded-md border px-4 py-3 text-left hover:border-primary hover:bg-accent/40"
           >
-            <span className="text-xs font-mono text-primary">
+            <span className="type-caption type-family-mono text-primary">
               {String(index + 1).padStart(2, "0")}
             </span>
             <strong className="min-w-0 flex-1 truncate group-hover:text-primary">
               {tag}
             </strong>
-            <small className="text-xs text-muted-foreground">{count} 篇</small>
+            <small className="type-caption text-muted-foreground">{count} 篇</small>
           </NavigationLink>
         );
       })}
@@ -168,7 +168,7 @@ function ArchiveBody({ onNavigate }: { onNavigate: (target: string) => void }) {
         >
           <Heading level={2} variant="subsection" className="flex items-baseline gap-3">
             {period}
-            <small className="text-xs font-normal text-muted-foreground">
+            <small className="type-caption type-weight-regular text-muted-foreground">
               {items.length}
             </small>
           </Heading>
@@ -184,12 +184,12 @@ function ArchiveBody({ onNavigate }: { onNavigate: (target: string) => void }) {
                 >
                   <time
                     dateTime={post.publishedAt}
-                    className="text-xs font-mono text-muted-foreground"
+                    className="type-caption type-family-mono text-muted-foreground"
                   >
                     {post.publishedAt.slice(8, 10)}
                   </time>
                   <span className="truncate">{post.title}</span>
-                  <small className="hidden text-xs text-muted-foreground sm:block">
+                  <small className="hidden type-caption text-muted-foreground sm:block">
                     {post.tags.slice(0, 2).join(" / ")}
                   </small>
                 </NavigationLink>

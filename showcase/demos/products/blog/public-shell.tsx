@@ -65,7 +65,7 @@ export function BlogPublicShellFixture({
           <a
             href="/"
             aria-label="Gouno Blog 首页"
-            className="mr-auto inline-flex min-w-0 items-center gap-2 text-lg font-semibold tracking-tight text-primary"
+            className="mr-auto inline-flex min-w-0 items-center gap-2 type-body-lg type-weight-semibold type-tracking-title text-primary"
             onClick={(event) => navigate(event, "/")}
           >
             <BrandMark src={gounoBlogLogo} className="size-8" />
@@ -79,7 +79,7 @@ export function BlogPublicShellFixture({
                 aria-current={
                   activePath(currentPath, item.path) ? "page" : undefined
                 }
-                className="py-5 text-sm text-muted-foreground hover:text-primary aria-[current=page]:text-primary"
+                className="py-5 type-body-sm text-muted-foreground hover:text-primary aria-[current=page]:text-primary"
                 onClick={(event) => navigate(event, item.path)}
               >
                 {item.label}
@@ -123,7 +123,7 @@ export function BlogPublicShellFixture({
           <div>
             <a
               href="/"
-              className="inline-flex items-center gap-2 font-semibold"
+              className="inline-flex items-center gap-2 type-weight-semibold"
               onClick={(event) => navigate(event, "/")}
             >
               <BrandMark
@@ -132,13 +132,13 @@ export function BlogPublicShellFixture({
               />
               <span>Gouno Blog</span>
             </a>
-            <p className="mt-2 max-w-md text-sm text-muted-foreground">
+            <p className="mt-2 max-w-md type-body-sm text-muted-foreground">
               互联网技术分析、工程实践与长期思考。
             </p>
           </div>
           <nav
             aria-label="页脚导航"
-            className="flex flex-wrap items-start gap-5 text-sm text-muted-foreground"
+            className="flex flex-wrap items-start gap-5 type-body-sm text-muted-foreground"
           >
             {navItems.map((item) => (
               <a
@@ -161,7 +161,7 @@ export function BlogPublicShellFixture({
               RSS
             </a>
           </nav>
-          <p className="text-xs text-muted-foreground md:col-span-2">
+          <p className="type-caption text-muted-foreground md:col-span-2">
             © 2026 Gouno Blog
           </p>
         </div>

@@ -63,7 +63,7 @@
             "scripts/check-foundation-integrity.mjs"
           ],
           "remainingNativeMetricBypasses": 0,
-          "remainingPublicMetricBypasses": 61
+          "remainingPublicMetricBypasses": 31
         },
         "guard": {
           "status": "passed",

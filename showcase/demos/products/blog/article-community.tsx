@@ -63,16 +63,16 @@ function CommentCard({
 }) {
   return (
     <Card id={`comment-${comment.id}`} padding="sm" className="gap-3">
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-        <strong className="text-sm text-foreground">{comment.author}</strong>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 type-caption text-muted-foreground">
+        <strong className="type-body-sm type-weight-semibold text-foreground">{comment.author}</strong>
         <Badge
           status={comment.authorType === "user" ? "success" : "default"}
           text={comment.authorType === "user" ? "已登录" : "访客"}
-          className="text-xs"
+          className="type-caption"
         />
         <span>{comment.createdAt}</span>
       </div>
-      <p className="whitespace-pre-wrap text-sm leading-7 text-foreground">{comment.content}</p>
+      <p className="whitespace-pre-wrap type-reading-sm text-foreground">{comment.content}</p>
       <div className="flex flex-wrap gap-1">
         {canReply ? (
           <Button
@@ -205,7 +205,7 @@ export function BlogArticleCommunity({
       <div className="flex flex-wrap items-end justify-between gap-4 border-b pb-4">
         <div>
           <Heading id="article-community" level={2} variant="section">讨论</Heading>
-          <p className="mt-1 text-sm text-muted-foreground">围绕文章内容继续交流；回复只保留一层，举报流程保持独立。</p>
+          <p className="mt-1 type-body-sm text-muted-foreground">围绕文章内容继续交流；回复只保留一层，举报流程保持独立。</p>
         </div>
         <Button
           variant={liked ? "solid" : "outline"}
@@ -261,7 +261,7 @@ export function BlogArticleCommunity({
       <Card as="section" variant="subtle" aria-labelledby="comment-form-title">
         <div>
           <Heading id="comment-form-title" level={3} variant="compact">留下评论</Heading>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 type-body-sm text-muted-foreground">
             {mode === "guest" ? "访客留言需要填写昵称。" : "当前以 Paw 身份参与讨论。"}
           </p>
         </div>
@@ -304,7 +304,7 @@ export function BlogArticleCommunity({
             />
           </Field>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <span className="text-xs text-muted-foreground">Showcase 只修改本地 Fixture，不会提交真实评论。</span>
+            <span className="type-caption text-muted-foreground">Showcase 只修改本地 Fixture，不会提交真实评论。</span>
             <Button type="submit" variant="solid" color="primary">
               {replyingTo ? "发布回复" : "发布评论"}
             </Button>
