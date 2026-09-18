@@ -453,6 +453,7 @@ describe("design-language conformance", () => {
     expect(governance).toContain("## PI-06 — Master-detail is a task pattern, not a generic list/detail default");
     expect(governance).toContain("## PI-07 — List-triggered create/edit uses complexity-based editor surfaces");
     expect(governance).toContain("## PI-08 — Common admin data blocks use governed composition contracts");
+    expect(governance).toContain("## PI-09 — Editor forms share one cross-surface composition grammar");
     expect(governance).toContain("Configuration Editor");
     expect(governance).toContain("Workspace Editor");
     const dedicatedEditor = readFileSync(resolve(repoRoot, "docs/patterns/dedicated-editor.md"), "utf8");
@@ -460,10 +461,13 @@ describe("design-language conformance", () => {
     expect(dedicatedEditor).toContain("Do not add `DedicatedEditor` to `src/patterns`");
     const designLanguage = readFileSync(resolve(repoRoot, "docs/design-language.md"), "utf8");
     expect(designLanguage).toContain("## DL-15 — Page composition uses ordered semantic slots");
+    expect(designLanguage).toContain("## DL-16 — Bounded business sections use canonical surface anatomy");
   });
   it("keeps editor forms and Workflow detail on canonical section surfaces", () => {
     const aiEditors = readFileSync(resolve(productsRoot, "blog-admin/ai/settings/editors.tsx"), "utf8");
     const automation = readFileSync(resolve(productsRoot, "blog-admin/ai/operations/automation-management.tsx"), "utf8");
+    const workflowExecution = readFileSync(resolve(productsRoot, "blog-admin/ai/operations/workflow-execution.tsx"), "utf8");
+    const gossoSiteSettings = readFileSync(resolve(productsRoot, "gosso-admin/system-management/site-settings.tsx"), "utf8");
 
     expect(aiEditors).toContain("EditorFormSurfaceSection");
     expect(aiEditors).not.toContain("function EditorSection(");
@@ -471,6 +475,10 @@ describe("design-language conformance", () => {
     expect(automation).toMatch(/<Card[\s\S]{0,160}padding="none"[\s\S]{0,160}aria-label="Workflow 资产"/);
     expect(automation).toContain('aria-label="最近运行"');
     expect(automation).toContain('aria-label="Workflow 流程定义"');
+    expect(workflowExecution).not.toMatch(/rounded-(?:lg|xl) border bg-background/);
+    expect(workflowExecution).toMatch(/<Card[^>]*data-slot="workflow-run-surface"/);
+    expect(workflowExecution).toMatch(/<Card[^>]*aria-label="Workflow 版本历史"/);
+    expect(gossoSiteSettings).toContain('aria-label="登录页预览"');
   });
 
 });
