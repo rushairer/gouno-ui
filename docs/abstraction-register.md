@@ -747,3 +747,15 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Product impact:** Agent, Skill and Workflow converge on the same private Configuration Editor composition. Post and Page are explicitly marked as Workspace Editor evidence. Modal and Drawer choices remain governed separately by PI-07.
 - **Validation:** `docs/patterns/dedicated-editor.md`, the canonical Pattern Showcase, product conformance tests and exact-head typecheck/test/build/Pages certification.
 - **Abstraction impact:** this decision intentionally separates **reusable design decisions** from **reusable runtime code**. A future public Dedicated Editor API requires a new cross-product Rule-of-Three admission review.
+
+
+### PD-079 — Admin data composition stays Showcase-only
+
+- **Status:** accepted / private composition contracts
+- **Owner:** Product interface governance + Showcase Patterns
+- **Evidence:** Blog Admin Posts / Pages / Categories and Gosso Admin Users / Clients / Audit Logs independently repeat Collection semantics; Blog Site Settings, Gosso Account Settings and AI Settings repeat Settings semantics; AI Operations independently provides Master-Detail, Record Detail and Data Summary evidence.
+- **Decision:** admit five Showcase composition contracts — Collection, Record Detail, Master-Detail, Settings and Data Summary. Canonical demos and private helpers define ordering, spacing ownership, state placement and responsive expectations.
+- **Public API impact:** none. Do not export page-level `CollectionPage`, `RecordDetail`, `MasterDetail`, `SettingsPage` or `DataSummary` runtime components solely to encode composition grammar.
+- **Product impact:** existing Blog Admin / Gosso Admin corpus is checked against the contracts. Known collection feedback-order drift is corrected instead of preserved as product-specific behavior.
+- **Validation:** `docs/patterns/admin-data-composition.md`, canonical Showcase demos, corpus conformance tests, typecheck/test/build/Pages certification.
+- **Abstraction impact:** repeated layout semantics are governed independently from public runtime reuse. Future public API admission requires shared runtime behavior and a separate Rule-of-Three review.
