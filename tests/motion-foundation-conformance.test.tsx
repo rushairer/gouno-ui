@@ -146,6 +146,7 @@ describe("Motion Foundation conformance", () => {
   });
 
   it("completes Carousel changes immediately and removes inline movement under reduced motion", () => {
+    document.documentElement.lang = "en";
     installMotionPreference(true);
     const afterChange = vi.fn();
 
@@ -171,6 +172,7 @@ describe("Motion Foundation conformance", () => {
   });
 
   it("stops Carousel autoplay when the system switches to reduced motion", () => {
+    document.documentElement.lang = "en";
     vi.useFakeTimers();
     const preference = installMotionPreference(false);
     const onChange = vi.fn();
