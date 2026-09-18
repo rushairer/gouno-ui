@@ -40,6 +40,7 @@ describe("audited batch completion", () => {
       "core-card",
       "core-progress",
       "core-code-block",
+      "core-anchor",
       "core-qrcode",
       "core-statistic",
       "core-image",
@@ -54,9 +55,9 @@ describe("audited batch completion", () => {
     }
   });
 
-  it("keeps Motion-owned reviews below certified completion", () => {
+  it("reports Motion-owned reviews complete only after certification", () => {
     for (const id of ["core-anchor", "core-back-top", "core-carousel"]) {
-      expect(componentProgress(id, 0), id).toBeLessThan(100);
+      expect(componentProgress(id, 0), id).toBe(100);
     }
   });
 
