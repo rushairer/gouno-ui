@@ -538,3 +538,24 @@ Use `focus-visible` for keyboard focus indication. Do not use direct `focus:ring
 
 The canonical Focus inventory currently admits no 3px ring or extra 1px outline exception.
 
+## DL-23 — Global stacking uses semantic Layer roles
+
+Application-global stacking is a Foundation contract, not a contest to choose a larger `z-index`.
+
+Canonical roles are ordered by interaction responsibility:
+
+- `layer-sticky` — in-page sticky affordances such as Affix or BulkActionBar;
+- `layer-shell` — application shell/header chrome that must remain above ordinary page content;
+- `layer-floating` — independent floating controls such as BackTop and FloatButton;
+- `layer-modal` — blocking masks plus Dialog/Sheet/AlertDialog surfaces;
+- `layer-popup` — transient popup portals such as Popover, Dropdown, Tooltip and Select; this role is deliberately above modal so nested popup content never depends on DOM portal insertion order;
+- `layer-notice` — global Message/Notification feedback above ordinary application overlays.
+
+Component-internal stacking such as Steps marker/body ordering or Carousel arrows/fade slides is **local** and does not consume the application-global Layer scale. Local values may exist only inside their owning stacking context and must not become product page layer policy.
+
+Modal and Drawer may expose an explicit numeric `zIndex` precision escape hatch. When used, the override must keep mask and content on the same caller-owned layer. The default remains Foundation-owned through `layer-modal`.
+
+Showcase Fixture chrome is tooling, not product UI. It uses an isolated Showcase-only tooling layer outside the runtime Layer scale so product components cannot copy its number as application authority.
+
+Product compositions consume named Layer roles. They do not introduce raw global `z-30`, `z-40`, `z-50`, `z-[100]` or equivalent inline defaults.
+
