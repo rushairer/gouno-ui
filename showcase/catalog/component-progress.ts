@@ -225,10 +225,10 @@ componentReviews["gouno-page-container"] = {
 
 for (const id of ["theme-system", "core-table"]) {
   componentReviews[id] = {
-    status: "reopened",
-    scope: "FI-001 Phase 2: Density Foundation reopened because ThemeProvider publishes a global comfortable/compact policy to documentElement, but current component CSS does not consume that root policy; Table also duplicates density geometry in component-local utility branches.",
-    evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "src/theme/provider.tsx", "src/base.css", "src/components/primitives/table.tsx"],
-    baseline: "FI-001 Phase 2 / 2026-09-18",
+    status: "reviewed",
+    scope: "FI-001 Density certified: Theme publishes the global comfortable/compact fallback policy, density-aware Tables consume it only in local default mode, and explicit compact/touch modes remain authoritative.",
+    evidence: ["foundation-integrity.json", "docs/foundation-geometry-inventory.md", "tests/density-foundation-conformance.test.ts", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "FI-001 Density certified / 2026-09-18",
   };
 }
 
