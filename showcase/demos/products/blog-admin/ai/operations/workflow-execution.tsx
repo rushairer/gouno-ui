@@ -3,6 +3,7 @@ import { Clock3, History, Play, RotateCcw, TestTube2 } from "lucide-react";
 import {
   Alert,
   Button,
+  Card,
   Input,
   Tag,
   Text,
@@ -111,7 +112,7 @@ export function WorkflowExecutionPanel({
 
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)]" aria-label={`${workflow.name} 执行工作区`}>
-      <section data-slot="workflow-run-surface" className="overflow-hidden rounded-xl border bg-background" aria-label="运行当前 Workflow">
+      <Card padding="none" data-slot="workflow-run-surface" className="overflow-hidden" aria-label="运行当前 Workflow">
         <div className="border-b p-6">
           <OpsRegionHeading
           title="运行当前 Workflow"
@@ -195,9 +196,9 @@ export function WorkflowExecutionPanel({
             ) : null}
           </div>
         ) : null}
-      </section>
+      </Card>
 
-      <section className="overflow-hidden rounded-lg border bg-background" aria-label="Workflow 版本历史">
+      <Card padding="none" className="overflow-hidden" aria-label="Workflow 版本历史">
         <div className="border-b px-5 py-4">
           <OpsRegionHeading
             title="版本历史"
@@ -228,7 +229,7 @@ export function WorkflowExecutionPanel({
             </div>
           ))}
         </div>
-      </section>
+      </Card>
     </div>
   );
 }
