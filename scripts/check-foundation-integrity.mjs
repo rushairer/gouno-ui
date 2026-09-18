@@ -47,9 +47,21 @@ for (const [name, foundation] of Object.entries(matrix.foundations)) {
     failures.push(name + ": all gates passed but status is not certified");
   }
   if (foundation.status !== "certified") {
+    const reopenedIds = new Set();
+    for (const match of reviews.matchAll(
+      /componentReviews\["([^"]+)"\]\s*=\s*\{\s*status:\s*"reopened"/g,
+    )) {
+      reopenedIds.add(match[1]);
+    }
+    for (const match of reviews.matchAll(
+      /for\s*\(const\s+id\s+of\s+\[([\s\S]*?)\]\)\s*\{\s*componentReviews\[id\]\s*=\s*\{\s*status:\s*"reopened"/g,
+    )) {
+      for (const idMatch of match[1].matchAll(/"([^"]+)"/g)) {
+        reopenedIds.add(idMatch[1]);
+      }
+    }
     for (const id of foundation.affectedComponentReviews || []) {
-      const marker = 'componentReviews["' + id + '"] = {\n  status: "reopened"';
-      if (!reviews.includes(marker)) {
+      if (!reopenedIds.has(id)) {
         failures.push(name + ": affected review " + id + " must be explicitly reopened");
       }
     }
