@@ -34,16 +34,16 @@ export interface TypographyProps extends HTMLAttributes<HTMLElement> {
 }
 
 const headingVariantClass: Record<HeadingVariant, string> = {
-  display: "text-page-title font-title tracking-title md:text-display-title",
-  hero: "text-task-title font-title tracking-title sm:text-page-title",
-  page: "text-page-title font-title tracking-title",
-  task: "text-task-title font-title tracking-title",
-  "section-lg": "text-task-title font-title tracking-section-title",
-  section: "text-section-title font-title tracking-section-title",
-  subsection: "text-subsection-title font-title",
-  compact: "text-compact-title font-title",
-  label: "text-label-title font-title",
-  micro: "text-caption font-title",
+  display: "type-display-title",
+  hero: "type-hero-title",
+  page: "type-page-title",
+  task: "type-task-title",
+  "section-lg": "type-section-lg-title",
+  section: "type-section-title",
+  subsection: "type-subsection-title",
+  compact: "type-compact-title",
+  label: "type-label-title",
+  micro: "type-micro-title",
 };
 
 const defaultHeadingVariant: Record<HeadingLevel, HeadingVariant> = {
@@ -56,10 +56,10 @@ const defaultHeadingVariant: Record<HeadingLevel, HeadingVariant> = {
 };
 
 const textSizeClass: Record<TextSize, string> = {
-  xs: "text-caption",
-  sm: "text-body-sm",
-  md: "text-body",
-  lg: "text-body-lg",
+  xs: "type-caption",
+  sm: "type-body-sm",
+  md: "type-body",
+  lg: "type-body-lg",
 };
 
 const textSizeRole: Record<TextSize, string> = {
@@ -132,7 +132,7 @@ export function Typography({
       {...props}
       data-slot="typography"
       data-typography-role="body-sm"
-      className={cn("text-body-sm text-foreground", className)}
+      className={cn("type-body-sm text-foreground", className)}
     />
   );
 }
