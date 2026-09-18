@@ -25,7 +25,7 @@ import {
   Tag,
   Text,
 } from "../../../../../../src/core";
-import { TabPanelLead } from "../../../../../components/tab-panel-lead";
+import { TabPanelFeedback, TabPanelLead } from "../../../../../components/tab-panel-lead";
 import type {
   AgentFixture,
   AISettingsFixture,
@@ -77,9 +77,11 @@ function AgentList({ fixture, actions }: { fixture: AISettingsFixture; actions: 
         description="Skill Version + 模型连接 + 运行计划组成可审计的执行单元。"
         actions={<Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={actions.onCreateAgent}>创建 Agent</Button>}
       />
-      {fixture.providers.length === 0 ? (
-        <Alert type="warning" showIcon title="先添加模型连接" description="保存首个可用模型连接后再创建 Agent。" />
-      ) : null}
+      <TabPanelFeedback>
+        {fixture.providers.length === 0 ? (
+          <Alert type="warning" showIcon title="先添加模型连接" description="保存首个可用模型连接后再创建 Agent。" />
+        ) : null}
+      </TabPanelFeedback>
       <Card padding="none" className="overflow-hidden">
         <CardContent className="divide-y p-0">
           {fixture.agents.map((agent) => (
@@ -191,12 +193,14 @@ function KnowledgePanel({ fixture, actions }: { fixture: AISettingsFixture["know
           </>
         )}
       />
+      <TabPanelFeedback>
+        {fixture.index.failed ? <Alert type="warning" showIcon title="知识索引存在失败任务" description="优先重试失败项；只有索引结构变化或一致性异常时才执行全量重建。" /> : null}
+      </TabPanelFeedback>
       <div className="grid gap-4 sm:grid-cols-3">
         <Card padding="base"><Text size="xs" tone="muted">分段</Text><Heading level={2}>{fixture.index.chunks}</Heading></Card>
         <Card padding="base"><Text size="xs" tone="muted">队列</Text><Heading level={2}>{fixture.index.queued}</Heading></Card>
         <Card padding="base"><Text size="xs" tone="muted">失败</Text><Heading level={2}>{fixture.index.failed}</Heading></Card>
       </div>
-      {fixture.index.failed ? <Alert type="warning" showIcon title="知识索引存在失败任务" description="优先重试失败项；只有索引结构变化或一致性异常时才执行全量重建。" /> : null}
       <Card padding="none" className="overflow-hidden">
         <CardContent className="divide-y p-0">
           {fixture.profiles.map((profile) => (
@@ -288,7 +292,9 @@ function ConnectorList({ fixture, actions }: { fixture: AISettingsFixture; actio
         description="管理 Agent 可访问的 Sandbox 外部能力、OAuth 边界与 Outbox 审批链路。"
         actions={<Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={actions.onCreateConnector}>添加 Connector Profile</Button>}
       />
-      <Alert type="info" showIcon title="Sandbox connector 边界" description="Showcase 只模拟 Profile、OAuth 状态和 Outbox 状态迁移；不保存真实凭据，也不执行真实网络投递。" />
+      <TabPanelFeedback>
+        <Alert type="info" showIcon title="Sandbox connector 边界" description="Showcase 只模拟 Profile、OAuth 状态和 Outbox 状态迁移；不保存真实凭据，也不执行真实网络投递。" />
+      </TabPanelFeedback>
       <Card padding="none" className="overflow-hidden">
         <CardContent className="divide-y p-0">
           {fixture.connectors.map((connector) => (
