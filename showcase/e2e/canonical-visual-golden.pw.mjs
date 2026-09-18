@@ -321,6 +321,29 @@ for (const mode of ["light", "dark"]) {
   });
 }
 
+test("responsive-steps-canonical-sm-stacking", async ({ page }) => {
+  const scenario = {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-steps",
+    viewport: { width: 600, height: 900 },
+    ready: '[data-slot="steps"]',
+  };
+
+  await prepareLightFixture(page, scenario);
+  const steps = page.locator('[data-slot="steps"]').first();
+  expect(
+    await steps.evaluate((element) => getComputedStyle(element).flexDirection),
+  ).toBe("column");
+
+  await page.setViewportSize({ width: 700, height: 900 });
+  await expect
+    .poll(() =>
+      steps.evaluate((element) => getComputedStyle(element).flexDirection),
+    )
+    .toBe("row");
+});
+
 test("surface-gosso-overview-quick-link-card-ownership", async ({ page }) => {
   const scenario = {
     workspace: "gosso-admin",
