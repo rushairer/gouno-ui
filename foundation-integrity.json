@@ -407,20 +407,40 @@
       }
     },
     "border": {
-      "status": "planned",
-      "affectedComponentReviews": [],
+      "status": "in_progress",
+      "affectedComponentReviews": [
+        "core-spin",
+        "core-timeline",
+        "core-steps",
+        "core-table"
+      ],
       "gates": {
         "inventory": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "src/tokens.css",
+            "src/base.css",
+            "src/core/spinner.tsx",
+            "src/core/timeline.tsx",
+            "src/core/steps.tsx",
+            "src/components/primitives/table.tsx",
+            "showcase/components/demo-section.tsx",
+            "showcase/components/markdown-preview.tsx",
+            "showcase/demos/products/blog-admin/ai/operations/canonical-patterns.tsx"
+          ]
         },
         "tokens": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "src/tokens.css"
+          ]
         },
         "authority": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "src/tokens.css",
+            "docs/design-language.md"
+          ]
         },
         "corpus": {
           "status": "pending",
@@ -438,6 +458,20 @@
           "status": "pending",
           "evidence": []
         }
+      },
+      "inventory": {
+        "ordinaryBoundary": "Tailwind border / side-border utilities (1px) with semantic border colors",
+        "emphasisWidthUsages": [
+          "Spinner ring",
+          "Timeline marker",
+          "Steps active navigation indicator",
+          "Table summary separator",
+          "Showcase DemoSection active tab indicator",
+          "Markdown blockquote lead",
+          "Blog Admin selected-record lead"
+        ],
+        "arbitraryNumericBorderWidths": 0,
+        "hardCodedNeutralBorderColors": 0
       }
     },
     "layout": {
