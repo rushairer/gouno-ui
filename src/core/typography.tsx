@@ -15,6 +15,9 @@ export type HeadingVariant =
   | "micro";
 export type TextSize = "xs" | "sm" | "md" | "lg";
 export type TextTone = "default" | "muted" | "danger" | "success";
+export type TextWeight = "regular" | "medium" | "semibold";
+export type TextFamily = "sans" | "mono";
+export type TextLeading = "default" | "relaxed";
 
 export interface HeadingProps extends HTMLAttributes<HTMLHeadingElement> {
   level?: HeadingLevel;
@@ -26,6 +29,9 @@ export interface TextProps extends HTMLAttributes<HTMLElement> {
   as?: ElementType;
   size?: TextSize;
   tone?: TextTone;
+  weight?: TextWeight;
+  family?: TextFamily;
+  leading?: TextLeading;
   children?: ReactNode;
 }
 
@@ -69,6 +75,17 @@ const textSizeRole: Record<TextSize, string> = {
   lg: "body-lg",
 };
 
+const textWeightClass: Record<TextWeight, string> = {
+  regular: "type-weight-regular",
+  medium: "type-weight-medium",
+  semibold: "type-weight-semibold",
+};
+
+const textFamilyClass: Record<TextFamily, string> = {
+  sans: "type-family-sans",
+  mono: "type-family-mono",
+};
+
 export function Heading({
   level = 2,
   variant,
@@ -95,6 +112,9 @@ export function Text({
   as: Component = "p",
   size = "md",
   tone = "default",
+  weight,
+  family,
+  leading = "default",
   children,
   className,
   ...props
@@ -104,8 +124,14 @@ export function Text({
       {...props}
       data-slot="text"
       data-typography-role={textSizeRole[size]}
+      data-typography-weight={weight}
+      data-typography-family={family}
+      data-typography-leading={leading}
       className={cn(
         textSizeClass[size],
+        weight && textWeightClass[weight],
+        family && textFamilyClass[family],
+        leading === "relaxed" && "type-leading-relaxed",
         tone === "muted" && "text-muted-foreground",
         tone === "danger" && "text-destructive",
         tone === "success" && "text-success",
