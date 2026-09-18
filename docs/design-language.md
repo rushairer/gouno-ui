@@ -559,3 +559,26 @@ Showcase Fixture chrome is tooling, not product UI. It uses an isolated Showcase
 
 Product compositions consume named Layer roles. They do not introduce raw global `z-30`, `z-40`, `z-50`, `z-[100]` or equivalent inline defaults.
 
+## DL-24 — Interaction state changes semantics and appearance, not ownership geometry
+
+State is expressed through the semantic mechanism that matches the control:
+
+- native `disabled` when the host supports it; otherwise `aria-disabled` plus blocked activation;
+- `aria-busy` for the semantic region/control that owns loading or pending work;
+- `aria-pressed` for toggle buttons;
+- `aria-checked` or native checked state for checkbox/radio/switch semantics;
+- `aria-selected` for selectable options/tabs;
+- `aria-current` for the current item in a sequence/navigation context;
+- `aria-expanded` for disclosure/popup ownership;
+- `aria-invalid` for actual validation errors, not warning-only visual emphasis.
+
+Visual state consumes the existing semantic Color, Border, Focus, Sizing, Radius, Motion, Surface and Density authorities. Interaction State does not introduce a second palette, border scale, control size or transition duration system.
+
+State transitions preserve the component's outer geometry unless reflow is an explicit part of that component API. Selected/error/loading/disabled state must not silently change control height, padding, border width, sibling alignment or the ownership boundary of an active indicator.
+
+Gesture containers own gestures only when the pointer sequence originates from gesture content. They must not capture pointer ownership from nested buttons, links, inputs, tabs or other interactive descendants. This applies to Carousel drag, Splitter resize and any future drag/reorder surface.
+
+Explicit caller-requested content changes such as `loadingText` may naturally change intrinsic text width. That is content replacement, not permission for state-specific geometry utilities.
+
+Product business state remains product-owned, but products express it through canonical component state APIs/slots rather than reconstructing selected/error/loading/disabled visuals with page-local raw palette, border-width or size utilities.
+
