@@ -73,7 +73,7 @@ if (typography) {
   ];
   const files = applicationRoots.flatMap(collectTsx);
   const rawMetricUtility =
-    /\b(?:text-(?:xs|sm|base|lg|xl|[2-9]xl|\[[^\]]+\])|font-(?:thin|extralight|light|normal|medium|semibold|bold|extrabold|black|mono|sans)|tracking-[^\s"'\x60]+|leading-[^\s"'\x60]+)/;
+    /\b(?:text-(?:xs|sm|base|lg|xl|[2-9]xl|\[[^\]]+\])|font-(?:thin|extralight|light|normal|medium|semibold|bold|extrabold|black|mono|sans)|(?<!type-)tracking-[^\s"'\x60]+|(?<!type-)leading-[^\s"'\x60]+)/;
   const textTags = /<Text\b[\s\S]{0,500}?>/g;
   const nativeTextTags =
     /<(?:p|span|strong|time|dt|dd|div|code|pre|label|small|em|a)\b[\s\S]{0,500}?>/g;

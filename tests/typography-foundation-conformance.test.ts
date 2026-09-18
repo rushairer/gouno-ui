@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 const root = process.cwd();
 const productsRoot = resolve(root, "showcase/demos/products");
 const bannedVisualUtility =
-  /\b(?:text-(?:xs|sm|base|lg|xl|[2-9]xl|\[[^\]]+\])|font-(?:thin|extralight|light|normal|medium|semibold|bold|extrabold|black)|tracking-[^\s"'\x60]+|leading-[^\s"'\x60]+)/;
+  /\b(?:text-(?:xs|sm|base|lg|xl|[2-9]xl|\[[^\]]+\])|font-(?:thin|extralight|light|normal|medium|semibold|bold|extrabold|black)|(?<!type-)tracking-[^\s"'\x60]+|(?<!type-)leading-[^\s"'\x60]+)/;
 
 function collectTsx(directory: string): string[] {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
