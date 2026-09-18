@@ -31,6 +31,7 @@ import {
   DedicatedEditorLayout,
   DedicatedEditorSection,
 } from "../../../../../components/patterns/dedicated-editor";
+import { EditorFormSurfaceSection } from "../../../../../components/patterns/editor-form-composition";
 
 export type AISettingsEditorState =
   | { kind: "agent"; value: AgentFixture | "new" }
@@ -148,27 +149,6 @@ function ContextualEditorHeader({
   );
 }
 
-function EditorSection({
-  title,
-  description,
-  children,
-}: {
-  title: string;
-  description: string;
-  children: ReactNode;
-}) {
-  return (
-    <Card padding="none" className="overflow-hidden">
-      <CardHeader className="border-b p-6">
-        <div className="flex flex-col gap-1">
-          <CardTitle className="text-base">{title}</CardTitle>
-          <Text size="xs" tone="muted">{description}</Text>
-        </div>
-      </CardHeader>
-      <CardContent className="p-6">{children}</CardContent>
-    </Card>
-  );
-}
 
 function AgentEditor({
   value,
@@ -534,7 +514,7 @@ function ProviderEditor({ value, onSave, onCancel, surface = "page" }: { value: 
           />
         ) : null}
         <div className="grid gap-5 xl:grid-cols-2">
-          <EditorSection title="连接身份" description="定义这条模型连接在产品中的名称和协议类型。">
+          <EditorFormSurfaceSection title="连接身份" description="定义这条模型连接在产品中的名称和协议类型。">
             <FormGrid columns={2}>
               <Field label="连接名称" required>
                 <Input name="name" defaultValue={initial?.name} placeholder="OpenAI Production" />
@@ -547,8 +527,8 @@ function ProviderEditor({ value, onSave, onCancel, surface = "page" }: { value: 
                 </Select>
               </Field>
             </FormGrid>
-          </EditorSection>
-          <EditorSection title="模型与端点" description="运行时请求只使用这里明确配置的端点和模型。">
+          </EditorFormSurfaceSection>
+          <EditorFormSurfaceSection title="模型与端点" description="运行时请求只使用这里明确配置的端点和模型。">
             <div className="flex flex-col gap-5">
               <Field label="Base URL" required>
                 <Input name="baseUrl" defaultValue={initial?.baseUrl} placeholder="https://api.openai.com/v1" />
@@ -557,9 +537,9 @@ function ProviderEditor({ value, onSave, onCancel, surface = "page" }: { value: 
                 <Input name="model" defaultValue={initial?.model} placeholder="gpt-5.6-sol" />
               </Field>
             </div>
-          </EditorSection>
+          </EditorFormSurfaceSection>
         </div>
-        <EditorSection title="凭据与状态" description="Showcase 只展示掩码与启停状态，不接触真实密钥。">
+        <EditorFormSurfaceSection title="凭据与状态" description="Showcase 只展示掩码与启停状态，不接触真实密钥。">
           <FormGrid columns={2}>
             <Field label="API Key 后四位" hint="仅用于展示密钥已保存状态；不输入真实凭证。">
               <Input name="apiKeyLast4" defaultValue={initial?.apiKeyLast4} maxLength={4} placeholder="1234" />
@@ -568,7 +548,7 @@ function ProviderEditor({ value, onSave, onCancel, surface = "page" }: { value: 
               <Switch name="enabled" defaultChecked={initial?.enabled ?? true} label="启用模型连接" />
             </Field>
           </FormGrid>
-        </EditorSection>
+        </EditorFormSurfaceSection>
         {surface === "page" ? (
           <FormActions>
             <Button type="button" variant="outline" onClick={onCancel}>取消</Button>
@@ -610,7 +590,7 @@ function EmbeddingEditor({ value, onSave, onCancel, surface = "page" }: { value:
           />
         ) : null}
         <div className="grid gap-5 xl:grid-cols-2">
-          <EditorSection title="索引模型" description="明确 Profile、模型和向量维度，避免把索引参数与凭据混在一起。">
+          <EditorFormSurfaceSection title="索引模型" description="明确 Profile、模型和向量维度，避免把索引参数与凭据混在一起。">
             <div className="flex flex-col gap-5">
               <Field label="Profile 名称" required><Input name="name" defaultValue={initial?.name} /></Field>
               <FormGrid columns={2}>
@@ -618,8 +598,8 @@ function EmbeddingEditor({ value, onSave, onCancel, surface = "page" }: { value:
                 <Field label="向量维度"><Input name="dimensions" inputMode="numeric" defaultValue={String(initial?.dimensions || 1536)} /></Field>
               </FormGrid>
             </div>
-          </EditorSection>
-          <EditorSection title="连接与凭据" description="端点与凭据状态属于连接治理，不属于索引内容本身。">
+          </EditorFormSurfaceSection>
+          <EditorFormSurfaceSection title="连接与凭据" description="端点与凭据状态属于连接治理，不属于索引内容本身。">
             <div className="flex flex-col gap-5">
               <Field label="Base URL" required><Input name="baseUrl" defaultValue={initial?.baseUrl} /></Field>
               <FormGrid columns={2}>
@@ -627,7 +607,7 @@ function EmbeddingEditor({ value, onSave, onCancel, surface = "page" }: { value:
                 <Field label="状态"><Switch name="enabled" defaultChecked={initial?.enabled ?? true} label="启用 Embedding" /></Field>
               </FormGrid>
             </div>
-          </EditorSection>
+          </EditorFormSurfaceSection>
         </div>
         {surface === "page" ? (
           <FormActions>
@@ -670,7 +650,7 @@ function ConnectorEditor({ value, onSave, onCancel, surface = "page" }: { value:
           />
         ) : null}
         <div className="grid gap-5 xl:grid-cols-2">
-          <EditorSection title="连接身份" description="定义 Connector 的产品名称、类型和允许访问的范围。">
+          <EditorFormSurfaceSection title="连接身份" description="定义 Connector 的产品名称、类型和允许访问的范围。">
             <div className="flex flex-col gap-5">
               <FormGrid columns={2}>
                 <Field label="Profile 名称" required><Input name="name" defaultValue={initial?.name} placeholder="search-console" /></Field>
@@ -685,13 +665,13 @@ function ConnectorEditor({ value, onSave, onCancel, surface = "page" }: { value:
               </FormGrid>
               <Field label="授权范围"><Input name="scope" defaultValue={initial?.scope} placeholder="只读公网研究" /></Field>
             </div>
-          </EditorSection>
-          <EditorSection title="运行与凭据" description="Sandbox 与凭据状态显式分离，避免把已配置凭据误解为允许生产写入。">
+          </EditorFormSurfaceSection>
+          <EditorFormSurfaceSection title="运行与凭据" description="Sandbox 与凭据状态显式分离，避免把已配置凭据误解为允许生产写入。">
             <div className="flex flex-col gap-4">
               <Switch name="sandbox" defaultChecked={initial?.sandbox ?? true} label="Sandbox" />
               <Switch name="hasCredential" defaultChecked={initial?.hasCredential ?? false} label="已配置凭据" />
             </div>
-          </EditorSection>
+          </EditorFormSurfaceSection>
         </div>
         {surface === "page" ? (
           <FormActions>
