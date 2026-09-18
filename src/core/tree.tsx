@@ -679,7 +679,7 @@ export function Tree({
                 "flex min-w-0 items-center gap-1 rounded-md px-1 py-0.5 text-sm outline-none transition-colors",
                 blockNode ? "w-full" : "w-fit max-w-full",
                 !nodeDisabled &&
-                  "hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring",
+                  "hover:bg-accent focus-control",
                 selected && "bg-accent text-accent-foreground",
                 matched && "font-medium",
                 nodeDisabled && "cursor-not-allowed opacity-50",
