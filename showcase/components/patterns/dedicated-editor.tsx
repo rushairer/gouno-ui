@@ -94,11 +94,13 @@ export function DedicatedEditorSection({
   title,
   description,
   actions,
+  contentClassName = "p-6",
   children,
 }: {
   title: ReactNode;
   description?: ReactNode;
   actions?: ReactNode;
+  contentClassName?: string;
   children: ReactNode;
 }) {
   return (
@@ -124,7 +126,7 @@ export function DedicatedEditorSection({
           ) : null}
         </div>
       </CardHeader>
-      <CardContent className="p-6">{children}</CardContent>
+      <CardContent className={contentClassName}>{children}</CardContent>
     </Card>
   );
 }
