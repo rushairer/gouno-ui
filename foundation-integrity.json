@@ -986,7 +986,7 @@
       }
     },
     "focus": {
-      "status": "in_progress",
+      "status": "certified",
       "affectedComponentReviews": [
         "core-button",
         "core-input",
@@ -1036,26 +1036,37 @@
           ]
         },
         "corpus": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "scripts/check-foundation-integrity.mjs",
-            "src"
-          ]
+            "src",
+            "CI run 35360452646 (#544): Focus corpus audit focusRing3pxFiles=0, directFocusRingFiles=0, doubleOutlineFiles=0"
+          ],
+          "focusRing3pxFiles": 0,
+          "directFocusRingFiles": 0,
+          "doubleOutlineFiles": 0
         },
         "guard": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "scripts/check-foundation-integrity.mjs",
-            "tests/focus-foundation-conformance.test.ts"
+            "tests/focus-foundation-conformance.test.ts",
+            "CI run 35360452646 (#544): success; 165/165 test files, 852/852 tests"
           ]
         },
         "visual": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Canonical Visual Golden Smoke run 35360452819 (#461): success; 57/57 passed",
+            "showcase/e2e/canonical-visual-golden.pw.mjs: focus-canonical-fallback-and-component-ring passed"
+          ]
         },
         "consumers": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Blog Consumer Parity run 35360452821 (#522): success",
+            "Gosso Admin Consumer Parity run 35360452653 (#517): success"
+          ]
         }
       },
       "inventory": {
