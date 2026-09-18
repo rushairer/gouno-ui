@@ -216,7 +216,7 @@
       }
     },
     "radius": {
-      "status": "in_progress",
+      "status": "certified",
       "affectedComponentReviews": [
         "theme-system",
         "core-checkbox"
@@ -268,19 +268,16 @@
           ]
         },
         "visual": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
-            "Canonical Visual Golden Smoke run 35337030010 (#379): success before Checkbox semantic-radius cleanup",
-            "Canonical Visual Golden Smoke run 35337669639 (#381): validating post-Checkbox cleanup"
+            "Canonical Visual Golden Smoke run 35337669639 (#381): success after Checkbox semantic-radius cleanup"
           ]
         },
         "consumers": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
-            "Blog Consumer Parity run 35337030043 (#424): success before Checkbox semantic-radius cleanup",
-            "Gosso Admin Consumer Parity run 35337030001 (#419): success before Checkbox semantic-radius cleanup",
-            "Blog Consumer Parity run 35337723535 (#429): validating full Radius candidate",
-            "Gosso Admin Consumer Parity run 35337723638 (#424): validating full Radius candidate"
+            "Blog Consumer Parity run 35337723535 (#429): success",
+            "Gosso Admin Consumer Parity run 35337723638 (#424): success"
           ]
         }
       }
