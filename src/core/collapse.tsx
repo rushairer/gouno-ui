@@ -287,7 +287,7 @@ export function Collapse({
                     disabled={disabled}
                     aria-label={active ? "Collapse panel" : "Expand panel"}
                     onClick={() => toggleItem(item)}
-                    className="mr-2 inline-flex size-7 shrink-0 items-center justify-center rounded-md outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                    className="mr-2 inline-flex size-7 shrink-0 items-center justify-center rounded-md outline-none transition-colors hover:bg-accent focus-control disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {arrow}
                   </button>
@@ -303,7 +303,7 @@ export function Collapse({
                   aria-controls={bodyId}
                   disabled={disabled}
                   onClick={() => toggleItem(item)}
-                  className="flex min-w-0 flex-1 items-center gap-2 rounded-sm text-inherit outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex min-w-0 flex-1 items-center gap-2 rounded-sm text-inherit outline-none transition-colors focus-control disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {headerContent}
                 </button>
