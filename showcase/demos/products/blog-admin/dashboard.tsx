@@ -335,7 +335,7 @@ export function BlogAdminDashboardDemo() {
               <CardHeader className="border-b p-6">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="flex flex-col gap-1">
-                    <CardTitle className="flex items-center gap-2 text-base">
+                    <CardTitle className="flex items-center gap-2">
                       <TrendingUp className="size-4 text-primary" />
                       30 天访问趋势
                     </CardTitle>
@@ -366,7 +366,7 @@ export function BlogAdminDashboardDemo() {
             <Card padding="none" className="overflow-hidden">
               <CardHeader className="border-b p-6">
                 <div className="flex flex-col gap-1">
-                  <CardTitle className="text-base">内容治理与指标</CardTitle>
+                  <CardTitle>内容治理与指标</CardTitle>
                   <Text size="xs" tone="muted">关键待办事项与健康指标</Text>
                 </div>
               </CardHeader>
@@ -402,7 +402,7 @@ export function BlogAdminDashboardDemo() {
               <CardHeader className="border-b p-6">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex flex-col gap-1">
-                    <CardTitle className="flex items-center gap-2 text-base">
+                    <CardTitle className="flex items-center gap-2">
                       <AlertTriangle className="size-4 text-warning" />
                       AI 运营提醒
                     </CardTitle>
@@ -452,7 +452,7 @@ export function BlogAdminDashboardDemo() {
             <CardHeader className="border-b p-6">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex flex-col gap-1">
-                  <CardTitle className="text-base">表现最佳文章</CardTitle>
+                  <CardTitle>表现最佳文章</CardTitle>
                   <Text size="xs" tone="muted">按全站阅读量与点赞数排序的热门内容</Text>
                 </div>
                 {canViewPosts ? <Button size="small" variant="text" onClick={() => navigate("/admin/posts")}>查看全部文章</Button> : null}
