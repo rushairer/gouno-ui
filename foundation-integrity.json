@@ -357,6 +357,7 @@
       "inventory": {
         "confirmedDefects": [
           "ThemeProvider hard-codes #ffffff/#11151b for browser theme-color instead of consuming --background.",
+          "Canonical Showcase omitted the <meta name=\"theme-color\"> target, so its documented browser Theme side effect was not exercised.",
           "Alert close hover encodes raw black/white theme branches.",
           "Image cover uses raw text-white over semantic overlay."
         ],
