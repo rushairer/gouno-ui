@@ -344,7 +344,7 @@ export function BlogAdminPostsDemo() {
       : null;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div data-pattern="collection-composition" className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/posts"
         note="真实 Blog Admin 文章管理页；Fixture 保留 manager/author 权限差异、筛选/分页、批量失败保留选择、单篇删除重试和兼容 Workflow Launcher，不请求真实 Blog/AI API。"
