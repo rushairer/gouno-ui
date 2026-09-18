@@ -138,7 +138,7 @@ function ContextualEditorHeader({
         {icon}
       </span>
       <div className="min-w-0">
-        <Heading level={2} className="text-lg">{title}</Heading>
+        <Heading level={2} variant="subsection">{title}</Heading>
         <Text size="sm" tone="muted">{description}</Text>
       </div>
     </div>
