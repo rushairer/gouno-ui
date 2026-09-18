@@ -49,6 +49,9 @@ describe("Accessibility Foundation", () => {
     );
     expect(hiddenSelect?.id).toBe(`${combobox.id}-native`);
     expect(hiddenSelect?.id).not.toBe(combobox.id);
+    expect(hiddenSelect?.hasAttribute("aria-labelledby")).toBe(false);
+    expect(hiddenSelect?.hasAttribute("aria-describedby")).toBe(false);
+    expect(screen.getByLabelText("状态")).toBe(combobox);
     expect(combobox.getAttribute("aria-required")).toBe("true");
     expect(combobox.getAttribute("aria-invalid")).toBe("true");
     const describedBy = combobox.getAttribute("aria-describedby")?.split(" ") ?? [];
@@ -169,7 +172,8 @@ describe("Accessibility Foundation", () => {
     expect(select).toContain("const nativeSelectId =");
     expect(select).toContain("id={nativeSelectId}");
     expect(select).toContain("id={baseId} role=\"combobox\"");
-    expect(select).toContain('aria-required={required || props["aria-required"] || undefined}');
+    expect(select).toContain('"aria-labelledby": ariaLabelledBy');
+    expect(select).toContain('aria-required={required || ariaRequired || undefined}');
 
     expect(collapse).toContain("aria-labelledby={labelId}");
     expect(collapse).not.toContain('"Expand panel"');
