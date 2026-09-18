@@ -198,7 +198,7 @@ export function BlogAdminPagesDemo() {
       : null;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div data-pattern="collection-composition" className="flex flex-col gap-6">
       <FixtureDock
         route="/admin/pages"
         note="保留真实单页筛选、响应式 Table/List、路径/模板/导航元数据、删除失败重试与 page_ids WorkflowLauncher；Workflow 资源范围由当前页面选择固定注入，Fixture 不请求真实 Blog/AI API。"
