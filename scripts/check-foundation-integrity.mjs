@@ -1085,6 +1085,118 @@ if (motion?.status !== "planned") {
   }
 }
 
+const focus = matrix.foundations.focus;
+if (focus?.status !== "planned") {
+  const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");
+  const baseSource = readFileSync(resolve(root, "src/base.css"), "utf8");
+  const tabsSource = readFileSync(
+    resolve(root, "src/components/primitives/tabs.tsx"),
+    "utf8",
+  );
+  const badgeSource = readFileSync(
+    resolve(root, "src/components/primitives/badge.tsx"),
+    "utf8",
+  );
+  const dialogSource = readFileSync(
+    resolve(root, "src/components/primitives/dialog.tsx"),
+    "utf8",
+  );
+  const sheetSource = readFileSync(
+    resolve(root, "src/components/primitives/sheet.tsx"),
+    "utf8",
+  );
+
+  for (const marker of [
+    "--focus-ring-width: 2px;",
+    "--focus-ring-offset: 2px;",
+  ]) {
+    if (!tokenSource.includes(marker)) {
+      failures.push("focus.guard: missing canonical Focus token " + marker);
+    }
+  }
+  for (const marker of [
+    "outline: var(--focus-ring-width) solid var(--ring);",
+    "outline-offset: var(--focus-ring-offset);",
+  ]) {
+    if (!baseSource.includes(marker)) {
+      failures.push("focus.guard: Base focus fallback escaped canonical geometry: " + marker);
+    }
+  }
+  if (baseSource.includes("outline-offset: 3px;")) {
+    failures.push("focus.guard: Base focus fallback reintroduced 3px offset");
+  }
+
+  if (
+    !tabsSource.includes(
+      "outline-none focus-visible:border-ring focus-visible:ring-2",
+    ) ||
+    tabsSource.includes("focus-visible:outline-1") ||
+    tabsSource.includes("focus-visible:outline-ring")
+  ) {
+    failures.push("focus.guard: primitive Tabs must own one 2px ring without a second outline");
+  }
+  if (
+    !badgeSource.includes(
+      "outline-none focus-visible:border-ring focus-visible:ring-2",
+    )
+  ) {
+    failures.push("focus.guard: primitive Badge must suppress fallback outline when owning a ring");
+  }
+  for (const [name, source] of [
+    ["Dialog", dialogSource],
+    ["Sheet", sheetSource],
+  ]) {
+    if (!source.includes("focus-visible:ring-2")) {
+      failures.push("focus.guard: " + name + " close control must use focus-visible:ring-2");
+    }
+    if (/\bfocus:ring-/.test(source)) {
+      failures.push("focus.guard: " + name + " reintroduced mouse-visible focus:ring");
+    }
+  }
+
+  const focusSourceFiles = collectTsx(resolve(root, "src"));
+  const ring3Files = focusSourceFiles.filter((file) =>
+    /focus-visible:ring-\[3px\]/.test(readFileSync(file, "utf8")),
+  );
+  const directFocusRingFiles = focusSourceFiles.filter((file) =>
+    /\bfocus:ring-/.test(readFileSync(file, "utf8")),
+  );
+  const doubleOutlineFiles = focusSourceFiles.filter((file) =>
+    /focus-visible:outline-1/.test(readFileSync(file, "utf8")),
+  );
+
+  const shortFocusPath = (file) =>
+    file.startsWith(root) ? file.slice(root.length + 1) : file;
+  process.stdout.write(
+    "Focus corpus audit: focusRing3pxFiles=" +
+      ring3Files.length +
+      ", directFocusRingFiles=" +
+      directFocusRingFiles.length +
+      ", doubleOutlineFiles=" +
+      doubleOutlineFiles.length +
+      "\n",
+  );
+
+  if (ring3Files.length !== 0) {
+    failures.push(
+      "focus.corpus: 3px direct focus rings are not admitted: " +
+        ring3Files.map(shortFocusPath).join(", "),
+    );
+  }
+  if (directFocusRingFiles.length !== 0) {
+    failures.push(
+      "focus.corpus: keyboard focus indication must use focus-visible, not direct focus:ring: " +
+        directFocusRingFiles.map(shortFocusPath).join(", "),
+    );
+  }
+  if (doubleOutlineFiles.length !== 0) {
+    failures.push(
+      "focus.corpus: component-owned focus rings must not stack a second focus outline: " +
+        doubleOutlineFiles.map(shortFocusPath).join(", "),
+    );
+  }
+}
+
 const density = matrix.foundations.density;
 if (density?.status !== "planned") {
   const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");
