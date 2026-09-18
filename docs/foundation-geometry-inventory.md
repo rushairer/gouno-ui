@@ -53,9 +53,11 @@ The existing generic form-control baseline is `ControlSize = small | middle | la
 
 `controlSizeClass` owns those heights for standard form controls.
 
-Some compound controls express the same outer geometry through internal composition rather than the same literal class. For example, `Segmented` uses an inset track: its label heights plus the track padding resolve to the same 32 / 36 / 44px outer sizes. `InputOTP` uses direct 32 / 36 / 44px square cells.
+The inventory found a real divergence: public `Button size="large"` resolved to 40px while `controlSizeClass("large")` and InputOTP resolved to 44px. Sizing is therefore reopened.
 
-Therefore the presence of different internal height classes is not by itself a Sizing defect. Sizing should be reopened only when the resolved semantic control size diverges or a second public size meaning appears.
+The canonical scale is now owned by `--control-height-small/middle/large` and semantic height/square/inset utilities. Standard controls consume `controlSizeClass`; Button reuses `ControlSize`; InputOTP derives square cells from the same heights; Segmented derives its inner label height by subtracting the 4px total track inset. The resulting outer geometry remains 32 / 36 / 44px across these families.
+
+Different internal classes are acceptable only when they are mathematically derived from the same outer ControlSize authority.
 
 ## Radius inventory
 
