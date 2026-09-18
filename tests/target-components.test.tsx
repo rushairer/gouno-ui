@@ -199,6 +199,7 @@ describe("audited target components", () => {
       "core-form",
       "core-date-picker",
       "core-upload",
+      "core-table",
       "core-pagination",
       "core-tabs",
       "core-empty",
