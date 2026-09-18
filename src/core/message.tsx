@@ -60,7 +60,7 @@ export function MessageProvider({
       {children}
       <div
         data-slot="message-region"
-        className="pointer-events-none fixed inset-x-0 top-4 z-[100] flex flex-col items-center gap-2"
+        className="pointer-events-none fixed inset-x-0 top-4 layer-notice flex flex-col items-center gap-2"
       >
         {items.map((item) => (
           <div
