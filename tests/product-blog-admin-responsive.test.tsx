@@ -5,8 +5,8 @@ import { aiOpsAutomationRecordsFixture } from "../showcase/demos/products/blog-a
 
 afterEach(cleanup);
 
-  it("keeps Workflow navigation height content-driven instead of capped by a magic max-height", () => {
-    render(
+  it("keeps the Workflow list page content-driven without an internal navigation rail", () => {
+    const { container } = render(
       <AutomationManagement
         workflows={aiOpsAutomationRecordsFixture.workflows}
         onSave={() => {}}
@@ -16,12 +16,10 @@ afterEach(cleanup);
     );
 
     const list = screen.getByRole("list", { name: "Workflow 列表" });
-    const rail = list.closest('[data-slot="ops-rail"]');
-    expect(rail).toBeTruthy();
-    expect(rail?.className).toContain("flex");
-    expect(rail?.className).toContain("min-h-0");
-    expect(list.className).toContain("flex-1");
-    expect(list.className).toContain("overflow-y-auto");
+    expect(container.querySelector('[data-slot="ops-rail"]')).toBeNull();
+    expect(container.querySelector('[data-slot="ops-rail-body"]')).toBeNull();
+    expect(list.className).toContain("overflow-hidden");
+    expect(list.className).not.toContain("overflow-y-auto");
     expect(list.className).not.toContain("max-h-[");
   });
 
@@ -30,6 +28,7 @@ describe("Blog Admin responsive product structure", () => {
     const { container } = render(
       <AutomationManagement
         workflows={aiOpsAutomationRecordsFixture.workflows}
+        selectedWorkflowId={aiOpsAutomationRecordsFixture.workflows[0].id}
         onSave={() => {}}
         onDelete={() => {}}
         onToggle={() => {}}
