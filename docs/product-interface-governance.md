@@ -317,6 +317,38 @@ Rules:
 
 The canonical contract is documented in `docs/patterns/admin-data-composition.md`.
 
+## PI-09 — Editor forms share one cross-surface composition grammar
+
+Modal, Drawer and Dedicated Editor choose different task surfaces under PI-07, but once an editor form begins they share one internal grammar. The surface choice must not cause every product team to reinvent field rhythm, feedback placement or save/cancel boundaries.
+
+The canonical order is:
+
+```text
+Editor identity / overlay header
+├─ optional EditorFeedback
+├─ EditorFormBody
+│  ├─ EditorFormSection
+│  │  ├─ optional SectionLead
+│  │  └─ FieldStack
+│  └─ EditorFormSection
+└─ EditorActions
+```
+
+Rules:
+
+- The owning editor surface controls outer padding, scrolling and footer behavior; fields do not repair those responsibilities with arbitrary outer margin.
+- Normal field stacks use one 20px vertical rhythm (`gap-5`) unless a compact repeated-row editor explicitly owns a denser local grammar.
+- Section-to-section rhythm is owned by the form body or Dedicated Editor layout, not by bottom margins on individual sections.
+- Field label/help/error geometry stays inside `Field`; business pages do not add a second label-spacing system around it.
+- Form-wide feedback appears after the editor identity/header and before the editable body. Section- or operation-local feedback stays with the owning section.
+- Save/cancel actions use one terminal action boundary. Drawer may render that boundary in its footer; Modal may use its action area; Dedicated Editor uses the page-level action boundary. The semantic order remains the same.
+- Create and edit variants of one object family keep the same section order and field rhythm. Optional fields may collapse without changing unrelated gaps.
+- A responsive multi-column `FormGrid` changes columns, not the vertical field rhythm around the grid.
+- Compact repeated editors such as dynamic Workflow step rows may own an explicit dense row grammar, but the exception must be local and must not leak into ordinary form sections.
+- This is a Showcase composition contract. Do not add a public `EditorForm`, `FormSection` or `FieldStack` API solely to encode layout grammar.
+
+The canonical contract is documented in `docs/patterns/editor-form-composition.md`.
+
 ## Review checklist
 
 Before accepting a normal Admin page or route family, ask:
@@ -342,5 +374,7 @@ Before accepting a normal Admin page or route family, ask:
 19. Is page/panel-wide feedback positioned before toolbar/data/settings sections according to its semantic scope?
 20. Does the semantic parent own spacing between peer data blocks rather than child components adding compensating margins?
 21. Is there a regression gate for the invariant, or a documented reason why only visual review can prove it?
+22. Does every create/edit form use the shared Editor Form order and field/section rhythm regardless of whether it lives in Modal, Drawer or Dedicated Editor?
+23. Does the owning editor surface control outer padding/footer behavior instead of fields or sections compensating with page-local margins?
 
 A page that passes component API tests but fails these questions is not interface-conformant.
