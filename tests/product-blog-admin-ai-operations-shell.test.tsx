@@ -47,7 +47,7 @@ describe("Blog Admin AI Operations route shell", () => {
     expect(screen.getByRole("tab", { name: "自动化" })).toBeTruthy();
     expect(screen.getByRole("tab", { name: "运行中心" })).toBeTruthy();
     expect(screen.queryByRole("tab", { name: "高级设置" })).toBeNull();
-    expect(screen.getByRole("heading", { level: 2, name: "今天需要关注什么" })).toBeTruthy();
+    expect(screen.getByText(/先处理失败与等待人工的运行/)).toBeTruthy();
 
     fireEvent.mouseDown(screen.getByRole("tab", { name: "自动化" }), { button: 0 });
     expect(screen.getByRole("list", { name: "Workflow 列表" })).toBeTruthy();
