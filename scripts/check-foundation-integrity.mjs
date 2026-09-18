@@ -651,6 +651,129 @@ if (border?.status !== "planned") {
   }
 }
 
+const elevation = matrix.foundations.elevation;
+if (elevation?.status !== "planned") {
+  const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");
+  const cardSource = readFileSync(resolve(root, "src/core/card.tsx"), "utf8");
+  const tableSource = readFileSync(
+    resolve(root, "src/components/primitives/table.tsx"),
+    "utf8",
+  );
+  const buttonSource = readFileSync(
+    resolve(root, "src/components/primitives/button.tsx"),
+    "utf8",
+  );
+  const segmentedSource = readFileSync(
+    resolve(root, "src/core/segmented.tsx"),
+    "utf8",
+  );
+  const dialogSource = readFileSync(
+    resolve(root, "src/components/primitives/dialog.tsx"),
+    "utf8",
+  );
+  const sheetSource = readFileSync(
+    resolve(root, "src/components/primitives/sheet.tsx"),
+    "utf8",
+  );
+  const popoverSource = readFileSync(
+    resolve(root, "src/components/primitives/popover.tsx"),
+    "utf8",
+  );
+
+  for (const marker of [
+    "--shadow-control: var(--elevation-shadow-control);",
+    "--shadow-surface: var(--elevation-shadow-surface);",
+    "--shadow-raised: var(--elevation-shadow-raised);",
+    "--shadow-overlay: var(--elevation-shadow-overlay);",
+    "--shadow-modal: var(--elevation-shadow-modal);",
+  ]) {
+    if (!tokenSource.includes(marker)) {
+      failures.push("elevation.guard: missing semantic elevation marker " + marker);
+    }
+  }
+  for (const size of ["xs", "sm", "md", "lg", "xl", "2xl"]) {
+    if (!tokenSource.includes("--shadow-" + size + ": 0 0 #0000;")) {
+      failures.push(
+        "elevation.guard: raw shadow alias " + size + " must remain flat compatibility vocabulary",
+      );
+    }
+  }
+
+  for (const [name, source, marker] of [
+    ["Card surface", cardSource, 'variant === "default" && "shadow-surface"'],
+    ["Card raised", cardSource, 'variant === "elevated" && "bg-raised shadow-raised"'],
+    ["Table surface", tableSource, 'bordered ? "border border-border/80 bg-card shadow-surface"'],
+    ["Button control", buttonSource, "shadow-control"],
+    ["Segmented control", segmentedSource, "peer-checked:shadow-control"],
+    ["Popover overlay", popoverSource, "shadow-overlay"],
+    ["Dialog modal", dialogSource, "shadow-modal"],
+    ["Sheet modal", sheetSource, "shadow-modal"],
+  ]) {
+    if (!source.includes(marker)) {
+      failures.push("elevation.guard: canonical owner changed: " + name);
+    }
+  }
+
+  const rawShadowPattern =
+    /\bshadow-(?:xs|sm|md|lg|xl|2xl)\b|\bshadow-\[[^\]]+\]|\bboxShadow\s*:/;
+  const rawShadowFiles = filesMatching(rawShadowPattern);
+
+  const semanticShadowFiles = canonicalProductFiles.filter((file) =>
+    /\bshadow-(?:control|surface|raised|overlay|modal)\b/.test(
+      readFileSync(file, "utf8"),
+    ),
+  );
+  const overviewFile = resolve(
+    root,
+    "showcase/demos/products/gosso-admin/overview.tsx",
+  );
+  const unexpectedSemanticShadowFiles = semanticShadowFiles.filter(
+    (file) => file !== overviewFile,
+  );
+
+  const elevatedVariantFiles = canonicalProductFiles.filter((file) =>
+    /variant=["']elevated["']/.test(readFileSync(file, "utf8")),
+  );
+  const allowedElevatedFiles = new Set([
+    overviewFile,
+    resolve(root, "showcase/demos/products/gosso-admin/auth/shared.tsx"),
+    resolve(root, "showcase/demos/products/gosso-admin/auth/not-found.tsx"),
+  ]);
+  const unexpectedElevatedFiles = elevatedVariantFiles.filter(
+    (file) => !allowedElevatedFiles.has(file),
+  );
+
+  const shortElevationPath = (file) =>
+    file.startsWith(root) ? file.slice(root.length + 1) : file;
+  process.stdout.write(
+    "Elevation corpus audit: rawShadowBypasses=" +
+      rawShadowFiles.length +
+      ", unexpectedSemanticShadowFiles=" +
+      unexpectedSemanticShadowFiles.length +
+      ", unexpectedElevatedFiles=" +
+      unexpectedElevatedFiles.length +
+      "\n",
+  );
+
+  if (rawShadowFiles.length !== 0) {
+    failures.push(
+      "elevation.corpus: product fixtures must not use raw size/arbitrary/page-local box shadows",
+    );
+  }
+  if (unexpectedSemanticShadowFiles.length !== 0) {
+    failures.push(
+      "elevation.corpus: product-owned semantic shadows require explicit elevation audit: " +
+        unexpectedSemanticShadowFiles.map(shortElevationPath).join(", "),
+    );
+  }
+  if (unexpectedElevatedFiles.length !== 0) {
+    failures.push(
+      "elevation.corpus: persistent elevated Card variants require whitelist review: " +
+        unexpectedElevatedFiles.map(shortElevationPath).join(", "),
+    );
+  }
+}
+
 const density = matrix.foundations.density;
 if (density?.status !== "planned") {
   const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");
