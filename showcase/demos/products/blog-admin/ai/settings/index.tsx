@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  ArrowLeft,
   Bot,
   DatabaseZap,
   GitBranch,
@@ -11,7 +10,7 @@ import {
 import { Alert, Button, Drawer, Modal, Segmented, TabPanel, Tabs, Text } from "../../../../../../src/core";
 import { PageHeader } from "../../../../../../src/gouno";
 import { FixtureDock } from "../../../../../components/fixture-dock";
-import { TabPanelLead } from "../../../../../components/tab-panel-lead";
+import { DedicatedEditorLead } from "../../../../../components/patterns/dedicated-editor";
 import {
   AISettingsEditor,
   getAISettingsEditorPresentation,
@@ -366,18 +365,11 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
           <div className="flex flex-col gap-5">
             {pageEditor && pageEditorPresentation ? (
               <div data-pattern="dedicated-list-editor" className="contents">
-                <TabPanelLead
+                <DedicatedEditorLead
+                  title={pageEditorPresentation.title}
                   description={pageEditorPresentation.description}
-                  actions={(
-                    <Button
-                      size="small"
-                      variant="outline"
-                      icon={<ArrowLeft />}
-                      onClick={() => setEditor(null)}
-                    >
-                      返回{section === "agents" ? " Agent 列表" : " Skill 列表"}
-                    </Button>
-                  )}
+                  backLabel={`返回${section === "agents" ? " Agent 列表" : " Skill 列表"}`}
+                  onBack={() => setEditor(null)}
                 />
                 <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
                 <AISettingsEditor
