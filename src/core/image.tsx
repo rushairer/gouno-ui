@@ -505,7 +505,7 @@ export function Image({
       {previewEnabled && !failed ? (
         <button
           type="button"
-          className="inline-flex max-w-full cursor-zoom-in rounded-md text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="inline-flex max-w-full cursor-zoom-in rounded-md text-left focus-standalone"
           aria-label={
             alt
               ? `${localizedLabel("Preview", "预览")} ${alt}`
