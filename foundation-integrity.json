@@ -558,39 +558,52 @@
           ]
         },
         "tokens": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
-            "src/theme/provider.tsx",
-            "src/base.css",
-            "src/components/primitives/table.tsx"
+            "src/tokens.css",
+            "docs/design-language.md",
+            "docs/foundation-geometry-inventory.md"
           ]
         },
         "authority": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
             "src/theme/provider.tsx",
             "src/components/primitives/table.tsx",
-            "src/base.css"
+            "src/base.css",
+            "docs/design-language.md"
           ]
         },
         "corpus": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "showcase/demos/products/blog",
+            "showcase/demos/products/blog-admin",
+            "showcase/demos/products/gosso-admin",
+            "scripts/check-foundation-integrity.mjs: Density corpus audit directDensityPolicyBypasses=0"
+          ],
+          "directDensityPolicyBypasses": 0
         },
         "guard": {
-          "status": "pending",
+          "status": "passed",
           "evidence": [
+            "scripts/check-foundation-integrity.mjs",
+            "tests/density-foundation-conformance.test.ts",
             "tests/theme.test.tsx",
             "tests/table-layout.test.tsx"
           ]
         },
         "visual": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "Canonical Visual Golden validation required after global density fallback implementation"
+          ]
         },
         "consumers": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "Blog/Gosso reciprocal parity required after global density fallback implementation"
+          ]
         }
       },
       "confirmedDefect": "ThemeProvider density writes documentElement.dataset.density, but no global density selector consumes it. Table separately duplicates compact/touch geometry in local utility branches."
