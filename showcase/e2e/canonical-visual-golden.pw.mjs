@@ -327,10 +327,10 @@ test("focus-canonical-fallback-and-component-ring", async ({ page }) => {
     brand: "blog-admin",
     fixture: "core-button",
     viewport: desktop,
-    ready: '[data-slot="button"]',
+    ready: '[data-slot="button"]:visible',
   });
 
-  const owned = page.locator('[data-slot="button"]').first();
+  const owned = page.locator('[data-slot="button"]:visible').first();
   const restingBoxShadow = await owned.evaluate(
     (element) => getComputedStyle(element).boxShadow,
   );
