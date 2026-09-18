@@ -38,7 +38,7 @@ describe("Table layout contract", () => {
     const container = table.closest('[data-slot="table-container"]');
     expect(container?.getAttribute("data-density")).toBe("touch");
     expect(table.className).toContain("[&_tfoot_td]:align-middle");
-    expect(table.className).toContain("[&_tfoot_tr]:border-t-2");
+    expect(table.className).toContain("[&_tfoot_tr]:edge-bs-emphasis");
     expect(table.className).not.toContain("[&_td]:py-4");
     expect(table.className).not.toContain("[&_tfoot_td]:h-14");
   });
