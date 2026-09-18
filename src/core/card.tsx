@@ -45,7 +45,7 @@ export function CardHeader({ title, description, action, children, className, ..
   </header>;
 }
 
-export const CardTitle = ({ className, ...props }: CardTitleProps) => <h3 {...props} data-slot="card-title" className={cn("text-base font-semibold", className)} />;
-export const CardDescription = ({ className, ...props }: CardDescriptionProps) => <p {...props} data-slot="card-description" className={cn("mt-1 text-sm text-muted-foreground", className)} />;
+export const CardTitle = ({ className, ...props }: CardTitleProps) => <h3 {...props} data-slot="card-title" data-typography-role="compact" className={cn("text-compact-title font-title", className)} />;
+export const CardDescription = ({ className, ...props }: CardDescriptionProps) => <p {...props} data-slot="card-description" data-typography-role="body-sm" className={cn("mt-1 text-body-sm text-muted-foreground", className)} />;
 export const CardContent = ({ className, flush: _flush, ...props }: CardContentProps) => <div {...props} data-slot="card-content" className={cn("min-w-0", className)} />;
 export const CardFooter = ({ className, ...props }: CardFooterProps) => <footer {...props} data-slot="card-footer" className={cn("flex flex-wrap items-center gap-3", className)} />;
