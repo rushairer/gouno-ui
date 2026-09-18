@@ -42,6 +42,49 @@ export type AISettingsEditorResult =
   | { kind: "embedding"; id?: number; value: Omit<EmbeddingProfileFixture, "id"> }
   | { kind: "connector"; id?: number; value: Omit<ConnectorFixture, "id"> };
 
+export type AISettingsEditorSurface = "page" | "drawer";
+
+export function getAISettingsEditorPresentation(editor: Exclude<AISettingsEditorState, null>) {
+  const name = editor.value === "new" ? undefined : editor.value.name;
+  switch (editor.kind) {
+    case "agent":
+      return {
+        title: name ? `编辑 Agent：${name}` : "创建 Agent",
+        description: "Agent 的能力绑定、运行计划与治理限制属于深度配置任务。",
+        submitLabel: "保存 Agent",
+        formId: "ai-settings-agent-editor",
+      };
+    case "skill":
+      return {
+        title: name ? `编辑 Skill：${name}` : "创建 Skill",
+        description: "Skill Version 同时定义行为、Tool 授权、发布策略、输入契约与治理上限。",
+        submitLabel: "保存 Skill",
+        formId: "ai-settings-skill-editor",
+      };
+    case "provider":
+      return {
+        title: name ? `编辑模型连接：${name}` : "添加模型连接",
+        description: "配置模型协议、端点、凭据状态与启停状态。",
+        submitLabel: "保存模型连接",
+        formId: "ai-settings-provider-editor",
+      };
+    case "embedding":
+      return {
+        title: name ? `编辑 Embedding：${name}` : "添加 Embedding 模型",
+        description: "配置知识索引使用的模型、端点、向量维度与凭据状态。",
+        submitLabel: "保存 Embedding",
+        formId: "ai-settings-embedding-editor",
+      };
+    case "connector":
+      return {
+        title: name ? `编辑 Connector：${name}` : "添加 Connector Profile",
+        description: "配置 Connector 的产品身份、授权范围、Sandbox 与凭据状态。",
+        submitLabel: "保存 Connector",
+        formId: "ai-settings-connector-editor",
+      };
+  }
+}
+
 function text(values: Record<string, FormDataEntryValue>, key: string, fallback = "") {
   const value = values[key];
   return typeof value === "string" && value.trim() ? value.trim() : fallback;
@@ -451,10 +494,11 @@ function SkillEditor({
   );
 }
 
-function ProviderEditor({ value, onSave, onCancel }: { value: ProviderFixture | "new"; onSave: (result: AISettingsEditorResult) => void; onCancel: () => void }) {
+function ProviderEditor({ value, onSave, onCancel, surface = "page" }: { value: ProviderFixture | "new"; onSave: (result: AISettingsEditorResult) => void; onCancel: () => void; surface?: AISettingsEditorSurface }) {
   const initial = value === "new" ? undefined : value;
   return (
     <Form
+      id="ai-settings-provider-editor"
       onFinish={(_, values) => {
         onSave({
           kind: "provider",
@@ -473,11 +517,13 @@ function ProviderEditor({ value, onSave, onCancel }: { value: ProviderFixture | 
       }}
     >
       <div className="flex flex-col gap-5">
-        <EditorHeader
-          title={initial ? `编辑模型连接：${initial.name}` : "添加模型连接"}
-          description="连接身份、端点与凭据状态分组展示；真实 API Key 仍由服务端加密保存。"
-          icon={<KeyRound />}
-        />
+        {surface === "page" ? (
+          <EditorHeader
+            title={initial ? `编辑模型连接：${initial.name}` : "添加模型连接"}
+            description="连接身份、端点与凭据状态分组展示；真实 API Key 仍由服务端加密保存。"
+            icon={<KeyRound />}
+          />
+        ) : null}
         <div className="grid gap-5 xl:grid-cols-2">
           <EditorSection title="连接身份" description="定义这条模型连接在产品中的名称和协议类型。">
             <FormGrid columns={2}>
@@ -514,19 +560,22 @@ function ProviderEditor({ value, onSave, onCancel }: { value: ProviderFixture | 
             </Field>
           </FormGrid>
         </EditorSection>
-        <FormActions>
-          <Button type="button" variant="outline" onClick={onCancel}>取消</Button>
-          <Button type="submit" variant="solid" color="primary">保存模型连接</Button>
-        </FormActions>
+        {surface === "page" ? (
+          <FormActions>
+            <Button type="button" variant="outline" onClick={onCancel}>取消</Button>
+            <Button type="submit" variant="solid" color="primary">保存模型连接</Button>
+          </FormActions>
+        ) : null}
       </div>
     </Form>
   );
 }
 
-function EmbeddingEditor({ value, onSave, onCancel }: { value: EmbeddingProfileFixture | "new"; onSave: (result: AISettingsEditorResult) => void; onCancel: () => void }) {
+function EmbeddingEditor({ value, onSave, onCancel, surface = "page" }: { value: EmbeddingProfileFixture | "new"; onSave: (result: AISettingsEditorResult) => void; onCancel: () => void; surface?: AISettingsEditorSurface }) {
   const initial = value === "new" ? undefined : value;
   return (
     <Form
+      id="ai-settings-embedding-editor"
       onFinish={(_, values) => {
         const dimensions = Number(text(values, "dimensions", String(initial?.dimensions || 1536)));
         onSave({
@@ -544,11 +593,13 @@ function EmbeddingEditor({ value, onSave, onCancel }: { value: EmbeddingProfileF
       }}
     >
       <div className="flex flex-col gap-5">
-        <EditorHeader
-          title={initial ? `编辑 Embedding：${initial.name}` : "添加 Embedding 模型"}
-          description="Embedding Profile 负责把已发布内容转换为可检索知识索引。"
-          icon={<DatabaseZap />}
-        />
+        {surface === "page" ? (
+          <EditorHeader
+            title={initial ? `编辑 Embedding：${initial.name}` : "添加 Embedding 模型"}
+            description="Embedding Profile 负责把已发布内容转换为可检索知识索引。"
+            icon={<DatabaseZap />}
+          />
+        ) : null}
         <div className="grid gap-5 xl:grid-cols-2">
           <EditorSection title="索引模型" description="明确 Profile、模型和向量维度，避免把索引参数与凭据混在一起。">
             <div className="flex flex-col gap-5">
@@ -569,19 +620,22 @@ function EmbeddingEditor({ value, onSave, onCancel }: { value: EmbeddingProfileF
             </div>
           </EditorSection>
         </div>
-        <FormActions>
-          <Button type="button" variant="outline" onClick={onCancel}>取消</Button>
-          <Button type="submit" variant="solid" color="primary">保存 Embedding</Button>
-        </FormActions>
+        {surface === "page" ? (
+          <FormActions>
+            <Button type="button" variant="outline" onClick={onCancel}>取消</Button>
+            <Button type="submit" variant="solid" color="primary">保存 Embedding</Button>
+          </FormActions>
+        ) : null}
       </div>
     </Form>
   );
 }
 
-function ConnectorEditor({ value, onSave, onCancel }: { value: ConnectorFixture | "new"; onSave: (result: AISettingsEditorResult) => void; onCancel: () => void }) {
+function ConnectorEditor({ value, onSave, onCancel, surface = "page" }: { value: ConnectorFixture | "new"; onSave: (result: AISettingsEditorResult) => void; onCancel: () => void; surface?: AISettingsEditorSurface }) {
   const initial = value === "new" ? undefined : value;
   return (
     <Form
+      id="ai-settings-connector-editor"
       onFinish={(_, values) => {
         onSave({
           kind: "connector",
@@ -599,11 +653,13 @@ function ConnectorEditor({ value, onSave, onCancel }: { value: ConnectorFixture 
       }}
     >
       <div className="flex flex-col gap-5">
-        <EditorHeader
-          title={initial ? `编辑 Connector：${initial.name}` : "添加 Connector Profile"}
-          description="连接器只暴露显式授权能力；真实 OAuth、凭据和网络调用不进入 Showcase。"
-          icon={<LockKeyhole />}
-        />
+        {surface === "page" ? (
+          <EditorHeader
+            title={initial ? `编辑 Connector：${initial.name}` : "添加 Connector Profile"}
+            description="连接器只暴露显式授权能力；真实 OAuth、凭据和网络调用不进入 Showcase。"
+            icon={<LockKeyhole />}
+          />
+        ) : null}
         <div className="grid gap-5 xl:grid-cols-2">
           <EditorSection title="连接身份" description="定义 Connector 的产品名称、类型和允许访问的范围。">
             <div className="flex flex-col gap-5">
@@ -628,26 +684,28 @@ function ConnectorEditor({ value, onSave, onCancel }: { value: ConnectorFixture 
             </div>
           </EditorSection>
         </div>
-        <FormActions>
-          <Button type="button" variant="outline" onClick={onCancel}>取消</Button>
-          <Button type="submit" variant="solid" color="primary">保存 Connector</Button>
-        </FormActions>
+        {surface === "page" ? (
+          <FormActions>
+            <Button type="button" variant="outline" onClick={onCancel}>取消</Button>
+            <Button type="submit" variant="solid" color="primary">保存 Connector</Button>
+          </FormActions>
+        ) : null}
       </div>
     </Form>
   );
 }
 
-export function AISettingsEditor({ editor, fixture, onSave, onCancel }: { editor: Exclude<AISettingsEditorState, null>; fixture: AISettingsFixture; onSave: (result: AISettingsEditorResult) => void; onCancel: () => void }) {
+export function AISettingsEditor({ editor, fixture, onSave, onCancel, surface = "page" }: { editor: Exclude<AISettingsEditorState, null>; fixture: AISettingsFixture; onSave: (result: AISettingsEditorResult) => void; onCancel: () => void; surface?: AISettingsEditorSurface }) {
   switch (editor.kind) {
     case "agent":
       return <AgentEditor value={editor.value} fixture={fixture} onSave={onSave} onCancel={onCancel} />;
     case "skill":
       return <SkillEditor value={editor.value} fixture={fixture} onSave={onSave} onCancel={onCancel} />;
     case "provider":
-      return <ProviderEditor value={editor.value} onSave={onSave} onCancel={onCancel} />;
+      return <ProviderEditor value={editor.value} onSave={onSave} onCancel={onCancel} surface={surface} />;
     case "embedding":
-      return <EmbeddingEditor value={editor.value} onSave={onSave} onCancel={onCancel} />;
+      return <EmbeddingEditor value={editor.value} onSave={onSave} onCancel={onCancel} surface={surface} />;
     case "connector":
-      return <ConnectorEditor value={editor.value} onSave={onSave} onCancel={onCancel} />;
+      return <ConnectorEditor value={editor.value} onSave={onSave} onCancel={onCancel} surface={surface} />;
   }
 }
