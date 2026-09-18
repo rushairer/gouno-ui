@@ -74,11 +74,10 @@
           ]
         },
         "visual": {
-          "status": "passed",
+          "status": "pending",
           "evidence": [
             "showcase/e2e/canonical-visual-golden.pw.mjs",
-            "Canonical Visual Golden Smoke run 35328740578: success after controlled FI-001 baseline refresh",
-            "Canonical visual refresh run 35328461423: success"
+            "Canonical Visual Golden Smoke run 35330608183: 11 expected screenshot diffs after canonical composition Typography closure; visual re-certification required"
           ]
         },
         "consumers": {
