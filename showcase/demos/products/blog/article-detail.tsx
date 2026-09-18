@@ -149,7 +149,7 @@ function ReadingBody() {
           公开 Blog、Blog Admin 与 GOSSO
           控制台可以共享视觉语言，但它们不是同一种应用壳。公开站点首先是阅读和发现系统；后台才需要持续的应用导航、任务操作和权限上下文。
         </p>
-        <blockquote className="border-l-4 border-primary/40 bg-muted/40 px-5 py-4 text-muted-foreground">
+        <blockquote className="edge-s-accent border-s-primary/40 bg-muted/40 px-5 py-4 text-muted-foreground">
           共享设计语言，不等于共享所有页面结构。真正稳定的抽象必须来自相同的用户意图与交互责任。
         </blockquote>
 
