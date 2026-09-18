@@ -305,11 +305,12 @@
       }
     },
     "color": {
-      "status": "certified",
+      "status": "reopened",
       "affectedComponentReviews": [
         "theme-system",
         "core-alert",
-        "core-image"
+        "core-image",
+        "core-tag"
       ],
       "gates": {
         "inventory": {
@@ -345,23 +346,22 @@
           ]
         },
         "corpus": {
-          "status": "passed",
+          "status": "in_progress",
           "evidence": [
             "showcase/demos/products/blog",
             "showcase/demos/products/blog-admin",
             "showcase/demos/products/gosso-admin",
             "scripts/check-foundation-integrity.mjs",
-            "CI run 35347351003 (#458): Color corpus audit passed; only documented MFA QR bg-white fixed-media exception remains"
-          ],
-          "unexpectedRawPaletteFiles": 0,
-          "fixedMediaException": "Gosso MFA QR bg-white quiet zone"
+            "CI run 35347351003 (#458): Color corpus audit passed; only documented MFA QR bg-white fixed-media exception remains",
+            "FI-D004 reopened: Core Tag close hover raw palette bypass discovered during Interaction State audit."
+          ]
         },
         "guard": {
-          "status": "passed",
+          "status": "in_progress",
           "evidence": [
             "scripts/check-foundation-integrity.mjs",
             "tests/color-foundation-conformance.test.ts",
-            "CI run 35347351003 (#458): success; 161/161 test files, 832/832 tests"
+            "FI-D004 adds explicit Tag close hover guard."
           ]
         },
         "visual": {
@@ -385,7 +385,8 @@
           "ThemeProvider hard-codes #ffffff/#11151b for browser theme-color instead of consuming --background.",
           "Canonical Showcase omitted the <meta name=\"theme-color\"> target, so its documented browser Theme side effect was not exercised.",
           "Alert close hover encodes raw black/white theme branches.",
-          "Image cover uses raw text-white over semantic overlay."
+          "Image cover uses raw text-white over semantic overlay.",
+          "Tag close hover encodes raw black alpha instead of deriving from current/semantic foreground."
         ],
         "functionalFixedColorExceptions": [
           "QRCode defaults to black modules on white background as generated/scannable media.",
@@ -1210,28 +1211,59 @@
       }
     },
     "state": {
-      "status": "planned",
-      "affectedComponentReviews": [],
+      "status": "in_progress",
+      "affectedComponentReviews": [
+        "core-carousel",
+        "core-tag"
+      ],
       "gates": {
         "inventory": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/foundation-state-inventory.md",
+            "src/core/button.tsx",
+            "src/core/select.tsx",
+            "src/core/carousel.tsx",
+            "src/core/tag.tsx",
+            "src/components/primitives/checkbox.tsx",
+            "src/components/primitives/radio-group.tsx",
+            "src/components/primitives/switch.tsx",
+            "src/components/primitives/tabs.tsx",
+            "src/components/primitives/table.tsx"
+          ]
         },
         "tokens": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/design-language.md: F-04",
+            "docs/foundation-state-inventory.md",
+            "src/tokens.css",
+            "State reuses certified Color/Border/Focus/Sizing/Motion authorities; no parallel state token scale is admitted."
+          ]
         },
         "authority": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "docs/foundation-state-inventory.md",
+            "src/core/carousel.tsx",
+            "src/core/tag.tsx"
+          ]
         },
         "corpus": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "src/core",
+            "src/components/primitives",
+            "showcase/demos/core",
+            "showcase/demos/products"
+          ]
         },
         "guard": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "showcase/e2e/canonical-visual-golden.pw.mjs: interaction-carousel-arrows-remain-clickable-while-draggable",
+            "scripts/check-foundation-integrity.mjs"
+          ]
         },
         "visual": {
           "status": "pending",
@@ -1241,6 +1273,21 @@
           "status": "pending",
           "evidence": []
         }
+      },
+      "inventory": {
+        "semanticStates": [
+          "disabled/unavailable",
+          "busy/loading/pending",
+          "selected/current/pressed/checked",
+          "open/expanded",
+          "validation error/warning",
+          "pointer/gesture ownership"
+        ],
+        "confirmedDefects": [
+          "FI-D002: draggable Carousel captures pointerdown from nested arrow buttons in real browsers.",
+          "FI-D004: Tag close hover uses raw black palette color instead of deriving from semantic/current foreground."
+        ],
+        "targetPolicy": "Role-correct DOM/ARIA owns state semantics; existing Foundation roles own visuals/geometry; gesture containers must preserve nested interactive pointer ownership."
       }
     },
     "accessibility": {
