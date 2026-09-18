@@ -3,20 +3,21 @@ import { afterEach, describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { showcaseCatalog } from "../showcase/catalog";
-import { componentProgress } from "../showcase/catalog/component-progress";
+import { componentProgress, componentReviews } from "../showcase/catalog/component-progress";
 import { PatternDedicatedEditorDemo } from "../showcase/demos/patterns/dedicated-editor";
 
 afterEach(cleanup);
 
 describe("Dedicated Editor composition pattern", () => {
-  it("publishes a reviewed Showcase composition contract without adding public runtime API", () => {
+  it("keeps the Showcase composition contract visible while Foundation review is reopened", () => {
     const ids = showcaseCatalog
       .filter((group) => group.workspace === "gouno-ui" && group.layer === "patterns")
       .flatMap((group) => group.items.map((item) => item.id));
     const publicPatterns = readFileSync(resolve(process.cwd(), "src/patterns/index.ts"), "utf8");
 
     expect(ids).toContain("pattern-dedicated-editor");
-    expect(componentProgress("pattern-dedicated-editor", 0)).toBe(100);
+    expect(componentReviews["pattern-dedicated-editor"]?.status).toBe("reopened");
+    expect(componentProgress("pattern-dedicated-editor", 0)).toBeLessThan(100);
     expect(publicPatterns).not.toContain("DedicatedEditor");
   });
 
