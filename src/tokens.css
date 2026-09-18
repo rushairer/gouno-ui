@@ -89,6 +89,15 @@
     --type-body-sm-line-height: 1.25rem;
     --type-caption-size: 0.75rem;
     --type-caption-line-height: 1rem;
+    --type-reading-body-size: 0.9375rem;
+    --type-reading-body-wide-size: 1rem;
+    --type-reading-body-line-height: 2rem;
+    --type-reading-lead-size: 1rem;
+    --type-reading-lead-line-height: 2rem;
+    --type-reading-sm-size: 0.875rem;
+    --type-reading-sm-line-height: 1.75rem;
+    --type-reading-summary-size: 0.875rem;
+    --type-reading-summary-line-height: 1.5rem;
     --type-metric-value-size: 1.5rem;
     --type-metric-value-line-height: 2rem;
     --type-metric-compact-size: 1.25rem;
@@ -289,6 +298,26 @@
     line-height: var(--type-caption-line-height);
   }
 
+  .type-reading-body {
+    font-size: var(--type-reading-body-size);
+    line-height: var(--type-reading-body-line-height);
+  }
+
+  .type-reading-lead {
+    font-size: var(--type-reading-lead-size);
+    line-height: var(--type-reading-lead-line-height);
+  }
+
+  .type-reading-sm {
+    font-size: var(--type-reading-sm-size);
+    line-height: var(--type-reading-sm-line-height);
+  }
+
+  .type-reading-summary {
+    font-size: var(--type-reading-summary-size);
+    line-height: var(--type-reading-summary-line-height);
+  }
+
   .type-metric-value {
     font-size: var(--type-metric-value-size);
     line-height: var(--type-metric-value-line-height);
@@ -329,7 +358,15 @@
     letter-spacing: var(--type-label-tracking);
   }
 
+  .type-tracking-title {
+    letter-spacing: var(--type-title-tracking);
+  }
+
   @media (min-width: 40rem) {
+    .type-reading-body {
+      font-size: var(--type-reading-body-wide-size);
+    }
+
     .type-hero-title {
       font-size: var(--type-page-title-size);
       line-height: var(--type-page-title-line-height);

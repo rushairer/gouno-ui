@@ -398,6 +398,7 @@ Rules:
 - Card/region headings choose their semantic level from the document outline and their visual role from the region hierarchy. Do not use a smaller HTML level merely to get a smaller font.
 - Public reading/marketing surfaces may choose `display`/`hero` roles, but still use the canonical `Heading` scale rather than raw product-local font-size utilities.
 - `Text.size` expresses body-density choices through semantic body/caption tokens. `Text.weight`, `Text.family` and `Text.leading` own canonical emphasis, font-family and readable line-height choices; product code must not recreate those metrics with `font-*`, `leading-*`, raw size utilities or font-family utilities in `className`.
+- Public reading surfaces use admitted reading roles instead of raw utilities: `type-reading-body` for long-form prose, `type-reading-lead` for hero/intro copy, `type-reading-sm` for relaxed commentary/supporting prose, and `type-reading-summary` for compact summaries. Reading roles are a governed Typography extension, not permission for arbitrary product-local text sizes.
 - Product code may extend color, measure, alignment and interaction styling through `className`, but canonical headings must not override font size, line-height, weight or tracking ad hoc.
 - Core compatibility may continue to infer a default visual variant from `level`, but admitted Gouno/Pattern compositions should state the intended visual role explicitly whenever the role is part of their contract.
 
