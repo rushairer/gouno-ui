@@ -22,7 +22,7 @@ describe("Blog Admin AI Operations panel lead contract", () => {
     expect(lead).toContain("<Heading level={2}>{title}</Heading>");
     expect(overview).toContain('title="今天需要关注什么"');
     expect(overview).toContain('title="人工决策队列"');
-    expect(automation).toContain('title="自动化资产"');
+    expect(automation.match(/title="自动化资产"/g)).toHaveLength(2);
     expect(records).toContain('title="运行证据中心"');
   });
 });
