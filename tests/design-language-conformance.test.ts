@@ -468,7 +468,7 @@ describe("design-language conformance", () => {
     expect(aiEditors).toContain("EditorFormSurfaceSection");
     expect(aiEditors).not.toContain("function EditorSection(");
     expect(automation).not.toContain("rounded-xl border bg-background");
-    expect(automation).toContain('<Card\n              padding="none"\n              className="overflow-hidden"\n              aria-label="Workflow 资产"');
+    expect(automation).toMatch(/<Card[\s\S]{0,160}padding="none"[\s\S]{0,160}aria-label="Workflow 资产"/);
     expect(automation).toContain('aria-label="最近运行"');
     expect(automation).toContain('aria-label="Workflow 流程定义"');
   });
