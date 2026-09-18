@@ -92,6 +92,12 @@ describe("Core General/Layout batch 6A", () => {
     expect(root.children).toHaveLength(2);
   });
 
+
+  it("uses the shared semantic scale for named Flex gaps", () => {
+    render(<Flex gap="md" data-testid="named-flex"><span>A</span></Flex>);
+    expect(screen.getByTestId("named-flex").className).toContain("gap-space-md");
+  });
+
   it("supports decorative and semantic Separator variants plus horizontal content", () => {
     const ref = createRef<HTMLDivElement>();
     const { rerender } = render(
