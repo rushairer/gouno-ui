@@ -381,7 +381,7 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
                 />
               </div>
             ) : (
-              <>
+              <div data-pattern="settings-composition" className="contents">
                 <AISettingsSectionLead
                   section={section}
                   actions={actions}
@@ -400,7 +400,7 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
                     {sectionPanel}
                   </PrivilegedAccessGate>
                 ) : sectionPanel}
-              </>
+              </div>
             )}
           </div>
         </TabPanel>
