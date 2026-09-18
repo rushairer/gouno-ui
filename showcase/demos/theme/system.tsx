@@ -18,7 +18,7 @@ const providerApi: ApiRow[] = [
   },
   {
     name: "density",
-    description: "全局密度，写入 data-density。",
+    description: "全局默认密度策略，写入 documentElement.dataset.density；支持 Density contract 的组件在本地 default 时继承，显式局部 density 优先。",
     type: '"comfortable" | "compact"',
     defaultValue: '"comfortable"',
   },
@@ -62,7 +62,7 @@ const contextApi: ApiRow[] = [
   },
   {
     name: "Density",
-    description: "全局交互密度。",
+    description: "全局交互密度默认策略；不改写 ControlSize，组件显式 density 优先。",
     type: '"comfortable" | "compact"',
   },
   {
@@ -91,7 +91,7 @@ export function ThemeSystemDemo() {
         </div>
         <Heading level={1}>Theme System 主题系统</Heading>
         <Text tone="muted" className="max-w-3xl leading-relaxed">
-          Theme 是正式所有权层，负责品牌、明暗模式、持久化与浏览器主题副作用；它不是通用应用状态 Provider。
+          Theme 是正式所有权层，负责品牌、明暗模式、全局默认密度、持久化与浏览器主题副作用；它不是通用应用状态 Provider。
         </Text>
       </header>
 
