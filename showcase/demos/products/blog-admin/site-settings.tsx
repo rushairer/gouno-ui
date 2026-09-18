@@ -112,7 +112,7 @@ function SettingsSurface({
   children: ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-5">
+    <div data-pattern="settings-composition" className="flex flex-col gap-5">
       <TabPanelLead description={description} />
       <Card padding="none" className="gap-0 overflow-clip">
         <CardContent className="flex flex-col gap-5 p-6">{children}</CardContent>
