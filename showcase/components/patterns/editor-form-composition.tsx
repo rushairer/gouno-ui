@@ -59,9 +59,9 @@ export function EditorFormSurfaceSection({
       <CardHeader className="border-b p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <CardTitle className="text-base">{title}</CardTitle>
+            <CardTitle>{title}</CardTitle>
             {description ? (
-              <Text size="xs" tone="muted" className="mt-1 leading-relaxed">
+              <Text size="xs" tone="muted" leading="relaxed" className="mt-1">
                 {description}
               </Text>
             ) : null}
