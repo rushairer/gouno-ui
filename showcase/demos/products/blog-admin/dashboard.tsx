@@ -295,7 +295,7 @@ export function BlogAdminDashboardDemo() {
         <PageSkeleton layout="dashboard" aria-label="数据概览加载中" statistics={4} sections={3} />
       ) : (
         <>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div data-pattern="data-summary-composition" aria-label="站点运营摘要" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <MetricCard
               icon={<FileText className="size-4" />}
               title="文章总数"
