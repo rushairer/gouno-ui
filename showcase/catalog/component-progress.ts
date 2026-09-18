@@ -293,6 +293,13 @@ componentReviews["core-steps"] = {
   baseline: "FI-D001 reopened / 2026-09-18",
 };
 
+componentReviews["core-tag"] = {
+  status: "reopened",
+  scope: "FI-D004 / Interaction State: Tag close hover used a raw black palette state instead of deriving interaction feedback from the current/semantic foreground; Color is reopened until the fix, guard and exact-head gates pass.",
+  evidence: ["docs/foundation-state-inventory.md", "docs/foundation-integrity-open-defects.md", "src/core/tag.tsx", "tests/color-foundation-conformance.test.ts"],
+  baseline: "FI-D004 reopened / 2026-09-19",
+};
+
 componentReviews["core-carousel"] = {
   status: "reopened",
   scope: "FI-D002: real Showcase arrow clicks are reported ineffective while JSDOM click tests pass; draggable viewport pointer capture is a browser-only event-ownership suspect and requires Playwright proof.",
