@@ -407,7 +407,7 @@
       }
     },
     "border": {
-      "status": "in_progress",
+      "status": "certified",
       "affectedComponentReviews": [
         "core-spin",
         "core-timeline",
@@ -430,47 +430,81 @@
           ]
         },
         "tokens": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
-            "src/tokens.css"
+            "src/tokens.css: --border-width-boundary=1px, --border-width-emphasis=2px, --border-width-accent=4px",
+            "src/tokens.css: edge-emphasis / edge-bs-emphasis / edge-be-emphasis / edge-s-emphasis / edge-e-emphasis / edge-s-accent utilities",
+            "docs/design-language.md: DL-18"
           ]
         },
         "authority": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
-            "src/tokens.css",
-            "docs/design-language.md"
+            "docs/design-language.md: DL-18 — Border width expresses boundary versus emphasis",
+            "docs/foundation-geometry-inventory.md: Border inventory",
+            "src/core/spinner.tsx",
+            "src/core/timeline.tsx",
+            "src/core/steps.tsx",
+            "src/components/primitives/table.tsx",
+            "showcase/demos/products/blog/article-detail.tsx",
+            "showcase/demos/products/blog/document-pages.tsx"
           ]
         },
         "corpus": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "showcase/demos/products/blog",
+            "showcase/demos/products/blog-admin",
+            "showcase/demos/products/gosso-admin",
+            "CI run 35345239291 (#434): Border corpus audit numericWidthBypasses=0, hardCodedNeutralColors=0",
+            "scripts/check-foundation-integrity.mjs"
+          ],
+          "numericWidthBypasses": 0,
+          "hardCodedNeutralColors": 0
         },
         "guard": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "scripts/check-foundation-integrity.mjs",
+            "tests/border-foundation-conformance.test.ts",
+            "tests/table-layout.test.tsx",
+            "CI run 35345239291 (#434): success; 160/160 test files, 826/826 tests"
+          ]
         },
         "visual": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Canonical Visual Golden Smoke run 35345239413 (#413): success; 51/51 passed",
+            "showcase/e2e/canonical-visual-golden.pw.mjs: border-semantic-width-geometry passed",
+            "Computed borderInlineStartWidth: selected Blog Admin record=2px; Public Blog reading quote=4px"
+          ]
         },
         "consumers": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Blog Consumer Parity run 35345239328 (#465): success",
+            "Gosso Admin Consumer Parity run 35345239349 (#460): success"
+          ]
         }
       },
       "inventory": {
-        "ordinaryBoundary": "Tailwind border / side-border utilities (1px) with semantic border colors",
+        "ordinaryBoundary": "Tailwind border / directional border-* / divide-* (1px) with semantic --border or explicit semantic state color",
         "emphasisWidthUsages": [
           "Spinner ring",
           "Timeline marker",
           "Steps active navigation indicator",
           "Table summary separator",
           "Showcase DemoSection active tab indicator",
-          "Markdown blockquote lead",
+          "Markdown preview blockquote lead",
           "Blog Admin selected-record lead"
         ],
-        "arbitraryNumericBorderWidths": 0,
+        "readingAccentUsages": [
+          "Public Blog article-detail long-form blockquote",
+          "Public Blog document-pages long-form blockquote"
+        ],
+        "rawNumericBorderSitesFoundDuringAudit": 2,
+        "rawNumericBorderSiteClassification": "Both were 4px Public Blog reading blockquotes; migrated to --border-width-accent / edge-s-accent rather than flattened to the 2px indicator role.",
+        "migratedNumericWidthBypasses": 0,
         "hardCodedNeutralBorderColors": 0
       }
     },
