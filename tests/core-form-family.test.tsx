@@ -97,16 +97,17 @@ describe("Core Form family", () => {
     expect(screen.getByRole("group", { name: "导航设置" })).toBeTruthy();
   });
 
-  it("deduplicates a caller aria-label that exactly repeats the visible Field label", () => {
+  it("preserves a caller aria-label that repeats the Field label without naming the wrapper group", () => {
     render(
       <FormField label="导航排序权重" hint="数字越小越靠前">
         <Input aria-label="导航排序权重" type="number" defaultValue="10" />
       </FormField>,
     );
 
-    const input = screen.getByLabelText("导航排序权重");
-    expect(input.tagName).toBe("INPUT");
-    expect(input.getAttribute("aria-label")).toBeNull();
+    const matches = screen.getAllByLabelText("导航排序权重");
+    expect(matches).toHaveLength(1);
+    expect(matches[0].tagName).toBe("INPUT");
+    expect(matches[0].getAttribute("aria-label")).toBe("导航排序权重");
     expect(
       screen.queryByRole("group", { name: "导航排序权重" }),
     ).toBeNull();
