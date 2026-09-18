@@ -93,28 +93,50 @@
       }
     },
     "spacing": {
-      "status": "planned",
-      "affectedComponentReviews": [],
+      "status": "in_progress",
+      "affectedComponentReviews": [
+        "core-space",
+        "core-flex",
+        "core-grid"
+      ],
       "gates": {
         "inventory": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "src/tokens.css",
+            "src/core/layout.tsx",
+            "showcase/demos/core/space",
+            "showcase/demos/core/flex",
+            "showcase/demos/core/grid"
+          ]
         },
         "tokens": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "src/tokens.css"
+          ]
         },
         "authority": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "src/tokens.css",
+            "src/core/layout.tsx",
+            "tests/core-feedback-layout.test.tsx",
+            "tests/core-general-layout-6a.test.tsx",
+            "tests/core-avatar-grid-6b1.test.tsx"
+          ]
         },
         "corpus": {
           "status": "pending",
           "evidence": []
         },
         "guard": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "tests/core-feedback-layout.test.tsx",
+            "tests/core-general-layout-6a.test.tsx",
+            "tests/core-avatar-grid-6b1.test.tsx"
+          ]
         },
         "visual": {
           "status": "pending",
@@ -363,8 +385,11 @@
           "evidence": []
         },
         "guard": {
-          "status": "pending",
-          "evidence": []
+          "status": "in_progress",
+          "evidence": [
+            "scripts/check-foundation-integrity.mjs",
+            "tests/gouno-structure.test.tsx"
+          ]
         },
         "visual": {
           "status": "pending",
