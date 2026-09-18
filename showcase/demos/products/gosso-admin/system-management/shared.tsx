@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { IconButton, MessageProvider, Modal, Text, useMessage } from "../../../../../src/core";
 import { FixtureDock } from "../../../../components/fixture-dock";
-import { TabPanelLead } from "../../../../components/tab-panel-lead";
+import { TabPanelFeedback, TabPanelLead } from "../../../../components/tab-panel-lead";
 
 type FixtureBannerProps = {
   route: string;
@@ -20,6 +20,7 @@ export function FixtureBanner({ route, controls, note }: FixtureBannerProps) {
 }
 
 export const ManagementPanelLead = TabPanelLead;
+export const ManagementPanelFeedback = TabPanelFeedback;
 
 function FixtureMessageContent({ children }: { children: ReactNode }) {
   const message = useMessage();
