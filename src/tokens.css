@@ -184,6 +184,14 @@
     --accent: oklch(0.96 0.018 var(--brand-hue));
     --accent-foreground: oklch(0.4 0.12 var(--brand-hue));
     --ring: var(--primary);
+
+    /* Focus indicator geometry. Color remains semantic-state owned; these tokens
+       are the single thickness/offset authority for keyboard focus visibility. */
+    --focus-ring-width: 2px;
+    --focus-ring-offset-control: 2px;
+    --focus-ring-offset-standalone: 3px;
+    --focus-ring-offset-inset: -2px;
+
     --radius: var(--radius-md);
     --radius-control: var(--radius-md);
     --content-width: 1200px;
