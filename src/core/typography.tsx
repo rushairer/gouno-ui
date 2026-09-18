@@ -7,10 +7,12 @@ export type HeadingVariant =
   | "hero"
   | "page"
   | "task"
+  | "section-lg"
   | "section"
   | "subsection"
   | "compact"
-  | "label";
+  | "label"
+  | "micro";
 export type TextSize = "xs" | "sm" | "md" | "lg";
 export type TextTone = "default" | "muted" | "danger" | "success";
 
@@ -32,14 +34,16 @@ export interface TypographyProps extends HTMLAttributes<HTMLElement> {
 }
 
 const headingVariantClass: Record<HeadingVariant, string> = {
-  display: "text-display-title font-title tracking-title",
+  display: "text-page-title font-title tracking-title md:text-display-title",
   hero: "text-task-title font-title tracking-title sm:text-page-title",
   page: "text-page-title font-title tracking-title",
   task: "text-task-title font-title tracking-title",
+  "section-lg": "text-task-title font-title tracking-section-title",
   section: "text-section-title font-title tracking-section-title",
   subsection: "text-subsection-title font-title",
   compact: "text-compact-title font-title",
   label: "text-label-title font-title",
+  micro: "text-caption font-title",
 };
 
 const defaultHeadingVariant: Record<HeadingLevel, HeadingVariant> = {
