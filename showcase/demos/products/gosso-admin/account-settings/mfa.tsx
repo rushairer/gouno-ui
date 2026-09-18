@@ -115,7 +115,7 @@ export function MfaPanel() {
         ) : null}
         {showBackupCodes && preview === "enabled" ? (
           <section className="flex flex-col gap-4 border-t pt-5" aria-labelledby="gosso-backup-codes-heading">
-            <Heading id="gosso-backup-codes-heading" level={2} className="text-base">恢复备用代码</Heading>
+            <Heading id="gosso-backup-codes-heading" level={2} variant="compact">恢复备用代码</Heading>
             <Text size="sm" tone="muted">每个代码只能使用一次。请保存到与主身份验证器分离的安全位置。</Text>
             <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {backupCodes.map((code) => <code key={code} className="rounded-md border bg-muted/30 px-3 py-2 text-center font-mono text-sm">{code}</code>)}
