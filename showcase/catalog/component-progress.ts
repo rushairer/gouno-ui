@@ -279,10 +279,10 @@ for (const id of ["core-button","core-input","core-textarea","core-checkbox","co
 
 for (const id of ["theme-system","gouno-app-shell","pattern-bulk-action-bar","core-affix","core-back-top","core-float-button","core-modal","core-drawer","core-popconfirm","core-popover","core-tooltip","core-dropdown","core-select","core-menu","core-autocomplete","core-mentions","core-message","core-notification"]) {
   componentReviews[id] = {
-    status: "reopened",
-    scope: "FI-001 Overlay reopened: application-global sticky/floating/modal/popup/notice precedence is encoded through raw z-index literals, modal and popup portals currently collide at z=50, and Showcase tooling needs an explicit isolation contract.",
-    evidence: ["foundation-integrity.json", "docs/foundation-overlay-inventory.md"],
-    baseline: "FI-001 Overlay reopened / 2026-09-18",
+    status: "reviewed",
+    scope: "FI-001 Overlay certified: semantic sticky/shell/floating/modal/popup/notice Layer roles own application-global stacking, nested popup portals are deterministically above modal surfaces, caller zIndex keeps mask/content aligned, and Showcase tooling is isolated.",
+    evidence: ["foundation-integrity.json", "docs/foundation-overlay-inventory.md", "docs/design-language.md", "tests/overlay-foundation-conformance.test.tsx", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "FI-001 Overlay certified / 2026-09-18",
   };
 }
 
