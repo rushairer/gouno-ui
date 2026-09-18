@@ -499,12 +499,96 @@ test("responsive-steps-canonical-sm-stacking", async ({ page }) => {
     await steps.evaluate((element) => getComputedStyle(element).flexDirection),
   ).toBe("column");
 
+  const mobileItem = steps.locator('[data-slot="steps-item"]').first();
+  const mobileMarker = mobileItem.locator('[data-slot="steps-marker"]');
+  const mobileTitle = mobileItem.locator('[data-slot="steps-title"]');
+  const mobileConnector = mobileItem.locator(
+    '[data-slot="steps-connector"][data-layout="mobile-vertical"]:visible',
+  );
+  const [mobileMarkerBox, mobileTitleBox, mobileConnectorBox] =
+    await Promise.all([
+      mobileMarker.boundingBox(),
+      mobileTitle.boundingBox(),
+      mobileConnector.boundingBox(),
+    ]);
+  expect(mobileMarkerBox).not.toBeNull();
+  expect(mobileTitleBox).not.toBeNull();
+  expect(mobileConnectorBox).not.toBeNull();
+  expect(
+    Math.abs(
+      mobileConnectorBox.x +
+        mobileConnectorBox.width / 2 -
+        (mobileMarkerBox.x + mobileMarkerBox.width / 2),
+    ),
+  ).toBeLessThanOrEqual(2);
+  expect(mobileConnectorBox.y).toBeGreaterThanOrEqual(
+    mobileMarkerBox.y + mobileMarkerBox.height,
+  );
+  expect(mobileTitleBox.x).toBeGreaterThan(
+    mobileMarkerBox.x + mobileMarkerBox.width,
+  );
+
   await page.setViewportSize({ width: 700, height: 900 });
   await expect
     .poll(() =>
       steps.evaluate((element) => getComputedStyle(element).flexDirection),
     )
     .toBe("row");
+
+  const desktopItem = steps.locator('[data-slot="steps-item"]').first();
+  const desktopMarker = desktopItem.locator('[data-slot="steps-marker"]');
+  const desktopTitle = desktopItem.locator('[data-slot="steps-title"]');
+  const desktopConnector = desktopItem.locator(
+    '[data-slot="steps-connector"][data-layout="desktop-inline"]:visible',
+  );
+  const [desktopMarkerBox, desktopTitleBox, desktopConnectorBox] =
+    await Promise.all([
+      desktopMarker.boundingBox(),
+      desktopTitle.boundingBox(),
+      desktopConnector.boundingBox(),
+    ]);
+  expect(desktopMarkerBox).not.toBeNull();
+  expect(desktopTitleBox).not.toBeNull();
+  expect(desktopConnectorBox).not.toBeNull();
+  expect(desktopConnectorBox.x).toBeGreaterThan(
+    desktopTitleBox.x + desktopTitleBox.width,
+  );
+  expect(
+    Math.abs(
+      desktopConnectorBox.y +
+        desktopConnectorBox.height / 2 -
+        (desktopMarkerBox.y + desktopMarkerBox.height / 2),
+    ),
+  ).toBeLessThanOrEqual(2);
+
+  const verticalDot = page.locator(
+    '[data-slot="steps"][data-type="dot"][data-orientation="vertical"]',
+  ).last();
+  const dotItem = verticalDot.locator('[data-slot="steps-item"]').first();
+  const dotMarker = dotItem.locator('[data-slot="steps-marker"]');
+  const dotTitle = dotItem.locator('[data-slot="steps-title"]');
+  const dotConnector = dotItem.locator(
+    '[data-slot="steps-connector"][data-layout="vertical"]:visible',
+  );
+  const [dotMarkerBox, dotTitleBox, dotConnectorBox] = await Promise.all([
+    dotMarker.boundingBox(),
+    dotTitle.boundingBox(),
+    dotConnector.boundingBox(),
+  ]);
+  expect(dotMarkerBox).not.toBeNull();
+  expect(dotTitleBox).not.toBeNull();
+  expect(dotConnectorBox).not.toBeNull();
+  expect(
+    Math.abs(
+      dotConnectorBox.x +
+        dotConnectorBox.width / 2 -
+        (dotMarkerBox.x + dotMarkerBox.width / 2),
+    ),
+  ).toBeLessThanOrEqual(2);
+  expect(dotConnectorBox.y).toBeGreaterThanOrEqual(
+    dotMarkerBox.y + dotMarkerBox.height,
+  );
+  expect(dotTitleBox.x).toBeGreaterThan(dotMarkerBox.x + dotMarkerBox.width);
 });
 
 test("surface-gosso-overview-quick-link-card-ownership", async ({ page }) => {
