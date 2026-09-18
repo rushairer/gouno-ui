@@ -170,7 +170,7 @@ export const advancedNavigationDocuments: Record<string, ComponentDocument> = {
           { name: "lazy mount", description: "默认 body 首次展开时才挂载，之后保持挂载", type: "rendering rule" },
           { name: "destroyOnHidden", description: "关闭后移除 body；再次展开重新挂载", type: "rendering rule" },
           { name: "forceRender", description: "优先于 destroyOnHidden，始终保持 body 挂载", type: "rendering rule" },
-          { name: "trigger", description: "button 暴露 aria-expanded/aria-controls；disabled 使用原生 disabled", type: "ARIA" },
+          { name: "trigger", description: "button 暴露 aria-expanded/aria-controls；icon-only trigger 通过 aria-labelledby 复用可见 panel label；disabled 使用原生 disabled", type: "ARIA" },
           { name: "body", description: "role=region 并通过真实 label 进行 aria-labelledby", type: "ARIA" },
         ],
       },
