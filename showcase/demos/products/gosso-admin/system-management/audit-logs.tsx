@@ -19,7 +19,7 @@ import {
   Tag,
 } from "../../../../../src/core";
 import { PageSkeleton } from "../../../../../src/gouno";
-import { FixtureBanner, ManagementPanelLead } from "./shared";
+import { FixtureBanner, ManagementPanelFeedback, ManagementPanelLead } from "./shared";
 
 type FixtureScenario = "data" | "loading" | "empty" | "error";
 type AuditFixture = {
@@ -91,6 +91,11 @@ export function AuditLogsPanel() {
         controls={<Segmented<FixtureScenario> aria-label="审计日志 Fixture 状态" options={scenarioOptions} value={scenario} onChange={changeScenario} block />}
       />
       <ManagementPanelLead description="按事件类型和目标账户查询身份平台安全审计事件，并查看事件上下文。" />
+      <ManagementPanelFeedback>
+        {scenario === "error" ? (
+          <Alert type="error" showIcon title="审计日志加载失败" description="无法读取安全审计事件。真实产品会保留筛选条件并允许重新请求。" action={<Button size="small" onClick={() => changeScenario("data")}>重新载入</Button>} />
+        ) : null}
+      </ManagementPanelFeedback>
 
       <Card padding="sm">
         <form onSubmit={search} className="flex flex-col gap-3 md:flex-row md:items-end">
@@ -107,9 +112,7 @@ export function AuditLogsPanel() {
         </form>
       </Card>
 
-      {scenario === "error" ? (
-        <Alert type="error" showIcon title="审计日志加载失败" description="无法读取安全审计事件。真实产品会保留筛选条件并允许重新请求。" action={<Button size="small" onClick={() => changeScenario("data")}>重新载入</Button>} />
-      ) : scenario === "loading" ? (
+      {scenario === "loading" ? (
         <PageSkeleton
           layout="collection"
           aria-label="审计日志加载中"
