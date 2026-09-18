@@ -261,10 +261,10 @@ for (const id of ["theme-system", "core-steps", "core-grid"]) {
 
 for (const id of ["core-anchor", "core-back-top", "core-carousel"]) {
   componentReviews[id] = {
-    status: "reopened",
-    scope: "FI-001 Phase 4: Motion Foundation reopened because CSS reduced-motion did not govern imperative smooth scroll, and Carousel inline/lifecycle motion could bypass the global preference.",
-    evidence: ["docs/foundation-motion-inventory.md", "foundation-integrity.json", "src/base.css", "src/lib/motion.ts", "src/hooks/use-reduced-motion.ts", "src/core/anchor.tsx", "src/core/affix.tsx", "src/core/carousel.tsx"],
-    baseline: "FI-001 Phase 4 Motion / 2026-09-18",
+    status: "reviewed",
+    scope: "FI-001 Motion certified: CSS and JavaScript share one reduced-motion authority; Anchor/BackTop resolve imperative scroll through that policy, and Carousel collapses autoplay/inline transition/lifecycle motion while reacting to live preference changes.",
+    evidence: ["foundation-integrity.json", "docs/foundation-motion-inventory.md", "docs/design-language.md", "tests/motion-foundation-conformance.test.tsx", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "FI-001 Motion certified / 2026-09-18",
   };
 }
 
