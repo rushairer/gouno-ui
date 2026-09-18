@@ -214,6 +214,90 @@ if (spacing?.status !== "planned") {
   }
 }
 
+const sizing = matrix.foundations.sizing;
+if (sizing?.status !== "planned") {
+  const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");
+  const controlTypesSource = readFileSync(
+    resolve(root, "src/core/control-types.ts"),
+    "utf8",
+  );
+  const coreButtonSource = readFileSync(resolve(root, "src/core/button.tsx"), "utf8");
+  const primitiveButtonSource = readFileSync(
+    resolve(root, "src/components/primitives/button.tsx"),
+    "utf8",
+  );
+  const otpSource = readFileSync(resolve(root, "src/core/input-otp.tsx"), "utf8");
+  const segmentedSource = readFileSync(
+    resolve(root, "src/core/segmented.tsx"),
+    "utf8",
+  );
+
+  for (const [name, value] of [
+    ["small", "2rem"],
+    ["middle", "2.25rem"],
+    ["large", "2.75rem"],
+  ]) {
+    if (!tokenSource.includes("--control-height-" + name + ": " + value + ";")) {
+      failures.push(
+        "sizing.guard: missing canonical control height " + name + "=" + value,
+      );
+    }
+    for (const prefix of [
+      ".control-height-",
+      ".control-square-",
+      ".control-inset-height-",
+    ]) {
+      if (!tokenSource.includes(prefix + name)) {
+        failures.push("sizing.guard: missing semantic control utility " + prefix + name);
+      }
+    }
+  }
+
+  for (const marker of [
+    'small: "control-height-small text-sm"',
+    'middle: "control-height-middle text-sm"',
+    'large: "control-height-large text-base"',
+  ]) {
+    if (!controlTypesSource.includes(marker)) {
+      failures.push("sizing.guard: ControlSize escaped semantic height authority");
+      break;
+    }
+  }
+  if (!coreButtonSource.includes("export type ButtonSize = ControlSize;")) {
+    failures.push("sizing.guard: ButtonSize must reuse ControlSize");
+  }
+  for (const marker of [
+    'sm: "control-height-small',
+    'default: "control-height-middle',
+    'lg: "control-height-large',
+  ]) {
+    if (!primitiveButtonSource.includes(marker)) {
+      failures.push("sizing.guard: Button primitive escaped ControlSize geometry");
+      break;
+    }
+  }
+  for (const marker of [
+    'small: "control-square-small',
+    'middle: "control-square-middle',
+    'large: "control-square-large',
+  ]) {
+    if (!otpSource.includes(marker)) {
+      failures.push("sizing.guard: InputOTP escaped ControlSize geometry");
+      break;
+    }
+  }
+  for (const marker of [
+    'small: "control-inset-height-small',
+    'middle: "control-inset-height-middle',
+    'large: "control-inset-height-large',
+  ]) {
+    if (!segmentedSource.includes(marker)) {
+      failures.push("sizing.guard: Segmented escaped derived ControlSize geometry");
+      break;
+    }
+  }
+}
+
 const layout = matrix.foundations.layout;
 if (layout?.status !== "planned") {
   const pageContainerSource = readFileSync(
