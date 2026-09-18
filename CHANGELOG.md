@@ -4,6 +4,23 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.4.5] - 2026-09-18
+
+### Added
+- Foundation Integrity Program with machine-readable seven-gate certification, CI enforcement, and explicit review reopening when a Foundation is not certified.
+- Semantic Typography roles for page/task/section/compact headings, metric values, body emphasis, font families, relaxed reading rhythm, and Public Blog reading surfaces.
+- `Text` semantic `weight`, `family`, and `leading` controls plus `Result.titleVariant` so visual hierarchy is independent from HTML heading level.
+
+### Changed
+- `PageHeader`, Dedicated Editor, Result, Statistic, Empty, Descriptions, Blog Admin, Gosso Admin, and Public Blog canonical fixtures now resolve typography through governed roles instead of page-local size/weight/line-height utilities.
+- Canonical Product Corpus now reports and blocks raw heading/Text/native typography metric bypasses across Public Blog, Blog Admin, and Gosso Admin.
+- Canonical visual goldens were re-certified after the Typography Foundation migration across light/dark and responsive representatives.
+
+### Fixed
+- Removed the previous H1/H2 visual collision where different semantic heading levels could resolve to the same local `text-2xl` size.
+- Eliminated product-local arbitrary 10px/11px metadata sizing and ungoverned `font-*`, `leading-*`, `tracking-*`, and raw text-size overrides from the certified Showcase product corpus.
+
+
 ## [0.4.4] - 2026-09-17
 
 ### Added

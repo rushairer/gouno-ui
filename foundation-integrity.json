@@ -74,9 +74,11 @@
           ]
         },
         "visual": {
-          "status": "pending",
+          "status": "passed",
           "evidence": [
-            "showcase/e2e/canonical-visual-golden.pw.mjs"
+            "showcase/e2e/canonical-visual-golden.pw.mjs",
+            "Canonical Visual Golden Smoke run 35328740578: success after controlled FI-001 baseline refresh",
+            "Canonical visual refresh run 35328461423: success"
           ]
         },
         "consumers": {
