@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   ArrowLeft,
   ChevronRight,
@@ -262,6 +262,21 @@ export function AutomationManagement({
   const [deleteTarget, setDeleteTarget] = useState<WorkflowFixture | null>(
     null,
   );
+
+  useEffect(() => {
+    if (!editing) return;
+    const frame = window.requestAnimationFrame(() => {
+      document.querySelector<HTMLElement>("[data-showcase-product-viewport]")?.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "auto",
+      });
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      document.scrollingElement?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [editing]);
+
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | "enabled" | "disabled">("all");
 
@@ -284,9 +299,21 @@ export function AutomationManagement({
 
   if (editing) {
     return (
-      <div className="flex flex-col gap-5">
+      <div data-pattern="dedicated-list-editor" className="flex flex-col gap-5">
         <TabPanelLead
-          description="编辑 Workflow 的输入契约、流程定义、执行计划与运行边界；保存形成新版本，运行证据继续进入运行中心。"
+          description={editing === "new"
+            ? "创建 Workflow 是独立的资产配置任务：定义输入契约、流程步骤、执行计划与运行边界。"
+            : "编辑 Workflow 是独立的资产配置任务：保存形成新版本，运行证据继续进入运行中心。"}
+          actions={(
+            <Button
+              size="small"
+              variant="outline"
+              icon={<ArrowLeft />}
+              onClick={() => setEditing(null)}
+            >
+              {editing === "new" ? "返回 Workflow 列表" : "返回 Workflow 详情"}
+            </Button>
+          )}
         />
         <WorkflowEditor
           value={editing}
