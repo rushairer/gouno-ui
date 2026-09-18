@@ -25,7 +25,7 @@ describe("Core AutoComplete 6D1", () => {
     expect(ref.current).toBe(input);
     expect(input.getAttribute("data-slot")).toBe("auto-complete-input");
     expect(input.getAttribute("aria-invalid")).toBe("true");
-    expect(input.className).toContain("h-11");
+    expect(input.className).toContain("control-height-large");
     expect(input.getAttribute("data-testid")).toBe("city-autocomplete");
   });
 
