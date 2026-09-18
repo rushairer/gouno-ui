@@ -7,7 +7,7 @@ export interface SectionProps {
   actions?: ReactNode;
   feedback?: ReactNode;
   surface?: "card" | "direct";
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 export interface SettingRowProps {
@@ -30,9 +30,11 @@ export function Section({ description, actions, feedback, surface = "card", chil
     <div className="flex flex-col gap-5">
       <TabPanelLead description={description} actions={actions} />
       <TabPanelFeedback>{feedback}</TabPanelFeedback>
-      {surface === "card" ? (
-        <Card padding="base" className="overflow-hidden">{children}</Card>
-      ) : children}
+      {children ? (
+        surface === "card" ? (
+          <Card padding="base" className="overflow-hidden">{children}</Card>
+        ) : children
+      ) : null}
     </div>
   );
 }
