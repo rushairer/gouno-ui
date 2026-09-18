@@ -200,27 +200,27 @@ componentReviews["core-checkbox"] = {
 
 for (const id of ["core-button", "core-segmented", "core-input-otp"]) {
   componentReviews[id] = {
-    status: "reopened",
-    scope: "FI-001 Phase 2: Sizing Foundation reopened because the shared small/middle/large ControlSize vocabulary did not resolve to one outer-height authority; Button large diverged from standard controls.",
-    evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "docs/foundation-geometry-inventory.md", "src/tokens.css", "src/core/control-types.ts"],
-    baseline: "FI-001 Phase 2 / 2026-09-18",
+    status: "reviewed",
+    scope: "FI-001 Sizing certified: shared ControlSize semantics resolve through one 32/36/44px token authority while preserving caller height overrides.",
+    evidence: ["foundation-integrity.json", "docs/foundation-geometry-inventory.md", "tests/sizing-foundation-conformance.test.ts", "scripts/check-foundation-integrity.mjs"],
+    baseline: "FI-001 Sizing certified / 2026-09-18",
   };
 }
 
 for (const id of ["core-space", "core-flex", "core-grid"]) {
   componentReviews[id] = {
-    status: "reopened",
-    scope: "FI-001 Phase 2: Spacing Foundation reopened because generic named gap values were not governed by one semantic scale across Space, Flex and Grid.",
-    evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "src/tokens.css", "src/core/layout.tsx"],
-    baseline: "FI-001 Phase 2 / 2026-09-18",
+    status: "reviewed",
+    scope: "FI-001 Spacing certified: Space, Flex and Grid share one named semantic gap scale while numeric gaps remain an explicit precision escape hatch.",
+    evidence: ["foundation-integrity.json", "docs/foundation-geometry-inventory.md", "src/core/layout.tsx", "scripts/check-foundation-integrity.mjs"],
+    baseline: "FI-001 Spacing certified / 2026-09-18",
   };
 }
 
 componentReviews["gouno-page-container"] = {
-  status: "reopened",
-  scope: "FI-001 Phase 2: PageContainer Layout Foundation reopened because canonical page width and vertical rhythm were encoded as local utility literals instead of a semantic geometry authority.",
-  evidence: ["docs/foundation-integrity-program.md", "foundation-integrity.json", "src/tokens.css", "src/gouno/page-container.tsx", "tests/gouno-structure.test.tsx"],
-  baseline: "FI-001 Phase 2 / 2026-09-18",
+  status: "reviewed",
+  scope: "FI-001 Layout certified: PageContainer consumes the semantic page-track authority for canonical width and page-stack rhythm without local geometry literals.",
+  evidence: ["foundation-integrity.json", "docs/foundation-geometry-inventory.md", "src/gouno/page-container.tsx", "tests/gouno-structure.test.tsx", "scripts/check-foundation-integrity.mjs"],
+  baseline: "FI-001 Layout certified / 2026-09-18",
 };
 
 componentReviews["pattern-dedicated-editor"] = {
