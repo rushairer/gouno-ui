@@ -29,6 +29,7 @@ concurrency:
 
 jobs:
   golden:
+    if: ${{ github.event_name != 'push' || github.event.head_commit.message != 'chore(showcase): refresh canonical visual goldens' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -59,6 +60,60 @@ jobs:
         with:
           name: gouno-ui-canonical-visual-golden-${{ github.run_id }}
           path: |
+            playwright-report-canonical-visual-golden
+            test-results/canonical-visual-golden
+          if-no-files-found: ignore
+          retention-days: 14
+
+  refresh:
+    if: ${{ github.event_name == 'push' && github.event.head_commit.message == 'chore(showcase): refresh canonical visual goldens' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout refresh commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install repository dependencies
+        run: npm ci
+
+      - name: Install isolated Playwright runtime
+        run: |
+          PLAYWRIGHT_VERSION=1.55.0
+          npm install --no-save --ignore-scripts @playwright/test@${PLAYWRIGHT_VERSION}
+          npx playwright install --with-deps chromium
+
+      - name: Regenerate canonical visual goldens
+        run: npx playwright test --config=showcase/e2e/canonical-visual-golden.config.mjs --update-snapshots
+
+      - name: Commit refreshed visual goldens
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add showcase/e2e/canonical-visual-golden.pw.mjs-snapshots
+          if git diff --cached --quiet; then
+            echo "No visual golden changes to commit."
+            exit 0
+          fi
+          git commit -m "test(showcase): refresh canonical visual goldens"
+          git push origin HEAD:main
+
+      - name: Upload refreshed visual evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: gouno-ui-canonical-visual-refresh-${{ github.run_id }}
+          path: |
+            showcase/e2e/canonical-visual-golden.pw.mjs-snapshots
             playwright-report-canonical-visual-golden
             test-results/canonical-visual-golden
           if-no-files-found: ignore
