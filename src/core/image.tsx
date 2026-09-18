@@ -486,7 +486,7 @@ export function Image({
         <span
           data-slot="image-cover"
           className={cn(
-            "pointer-events-none absolute inset-x-0 flex justify-center bg-overlay/55 p-2 text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100",
+            "pointer-events-none absolute inset-x-0 flex justify-center bg-overlay/55 p-2 text-overlay-foreground opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100",
             coverPlacement === "top" && "top-0",
             coverPlacement === "bottom" && "bottom-0",
             coverPlacement === "center" && "inset-y-0 items-center",
