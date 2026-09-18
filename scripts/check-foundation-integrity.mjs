@@ -1410,6 +1410,8 @@ if (state?.status !== "planned") {
     "!event.isPrimary",
     "releasePointerCapture(event.pointerId)",
     "onLostPointerCapture",
+    'data-slot="carousel-prev-arrow"',
+    'data-slot="carousel-next-arrow"',
   ]) {
     if (!carouselSource.includes(marker)) {
       failures.push(
