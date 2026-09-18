@@ -21,7 +21,7 @@ Next action:
 
 ## FI-D002 — Carousel arrows do not navigate in the real Showcase
 
-**Status:** fix implemented; browser gate pending  
+**Status:** resolved / certified 2026-09-19  
 **Component:** `core-carousel`  
 **Observed evidence:** Showcase Carousel screenshot and manual click report, 2026-09-18.
 
@@ -34,6 +34,8 @@ Next action:
 - restore the documented `carousel-prev-arrow` / `carousel-next-arrow` semantic slots on the real buttons;
 - add a browser contract proving previous/next buttons change the active slide;
 - close during Interaction State Foundation at the latest.
+
+Resolution evidence: Carousel now ignores interactive descendants when beginning drag capture, restores `carousel-prev-arrow` / `carousel-next-arrow` on the real buttons, and Canonical Visual Golden Smoke #479 passed the real-browser click contract (59/59 suite). CI #562, Blog parity #540 and Gosso parity #535 are green.
 
 ## FI-D003 — ConfigProvider Showcase does not visibly prove localization
 
@@ -53,7 +55,7 @@ Next action:
 
 ## FI-D004 — Tag close hover bypasses semantic Color
 
-**Status:** fix implemented; certification pending  
+**Status:** resolved / certified 2026-09-19  
 **Component:** `core-tag`  
 **Foundation impact:** Interaction State + reopened Color.
 
@@ -64,3 +66,5 @@ Resolution:
 - derive hover feedback from `currentColor` instead of a fixed raw palette color;
 - expand the Color guard and focused conformance test to cover Tag close hover;
 - keep `core-tag` reopened until exact-head CI/visual/consumer gates confirm the correction.
+
+Resolution evidence: `hover:bg-current/10` is guarded by Color and State conformance; CI #562 reports zero raw product palette bypasses and zero state-geometry bypasses, Golden #479 is green, and Blog/Gosso parity #540/#535 passed.
