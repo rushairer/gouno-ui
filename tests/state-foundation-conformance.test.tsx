@@ -19,24 +19,23 @@ describe("Interaction State Foundation", () => {
     );
 
     const save = screen.getByRole("button", { name: "Save" });
-    expect(save).toBeDisabled();
-    expect(save).toHaveAttribute("aria-busy", "true");
+    expect((save as HTMLButtonElement).disabled).toBe(true);
+    expect(save.getAttribute("aria-busy")).toBe("true");
 
     const preview = screen.getByRole("button", { name: "Preview" });
-    expect(preview).toHaveAttribute("aria-pressed", "true");
+    expect(preview.getAttribute("aria-pressed")).toBe("true");
   });
 
   it("maps validation errors to aria-invalid without treating warnings as errors", () => {
     const { rerender } = render(<Input aria-label="Title" status="error" />);
-    expect(screen.getByRole("textbox", { name: "Title" })).toHaveAttribute(
-      "aria-invalid",
-      "true",
-    );
+    expect(
+      screen.getByRole("textbox", { name: "Title" }).getAttribute("aria-invalid"),
+    ).toBe("true");
 
     rerender(<Input aria-label="Title" status="warning" />);
-    expect(screen.getByRole("textbox", { name: "Title" })).not.toHaveAttribute(
-      "aria-invalid",
-    );
+    expect(
+      screen.getByRole("textbox", { name: "Title" }).hasAttribute("aria-invalid"),
+    ).toBe(false);
   });
 
   it("keeps Select state semantics on combobox/options", async () => {
@@ -48,8 +47,8 @@ describe("Interaction State Foundation", () => {
     );
 
     const combobox = screen.getByRole("combobox", { name: "Status" });
-    expect(combobox).toBeDisabled();
-    expect(combobox).toHaveAttribute("aria-busy", "true");
+    expect((combobox as HTMLButtonElement).disabled).toBe(true);
+    expect(combobox.getAttribute("aria-busy")).toBe("true");
   });
 
   it("protects interactive descendants from Carousel drag pointer capture", () => {
