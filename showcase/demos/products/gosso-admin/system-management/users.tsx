@@ -113,7 +113,7 @@ export function UsersPanel() {
   };
 
   return (
-    <div className="flex flex-col gap-5">
+    <div data-pattern="collection-composition" className="flex flex-col gap-5">
       <FixtureBanner route="/system-management/users" note="用户管理 Fixture 覆盖目录数据、加载、空态与读取失败；角色变更、密码重置、启停/删除的 Sudo 与写操作失败在业务态层独立建模。" controls={<Segmented<FixtureScenario> aria-label="用户管理 Fixture 状态" options={scenarioOptions} value={scenario} onChange={changeScenario} block />} />
       <ManagementPanelLead description="管理身份平台账户状态、角色、安全凭据与高风险管理操作。" actions={<Button variant="solid" color="primary" icon={<Plus />} onClick={() => setCreateOpen(true)}>添加用户</Button>} />
       {status ? <StatusNotice>{status}</StatusNotice> : null}
