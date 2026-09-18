@@ -109,7 +109,7 @@ export function ClientsPanel() {
   };
 
   return (
-    <div className="flex flex-col gap-5">
+    <div data-pattern="collection-composition" className="flex flex-col gap-5">
       <FixtureBanner
         route="/system-management/clients"
         note="OAuth2 客户端 Fixture 覆盖数据、加载、空态与读取失败；创建/编辑/删除、密钥轮换与 Sudo 写操作失败在后续业务态层单独建模。"
