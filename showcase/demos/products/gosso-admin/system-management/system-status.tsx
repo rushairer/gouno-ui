@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Database, RefreshCw, Server, ShieldCheck } from "lucide-react";
 import { Alert, Button, Card, Heading, Segmented, Tag, Text } from "../../../../../src/core";
 import { PageSkeleton } from "../../../../../src/gouno";
-import { FixtureBanner, ManagementPanelLead } from "./shared";
+import { FixtureBanner, ManagementPanelFeedback, ManagementPanelLead } from "./shared";
 
 type SystemScenario = "healthy" | "checking" | "degraded" | "unavailable";
 
@@ -33,6 +33,10 @@ export function SystemStatusPanel() {
         controls={<Segmented<SystemScenario> aria-label="系统状态 Fixture 状态" options={scenarioOptions} value={scenario} onChange={setScenario} block />}
       />
       <ManagementPanelLead description="查看身份服务健康探针、关键依赖、OpenID Connect 发现信息和安全策略摘要。" actions={<Button icon={<RefreshCw />} onClick={() => setRefreshCount((count) => count + 1)}>刷新状态</Button>} />
+      <ManagementPanelFeedback>
+        {degraded ? <Alert type="warning" showIcon title="Redis 探针异常" description="身份服务仍可响应，但会话缓存与分布式锁处于降级状态。" /> : null}
+        {unavailable ? <Alert type="error" showIcon title="身份服务不可用" description="Readiness 探针失败，关键依赖未达到可服务条件。真实产品会展示服务端故障详情与重试入口。" /> : null}
+      </ManagementPanelFeedback>
 
       {scenario === "checking" ? (
         <PageSkeleton
@@ -43,8 +47,6 @@ export function SystemStatusPanel() {
         />
       ) : (
         <>
-          {degraded ? <Alert type="warning" showIcon title="Redis 探针异常" description="身份服务仍可响应，但会话缓存与分布式锁处于降级状态。" /> : null}
-          {unavailable ? <Alert type="error" showIcon title="身份服务不可用" description="Readiness 探针失败，关键依赖未达到可服务条件。真实产品会展示服务端故障详情与重试入口。" /> : null}
           <div className="grid gap-4 md:grid-cols-3">
             <Card padding="base"><Text size="xs" tone="muted">检查时间</Text><div className="mt-2 text-lg font-semibold">刚刚</div><Text size="xs" tone="muted" className="mt-1">刷新次数：{refreshCount}</Text></Card>
             <Card padding="base"><Text size="xs" tone="muted">HTTP 状态</Text><div className="mt-2 text-lg font-semibold">{unavailable ? "503 Service Unavailable" : "200 OK"}</div><Text size="xs" tone="muted" className="mt-1">/health/ready</Text></Card>
