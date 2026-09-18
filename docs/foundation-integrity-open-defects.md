@@ -41,7 +41,7 @@ Resolution evidence: Carousel now ignores interactive descendants when beginning
 
 ## FI-D003 — ConfigProvider Showcase does not visibly prove localization
 
-**Status:** open  
+**Status:** fix implemented; Showcase certification pending  
 **Component:** `core-config-provider`  
 **Observed evidence:** Showcase review, 2026-09-18.
 
@@ -53,6 +53,8 @@ Next action:
 - expose visible localized component copy/states without requiring source inspection;
 - preserve explicit local override precedence in the example;
 - add Showcase contract coverage for the visible proof.
+
+Implementation: the localized demo now renders zh-CN and en-US Providers simultaneously. An empty Select visibly shows `请选择` versus `Please select`; Pagination visibly shows localized previous/next/page-size/jump copy; a second Select proves an explicit product `placeholder` overrides Provider defaults. `tests/showcase-config-provider-demo.test.tsx` guards these visible differences.
 
 
 ## FI-D004 — Tag close hover bypasses semantic Color
