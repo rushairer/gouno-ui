@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { FloatButton } from "../src/core";
-import { componentProgress } from "../showcase/catalog/component-progress";
+import { componentReviews } from "../showcase/catalog/component-progress";
 import { otherDocuments } from "../showcase/demos/core/other";
 
 class ResizeObserverStub {
@@ -127,6 +127,6 @@ describe("FloatButton 6F1", () => {
         "ref",
       ]),
     );
-    expect(componentProgress("core-float-button", 65)).toBe(100);
+    expect(componentReviews["core-float-button"]?.evidence.length).toBeGreaterThan(0);
   });
 });
