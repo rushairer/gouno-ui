@@ -33,7 +33,7 @@ describe("Blog Admin AI canonical redesign contract", () => {
     expect(screen.getByRole("button", { name: "回滚到 v3" })).toBeTruthy();
   });
 
-  it("keeps Workflow list rows on one canonical object grammar", () => {
+  it("presents Workflow assets with summary, filters and dedicated scan columns", () => {
     render(
       <AutomationManagement
         workflows={aiOpsAutomationRecordsFixture.workflows}
@@ -44,12 +44,42 @@ describe("Blog Admin AI canonical redesign contract", () => {
       />,
     );
 
+    expect(screen.getByLabelText("Workflow 资产摘要")).toBeTruthy();
+    expect(screen.getByRole("region", { name: "Workflow 资产" })).toBeTruthy();
     expect(screen.getByRole("list", { name: "Workflow 列表" })).toBeTruthy();
+    expect(screen.getByText("待关注")).toBeTruthy();
+    expect(screen.getByText("累计运行")).toBeTruthy();
+
     const oldContent = screen.getByRole("button", { name: "打开 Workflow：旧文维护" });
     expect(oldContent).toBeTruthy();
     expect(oldContent.textContent).toContain("已启用");
     expect(oldContent.textContent).toContain("v4");
-    expect(oldContent.textContent).toContain("最近：成功");
+    expect(oldContent.textContent).toContain("0 9 * * 1");
+    expect(oldContent.textContent).toContain("成功");
+    expect(oldContent.textContent).toContain("31 次");
+    expect(oldContent.textContent).toContain("2 次失败");
+  });
+
+  it("filters Workflow assets without turning the list into a nested scroll surface", () => {
+    render(
+      <AutomationManagement
+        workflows={aiOpsAutomationRecordsFixture.workflows}
+        onSave={vi.fn()}
+        onDelete={vi.fn()}
+        onToggle={vi.fn()}
+        onSelect={vi.fn()}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText("搜索 Workflow"), {
+      target: { value: "不存在的流程" },
+    });
+    expect(screen.getByText("没有符合条件的 Workflow")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "清除筛选" })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "清除筛选" }));
+    expect(screen.getByRole("button", { name: "打开 Workflow：旧文维护" })).toBeTruthy();
+    expect(screen.queryByText("没有符合条件的 Workflow")).toBeNull();
   });
 
   it("keeps Workflow input contract, ordered definition and run boundary visible while editing", () => {
