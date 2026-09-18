@@ -14,7 +14,7 @@ describe("Core data entry controls", () => {
     const onClear = vi.fn();
     render(<Select aria-label="Status" allowClear defaultValue="ready" onClear={onClear}><option value="">Choose</option><option value="ready">Ready</option></Select>);
     fireEvent.click(screen.getByRole("button", { name: "Clear selection" }));
-    expect((document.querySelector('select[aria-label="Status"]') as HTMLSelectElement).value).toBe("");
+    expect((document.querySelector('[data-slot="select"] select[aria-hidden="true"]') as HTMLSelectElement).value).toBe("");
     expect(onClear).toHaveBeenCalledTimes(1);
   });
   it("renders searchable multi-select options as removable tags", () => {
