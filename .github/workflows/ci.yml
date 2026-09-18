@@ -35,6 +35,9 @@ jobs:
       - name: Verify reciprocal consumer parity maintenance contract
         run: npm run lint:parity
 
+      - name: Verify Foundation integrity progress ledger
+        run: npm run lint:foundation
+
       - name: Typecheck package and Showcase
         run: npm run typecheck
 
