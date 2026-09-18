@@ -277,6 +277,36 @@ for (const id of ["core-button","core-input","core-textarea","core-checkbox","co
   };
 }
 
+for (const id of ["gouno-app-shell","core-affix","core-back-top","core-float-button","core-modal","core-drawer","core-popconfirm","core-popover","core-tooltip","core-dropdown","core-select","core-menu","core-autocomplete","core-mentions","core-message","core-notification"]) {
+  componentReviews[id] = {
+    status: "reopened",
+    scope: "FI-001 Overlay reopened: application-global sticky/floating/modal/popup/notice precedence is encoded through raw z-index literals, modal and popup portals currently collide at z=50, and Showcase tooling needs an explicit isolation contract.",
+    evidence: ["foundation-integrity.json", "docs/foundation-overlay-inventory.md"],
+    baseline: "FI-001 Overlay reopened / 2026-09-18",
+  };
+}
+
+componentReviews["core-steps"] = {
+  status: "reopened",
+  scope: "FI-D001: Showcase review found connector/title/content geometry with incorrect visual spacing/relationship; must be revalidated in browser and either fixed locally or traced to a Foundation authority gap.",
+  evidence: ["docs/foundation-integrity-open-defects.md", "src/core/steps.tsx", "showcase/demos/core/steps/steps-1.tsx"],
+  baseline: "FI-D001 reopened / 2026-09-18",
+};
+
+componentReviews["core-carousel"] = {
+  status: "reopened",
+  scope: "FI-D002: real Showcase arrow clicks are reported ineffective while JSDOM click tests pass; draggable viewport pointer capture is a browser-only event-ownership suspect and requires Playwright proof.",
+  evidence: ["docs/foundation-integrity-open-defects.md", "src/core/carousel.tsx", "showcase/demos/core/carousel/carousel-0.tsx", "tests/core-data-display-advanced.test.tsx"],
+  baseline: "FI-D002 reopened / 2026-09-18",
+};
+
+componentReviews["core-config-provider"] = {
+  status: "reopened",
+  scope: "FI-D003: localization implementation has unit evidence, but the canonical Showcase demo does not visibly demonstrate provider effects strongly enough to serve as product/design evidence.",
+  evidence: ["docs/foundation-integrity-open-defects.md", "showcase/demos/core/config-provider/localized.tsx", "tests/core-localization.test.tsx"],
+  baseline: "FI-D003 reopened / 2026-09-18",
+};
+
 componentReviews["pattern-dedicated-editor"] = {
   status: "reviewed",
   scope: "FI-001 certified: Dedicated Editor explicitly separates nested/standalone heading semantics from task-title visual hierarchy and stays under the canonical Typography guard.",
