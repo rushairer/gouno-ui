@@ -15,7 +15,6 @@ describe("audited batch completion", () => {
       "core-form",
       "core-date-picker",
       "core-upload",
-      "core-checkbox",
       "core-radio",
       "core-switch",
       "core-table",
@@ -76,6 +75,8 @@ describe("audited batch completion", () => {
       "core-button",
       "core-segmented",
       "core-input-otp",
+      "theme-system",
+      "core-checkbox",
     ]) {
       expect(componentProgress(id, 0), id).toBeLessThan(100);
     }
