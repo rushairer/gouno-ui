@@ -269,7 +269,7 @@ function ConnectorList({ fixture, actions }: { fixture: AISettingsFixture; actio
       </Card>
       <Card padding="base">
         <div className="flex flex-col gap-5">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"><div><Heading level={2} className="text-base">Outbox 沙箱</Heading><Text size="sm" tone="muted">先审批，再进行不可外发的 Mock 投递；幂等键避免重复入队。</Text></div><Button size="small" variant="outline" icon={<Plus />} onClick={actions.onQueueOutbox}>加入 Outbox</Button></div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"><div><Heading level={2} variant="compact">Outbox 沙箱</Heading><Text size="sm" tone="muted">先审批，再进行不可外发的 Mock 投递；幂等键避免重复入队。</Text></div><Button size="small" variant="outline" icon={<Plus />} onClick={actions.onQueueOutbox}>加入 Outbox</Button></div>
           <div className="divide-y">
             {fixture.connectorOutbox.map((item) => {
               const connector = connectorMap.get(item.connectorId);
