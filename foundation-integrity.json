@@ -1,0 +1,587 @@
+{
+  "version": 1,
+  "updated": "2026-09-18",
+  "program": "FI-001",
+  "gates": [
+    "inventory",
+    "tokens",
+    "authority",
+    "corpus",
+    "guard",
+    "visual",
+    "consumers"
+  ],
+  "statusValues": [
+    "pending",
+    "in_progress",
+    "passed",
+    "blocked"
+  ],
+  "foundations": {
+    "typography": {
+      "status": "reopened",
+      "affectedComponentReviews": [
+        "core-typography",
+        "gouno-page-header",
+        "pattern-dedicated-editor"
+      ],
+      "gates": {
+        "inventory": {
+          "status": "passed",
+          "evidence": [
+            "src/core/typography.tsx",
+            "src/gouno/page-header.tsx",
+            "showcase/demos/core/typography.tsx",
+            "tests/core-typography.test.tsx"
+          ]
+        },
+        "tokens": {
+          "status": "in_progress",
+          "evidence": [
+            "src/tokens.css"
+          ]
+        },
+        "authority": {
+          "status": "in_progress",
+          "evidence": [
+            "src/core/typography.tsx",
+            "src/gouno/page-header.tsx"
+          ]
+        },
+        "corpus": {
+          "status": "in_progress",
+          "evidence": [
+            "showcase/demos/products"
+          ]
+        },
+        "guard": {
+          "status": "pending",
+          "evidence": []
+        },
+        "visual": {
+          "status": "pending",
+          "evidence": [
+            "showcase/e2e/canonical-visual-golden.pw.mjs"
+          ]
+        },
+        "consumers": {
+          "status": "pending",
+          "evidence": [
+            ".github/workflows/blog-consumer-parity.yml",
+            ".github/workflows/gosso-consumer-parity.yml"
+          ]
+        }
+      }
+    },
+    "spacing": {
+      "status": "planned",
+      "affectedComponentReviews": [],
+      "gates": {
+        "inventory": {
+          "status": "pending",
+          "evidence": []
+        },
+        "tokens": {
+          "status": "pending",
+          "evidence": []
+        },
+        "authority": {
+          "status": "pending",
+          "evidence": []
+        },
+        "corpus": {
+          "status": "pending",
+          "evidence": []
+        },
+        "guard": {
+          "status": "pending",
+          "evidence": []
+        },
+        "visual": {
+          "status": "pending",
+          "evidence": []
+        },
+        "consumers": {
+          "status": "pending",
+          "evidence": []
+        }
+      }
+    },
+    "sizing": {
+      "status": "planned",
+      "affectedComponentReviews": [],
+      "gates": {
+        "inventory": {
+          "status": "pending",
+          "evidence": []
+        },
+        "tokens": {
+          "status": "pending",
+          "evidence": []
+        },
+        "authority": {
+          "status": "pending",
+          "evidence": []
+        },
+        "corpus": {
+          "status": "pending",
+          "evidence": []
+        },
+        "guard": {
+          "status": "pending",
+          "evidence": []
+        },
+        "visual": {
+          "status": "pending",
+          "evidence": []
+        },
+        "consumers": {
+          "status": "pending",
+          "evidence": []
+        }
+      }
+    },
+    "radius": {
+      "status": "planned",
+      "affectedComponentReviews": [],
+      "gates": {
+        "inventory": {
+          "status": "pending",
+          "evidence": []
+        },
+        "tokens": {
+          "status": "pending",
+          "evidence": []
+        },
+        "authority": {
+          "status": "pending",
+          "evidence": []
+        },
+        "corpus": {
+          "status": "pending",
+          "evidence": []
+        },
+        "guard": {
+          "status": "pending",
+          "evidence": []
+        },
+        "visual": {
+          "status": "pending",
+          "evidence": []
+        },
+        "consumers": {
+          "status": "pending",
+          "evidence": []
+        }
+      }
+    },
+    "color": {
+      "status": "planned",
+      "affectedComponentReviews": [],
+      "gates": {
+        "inventory": {
+          "status": "pending",
+          "evidence": []
+        },
+        "tokens": {
+          "status": "pending",
+          "evidence": []
+        },
+        "authority": {
+          "status": "pending",
+          "evidence": []
+        },
+        "corpus": {
+          "status": "pending",
+          "evidence": []
+        },
+        "guard": {
+          "status": "pending",
+          "evidence": []
+        },
+        "visual": {
+          "status": "pending",
+          "evidence": []
+        },
+        "consumers": {
+          "status": "pending",
+          "evidence": []
+        }
+      }
+    },
+    "elevation": {
+      "status": "planned",
+      "affectedComponentReviews": [],
+      "gates": {
+        "inventory": {
+          "status": "pending",
+          "evidence": []
+        },
+        "tokens": {
+          "status": "pending",
+          "evidence": []
+        },
+        "authority": {
+          "status": "pending",
+          "evidence": []
+        },
+        "corpus": {
+          "status": "pending",
+          "evidence": []
+        },
+        "guard": {
+          "status": "pending",
+          "evidence": []
+        },
+        "visual": {
+          "status": "pending",
+          "evidence": []
+        },
+        "consumers": {
+          "status": "pending",
+          "evidence": []
+        }
+      }
+    },
+    "surface": {
+      "status": "planned",
+      "affectedComponentReviews": [],
+      "gates": {
+        "inventory": {
+          "status": "pending",
+          "evidence": []
+        },
+        "tokens": {
+          "status": "pending",
+          "evidence": []
+        },
+        "authority": {
+          "status": "pending",
+          "evidence": []
+        },
+        "corpus": {
+          "status": "pending",
+          "evidence": []
+        },
+        "guard": {
+          "status": "pending",
+          "evidence": []
+        },
+        "visual": {
+          "status": "pending",
+          "evidence": []
+        },
+        "consumers": {
+          "status": "pending",
+          "evidence": []
+        }
+      }
+    },
+    "border": {
+      "status": "planned",
+      "affectedComponentReviews": [],
+      "gates": {
+        "inventory": {
+          "status": "pending",
+          "evidence": []
+        },
+        "tokens": {
+          "status": "pending",
+          "evidence": []
+        },
+        "authority": {
+          "status": "pending",
+          "evidence": []
+        },
+        "corpus": {
+          "status": "pending",
+          "evidence": []
+        },
+        "guard": {
+          "status": "pending",
+          "evidence": []
+        },
+        "visual": {
+          "status": "pending",
+          "evidence": []
+        },
+        "consumers": {
+          "status": "pending",
+          "evidence": []
+        }
+      }
+    },
+    "layout": {
+      "status": "planned",
+      "affectedComponentReviews": [],
+      "gates": {
+        "inventory": {
+          "status": "pending",
+          "evidence": []
+        },
+        "tokens": {
+          "status": "pending",
+          "evidence": []
+        },
+        "authority": {
+          "status": "pending",
+          "evidence": []
+        },
+        "corpus": {
+          "status": "pending",
+          "evidence": []
+        },
+        "guard": {
+          "status": "pending",
+          "evidence": []
+        },
+        "visual": {
+          "status": "pending",
+          "evidence": []
+        },
+        "consumers": {
+          "status": "pending",
+          "evidence": []
+        }
+      }
+    },
+    "responsive": {
+      "status": "planned",
+      "affectedComponentReviews": [],
+      "gates": {
+        "inventory": {
+          "status": "pending",
+          "evidence": []
+        },
+        "tokens": {
+          "status": "pending",
+          "evidence": []
+        },
+        "authority": {
+          "status": "pending",
+          "evidence": []
+        },
+        "corpus": {
+          "status": "pending",
+          "evidence": []
+        },
+        "guard": {
+          "status": "pending",
+          "evidence": []
+        },
+        "visual": {
+          "status": "pending",
+          "evidence": []
+        },
+        "consumers": {
+          "status": "pending",
+          "evidence": []
+        }
+      }
+    },
+    "density": {
+      "status": "planned",
+      "affectedComponentReviews": [],
+      "gates": {
+        "inventory": {
+          "status": "pending",
+          "evidence": []
+        },
+        "tokens": {
+          "status": "pending",
+          "evidence": []
+        },
+        "authority": {
+          "status": "pending",
+          "evidence": []
+        },
+        "corpus": {
+          "status": "pending",
+          "evidence": []
+        },
+        "guard": {
+          "status": "pending",
+          "evidence": []
+        },
+        "visual": {
+          "status": "pending",
+          "evidence": []
+        },
+        "consumers": {
+          "status": "pending",
+          "evidence": []
+        }
+      }
+    },
+    "motion": {
+      "status": "planned",
+      "affectedComponentReviews": [],
+      "gates": {
+        "inventory": {
+          "status": "pending",
+          "evidence": []
+        },
+        "tokens": {
+          "status": "pending",
+          "evidence": []
+        },
+        "authority": {
+          "status": "pending",
+          "evidence": []
+        },
+        "corpus": {
+          "status": "pending",
+          "evidence": []
+        },
+        "guard": {
+          "status": "pending",
+          "evidence": []
+        },
+        "visual": {
+          "status": "pending",
+          "evidence": []
+        },
+        "consumers": {
+          "status": "pending",
+          "evidence": []
+        }
+      }
+    },
+    "focus": {
+      "status": "planned",
+      "affectedComponentReviews": [],
+      "gates": {
+        "inventory": {
+          "status": "pending",
+          "evidence": []
+        },
+        "tokens": {
+          "status": "pending",
+          "evidence": []
+        },
+        "authority": {
+          "status": "pending",
+          "evidence": []
+        },
+        "corpus": {
+          "status": "pending",
+          "evidence": []
+        },
+        "guard": {
+          "status": "pending",
+          "evidence": []
+        },
+        "visual": {
+          "status": "pending",
+          "evidence": []
+        },
+        "consumers": {
+          "status": "pending",
+          "evidence": []
+        }
+      }
+    },
+    "overlay": {
+      "status": "planned",
+      "affectedComponentReviews": [],
+      "gates": {
+        "inventory": {
+          "status": "pending",
+          "evidence": []
+        },
+        "tokens": {
+          "status": "pending",
+          "evidence": []
+        },
+        "authority": {
+          "status": "pending",
+          "evidence": []
+        },
+        "corpus": {
+          "status": "pending",
+          "evidence": []
+        },
+        "guard": {
+          "status": "pending",
+          "evidence": []
+        },
+        "visual": {
+          "status": "pending",
+          "evidence": []
+        },
+        "consumers": {
+          "status": "pending",
+          "evidence": []
+        }
+      }
+    },
+    "state": {
+      "status": "planned",
+      "affectedComponentReviews": [],
+      "gates": {
+        "inventory": {
+          "status": "pending",
+          "evidence": []
+        },
+        "tokens": {
+          "status": "pending",
+          "evidence": []
+        },
+        "authority": {
+          "status": "pending",
+          "evidence": []
+        },
+        "corpus": {
+          "status": "pending",
+          "evidence": []
+        },
+        "guard": {
+          "status": "pending",
+          "evidence": []
+        },
+        "visual": {
+          "status": "pending",
+          "evidence": []
+        },
+        "consumers": {
+          "status": "pending",
+          "evidence": []
+        }
+      }
+    },
+    "accessibility": {
+      "status": "planned",
+      "affectedComponentReviews": [],
+      "gates": {
+        "inventory": {
+          "status": "pending",
+          "evidence": []
+        },
+        "tokens": {
+          "status": "pending",
+          "evidence": []
+        },
+        "authority": {
+          "status": "pending",
+          "evidence": []
+        },
+        "corpus": {
+          "status": "pending",
+          "evidence": []
+        },
+        "guard": {
+          "status": "pending",
+          "evidence": []
+        },
+        "visual": {
+          "status": "pending",
+          "evidence": []
+        },
+        "consumers": {
+          "status": "pending",
+          "evidence": []
+        }
+      }
+    }
+  }
+}
