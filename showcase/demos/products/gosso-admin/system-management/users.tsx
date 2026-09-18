@@ -22,7 +22,7 @@ import {
   Text,
 } from "../../../../../src/core";
 import { PageSkeleton } from "../../../../../src/gouno";
-import { ConfirmAction, FixtureBanner, ManagementPanelLead, StatusNotice } from "./shared";
+import { ConfirmAction, FixtureBanner, ManagementPanelFeedback, ManagementPanelLead, StatusNotice } from "./shared";
 
 type FixtureScenario = "data" | "loading" | "empty" | "error";
 type UserStatus = "active" | "suspended";
@@ -118,9 +118,14 @@ export function UsersPanel() {
       <ManagementPanelLead description="管理身份平台账户状态、角色、安全凭据与高风险管理操作。" actions={<Button variant="solid" color="primary" icon={<Plus />} onClick={() => setCreateOpen(true)}>添加用户</Button>} />
       {status ? <StatusNotice>{status}</StatusNotice> : null}
 
-      {scenario === "error" ? (
-        <Alert type="error" showIcon title="用户目录加载失败" description="无法读取身份平台账户。真实产品会保留页面上下文并允许重新请求。" action={<Button size="small" onClick={() => changeScenario("data")}>重新载入</Button>} />
-      ) : scenario === "loading" ? (
+      <ManagementPanelFeedback>
+        {scenario === "error" ? <Alert type="error" showIcon title="用户目录加载失败" description="无法读取身份平台账户。真实产品会保留页面上下文并允许重新请求。" action={<Button size="small" onClick={() => changeScenario("data")}>重新载入</Button>} /> : null}
+
+
+      </ManagementPanelFeedback>
+
+
+      {scenario === "loading" ? (
         <PageSkeleton layout="collection" aria-label="用户目录加载中" />
       ) : visibleUsers.length === 0 ? (
         <Empty title="还没有用户" description="创建第一个本地身份账户，或等待外部身份同步。" action={<Button size="small" variant="solid" color="primary" icon={<Plus />} onClick={() => setCreateOpen(true)}>添加用户</Button>} />
