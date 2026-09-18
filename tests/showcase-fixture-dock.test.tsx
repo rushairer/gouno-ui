@@ -16,6 +16,11 @@ describe("Showcase FixtureDock", () => {
     expect(screen.getByText("/admin/example")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Switch state" })).toBeTruthy();
   });
+  it("publishes Fixture toolbar height for portaled overlay safe area", () => {
+    render(<FixtureTools><main>Product</main></FixtureTools>);
+    expect(document.documentElement.style.getPropertyValue("--showcase-tools-inset-top")).toBe("48px");
+  });
+
   it("reserves normal-flow space when rendered without Showcase tooling", () => {
     render(<FixtureDock route="/example" />);
     expect(screen.getByRole("button", { name: "打开 Fixture 控制" }).closest("[data-showcase-fixture-dock]")?.className).not.toMatch(/fixed|absolute/);
