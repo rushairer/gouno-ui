@@ -234,7 +234,7 @@ function AgentEditor({
                 {initial ? (
                   <div className="rounded-md border bg-muted/20 p-4">
                     <Text size="xs" tone="muted">当前行为策略</Text>
-                    <strong className="mt-1 block text-sm">{initial.skill} · v{initial.skillVersion}</strong>
+                    <strong className="mt-1 block type-body-sm type-weight-semibold">{initial.skill} · v{initial.skillVersion}</strong>
                     <Text size="xs" tone="muted">已授权 {initial.capabilities.length} 个 Tool；限制覆盖只能比 Skill 默认值更严格。</Text>
                   </div>
                 ) : null}
@@ -261,7 +261,7 @@ function AgentEditor({
                 {initial ? (
                   <div className="border-t pt-5">
                     <Text size="xs" tone="muted">最近运行</Text>
-                    <strong className="mt-1 block text-sm">{initial.latestRun}</strong>
+                    <strong className="mt-1 block type-body-sm type-weight-semibold">{initial.latestRun}</strong>
                   </div>
                 ) : null}
               </div>
@@ -385,7 +385,7 @@ function SkillEditor({
                       defaultChecked={initial?.capabilities.includes(tool.name) ?? false}
                     />
                     <span className="min-w-0">
-                      <strong className="block font-mono text-sm">{tool.name}</strong>
+                      <strong className="block type-family-mono type-body-sm type-weight-semibold">{tool.name}</strong>
                       <Text size="xs" tone="muted">{tool.description}</Text>
                       <Text size="xs" tone="muted">风险：{tool.risk === "high" ? "高" : tool.risk === "medium" ? "中" : "低"}</Text>
                     </span>
@@ -426,11 +426,11 @@ function SkillEditor({
                 <div className="border-t pt-5">
                   <Text size="sm">允许触发器</Text>
                   <div className="mt-3 flex flex-col gap-3">
-                    <label className="inline-flex items-center gap-2 text-sm">
+                    <label className="inline-flex items-center gap-2 type-body-sm type-weight-semibold">
                       <Checkbox name="trigger:manual" defaultChecked={triggers.includes("manual")} />
                       手动触发
                     </label>
-                    <label className="inline-flex items-center gap-2 text-sm">
+                    <label className="inline-flex items-center gap-2 type-body-sm type-weight-semibold">
                       <Checkbox name="trigger:cron" defaultChecked={triggers.includes("cron")} />
                       Cron 定时
                     </label>
@@ -438,8 +438,8 @@ function SkillEditor({
                 </div>
                 {initial ? (
                   <div className="grid grid-cols-2 gap-4 border-t pt-5">
-                    <div><Text size="xs" tone="muted">当前版本</Text><strong className="mt-1 block text-sm">v{initial.version}</strong></div>
-                    <div><Text size="xs" tone="muted">最近更新</Text><strong className="mt-1 block text-sm">{initial.updatedAt}</strong></div>
+                    <div><Text size="xs" tone="muted">当前版本</Text><strong className="mt-1 block type-body-sm type-weight-semibold">v{initial.version}</strong></div>
+                    <div><Text size="xs" tone="muted">最近更新</Text><strong className="mt-1 block type-body-sm type-weight-semibold">{initial.updatedAt}</strong></div>
                   </div>
                 ) : null}
               </div>

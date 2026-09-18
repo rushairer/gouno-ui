@@ -292,7 +292,7 @@ export function WorkflowEditor({
                     </Field>
                   </div>
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <label className="inline-flex items-center gap-2 text-sm">
+                    <label className="inline-flex items-center gap-2 type-body-sm type-weight-semibold">
                       <Checkbox
                         checked={field.required}
                         onChange={(event) => updateInputField(index, { required: event.target.checked })}
@@ -341,7 +341,7 @@ export function WorkflowEditor({
           >
               {steps.map((step, index) => (
                 <div key={`${step.id}-${index}`} className="flex gap-4 p-6">
-                  <div className="flex size-8 shrink-0 items-center justify-center rounded-full border text-xs font-semibold">
+                  <div className="flex size-8 shrink-0 items-center justify-center rounded-full border type-caption type-weight-semibold">
                     {index + 1}
                   </div>
                   <div className="min-w-0 flex-1">
@@ -411,7 +411,7 @@ export function WorkflowEditor({
               {initial ? (
                 <div className="mt-5 border-t pt-5">
                   <Text size="xs" tone="muted">当前版本</Text>
-                  <strong className="mt-1 block text-sm">v{initial.currentVersion}</strong>
+                  <strong className="mt-1 block type-body-sm type-weight-semibold">v{initial.currentVersion}</strong>
                 </div>
               ) : null}
             </DedicatedEditorSection>
@@ -447,7 +447,7 @@ export function WorkflowEditor({
                 {inputFields.map((field) => (
                   <div key={field.key} className="flex items-start justify-between gap-4 border-b pb-3 last:border-b-0 last:pb-0">
                     <div className="min-w-0">
-                      <strong className="text-sm">{field.label}</strong>
+                      <strong className="type-body-sm type-weight-semibold">{field.label}</strong>
                       <Text size="xs" tone="muted">{field.key} · {field.type}{field.required ? " · 必填" : ""}</Text>
                     </div>
                     <Text size="sm" className="max-w-[10rem] truncate text-right">{String(field.defaultValue ?? "—")}</Text>

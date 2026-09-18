@@ -123,11 +123,11 @@ export function WorkflowExecutionPanel({
 
         <div className="p-6">
           <div>
-            <strong className="text-sm">本次运行输入</strong>
+            <strong className="type-body-sm type-weight-semibold">本次运行输入</strong>
             <Text size="xs" tone="muted" className="mt-1">默认值来自 Workflow 输入契约；这里只覆盖本次 Run，不形成新版本。</Text>
           </div>
           <div className="mt-4 grid gap-4 md:grid-cols-2">
-            <label className="flex flex-col gap-2 text-sm font-medium">
+            <label className="flex flex-col gap-2 type-body-sm type-weight-medium">
               {workflow.inputFields.find((field) => field.key === "topic")?.label || "主题"}
               <Input
                 aria-label="Workflow 主题"
@@ -135,7 +135,7 @@ export function WorkflowExecutionPanel({
                 onChange={(event) => setInput((current) => ({ ...current, topic: event.target.value }))}
               />
             </label>
-            <label className="flex flex-col gap-2 text-sm font-medium">
+            <label className="flex flex-col gap-2 type-body-sm type-weight-medium">
               {workflow.inputFields.find((field) => field.key === "days")?.label || "时间范围（天）"}
               <Input
                 aria-label="Workflow 时间范围"
@@ -151,7 +151,7 @@ export function WorkflowExecutionPanel({
         <div className="flex flex-col gap-3 border-t px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <Text size="xs" tone="muted">运行范围</Text>
-            <strong className="mt-1 block text-sm">{workflow.scopeMode === "strict" ? "遵守 Workflow 严格资源边界" : "使用 Workflow 兼容范围"}</strong>
+            <strong className="mt-1 block type-body-sm type-weight-semibold">{workflow.scopeMode === "strict" ? "遵守 Workflow 严格资源边界" : "使用 Workflow 兼容范围"}</strong>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button
@@ -211,7 +211,7 @@ export function WorkflowExecutionPanel({
             <div key={version.version} className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <strong className="text-sm">v{version.version}</strong>
+                  <strong className="type-body-sm type-weight-semibold">v{version.version}</strong>
                   {version.version === workflow.currentVersion ? <Tag color="primary">当前版本</Tag> : null}
                 </div>
                 <Text size="xs" tone="muted" className="mt-1">{version.createdAt} · {version.note}</Text>

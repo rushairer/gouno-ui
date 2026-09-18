@@ -178,7 +178,7 @@ function MetricCard({
             {icon}
           </span>
         </div>
-        <div className="mt-auto text-xs text-muted-foreground">{detail}</div>
+        <div className="mt-auto type-caption text-muted-foreground">{detail}</div>
       </div>
     </Card>
   );
@@ -354,7 +354,7 @@ export function BlogAdminDashboardDemo() {
                       return (
                         <div key={item.date} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-2" title={`${item.date}: ${item.count} 次访问`}>
                           <div className="w-full rounded-t-sm bg-primary/65 transition-opacity hover:bg-primary" style={{ height: `${height}%` }} />
-                          <span className="hidden truncate text-[10px] text-muted-foreground sm:block">{item.date.slice(-2)}</span>
+                          <span className="hidden truncate type-caption text-muted-foreground sm:block">{item.date.slice(-2)}</span>
                         </div>
                       );
                     })}
@@ -374,19 +374,19 @@ export function BlogAdminDashboardDemo() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="rounded-lg border bg-muted/30 p-4">
                     <Text size="xs" tone="muted">待审核评论</Text>
-                    <div className="mt-1 text-xl font-semibold">{summary.pendingComments}</div>
+                    <div className="mt-1 type-metric-compact">{summary.pendingComments}</div>
                   </div>
                   <div className="rounded-lg border bg-muted/30 p-4">
                     <Text size="xs" tone="muted">被举报内容</Text>
-                    <div className="mt-1 text-xl font-semibold">{summary.reportedItems}</div>
+                    <div className="mt-1 type-metric-compact">{summary.reportedItems}</div>
                   </div>
                   <div className="rounded-lg border bg-muted/30 p-4">
                     <Text size="xs" tone="muted">已发布文章</Text>
-                    <div className="mt-1 text-xl font-semibold">{summary.publishedPosts}</div>
+                    <div className="mt-1 type-metric-compact">{summary.publishedPosts}</div>
                   </div>
                   <div className="rounded-lg border bg-muted/30 p-4">
                     <Text size="xs" tone="muted">草稿待发布</Text>
-                    <div className="mt-1 text-xl font-semibold">{drafts}</div>
+                    <div className="mt-1 type-metric-compact">{drafts}</div>
                   </div>
                 </div>
                 <div className="flex items-center justify-between gap-3 border-t pt-4">
@@ -433,14 +433,14 @@ export function BlogAdminDashboardDemo() {
                         </span>
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-2">
-                            <strong className="text-sm">{workflow ? "Workflow 执行失败" : "Agent 执行失败"}</strong>
-                            <span className="text-xs font-medium text-warning">{alert.title}</span>
+                            <strong className="type-body-sm type-weight-semibold">{workflow ? "Workflow 执行失败" : "Agent 执行失败"}</strong>
+                            <span className="type-caption type-weight-medium text-warning">{alert.title}</span>
                           </div>
                           <Text size="xs" tone="muted" className="mt-1 line-clamp-1">失败原因：{alert.body}</Text>
-                          <time className="mt-1 block text-[11px] text-muted-foreground">{alert.createdAt}</time>
+                          <time className="mt-1 block type-caption text-muted-foreground">{alert.createdAt}</time>
                         </div>
                       </div>
-                      <span className="shrink-0 text-xs font-medium text-primary">查看失败详情</span>
+                      <span className="shrink-0 type-caption type-weight-medium text-primary">查看失败详情</span>
                     </a>
                   );
                 })}
@@ -477,10 +477,10 @@ export function BlogAdminDashboardDemo() {
                   <TableBody>
                     {summary.topPosts.map((post, index) => (
                       <TableRow key={post.id}>
-                        <TableCell className="text-center font-mono text-xs text-muted-foreground">{index + 1}</TableCell>
+                        <TableCell className="text-center font-mono type-caption text-muted-foreground">{index + 1}</TableCell>
                         <TableCell className="font-medium">{post.title}</TableCell>
-                        <TableCell className="text-right font-mono text-xs text-muted-foreground">{post.views.toLocaleString()}</TableCell>
-                        <TableCell className="text-right font-mono text-xs text-muted-foreground">{post.likes.toLocaleString()}</TableCell>
+                        <TableCell className="text-right font-mono type-caption text-muted-foreground">{post.views.toLocaleString()}</TableCell>
+                        <TableCell className="text-right font-mono type-caption text-muted-foreground">{post.likes.toLocaleString()}</TableCell>
                         <TableCell className="text-right">
                           <div className="inline-flex min-w-max flex-nowrap items-center justify-end gap-1">
                             <IconButton

@@ -89,7 +89,7 @@ function AgentList({ fixture, actions }: { fixture: AISettingsFixture; actions: 
                   {agent.system ? <Tag color="primary">默认能力</Tag> : <Tag>自定义</Tag>}
                 </div>
                 <Text size="sm" tone="muted">{agent.description}</Text>
-                <div className="grid gap-2 text-xs text-muted-foreground sm:grid-cols-2 xl:grid-cols-4">
+                <div className="grid gap-2 type-caption text-muted-foreground sm:grid-cols-2 xl:grid-cols-4">
                   <span>Provider: {agent.provider}</span>
                   <span>Skill: {agent.skill} v{agent.skillVersion}</span>
                   <span>{agent.schedule} · {agent.timezone}</span>
@@ -155,7 +155,7 @@ function ToolList({ fixture }: { fixture: AISettingsFixture }) {
         <CardContent className="divide-y p-0">
           {fixture.tools.map((tool) => (
             <div key={tool.name} className="grid gap-3 p-6 md:grid-cols-[minmax(0,1fr)_minmax(8rem,0.3fr)_auto] md:items-center">
-              <div><strong className="font-mono text-sm">{tool.name}</strong><Text size="xs" tone="muted">{tool.description}</Text></div>
+              <div><strong className="type-family-mono type-body-sm type-weight-semibold">{tool.name}</strong><Text size="xs" tone="muted">{tool.description}</Text></div>
               <Text size="sm">{tool.surfaces.join(", ")}</Text>
               <Tag color={tool.risk === "high" ? "error" : tool.risk === "medium" ? "warning" : "success"}>{tool.risk === "high" ? "高风险" : tool.risk === "medium" ? "中风险" : "低风险"}</Tag>
             </div>
