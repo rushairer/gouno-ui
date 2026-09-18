@@ -772,6 +772,89 @@ if (elevation?.status !== "planned") {
   }
 }
 
+const surface = matrix.foundations.surface;
+if (surface?.status !== "planned") {
+  const cardSource = readFileSync(resolve(root, "src/core/card.tsx"), "utf8");
+  const tableSource = readFileSync(
+    resolve(root, "src/components/primitives/table.tsx"),
+    "utf8",
+  );
+  const overviewSource = readFileSync(
+    resolve(root, "showcase/demos/products/gosso-admin/overview.tsx"),
+    "utf8",
+  );
+
+  for (const marker of [
+    '"min-w-0 rounded-lg border bg-card text-card-foreground flex flex-col gap-5"',
+    'variant === "default" && "shadow-surface"',
+    'variant === "subtle" && "bg-muted"',
+    'variant === "elevated" && "bg-raised shadow-raised"',
+    'interactive && "cursor-pointer transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-raised"',
+  ]) {
+    if (!cardSource.includes(marker)) {
+      failures.push("surface.guard: Card canonical anatomy changed: " + marker);
+    }
+  }
+  if (
+    !tableSource.includes(
+      'bordered ? "border border-border/80 bg-card shadow-surface" : "bg-card/40"',
+    )
+  ) {
+    failures.push("surface.guard: bordered Table escaped canonical collection Surface");
+  }
+
+  for (const marker of ["<Card", "interactive", 'padding="none"']) {
+    if (!overviewSource.includes(marker)) {
+      failures.push(
+        "surface.guard: Gosso Overview Quick Link must consume Card interactive: " +
+          marker,
+      );
+    }
+  }
+  if (
+    /\bshadow-(?:control|surface|raised|overlay|modal)\b/.test(overviewSource)
+  ) {
+    failures.push(
+      "surface.guard: Gosso Overview must not reproduce semantic Surface depth in product code",
+    );
+  }
+
+  const directSemanticShadowFiles = canonicalProductFiles.filter((file) =>
+    /\bshadow-(?:control|surface|raised|overlay|modal)\b/.test(
+      readFileSync(file, "utf8"),
+    ),
+  );
+
+  const fullCardTreatmentPattern =
+    /rounded-(?:md|lg|xl)[^"'\x60]{0,180}\bborder\b[^"'\x60]{0,180}\bbg-card\b[^"'\x60]{0,180}\bshadow-surface\b|\bshadow-surface\b[^"'\x60]{0,180}\bbg-card\b/;
+  const duplicatedCardSurfaceFiles = canonicalProductFiles.filter((file) =>
+    fullCardTreatmentPattern.test(readFileSync(file, "utf8")),
+  );
+
+  const shortSurfacePath = (file) =>
+    file.startsWith(root) ? file.slice(root.length + 1) : file;
+  process.stdout.write(
+    "Surface corpus audit: directSemanticShadowBypasses=" +
+      directSemanticShadowFiles.length +
+      ", duplicatedCardSurfaceBundles=" +
+      duplicatedCardSurfaceFiles.length +
+      "\n",
+  );
+
+  if (directSemanticShadowFiles.length !== 0) {
+    failures.push(
+      "surface.corpus: product fixtures must select Surface-owning components/variants instead of semantic shadow utilities: " +
+        directSemanticShadowFiles.map(shortSurfacePath).join(", "),
+    );
+  }
+  if (duplicatedCardSurfaceFiles.length !== 0) {
+    failures.push(
+      "surface.corpus: product fixtures must not reproduce the canonical Card surface bundle: " +
+        duplicatedCardSurfaceFiles.map(shortSurfacePath).join(", "),
+    );
+  }
+}
+
 const density = matrix.foundations.density;
 if (density?.status !== "planned") {
   const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");
