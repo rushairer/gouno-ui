@@ -207,7 +207,7 @@ export function Steps({
           : "flex items-start gap-2 overflow-x-auto",
         responsive &&
           orientation === "horizontal" &&
-          "max-[531px]:flex-col max-[531px]:overflow-visible",
+          "max-sm:flex-col max-sm:overflow-visible",
         semanticClassNames.root,
         className,
       )}
