@@ -29,7 +29,7 @@ export function AuthSurface({
         <Card padding="lg" variant="elevated" className="w-full border-border/80 bg-raised/95 backdrop-blur">
           <div className="mb-7 text-center">
             <BrandMark src={gossoLogo} className="mx-auto mb-4 size-14 text-primary" />
-            <Heading level={1} className="text-2xl font-bold tracking-tight">{title}</Heading>
+            <Heading level={1} variant="task">{title}</Heading>
             {description ? <Text tone="muted" size="sm" className="mt-2 leading-relaxed">{description}</Text> : null}
           </div>
           {children}
