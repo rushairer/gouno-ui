@@ -30,4 +30,13 @@ describe("Radius Foundation conformance", () => {
     expect(coreButton).toContain('circle: "rounded-full aspect-square px-0"');
     expect(base).toContain('border-radius: var(--radius-control);');
   });
+
+  it("removes raw control radius literals while keeping the documented Tooltip arrow exception", () => {
+    const checkbox = source("src/components/primitives/checkbox.tsx");
+    const tooltip = source("src/components/primitives/tooltip.tsx");
+
+    expect(checkbox).toContain("rounded-sm");
+    expect(checkbox).not.toContain("rounded-[4px]");
+    expect(tooltip).toContain("rounded-[2px]");
+  });
 });
