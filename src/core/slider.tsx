@@ -20,7 +20,7 @@ export const Slider = forwardRef<
       max={max}
       step={step}
       className={cn(
-        "h-2 w-full cursor-pointer accent-primary outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+        "h-2 w-full cursor-pointer accent-primary outline-none focus-standalone disabled:cursor-not-allowed disabled:opacity-50",
         className,
       )}
     />
