@@ -42,8 +42,8 @@ describe("audited batch completion", () => {
     }
   });
 
-  it("keeps Theme below certified completion while a Foundation review is reopened", () => {
-    expect(componentProgress("theme-system", 0)).toBeLessThan(100);
+  it("reports Theme complete only after the active Foundation reviews are certified", () => {
+    expect(componentProgress("theme-system", 0)).toBe(100);
   });
 
   it("reports admitted Patterns complete only after focused review", () => {
@@ -75,8 +75,6 @@ describe("audited batch completion", () => {
       "core-button",
       "core-segmented",
       "core-input-otp",
-      "theme-system",
-      "core-checkbox",
     ]) {
       expect(componentProgress(id, 0), id).toBeLessThan(100);
     }
