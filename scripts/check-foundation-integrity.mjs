@@ -398,6 +398,120 @@ if (radius?.status !== "planned") {
   }
 }
 
+const color = matrix.foundations.color;
+if (color?.status !== "planned") {
+  const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");
+  const themeSource = readFileSync(resolve(root, "src/theme/provider.tsx"), "utf8");
+  const alertSource = readFileSync(resolve(root, "src/core/alert.tsx"), "utf8");
+  const imageSource = readFileSync(resolve(root, "src/core/image.tsx"), "utf8");
+  const qrcodeSource = readFileSync(resolve(root, "src/core/qrcode.tsx"), "utf8");
+  const tagSource = readFileSync(resolve(root, "src/core/tag.tsx"), "utf8");
+  const badgeSource = readFileSync(resolve(root, "src/core/badge.tsx"), "utf8");
+  const timelineSource = readFileSync(resolve(root, "src/core/timeline.tsx"), "utf8");
+  const mfaFile = resolve(
+    root,
+    "showcase/demos/products/gosso-admin/account-settings/mfa.tsx",
+  );
+  const mfaSource = readFileSync(mfaFile, "utf8");
+
+  for (const marker of [
+    "--color-background: var(--background);",
+    "--color-foreground: var(--foreground);",
+    "--color-border: var(--border);",
+    "--color-ring: var(--ring);",
+    "--color-overlay: var(--overlay);",
+    "--color-overlay-foreground: var(--overlay-foreground);",
+    "--overlay-foreground: #ffffff;",
+  ]) {
+    if (!tokenSource.includes(marker)) {
+      failures.push("color.guard: missing semantic color marker " + marker);
+    }
+  }
+
+  for (const marker of [
+    'getPropertyValue("--background").trim()',
+    "syncBrowserThemeColor(root);",
+  ]) {
+    if (!themeSource.includes(marker)) {
+      failures.push("color.guard: ThemeProvider missing token-driven browser color marker " + marker);
+    }
+  }
+  if (/"#(?:11151b|ffffff)"/i.test(themeSource)) {
+    failures.push(
+      "color.guard: ThemeProvider must not duplicate light/dark background literals",
+    );
+  }
+
+  if (
+    !alertSource.includes("hover:bg-foreground/5") ||
+    !alertSource.includes("dark:hover:bg-foreground/10") ||
+    /hover:bg-(?:black|white)\//.test(alertSource)
+  ) {
+    failures.push(
+      "color.guard: Alert close hover must derive from semantic foreground color",
+    );
+  }
+
+  if (
+    !imageSource.includes("text-overlay-foreground") ||
+    imageSource.includes("text-white")
+  ) {
+    failures.push(
+      "color.guard: Image overlay copy must consume overlay-foreground",
+    );
+  }
+
+  for (const [name, source, marker] of [
+    ["QRCode foreground", qrcodeSource, 'color = "#000000"'],
+    ["QRCode background", qrcodeSource, 'background = "#ffffff"'],
+    ["Tag custom color", tagSource, "backgroundColor: selected || semanticColor ? undefined : color"],
+    ["Badge custom color", badgeSource, "backgroundColor: color"],
+    ["Timeline custom color", timelineSource, '"--timeline-color": color'],
+    ["MFA QR quiet zone", mfaSource, 'rounded-lg border bg-white p-4'],
+  ]) {
+    if (!source.includes(marker)) {
+      failures.push(
+        "color.guard: documented fixed/caller-owned color exception changed: " + name,
+      );
+    }
+  }
+
+  const rawPaletteUtility =
+    /\b(?:bg|text|border|ring|fill|stroke)-(?:white|black|(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d+)(?:\/\d+)?\b|\b(?:bg|text|border|ring|fill|stroke)-\[(?:#|rgb|hsl|oklch|oklab|color:)[^\]]+\]/;
+  const rawProductColorFiles = filesMatching(rawPaletteUtility);
+  const unexpectedRawProductColors = rawProductColorFiles.filter(
+    (file) => file !== mfaFile,
+  );
+  const mfaRawColors = [
+    ...mfaSource.matchAll(new RegExp(rawPaletteUtility.source, "g")),
+  ].map((match) => match[0]);
+  const mfaExceptionValid =
+    mfaRawColors.length === 1 && mfaRawColors[0] === "bg-white";
+
+  const shortColorPath = (file) =>
+    file.startsWith(root) ? file.slice(root.length + 1) : file;
+  process.stdout.write(
+    "Color corpus audit: unexpectedRawPaletteFiles=" +
+      unexpectedRawProductColors.length +
+      " [" +
+      unexpectedRawProductColors.map(shortColorPath).join(", ") +
+      "], mfaFixedColorException=" +
+      (mfaExceptionValid ? "valid" : "invalid") +
+      "\n",
+  );
+
+  if (unexpectedRawProductColors.length !== 0) {
+    failures.push(
+      "color.corpus: product UI must consume semantic colors instead of raw palette/arbitrary color utilities",
+    );
+  }
+  if (!mfaExceptionValid) {
+    failures.push(
+      "color.corpus: Gosso MFA fixed white QR quiet-zone exception changed and requires Color inventory review",
+    );
+  }
+}
+
 const border = matrix.foundations.border;
 if (border?.status !== "planned") {
   const tokenSource = readFileSync(resolve(root, "src/tokens.css"), "utf8");
