@@ -11,12 +11,18 @@ const publicSource = (source: string) =>
 const headingApi: ApiRow[] = [
   {
     name: "level",
-    description: "标题语义级别，同时选择 h1-h6 宿主。",
+    description: "标题语义级别，只选择 h1-h6 宿主；视觉层级由 variant 独立决定。",
     type: "1 | 2 | 3 | 4 | 5 | 6",
     defaultValue: "2",
   },
+  {
+    name: "variant",
+    description: "视觉 Typography role；与 level 独立。未传时仅为兼容旧调用按 level 推导默认 role。",
+    type: '"display" | "hero" | "page" | "task" | "section-lg" | "section" | "subsection" | "compact" | "label" | "micro"',
+    defaultValue: "按 level 兼容推导",
+  },
   { name: "children", description: "标题内容。", type: "ReactNode" },
-  { name: "className", description: "扩展 canonical 标题 token。", type: "string" },
+  { name: "className", description: "扩展布局、颜色等非层级样式；canonical 产品不得用它改写字号、字重、行高或 tracking。", type: "string" },
   {
     name: "...heading props",
     description: "透传原生 heading HTML 属性，包括 id、data-*、aria-* 与事件。",
@@ -60,7 +66,7 @@ const typographyApi: ApiRow[] = [
     defaultValue: '"p"',
   },
   { name: "children", description: "文字内容。", type: "ReactNode" },
-  { name: "className", description: "扩展基础 text-sm/text-foreground 样式。", type: "string" },
+  { name: "className", description: "扩展兼容基础文字宿主；新产品文案优先使用 Heading/Text。", type: "string" },
   {
     name: "...element props",
     description: "透传通用 HTML 属性。",
@@ -72,7 +78,7 @@ export const typographyDocuments: Record<string, ComponentDocument> = {
   typography: {
     title: "Typography 排版",
     description:
-      "Heading、Text 与 Typography 共同定义产品文字的语义宿主、尺寸和色调。Heading 保持真实 h1-h6 层级；Text 的 as 只改变宿主语义；Typography 是最轻量的基础文字原语。",
+      "Heading 将 HTML heading level 与视觉 Typography role 解耦；Text 通过 semantic body/caption scale 统一正文密度；Typography 仅保留为轻量兼容宿主，新产品优先使用 Heading/Text。",
     code: publicSource(TypographyExampleSource),
     render: () => <TypographyExample />,
     demos: [
