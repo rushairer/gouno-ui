@@ -197,7 +197,7 @@ export function BlogArticleTeaser({
       className={`group grid min-w-0 gap-5 border-b py-6 ${post.cover && !compact ? "sm:grid-cols-[minmax(0,1fr)_180px]" : ""}`}
     >
       <div className="min-w-0">
-        <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+        <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 type-caption text-muted-foreground">
           <time dateTime={post.publishedAt}>{post.publishedAt}</time>
           <span>{post.readTime} 分钟阅读</span>
         </div>
@@ -219,11 +219,11 @@ export function BlogArticleTeaser({
           />
         </a>
         <p
-          className={`mt-3 text-sm leading-7 text-muted-foreground ${compact ? "line-clamp-2" : "line-clamp-3"}`}
+          className={`mt-3 type-reading-sm text-muted-foreground ${compact ? "line-clamp-2" : "line-clamp-3"}`}
         >
           {post.summary}
         </p>
-        <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-primary">
+        <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 type-caption text-primary">
           {post.tags.slice(0, compact ? 3 : post.tags.length).map((tag) => {
             const tagPath = `/tags/${encodeURIComponent(tag)}`;
             return (
@@ -247,7 +247,7 @@ export function BlogArticleTeaser({
           className="aspect-[4/3] self-center overflow-hidden rounded-md border bg-gradient-to-br from-primary/15 via-muted to-background p-4"
           onClick={(event) => navigate(event, articlePath)}
         >
-          <span className="grid h-full place-items-center rounded border border-dashed text-center text-[11px] text-muted-foreground">
+          <span className="grid h-full place-items-center rounded border border-dashed text-center type-caption text-muted-foreground">
             文章封面静态占位
           </span>
         </a>

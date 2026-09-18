@@ -90,7 +90,7 @@ function ArticleMetadata({
   onNavigate: (target: string) => void;
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-x-5 gap-y-3 border-y py-4 text-sm text-muted-foreground">
+    <div className="flex flex-wrap items-center gap-x-5 gap-y-3 border-y py-4 type-body-sm text-muted-foreground">
       <span className="inline-flex items-center gap-1.5">
         <CalendarDays aria-hidden="true" className="size-4" />
         {article.publishedAt}
@@ -116,7 +116,7 @@ function ArticleMetadata({
           <a
             key={tag}
             href={`/tags/${encodeURIComponent(tag)}`}
-            className="rounded-md border px-2 py-1 text-xs text-foreground hover:border-primary hover:bg-accent"
+            className="rounded-md border px-2 py-1 type-caption text-foreground hover:border-primary hover:bg-accent"
             onClick={(event) => {
               event.preventDefault();
               onNavigate(`/tags/${encodeURIComponent(tag)}`);
@@ -132,7 +132,7 @@ function ArticleMetadata({
 
 function ReadingBody() {
   return (
-    <div className="space-y-7 text-[15px] leading-8 text-foreground sm:text-base">
+    <div className="space-y-7 type-reading-body text-foreground">
       <p>
         浏览器不持有长期 Token
         看起来是一条安全规则，但真正落进产品以后，它会继续影响会话恢复、错误提示、跨产品跳转和前端能否独立调用身份服务。安全边界最终会变成用户体验的一部分。
@@ -182,12 +182,12 @@ function ReadingBody() {
           本身不应该发明第二套滚动系统。
         </p>
         <div className="overflow-x-auto rounded-lg border">
-          <table className="w-full min-w-[560px] border-collapse text-left text-sm">
+          <table className="w-full min-w-[560px] border-collapse text-left type-body-sm">
             <thead className="bg-muted/50">
               <tr>
-                <th className="border-b px-4 py-3 font-semibold">问题</th>
-                <th className="border-b px-4 py-3 font-semibold">稳定责任</th>
-                <th className="border-b px-4 py-3 font-semibold">归属</th>
+                <th className="border-b px-4 py-3 type-weight-semibold">问题</th>
+                <th className="border-b px-4 py-3 type-weight-semibold">稳定责任</th>
+                <th className="border-b px-4 py-3 type-weight-semibold">归属</th>
               </tr>
             </thead>
             <tbody>
@@ -237,19 +237,19 @@ function ReadingBody() {
           aria-label="浏览器、Blog BFF 与 GOSSO 身份服务边界示意图"
           className="grid aspect-[16/7] place-items-center rounded-lg border bg-gradient-to-br from-primary/10 via-muted/60 to-background p-6"
         >
-          <div className="grid w-full max-w-2xl grid-cols-3 items-center gap-3 text-center text-sm">
-            <div className="rounded-lg border bg-background p-4 font-medium">
+          <div className="grid w-full max-w-2xl grid-cols-3 items-center gap-3 text-center type-body-sm">
+            <div className="rounded-lg border bg-background p-4 type-weight-medium">
               Browser
             </div>
-            <div className="rounded-lg border bg-background p-4 font-medium">
+            <div className="rounded-lg border bg-background p-4 type-weight-medium">
               Blog BFF
             </div>
-            <div className="rounded-lg border bg-background p-4 font-medium">
+            <div className="rounded-lg border bg-background p-4 type-weight-medium">
               GOSSO
             </div>
           </div>
         </div>
-        <figcaption className="text-center text-xs text-muted-foreground">
+        <figcaption className="text-center type-caption text-muted-foreground">
           阅读页中的静态架构插图占位：图片语义属于文章内容，不提升为公共 Diagram
           组件。
         </figcaption>
@@ -384,7 +384,7 @@ export function BlogArticleDetailDemo({
                   aria-label={`${article.title} 封面占位`}
                   className="grid aspect-[16/7] place-items-center border-b bg-gradient-to-br from-primary/15 via-muted to-background p-6"
                 >
-                  <span className="rounded-full border bg-background/80 px-4 py-2 text-xs text-muted-foreground">
+                  <span className="rounded-full border bg-background/80 px-4 py-2 type-caption text-muted-foreground">
                     ARTICLE COVER · STATIC FIXTURE
                   </span>
                 </div>
@@ -400,7 +400,7 @@ export function BlogArticleDetailDemo({
 
               <aside className="lg:sticky lg:top-24">
                 <Card variant="subtle" padding="sm">
-                  <div className="mb-3 text-sm font-semibold">文章目录</div>
+                  <div className="mb-3 type-body-sm type-weight-semibold">文章目录</div>
                   <Anchor aria-label="文章目录" items={tocItems} />
                 </Card>
               </aside>
@@ -417,7 +417,7 @@ export function BlogArticleDetailDemo({
                 >
                   相关阅读
                 </Heading>
-                <p className="mt-1 text-sm text-muted-foreground">
+                <p className="mt-1 type-body-sm text-muted-foreground">
                   继续沿着架构与设计系统的阅读路径向下探索。
                 </p>
               </div>

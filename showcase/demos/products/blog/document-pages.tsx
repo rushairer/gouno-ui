@@ -51,8 +51,8 @@ function BlogDocumentSurface({
     <Card as="article" padding="none" className="mx-auto w-full max-w-[900px] overflow-hidden">
       <div className="space-y-7 p-6 sm:p-8">
         <PageHeader title={title} description={description} />
-        {meta ? <div className="border-y py-3 text-sm text-muted-foreground">{meta}</div> : null}
-        <div className="space-y-6 text-[15px] leading-8 text-foreground sm:text-base">{children}</div>
+        {meta ? <div className="border-y py-3 type-body-sm text-muted-foreground">{meta}</div> : null}
+        <div className="space-y-6 type-reading-body text-foreground">{children}</div>
       </div>
     </Card>
   );
@@ -170,10 +170,10 @@ export function BlogAboutDemo() {
           <section aria-labelledby="about-topics" className="space-y-3">
             <Heading level={2} variant="section-lg" id="about-topics" >主要内容</Heading>
             <ul className="grid gap-3 sm:grid-cols-2">
-              <li className="rounded-lg border p-4"><strong>工程实践</strong><p className="mt-1 text-sm text-muted-foreground">Go、React、Swift、Kubernetes、性能与安全。</p></li>
-              <li className="rounded-lg border p-4"><strong>设计系统</strong><p className="mt-1 text-sm text-muted-foreground">从真实产品迁移反推组件 API 与设计语言。</p></li>
-              <li className="rounded-lg border p-4"><strong>身份与架构</strong><p className="mt-1 text-sm text-muted-foreground">OAuth2、BFF、会话边界与跨产品治理。</p></li>
-              <li className="rounded-lg border p-4"><strong>AI 协作</strong><p className="mt-1 text-sm text-muted-foreground">Agent、模型、开发工具与可复现工作流。</p></li>
+              <li className="rounded-lg border p-4"><strong>工程实践</strong><p className="mt-1 type-body-sm text-muted-foreground">Go、React、Swift、Kubernetes、性能与安全。</p></li>
+              <li className="rounded-lg border p-4"><strong>设计系统</strong><p className="mt-1 type-body-sm text-muted-foreground">从真实产品迁移反推组件 API 与设计语言。</p></li>
+              <li className="rounded-lg border p-4"><strong>身份与架构</strong><p className="mt-1 type-body-sm text-muted-foreground">OAuth2、BFF、会话边界与跨产品治理。</p></li>
+              <li className="rounded-lg border p-4"><strong>AI 协作</strong><p className="mt-1 type-body-sm text-muted-foreground">Agent、模型、开发工具与可复现工作流。</p></li>
             </ul>
           </section>
 

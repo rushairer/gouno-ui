@@ -76,13 +76,13 @@ export function BlogHomeDemo({
                 <Heading level={1} variant="display" className="max-w-3xl whitespace-pre-line">
                   把真实工程问题，写成可以长期复用的知识。
                 </Heading>
-                <p className="mt-5 max-w-2xl text-base leading-8 text-muted-foreground">
+                <p className="mt-5 max-w-2xl type-reading-lead text-muted-foreground">
                   记录架构、安全、AI、Go
                   与产品设计中的真实判断、失败和复盘，而不是只整理漂亮答案。
                 </p>
               </div>
               <div className="aspect-[4/3] overflow-hidden rounded-lg border bg-gradient-to-br from-muted via-background to-primary/10 p-5">
-                <div className="grid h-full place-items-center rounded-md border border-dashed text-center text-sm text-muted-foreground">
+                <div className="grid h-full place-items-center rounded-md border border-dashed text-center type-body-sm text-muted-foreground">
                   系统关系 / 工程路径 / 产品演进
                 </div>
               </div>
@@ -121,7 +121,7 @@ export function BlogHomeDemo({
                         <Heading level={2} variant="subsection">精选文章</Heading>
                         <a
                           href="/articles"
-                          className="inline-flex items-center gap-2 text-sm text-primary"
+                          className="inline-flex items-center gap-2 type-body-sm text-primary"
                           onClick={(event) => navigateLink(event, "/articles")}
                         >
                           查看全部
@@ -152,11 +152,11 @@ export function BlogHomeDemo({
                           <a
                             href={target}
                             key={category.slug}
-                            className="flex items-center justify-between gap-3 text-sm hover:text-primary"
+                            className="flex items-center justify-between gap-3 type-body-sm hover:text-primary"
                             onClick={(event) => navigateLink(event, target)}
                           >
                             <span>{category.name}</span>
-                            <span className="text-xs tabular-nums text-muted-foreground">
+                            <span className="type-caption tabular-nums text-muted-foreground">
                               {category.postCount} 篇
                             </span>
                           </a>
@@ -174,7 +174,7 @@ export function BlogHomeDemo({
                             <a
                               href={target}
                               key={tag}
-                              className="rounded-md bg-muted px-2 py-1 text-xs hover:bg-accent"
+                              className="rounded-md bg-muted px-2 py-1 type-caption hover:bg-accent"
                               onClick={(event) => navigateLink(event, target)}
                             >
                               {tag}
@@ -186,15 +186,15 @@ export function BlogHomeDemo({
                   </section>
 
                   <section className="border-t pt-6">
-                    <span className="mb-4 flex size-10 items-center justify-center rounded-md bg-accent font-semibold text-primary">
+                    <span className="mb-4 flex size-10 items-center justify-center rounded-md bg-accent type-weight-semibold text-primary">
                       PW
                     </span>
                     <Heading level={2} variant="compact">Paw</Heading>
-                    <p className="mt-2 text-sm leading-7 text-muted-foreground">
+                    <p className="mt-2 type-reading-sm text-muted-foreground">
                       Full Stack Developer。关注工程、产品与 AI
                       在真实团队中的长期实践。
                     </p>
-                    <div className="mt-4 flex gap-4 text-sm text-primary">
+                    <div className="mt-4 flex gap-4 type-body-sm text-primary">
                       <a
                         href="/about"
                         onClick={(event) => navigateLink(event, "/about")}
@@ -234,11 +234,11 @@ export function BlogHomeDemo({
             <section className="flex flex-col justify-between gap-5 border-t pt-8 sm:flex-row sm:items-center">
               <div>
                 <Heading level={2} variant="subsection">订阅更新</Heading>
-                <p className="mt-2 text-sm text-muted-foreground">
+                <p className="mt-2 type-body-sm text-muted-foreground">
                   每当有新文章发布，都可以通过你熟悉的方式收到。
                 </p>
               </div>
-              <div className="flex gap-5 text-sm text-primary">
+              <div className="flex gap-5 type-body-sm text-primary">
                 <a
                   href="/feed.xml"
                   className="inline-flex items-center gap-2"
