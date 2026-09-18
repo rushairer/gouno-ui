@@ -540,7 +540,7 @@
       }
     },
     "density": {
-      "status": "in_progress",
+      "status": "certified",
       "affectedComponentReviews": [
         "theme-system",
         "core-table"
@@ -594,19 +594,20 @@
           ]
         },
         "visual": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
-            "Canonical Visual Golden validation required after global density fallback implementation"
+            "Canonical Visual Golden Smoke run 35338814614 (#391): 50/50 passed",
+            "showcase/e2e/canonical-visual-golden.pw.mjs: density-global-compact-default-table-geometry passed with comfortable 12/16/24px and compact 8/12/16px computed geometry"
           ]
         },
         "consumers": {
-          "status": "in_progress",
+          "status": "passed",
           "evidence": [
-            "Blog/Gosso reciprocal parity required after global density fallback implementation"
+            "Blog Consumer Parity run 35338814604 (#440): success",
+            "Gosso Admin Consumer Parity run 35338814525 (#435): success"
           ]
         }
-      },
-      "confirmedDefect": "ThemeProvider density writes documentElement.dataset.density, but no global density selector consumes it. Table separately duplicates compact/touch geometry in local utility branches."
+      }
     },
     "motion": {
       "status": "planned",
