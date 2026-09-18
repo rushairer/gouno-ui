@@ -73,6 +73,9 @@ describe("Core Typography family", () => {
         as="span"
         size="sm"
         tone="muted"
+        weight="medium"
+        family="mono"
+        leading="relaxed"
         data-kind="metadata"
         className="custom-text"
       >
@@ -85,7 +88,13 @@ describe("Core Typography family", () => {
     expect(text.getAttribute("data-slot")).toBe("text");
     expect(text.getAttribute("data-kind")).toBe("metadata");
     expect(text.getAttribute("data-typography-role")).toBe("body-sm");
+    expect(text.getAttribute("data-typography-weight")).toBe("medium");
+    expect(text.getAttribute("data-typography-family")).toBe("mono");
+    expect(text.getAttribute("data-typography-leading")).toBe("relaxed");
     expect(text.className).toContain("type-body-sm");
+    expect(text.className).toContain("type-weight-medium");
+    expect(text.className).toContain("type-family-mono");
+    expect(text.className).toContain("type-leading-relaxed");
     expect(text.className).toContain("text-muted-foreground");
     expect(text.className).toContain("custom-text");
   });
