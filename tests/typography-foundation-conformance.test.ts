@@ -15,7 +15,7 @@ function collectTsx(directory: string): string[] {
   });
 }
 
-function openingTags(source: string, component: "Heading" | "CardTitle") {
+function openingTags(source: string, component: "Heading" | "CardTitle" | "Text") {
   const expression = new RegExp(`<${component}\\b[\\s\\S]{0,500}?>`, "g");
   return source.match(expression) ?? [];
 }
@@ -39,6 +39,17 @@ describe("Typography Foundation conformance", () => {
         ...openingTags(source, "Heading").map((tag) => ({ path, component: "Heading", tag })),
         ...openingTags(source, "CardTitle").map((tag) => ({ path, component: "CardTitle", tag })),
       ].filter((entry) => bannedVisualUtility.test(entry.tag));
+    });
+
+    expect(offenders).toEqual([]);
+  });
+
+  it("keeps product Text metrics under semantic Text props", () => {
+    const offenders = collectTsx(productsRoot).flatMap((path) => {
+      const source = readFileSync(path, "utf8");
+      return openingTags(source, "Text")
+        .map((tag) => ({ path, component: "Text", tag }))
+        .filter((entry) => bannedVisualUtility.test(entry.tag));
     });
 
     expect(offenders).toEqual([]);
