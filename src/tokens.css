@@ -64,23 +64,23 @@
   --shadow-xl: 0 0 #0000;
   --shadow-2xl: 0 0 #0000;
 }
-@utility border-emphasis {
+@utility edge-emphasis {
   border-width: var(--border-width-emphasis);
 }
 
-@utility border-bs-emphasis {
+@utility edge-bs-emphasis {
   border-block-start-width: var(--border-width-emphasis);
 }
 
-@utility border-be-emphasis {
+@utility edge-be-emphasis {
   border-block-end-width: var(--border-width-emphasis);
 }
 
-@utility border-s-emphasis {
+@utility edge-s-emphasis {
   border-inline-start-width: var(--border-width-emphasis);
 }
 
-@utility border-e-emphasis {
+@utility edge-e-emphasis {
   border-inline-end-width: var(--border-width-emphasis);
 }
 
