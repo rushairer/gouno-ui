@@ -1,6 +1,7 @@
 import { useMemo, useState, type ReactNode } from "react";
 import {
   ArrowLeft,
+  ChevronRight,
   Clock3,
   Edit2,
   GitBranch,
@@ -31,7 +32,7 @@ import type {
   WorkflowRunStatus,
 } from "./automation-records-fixtures";
 import { WorkflowEditor } from "./workflow-editor";
-import { OpsMeta, OpsObjectRow, OpsRegionHeading } from "./canonical-patterns";
+import { OpsRegionHeading, OpsSummaryStrip } from "./canonical-patterns";
 
 const stepLabels: Record<WorkflowFixture["steps"][number]["type"], string> = {
   resource_query: "资源筛选",
@@ -79,6 +80,99 @@ function runDuration(run: WorkflowRunFixture) {
   const duration = run.steps.reduce((sum, step) => sum + step.durationMs, 0);
   if (duration < 1000) return `${duration} ms`;
   return `${(duration / 1000).toFixed(duration >= 10000 ? 0 : 1)} s`;
+}
+
+function workflowNeedsAttention(workflow: WorkflowFixture) {
+  return ["failed", "waiting_for_user", "awaiting_approval"].includes(
+    workflow.latestRun?.status ?? "",
+  );
+}
+
+function WorkflowListRow({
+  workflow,
+  onSelect,
+}: {
+  workflow: WorkflowFixture;
+  onSelect?: (workflow: WorkflowFixture) => void;
+}) {
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      block
+      aria-label={`打开 Workflow：${workflow.name}`}
+      className="grid h-auto w-full min-w-0 grid-cols-1 gap-4 whitespace-normal rounded-none border-b px-5 py-4 text-left font-normal transition-colors last:border-b-0 hover:bg-muted/30 xl:grid-cols-[minmax(17rem,1.45fr)_minmax(12rem,0.8fr)_minmax(16rem,1.15fr)_8rem_1.5rem] xl:items-center [&>span]:contents"
+      onClick={() => onSelect?.(workflow)}
+    >
+      <span className="flex min-w-0 items-start gap-3">
+        <span
+          className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg border bg-muted/25 text-muted-foreground transition-colors group-hover:text-foreground"
+          aria-hidden="true"
+        >
+          <GitBranch className="size-4" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="flex min-w-0 flex-wrap items-center gap-2">
+            <strong className="min-w-0 text-sm font-semibold text-foreground [overflow-wrap:anywhere]">
+              {workflow.name}
+            </strong>
+            <Tag color={workflow.enabled ? "success" : undefined}>
+              {workflow.enabled ? "已启用" : "已停用"}
+            </Tag>
+            <Tag>v{workflow.currentVersion}</Tag>
+          </span>
+          <Text size="xs" tone="muted" className="mt-1 line-clamp-2">
+            {workflow.description}
+          </Text>
+          <Text size="xs" tone="muted" className="mt-1">
+            {workflow.steps.length} 个步骤
+            {workflow.templateKey ? ` · ${workflow.templateKey}` : ""}
+          </Text>
+        </span>
+      </span>
+
+      <span className="min-w-0">
+        <Text size="xs" tone="muted" className="xl:hidden">执行计划</Text>
+        <strong className="mt-1 block text-sm font-medium">{workflow.schedule}</strong>
+        <Text size="xs" tone="muted" className="mt-1">
+          {workflow.timezone}
+        </Text>
+        <Text size="xs" tone="muted" className="mt-0.5">
+          下次 {workflow.nextRunAt}
+        </Text>
+      </span>
+
+      <span className="min-w-0">
+        <Text size="xs" tone="muted" className="xl:hidden">最近运行</Text>
+        <span className="mt-1 flex flex-wrap items-center gap-2">
+          {runStatusTag(workflow.latestRun?.status)}
+          <Text size="xs" tone="muted">{workflow.latestRun?.at ?? "—"}</Text>
+        </span>
+        <Text size="xs" tone="muted" className="mt-1 line-clamp-2">
+          {workflow.latestRun?.summary || "暂无运行记录"}
+        </Text>
+      </span>
+
+      <span className="min-w-0">
+        <Text size="xs" tone="muted" className="xl:hidden">运行质量</Text>
+        <strong className="mt-1 block text-sm font-medium">
+          {workflow.metrics.runs} 次
+        </strong>
+        <Text
+          size="xs"
+          tone={workflow.metrics.failures ? "danger" : "muted"}
+          className="mt-1"
+        >
+          {workflow.metrics.failures} 次失败
+        </Text>
+      </span>
+
+      <ChevronRight
+        className="hidden size-4 text-muted-foreground xl:block"
+        aria-hidden="true"
+      />
+    </Button>
+  );
 }
 
 function WorkflowMetric({
@@ -224,76 +318,125 @@ export function AutomationManagement({
         />
 
         {workflows.length ? (
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-              <div className="min-w-0 flex-1">
-                <Input
-                  aria-label="搜索 Workflow"
-                  prefix={<Search className="size-4" />}
-                  placeholder="搜索名称、目标或模板"
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                />
-              </div>
-              <div className="lg:w-44">
-                <Select
-                  aria-label="按状态筛选 Workflow"
-                  value={status}
-                  onChange={(value) =>
-                    setStatus(String(value) as "all" | "enabled" | "disabled")
-                  }
-                >
-                  <option value="all">全部状态</option>
-                  <option value="enabled">已启用</option>
-                  <option value="disabled">已停用</option>
-                </Select>
-              </div>
-            </div>
+          <div className="flex flex-col gap-5">
+            <OpsSummaryStrip
+              ariaLabel="Workflow 资产摘要"
+              items={[
+                {
+                  label: "Workflow",
+                  value: String(workflows.length),
+                  detail: "自动化资产",
+                },
+                {
+                  label: "已启用",
+                  value: String(workflows.filter((workflow) => workflow.enabled).length),
+                  detail: `${workflows.filter((workflow) => !workflow.enabled).length} 项已停用`,
+                },
+                {
+                  label: "待关注",
+                  value: String(workflows.filter(workflowNeedsAttention).length),
+                  detail: "最新 Run 失败或等待人工",
+                },
+                {
+                  label: "累计运行",
+                  value: String(workflows.reduce((sum, workflow) => sum + workflow.metrics.runs, 0)),
+                  detail: `${workflows.reduce((sum, workflow) => sum + workflow.metrics.failures, 0)} 次失败`,
+                },
+              ]}
+            />
 
-            <div
-              role="list"
-              aria-label="Workflow 列表"
+            <section
               className="overflow-hidden rounded-xl border bg-background"
+              aria-label="Workflow 资产"
             >
-              {visible.length ? (
-                visible.map((workflow) => (
-                  <div key={workflow.id} role="listitem">
-                    <OpsObjectRow
-                      leading={<GitBranch className="size-4" />}
-                      title={workflow.name}
-                      status={
-                        <Tag color={workflow.enabled ? "success" : undefined}>
-                          {workflow.enabled ? "已启用" : "已停用"}
-                        </Tag>
-                      }
-                      meta={`${workflow.schedule} · ${workflow.timezone} · 下次 ${workflow.nextRunAt}`}
-                      summary={
-                        workflow.latestRun?.summary || workflow.description
-                      }
-                      signals={
-                        <>
-                          <OpsMeta>v{workflow.currentVersion}</OpsMeta>
-                          <OpsMeta>{workflow.steps.length} 个步骤</OpsMeta>
-                          <OpsMeta>
-                            最近：{runStatusLabel(workflow.latestRun?.status)}
-                          </OpsMeta>
-                          <OpsMeta>
-                            {workflow.metrics.runs} 次运行 ·{" "}
-                            {workflow.metrics.failures} 次失败
-                          </OpsMeta>
-                        </>
-                      }
-                      onClick={() => onSelect?.(workflow)}
-                      ariaLabel={`打开 Workflow：${workflow.name}`}
-                    />
-                  </div>
-                ))
-              ) : (
-                <div className="p-6">
-                  <Text tone="muted">没有符合条件的 Workflow。</Text>
+              <div
+                data-slot="workflow-list-toolbar"
+                className="flex flex-col gap-3 border-b bg-muted/[0.12] px-4 py-4 lg:flex-row lg:items-center"
+              >
+                <div className="min-w-0 flex-1">
+                  <Input
+                    aria-label="搜索 Workflow"
+                    prefix={<Search className="size-4" />}
+                    placeholder="搜索名称、描述或模板"
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                  />
                 </div>
-              )}
-            </div>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <div className="sm:w-44">
+                    <Select
+                      aria-label="按状态筛选 Workflow"
+                      value={status}
+                      onChange={(value) =>
+                        setStatus(String(value) as "all" | "enabled" | "disabled")
+                      }
+                    >
+                      <option value="all">全部状态</option>
+                      <option value="enabled">已启用</option>
+                      <option value="disabled">已停用</option>
+                    </Select>
+                  </div>
+                  {query || status !== "all" ? (
+                    <Button
+                      size="small"
+                      variant="ghost"
+                      onClick={() => {
+                        setQuery("");
+                        setStatus("all");
+                      }}
+                    >
+                      清除筛选
+                    </Button>
+                  ) : null}
+                  <Text size="xs" tone="muted" className="shrink-0 sm:min-w-16 sm:text-right">
+                    {visible.length} / {workflows.length}
+                  </Text>
+                </div>
+              </div>
+
+              <div
+                aria-hidden="true"
+                className="hidden grid-cols-[minmax(17rem,1.45fr)_minmax(12rem,0.8fr)_minmax(16rem,1.15fr)_8rem_1.5rem] gap-4 border-b bg-muted/[0.18] px-5 py-2.5 text-xs font-medium text-muted-foreground xl:grid"
+              >
+                <span>Workflow</span>
+                <span>执行计划</span>
+                <span>最近运行</span>
+                <span>运行质量</span>
+                <span />
+              </div>
+
+              <div
+                role="list"
+                aria-label="Workflow 列表"
+                className="overflow-hidden"
+              >
+                {visible.length ? (
+                  visible.map((workflow) => (
+                    <div key={workflow.id} role="listitem">
+                      <WorkflowListRow workflow={workflow} onSelect={onSelect} />
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex flex-col items-center gap-2 px-6 py-10 text-center">
+                    <Search className="size-5 text-muted-foreground" aria-hidden="true" />
+                    <strong className="text-sm">没有符合条件的 Workflow</strong>
+                    <Text size="xs" tone="muted">
+                      调整搜索词或状态筛选后再试。
+                    </Text>
+                    <Button
+                      size="small"
+                      variant="ghost"
+                      onClick={() => {
+                        setQuery("");
+                        setStatus("all");
+                      }}
+                    >
+                      清除筛选
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </section>
           </div>
         ) : (
           <Card padding="base">
