@@ -56,4 +56,4 @@ jobs:
           TAG: v0.4.8
         run: |
           set -euo pipefail
-          gh workflow run release.yml --ref main -f tag="$TAG"
+          gh workflow run release.yml --ref "$TAG" -f tag="$TAG"
