@@ -158,7 +158,7 @@ export const TreeSelect = forwardRef<HTMLSelectElement, TreeSelectProps>(
     };
 
     const checkedValues = (checked: TreeCheckedKeys) =>
-      (Array.isArray(checked) ? checked : checked.checked).map(String);
+      ("checked" in checked ? checked.checked : checked).map(String);
 
     return (
       <div className="relative min-w-0" data-slot="tree-select-root">
