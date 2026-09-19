@@ -54,7 +54,6 @@ function toTreeNodes(nodes: readonly TreeSelectNode[]): TreeNode[] {
 function ancestorKeys(
   nodes: readonly TreeSelectNode[],
   selectedValues: readonly string[],
-  parents: readonly string[] = [],
 ): string[] {
   const selected = new Set(selectedValues);
   const expanded = new Set<string>();
@@ -62,21 +61,26 @@ function ancestorKeys(
   const visit = (
     items: readonly TreeSelectNode[],
     parentPath: readonly string[],
-  ) => {
+  ): boolean => {
+    let subtreeSelected = false;
+
     for (const item of items) {
       const path = [...parentPath, item.value];
-      if (
-        item.children?.length &&
-        (selected.has(item.value) ||
-          item.children.some((child) => selected.has(child.value)))
-      ) {
+      const childSelected = item.children?.length
+        ? visit(item.children, path)
+        : false;
+      const containsSelection = selected.has(item.value) || childSelected;
+
+      if (item.children?.length && containsSelection) {
         for (const key of path) expanded.add(key);
       }
-      if (item.children?.length) visit(item.children, path);
+      subtreeSelected ||= containsSelection;
     }
+
+    return subtreeSelected;
   };
 
-  visit(nodes, parents);
+  visit(nodes, []);
   return [...expanded];
 }
 
@@ -306,6 +310,7 @@ export const TreeSelect = forwardRef<HTMLSelectElement, TreeSelectProps>(
           >
             <Tree
               aria-label={ariaLabel}
+              aria-labelledby={ariaLabelledBy}
               treeData={treeNodes}
               blockNode
               disabled={disabled}
