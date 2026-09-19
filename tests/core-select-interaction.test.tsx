@@ -1,8 +1,8 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createRef } from "react";
-import { Select, Input } from "../src/core";
+import { createRef, useState } from "react";
+import { Drawer, Modal, Select, Input } from "../src/core";
 
 afterEach(cleanup);
 const options = <><option value="a">Alpha</option><option value="b">Beta</option></>;
@@ -59,6 +59,57 @@ describe("Select independent actions and focus", () => {
     await userEvent.keyboard("{Enter}");
     expect(second.textContent).toContain("Beta");
     expect(document.activeElement).toBe(second);
+  });
+
+  it("keeps a parent Drawer open when selecting from the portaled option list", async () => {
+    function Harness() {
+      const [open, setOpen] = useState(true);
+      return (
+        <Drawer
+          open={open}
+          title="Connection"
+          onClose={() => setOpen(false)}
+        >
+          <Select aria-label="Kind" defaultValue="a">
+            {options}
+          </Select>
+        </Drawer>
+      );
+    }
+
+    render(<Harness />);
+    const trigger = screen.getByRole("combobox", { name: "Kind" });
+    await userEvent.click(trigger);
+    await userEvent.click(screen.getByRole("option", { name: "Beta" }));
+
+    expect(screen.getByRole("dialog", { name: "Connection" })).toBeTruthy();
+    expect(trigger.textContent).toContain("Beta");
+  });
+
+  it("keeps a backdrop-dismissible Modal open for nested Select option interaction", async () => {
+    function Harness() {
+      const [open, setOpen] = useState(true);
+      return (
+        <Modal
+          open={open}
+          title="Connection"
+          closeOnBackdrop
+          onClose={() => setOpen(false)}
+        >
+          <Select aria-label="Kind" defaultValue="a">
+            {options}
+          </Select>
+        </Modal>
+      );
+    }
+
+    render(<Harness />);
+    const trigger = screen.getByRole("combobox", { name: "Kind" });
+    await userEvent.click(trigger);
+    await userEvent.click(screen.getByRole("option", { name: "Beta" }));
+
+    expect(screen.getByRole("dialog", { name: "Connection" })).toBeTruthy();
+    expect(trigger.textContent).toContain("Beta");
   });
 
   it("keeps Input suffix content when clearing and returns focus to the native input", async () => {

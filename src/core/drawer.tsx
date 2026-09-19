@@ -14,6 +14,7 @@ import {
 } from "../components/primitives/sheet";
 import { useOverlayBody } from "../hooks/use-overlay-body";
 import { cn } from "../lib/utils";
+import { isTransientPortalInteraction } from "../lib/overlay-interaction";
 import type { ModalProps } from "./modal";
 
 const localizedText = (en: string, zh: string) =>
@@ -126,7 +127,12 @@ export function Drawer({
             if (!closeOnEsc) event.preventDefault();
           }}
           onPointerDownOutside={(event) => {
-            if (!closeOnBackdrop) event.preventDefault();
+            if (
+              isTransientPortalInteraction(event) ||
+              !closeOnBackdrop
+            ) {
+              event.preventDefault();
+            }
           }}
           onCloseAutoFocus={(event) => {
             if (previousFocus.current?.isConnected) {

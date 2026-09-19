@@ -4,6 +4,12 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.4.8] - 2026-09-19
+
+### Fixed
+- Modal and Drawer now recognize Gouno-owned transient popup portals as nested interaction rather than backdrop interaction, so choosing a Select/Popover/Dropdown option no longer dismisses the owning blocking surface.
+- Select remains a non-modal popup and keeps surrounding page controls accessible while open; regression coverage protects both existing Select behavior and nested Drawer interaction.
+
 ## [0.4.7] - 2026-09-19
 
 ### Added

@@ -16,6 +16,7 @@ import {
 import { Button, type ButtonProps } from "./button";
 import { useOverlayBody } from "../hooks/use-overlay-body";
 import { cn } from "../lib/utils";
+import { isTransientPortalInteraction } from "../lib/overlay-interaction";
 const localizedText = (en: string, zh: string) =>
   typeof document !== "undefined" &&
   document.documentElement.lang.startsWith("en")
@@ -148,7 +149,12 @@ export function Modal({
             if (!closeOnEsc) e.preventDefault();
           }}
           onPointerDownOutside={(e) => {
-            if (!closeOnBackdrop) e.preventDefault();
+            if (
+              isTransientPortalInteraction(e) ||
+              !closeOnBackdrop
+            ) {
+              e.preventDefault();
+            }
           }}
           onCloseAutoFocus={(e) => {
             if (previousFocus.current?.isConnected) {
