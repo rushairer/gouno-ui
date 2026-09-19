@@ -142,9 +142,13 @@ describe("Core Collapse", () => {
     fireEvent.click(screen.getByText("Icon only"));
     expect(screen.queryByText("Hidden content")).toBeNull();
 
-    fireEvent.click(screen.getByRole("button", { name: "Expand panel" }));
+    const disclosure = screen.getByRole("button", { name: "Icon only" });
+    expect(disclosure.getAttribute("aria-expanded")).toBe("false");
+    fireEvent.click(disclosure);
     expect(screen.getByText("Hidden content")).toBeTruthy();
-    expect(screen.getByRole("button", { name: "Collapse panel" }).getAttribute("aria-expanded")).toBe("true");
+    expect(screen.getByRole("button", { name: "Icon only" }).getAttribute("aria-expanded")).toBe("true");
+    expect(screen.queryByRole("button", { name: "Expand panel" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Collapse panel" })).toBeNull();
   });
 
   it("honors lazy mount, destroyOnHidden and forceRender", () => {

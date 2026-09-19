@@ -314,6 +314,24 @@ componentReviews["core-config-provider"] = {
   baseline: "FI-D003 certified / 2026-09-19",
 };
 
+
+for (const [id, scope] of Object.entries({
+  "core-form": "FI-001 Accessibility certified: Field preserves native/control-owned naming, groups independently named controls only when needed, and propagates hint/error/required semantics without duplicate accessible owners.",
+  "core-select": "FI-001 Accessibility certified: the visible combobox owns public id/name/state/relationships while the hidden native select is form-serialization compatibility only.",
+  "core-collapse": "FI-001 Accessibility certified: icon-only disclosure controls derive contextual names from their visible panel labels and retain role-specific expanded/controls semantics.",
+  "core-tree": "FI-001 Accessibility certified: tree switchers derive contextual names from node titles while treeitem state and keyboard ownership remain canonical.",
+  "core-modal": "FI-001 Accessibility certified: dialog surfaces have neutral/localized names, localized close affordances, focus containment and deterministic focus return.",
+  "core-drawer": "FI-001 Accessibility certified: drawer surfaces have neutral/localized names, localized close affordances, focus containment and deterministic focus return.",
+  "core-tag": "FI-001 Accessibility certified: checkable + closable tags use sibling interactive owners rather than nested native buttons, with separate names and state.",
+})) {
+  componentReviews[id] = {
+    status: "reviewed",
+    scope,
+    evidence: ["foundation-integrity.json", "docs/foundation-accessibility-inventory.md", "docs/design-language.md", "tests/accessibility-foundation-conformance.test.tsx", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "FI-001 Accessibility certified / 2026-09-19",
+  };
+}
+
 componentReviews["pattern-dedicated-editor"] = {
   status: "reviewed",
   scope: "FI-001 certified: Dedicated Editor explicitly separates nested/standalone heading semantics from task-title visual hierarchy and stays under the canonical Typography guard.",

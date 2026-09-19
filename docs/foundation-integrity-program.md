@@ -124,7 +124,7 @@ Phase 3 Visual Semantic Foundations is fully certified:
 
 Phase 2/3 exits are backed by exact-head CI, canonical visual browser checks and reciprocal Blog/Gosso consumer parity rather than historical completion claims.
 
-Phase 4 — Interaction Foundations is active:
+Phase 4 — Interaction Foundations is fully certified:
 
 - **Responsive 7/7 (re-certified after FI-D001)** — canonical breakpoint authority remains unchanged; Steps now converts the complete max-sm composition and keeps connector geometry separate from copy across desktop horizontal and vertical-dot layouts.
 - **Motion 7/7** — CSS and JavaScript share one reduced-motion policy across imperative scrolling and Carousel lifecycle/autoplay.
@@ -135,6 +135,12 @@ Phase 4 — Interaction Foundations is active:
 
 The post-Foundation component defect sweep is complete: FI-D001 Steps, FI-D002 Carousel, FI-D003 ConfigProvider and FI-D004 Tag are all resolved and their component reviews are restored to certified/reviewed state.
 
+Phase 5 — Accessibility Foundation is certified 7/7. The semantic-owner audit corrected five Core defects: FormField → composite Select naming/required propagation, contextual Collapse switcher naming, contextual Tree switcher naming, localized Modal/Drawer surface + close naming, and Tag checkable+closable nested interaction. Landmark/skip-link, PageSkeleton live-region, native Table semantics and real-browser overlay focus containment are guarded.
+
+Phase 6 — Corpus and consumer re-certification is complete. Canonical product corpus semantic bypass counts are zero, all unit/integration tests pass, the canonical browser matrix is green, and reciprocal Blog/Gosso consumer parity is green.
+
+**Foundation Integrity Program FI-001 is complete: 16 Foundations × 7 gates = 112/112 passed.**
+
 Focus certification is backed by CI run 35360452646 (#544), Canonical Visual Golden Smoke run 35360452819 (#461), Blog Consumer Parity run 35360452821 (#522), and Gosso Admin Consumer Parity run 35360452653 (#517).
 
 Overlay certification is backed by CI run 35364329607 (#555), Canonical Visual Golden Smoke run 35364330737 (#472), Blog Consumer Parity run 35364330586 (#533), and Gosso Admin Consumer Parity run 35364329528 (#528).
@@ -142,3 +148,5 @@ Overlay certification is backed by CI run 35364329607 (#555), Canonical Visual G
 Interaction State certification and FI-D004 Color re-certification are backed by CI run 35367064494 (#562), Canonical Visual Golden Smoke run 35367064504 (#479), Blog Consumer Parity run 35367064487 (#540), and Gosso Admin Consumer Parity run 35367064636 (#535).
 
 FI-D001 Responsive re-certification and FI-D003 ConfigProvider Showcase certification are backed by CI run 35370575584 (#568), Canonical Visual Golden Smoke run 35370575666 (#485), Blog Consumer Parity run 35370575614 (#546), and Gosso Admin Consumer Parity run 35370575622 (#541).
+
+Accessibility certification and Phase 6 exit are backed by implementation-head CI run 35407537596 (#594), Canonical Visual Golden Smoke run 35407537645 (#511, 62/62 browser checks), Blog Consumer Parity run 35407537639 (#572), and Gosso Admin Consumer Parity run 35407537660 (#567). The ledger-only certification commit is still required to pass the same exact-head gates before merge.

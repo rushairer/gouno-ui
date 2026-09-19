@@ -47,6 +47,22 @@ describe("Core layout and feedback", () => {
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
     expect(document.activeElement).toBe(trigger);
   });
+  it("localizes overlay close actions and uses neutral fallback surface names", () => {
+    const previousLang = document.documentElement.lang;
+    document.documentElement.lang = "zh-CN";
+
+    const modal = render(<Modal open>Content</Modal>);
+    expect(screen.getByRole("dialog", { name: "对话框" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "关闭" })).toBeTruthy();
+    modal.unmount();
+
+    render(<Drawer open>Content</Drawer>);
+    expect(screen.getByRole("dialog", { name: "抽屉" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "关闭" })).toBeTruthy();
+
+    document.documentElement.lang = previousLang;
+  });
+
   it("supports Drawer placement and Escape close", async () => {
     function Probe() { const [open, setOpen] = React.useState(true); return <Drawer open={open} placement="bottom" height={320} title="Drawer" onClose={() => setOpen(false)}>Content</Drawer>; }
     render(<Probe />);

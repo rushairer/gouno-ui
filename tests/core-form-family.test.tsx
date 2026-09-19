@@ -2,6 +2,7 @@ import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   Button,
+  Checkbox,
   FieldGroup,
   FieldLabel,
   FieldLegend,
@@ -11,6 +12,7 @@ import {
   FormGrid,
   Input,
   OverlayForm,
+  Select,
 } from "../src/core";
 
 afterEach(cleanup);
@@ -38,6 +40,77 @@ describe("Core Form family", () => {
     expect(describedBy).toContain(hint.id);
     expect(describedBy).toContain(error.id);
     expect(error.textContent).toBe("邮箱格式无效");
+  });
+
+  it("binds FormField semantics to a composite Select's visible combobox", () => {
+    render(
+      <FormField
+        label="发布状态"
+        hint="选择当前发布状态。"
+        error="请选择状态"
+        required
+      >
+        <Select defaultValue="draft">
+          <option value="draft">草稿</option>
+          <option value="published">已发布</option>
+        </Select>
+      </FormField>,
+    );
+
+    const combobox = screen.getByRole("combobox", { name: "发布状态" });
+    expect(combobox.getAttribute("aria-required")).toBe("true");
+    expect(combobox.getAttribute("aria-invalid")).toBe("true");
+
+    const describedBy = combobox.getAttribute("aria-describedby")?.split(" ") ?? [];
+    expect(describedBy).toContain(screen.getByText("选择当前发布状态。").id);
+    expect(describedBy).toContain(screen.getByRole("alert").id);
+
+    const hiddenSelect = document.querySelector(
+      '[data-slot="select"] select[aria-hidden="true"]',
+    );
+    expect(hiddenSelect?.getAttribute("tabindex")).toBe("-1");
+  });
+
+  it("fills missing names without overriding an explicitly named child control", () => {
+    const { rerender } = render(
+      <FormField label="成员角色">
+        <Select aria-label="Blog 角色分配" defaultValue="editor">
+          <option value="editor">编辑</option>
+        </Select>
+      </FormField>,
+    );
+
+    expect(
+      screen.getByRole("combobox", { name: "Blog 角色分配" }),
+    ).toBeTruthy();
+    expect(screen.getByRole("group", { name: "成员角色" })).toBeTruthy();
+
+    rerender(
+      <FormField label="导航设置">
+        <Checkbox label="显示在顶部主导航栏" defaultChecked />
+      </FormField>,
+    );
+
+    expect(
+      screen.getByRole("checkbox", { name: "显示在顶部主导航栏" }),
+    ).toBeTruthy();
+    expect(screen.getByRole("group", { name: "导航设置" })).toBeTruthy();
+  });
+
+  it("preserves a caller aria-label that repeats the Field label without naming the wrapper group", () => {
+    render(
+      <FormField label="导航排序权重" hint="数字越小越靠前">
+        <Input aria-label="导航排序权重" type="number" defaultValue="10" />
+      </FormField>,
+    );
+
+    const matches = screen.getAllByLabelText("导航排序权重");
+    expect(matches).toHaveLength(1);
+    expect(matches[0].tagName).toBe("INPUT");
+    expect(matches[0].getAttribute("aria-label")).toBe("导航排序权重");
+    expect(
+      screen.queryByRole("group", { name: "导航排序权重" }),
+    ).toBeNull();
   });
 
   it("keeps a visually hidden FormField label as the accessible control name", () => {

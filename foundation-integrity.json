@@ -1311,36 +1311,112 @@
       }
     },
     "accessibility": {
-      "status": "planned",
-      "affectedComponentReviews": [],
+      "status": "certified",
+      "affectedComponentReviews": [
+        "core-form",
+        "core-select",
+        "core-collapse",
+        "core-tree",
+        "core-modal",
+        "core-drawer",
+        "core-tag"
+      ],
       "gates": {
         "inventory": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/foundation-accessibility-inventory.md",
+            "src/core/field.tsx",
+            "src/core/select.tsx",
+            "src/core/collapse.tsx",
+            "src/core/tree.tsx",
+            "src/core/modal.tsx",
+            "src/core/drawer.tsx",
+            "src/core/tag.tsx",
+            "src/gouno/app-shell.tsx",
+            "src/gouno/page-skeleton.tsx",
+            "src/components/primitives/table.tsx"
+          ]
         },
         "tokens": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/design-language.md: DL-25",
+            "docs/foundation-accessibility-inventory.md",
+            "Accessibility introduces no parallel visual token scale; it consumes certified Focus/Typography/Interaction State/Responsive/Motion/Color/Sizing authority."
+          ]
         },
         "authority": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/design-language.md: DL-25",
+            "docs/foundation-accessibility-inventory.md",
+            "src/core/field.tsx",
+            "src/core/select.tsx",
+            "src/core/collapse.tsx",
+            "src/core/tree.tsx",
+            "src/core/modal.tsx",
+            "src/core/drawer.tsx",
+            "src/core/tag.tsx",
+            "src/gouno/app-shell.tsx",
+            "src/gouno/page-skeleton.tsx"
+          ]
         },
         "corpus": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "showcase/demos/products/blog",
+            "showcase/demos/products/blog-admin",
+            "showcase/demos/products/gosso-admin",
+            "scripts/check-foundation-integrity.mjs",
+            "CI run 35407537596 (#594): nonSemanticClickFiles=0, missingAltImageFiles=0, focusableAriaHiddenFiles=0"
+          ]
         },
         "guard": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "scripts/check-foundation-integrity.mjs",
+            "tests/accessibility-foundation-conformance.test.tsx",
+            "tests/core-form-family.test.tsx",
+            "tests/core-entry-controls.test.tsx",
+            "tests/gouno-page-skeleton.test.tsx",
+            "CI run 35407537596 (#594): 169/169 test files, 880/880 tests passed"
+          ]
         },
         "visual": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "showcase/e2e/canonical-visual-golden.pw.mjs: accessibility-form-select-and-overlay-ownership",
+            "showcase/e2e/canonical-visual-golden.pw.mjs: accessibility-app-shell-skip-link-and-landmarks",
+            "Canonical Visual Golden Smoke run 35407537645 (#511): 62/62 browser tests passed"
+          ]
         },
         "consumers": {
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "Blog Consumer Parity run 35407537639 (#572): success",
+            "Gosso Admin Consumer Parity run 35407537660 (#567): success"
+          ]
+        }
+      },
+      "inventory": {
+        "confirmedDefects": [
+          "A11Y-D001: FormField labels hidden Select instead of visible combobox; visible required state is missing.",
+          "A11Y-D002: Collapse icon-only switchers use duplicate generic English names.",
+          "A11Y-D003: Tree switchers inject generic English Expand/Collapse names.",
+          "A11Y-D004: Modal/Drawer primitive close buttons hard-code English Close and Modal fallback title reuses close-action copy.",
+          "A11Y-D005: Tag permits checkable+closable nested native buttons."
+        ],
+        "targetPolicy": "Native semantics first; the actual interactive owner carries name/state/relationships; no focusable aria-hidden or nested native interactive controls.",
+        "certification20260919": {
+          "resolution": "A11Y-D001 through A11Y-D005 are corrected at their semantic owners. Composite naming, contextual disclosure naming, localized overlay naming/focus, sibling Tag interactions, landmarks/live regions/native tables and canonical product corpus checks are guarded.",
+          "sourceHead": "e1f159508f4a286c1f4d8b900251eb689e2cf35e",
+          "evidence": [
+            "CI #594",
+            "Canonical Visual Golden Smoke #511",
+            "Blog Consumer Parity #572",
+            "Gosso Admin Consumer Parity #567"
+          ]
         }
       }
     }

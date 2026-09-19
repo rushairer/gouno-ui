@@ -63,6 +63,28 @@ describe("Core Tag", () => {
     expect(onChange).toHaveBeenLastCalledWith(true);
   });
 
+  it("keeps check and close as sibling interactive owners when both are requested", () => {
+    const onChange = vi.fn();
+    const onClose = vi.fn();
+    render(
+      <Tag checkable closable onChange={onChange} onClose={onClose}>
+        Release
+      </Tag>,
+    );
+
+    const checkbox = screen.getByRole("checkbox", { name: "Release" });
+    const close = screen.getByRole("button", { name: "关闭 Release" });
+
+    expect(checkbox.contains(close)).toBe(false);
+    expect(checkbox.parentElement).toBe(close.parentElement);
+    expect(checkbox.parentElement?.querySelector("button button")).toBeNull();
+
+    fireEvent.click(checkbox);
+    expect(onChange).toHaveBeenLastCalledWith(true);
+    fireEvent.click(close);
+    expect(onClose).toHaveBeenCalledOnce();
+  });
+
   it("prevents changes while disabled", () => {
     const onChange = vi.fn();
     render(<CheckableTag disabled defaultChecked onChange={onChange}>Disabled</CheckableTag>);

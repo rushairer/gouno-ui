@@ -48,6 +48,7 @@ function SheetContent({
   children,
   side = "right",
   showCloseButton = true,
+  closeLabel = "Close",
   mask = true,
   zIndex,
   maskStyle,
@@ -55,6 +56,7 @@ function SheetContent({
 }: React.ComponentProps<typeof SheetPrimitive.Content> & {
   side?: "top" | "right" | "bottom" | "left";
   showCloseButton?: boolean;
+  closeLabel?: string;
   mask?: boolean;
   zIndex?: number;
   maskStyle?: React.CSSProperties;
@@ -82,8 +84,8 @@ function SheetContent({
         {children}
         {showCloseButton && (
           <SheetPrimitive.Close className="absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none data-[state=open]:bg-secondary">
-            <XIcon className="size-4" />
-            <span className="sr-only">Close</span>
+            <XIcon aria-hidden="true" className="size-4" />
+            <span className="sr-only">{closeLabel}</span>
           </SheetPrimitive.Close>
         )}
       </SheetPrimitive.Content>

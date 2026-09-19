@@ -284,8 +284,8 @@ export function Collapse({
                     id={headerId}
                     aria-expanded={active}
                     aria-controls={bodyId}
+                    aria-labelledby={labelId}
                     disabled={disabled}
-                    aria-label={active ? "Collapse panel" : "Expand panel"}
                     onClick={() => toggleItem(item)}
                     className="mr-2 inline-flex size-7 shrink-0 items-center justify-center rounded-md outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                   >

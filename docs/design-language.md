@@ -582,3 +582,18 @@ Explicit caller-requested content changes such as `loadingText` may naturally ch
 
 Product business state remains product-owned, but products express it through canonical component state APIs/slots rather than reconstructing selected/error/loading/disabled visuals with page-local raw palette, border-width or size utilities.
 
+## DL-25 — Accessibility semantics belong to the interactive owner
+
+Accessibility is part of component ownership, not a product-side repair layer.
+
+- Use native semantic elements whenever the platform already owns the behavior.
+- The element that users actually focus or activate owns its accessible name, state and relationships. Hidden compatibility/form elements do not satisfy this contract for a visible composite control.
+- Field labels, hints, validation errors and required state must reach the real interactive owner. A Field fills missing naming relationships; it does not overwrite an explicit child-owned `aria-label`, `aria-labelledby` or component label. Composite controls expose standard ARIA and the public `id` on the visible owner while preserving native form participation through a separate internal control when necessary.
+- Icon-only controls derive names from explicit caller copy or a stable visible label relationship. Do not inject generic action text when a contextual visible label already exists.
+- Dialog/Drawer close actions must be named in the active language; focus containment, Escape policy and focus return remain part of the overlay interaction contract.
+- Decorative content uses `aria-hidden` only when it is not keyboard-focusable.
+- Never nest native interactive controls. If two independent actions are required, they are sibling interactive owners with separate names/states.
+- Heading, landmark, list and table semantics are not replaced by visual wrappers.
+
+Products must not patch missing Core accessibility semantics with duplicated page-local labels, roles or keyboard handlers. A missing semantic relationship in an admitted component reopens that component/Foundation and is fixed at the owner.
+
