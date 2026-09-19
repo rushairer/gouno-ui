@@ -25,13 +25,13 @@ function inspectJsxText(file) {
   );
 
   function visit(node) {
-    if (ts.isJsxText(node) && /\\\\[nrt]/.test(node.getText(sourceFile))) {
+    if (ts.isJsxText(node) && /\\[nrt]/.test(node.getText(sourceFile))) {
       const start = node.getStart(sourceFile);
       const position = sourceFile.getLineAndCharacterOfPosition(start);
       const excerpt = node
         .getText(sourceFile)
         .trim()
-        .replace(/\\s+/g, " ")
+        .replace(/\s+/g, " ")
         .slice(0, 120);
 
       failures.push(
