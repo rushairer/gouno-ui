@@ -4,6 +4,24 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.4.7] - 2026-09-19
+
+### Added
+- Accessibility Foundation ownership and executable guards for Field/composite controls, visible Select naming, contextual Tree/Collapse disclosure names, localized overlay close labels, and landmark/live-region behavior.
+- Private picker control infrastructure shared by visible picker surfaces, plus a regression contract preventing Core pickers from silently reverting to OS-native visible menus.
+- Semantic Layer and logical-edge utilities used by canonical product surfaces instead of raw global z-index and physical left-border ownership.
+
+### Changed
+- Cascader now renders one Gouno-owned combobox trigger with a multi-column cascading popup instead of visible native selects.
+- TreeSelect now renders a real Tree popup for single/multiple selection while keeping an aria-hidden native select only as a form/ref compatibility bridge.
+- Pagination page-size selection now reuses canonical Core Select.
+- Select, Field, Modal, Drawer, Dialog, Sheet, Tree, Collapse, Tag, AppShell, PageContainer and related primitives consume the certified Foundation contracts for accessibility, focus, state, geometry, motion, surface and overlay ownership.
+
+### Fixed
+- Steps connector/copy geometry, Carousel arrow interaction ownership, ConfigProvider locale proof, and Tag close/check interactive ownership.
+- Select accessible-name/id ownership and required/error state now belong to the visible combobox without duplicate hidden-control semantics.
+- Deep controlled TreeSelect values expand their complete ancestor path, and visible picker interaction remains source-compatible with established value/callback contracts.
+
 ## [0.4.6] - 2026-09-18
 
 ### Changed
