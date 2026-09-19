@@ -111,7 +111,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
   const resolvedPlaceholder = placeholder ?? text.placeholder;
   return <div className="relative min-w-0" data-slot="select">
     <select {...props} id={nativeSelectId} name={name} required={required} disabled={disabled || loading} multiple={multi} value={hiddenValue} onChange={() => undefined} ref={selectRef} aria-hidden="true" tabIndex={-1} className="pointer-events-none absolute inset-0 h-full w-full opacity-0">{children}{selectedValues.filter((item) => !options.some((option) => option.value === item)).map((item) => <option key={item} value={item}>{item}</option>)}</select>
-    <Popover modal open={open} onOpenChange={(next) => { if (!disabled && !loading) setOpen(next); }}>
+    <Popover open={open} onOpenChange={(next) => { if (!disabled && !loading) setOpen(next); }}>
       <PopoverAnchor asChild>
         <div data-slot="select-control" className={cn(pickerControlClass({ size, status, disabled: disabled || loading, flexible: multi }), className)}>
           {multi && hasValue ? <div className="flex min-w-0 flex-1 flex-wrap gap-1" data-slot="select-tags">
