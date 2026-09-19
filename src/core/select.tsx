@@ -1,10 +1,11 @@
 import { useComponentLocale } from "./config-provider";
 import type { SelectLocale } from "./locale";
 import * as React from "react";
-import { Check, ChevronDown, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "../components/primitives/popover";
 import { cn } from "../lib/utils";
-import { controlSizeClass, type ControlSize } from "./control-types";
+import type { ControlSize } from "./control-types";
+import { PickerChevron, pickerControlClass, pickerTriggerClass } from "./picker-internals";
 
 export type SelectMode = "single" | "multiple" | "tags";
 export interface SelectOption { value: string; label: React.ReactNode; disabled?: boolean; }
@@ -112,7 +113,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
     <select {...props} id={nativeSelectId} name={name} required={required} disabled={disabled || loading} multiple={multi} value={hiddenValue} onChange={() => undefined} ref={selectRef} aria-hidden="true" tabIndex={-1} className="pointer-events-none absolute inset-0 h-full w-full opacity-0">{children}{selectedValues.filter((item) => !options.some((option) => option.value === item)).map((item) => <option key={item} value={item}>{item}</option>)}</select>
     <Popover open={open} onOpenChange={(next) => { if (!disabled && !loading) setOpen(next); }}>
       <PopoverAnchor asChild>
-        <div data-slot="select-control" className={cn("flex w-full min-w-0 items-center gap-2 rounded-md border border-border bg-input px-3 text-foreground focus-within:ring-2 focus-within:ring-ring", controlSizeClass(size), multi && "h-auto min-h-9 py-1", status === "error" && "border-destructive focus-within:ring-destructive", status === "warning" && "border-warning focus-within:ring-warning", (disabled || loading) && "cursor-not-allowed opacity-50", className)}>
+        <div data-slot="select-control" className={cn(pickerControlClass({ size, status, disabled: disabled || loading, flexible: multi }), className)}>
           {multi && hasValue ? <div className="flex min-w-0 flex-1 flex-wrap gap-1" data-slot="select-tags">
             {selectedOptions.slice(0, maxTagCount).map((option) => <span key={option.value} className="inline-flex max-w-full items-center gap-1 rounded bg-secondary px-1.5 py-0.5 text-xs">
               <span className="truncate">{option.label}</span>
@@ -127,9 +128,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
                 else if (event.key === "Enter" || event.key === " ") { event.preventDefault(); if (open) selectActive(); else setOpen(true); }
                 else if (event.key === "Escape" && open) { event.preventDefault(); setOpen(false); }
               }}
-              className={cn("flex min-w-0 items-center gap-2 self-stretch text-left outline-none disabled:cursor-not-allowed", multi && hasValue ? "shrink-0" : "flex-1")}>
+              className={cn(pickerTriggerClass, multi && hasValue ? "shrink-0" : "flex-1")}>
               <span className={cn("min-w-0 flex-1 truncate", !hasValue && "text-muted-foreground", multi && hasValue && "sr-only")}>{multi && hasValue ? selectedOptions.map((option) => typeof option.label === "string" ? option.label : option.value).join(", ") : display ?? resolvedPlaceholder}</span>
-              <ChevronDown aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
+              <PickerChevron />
             </button>
           </PopoverTrigger>
           {canClear ? <button type="button" aria-label={text.clearLabel} className="flex size-5 shrink-0 items-center justify-center rounded text-muted-foreground outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring" onClick={clear}><X aria-hidden="true" className="size-3.5" /></button> : null}
