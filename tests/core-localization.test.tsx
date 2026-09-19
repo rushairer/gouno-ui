@@ -54,6 +54,7 @@ describe("component localization", () => {
     </ConfigProvider>);
     expect(screen.getByRole("list", { name: "已选择文件" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "移除 测试.txt" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("combobox", { name: "每页条数" }));
     expect(screen.getByRole("option", { name: "20 条 / 页" })).toBeTruthy();
     expect(screen.getByRole("spinbutton", { name: "跳转到页码" })).toBeTruthy();
   });
