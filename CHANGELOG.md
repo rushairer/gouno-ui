@@ -4,6 +4,12 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.4.8] - 2026-09-19
+
+### Fixed
+- Select option popovers now participate as modal nested overlays, so choosing an option inside Modal or Drawer no longer dismisses the owning blocking surface.
+- Added a regression test covering portaled Select option interaction inside Drawer.
+
 ## [0.4.7] - 2026-09-19
 
 ### Added
