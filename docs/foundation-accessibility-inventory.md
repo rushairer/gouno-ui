@@ -1,6 +1,6 @@
 # Accessibility Foundation Inventory
 
-Status: FI-001 Phase 5 working inventory.
+Status: FI-001 Phase 5 certified inventory.
 Updated: 2026-09-19
 
 ## Scope
@@ -101,3 +101,14 @@ Accessibility can be certified only when:
 6. representative keyboard/browser tests prove form naming, overlay focus/close and composite interaction;
 7. heading/table/list/landmark structure remains covered by existing semantic contracts and representative product checks;
 8. Blog/Gosso reciprocal consumer parity passes.
+
+## Certification evidence
+
+Accessibility is certified 7/7 on the implementation head `e1f159508f4a286c1f4d8b900251eb689e2cf35e`:
+
+- CI #594 passed the semantic-owner/static corpus guard, with `nonSemanticClickFiles=0`, `missingAltImageFiles=0`, `focusableAriaHiddenFiles=0`, plus 169/169 test files and 880/880 tests.
+- Canonical Visual Golden Smoke #511 passed 62/62 browser checks, including composite Form/Select ownership, Modal focus containment/return, AppShell skip-link targeting and landmark semantics.
+- Blog Consumer Parity #572 passed.
+- Gosso Admin Consumer Parity #567 passed.
+
+No Accessibility Foundation exception remains open. Future regressions in these invariants reopen the owning component review and Accessibility Foundation rather than being patched at product-page level.
