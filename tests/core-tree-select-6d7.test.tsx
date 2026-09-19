@@ -148,6 +148,33 @@ describe("TreeSelect 6D7", () => {
     );
   });
 
+  it("expands every ancestor needed by a deeply nested controlled value", async () => {
+    render(
+      <TreeSelect
+        aria-label="Deep section"
+        value="leaf"
+        treeData={[
+          {
+            value: "root",
+            title: "Root",
+            children: [
+              {
+                value: "branch",
+                title: "Branch",
+                children: [{ value: "leaf", title: "Leaf" }],
+              },
+            ],
+          },
+        ]}
+      />,
+    );
+
+    await userEvent.click(
+      screen.getByRole("combobox", { name: "Deep section" }),
+    );
+    expect(screen.getByRole("treeitem", { name: /Leaf/ })).toBeTruthy();
+  });
+
   it("keeps Preview/Code executable and marks the reviewed family complete", () => {
     const document = treeSelectReviewDocuments["tree-select"];
     expect(document.code).toContain("<TreeSelect");
