@@ -163,7 +163,9 @@ export function BlogAdminCommentsDemo() {
       />
 
       <PageHeader title="评论" description="审核讨论、处理举报，并维护高质量的交流空间。" />
-      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />\n\n      {scenario === "error" ? (
+      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
+
+      {scenario === "error" ? (
         <Alert type="error" showIcon title="评论加载失败" description="无法读取当前审核队列。真实产品会保留筛选条件并允许重新请求。" action={<Button size="small" onClick={() => setScenario("data")}>重新载入</Button>} />
       ) : null}
 

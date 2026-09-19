@@ -383,7 +383,9 @@ export function BlogAdminPostsDemo() {
         )}
       />
 
-      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />\n\n      {scenario === "error" ? (
+      <FixtureNotification notice={notice} onConsumed={() => setNotice(null)} />
+
+      {scenario === "error" ? (
         <Alert
           type="error"
           showIcon
