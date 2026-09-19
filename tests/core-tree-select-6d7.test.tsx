@@ -60,6 +60,7 @@ describe("TreeSelect 6D7", () => {
 
     expect(trigger.textContent).toContain("Guide");
     await userEvent.click(trigger);
+    await userEvent.click(screen.getByRole("button", { name: "Admin" }));
     expect(
       screen.getByRole("treeitem", { name: /Audit/ }).getAttribute(
         "aria-disabled",
