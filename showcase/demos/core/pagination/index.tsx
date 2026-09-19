@@ -110,7 +110,7 @@ export const paginationDocument: ComponentDocument = {
       name: "showSizeChanger",
       type: "boolean",
       defaultValue: "false",
-      description: "显示原生页大小选择器",
+      description: "显示统一的 Gouno Select 页大小选择器",
     },
     {
       name: "pageSizeOptions",
