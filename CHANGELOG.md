@@ -7,8 +7,8 @@ All notable changes to this project are documented here.
 ## [0.4.8] - 2026-09-19
 
 ### Fixed
-- Select option popovers now participate as modal nested overlays, so choosing an option inside Modal or Drawer no longer dismisses the owning blocking surface.
-- Added a regression test covering portaled Select option interaction inside Drawer.
+- Modal and Drawer now recognize Gouno-owned transient popup portals as nested interaction rather than backdrop interaction, so choosing a Select/Popover/Dropdown option no longer dismisses the owning blocking surface.
+- Select remains a non-modal popup and keeps surrounding page controls accessible while open; regression coverage protects both existing Select behavior and nested Drawer interaction.
 
 ## [0.4.7] - 2026-09-19
 
