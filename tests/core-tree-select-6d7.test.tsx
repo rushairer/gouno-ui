@@ -1,6 +1,7 @@
 import * as React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { TreeSelect } from "../src/core";
 import { componentProgress } from "../showcase/catalog/component-progress";
 import { treeSelectReviewDocuments } from "../showcase/demos/core/data-entry-review-6d7";
@@ -24,7 +25,7 @@ const treeData = [
 afterEach(cleanup);
 
 describe("TreeSelect 6D7", () => {
-  it("keeps placeholder copy caller-owned and removes the English default", () => {
+  it("renders a Gouno-owned tree popup and keeps placeholder copy caller-owned", async () => {
     const { rerender } = render(
       <TreeSelect
         aria-label="Section"
@@ -33,19 +34,18 @@ describe("TreeSelect 6D7", () => {
       />,
     );
 
-    expect(screen.getByRole("option", { name: "请选择" })).toBeTruthy();
+    const trigger = screen.getByRole("combobox", { name: "Section" });
+    expect(trigger.textContent).toContain("请选择");
+    expect(trigger.getAttribute("aria-haspopup")).toBe("tree");
+    await userEvent.click(trigger);
+    expect(screen.getByRole("tree", { name: "Section" })).toBeTruthy();
     expect(screen.queryByText("Please select")).toBeNull();
 
     rerender(<TreeSelect aria-label="Section" treeData={treeData} />);
     expect(screen.queryByText("Please select")).toBeNull();
-    expect(
-      screen
-        .getAllByRole("option")
-        .some((option) => option.getAttribute("data-slot") === "tree-select-placeholder"),
-    ).toBe(false);
   });
 
-  it("keeps controlled single selection caller-owned and preserves disabled nodes", () => {
+  it("keeps controlled single selection caller-owned and preserves disabled tree nodes", async () => {
     const onChange = vi.fn();
     const renderControlled = () => (
       <TreeSelect
@@ -56,55 +56,47 @@ describe("TreeSelect 6D7", () => {
       />
     );
     const { rerender } = render(renderControlled());
-    const select = screen.getByRole("combobox", { name: "Section" });
+    const trigger = screen.getByRole("combobox", { name: "Section" });
 
-    expect((select as HTMLSelectElement).value).toBe("guide");
+    expect(trigger.textContent).toContain("Guide");
+    await userEvent.click(trigger);
     expect(
-      (screen.getByRole("option", { name: /Audit/ }) as HTMLOptionElement)
-        .disabled,
-    ).toBe(true);
+      screen.getByRole("treeitem", { name: /Audit/ }).getAttribute(
+        "aria-disabled",
+      ),
+    ).toBe("true");
 
-    fireEvent.change(select, { target: { value: "api" } });
+    await userEvent.click(screen.getByRole("treeitem", { name: /API/ }));
     expect(onChange).toHaveBeenLastCalledWith("api");
     rerender(renderControlled());
-    expect(
-      (screen.getByRole("combobox", { name: "Section" }) as HTMLSelectElement)
-        .value,
-    ).toBe("guide");
+    expect(screen.getByRole("combobox", { name: "Section" }).textContent).toContain(
+      "Guide",
+    );
   });
 
-  it("preserves native multiple selection and returns a string array", () => {
+  it("uses checkable tree semantics for multiple selection and returns a string array", async () => {
     const onChange = vi.fn();
     render(
       <TreeSelect
         aria-label="Topics"
         treeData={treeData}
         multiple
+        defaultValue={["guide", "api"]}
         onChange={onChange}
       />,
     );
 
-    const select = screen.getByRole("listbox", { name: "Topics" });
-    const guide = screen.getByRole("option", { name: /Guide/ }) as HTMLOptionElement;
-    const api = screen.getByRole("option", { name: /API/ }) as HTMLOptionElement;
-    guide.selected = true;
-    api.selected = true;
-    fireEvent.change(select);
-
-    expect(onChange).toHaveBeenLastCalledWith(["guide", "api"]);
-    expect(select.className).toContain("h-auto");
+    const trigger = screen.getByRole("combobox", { name: "Topics" });
+    expect(trigger.textContent).toContain("Guide");
+    expect(trigger.textContent).toContain("API");
+    await userEvent.click(trigger);
+    const api = screen.getByRole("checkbox", { name: "API" });
+    expect((api as HTMLInputElement).checked).toBe(true);
+    await userEvent.click(api);
+    expect(onChange).toHaveBeenLastCalledWith(["guide"]);
   });
 
-  it("uses string titles with stable depth metadata instead of stringifying React nodes", () => {
-    render(<TreeSelect aria-label="Section" treeData={treeData} />);
-    const api = screen.getByRole("option", { name: /API/ });
-    expect(api.textContent).toContain("API");
-    expect(api.textContent).not.toContain("[object Object]");
-    expect(api.getAttribute("data-depth")).toBe("1");
-    expect(api.getAttribute("data-slot")).toBe("tree-select-option");
-  });
-
-  it("forwards the native ref and standard select DOM/form attributes", () => {
+  it("keeps native form/ref compatibility hidden while hierarchy metadata stays stable", () => {
     const ref = React.createRef<HTMLSelectElement>();
     render(
       <TreeSelect
@@ -119,22 +111,40 @@ describe("TreeSelect 6D7", () => {
       />,
     );
 
-    const select = screen.getByTestId("tree-select");
-    expect(ref.current).toBe(select);
-    expect(select.getAttribute("data-slot")).toBe("tree-select");
-    expect(select.getAttribute("name")).toBe("section");
-    expect(select.hasAttribute("required")).toBe(true);
-    expect(select.getAttribute("aria-invalid")).toBe("true");
-    expect(select.className).toContain("h-[var(--control-height-large)]");
+    const native = screen.getByTestId("tree-select") as HTMLSelectElement;
+    const api = native.querySelector(
+      'option[data-slot="tree-select-option"][value="api"]',
+    );
+    const trigger = screen.getByRole("combobox", { name: "Section" });
+    const control = trigger.closest('[data-slot="tree-select-control"]');
+    expect(ref.current).toBe(native);
+    expect(native.getAttribute("data-slot")).toBe("tree-select");
+    expect(native.getAttribute("name")).toBe("section");
+    expect(native.hasAttribute("required")).toBe(true);
+    expect(native.getAttribute("aria-invalid")).toBe("true");
+    expect(native.getAttribute("aria-hidden")).toBe("true");
+    expect(api?.textContent).toBe("API");
+    expect(api?.getAttribute("data-depth")).toBe("1");
+    expect(trigger.getAttribute("aria-invalid")).toBe("true");
+    expect(control?.className).toContain("h-[var(--control-height-large)]");
   });
 
-  it("keeps whole-control disabled semantics native", () => {
+  it("keeps whole-control disabled semantics on both visible trigger and native bridge", () => {
     render(
-      <TreeSelect aria-label="Section" treeData={treeData} disabled />,
+      <TreeSelect
+        aria-label="Section"
+        data-testid="tree-select"
+        treeData={treeData}
+        disabled
+      />,
     );
-    const select = screen.getByRole("combobox", { name: "Section" });
-    expect((select as HTMLSelectElement).disabled).toBe(true);
-    expect(select.getAttribute("aria-disabled")).toBe("true");
+    expect(
+      (screen.getByRole("combobox", { name: "Section" }) as HTMLButtonElement)
+        .disabled,
+    ).toBe(true);
+    expect((screen.getByTestId("tree-select") as HTMLSelectElement).disabled).toBe(
+      true,
+    );
   });
 
   it("keeps Preview/Code executable and marks the reviewed family complete", () => {
