@@ -36,6 +36,17 @@ const workflows = [
     consumerRef: "ref: main",
     command: "npx playwright test --config=e2e/showcase-parity.config.mjs",
     evidence: "gouno-ui-blog-consumer-parity-${{ github.run_id }}",
+    requiredMarkers: [
+      "Verify complete Blog parity harness",
+      "test -f blog-frontend/e2e/showcase-parity.pw.mjs",
+      "test -f blog-frontend/e2e/privileged-access-parity.pw.mjs",
+      "test -f blog-frontend/e2e/public-showcase-parity.pw.mjs",
+      "test -f blog-frontend/e2e/users-showcase-parity.pw.mjs",
+      "\"showcase-parity.pw.mjs\"",
+      "\"privileged-access-parity.pw.mjs\"",
+      "\"public-showcase-parity.pw.mjs\"",
+      "\"users-showcase-parity.pw.mjs\"",
+    ],
   },
   {
     path: ".github/workflows/gosso-admin-consumer-parity.yml",
@@ -81,6 +92,13 @@ for (const workflow of workflows) {
     workflow.evidence,
     `${workflow.path}: paired parity evidence artifact contract changed or was removed`,
   );
+  for (const marker of workflow.requiredMarkers ?? []) {
+    requireText(
+      workflowSource,
+      marker,
+      `${workflow.path}: missing consumer harness fail-closed marker ${marker}`,
+    );
+  }
 }
 
 const aiOpsAdaptiveRailFiles = [
