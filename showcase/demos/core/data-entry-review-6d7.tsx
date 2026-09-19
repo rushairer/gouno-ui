@@ -10,7 +10,7 @@ export const treeSelectReviewDocuments: Record<string, ComponentDocument> = {
   "tree-select": {
     ...dataEntryDocuments["tree-select"],
     description:
-      "TreeSelect 保留原生 select 的窄实现：Core 只把 readonly 层级数据稳定展平为原生 option，并保留 single/multiple 的浏览器选择语义。title 明确为 string，避免 ReactNode 经 String() 退化为 [object Object]；placeholder 完全由调用方拥有，Core 不再注入 Please select。支持标准 select DOM/ARIA/form 属性、真实 ref、统一 size/status 与 disabled；搜索、异步树、checkbox、弹层和自定义节点渲染继续由 Tree 或产品层拥有。",
+      "TreeSelect 使用 Gouno 自渲染的 combobox trigger + Tree popup 表达真实层级结构；single 使用 tree selection，multiple 使用 checkable tree。隐藏 native select 仅保留 name/required/value/ref 等表单兼容职责，不参与可见渲染。placeholder 完全由调用方拥有；统一 size/status/disabled 与 overlay 设计语言。搜索、异步树和自定义节点渲染仍不在当前窄职责内。",
     code: canonicalCoreSource(TreeSelectDemoSource),
     render: () => <TreeSelectDemo />,
     api: [
@@ -31,12 +31,12 @@ export const treeSelectReviewDocuments: Record<string, ComponentDocument> = {
       },
       {
         name: "onChange",
-        description: "原生选择变化后的值回调；multiple 返回 string[]。",
+        description: "树选择变化后的值回调；multiple 返回 string[]。",
         type: "(value: string | string[]) => void",
       },
       {
         name: "multiple",
-        description: "启用原生 multiple select；不引入 checkbox/tree-popup 语义。",
+        description: "启用多选；popup 使用 checkable Tree 并返回 string[]。",
         type: "boolean",
         defaultValue: "false",
       },
@@ -47,7 +47,7 @@ export const treeSelectReviewDocuments: Record<string, ComponentDocument> = {
       },
       {
         name: "size",
-        description: "统一控件尺寸；multiple 模式保留原生多行高度。",
+        description: "统一控件尺寸；multiple 已选值以自渲染标签在 trigger 内换行。",
         type: '"small" | "middle" | "large"',
         defaultValue: '"middle"',
       },
@@ -58,12 +58,12 @@ export const treeSelectReviewDocuments: Record<string, ComponentDocument> = {
       },
       {
         name: "...select props",
-        description: "透传标准 select 的 name/required/ARIA/data/event/className 等属性。",
+        description: "name/required/form 等标准 select 属性继续由隐藏 native bridge 承担；className 作用于可见 picker control。",
         type: "SelectHTMLAttributes<HTMLSelectElement>",
       },
       {
         name: "ref",
-        description: "指向真实 native select。",
+        description: "指向隐藏 native select compatibility bridge；可见交互由 combobox + Tree popup 拥有。",
         type: "Ref<HTMLSelectElement>",
       },
     ],

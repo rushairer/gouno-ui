@@ -597,3 +597,13 @@ Accessibility is part of component ownership, not a product-side repair layer.
 
 Products must not patch missing Core accessibility semantics with duplicated page-local labels, roles or keyboard handlers. A missing semantic relationship in an admitted component reopens that component/Foundation and is fixed at the owner.
 
+
+## DL-26 — Visible pickers are Gouno-owned interaction surfaces
+
+A visible picker is part of the design system surface, focus and overlay contract. Core must not hand the user-facing menu/popup back to the operating system when Gouno already owns the corresponding control family.
+
+- `Select`, `Cascader`, `TreeSelect` and embedded picker usages such as Pagination page-size selection render their visible trigger/menu/tree/cascade UI with Gouno primitives and semantic popup layers.
+- A native `<select>` may remain only as an `aria-hidden`, non-interactive compatibility bridge for established form/value/ref behavior. It must not be the visible or focusable interaction owner.
+- Hierarchical controls must render their hierarchy semantically: Cascader as a cascading path surface; TreeSelect as a tree surface. Flattening hierarchy only for a hidden form bridge is allowed, but flattening must not define the visible interaction.
+- Picker control geometry consumes canonical Sizing/Border/Focus/Color authority; popup surfaces consume canonical Surface/Elevation/Layer authority. Do not recreate these with page-local native appearance or one-off CSS.
+- This is a maintenance rule and does not reopen FI-001. It consumes the already-certified Foundations.

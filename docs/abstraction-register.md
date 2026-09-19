@@ -599,7 +599,7 @@ This register records why abstractions were accepted, rejected, deferred or chan
 
 ### PD-065 — Cascader stays native-select based and makes hierarchy semantics language-neutral
 
-- **Status:** accepted / Core hardening
+- **Status:** superseded by PD-080; retained as historical evidence
 - **Owner:** Core / Data Entry family
 - **Evidence:** `Cascader` is an established retained Core control with no current Gosso Admin, Blog Admin or Blog public product consumer that would justify a larger picker framework. The pre-6D6 implementation injected `Please select`, `Select` and `Level N`, exposed no composite root DOM/ref contract, used mutable option arrays and wrote an empty string into the path when a level was cleared.
 - **Decision:** preserve one native `<select>` per visible hierarchy level. `value/defaultValue/onChange` is the only path-state contract; selecting a node replaces that level and truncates deeper selections, while choosing the empty option truncates the path before that level. The composite root owns `role="group"` and caller-provided standard accessible naming; each native select uses only its language-neutral numeric position name within that group. Visible placeholder copy belongs to the caller.
@@ -759,3 +759,18 @@ This register records why abstractions were accepted, rejected, deferred or chan
 - **Product impact:** existing Blog Admin / Gosso Admin corpus is checked against the contracts. Known collection feedback-order drift is corrected instead of preserved as product-specific behavior.
 - **Validation:** `docs/patterns/admin-data-composition.md`, canonical Showcase demos, corpus conformance tests, typecheck/test/build/Pages certification.
 - **Abstraction impact:** repeated layout semantics are governed independently from public runtime reuse. Future public API admission requires shared runtime behavior and a separate Rule-of-Three review.
+
+
+### PD-080 — Visible hierarchical pickers are Gouno-owned overlays; native select is compatibility-only
+
+- **Status:** accepted / post-FI maintenance hardening
+- **Owner:** Core / Data Entry family
+- **Supersedes:** PD-065 visible native-select rendering for Cascader; PD-066 visible native-select rendering for TreeSelect. Their value/callback and caller-owned copy decisions remain valid unless explicitly changed below.
+- **Evidence:** Core Select has evolved to a Gouno-owned combobox + popup surface while Cascader still rendered one visible OS-native select per level and TreeSelect flattened hierarchy into one visible OS-native select. The resulting platform-dependent popup styling bypasses the certified Surface/Elevation/Focus/Layer design language and, for TreeSelect, no longer matches the semantic promise of a tree selector. Pagination page-size selection retained the same visible native-popup drift.
+- **Decision:** all visible picker menus owned by Gouno Core use Gouno-rendered controls and popup surfaces. Native select elements may remain hidden only as form/value/ref compatibility bridges when an established public contract benefits from them. A hidden bridge is not a second visible interaction surface.
+- **Cascader:** retain `options/value/defaultValue/onChange/placeholder/disabled/size/status`; render one combobox trigger and a multi-column popup. Selecting a branch advances to the next column, leaf selection closes the popup, clearing a level truncates deeper path state, and ArrowUp/ArrowDown plus ArrowLeft/ArrowRight preserve hierarchical keyboard navigation. Search, remote loading and product address models remain out of scope.
+- **TreeSelect:** retain `treeData/value/defaultValue/onChange/multiple/placeholder/size/status` and the established `HTMLSelectElement` ref/form compatibility contract through a hidden native select. Visible interaction uses a combobox trigger and canonical Tree popup; single mode uses tree selection, multiple mode uses checkable-tree semantics. Search, async trees and custom node rendering still require separate evidence.
+- **Pagination:** `showSizeChanger` consumes canonical Core Select instead of a visible native select.
+- **Internal architecture:** picker geometry and affordance classes are private infrastructure, not a new public `Picker` API. Public extraction requires independent reuse evidence.
+- **Foundation impact:** FI-001 remains complete and in maintenance mode. This change consumes already-certified Sizing, Color, Surface, Elevation, Focus, Overlay and Interaction foundations; it does not reopen or redefine those foundations.
+- **Validation:** same-source Showcase docs, focused Cascader/TreeSelect/Pagination interaction tests, typecheck/test/build, reciprocal Blog/Gosso parity and canonical visual smoke on the maintenance head.

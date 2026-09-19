@@ -2,6 +2,7 @@ import { useComponentLocale } from "./config-provider";
 import type { PaginationLocale } from "./locale";
 import { useState, type ReactNode } from "react";
 import { Button } from "./button";
+import { Select } from "./select";
 import { cn } from "../lib/utils";
 
 export interface PaginationProps {
@@ -106,15 +107,19 @@ export function Pagination({
         : <Button key={item} size="small" variant="text" disabled={disabled} aria-label={item === "before" ? text.jumpBackwardLabel : text.jumpForwardLabel} onClick={() => update(current + (item === "before" ? -5 : 5))}>…</Button>)}
       {button(current + 1, "next", next, current >= pages)}
       {!simple && <span className="sr-only" aria-live="polite">{current} / {pages}</span>}
-      {showSizeChanger && <label className="flex items-center gap-2 text-sm">
-        <span className="sr-only">{text.pageSizeLabel}</span>
-        <select className="min-h-9 rounded-md border bg-background px-2 text-foreground" disabled={disabled} value={resolvedSize} onChange={event => {
-          const nextSize = Number(event.target.value);
+      {showSizeChanger && <Select
+        aria-label={text.pageSizeLabel}
+        size={size}
+        disabled={disabled}
+        value={String(resolvedSize)}
+        className="w-auto min-w-24"
+        onChange={(value) => {
+          const nextSize = Number(value);
           const nextPage = Math.min(current, Math.max(1, Math.ceil(count / nextSize)));
           update(nextPage, nextSize);
           onShowSizeChange?.(nextPage, nextSize);
-        }}>{options.map(option => <option key={option} value={option}>{text.pageSizeText(option)}</option>)}</select>
-      </label>}
+        }}
+      >{options.map(option => <option key={option} value={String(option)}>{text.pageSizeText(option)}</option>)}</Select>}
       {showQuickJumper && <label className="flex items-center gap-2 text-sm">
         <span>{text.jumpText}</span>
         <input aria-label={text.jumpLabel} className="min-h-9 w-16 rounded-md border bg-background px-2 text-foreground" type="number" min={1} max={pages} disabled={disabled} value={jump} onChange={event => setJump(event.target.value)} onBlur={submitJump} onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); submitJump(); } }} />

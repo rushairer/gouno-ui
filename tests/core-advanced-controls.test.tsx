@@ -17,10 +17,9 @@ describe("additional Core controls", () => {
         ]}
       />,
     );
-    fireEvent.change(screen.getByRole("combobox", { name: "1" }), {
-      target: { value: "a" },
-    });
-    expect(screen.getByRole("combobox", { name: "2" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("combobox", { name: "Location" }));
+    fireEvent.click(screen.getByRole("option", { name: "A" }));
+    expect(screen.getByRole("listbox", { name: "2" })).toBeTruthy();
   });
 
   it("moves selected transfer entries", () => {

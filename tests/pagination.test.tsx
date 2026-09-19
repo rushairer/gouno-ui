@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach } from "vitest";
 import { Pagination } from "../src/core/pagination";
 
@@ -14,22 +15,28 @@ describe("Pagination", () => {
     fireEvent.click(screen.getByRole("button", { name: "Page 56" }));
     expect(screen.getByRole("button", { name: "Page 56" }).getAttribute("aria-current")).toBe("page");
   });
-  it("updates uncontrolled size, clamps page and reports callbacks and ranges", () => {
+  it("updates uncontrolled size through canonical Select, clamps page and reports callbacks and ranges", async () => {
     const changed = vi.fn(); const sized = vi.fn();
-    render(<Pagination total={86} defaultPage={9} showSizeChanger onChange={changed} onShowSizeChange={sized} showTotal={(total, range) => `${range.join('-')} of ${total}`} />);
-    fireEvent.change(screen.getByRole("combobox"), { target: { value: "50" } });
+    render(<Pagination total={86} defaultPage={9} showSizeChanger onChange={changed} onShowSizeChange={sized} showTotal={(total, range) => `${range.join("-")} of ${total}`} />);
+    const trigger = screen.getByRole("combobox", { name: "Page size" });
+    expect(trigger.getAttribute("aria-expanded")).toBe("false");
+    await userEvent.click(trigger);
+    await userEvent.click(screen.getByRole("option", { name: "50 / page" }));
     expect(changed).toHaveBeenLastCalledWith(2, 50);
     expect(sized).toHaveBeenLastCalledWith(2, 50);
     expect(screen.getByText("51-86 of 86")).toBeTruthy();
   });
-  it("does not mutate controlled page or size", () => {
+  it("does not mutate controlled page or size", async () => {
     const changed = vi.fn();
     render(<Pagination page={2} pageSize={10} total={90} onChange={changed} showSizeChanger />);
     fireEvent.click(screen.getByRole("button", { name: "Next" }));
     expect(changed).toHaveBeenLastCalledWith(3, 10);
     expect(screen.getByRole("button", { name: "Page 2" }).getAttribute("aria-current")).toBe("page");
-    fireEvent.change(screen.getByRole("combobox"), { target: { value: "20" } });
-    expect((screen.getByRole("combobox") as HTMLSelectElement).value).toBe("10");
+    const trigger = screen.getByRole("combobox", { name: "Page size" });
+    await userEvent.click(trigger);
+    await userEvent.click(screen.getByRole("option", { name: "20 / page" }));
+    const native = document.querySelector('[data-slot="select"] select[aria-hidden="true"]') as HTMLSelectElement;
+    expect(native.value).toBe("10");
   });
   it("clamps quick jumps and does not submit an enclosing form", () => {
     const submit = vi.fn(); const changed = vi.fn();
@@ -47,14 +54,14 @@ describe("Pagination", () => {
     const changed = vi.fn();
     const { rerender } = render(<Pagination total={100} disabled showQuickJumper showSizeChanger onChange={changed} />);
     for (const control of screen.getAllByRole("button")) expect((control as HTMLButtonElement).disabled).toBe(true);
-    expect((screen.getByRole("combobox") as HTMLSelectElement).disabled).toBe(true);
+    expect((screen.getByRole("combobox", { name: "Page size" }) as HTMLButtonElement).disabled).toBe(true);
     expect((screen.getByRole("spinbutton") as HTMLInputElement).disabled).toBe(true);
     expect(changed).not.toHaveBeenCalled();
     rerender(<Pagination total={0} hideOnSinglePage />);
     expect(screen.queryByRole("navigation")).toBeNull();
   });
   it("handles invalid inputs, simple layout and custom labels accessibly", () => {
-    render(<Pagination total={-1} pageSize={0} page={Infinity} simple itemRender={(_page, type, original) => type === "prev" ? "上一页" : original} showTotal={(total, range) => `${range.join('-')} of ${total}`} />);
+    render(<Pagination total={-1} pageSize={0} page={Infinity} simple itemRender={(_page, type, original) => type === "prev" ? "上一页" : original} showTotal={(total, range) => `${range.join("-")} of ${total}`} />);
     expect(screen.getByText("1 / 1")).toBeTruthy();
     expect(screen.getByText("0-0 of 0")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Previous" }).textContent).toContain("上一页");

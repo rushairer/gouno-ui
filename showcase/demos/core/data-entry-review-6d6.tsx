@@ -10,7 +10,7 @@ export const cascaderReviewDocuments: Record<string, ComponentDocument> = {
   cascader: {
     ...dataEntryDocuments.cascader,
     description:
-      "Cascader 保留逐级原生 select 的窄职责：调用方拥有组级可访问名称和本地化 placeholder，Core 只管理一条受控/非受控路径、层级展开、disabled 保护与清空截断。每一级使用语言无关的数字位置名，避免 Core 注入 Level/Select 等英文文案。搜索、异步加载、自定义弹层与业务地址模型继续由产品拥有。",
+      "Cascader 使用 Gouno 自渲染的单一 combobox trigger 与多列 popup 表达层级路径：调用方拥有组级可访问名称和 placeholder，Core 管理受控/非受控路径、列展开、disabled、清空截断与横向键盘导航。可见 UI 不再依赖 OS native select；搜索、异步加载与业务地址模型继续由产品拥有。",
     code: canonicalCoreSource(CascaderDemoSource),
     render: () => <CascaderDemo />,
     api: [
@@ -37,7 +37,7 @@ export const cascaderReviewDocuments: Record<string, ComponentDocument> = {
       },
       {
         name: "placeholder",
-        description: "调用方拥有的逐级空选项文案；Core 不注入 Please select / Select。",
+        description: "调用方拥有的空路径文案；未提供时只使用语言无关占位符，不注入 Please select / Select。",
         type: "string",
       },
       {
@@ -53,7 +53,7 @@ export const cascaderReviewDocuments: Record<string, ComponentDocument> = {
       },
       {
         name: "disabled",
-        description: "禁用整组逐级选择。",
+        description: "禁用 trigger 与 popup 内全部层级选择。",
         type: "boolean",
         defaultValue: "false",
       },
