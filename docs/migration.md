@@ -424,3 +424,9 @@ The product-validation reset and canonical renames are breaking changes for cons
 ## PD-074: control copy and interaction corrections
 
 Select/Upload formerly injected some Chinese defaults. Without configuration the participating controls now use English. Wrap Chinese application subtrees in `<ConfigProvider locale={zhCN}>` from `@gouno/ui/core`; no per-control copy repetition is needed. See [all fields and priorities](component-localization.md). Existing explicit copy, controlled/uncontrolled callbacks and native refs remain valid. Select clear/tag actions are now siblings of the trigger, so consumers targeting the old nested DOM should use semantic roles or stable slots. No package release or downstream vendor synchronization is part of this source change.
+
+## PD-080: visible picker rendering
+
+Cascader and TreeSelect no longer expose an OS-native visible popup. Existing `value`, `defaultValue`, `onChange`, `disabled`, `size`, `status` and caller-owned placeholder contracts remain valid. TreeSelect still forwards its established `HTMLSelectElement` ref and form attributes through an `aria-hidden` native select compatibility bridge; consumers must not target that hidden bridge as the visible interaction surface.
+
+Pagination `showSizeChanger` now renders canonical Core Select. Tests and product automation should target the visible combobox/options by semantic roles instead of firing `change` on a visible native select.
