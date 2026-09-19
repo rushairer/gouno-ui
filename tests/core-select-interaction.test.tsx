@@ -2,7 +2,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createRef, useState } from "react";
-import { Drawer, Select, Input } from "../src/core";
+import { Drawer, Modal, Select, Input } from "../src/core";
 
 afterEach(cleanup);
 const options = <><option value="a">Alpha</option><option value="b">Beta</option></>;
@@ -74,6 +74,32 @@ describe("Select independent actions and focus", () => {
             {options}
           </Select>
         </Drawer>
+      );
+    }
+
+    render(<Harness />);
+    const trigger = screen.getByRole("combobox", { name: "Kind" });
+    await userEvent.click(trigger);
+    await userEvent.click(screen.getByRole("option", { name: "Beta" }));
+
+    expect(screen.getByRole("dialog", { name: "Connection" })).toBeTruthy();
+    expect(trigger.textContent).toContain("Beta");
+  });
+
+  it("keeps a backdrop-dismissible Modal open for nested Select option interaction", async () => {
+    function Harness() {
+      const [open, setOpen] = useState(true);
+      return (
+        <Modal
+          open={open}
+          title="Connection"
+          closeOnBackdrop
+          onClose={() => setOpen(false)}
+        >
+          <Select aria-label="Kind" defaultValue="a">
+            {options}
+          </Select>
+        </Modal>
       );
     }
 
