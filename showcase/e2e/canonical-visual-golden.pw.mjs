@@ -860,9 +860,10 @@ test("csa-core-select-popup-evidence", async ({ page }, testInfo) => {
   const trigger = root.getByRole("combobox");
   await trigger.click();
   await expect(trigger).toHaveAttribute("aria-expanded", "true");
-  const list = page.locator('[data-slot="select-list"]').last();
-  await expect(list).toBeVisible();
-  await expect(list.getByRole("option")).toHaveCount(2);
+  const list = page.locator('[data-slot="select-list"]:visible');
+  await expect(list).toHaveCount(1);
+  await expect(list.getByRole("option", { name: "选项一" })).toBeVisible();
+  await expect(list.getByRole("option", { name: "选项二" })).toBeVisible();
   await captureCanonicalAuditEvidence(page, testInfo, "core-select-popup");
 });
 
