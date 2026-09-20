@@ -1205,7 +1205,10 @@ test("csa-core-notification-feedback-evidence", async ({ page }, testInfo) => {
   await expect(page.getByRole("button", { name: "关闭持久通知" })).toBeVisible();
 
   const tools = page.getByRole("region", { name: "Showcase 工具" });
-  const notificationRegion = page.locator('[data-slot="notification-region"]');
+  const notificationRegion = page
+    .locator('[data-slot="notification-region"]')
+    .filter({ hasText: "构建完成" });
+  await expect(notificationRegion).toHaveCount(1);
   const [toolsBox, notificationBox] = await Promise.all([
     tools.boundingBox(),
     notificationRegion.boundingBox(),
