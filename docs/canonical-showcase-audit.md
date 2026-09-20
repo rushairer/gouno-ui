@@ -356,3 +356,20 @@ The first two Pagination browser attempts failed because the evidence locator in
 Manual review found **no Foundation reopening** in Wave C. Anchor acceptance is intentionally split: browser assertions prove hash/target behavior, while the rendered capture proves the target landing position; the screenshot alone is not treated as proof of Anchor state.
 
 This acceptance is family-scoped. CSA-2 remains in progress for the remaining Core catalog.
+
+
+## CSA-2 Wave D — feedback / status family
+
+Status: **in progress**
+
+Wave D targets rendered feedback/state surfaces where semantic correctness alone is insufficient:
+
+- Alert — four semantic tones plus closable lifecycle/reset;
+- Popconfirm — destructive confirmation overlay and action hierarchy;
+- Message — simultaneous success/error transient feedback;
+- Notification — mixed success/error/persistent queue composition;
+- Empty — contained empty-state rhythm, copy and action ownership;
+- Result — success end-state hierarchy and recovery/next action;
+- Spin — busy overlay, retained underlying content and tip relationship.
+
+The initial candidate changes only browser evidence and audit guards. No Core runtime behavior is changed before manual inspection. Wave D can be accepted only after exact-head CI, Golden, Blog/Gosso reciprocal parity and direct review of the generated Chromium artifact.
