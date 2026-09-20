@@ -86,6 +86,13 @@ for (const evidence of [
   "core-tooltip-keyboard-open",
   "core-tour-step-1",
   "core-tour-step-2",
+  "core-checkbox-unchecked",
+  "core-radio-pro-selected",
+  "core-switch-off",
+  "core-segmented-month-selected",
+  "core-slider-keyboard-45",
+  "core-rate-five-selected",
+  "core-input-otp-complete",
 ]) {
   requireText(
     golden,
