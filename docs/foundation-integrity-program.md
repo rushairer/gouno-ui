@@ -1,6 +1,6 @@
 # Gouno UI Foundation Integrity Program
 
-Status: maintenance mode; Responsive/core-steps reopened by CSA-001 on 2026-09-20.
+Status: complete; maintenance mode. CSA-D001 re-certified Responsive/core-steps on 2026-09-20.
 Program id: **FI-001**
 Started: 2026-09-18
 Completed: 2026-09-19
@@ -158,3 +158,18 @@ Accessibility certification and Phase 6 exit are backed by implementation-head C
 CSA-001 manual browser review exposed `CSA-D001`: `core-steps` returns to a horizontal four-step lane too early at intermediate widths. The canonical breakpoint scale itself remains valid; only the Steps responsive composition is reopened.
 
 While CSA-D001 is open, the historical 112/112 FI-001 certification remains a record of the 2026-09-19 baseline, not the current live gate count. Responsive corpus/guard/visual/consumer gates are being re-certified against the canonical `md` threshold and fresh human-reviewable browser evidence.
+
+
+### CSA-D001 re-certification
+
+The CSA-001 maintenance reopening is closed. Responsive/core-steps is certified again without changing the canonical breakpoint scale.
+
+Final evidence:
+
+- implementation head `cb224031618c238f6ebab2dc2ad452eb6f5d5d00`;
+- CI `35500169813` — success;
+- Canonical Visual Golden `35500170014` / artifact `10601014647` — success and manually reviewed;
+- Blog Consumer Parity `35500169770` — success;
+- Gosso Admin Consumer Parity `35500169802` — success.
+
+The live Foundation ledger is again fully certified; historical FI-001 and FI-D001 evidence remains preserved as prior baseline history.
