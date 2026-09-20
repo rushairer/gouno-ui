@@ -155,6 +155,18 @@ describe("Blog Admin AI Settings route family", () => {
     expect(screen.getByRole("button", { name: "全量重建" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "添加 Embedding 模型" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "测试 Blog Knowledge" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "索引概览" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "已索引内容" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "检索验证" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "Embedding 配置" })).toBeTruthy();
+    expect(screen.getByText("OAuth 2.1 与 PKCE：浏览器应用的安全边界")).toBeTruthy();
+    expect(screen.getByText("kb_8a91d2c4")).toBeTruthy();
+    expect(screen.getByText("Semantic 0.94")).toBeTruthy();
+    expect(screen.getByText("Lexical 0.78")).toBeTruthy();
+
+    fireEvent.change(screen.getByLabelText("知识库检索测试"), { target: { value: "BFF 为什么不让浏览器持有 OAuth Token？" } });
+    fireEvent.click(screen.getByRole("button", { name: "测试检索" }));
+    expect(screen.getByText("已模拟执行 content.search_knowledge：“BFF 为什么不让浏览器持有 OAuth Token？”")).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "添加 Embedding 模型" }));
     const embeddingDrawer = screen.getByRole("dialog", { name: "添加 Embedding 模型" });
