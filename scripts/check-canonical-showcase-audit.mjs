@@ -81,6 +81,11 @@ for (const evidence of [
   "core-empty-contained-state",
   "core-result-success-state",
   "core-spin-busy-overlay",
+  "core-progress-after-increase",
+  "core-skeleton-loading-grid",
+  "core-tooltip-keyboard-open",
+  "core-tour-step-1",
+  "core-tour-step-2",
 ]) {
   requireText(
     golden,
