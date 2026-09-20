@@ -906,17 +906,18 @@ if (responsive?.status !== "planned") {
 
   if (
     !stepsSource.includes(
-      '"max-sm:flex-col max-sm:overflow-visible"',
+      '"max-md:flex-col max-md:overflow-visible"',
     )
   ) {
     failures.push(
-      "responsive.guard: Steps responsive stacking must consume canonical max-sm",
+      "responsive.guard: Steps responsive stacking must consume canonical max-md",
     );
   }
 
   for (const marker of [
-    "max-sm:w-full max-sm:min-w-0 max-sm:flex-none max-sm:pb-3",
-    "max-sm:flex-row max-sm:items-start",
+    "min-w-44 flex-1",
+    "max-md:w-full max-md:min-w-0 max-md:flex-none max-md:pb-3",
+    "max-md:flex-row max-md:items-start",
     'data-layout="mobile-vertical"',
     'data-layout="desktop-inline"',
   ]) {
@@ -934,7 +935,7 @@ if (responsive?.status !== "planned") {
   }
   if (
     !stepsDocSource.includes(
-      "低于 canonical sm（40rem / 640px）时将 horizontal 流程切为纵向排列",
+      "低于 canonical md（48rem / 768px）时将 horizontal 流程切为纵向排列",
     )
   ) {
     failures.push(

@@ -33,7 +33,7 @@ describe("Responsive Foundation conformance", () => {
     expect(base).not.toMatch(/@media\s*\((?:min|max)-width:\s*\d+px/);
   });
 
-  it("binds automatic horizontal Steps stacking to canonical sm", () => {
+  it("binds automatic horizontal Steps stacking to canonical md", () => {
     render(
       <Steps
         items={[
@@ -44,21 +44,22 @@ describe("Responsive Foundation conformance", () => {
     );
 
     const root = document.querySelector('[data-slot="steps"]');
-    expect(root?.className).toContain("max-sm:flex-col");
-    expect(root?.className).toContain("max-sm:overflow-visible");
+    expect(root?.className).toContain("max-md:flex-col");
+    expect(root?.className).toContain("max-md:overflow-visible");
     expect(root?.className).not.toContain("max-[531px]");
 
 
     const firstItem = document.querySelector('[data-slot="steps-item"]');
-    expect(firstItem?.className).toContain("max-sm:w-full");
-    expect(firstItem?.className).toContain("max-sm:min-w-0");
-    expect(firstItem?.className).toContain("max-sm:flex-none");
-    expect(firstItem?.className).toContain("max-sm:pb-3");
+    expect(firstItem?.className).toContain("min-w-44");
+    expect(firstItem?.className).toContain("max-md:w-full");
+    expect(firstItem?.className).toContain("max-md:min-w-0");
+    expect(firstItem?.className).toContain("max-md:flex-none");
+    expect(firstItem?.className).toContain("max-md:pb-3");
 
     const body = firstItem?.querySelector('[aria-current="step"]') ??
       firstItem?.querySelector("div.relative");
-    expect(body?.className).toContain("max-sm:flex-row");
-    expect(body?.className).toContain("max-sm:items-start");
+    expect(body?.className).toContain("max-md:flex-row");
+    expect(body?.className).toContain("max-md:items-start");
 
     expect(
       firstItem?.querySelector('[data-layout="mobile-vertical"]'),
@@ -77,7 +78,7 @@ describe("Responsive Foundation conformance", () => {
     );
 
     const root = document.querySelector('[data-slot="steps"]');
-    expect(root?.className).not.toContain("max-sm:flex-col");
-    expect(root?.className).not.toContain("max-sm:overflow-visible");
+    expect(root?.className).not.toContain("max-md:flex-col");
+    expect(root?.className).not.toContain("max-md:overflow-visible");
   });
 });

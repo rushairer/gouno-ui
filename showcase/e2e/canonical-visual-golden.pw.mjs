@@ -183,6 +183,15 @@ async function expectNoHorizontalDocumentOverflow(page) {
   expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.viewport + 1);
 }
 
+async function captureCanonicalAuditEvidence(page, testInfo, name) {
+  await page.screenshot({
+    path: testInfo.outputPath(`csa-${name}.png`),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+}
+
 for (const scenario of scenarios) {
   test(scenario.name, async ({ page }) => {
     await prepareLightFixture(page, scenario);
@@ -321,7 +330,7 @@ for (const mode of ["light", "dark"]) {
   });
 }
 
-test("focus-canonical-fallback-and-component-ring", async ({ page }) => {
+test("focus-canonical-fallback-and-component-ring", async ({ page }, testInfo) => {
   await prepareLightFixture(page, {
     workspace: "gouno-ui",
     brand: "blog-admin",
@@ -350,6 +359,11 @@ test("focus-canonical-fallback-and-component-ring", async ({ page }) => {
   expect(ownedStyle.focusVisible).toBe(true);
   expect(ownedStyle.outlineStyle).toBe("none");
   expect(ownedStyle.boxShadow).not.toBe(restingBoxShadow);
+  await captureCanonicalAuditEvidence(
+    page,
+    testInfo,
+    "core-focus-component-owned",
+  );
 
   await page.evaluate(() => {
     const probe = document.createElement("button");
@@ -357,8 +371,8 @@ test("focus-canonical-fallback-and-component-ring", async ({ page }) => {
     probe.type = "button";
     probe.textContent = "Focus fallback probe";
     probe.style.position = "fixed";
-    probe.style.left = "16px";
-    probe.style.bottom = "16px";
+    probe.style.right = "24px";
+    probe.style.bottom = "24px";
     document.body.appendChild(probe);
   });
 
@@ -378,9 +392,15 @@ test("focus-canonical-fallback-and-component-ring", async ({ page }) => {
   expect(fallbackStyle.outlineStyle).toBe("solid");
   expect(fallbackStyle.outlineWidth).toBe("2px");
   expect(fallbackStyle.outlineOffset).toBe("2px");
+
+  await captureCanonicalAuditEvidence(
+    page,
+    testInfo,
+    "core-focus-fallback",
+  );
 });
 
-test("overlay-semantic-modal-popup-ordering", async ({ page }) => {
+test("overlay-semantic-modal-popup-ordering", async ({ page }, testInfo) => {
   await prepareLightFixture(page, {
     workspace: "gouno-ui",
     brand: "blog-admin",
@@ -413,9 +433,15 @@ test("overlay-semantic-modal-popup-ordering", async ({ page }) => {
   );
   expect(popupLayer).toBe(60);
   expect(popupLayer).toBeGreaterThan(modalLayers[0]);
+
+  await captureCanonicalAuditEvidence(
+    page,
+    testInfo,
+    "core-modal-nested-popover",
+  );
 });
 
-test("accessibility-form-select-and-overlay-ownership", async ({ page }) => {
+test("accessibility-form-select-and-overlay-ownership", async ({ page }, testInfo) => {
   await prepareLightFixture(page, {
     workspace: "gouno-ui",
     brand: "blog-admin",
@@ -430,6 +456,11 @@ test("accessibility-form-select-and-overlay-ownership", async ({ page }) => {
   await expect(status).toHaveAttribute("aria-describedby", /-hint/);
 
   await status.click();
+  await captureCanonicalAuditEvidence(
+    page,
+    testInfo,
+    "core-form-select-open",
+  );
   await page.getByRole("option", { name: "已发布" }).click();
   await expect(status).toContainText("已发布");
 
@@ -447,6 +478,11 @@ test("accessibility-form-select-and-overlay-ownership", async ({ page }) => {
 
   const dialog = page.getByRole("dialog", { name: "编辑资料" });
   await expect(dialog).toBeVisible();
+  await captureCanonicalAuditEvidence(
+    page,
+    testInfo,
+    "core-modal-focus-trap",
+  );
 
   await expect
     .poll(() =>
@@ -506,7 +542,7 @@ test("accessibility-app-shell-skip-link-and-landmarks", async ({ page }) => {
   await expect(main).toBeFocused();
 });
 
-test("showcase-config-provider-visibly-proves-locale-ownership", async ({ page }) => {
+test("showcase-config-provider-visibly-proves-locale-ownership", async ({ page }, testInfo) => {
   await prepareLightFixture(page, {
     workspace: "gouno-ui",
     brand: "blog-admin",
@@ -542,9 +578,21 @@ test("showcase-config-provider-visibly-proves-locale-ownership", async ({ page }
       name: "English provider product override Select",
     }),
   ).toContainText("Product-owned placeholder");
+
+  const localeSection = page
+    .getByRole("heading", {
+      name: "中英文 Provider 可见对照与显式覆盖",
+    })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  await expect(localeSection).toBeVisible();
+  await localeSection.screenshot({
+    path: testInfo.outputPath("csa-core-config-provider-locales.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
 });
 
-test("interaction-carousel-arrows-remain-clickable-while-draggable", async ({ page }) => {
+test("interaction-carousel-arrows-remain-clickable-while-draggable", async ({ page }, testInfo) => {
   await prepareLightFixture(page, {
     workspace: "gouno-ui",
     brand: "blog-admin",
@@ -560,6 +608,11 @@ test("interaction-carousel-arrows-remain-clickable-while-draggable", async ({ pa
 
   await carousel.locator('[data-slot="carousel-next-arrow"]').click();
   await expect(dots.nth(1)).toHaveAttribute("aria-selected", "true");
+  await captureCanonicalAuditEvidence(
+    page,
+    testInfo,
+    "core-carousel-after-next",
+  );
 
   await carousel.locator('[data-slot="carousel-prev-arrow"]').click();
   await expect(dots.nth(0)).toHaveAttribute("aria-selected", "true");
@@ -613,7 +666,7 @@ test("motion-reduced-preference-collapses-carousel-movement", async ({ page }) =
   ).toHaveCount(0);
 });
 
-test("responsive-steps-canonical-sm-stacking", async ({ page }) => {
+test("responsive-steps-canonical-md-stacking", async ({ page }, testInfo) => {
   const scenario = {
     workspace: "gouno-ui",
     brand: "blog-admin",
@@ -656,13 +709,41 @@ test("responsive-steps-canonical-sm-stacking", async ({ page }) => {
   expect(mobileTitleBox.x).toBeGreaterThan(
     mobileMarkerBox.x + mobileMarkerBox.width,
   );
+  await captureCanonicalAuditEvidence(
+    page,
+    testInfo,
+    "core-steps-mobile-stack",
+  );
 
   await page.setViewportSize({ width: 700, height: 900 });
   await expect
     .poll(() =>
       steps.evaluate((element) => getComputedStyle(element).flexDirection),
     )
+    .toBe("column");
+  await expectNoHorizontalDocumentOverflow(page);
+  await captureCanonicalAuditEvidence(
+    page,
+    testInfo,
+    "core-steps-intermediate-stack",
+  );
+
+  await page.setViewportSize({ width: 800, height: 900 });
+  await expect
+    .poll(() =>
+      steps.evaluate((element) => getComputedStyle(element).flexDirection),
+    )
     .toBe("row");
+
+  const securityTitle = steps
+    .locator('[data-slot="steps-title"]')
+    .filter({ hasText: "Security" });
+  await expect(securityTitle).toHaveCount(1);
+  expect(
+    await securityTitle.evaluate(
+      (element) => element.scrollWidth <= element.clientWidth + 1,
+    ),
+  ).toBe(true);
 
   const desktopItem = steps.locator('[data-slot="steps-item"]').first();
   const desktopMarker = desktopItem.locator('[data-slot="steps-marker"]');
@@ -689,6 +770,33 @@ test("responsive-steps-canonical-sm-stacking", async ({ page }) => {
         (desktopMarkerBox.y + desktopMarkerBox.height / 2),
     ),
   ).toBeLessThanOrEqual(2);
+  await captureCanonicalAuditEvidence(
+    page,
+    testInfo,
+    "core-steps-desktop-inline",
+  );
+
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await expect
+    .poll(() =>
+      steps.evaluate((element) => getComputedStyle(element).flexDirection),
+    )
+    .toBe("row");
+  expect(
+    await securityTitle.evaluate(
+      (element) => element.scrollWidth <= element.clientWidth + 1,
+    ),
+  ).toBe(true);
+  expect(
+    await steps.evaluate(
+      (element) => element.scrollWidth > element.clientWidth + 1,
+    ),
+  ).toBe(true);
+  await steps.screenshot({
+    path: testInfo.outputPath("csa-core-steps-shell-constrained.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
 
   const verticalDot = page.locator(
     '[data-slot="steps"][data-type="dot"][data-orientation="vertical"]',
@@ -718,6 +826,13 @@ test("responsive-steps-canonical-sm-stacking", async ({ page }) => {
     dotMarkerBox.y + dotMarkerBox.height,
   );
   expect(dotTitleBox.x).toBeGreaterThan(dotMarkerBox.x + dotMarkerBox.width);
+
+  await verticalDot.scrollIntoViewIfNeeded();
+  await verticalDot.screenshot({
+    path: testInfo.outputPath("csa-core-steps-vertical-dot.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
 });
 
 test("surface-gosso-overview-quick-link-card-ownership", async ({ page }) => {

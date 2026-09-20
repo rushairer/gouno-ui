@@ -1,6 +1,6 @@
 # Gouno UI Foundation Integrity Program
 
-Status: complete; maintenance mode.
+Status: complete; maintenance mode. CSA-D001 re-certified Responsive/core-steps on 2026-09-20.
 Program id: **FI-001**
 Started: 2026-09-18
 Completed: 2026-09-19
@@ -151,3 +151,25 @@ Interaction State certification and FI-D004 Color re-certification are backed by
 FI-D001 Responsive re-certification and FI-D003 ConfigProvider Showcase certification are backed by CI run 35370575584 (#568), Canonical Visual Golden Smoke run 35370575666 (#485), Blog Consumer Parity run 35370575614 (#546), and Gosso Admin Consumer Parity run 35370575622 (#541).
 
 Accessibility certification and Phase 6 exit are backed by implementation-head CI run 35407537596 (#594), Canonical Visual Golden Smoke run 35407537645 (#511, 62/62 browser checks), Blog Consumer Parity run 35407537639 (#572), and Gosso Admin Consumer Parity run 35407537660 (#567). The ledger-only certification commit is still required to pass the same exact-head gates before merge.
+
+
+## 2026-09-20 maintenance reopening
+
+CSA-001 manual browser review exposed `CSA-D001`: `core-steps` returns to a horizontal four-step lane too early at intermediate widths. The canonical breakpoint scale itself remains valid; only the Steps responsive composition is reopened.
+
+While CSA-D001 is open, the historical 112/112 FI-001 certification remains a record of the 2026-09-19 baseline, not the current live gate count. Responsive corpus/guard/visual/consumer gates are being re-certified against the canonical `md` threshold and fresh human-reviewable browser evidence.
+
+
+### CSA-D001 re-certification
+
+The CSA-001 maintenance reopening is closed. Responsive/core-steps is certified again without changing the canonical breakpoint scale.
+
+Final evidence:
+
+- implementation head `cb224031618c238f6ebab2dc2ad452eb6f5d5d00`;
+- CI `35500169813` — success;
+- Canonical Visual Golden `35500170014` / artifact `10601014647` — success and manually reviewed;
+- Blog Consumer Parity `35500169770` — success;
+- Gosso Admin Consumer Parity `35500169802` — success.
+
+The live Foundation ledger is again fully certified; historical FI-001 and FI-D001 evidence remains preserved as prior baseline history.

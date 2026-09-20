@@ -250,7 +250,7 @@ for (const id of ["theme-system", "core-alert", "core-image"]) {
   };
 }
 
-for (const id of ["theme-system", "core-steps", "core-grid"]) {
+for (const id of ["theme-system", "core-grid"]) {
   componentReviews[id] = {
     status: "reviewed",
     scope: "FI-001 Responsive certified: Theme owns the canonical sm/md/lg/xl/2xl scale, Base CSS mirrors the same rem tiers under guard, Row/Col stays aligned, and Steps responsive stacking resolves through canonical max-sm with no arbitrary breakpoint exception.",
@@ -288,9 +288,9 @@ for (const id of ["theme-system","gouno-app-shell","pattern-bulk-action-bar","co
 
 componentReviews["core-steps"] = {
   status: "reviewed",
-  scope: "FI-D001 certified: connector and copy occupy distinct desktop lanes, vertical dot geometry uses dot-specific marker offsets, and max-sm converts the complete item/body/connector composition rather than only the root flex axis.",
-  evidence: ["foundation-integrity.json", "docs/foundation-responsive-inventory.md", "src/core/steps.tsx", "tests/responsive-foundation-conformance.test.tsx", "showcase/e2e/canonical-visual-golden.pw.mjs"],
-  baseline: "FI-D001 certified / 2026-09-19",
+  scope: "CSA-D001 certified: manual browser review now proves the complete responsive stack below canonical md, readable min-w-44 horizontal tracks above md, constrained-container overflow ownership, and separate vertical-dot geometry without title truncation.",
+  evidence: ["foundation-integrity.json", "docs/foundation-responsive-inventory.md", "docs/canonical-showcase-audit.md", "src/core/steps.tsx", "tests/responsive-foundation-conformance.test.tsx", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+  baseline: "CSA-D001 certified / 2026-09-20",
 };
 
 componentReviews["core-tag"] = {

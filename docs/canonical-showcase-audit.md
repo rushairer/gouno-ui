@@ -189,9 +189,9 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 
 | Phase | Status | Notes |
 | --- | --- | --- |
-| CSA-0 Stabilize | in progress | Obsolete Blog AI reverse-migration PR closed; final Core Wave 2 checkpoint is being completed. |
+| CSA-0 Stabilize | complete | Obsolete Blog AI reverse-migration PR closed; Blog Core Wave 2 merged to `gouno-blog/main` at `5e20df79`; Consumer expansion is frozen at this checkpoint. |
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
-| CSA-2 Core browser pass | planned | Starts after CSA-0 checkpoint lands. |
+| CSA-2 Core browser pass | in progress | Wave A manually accepted for Focus, Modal/Popover, Form/Select, ConfigProvider, Carousel and Steps; additional Core families remain. |
 | CSA-3 Pattern/Gouno pass | planned | |
 | CSA-4 Product Showcase pages | planned | |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
@@ -201,3 +201,69 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 Do not report “Showcase aligned”, “Canonical”, “finished”, or equivalent solely from static checks, source markers, CI success, visual-diff thresholds or parity scripts.
 
 A completion claim must name the manually reviewed rendered scope and the unresolved/reopened findings, if any.
+
+
+## CSA-2 Wave A manual finding — Core Steps
+
+Source evidence: Canonical Visual Golden Smoke run `35499388006`, artifact `10601489776`.
+
+Human review of the first dedicated Core evidence batch found that the 700px Steps state is **not acceptable as Canonical** even though the Playwright geometry test passed:
+
+- the horizontal composition resumes immediately above `sm`;
+- the second step title `Security` truncates visibly to `S...`;
+- four title/content lanes are cramped at this intermediate width;
+- therefore the test proved geometry, but not readable product composition.
+
+Classification: `core-steps` Responsive implementation defect. Responsive is reopened only for this component; the canonical breakpoint scale is not reopened.
+
+Planned correction already in the candidate branch: keep the complete responsive stack below canonical `md`, validate 700px remains vertical and 800px is horizontal, and capture separate stacked / desktop-inline / vertical-dot evidence.
+
+The same manual pass also found two **evidence-quality defects**, not component defects:
+
+- Focus evidence captured only the fallback probe after focus had left the real Button;
+- ConfigProvider evidence did not frame the localized comparison region clearly enough for human review.
+
+Both evidence captures are being corrected before Wave A can be accepted.
+
+
+### CSA-D001 iteration 2 — breakpoint-only correction was insufficient
+
+The first candidate moved the automatic stack threshold from canonical `sm` to `md`. Fresh artifact `10601841164` from Golden run `35499670227` proved that 700px now stayed vertical, but human review of the 800px horizontal state still showed `Security` truncated as `Sec...`.
+
+This rules out a viewport-threshold-only fix. AppShell also restores its 288px sidebar at `lg`, so viewport width cannot reliably stand in for the actual Steps content track.
+
+The revised Core contract is:
+
+- below `md`: use the complete vertical responsive composition;
+- at/above `md`: each horizontal Step owns a readable `min-w-44` track;
+- the existing root `overflow-x-auto` absorbs constrained-container width pressure instead of sacrificing ordinary title readability;
+- explicitly verify 700px stacked, 800px horizontal, and 1024px AppShell/sidebar-constrained states;
+- keep the vertical-dot geometry evidence separate.
+
+Focus fallback evidence is also changed back to a full-page capture after moving the probe away from navigation, because a tight locator screenshot clipped the actual outline and was not independently reviewable.
+
+
+## CSA-2 Wave A acceptance
+
+Wave A is accepted as **manual-reviewed evidence**, not as completion of the entire Core catalog.
+
+Final exact-head machine evidence:
+
+- CI `35500169813` — success;
+- Canonical Visual Golden Smoke `35500170014` — success;
+- Blog Consumer Parity `35500169770` — success;
+- Gosso Admin Consumer Parity `35500169802` — success.
+
+Final artifact `10601014647` was inspected directly. Accepted rendered states include:
+
+- component-owned Button focus and Base fallback focus;
+- nested Modal + Popover layering;
+- Form + open Select;
+- Modal focus-trap state;
+- ConfigProvider zh-CN / en-US visible comparison and caller override;
+- Carousel after real next-arrow interaction;
+- Steps 600px mobile stack, 700px intermediate stack, 800px horizontal inline composition, 1024px AppShell-constrained overflow ownership, and explicit vertical-dot geometry.
+
+The manual pass found CSA-D001, rejected the first breakpoint-only correction, and accepted the second correction only after `Security` remained readable at 800px and 1024px. Responsive/core-steps is therefore re-certified.
+
+Wave A does **not** authorize claiming all Core components are Canonical. CSA-2 remains in progress and continues family-by-family.

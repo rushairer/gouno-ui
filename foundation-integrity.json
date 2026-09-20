@@ -796,7 +796,9 @@
             "scripts/check-foundation-integrity.mjs",
             "src/core/steps.tsx",
             "showcase/demos/core/steps-menu.tsx",
-            "CI run 35370575584 (#568): Responsive corpus audit arbitraryResponsiveVariants=0, pxWidthMediaQueries=0"
+            "CI run 35370575584 (#568): Responsive corpus audit arbitraryResponsiveVariants=0, pxWidthMediaQueries=0",
+            "CSA-D001 2026-09-20: intermediate-width Steps readability reopened corpus evidence pending exact-head recertification",
+            "CSA-D001 exact-head CI run 35500169813: success; responsive corpus guard remains zero arbitrary responsive variants / zero px-width media queries"
           ],
           "arbitraryResponsiveVariants": 0,
           "pxWidthMediaQueries": 0
@@ -806,21 +808,29 @@
           "evidence": [
             "scripts/check-foundation-integrity.mjs",
             "tests/responsive-foundation-conformance.test.tsx",
-            "CI run 35370575584 (#568): success; 168/168 test files, 866/866 tests"
+            "CI run 35370575584 (#568): success; 168/168 test files, 866/866 tests",
+            "CSA-D001 2026-09-20: intermediate-width Steps readability reopened guard evidence pending exact-head recertification",
+            "CSA-D001 exact-head CI run 35500169813: success; max-md complete-stack contract, min-w-44 horizontal track, and responsive=false opt-out guarded"
           ]
         },
         "visual": {
           "status": "passed",
           "evidence": [
             "showcase/e2e/canonical-visual-golden.pw.mjs: responsive-steps-canonical-sm-stacking validates mobile vertical lane, desktop inline connector after copy, and vertical-dot marker-centered connector",
-            "Canonical Visual Golden Smoke run 35370575666 (#485): success; 60/60 passed"
+            "Canonical Visual Golden Smoke run 35370575666 (#485): success; 60/60 passed",
+            "CSA-D001 2026-09-20: intermediate-width Steps readability reopened visual evidence pending exact-head recertification",
+            "Canonical Visual Golden Smoke run 35500170014: success; exact-head artifact 10601014647",
+            "CSA-001 manual review 2026-09-20: 700px stacked, 800px horizontal, 1024px AppShell-constrained overflow, vertical-dot, component focus and fallback focus evidence accepted"
           ]
         },
         "consumers": {
           "status": "passed",
           "evidence": [
             "Blog Consumer Parity run 35370575614 (#546): success",
-            "Gosso Admin Consumer Parity run 35370575622 (#541): success"
+            "Gosso Admin Consumer Parity run 35370575622 (#541): success",
+            "CSA-D001 2026-09-20: intermediate-width Steps readability reopened consumers evidence pending exact-head recertification",
+            "Blog Consumer Parity run 35500169770: success",
+            "Gosso Admin Consumer Parity run 35500169802: success"
           ]
         }
       },
@@ -842,6 +852,23 @@
           "classification": "Responsive component implementation defect; canonical breakpoint tokens, Layout and Spacing authority remain valid.",
           "target": "At max-sm the full Steps composition becomes vertical: full-width items, marker/text row, vertical connector lane. Desktop horizontal and explicit vertical layouts keep their own connector geometry.",
           "resolution": "FI-D001 corrected the complete Steps responsive composition and connector geometry without changing canonical breakpoint/Layout/Spacing/Sizing authorities; exact-head CI/browser/consumer gates passed."
+        },
+        "reopening20260920": {
+          "defect": "CSA-D001",
+          "finding": "CSA-001 manual browser review at a 700px viewport showed horizontal Steps entering the desktop lane too early: the Security title truncates to S... and the four-step copy becomes visually cramped even though connector geometry assertions pass.",
+          "classification": "Responsive component implementation defect limited to core-steps; canonical sm/md/lg/xl/2xl breakpoint authority remains valid.",
+          "target": "Below canonical md (48rem / 768px), keep the complete vertical responsive composition. At md and above, horizontal items own a readable min-w-44 track and the root overflow-x-auto absorbs width pressure instead of truncating ordinary step titles. Preserve responsive=false.",
+          "evidence": "CSA manual review: run 35499388006 exposed 700px truncation; run 35499670227 showed the md-only candidate still truncated Security at 800px. Final candidate adds a readable horizontal track plus 700/800/1024 browser evidence.",
+          "resolution": "CSA-D001 resolved: responsive horizontal Steps now keeps the complete vertical composition below canonical md, uses min-w-44 readable horizontal item tracks at/above md, and lets the root overflow-x-auto own constrained-container pressure. Exact-head CI/Golden/Blog/Gosso gates passed and the final artifact was manually reviewed.",
+          "acceptedEvidence": {
+            "implementationHead": "cb224031618c238f6ebab2dc2ad452eb6f5d5d00",
+            "ciRun": 35500169813,
+            "goldenRun": 35500170014,
+            "goldenArtifact": 10601014647,
+            "blogParityRun": 35500169770,
+            "gossoParityRun": 35500169802,
+            "manualReviewDate": "2026-09-20"
+          }
         }
       }
     },

@@ -38,6 +38,9 @@ jobs:
       - name: Verify Foundation integrity progress ledger
         run: npm run lint:foundation
 
+      - name: Verify Canonical Showcase audit contract
+        run: npm run lint:canonical-audit
+
       - name: Verify JSX source hygiene
         run: npm run lint:source-hygiene
 
