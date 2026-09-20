@@ -287,10 +287,10 @@ for (const id of ["theme-system","gouno-app-shell","pattern-bulk-action-bar","co
 }
 
 componentReviews["core-steps"] = {
-  status: "reopened",
-  scope: "CSA-D001 reopened: manual browser review exposed premature horizontal composition at 700px even though connector geometry passed; responsive stacking now targets canonical md and requires fresh browser + consumer recertification.",
+  status: "reviewed",
+  scope: "CSA-D001 certified: manual browser review now proves the complete responsive stack below canonical md, readable min-w-44 horizontal tracks above md, constrained-container overflow ownership, and separate vertical-dot geometry without title truncation.",
   evidence: ["foundation-integrity.json", "docs/foundation-responsive-inventory.md", "docs/canonical-showcase-audit.md", "src/core/steps.tsx", "tests/responsive-foundation-conformance.test.tsx", "showcase/e2e/canonical-visual-golden.pw.mjs"],
-  baseline: "CSA-D001 reopened / 2026-09-20",
+  baseline: "CSA-D001 certified / 2026-09-20",
 };
 
 componentReviews["core-tag"] = {
