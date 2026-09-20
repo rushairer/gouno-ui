@@ -191,7 +191,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | --- | --- | --- |
 | CSA-0 Stabilize | complete | Obsolete Blog AI reverse-migration PR closed; Blog Core Wave 2 merged to `gouno-blog/main` at `5e20df79`; Consumer expansion is frozen at this checkpoint. |
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
-| CSA-2 Core browser pass | in progress | Waves A–G manually accepted. Wave H Data Display candidate covers List, Descriptions, Calendar, Image, Table, Statistic, Timeline and Tree; acceptance awaits one batched exact-head gate plus rendered artifact inspection. |
+| CSA-2 Core browser pass | in progress | Waves A–H manually accepted through input, feedback and Data Display families. Remaining Core layout/other families still require browser review. |
 | CSA-3 Pattern/Gouno pass | planned | |
 | CSA-4 Product Showcase pages | planned | |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
@@ -578,7 +578,7 @@ This acceptance remains family-scoped. **CSA-2 is still in progress** for the re
 
 ## CSA-2 Wave H — Data Display
 
-Status: **candidate / awaiting batched machine + rendered review**
+Status: **accepted / manual-reviewed**
 
 Wave H audits the Data Display family as composed browser surfaces rather than treating prior API/foundation coverage as sufficient:
 
@@ -617,3 +617,41 @@ Candidate correction:
 - retain the existing real-browser regression path: open controlled preview → zoom → rotate → click Close without force-click or DOM bypass.
 
 The correction is not accepted until a fresh exact-head Golden proves the ordinary user click reaches Close after transforms and the rendered evidence is inspected manually.
+
+
+## CSA-2 Wave H acceptance
+
+Status: **accepted / manual-reviewed**
+
+Accepted implementation head: `5692dff41f524a131f3b15d9a467ac3bc4a4dc30`.
+
+Exact-head machine evidence:
+
+- CI `35524048564` — success;
+- Canonical Visual Golden Smoke `35524048559` — success;
+- Blog Consumer Parity `35524048556` — success;
+- Gosso Admin Consumer Parity `35524048585` — success;
+- rendered Golden artifact `10608284046` — inspected directly.
+
+Manual rendered review accepted:
+
+- List — localized Empty and the loading/Load More composition remain legible without manufacturing another page surface;
+- Descriptions — at 600px the bordered vertical example collapses to a single readable column and the long Notes value wraps correctly;
+- Calendar — September 18 becomes the actual selected date while week numbers and today/selection distinction remain readable;
+- Image — after fallback load, controlled preview, zoom and rotate, the transformed image no longer pointer-occludes the visible action bar; toolbar and Close remain clearly usable;
+- Table — compact/touch density examples preserve table structure and selected/disabled/footer/caption treatment remains coherent;
+- Statistic — title/value/unit hierarchy remains compact and does not smuggle dashboard-card semantics into Core;
+- Timeline — alternate vertical and reversed horizontal variants retain clear rail/node/title alignment;
+- Tree — expanded hierarchy, selected Theme node and checked file state remain visually distinguishable.
+
+### CSA-D003 certification
+
+CSA-D003 is **certified** at `5692dff4`.
+
+The defect was not suppressed with `force` clicking or a test-only bypass. Core Image now gives the preview action-bar wrapper explicit component-local stacking above transformed preview media. The regression path performs the ordinary user sequence:
+
+`open controlled preview → zoom → rotate → ordinary Close click`.
+
+That path passes in Chromium and the resulting transformed-preview screenshot was inspected manually. Because the fix is local to a single modal surface, FI-001 global Overlay/Layering authority remains closed; no application-global z-index policy was reopened.
+
+Wave H acceptance remains family-scoped. **CSA-2 is still in progress** for the remaining Core catalog.
