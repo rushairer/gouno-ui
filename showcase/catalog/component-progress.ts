@@ -389,23 +389,6 @@ for (const [id, scope] of Object.entries({
 }
 
 for (const [id, scope] of Object.entries({
-  "core-checkbox": "CSA-2 Wave F candidate: checked-to-unchecked lifecycle and disabled-state composition are covered by real browser evidence; manual artifact acceptance pending.",
-  "core-radio": "CSA-2 Wave F candidate: mutually exclusive selection transition and disabled-state composition are covered by real browser evidence; manual artifact acceptance pending.",
-  "core-switch": "CSA-2 Wave F candidate: on-to-off transition and disabled-state composition are covered by real browser evidence; manual artifact acceptance pending.",
-  "core-segmented": "CSA-2 Wave F candidate: real radiogroup selection transition is covered by browser evidence; manual artifact acceptance pending.",
-  "core-slider": "CSA-2 Wave F candidate: native keyboard stepping and synchronized visible value are covered by browser evidence; manual artifact acceptance pending.",
-  "core-rate": "CSA-2 Wave F candidate: explicit score transition and radiogroup state are covered by browser evidence; manual artifact acceptance pending.",
-  "core-input-otp": "CSA-2 Wave F candidate: sequential digit entry and disabled peer state are covered by browser evidence; manual artifact acceptance pending.",
-})) {
-  componentReviews[id] = {
-    status: "reopened",
-    scope,
-    evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs"],
-    baseline: "CSA-2 Wave F candidate / 2026-09-21",
-  };
-}
-
-for (const [id, scope] of Object.entries({
   "core-progress": "CSA-2 Wave E manual-reviewed: real browser evidence confirms a 64% → 74% state transition, fill geometry, localized value copy and adjacent decrement/increment action rhythm.",
   "core-skeleton": "CSA-2 Wave E manual-reviewed: two-card loading structure preserves decorative placeholder ownership, consistent density and caller-owned surface boundaries.",
   "core-tooltip": "CSA-2 Wave E manual-reviewed: keyboard focus opens the canonical tooltip with visible trigger focus, bottom-start anchoring, arrow geometry and popup depth.",
