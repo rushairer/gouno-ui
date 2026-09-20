@@ -2146,14 +2146,14 @@ test("csa-core-badge-dynamic-state-evidence", async ({ page }, testInfo) => {
   const card = page
     .getByText("当前计数：5", { exact: true })
     .locator('xpath=ancestor::*[@data-slot="card"][1]');
-  await expect(card.getByRole("status", { name: "5" })).toBeVisible();
-  await expect(card.getByRole("status", { name: "0" })).toBeVisible();
-  await expect(card.getByRole("status", { name: "99+" })).toBeVisible();
-  await expect(card.getByRole("status", { name: "999+" })).toBeVisible();
+  await expect(card.getByRole("status", { name: "5", exact: true })).toBeVisible();
+  await expect(card.getByRole("status", { name: "0", exact: true })).toBeVisible();
+  await expect(card.getByRole("status", { name: "99+", exact: true })).toBeVisible();
+  await expect(card.getByRole("status", { name: "999+", exact: true })).toBeVisible();
 
   await card.getByRole("button", { name: "增加计数" }).click();
   await expect(card.getByText("当前计数：6", { exact: true })).toBeVisible();
-  await expect(card.getByRole("status", { name: "6" })).toBeVisible();
+  await expect(card.getByRole("status", { name: "6", exact: true })).toBeVisible();
 
   await card.screenshot({
     path: testInfo.outputPath("csa-core-badge-count-statuses.png"),

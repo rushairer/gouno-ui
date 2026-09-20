@@ -683,3 +683,14 @@ Layout evidence:
 - Page Layout — Header/Sider/Content/Footer region semantics and canonical 240px Sider geometry.
 
 This candidate does **not** promote components by test existence. Acceptance requires one exact-head CI + Canonical Visual Golden + Blog Consumer Parity + Gosso Admin Consumer Parity cycle followed by direct human review of all Wave I rendered evidence. Any defect discovered by rendering must be fixed at its owning layer before acceptance.
+
+
+### Wave I Badge evidence-name correction
+
+The first Wave I Golden run on `e0dca147` executed 12 of 13 new Wave I tests successfully and failed only the Badge evidence locator.
+
+Root cause: Playwright role-name matching is substring-based unless `exact: true` is supplied. The evidence query for status name `99+` therefore matched both the real `99+` overflow badge and `999+`.
+
+Classification: **evidence-driver defect**, not a Core Badge defect. The rendered Badge API deliberately exposes both overflow examples, and the ambiguity exists only in the test locator. The correction keeps the same user-visible states and requires exact accessible-name matching for 5 / 0 / 99+ / 999+ / 6.
+
+The 12 successful Wave I rendered captures from artifact `10616039018` were pre-reviewed directly; no Core/Foundation defect was identified in those captures. Wave I still requires a fresh exact-head run and a complete artifact including Badge before acceptance.
