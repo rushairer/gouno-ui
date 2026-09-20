@@ -191,7 +191,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | --- | --- | --- |
 | CSA-0 Stabilize | complete | Obsolete Blog AI reverse-migration PR closed; Blog Core Wave 2 merged to `gouno-blog/main` at `5e20df79`; Consumer expansion is frozen at this checkpoint. |
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
-| CSA-2 Core browser pass | in progress | Waves A–G manually accepted through selection/direct-input and complex-input families. Remaining Core data-display/layout/other families still require browser review. |
+| CSA-2 Core browser pass | in progress | Waves A–G manually accepted. Wave H Data Display candidate covers List, Descriptions, Calendar, Image, Table, Statistic, Timeline and Tree; acceptance awaits one batched exact-head gate plus rendered artifact inspection. |
 | CSA-3 Pattern/Gouno pass | planned | |
 | CSA-4 Product Showcase pages | planned | |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
@@ -574,3 +574,23 @@ Manual review found no Foundation/Core defect requiring reopening. The first Wav
 Native Date/Time/Color browser chrome is platform-owned. CSA acceptance covers the Gouno-owned web input geometry, state/focus treatment, value contract and composition; it does not attempt to restyle or automate operating-system picker chrome.
 
 This acceptance remains family-scoped. **CSA-2 is still in progress** for the remaining Core catalog.
+
+
+## CSA-2 Wave H — Data Display
+
+Status: **candidate / awaiting batched machine + rendered review**
+
+Wave H audits the Data Display family as composed browser surfaces rather than treating prior API/foundation coverage as sufficient:
+
+- List — localized Empty, active loading overlay and explicit Load More composition;
+- Descriptions — bordered vertical layout, long-value wrapping and single-column responsive collapse at 600px;
+- Calendar — controlled selected date, week-number column and real date-selection transition;
+- Image — deterministic fallback image, controlled preview overlay and zoom/rotate transform toolbar;
+- Table — selected/disabled row treatment, caption/footer ownership and compact/touch/sticky density variants;
+- Statistic — caller-owned label/value/suffix hierarchy without manufacturing a Card;
+- Timeline — alternate vertical and reversed horizontal layout semantics;
+- Tree — controlled selection plus check state on an expanded hierarchy.
+
+The Image browser evidence intercepts the remote demo image with deterministic SVG bytes. The audit therefore reviews Gouno preview/overlay/transform composition without making Canonical acceptance depend on a third-party image host.
+
+No component is promoted by this candidate. Open the PR only after the complete Wave H evidence/ledger batch is prepared so intermediate branch commits do not repeatedly run CI/Golden/reciprocal parity. Acceptance still requires exact-head CI, Canonical Visual Golden, Blog Consumer Parity, Gosso Admin Consumer Parity, and direct manual inspection of every generated Wave H screenshot.
