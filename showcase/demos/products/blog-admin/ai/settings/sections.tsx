@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Check,
   Copy,
@@ -21,6 +22,7 @@ import {
   CardContent,
   Heading,
   IconButton,
+  Input,
   Select,
   Tag,
   Text,
@@ -52,6 +54,7 @@ export interface AISettingsSectionActions {
   onDeleteSkill: (skill: SkillFixture) => void;
   onRetryIndex: () => void;
   onRebuildIndex: () => void;
+  onRunKnowledgeSearch: (query: string) => void;
   onCreateEmbedding: () => void;
   onTestEmbedding: (profile: EmbeddingProfileFixture) => void;
   onEditEmbedding: (profile: EmbeddingProfileFixture) => void;
@@ -167,35 +170,112 @@ function ToolList({ fixture }: { fixture: AISettingsFixture }) {
 }
 
 function KnowledgePanel({ fixture, actions }: { fixture: AISettingsFixture["knowledge"]; actions: AISettingsSectionActions }) {
+  const [query, setQuery] = useState(fixture.retrieval.query);
+
   return (
     <div className="flex flex-col gap-5">
       <TabPanelFeedback>
         {fixture.index.failed ? <Alert type="warning" showIcon title="知识索引存在失败任务" description="优先重试失败项；只有索引结构变化或一致性异常时才执行全量重建。" /> : null}
       </TabPanelFeedback>
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Card padding="base"><Text size="xs" tone="muted">分段</Text><Heading level={2}>{fixture.index.chunks}</Heading></Card>
-        <Card padding="base"><Text size="xs" tone="muted">队列</Text><Heading level={2}>{fixture.index.queued}</Heading></Card>
-        <Card padding="base"><Text size="xs" tone="muted">失败</Text><Heading level={2}>{fixture.index.failed}</Heading></Card>
-      </div>
-      <Card padding="none" className="overflow-hidden">
-        <CardContent className="divide-y p-0">
-          {fixture.profiles.map((profile) => (
-            <div key={profile.id} className="flex flex-col gap-4 p-6 xl:flex-row xl:items-center xl:justify-between">
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2"><strong>{profile.name}</strong><Tag color={profile.enabled ? "success" : "default"}>{profile.enabled ? "已启用" : "已停用"}</Tag></div>
-                <Text size="xs" tone="muted">{profile.model} · {profile.dimensions} dimensions</Text>
-                <Text size="xs" tone="muted" className="break-all">{profile.baseUrl} · API Key •••• {profile.apiKeyLast4}</Text>
+
+      <section className="flex flex-col gap-3" aria-labelledby="knowledge-overview-title">
+        <div>
+          <Heading id="knowledge-overview-title" level={2} variant="compact">索引概览</Heading>
+          <Text size="sm" tone="muted">确认已发布内容是否已进入知识索引，以及检索链路是否健康。</Text>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+          <Card padding="base"><Text size="xs" tone="muted">已索引文章</Text><Heading level={3}>{fixture.index.indexedPosts}</Heading></Card>
+          <Card padding="base"><Text size="xs" tone="muted">分段</Text><Heading level={3}>{fixture.index.chunks}</Heading></Card>
+          <Card padding="base"><Text size="xs" tone="muted">队列</Text><Heading level={3}>{fixture.index.queued}</Heading></Card>
+          <Card padding="base"><Text size="xs" tone="muted">失败</Text><Heading level={3}>{fixture.index.failed}</Heading></Card>
+          <Card padding="base"><Text size="xs" tone="muted">检索 P95 · 24h</Text><Heading level={3}>{fixture.index.retrievalP95Ms24h} ms</Heading></Card>
+        </div>
+        <Text size="xs" tone="muted">最近全量重建：{fixture.index.lastRebuiltAt}</Text>
+      </section>
+
+      <section className="flex flex-col gap-3" aria-labelledby="knowledge-content-title">
+        <div>
+          <Heading id="knowledge-content-title" level={2} variant="compact">已索引内容</Heading>
+          <Text size="sm" tone="muted">这里展示知识库真正包含的 Blog 内容，而不是只暴露向量基础设施状态。</Text>
+        </div>
+        <Card padding="none" className="overflow-hidden">
+          <CardContent className="divide-y p-0">
+            {fixture.content.map((item) => (
+              <div key={item.postId} className="grid gap-3 p-6 md:grid-cols-[minmax(0,1fr)_auto_auto] md:items-center">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <strong>{item.title}</strong>
+                    <Tag color={item.status === "ready" ? "success" : "warning"}>{item.status === "ready" ? "已同步" : "待同步"}</Tag>
+                  </div>
+                  <Text size="xs" tone="muted" className="break-all">/{item.slug}</Text>
+                </div>
+                <Text size="sm">{item.chunks} Chunks</Text>
+                <Text size="xs" tone="muted">{item.lastIndexedAt}</Text>
               </div>
-              <div className="flex min-w-max flex-nowrap items-center gap-1">
-                <IconButton label={`测试 ${profile.name}`} icon={<TestTube2 />} variant="ghost" onClick={() => actions.onTestEmbedding(profile)} />
-                <IconButton label={`编辑 ${profile.name}`} icon={<Edit2 />} variant="ghost" onClick={() => actions.onEditEmbedding(profile)} />
-                <IconButton label={`删除 ${profile.name}`} icon={<Trash2 />} variant="ghost" color="error" onClick={() => actions.onDeleteEmbedding(profile)} />
-              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </section>
+
+      <section className="flex flex-col gap-3" aria-labelledby="knowledge-retrieval-title">
+        <div>
+          <Heading id="knowledge-retrieval-title" level={2} variant="compact">检索验证</Heading>
+          <Text size="sm" tone="muted">直接验证 content.search_knowledge 的真实语义：命中文章、证据片段、Citation 与混合检索分数。</Text>
+        </div>
+        <Card padding="base">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Input aria-label="知识库检索测试" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="输入一个问题验证知识检索…" />
+              <Button variant="solid" color="primary" disabled={!query.trim()} onClick={() => actions.onRunKnowledgeSearch(query.trim())}>测试检索</Button>
             </div>
-          ))}
-        </CardContent>
-      </Card>
-      <Text size="xs" tone="muted">最近重建：{fixture.index.lastRebuiltAt}</Text>
+            <Text size="xs" tone="muted">Fixture 最近一次检索耗时 {fixture.retrieval.latencyMs} ms · 返回 {fixture.retrieval.results.length} 条证据。</Text>
+            <div className="divide-y">
+              {fixture.retrieval.results.map((result) => (
+                <article key={result.citationId} className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0">
+                      <strong>{result.title}</strong>
+                      <Text size="xs" tone="muted" className="break-all">/{result.slug}</Text>
+                    </div>
+                    <Tag color="primary">{result.citationId}</Tag>
+                  </div>
+                  <Text size="sm">{result.snippet}</Text>
+                  <div className="flex flex-wrap gap-2">
+                    <Tag>综合 {result.score.toFixed(2)}</Tag>
+                    <Tag>Semantic {result.semanticScore.toFixed(2)}</Tag>
+                    <Tag>Lexical {result.lexicalScore.toFixed(2)}</Tag>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </Card>
+      </section>
+
+      <section className="flex flex-col gap-3" aria-labelledby="knowledge-embedding-title">
+        <div>
+          <Heading id="knowledge-embedding-title" level={2} variant="compact">Embedding 配置</Heading>
+          <Text size="sm" tone="muted">Embedding Profile 定义知识索引的语义空间；配置本身与索引内容、检索验证保持分层。</Text>
+        </div>
+        <Card padding="none" className="overflow-hidden">
+          <CardContent className="divide-y p-0">
+            {fixture.profiles.map((profile) => (
+              <div key={profile.id} className="flex flex-col gap-4 p-6 xl:flex-row xl:items-center xl:justify-between">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2"><strong>{profile.name}</strong><Tag color={profile.enabled ? "success" : "default"}>{profile.enabled ? "已启用" : "已停用"}</Tag></div>
+                  <Text size="xs" tone="muted">{profile.model} · {profile.dimensions} dimensions</Text>
+                  <Text size="xs" tone="muted" className="break-all">{profile.baseUrl} · API Key •••• {profile.apiKeyLast4}</Text>
+                </div>
+                <div className="flex min-w-max flex-nowrap items-center gap-1">
+                  <IconButton label={`测试 ${profile.name}`} icon={<TestTube2 />} variant="ghost" onClick={() => actions.onTestEmbedding(profile)} />
+                  <IconButton label={`编辑 ${profile.name}`} icon={<Edit2 />} variant="ghost" onClick={() => actions.onEditEmbedding(profile)} />
+                  <IconButton label={`删除 ${profile.name}`} icon={<Trash2 />} variant="ghost" color="error" onClick={() => actions.onDeleteEmbedding(profile)} />
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </section>
     </div>
   );
 }
