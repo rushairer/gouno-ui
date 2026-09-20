@@ -201,3 +201,26 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 Do not report “Showcase aligned”, “Canonical”, “finished”, or equivalent solely from static checks, source markers, CI success, visual-diff thresholds or parity scripts.
 
 A completion claim must name the manually reviewed rendered scope and the unresolved/reopened findings, if any.
+
+
+## CSA-2 Wave A manual finding — Core Steps
+
+Source evidence: Canonical Visual Golden Smoke run `35499388006`, artifact `10601489776`.
+
+Human review of the first dedicated Core evidence batch found that the 700px Steps state is **not acceptable as Canonical** even though the Playwright geometry test passed:
+
+- the horizontal composition resumes immediately above `sm`;
+- the second step title `Security` truncates visibly to `S...`;
+- four title/content lanes are cramped at this intermediate width;
+- therefore the test proved geometry, but not readable product composition.
+
+Classification: `core-steps` Responsive implementation defect. Responsive is reopened only for this component; the canonical breakpoint scale is not reopened.
+
+Planned correction already in the candidate branch: keep the complete responsive stack below canonical `md`, validate 700px remains vertical and 800px is horizontal, and capture separate stacked / desktop-inline / vertical-dot evidence.
+
+The same manual pass also found two **evidence-quality defects**, not component defects:
+
+- Focus evidence captured only the fallback probe after focus had left the real Button;
+- ConfigProvider evidence did not frame the localized comparison region clearly enough for human review.
+
+Both evidence captures are being corrected before Wave A can be accepted.
