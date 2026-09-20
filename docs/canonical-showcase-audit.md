@@ -312,3 +312,19 @@ Accepted rendered states:
 Manual review found **no Foundation reopening** in this wave. The active final Cascader/TreeSelect registry entries are the reviewed multi-level implementations; legacy simple snippets are not treated as canonical evidence.
 
 This acceptance is family-scoped. CSA-2 remains in progress for the remaining Core catalog.
+
+
+## CSA-2 Wave C — navigation / disclosure family
+
+Status: **in progress**
+
+Wave C targets interactive navigation/disclosure surfaces that were historically reviewed but did not yet have dedicated human-reviewable Canonical Golden states:
+
+- Tabs — real active-tab transition and panel ownership;
+- Menu — inline hierarchy, submenu expanded state and selected leaf;
+- Collapse — accordion transition and disclosure state;
+- Pagination — real page transition and current-page state;
+- Breadcrumb — real attached navigation menu;
+- Anchor — native hash navigation to a real target section.
+
+No component behavior is changed in the initial candidate. The generated Chromium artifact must be inspected manually before any Wave C family is promoted to CSA manual-reviewed evidence.
