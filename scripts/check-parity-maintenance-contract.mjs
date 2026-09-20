@@ -47,6 +47,7 @@ const workflows = [
       "test -f blog-frontend/e2e/privileged-access-parity.pw.mjs",
       "test -f blog-frontend/e2e/public-showcase-parity.pw.mjs",
       "test -f blog-frontend/e2e/users-showcase-parity.pw.mjs",
+      "test -f blog-frontend/scripts/check-showcase-parity-certifications.mjs",
       "\"showcase-parity.pw.mjs\"",
       "\"privileged-access-parity.pw.mjs\"",
       "\"public-showcase-parity.pw.mjs\"",
