@@ -1103,6 +1103,159 @@ test("csa-core-anchor-hash-evidence", async ({ page }, testInfo) => {
   await captureCanonicalAuditEvidence(page, testInfo, "core-anchor-contract-hash");
 });
 
+
+test("csa-core-alert-feedback-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-alert",
+    viewport: desktop,
+    ready: '[data-slot="alert"]',
+  });
+
+  for (const title of [
+    "操作成功",
+    "有一条新的系统信息",
+    "配置即将过期",
+    "保存失败，请检查输入",
+  ]) {
+    await expect(page.getByText(title, { exact: true })).toBeVisible();
+  }
+
+  const lifecycleCard = page
+    .getByRole("heading", { level: 3, name: "操作与关闭生命周期" })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  await expect(lifecycleCard.getByText("可关闭通知", { exact: true })).toBeVisible();
+  await captureCanonicalAuditEvidence(page, testInfo, "core-alert-semantic-states");
+
+  await lifecycleCard.getByRole("button", { name: "关闭通知" }).click();
+  await expect(lifecycleCard.getByText("已关闭", { exact: true })).toBeVisible();
+  await lifecycleCard.getByRole("button", { name: "重新显示" }).click();
+  await expect(lifecycleCard.getByText("可关闭通知", { exact: true })).toBeVisible();
+  await lifecycleCard.screenshot({
+    path: testInfo.outputPath("csa-core-alert-closable-reset.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-popconfirm-feedback-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-popconfirm",
+    viewport: desktop,
+    ready: 'button:has-text("删除版本")',
+  });
+
+  await page.getByRole("button", { name: "删除版本" }).click();
+  const dialog = page.getByRole("alertdialog");
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText("确认删除这个版本？", { exact: true })).toBeVisible();
+  await expect(dialog.getByText("删除后无法恢复。", { exact: true })).toBeVisible();
+  await expect(dialog.getByRole("button", { name: "删除" })).toBeVisible();
+  await expect(dialog.getByRole("button", { name: "取消" })).toBeVisible();
+  await captureCanonicalAuditEvidence(page, testInfo, "core-popconfirm-danger-open");
+});
+
+test("csa-core-message-feedback-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-message",
+    viewport: desktop,
+    ready: 'button:has-text("成功")',
+  });
+
+  await page.getByRole("button", { name: "成功", exact: true }).click();
+  await page.getByRole("button", { name: "错误", exact: true }).click();
+  await expect(page.getByText("配置已保存", { exact: true })).toBeVisible();
+  await expect(page.getByText("保存失败", { exact: true })).toBeVisible();
+  await captureCanonicalAuditEvidence(page, testInfo, "core-message-success-error");
+});
+
+test("csa-core-notification-feedback-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-notification",
+    viewport: desktop,
+    ready: 'button:has-text("成功通知")',
+  });
+
+  await page.getByRole("button", { name: "成功通知" }).click();
+  await page.getByRole("button", { name: "错误通知" }).click();
+  await page.getByRole("button", { name: "持久通知" }).click();
+  await expect(page.getByText("构建完成", { exact: true })).toBeVisible();
+  await expect(page.getByText("构建失败", { exact: true })).toBeVisible();
+  await expect(page.getByText("需要人工确认", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "关闭持久通知" })).toBeVisible();
+  await captureCanonicalAuditEvidence(page, testInfo, "core-notification-mixed-stack");
+});
+
+test("csa-core-empty-feedback-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-empty",
+    viewport: desktop,
+    ready: '[data-slot="empty"]',
+  });
+
+  const empty = page.locator('[data-slot="empty"]').first();
+  await expect(empty.getByText("暂无匹配内容", { exact: true })).toBeVisible();
+  await expect(empty.getByText("调整筛选条件，或清除筛选后继续浏览。", { exact: true })).toBeVisible();
+  await expect(empty.getByRole("button", { name: "清除筛选" })).toBeVisible();
+  const card = empty.locator('xpath=ancestor::*[@data-slot="card"][1]');
+  await card.screenshot({
+    path: testInfo.outputPath("csa-core-empty-contained-state.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-result-feedback-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-result",
+    viewport: desktop,
+    ready: '[data-slot="result"]',
+  });
+
+  const result = page.locator('[data-slot="result"]').first();
+  await expect(result).toHaveAttribute("data-status", "success");
+  await expect(result.getByText("操作成功", { exact: true })).toBeVisible();
+  await expect(result.getByText("数据已经保存，可以返回列表继续处理。", { exact: true })).toBeVisible();
+  await expect(result.getByRole("button", { name: "返回列表" })).toBeVisible();
+  await result.screenshot({
+    path: testInfo.outputPath("csa-core-result-success-state.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-spin-feedback-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-spin",
+    viewport: desktop,
+    ready: '[data-slot="spin"]',
+  });
+
+  const spin = page.locator('[data-slot="spin"]').first();
+  await expect(spin).toHaveAttribute("aria-busy", "true");
+  await expect(spin.locator('[data-slot="spin-overlay"]')).toBeVisible();
+  await expect(spin.getByText("正在刷新内容", { exact: true })).toBeVisible();
+  await expect(spin.getByText("已有内容在后台刷新时仍保留。", { exact: true })).toBeVisible();
+  await spin.screenshot({
+    path: testInfo.outputPath("csa-core-spin-busy-overlay.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
 test("surface-gosso-overview-quick-link-card-ownership", async ({ page }) => {
   const scenario = {
     workspace: "gosso-admin",
