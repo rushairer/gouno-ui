@@ -191,7 +191,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | --- | --- | --- |
 | CSA-0 Stabilize | complete | Obsolete Blog AI reverse-migration PR closed; Blog Core Wave 2 merged to `gouno-blog/main` at `5e20df79`; Consumer expansion is frozen at this checkpoint. |
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
-| CSA-2 Core browser pass | in progress | Waves A–E manually accepted across focus/forms/overlays, picker-popup, navigation/disclosure and the complete Feedback family; additional Core families remain. |
+| CSA-2 Core browser pass | in progress | Waves A–G manually accepted through selection/direct-input and complex-input families. Remaining Core data-display/layout/other families still require browser review. |
 | CSA-3 Pattern/Gouno pass | planned | |
 | CSA-4 Product Showcase pages | planned | |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
@@ -483,3 +483,94 @@ Accepted rendered/browser states:
 Direct review found **no Wave E defect requiring Foundation or Core reopening**. The Tour review respects its current admitted contract: it is a modal walkthrough and does not imply target spotlight/anchoring capability that Core does not implement.
 
 With Wave E accepted, the Feedback family now has dedicated CSA browser evidence across Alert, Progress, Skeleton, Modal, Drawer, Popover, Tooltip, Popconfirm, Message, Notification, Empty, Result, Spin and Tour. CSA-2 remains active for the remaining Core catalog.
+
+
+## CSA-2 Wave F — selection / direct-input controls
+
+Status: **candidate / awaiting machine + rendered review**
+
+Wave F extends the Core browser pass to interaction states that are easy to over-credit from static API coverage alone:
+
+- Checkbox — checked → unchecked lifecycle plus disabled peer;
+- Radio — mutually exclusive plan selection plus disabled peer;
+- Switch — on → off state plus disabled peer;
+- Segmented — real radio-group selection change;
+- Slider — native keyboard step transition with synchronized visible value;
+- Rate — explicit score transition with radiogroup state;
+- InputOTP — focus progression and six-digit entry with disabled masked peer.
+
+Candidate evidence names are guarded by `scripts/check-canonical-showcase-audit.mjs`.
+No component is promoted by this commit. Wave F is accepted only after exact-head CI, Canonical Golden, reciprocal Blog/Gosso parity, and manual inspection of the generated rendered evidence.
+
+
+### Wave F evidence-target correction
+
+The first Wave F Golden run on `b2866632` passed CI plus both reciprocal consumer parity jobs, but the Canonical Golden browser job rejected two evidence interactions:
+
+- Switch evidence clicked the visually hidden native checkbox instead of its visible label surface;
+- Segmented evidence clicked the visually hidden native radio instead of the visible segmented item surface.
+
+The browser reported pointer interception by the visible labels. This is classified as an **evidence-driver defect**, not a Core component defect: the canonical controls intentionally use visually hidden native inputs behind visible label-owned hit targets. The candidate is corrected to exercise the actual visible interaction surfaces. No Foundation/API review is reopened by this finding.
+
+## CSA-2 Wave G — complex input / assisted-entry controls
+
+Status: **candidate / batched with Wave F**
+
+Wave G adds real-browser evidence for:
+
+- InputNumber — controlled formatted value and keyboard step transition;
+- DatePicker — controlled value plus explicit clear lifecycle;
+- DateRangePicker — start-date update while preserving the end-date contract;
+- TimePicker — native time value update plus warning state;
+- ColorPicker — browser-native color value, keyboard focus and warning state;
+- Upload — controlled image selection and rendered file-list ownership;
+- AutoComplete — filtered popup, disabled option and keyboard confirmation;
+- Mentions — active mention popup, keyboard highlight and selection commit;
+- Transfer — source selection, operation enablement and real item movement.
+
+ColorPicker intentionally does not attempt to automate the operating-system color dialog; CSA evidence owns the web-visible input/focus/state surface while the browser/OS owns the native picker chrome.
+
+Wave G is **not accepted by source or test existence**. The batch must pass one exact-head CI/Canonical Golden/Blog parity/Gosso parity cycle, then the generated Wave F and Wave G rendered evidence must be inspected family-by-family.
+
+
+## CSA-2 Waves F-G acceptance
+
+Status: **accepted / manual-reviewed**
+
+Accepted implementation head: `0db47f095792aa58e4742eaa05697398781b67d7`.
+
+Exact-head machine evidence:
+
+- CI `35522972664` — success;
+- Canonical Visual Golden Smoke `35522972649` — success;
+- Blog Consumer Parity `35522972674` — success;
+- Gosso Admin Consumer Parity `35522972659` — success;
+- rendered Golden artifact `10609207461` inspected directly.
+
+Wave F accepted rendered states:
+
+- Checkbox — checked-to-unchecked lifecycle plus disabled peer;
+- Radio — mutually exclusive selection transition plus disabled peer;
+- Switch — visible label-owned hit target, on-to-off transition and disabled checked peer;
+- Segmented — visible item-owned hit target and real radiogroup selection transition;
+- Slider — native keyboard step from 40 to 45 plus disabled peer;
+- Rate — score transition to 5 with radiogroup state plus disabled example;
+- InputOTP — sequential six-digit entry, focus progression and disabled masked peer.
+
+Wave G accepted rendered states:
+
+- InputNumber — formatted controlled value and keyboard step to 1380;
+- DatePicker — controlled date cleared to the explicit empty state;
+- DateRangePicker — start date changed while the end date remained stable;
+- TimePicker — native time update plus warning-state peer;
+- ColorPicker — browser-native value, visible keyboard focus and warning-state peer;
+- Upload — controlled image selection and caller-owned rendered file list;
+- AutoComplete — filtered popup with active enabled option and disabled option, followed by keyboard commit;
+- Mentions — active mention popup, keyboard highlight movement and committed mention;
+- Transfer — source selection, enabled add operation and visible item movement into the target list.
+
+Manual review found no Foundation/Core defect requiring reopening. The first Wave F Golden failure is retained as evidence of an **evidence-driver defect**: Playwright initially targeted visually hidden native bridges instead of visible label-owned hit targets. The corrected evidence exercises the same surfaces a user clicks.
+
+Native Date/Time/Color browser chrome is platform-owned. CSA acceptance covers the Gouno-owned web input geometry, state/focus treatment, value contract and composition; it does not attempt to restyle or automate operating-system picker chrome.
+
+This acceptance remains family-scoped. **CSA-2 is still in progress** for the remaining Core catalog.

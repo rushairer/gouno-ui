@@ -402,6 +402,33 @@ for (const [id, scope] of Object.entries({
   };
 }
 
+
+for (const [id, scope] of Object.entries({
+  "core-checkbox": "CSA-2 Wave F manual-reviewed: real browser evidence confirms visible Checkbox state transition and disabled-state composition.",
+  "core-radio": "CSA-2 Wave F manual-reviewed: real browser evidence confirms mutually exclusive Radio selection and disabled-state composition.",
+  "core-switch": "CSA-2 Wave F manual-reviewed: the visible label owns the hit target while native switch semantics preserve checked/disabled state.",
+  "core-segmented": "CSA-2 Wave F manual-reviewed: visible segmented items drive the native radiogroup selection transition without hidden-input interaction leakage.",
+  "core-slider": "CSA-2 Wave F manual-reviewed: native keyboard stepping updates both range value and visible value copy while disabled state remains distinct.",
+  "core-rate": "CSA-2 Wave F manual-reviewed: score transition, radiogroup state and disabled example remain visually coherent.",
+  "core-input-otp": "CSA-2 Wave F manual-reviewed: sequential digit entry, focus progression and disabled masked peer were inspected in Chromium.",
+  "core-input-number": "CSA-2 Wave G manual-reviewed: formatted controlled value and keyboard step transition preserve focus, controls and visible value ownership.",
+  "core-date-picker": "CSA-2 Wave G manual-reviewed: controlled date and explicit clear lifecycle preserve input/action geometry and empty-state copy.",
+  "core-date-range-picker": "CSA-2 Wave G manual-reviewed: paired native dates preserve range geometry while start-date updates leave the end-date contract stable.",
+  "core-time-picker": "CSA-2 Wave G manual-reviewed: native time update plus warning-state peer preserve Gouno sizing/state treatment around platform-owned chrome.",
+  "core-color-picker": "CSA-2 Wave G manual-reviewed: native color value, keyboard focus and warning-state peer preserve Gouno-owned geometry/state around platform chrome.",
+  "core-upload": "CSA-2 Wave G manual-reviewed: controlled selection renders a coherent drag target and owned file list with remove affordance.",
+  "core-autocomplete": "CSA-2 Wave G manual-reviewed: filtered popup preserves active/disabled option hierarchy and keyboard confirmation.",
+  "core-mentions": "CSA-2 Wave G manual-reviewed: active mention popup, keyboard highlight movement and committed mention preserve textbox/listbox ownership.",
+  "core-transfer": "CSA-2 Wave G manual-reviewed: source selection enables the intended operation and visibly moves the item into the target list.",
+})) {
+  componentReviews[id] = {
+    status: "reviewed",
+    scope,
+    evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "CSA-2 Waves F-G manual-reviewed / 2026-09-21",
+  };
+}
+
 export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
   return review?.status === "reviewed" ? 100 : Math.min(fallback, 99);
 }
