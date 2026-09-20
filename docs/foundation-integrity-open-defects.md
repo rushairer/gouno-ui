@@ -76,3 +76,20 @@ Resolution:
 - keep `core-tag` reopened until exact-head CI/visual/consumer gates confirm the correction.
 
 Resolution evidence: `hover:bg-current/10` is guarded by Color and State conformance; CI #562 reports zero raw product palette bypasses and zero state-geometry bypasses, Golden #479 is green, and Blog/Gosso parity #540/#535 passed.
+
+
+## CSA-D001 — Steps intermediate-width readability
+
+**Status:** open / Responsive reopened 2026-09-20  
+**Component:** `core-steps`  
+**Observed evidence:** CSA-001 Canonical Visual Golden run `35499388006`, artifact `10601489776`, 700px Steps capture.
+
+The prior FI-D001 browser contract proved connector geometry and the complete `max-sm` composition, but manual review of the rendered 700px state showed that the horizontal lane resumed too early. `Security` was visibly truncated to `S...`, and four content columns became cramped even while all geometry assertions remained green.
+
+Resolution target:
+
+- use canonical `md` rather than `sm` as the automatic horizontal/vertical Steps threshold;
+- keep the entire item/body/connector composition on the same responsive threshold;
+- preserve `responsive={false}`;
+- capture separate human-reviewable evidence for stacked, desktop-inline, and vertical-dot layouts;
+- re-certify Responsive/core-steps only after exact-head CI, Golden, Blog/Gosso reciprocal parity and manual screenshot review succeed.
