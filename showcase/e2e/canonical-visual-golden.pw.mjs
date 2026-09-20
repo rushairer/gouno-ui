@@ -787,6 +787,11 @@ test("responsive-steps-canonical-md-stacking", async ({ page }, testInfo) => {
       (element) => element.scrollWidth <= element.clientWidth + 1,
     ),
   ).toBe(true);
+  expect(
+    await steps.evaluate(
+      (element) => element.scrollWidth > element.clientWidth + 1,
+    ),
+  ).toBe(true);
   await steps.screenshot({
     path: testInfo.outputPath("csa-core-steps-shell-constrained.png"),
     animations: "disabled",
