@@ -191,7 +191,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | --- | --- | --- |
 | CSA-0 Stabilize | complete | Obsolete Blog AI reverse-migration PR closed; Blog Core Wave 2 merged to `gouno-blog/main` at `5e20df79`; Consumer expansion is frozen at this checkpoint. |
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
-| CSA-2 Core browser pass | in progress | Waves A–E manually accepted across focus/forms/overlays, picker-popup, navigation/disclosure and the complete Feedback family; additional Core families remain. |
+| CSA-2 Core browser pass | in progress | Waves A–E manually accepted. Wave F candidate adds selection/input-control evidence for Checkbox, Radio, Switch, Segmented, Slider, Rate and InputOTP; acceptance awaits exact-head CI/Golden plus rendered artifact inspection. |
 | CSA-3 Pattern/Gouno pass | planned | |
 | CSA-4 Product Showcase pages | planned | |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
@@ -483,3 +483,21 @@ Accepted rendered/browser states:
 Direct review found **no Wave E defect requiring Foundation or Core reopening**. The Tour review respects its current admitted contract: it is a modal walkthrough and does not imply target spotlight/anchoring capability that Core does not implement.
 
 With Wave E accepted, the Feedback family now has dedicated CSA browser evidence across Alert, Progress, Skeleton, Modal, Drawer, Popover, Tooltip, Popconfirm, Message, Notification, Empty, Result, Spin and Tour. CSA-2 remains active for the remaining Core catalog.
+
+
+## CSA-2 Wave F — selection / direct-input controls
+
+Status: **candidate / awaiting machine + rendered review**
+
+Wave F extends the Core browser pass to interaction states that are easy to over-credit from static API coverage alone:
+
+- Checkbox — checked → unchecked lifecycle plus disabled peer;
+- Radio — mutually exclusive plan selection plus disabled peer;
+- Switch — on → off state plus disabled peer;
+- Segmented — real radio-group selection change;
+- Slider — native keyboard step transition with synchronized visible value;
+- Rate — explicit score transition with radiogroup state;
+- InputOTP — focus progression and six-digit entry with disabled masked peer.
+
+Candidate evidence names are guarded by `scripts/check-canonical-showcase-audit.mjs`.
+No component is promoted by this commit. Wave F is accepted only after exact-head CI, Canonical Golden, reciprocal Blog/Gosso parity, and manual inspection of the generated rendered evidence.
