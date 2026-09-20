@@ -90,6 +90,37 @@ Gouno UI currently has **three completed real-product comparison corpora and no 
 - When a binding rule in `docs/design-language.md` or `docs/product-interface-governance.md` is added or materially changed, stop ordinary product work until the completed governed corpora have been scanned. Fix stale occurrences, document intentional exceptions and add source/runtime regression coverage where practical.
 - Ant Design and other mature systems are benchmarks during hardening and legitimate prior art for established generic Core catalog breadth. They do not automatically authorize new APIs or historical compatibility baggage; platform semantics, accessibility, Gouno API governance and real product evidence still decide the final contract.
 
+## Canonical Showcase acceptance rule
+
+Showcase is not canonical merely because its source compiles, its component contracts pass, or its visual snapshots are green.
+
+Every page/pattern promoted as a Canonical Reference must pass a **manual browser-render review** first. The reviewer must inspect the actually rendered surface and exercise the meaningful interaction/state path; static source scans, DOM markers, style fingerprints, snapshot thresholds and parity scripts are supporting evidence only.
+
+Canonical acceptance states are:
+
+```text
+Implemented
+    ↓
+Manual Browser Reviewed
+    ↓
+Canonical
+```
+
+A surface must not be used as the authority for a new Consumer reverse migration while it is only `Implemented`. A green automated suite cannot promote a surface to `Canonical` by itself.
+
+The manual pass must cover the dimensions that apply to the surface: information hierarchy, typography, spacing/rhythm, container and surface ownership, grid/flex geometry, form density, feedback/state placement, overlay behavior, scrolling, interaction feedback, responsive behavior, and consistency with sibling surfaces.
+
+When manual review finds a repeated/systemic defect:
+
+1. stop Consumer propagation for the affected surface family;
+2. classify whether the owner is Foundation, Core, Pattern/Gouno composition, or Showcase-only composition;
+3. fix the owner rather than applying a page-local patch;
+4. add/strengthen automated regression evidence after the human finding is understood;
+5. re-review the rendered Showcase;
+6. only then resume Consumer parity/reverse migration.
+
+The durable execution ledger for this pass is `docs/canonical-showcase-audit.md`. FI-001 remains historical foundation certification evidence; this audit does not silently reopen a Foundation unless an observed rendered defect demonstrates that the certified authority is actually wrong or incomplete.
+
 ## Showcase evidence rule
 
 Showcase has two roles:
