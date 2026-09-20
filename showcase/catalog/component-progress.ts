@@ -297,7 +297,7 @@ for (const [id, scope] of Object.entries({
   componentReviews[id] = {
     status: "reviewed",
     scope,
-    evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs", "Canonical Visual Golden Smoke 35501490432 / artifact 10602856830"],
+    evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs"],
     baseline: "CSA-2 Wave B manual-reviewed / 2026-09-20",
   };
 }
