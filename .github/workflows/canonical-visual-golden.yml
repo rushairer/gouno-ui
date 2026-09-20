@@ -65,6 +65,8 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
 
+  # An explicit refresh commit is the only write path for manually reviewed
+  # canonical visual changes; normal comparison runs remain read-only.
   refresh:
     if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'chore(showcase): refresh canonical visual goldens' }}"
     runs-on: ubuntu-latest
