@@ -90,6 +90,7 @@ Resolution target:
 
 - use canonical `md` rather than `sm` as the automatic horizontal/vertical Steps threshold;
 - keep the entire item/body/connector composition on the same responsive threshold;
+- give horizontal items a readable `min-w-44` track and let the root horizontal overflow own constrained-container pressure;
 - preserve `responsive={false}`;
-- capture separate human-reviewable evidence for stacked, desktop-inline, and vertical-dot layouts;
+- capture separate human-reviewable evidence for 700px stacked, 800px desktop-inline, 1024px shell-constrained, and vertical-dot layouts;
 - re-certify Responsive/core-steps only after exact-head CI, Golden, Blog/Gosso reciprocal parity and manual screenshot review succeed.
