@@ -1060,7 +1060,8 @@ test("csa-core-pagination-interaction-evidence", async ({ page }, testInfo) => {
   const pagination = baseDemo.getByRole("navigation", { name: "Pagination" });
   const page6 = pagination.locator('button[aria-current="page"]');
   await expect(page6).toContainText("6");
-  const page7 = pagination.getByRole("button", { name: "7", exact: true });
+  const page7 = pagination.locator("button").filter({ hasText: /^7$/ });
+  await expect(page7).toHaveCount(1);
   await page7.click();
   await expect(page7).toHaveAttribute("aria-current", "page");
   await captureCanonicalAuditEvidence(page, testInfo, "core-pagination-page-7");
