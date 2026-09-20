@@ -191,7 +191,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | --- | --- | --- |
 | CSA-0 Stabilize | complete | Obsolete Blog AI reverse-migration PR closed; Blog Core Wave 2 merged to `gouno-blog/main` at `5e20df79`; Consumer expansion is frozen at this checkpoint. |
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
-| CSA-2 Core browser pass | in progress | Dedicated artifact captures added for Focus, Modal/Popover, Form/Select, ConfigProvider, Carousel and Steps; manual review follows CI artifact generation. |
+| CSA-2 Core browser pass | in progress | Wave A manually accepted for Focus, Modal/Popover, Form/Select, ConfigProvider, Carousel and Steps; additional Core families remain. |
 | CSA-3 Pattern/Gouno pass | planned | |
 | CSA-4 Product Showcase pages | planned | |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
@@ -241,3 +241,29 @@ The revised Core contract is:
 - keep the vertical-dot geometry evidence separate.
 
 Focus fallback evidence is also changed back to a full-page capture after moving the probe away from navigation, because a tight locator screenshot clipped the actual outline and was not independently reviewable.
+
+
+## CSA-2 Wave A acceptance
+
+Wave A is accepted as **manual-reviewed evidence**, not as completion of the entire Core catalog.
+
+Final exact-head machine evidence:
+
+- CI `35500169813` — success;
+- Canonical Visual Golden Smoke `35500170014` — success;
+- Blog Consumer Parity `35500169770` — success;
+- Gosso Admin Consumer Parity `35500169802` — success.
+
+Final artifact `10601014647` was inspected directly. Accepted rendered states include:
+
+- component-owned Button focus and Base fallback focus;
+- nested Modal + Popover layering;
+- Form + open Select;
+- Modal focus-trap state;
+- ConfigProvider zh-CN / en-US visible comparison and caller override;
+- Carousel after real next-arrow interaction;
+- Steps 600px mobile stack, 700px intermediate stack, 800px horizontal inline composition, 1024px AppShell-constrained overflow ownership, and explicit vertical-dot geometry.
+
+The manual pass found CSA-D001, rejected the first breakpoint-only correction, and accepted the second correction only after `Security` remained readable at 800px and 1024px. Responsive/core-steps is therefore re-certified.
+
+Wave A does **not** authorize claiming all Core components are Canonical. CSA-2 remains in progress and continues family-by-family.
