@@ -189,9 +189,9 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 
 | Phase | Status | Notes |
 | --- | --- | --- |
-| CSA-0 Stabilize | in progress | Obsolete Blog AI reverse-migration PR closed; final Core Wave 2 checkpoint is being completed. |
+| CSA-0 Stabilize | complete | Obsolete Blog AI reverse-migration PR closed; Blog Core Wave 2 merged to `gouno-blog/main` at `5e20df79`; Consumer expansion is frozen at this checkpoint. |
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
-| CSA-2 Core browser pass | planned | Starts after CSA-0 checkpoint lands. |
+| CSA-2 Core browser pass | in progress | Dedicated artifact captures added for Focus, Modal/Popover, Form/Select, ConfigProvider, Carousel and Steps; manual review follows CI artifact generation. |
 | CSA-3 Pattern/Gouno pass | planned | |
 | CSA-4 Product Showcase pages | planned | |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
