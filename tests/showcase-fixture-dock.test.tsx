@@ -30,6 +30,13 @@ describe("Showcase FixtureDock", () => {
     expect(styles).toContain('height: calc(100dvh - var(--showcase-tools-inset-top, 3rem))');
   });
 
+  it("keeps global notice overlays below Showcase tooling", () => {
+    const styles = readFileSync(resolve(process.cwd(), "showcase/styles/showcase.css"), "utf8");
+    expect(styles).toContain('[data-slot="message-region"]');
+    expect(styles).toContain('[data-slot="notification-region"]');
+    expect(styles).toContain('top: calc(var(--showcase-tools-inset-top, 3rem) + 1rem)');
+  });
+
   it("reserves normal-flow space when rendered without Showcase tooling", () => {
     render(<FixtureDock route="/example" />);
     expect(screen.getByRole("button", { name: "打开 Fixture 控制" }).closest("[data-showcase-fixture-dock]")?.className).not.toMatch(/fixed|absolute/);
