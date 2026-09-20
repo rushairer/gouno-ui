@@ -103,3 +103,11 @@ body:has([data-showcase-product-preview]) [data-slot="sheet-content"][data-side=
 body:has([data-showcase-product-preview]) [data-slot="sheet-content"][data-side="top"] {
   top: var(--showcase-tools-inset-top, 3rem);
 }
+
+
+/* Global notice overlays are fixed to the browser viewport. In Fixture mode,
+   preserve their normal 1rem breathing room below Showcase-only tooling. */
+body:has([data-showcase-product-preview]) [data-slot="message-region"],
+body:has([data-showcase-product-preview]) [data-slot="notification-region"] {
+  top: calc(var(--showcase-tools-inset-top, 3rem) + 1rem);
+}

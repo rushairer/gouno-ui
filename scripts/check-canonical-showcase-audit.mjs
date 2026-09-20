@@ -73,6 +73,14 @@ for (const evidence of [
   "core-pagination-page-7",
   "core-breadcrumb-project-menu",
   "core-anchor-contract-hash",
+  "core-alert-semantic-states",
+  "core-alert-closable-reset",
+  "core-popconfirm-danger-open",
+  "core-message-success-error",
+  "core-notification-mixed-stack",
+  "core-empty-contained-state",
+  "core-result-success-state",
+  "core-spin-busy-overlay",
 ]) {
   requireText(
     golden,

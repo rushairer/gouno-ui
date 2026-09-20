@@ -371,6 +371,23 @@ for (const [id, scope] of Object.entries({
   };
 }
 
+for (const [id, scope] of Object.entries({
+  "core-alert": "CSA-2 Wave D manual-reviewed: four semantic Alert tones, closable lifecycle/reset, action placement and visible feedback hierarchy were inspected in Chromium.",
+  "core-popconfirm": "CSA-2 Wave D manual-reviewed: destructive confirmation renders as a focused alertdialog with clear title/description ownership and cancel/destructive action hierarchy.",
+  "core-message": "CSA-2 Wave D manual-reviewed: simultaneous success/error transient messages remain legible as a notice queue; Fixture safe-area integration is guarded without leaking Showcase tooling into Core.",
+  "core-notification": "CSA-2 Wave D manual-reviewed: mixed success/error/persistent notifications preserve semantic icon/tone, close ownership and queue rhythm; Fixture safe-area integration is browser-guarded.",
+  "core-empty": "CSA-2 Wave D manual-reviewed: contained Empty state preserves centered icon/title/description/action rhythm without manufacturing its own outer surface.",
+  "core-result": "CSA-2 Wave D manual-reviewed: success Result preserves terminal-state icon/title/description/action hierarchy and caller-owned page/surface context.",
+  "core-spin": "CSA-2 Wave D manual-reviewed: busy overlay keeps retained content visible underneath while spinner/tip own the active refresh state.",
+})) {
+  componentReviews[id] = {
+    status: "reviewed",
+    scope,
+    evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs", "tests/showcase-fixture-dock.test.tsx"],
+    baseline: "CSA-2 Wave D manual-reviewed / 2026-09-20",
+  };
+}
+
 export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
   return review?.status === "reviewed" ? 100 : Math.min(fallback, 99);
 }
