@@ -394,9 +394,9 @@ describe("design-language conformance", () => {
 
     const knowledgeStart = aiSettings.indexOf("function KnowledgePanel");
     const knowledgeFeedback = aiSettings.indexOf("<TabPanelFeedback>", knowledgeStart);
-    const knowledgeMetrics = aiSettings.indexOf('<div className="grid gap-4 sm:grid-cols-3">', knowledgeFeedback);
+    const knowledgeOverview = aiSettings.indexOf('aria-labelledby="knowledge-overview-title"', knowledgeFeedback);
     expect(knowledgeFeedback).toBeGreaterThan(knowledgeStart);
-    expect(knowledgeMetrics).toBeGreaterThan(knowledgeFeedback);
+    expect(knowledgeOverview).toBeGreaterThan(knowledgeFeedback);
   });
 
   it("keeps governed management alerts in the shared feedback slot", () => {

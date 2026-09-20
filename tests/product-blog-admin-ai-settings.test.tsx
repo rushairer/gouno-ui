@@ -159,7 +159,7 @@ describe("Blog Admin AI Settings route family", () => {
     expect(screen.getByRole("heading", { level: 2, name: "已索引内容" })).toBeTruthy();
     expect(screen.getByRole("heading", { level: 2, name: "检索验证" })).toBeTruthy();
     expect(screen.getByRole("heading", { level: 2, name: "Embedding 配置" })).toBeTruthy();
-    expect(screen.getByText("OAuth 2.1 与 PKCE：浏览器应用的安全边界")).toBeTruthy();
+    expect(screen.getAllByText("OAuth 2.1 与 PKCE：浏览器应用的安全边界")).toHaveLength(2);
     expect(screen.getByText("kb_8a91d2c4")).toBeTruthy();
     expect(screen.getByText("Semantic 0.94")).toBeTruthy();
     expect(screen.getByText("Lexical 0.78")).toBeTruthy();
