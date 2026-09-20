@@ -851,8 +851,8 @@
           "defect": "CSA-D001",
           "finding": "CSA-001 manual browser review at a 700px viewport showed horizontal Steps entering the desktop lane too early: the Security title truncates to S... and the four-step copy becomes visually cramped even though connector geometry assertions pass.",
           "classification": "Responsive component implementation defect limited to core-steps; canonical sm/md/lg/xl/2xl breakpoint authority remains valid.",
-          "target": "Keep responsive horizontal Steps in the complete vertical composition below canonical md (48rem / 768px), then enter the horizontal composition at md and above. Preserve the explicit responsive=false opt-out.",
-          "evidence": "Canonical Visual Golden Smoke run 35499388006 artifact 10601489776, csa-core-steps-responsive-and-vertical-dot.png; CSA manual review 2026-09-20."
+          "target": "Below canonical md (48rem / 768px), keep the complete vertical responsive composition. At md and above, horizontal items own a readable min-w-44 track and the root overflow-x-auto absorbs width pressure instead of truncating ordinary step titles. Preserve responsive=false.",
+          "evidence": "CSA manual review: run 35499388006 exposed 700px truncation; run 35499670227 showed the md-only candidate still truncated Security at 800px. Final candidate adds a readable horizontal track plus 700/800/1024 browser evidence."
         }
       }
     },
