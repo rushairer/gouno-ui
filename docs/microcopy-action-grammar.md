@@ -22,6 +22,7 @@ This contract complements visual, structural and state parity. A page is not con
 7. **Terminology is canonical.** Within the Gouno product family use `账户设置` for account settings. Product-specific domain nouns may remain richer than Showcase when they carry real business meaning.
 8. **Localized products must localize accessible names too.** Hard-coded English `label` / `aria-label` strings in otherwise localized Chinese product surfaces are parity defects unless the term is intentionally English product/domain vocabulary.
 9. **Business-domain wording may flow Product → Showcase.** When the real product has a more precise domain label (for example `成员显示昵称 / 备注名` instead of a generic `显示名称`), keep the richer Product language and update the Showcase fixture rather than flattening Product semantics.
+10. **AI action icons follow action semantics.** Controls whose primary action invokes AI assistance/generation or hands selected resources to an AI Workflow use `Sparkles`; `Bot` is reserved for Agent/AI entity identity or status. Sibling Collection pages must not use different icons for the same `交给 AI` action.
 
 ## Guard expectations
 
@@ -45,6 +46,7 @@ Static guards should reject known ambiguous action patterns before browser tests
 - Media dense actions: `相对地址`, `Markdown`, `Alt Text`, `删除`
 - persistent collection load recovery: `重新载入`
 - GOSSO handoff: `打开 GOSSO Admin`
+- selected-resource AI Workflow handoff: `交给 AI` uses the `Sparkles` action icon across Posts, Pages, Categories, Tags, Comments and Media
 - member identity copy stays adjacent to the account ID; the dense operation column is reserved for member/permission mutations
 - member editor uses the product-accurate `成员显示昵称 / 备注名`, `Blog 角色分配（单选）`, and `保存设置` vocabulary
 
