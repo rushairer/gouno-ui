@@ -594,3 +594,26 @@ Wave H audits the Data Display family as composed browser surfaces rather than t
 The Image browser evidence intercepts the remote demo image with deterministic SVG bytes. The audit therefore reviews Gouno preview/overlay/transform composition without making Canonical acceptance depend on a third-party image host.
 
 No component is promoted by this candidate. Open the PR only after the complete Wave H evidence/ledger batch is prepared so intermediate branch commits do not repeatedly run CI/Golden/reciprocal parity. Acceptance still requires exact-head CI, Canonical Visual Golden, Blog Consumer Parity, Gosso Admin Consumer Parity, and direct manual inspection of every generated Wave H screenshot.
+
+
+### CSA-D003 — Image preview action occlusion
+
+The first Wave H Golden run on `6391ecda` produced a real component defect in Image preview rather than an evidence-driver failure.
+
+Observed after the canonical controlled preview was opened, zoomed and rotated:
+
+- the transformed preview image expanded into the action-bar region;
+- the toolbar and Close control remained visibly rendered;
+- pointer hit-testing landed on the transformed `img`, so a real click on Close was intercepted;
+- the same transformed image could therefore obstruct other preview actions despite the controls appearing available.
+
+Classification: **Core Image interaction/local-stacking defect**. `core-image` is reopened for CSA-D003. The global Overlay/Layering Foundation is **not** reopened because this conflict is entirely inside one modal surface; the Overlay inventory explicitly classifies component-internal 1/2/10/20 stacking as local rather than application-global Layer authority.
+
+Candidate correction:
+
+- keep transformed media draggable and interactive;
+- give the preview action-bar wrapper explicit component-local stacking above transformed media;
+- keep the action bar shrink-stable at the bottom of the dialog;
+- retain the existing real-browser regression path: open controlled preview → zoom → rotate → click Close without force-click or DOM bypass.
+
+The correction is not accepted until a fresh exact-head Golden proves the ordinary user click reaches Close after transforms and the rendered evidence is inspected manually.

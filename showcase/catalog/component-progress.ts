@@ -429,6 +429,14 @@ for (const [id, scope] of Object.entries({
   };
 }
 
+
+componentReviews["core-image"] = {
+  status: "reopened",
+  scope: "CSA-D003 reopened: transformed preview media can overlap the visible action bar hit region, leaving toolbar/close controls visible but pointer-occluded after zoom/rotation. Candidate fix gives the action bar explicit component-local stacking above transformed media while preserving drag interaction.",
+  evidence: ["docs/canonical-showcase-audit.md", "src/core/image.tsx", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+  baseline: "CSA-D003 reopened / 2026-09-21",
+};
+
 export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
   return review?.status === "reviewed" ? 100 : Math.min(fallback, 99);
 }
