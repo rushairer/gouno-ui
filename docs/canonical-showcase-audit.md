@@ -191,7 +191,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | --- | --- | --- |
 | CSA-0 Stabilize | complete | Obsolete Blog AI reverse-migration PR closed; Blog Core Wave 2 merged to `gouno-blog/main` at `5e20df79`; Consumer expansion is frozen at this checkpoint. |
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
-| CSA-2 Core browser pass | in progress | Waves A–E manually accepted. Wave F selection/direct-input controls and Wave G complex-input controls are batched in PR #124; exact-head CI/Golden plus paired consumer parity and rendered artifact inspection are required before acceptance. |
+| CSA-2 Core browser pass | in progress | Waves A–G manually accepted through selection/direct-input and complex-input families. Remaining Core data-display/layout/other families still require browser review. |
 | CSA-3 Pattern/Gouno pass | planned | |
 | CSA-4 Product Showcase pages | planned | |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
@@ -531,3 +531,46 @@ Wave G adds real-browser evidence for:
 ColorPicker intentionally does not attempt to automate the operating-system color dialog; CSA evidence owns the web-visible input/focus/state surface while the browser/OS owns the native picker chrome.
 
 Wave G is **not accepted by source or test existence**. The batch must pass one exact-head CI/Canonical Golden/Blog parity/Gosso parity cycle, then the generated Wave F and Wave G rendered evidence must be inspected family-by-family.
+
+
+## CSA-2 Waves F-G acceptance
+
+Status: **accepted / manual-reviewed**
+
+Accepted implementation head: `0db47f095792aa58e4742eaa05697398781b67d7`.
+
+Exact-head machine evidence:
+
+- CI `35522972664` — success;
+- Canonical Visual Golden Smoke `35522972649` — success;
+- Blog Consumer Parity `35522972674` — success;
+- Gosso Admin Consumer Parity `35522972659` — success;
+- rendered Golden artifact `10609207461` inspected directly.
+
+Wave F accepted rendered states:
+
+- Checkbox — checked-to-unchecked lifecycle plus disabled peer;
+- Radio — mutually exclusive selection transition plus disabled peer;
+- Switch — visible label-owned hit target, on-to-off transition and disabled checked peer;
+- Segmented — visible item-owned hit target and real radiogroup selection transition;
+- Slider — native keyboard step from 40 to 45 plus disabled peer;
+- Rate — score transition to 5 with radiogroup state plus disabled example;
+- InputOTP — sequential six-digit entry, focus progression and disabled masked peer.
+
+Wave G accepted rendered states:
+
+- InputNumber — formatted controlled value and keyboard step to 1380;
+- DatePicker — controlled date cleared to the explicit empty state;
+- DateRangePicker — start date changed while the end date remained stable;
+- TimePicker — native time update plus warning-state peer;
+- ColorPicker — browser-native value, visible keyboard focus and warning-state peer;
+- Upload — controlled image selection and caller-owned rendered file list;
+- AutoComplete — filtered popup with active enabled option and disabled option, followed by keyboard commit;
+- Mentions — active mention popup, keyboard highlight movement and committed mention;
+- Transfer — source selection, enabled add operation and visible item movement into the target list.
+
+Manual review found no Foundation/Core defect requiring reopening. The first Wave F Golden failure is retained as evidence of an **evidence-driver defect**: Playwright initially targeted visually hidden native bridges instead of visible label-owned hit targets. The corrected evidence exercises the same surfaces a user clicks.
+
+Native Date/Time/Color browser chrome is platform-owned. CSA acceptance covers the Gouno-owned web input geometry, state/focus treatment, value contract and composition; it does not attempt to restyle or automate operating-system picker chrome.
+
+This acceptance remains family-scoped. **CSA-2 is still in progress** for the remaining Core catalog.
