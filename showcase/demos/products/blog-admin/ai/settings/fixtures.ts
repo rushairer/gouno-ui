@@ -76,6 +76,26 @@ export type EmbeddingProfileFixture = {
   enabled: boolean;
 };
 
+export type KnowledgeContentFixture = {
+  postId: number;
+  title: string;
+  slug: string;
+  chunks: number;
+  status: "ready" | "pending";
+  lastIndexedAt: string;
+};
+
+export type KnowledgeSearchResultFixture = {
+  postId: number;
+  title: string;
+  slug: string;
+  snippet: string;
+  citationId: string;
+  lexicalScore: number;
+  semanticScore: number;
+  score: number;
+};
+
 export type ConnectorFixture = {
   id: number;
   name: string;
@@ -109,10 +129,18 @@ export type AISettingsFixture = {
   knowledge: {
     profiles: EmbeddingProfileFixture[];
     index: {
+      indexedPosts: number;
       queued: number;
       failed: number;
       chunks: number;
+      retrievalP95Ms24h: number;
       lastRebuiltAt: string;
+    };
+    content: KnowledgeContentFixture[];
+    retrieval: {
+      query: string;
+      latencyMs: number;
+      results: KnowledgeSearchResultFixture[];
     };
   };
   providers: ProviderFixture[];
@@ -325,10 +353,64 @@ export const aiSettingsFixture: AISettingsFixture = {
       },
     ],
     index: {
+      indexedPosts: 128,
       queued: 2,
       failed: 1,
       chunks: 14380,
+      retrievalP95Ms24h: 112,
       lastRebuiltAt: "2026-09-08 03:10",
+    },
+    content: [
+      {
+        postId: 201,
+        title: "OAuth 2.1 与 PKCE：浏览器应用的安全边界",
+        slug: "oauth-pkce-browser-security",
+        chunks: 24,
+        status: "ready",
+        lastIndexedAt: "2026-09-08 09:42",
+      },
+      {
+        postId: 198,
+        title: "从 BFF 到业务会话：前端不持有 OAuth Token",
+        slug: "bff-business-session",
+        chunks: 18,
+        status: "ready",
+        lastIndexedAt: "2026-09-08 09:38",
+      },
+      {
+        postId: 193,
+        title: "内容发布后的 AI 审校与引用证据",
+        slug: "ai-review-citation-evidence",
+        chunks: 31,
+        status: "ready",
+        lastIndexedAt: "2026-09-08 09:35",
+      },
+    ],
+    retrieval: {
+      query: "PKCE code_verifier 为什么重要？",
+      latencyMs: 84,
+      results: [
+        {
+          postId: 201,
+          title: "OAuth 2.1 与 PKCE：浏览器应用的安全边界",
+          slug: "oauth-pkce-browser-security",
+          snippet: "客户端生成高熵 code_verifier，并只在授权请求中发送其派生出的 code_challenge；令牌交换阶段再提交原始 verifier。",
+          citationId: "kb_8a91d2c4",
+          lexicalScore: 0.78,
+          semanticScore: 0.94,
+          score: 0.88,
+        },
+        {
+          postId: 198,
+          title: "从 BFF 到业务会话：前端不持有 OAuth Token",
+          slug: "bff-business-session",
+          snippet: "BFF 负责服务端完成 code exchange，浏览器只持有本域 Secure/HttpOnly 业务会话 Cookie，避免暴露 OAuth Token。",
+          citationId: "kb_5d307c2e",
+          lexicalScore: 0.52,
+          semanticScore: 0.82,
+          score: 0.72,
+        },
+      ],
     },
   },
   providers: [
