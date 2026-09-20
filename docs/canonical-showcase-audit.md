@@ -191,7 +191,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | --- | --- | --- |
 | CSA-0 Stabilize | complete | Obsolete Blog AI reverse-migration PR closed; Blog Core Wave 2 merged to `gouno-blog/main` at `5e20df79`; Consumer expansion is frozen at this checkpoint. |
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
-| CSA-2 Core browser pass | in progress | Waves A–E manually accepted. Wave F candidate adds selection/input-control evidence for Checkbox, Radio, Switch, Segmented, Slider, Rate and InputOTP; acceptance awaits exact-head CI/Golden plus rendered artifact inspection. |
+| CSA-2 Core browser pass | in progress | Waves A–E manually accepted. Wave F selection/direct-input controls and Wave G complex-input controls are batched in PR #124; exact-head CI/Golden plus paired consumer parity and rendered artifact inspection are required before acceptance. |
 | CSA-3 Pattern/Gouno pass | planned | |
 | CSA-4 Product Showcase pages | planned | |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
@@ -501,3 +501,33 @@ Wave F extends the Core browser pass to interaction states that are easy to over
 
 Candidate evidence names are guarded by `scripts/check-canonical-showcase-audit.mjs`.
 No component is promoted by this commit. Wave F is accepted only after exact-head CI, Canonical Golden, reciprocal Blog/Gosso parity, and manual inspection of the generated rendered evidence.
+
+
+### Wave F evidence-target correction
+
+The first Wave F Golden run on `b2866632` passed CI plus both reciprocal consumer parity jobs, but the Canonical Golden browser job rejected two evidence interactions:
+
+- Switch evidence clicked the visually hidden native checkbox instead of its visible label surface;
+- Segmented evidence clicked the visually hidden native radio instead of the visible segmented item surface.
+
+The browser reported pointer interception by the visible labels. This is classified as an **evidence-driver defect**, not a Core component defect: the canonical controls intentionally use visually hidden native inputs behind visible label-owned hit targets. The candidate is corrected to exercise the actual visible interaction surfaces. No Foundation/API review is reopened by this finding.
+
+## CSA-2 Wave G — complex input / assisted-entry controls
+
+Status: **candidate / batched with Wave F**
+
+Wave G adds real-browser evidence for:
+
+- InputNumber — controlled formatted value and keyboard step transition;
+- DatePicker — controlled value plus explicit clear lifecycle;
+- DateRangePicker — start-date update while preserving the end-date contract;
+- TimePicker — native time value update plus warning state;
+- ColorPicker — browser-native color value, keyboard focus and warning state;
+- Upload — controlled image selection and rendered file-list ownership;
+- AutoComplete — filtered popup, disabled option and keyboard confirmation;
+- Mentions — active mention popup, keyboard highlight and selection commit;
+- Transfer — source selection, operation enablement and real item movement.
+
+ColorPicker intentionally does not attempt to automate the operating-system color dialog; CSA evidence owns the web-visible input/focus/state surface while the browser/OS owns the native picker chrome.
+
+Wave G is **not accepted by source or test existence**. The batch must pass one exact-head CI/Canonical Golden/Blog parity/Gosso parity cycle, then the generated Wave F and Wave G rendered evidence must be inspected family-by-family.

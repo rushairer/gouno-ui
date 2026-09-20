@@ -93,6 +93,15 @@ for (const evidence of [
   "core-slider-keyboard-45",
   "core-rate-five-selected",
   "core-input-otp-complete",
+  "core-transfer-after-add",
+  "core-mentions-popup",
+  "core-autocomplete-popup",
+  "core-upload-file-list",
+  "core-color-picker-focus",
+  "core-time-picker-updated",
+  "core-date-range-updated",
+  "core-date-picker-cleared",
+  "core-input-number-keyboard-step",
 ]) {
   requireText(
     golden,
