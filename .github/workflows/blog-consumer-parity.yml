@@ -55,6 +55,7 @@ jobs:
           test -f blog-frontend/e2e/privileged-access-parity.pw.mjs
           test -f blog-frontend/e2e/public-showcase-parity.pw.mjs
           test -f blog-frontend/e2e/users-showcase-parity.pw.mjs
+          test -f blog-frontend/scripts/check-showcase-parity-certifications.mjs
           grep -Fq '"showcase-parity.pw.mjs"' blog-frontend/e2e/showcase-parity.config.mjs
           grep -Fq '"privileged-access-parity.pw.mjs"' blog-frontend/e2e/showcase-parity.config.mjs
           grep -Fq '"public-showcase-parity.pw.mjs"' blog-frontend/e2e/showcase-parity.config.mjs
