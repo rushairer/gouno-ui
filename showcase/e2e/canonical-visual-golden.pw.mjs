@@ -835,6 +835,160 @@ test("responsive-steps-canonical-md-stacking", async ({ page }, testInfo) => {
   });
 });
 
+test("csa-core-select-popup-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-select",
+    viewport: desktop,
+    ready: '[data-slot="select"]',
+  });
+
+  const baseDemo = page
+    .getByRole("heading", { level: 3, name: "基础用法" })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const root = baseDemo.locator('[data-slot="select"]').first();
+  const nativeSelect = root.locator('select[aria-hidden="true"]');
+  await expect(nativeSelect).toHaveCount(1);
+  expect(
+    await nativeSelect.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return {
+        opacity: style.opacity,
+        pointerEvents: style.pointerEvents,
+      };
+    }),
+  ).toEqual({ opacity: "0", pointerEvents: "none" });
+
+  const trigger = root.getByRole("combobox");
+  await trigger.click();
+  await expect(trigger).toHaveAttribute("aria-expanded", "true");
+  const list = page.locator('[data-slot="select-list"]:visible');
+  await expect(list).toHaveCount(1);
+  await expect(list.getByRole("option", { name: "选项一" })).toBeVisible();
+  await expect(list.getByRole("option", { name: "选项二" })).toBeVisible();
+  await captureCanonicalAuditEvidence(page, testInfo, "core-select-popup");
+});
+
+test("csa-core-cascader-popup-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-cascader",
+    viewport: desktop,
+    ready: '[data-slot="cascader"]',
+  });
+
+  const root = page.locator('[data-slot="cascader"]').first();
+  await expect(root.locator("select")).toHaveCount(0);
+  const trigger = root.getByRole("combobox", { name: "地区" });
+  await trigger.click();
+  await expect(trigger).toHaveAttribute("aria-expanded", "true");
+
+  const columns = page.locator('[data-slot="cascader-column"]');
+  await expect(columns).toHaveCount(3);
+  await page.getByRole("option", { name: "上海" }).click();
+  await expect(page.getByRole("option", { name: "浦东" })).toBeVisible();
+  await expect(columns).toHaveCount(3);
+  await captureCanonicalAuditEvidence(page, testInfo, "core-cascader-columns");
+});
+
+test("csa-core-tree-select-popup-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-tree-select",
+    viewport: desktop,
+    ready: '[data-slot="tree-select-root"]',
+  });
+
+  const roots = page.locator('[data-slot="tree-select-root"]');
+  await expect(roots).toHaveCount(2);
+
+  const singleRoot = roots.nth(0);
+  const singleNative = singleRoot.locator('select[aria-hidden="true"]');
+  await expect(singleNative).toHaveCount(1);
+  expect(
+    await singleNative.evaluate((element) => getComputedStyle(element).opacity),
+  ).toBe("0");
+
+  const singleTrigger = singleRoot.getByRole("combobox", { name: "主分区" });
+  await singleTrigger.click();
+  await expect(singleTrigger).toHaveAttribute("aria-expanded", "true");
+  await expect(page.getByRole("treeitem", { name: /文档/ })).toBeVisible();
+  await expect(page.getByRole("treeitem", { name: /指南/ })).toBeVisible();
+  await captureCanonicalAuditEvidence(
+    page,
+    testInfo,
+    "core-tree-select-single-popup",
+  );
+
+  await page.keyboard.press("Escape");
+  const multipleRoot = roots.nth(1);
+  const multipleTrigger = multipleRoot.getByRole("combobox", {
+    name: "关联主题",
+  });
+  await multipleTrigger.click();
+  await expect(multipleTrigger).toHaveAttribute("aria-expanded", "true");
+  await expect(page.getByRole("treeitem", { name: /API/ })).toBeVisible();
+  await captureCanonicalAuditEvidence(
+    page,
+    testInfo,
+    "core-tree-select-multiple-popup",
+  );
+});
+
+test("csa-core-dropdown-popup-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-dropdown",
+    viewport: desktop,
+    ready: '[data-slot="dropdown-menu-trigger"]',
+  });
+
+  await page.getByRole("button", { name: "更多操作" }).click();
+  const content = page.locator('[data-slot="dropdown-menu-content"]').last();
+  await expect(content).toBeVisible();
+  await expect(page.getByRole("menuitem", { name: "编辑" })).toBeVisible();
+  await expect(page.getByRole("menuitem", { name: "删除" })).toBeVisible();
+  await captureCanonicalAuditEvidence(page, testInfo, "core-dropdown-popup");
+});
+
+test("csa-core-popover-popup-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-popover",
+    viewport: desktop,
+    ready: '[data-slot="popover-trigger"]',
+  });
+
+  await page.getByRole("button", { name: "打开 Popover" }).click();
+  const content = page.locator('[data-slot="popover-content"]').last();
+  await expect(content).toBeVisible();
+  await expect(content.getByText("批量操作说明", { exact: true })).toBeVisible();
+  await captureCanonicalAuditEvidence(page, testInfo, "core-popover-popup");
+});
+
+test("csa-core-drawer-overlay-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-drawer",
+    viewport: desktop,
+    ready: 'button:has-text("打开 Drawer")',
+  });
+
+  const trigger = page.getByRole("button", { name: "打开 Drawer" }).first();
+  await trigger.click();
+  const dialog = page.getByRole("dialog", { name: "筛选条件" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByPlaceholder("搜索")).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+  await captureCanonicalAuditEvidence(page, testInfo, "core-drawer-open");
+});
+
 test("surface-gosso-overview-quick-link-card-ownership", async ({ page }) => {
   const scenario = {
     workspace: "gosso-admin",

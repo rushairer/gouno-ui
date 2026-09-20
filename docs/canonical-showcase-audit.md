@@ -267,3 +267,48 @@ Final artifact `10601014647` was inspected directly. Accepted rendered states in
 The manual pass found CSA-D001, rejected the first breakpoint-only correction, and accepted the second correction only after `Security` remained readable at 800px and 1024px. Responsive/core-steps is therefore re-certified.
 
 Wave A does **not** authorize claiming all Core components are Canonical. CSA-2 remains in progress and continues family-by-family.
+
+
+## CSA-2 Wave B — picker / popup / overlay family
+
+Status: **in progress**
+
+Wave B targets browser-rendered interaction families whose correctness cannot be established from source/API review alone:
+
+- Select visible self-rendered popup versus hidden native form bridge;
+- Cascader multi-column hierarchy;
+- TreeSelect single and multiple tree popup;
+- Dropdown action menu;
+- Popover contextual surface;
+- Drawer overlay composition.
+
+The first inspection of source registration found that the legacy/simple `data-entry.tsx` snippets are **not** the active Cascader/TreeSelect canonical demos: the final registry overrides them with `data-entry-review-6d6/6d7`, backed by real multi-level demos. Therefore no defect is recorded for the legacy snippet itself.
+
+Wave B adds explicit Chromium evidence captures for the final registered surfaces. No component is accepted merely because the DOM/ARIA assertions pass; the generated artifact must be inspected manually before Wave B acceptance.
+
+
+## CSA-2 Wave B acceptance — picker / popup / overlay family
+
+Wave B is accepted as **manual-reviewed rendered evidence**.
+
+Exact-head machine evidence before acceptance:
+
+- CI `35501490513` — success;
+- Canonical Visual Golden Smoke `35501490432` — success;
+- Blog Consumer Parity `35501490415` — success;
+- Gosso Admin Consumer Parity `35501490441` — success;
+- rendered artifact `10602856830` inspected directly.
+
+Accepted rendered states:
+
+- Select — visible self-rendered listbox popup, focus ring and option highlight;
+- Cascader — three-column hierarchical popup with active-path highlighting and aligned column boundaries;
+- TreeSelect single — tree popup with expanded branch, selected item and trigger relationship;
+- TreeSelect multiple — checkable tree popup with selected tags and branch/checkbox hierarchy;
+- Dropdown — action menu with label/action/destructive hierarchy;
+- Popover — contextual surface anchored to its trigger without pretending to be Modal/Drawer;
+- Drawer — right-side modal surface, Showcase tooling offset, overlay depth, header/close ownership and focused input.
+
+Manual review found **no Foundation reopening** in this wave. The active final Cascader/TreeSelect registry entries are the reviewed multi-level implementations; legacy simple snippets are not treated as canonical evidence.
+
+This acceptance is family-scoped. CSA-2 remains in progress for the remaining Core catalog.

@@ -286,6 +286,22 @@ for (const id of ["theme-system","gouno-app-shell","pattern-bulk-action-bar","co
   };
 }
 
+for (const [id, scope] of Object.entries({
+  "core-select": "CSA-2 Wave B manual-reviewed: real browser evidence confirms the visible self-rendered popup, focus/option states and form-compatible trigger surface.",
+  "core-cascader": "CSA-2 Wave B manual-reviewed: the final registered canonical demo renders a real multi-column hierarchy with active-path state; legacy simple snippets are not canonical evidence.",
+  "core-tree-select": "CSA-2 Wave B manual-reviewed: single and multiple modes render real tree popups with branch, selection, tag and checkbox hierarchy.",
+  "core-dropdown": "CSA-2 Wave B manual-reviewed: real browser evidence confirms anchored action-menu hierarchy including destructive action treatment.",
+  "core-popover": "CSA-2 Wave B manual-reviewed: contextual popup remains visually and semantically distinct from modal/drawer surfaces.",
+  "core-drawer": "CSA-2 Wave B manual-reviewed: real browser evidence confirms Showcase-tooling offset, overlay layering, header/close ownership and focused form content.",
+})) {
+  componentReviews[id] = {
+    status: "reviewed",
+    scope,
+    evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "CSA-2 Wave B manual-reviewed / 2026-09-20",
+  };
+}
+
 componentReviews["core-steps"] = {
   status: "reviewed",
   scope: "CSA-D001 certified: manual browser review now proves the complete responsive stack below canonical md, readable min-w-44 horizontal tracks above md, constrained-container overflow ownership, and separate vertical-dot geometry without title truncation.",
