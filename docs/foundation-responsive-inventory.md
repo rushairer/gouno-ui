@@ -86,3 +86,19 @@ Responsive can be certified only when:
 6. Blog/Gosso reciprocal consumer parity passes.
 
 Re-certification evidence (2026-09-19): CI #568 passed the expanded Responsive guard with zero arbitrary responsive variants and zero px-width media queries; Canonical Visual Golden Smoke #485 passed the strengthened Steps geometry/browser contract (60/60); Blog parity #546 and Gosso parity #541 passed.
+
+
+## 2026-09-20 CSA-001 reopening — intermediate-width readability
+
+CSA-001 added human-reviewable browser captures to the existing geometry assertions. The first capture exposed a gap that the previous FI-D001 proof did not cover: at a 700px viewport, responsive horizontal Steps had already crossed the `sm` threshold and returned to a four-column horizontal lane. The geometry remained mathematically valid, but the second title rendered as `S...` and the copy lane became visibly cramped.
+
+Classification: **local Responsive implementation defect in `core-steps`**. The canonical breakpoint scale remains correct; no arbitrary breakpoint is introduced.
+
+Correction target:
+
+- below canonical `md` (48rem / 768px), the complete horizontal Steps composition stays in the vertical responsive lane;
+- at `md` and above, horizontal Steps use the desktop inline connector/copy composition;
+- explicit vertical Steps and `responsive={false}` keep their existing semantics;
+- visual evidence must separately show mobile/intermediate stacking, desktop inline layout, and vertical-dot geometry.
+
+Responsive is reopened only for `core-steps` until exact-head CI, Canonical Visual Golden, Blog Consumer Parity, Gosso Admin Consumer Parity, and manual screenshot review all pass.
