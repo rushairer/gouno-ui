@@ -1054,10 +1054,13 @@ test("csa-core-pagination-interaction-evidence", async ({ page }, testInfo) => {
     ready: 'nav[aria-label="Pagination"]',
   });
 
-  const pagination = page.getByRole("navigation", { name: "Pagination" }).first();
-  const page6 = pagination.getByRole("button", { name: "6", exact: true });
+  const baseDemo = page
+    .getByRole("heading", { level: 3, name: "基础用法" })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const pagination = baseDemo.getByRole("navigation", { name: "Pagination" });
+  const page6 = pagination.locator('button[aria-current="page"]');
+  await expect(page6).toContainText("6");
   const page7 = pagination.getByRole("button", { name: "7", exact: true });
-  await expect(page6).toHaveAttribute("aria-current", "page");
   await page7.click();
   await expect(page7).toHaveAttribute("aria-current", "page");
   await captureCanonicalAuditEvidence(page, testInfo, "core-pagination-page-7");
