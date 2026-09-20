@@ -122,12 +122,75 @@ Initial finding:
 - the previous class of “tab subtitle height/rhythm drift” is not visible in these two captured states;
 - this remains a sample, not a full family acceptance. Dedicated editors, Drawers, Knowledge/Provider/Connector states and responsive states still require explicit CSA review.
 
+## CSA-1 manual browser sanity evidence — batch 1
+
+The following surfaces were inspected from actual Chromium/Playwright rendered captures. Automated parity status was not used as the acceptance decision.
+
+### AI Settings — Dedicated Agent editor
+
+Reviewed rendered state: create Agent.
+
+Observed:
+
+- the page-level `AI 设置` title remains the top information level;
+- `创建 Agent` is visually subordinate while still reading as the task title;
+- the back action is separated from task identity rather than competing with the title;
+- section Cards use a consistent title/description/body rhythm;
+- the two-column desktop composition has a clear primary/secondary relationship and does not reintroduce equal-size H1/H2 behavior.
+
+Decision: no Typography/Layout Foundation reopening. The Dedicated Editor pattern remains **manual-reviewed for this state only**, not yet Canonical for the full family.
+
+### AI Settings — Dedicated Skill editor
+
+Reviewed rendered state: create Skill.
+
+Observed:
+
+- task-title hierarchy matches the Agent editor rather than defining a second page-title grammar;
+- section-header typography and field density remain consistent between left/right regions;
+- action/field grouping is coherent and no page-local spacing anomaly is visible in the captured state.
+
+Decision: no Foundation reopening. This state strengthens the Dedicated Editor family evidence but does not yet complete the family.
+
+### AI Settings — Provider Drawer
+
+Reviewed rendered state: add model connection.
+
+Observed:
+
+- the Drawer starts below the Showcase tooling strip and owns its own overlay layer correctly;
+- Drawer header, content and footer have clear boundaries;
+- contextual editor Cards retain a shared field rhythm;
+- the fixed footer actions remain visually separated from form content;
+- the underlying page is dimmed without losing the modal/overlay depth relationship.
+
+Decision: no Overlay/Surface/Layout Foundation reopening. Drawer composition remains **manual-reviewed for this state only**.
+
+### Post Editor — mobile
+
+Reviewed rendered state: 390px-class mobile editor capture.
+
+Observed:
+
+- shell navigation collapses before editor content;
+- command actions remain reachable without horizontal overflow;
+- outline/history navigation, editor metadata and fields stack onto one content axis;
+- the mobile composition does not merely shrink the desktop grid.
+
+Decision: no Responsive/Layout Foundation reopening from this state. The complete editor family still requires explicit interactive/scroll review before Canonical acceptance.
+
+## CSA-1 batch-1 conclusion
+
+The first sanity batch supports the existing FI-001 authorities for Typography, Layout, Surface, Overlay and Responsive behavior. **No Foundation is reopened.**
+
+This is deliberately weaker than a global Showcase certification. The reviewed states are evidence inputs for CSA-2/CSA-3; they do not authorize resuming Consumer expansion yet.
+
 ## Progress
 
 | Phase | Status | Notes |
 | --- | --- | --- |
 | CSA-0 Stabilize | in progress | Obsolete Blog AI reverse-migration PR closed; final Core Wave 2 checkpoint is being completed. |
-| CSA-1 Foundation sanity | started | First rendered samples inspected; no Foundation reopened yet. |
+| CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
 | CSA-2 Core browser pass | planned | Starts after CSA-0 checkpoint lands. |
 | CSA-3 Pattern/Gouno pass | planned | |
 | CSA-4 Product Showcase pages | planned | |
