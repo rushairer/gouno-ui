@@ -40,11 +40,13 @@ jobs:
           repository: rushairer/gouno-blog
           ref: main
           path: consumer-blog
+          fetch-depth: 0
 
       - name: Checkout candidate Gouno UI
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: consumer-blog/upstream-gouno-ui
+          fetch-depth: 0
 
       - name: Verify complete Blog parity harness
         working-directory: consumer-blog
@@ -53,10 +55,18 @@ jobs:
           test -f blog-frontend/e2e/privileged-access-parity.pw.mjs
           test -f blog-frontend/e2e/public-showcase-parity.pw.mjs
           test -f blog-frontend/e2e/users-showcase-parity.pw.mjs
+          test -f blog-frontend/scripts/check-showcase-parity-certifications.mjs
           grep -Fq '"showcase-parity.pw.mjs"' blog-frontend/e2e/showcase-parity.config.mjs
           grep -Fq '"privileged-access-parity.pw.mjs"' blog-frontend/e2e/showcase-parity.config.mjs
           grep -Fq '"public-showcase-parity.pw.mjs"' blog-frontend/e2e/showcase-parity.config.mjs
           grep -Fq '"users-showcase-parity.pw.mjs"' blog-frontend/e2e/showcase-parity.config.mjs
+
+      - name: Verify current Blog certification freshness against candidate Showcase
+        working-directory: consumer-blog/blog-frontend
+        env:
+          GOUNO_UI_CANONICAL_ROOT: ../upstream-gouno-ui
+          PARITY_STRICT_HISTORY: "1"
+        run: node scripts/check-showcase-parity-certifications.mjs
 
       - name: Set up Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
