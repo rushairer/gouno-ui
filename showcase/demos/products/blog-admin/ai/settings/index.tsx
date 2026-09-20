@@ -94,6 +94,11 @@ function cloneFixture(): AISettingsFixture {
     knowledge: {
       profiles: aiSettingsFixture.knowledge.profiles.map((item) => ({ ...item })),
       index: { ...aiSettingsFixture.knowledge.index },
+      content: aiSettingsFixture.knowledge.content.map((item) => ({ ...item })),
+      retrieval: {
+        ...aiSettingsFixture.knowledge.retrieval,
+        results: aiSettingsFixture.knowledge.retrieval.results.map((item) => ({ ...item })),
+      },
     },
     providers: aiSettingsFixture.providers.map((item) => ({ ...item })),
     connectors: aiSettingsFixture.connectors.map((item) => ({ ...item })),
@@ -282,6 +287,20 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
     onDeleteSkill: (skill) => setDeleteTarget({ kind: "skill", value: skill }),
     onRetryIndex: () => setNotice({ type: "success", text: "失败索引任务已重新排队。" }),
     onRebuildIndex: () => setNotice({ type: "warning", text: "已模拟通过近期 MFA 后请求全量重建知识索引。" }),
+    onRunKnowledgeSearch: (query) => {
+      setFixture((current) => ({
+        ...current,
+        knowledge: {
+          ...current.knowledge,
+          retrieval: {
+            ...current.knowledge.retrieval,
+            query,
+            latencyMs: 76,
+          },
+        },
+      }));
+      setNotice({ type: "success", text: `已模拟执行 content.search_knowledge：“${query}”` });
+    },
     onCreateEmbedding: () => setEditor({ kind: "embedding", value: "new" }),
     onTestEmbedding: (profile) => testConnection(profile.name, "embedding"),
     onEditEmbedding: (profile) => setEditor({ kind: "embedding", value: profile }),
