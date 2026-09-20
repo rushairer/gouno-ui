@@ -1468,7 +1468,7 @@ test("csa-core-switch-selection-evidence", async ({ page }, testInfo) => {
   await expect(notifications).toBeChecked();
   await expect(page.getByText("通知：开启", { exact: true })).toBeVisible();
 
-  await page.getByText("启用通知", { exact: true }).click();
+  await notifications.locator("xpath=ancestor::label[1]").click();
   await expect(notifications).not.toBeChecked();
   await expect(page.getByText("通知：关闭", { exact: true })).toBeVisible();
   await expect(page.getByRole("switch", { name: "系统策略" })).toBeDisabled();
@@ -1491,7 +1491,7 @@ test("csa-core-segmented-selection-evidence", async ({ page }, testInfo) => {
   await expect(weekly).toBeChecked();
   await expect(monthly).not.toBeChecked();
 
-  await group.getByText("月", { exact: true }).click();
+  await monthly.locator("xpath=ancestor::label[1]").click();
   await expect(monthly).toBeChecked();
   await expect(weekly).not.toBeChecked();
 
@@ -1609,7 +1609,10 @@ test("csa-core-date-picker-clear-evidence", async ({ page }, testInfo) => {
     .locator('xpath=ancestor::*[@data-slot="card"][1]');
   const input = card.locator('input[type="date"]');
   await expect(input).toHaveValue("2026-09-06");
-  await card.getByRole("button", { name: "清除日期" }).click();
+  const clear = card.locator('[data-slot="date-picker"] button');
+  await expect(clear).toHaveCount(1);
+  await expect(clear).toHaveAttribute("aria-label", /.+/);
+  await clear.click();
   await expect(input).toHaveValue("");
   await expect(card.getByText("日期：未选择", { exact: true })).toBeVisible();
 
