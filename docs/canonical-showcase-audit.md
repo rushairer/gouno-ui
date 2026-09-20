@@ -224,3 +224,20 @@ The same manual pass also found two **evidence-quality defects**, not component 
 - ConfigProvider evidence did not frame the localized comparison region clearly enough for human review.
 
 Both evidence captures are being corrected before Wave A can be accepted.
+
+
+### CSA-D001 iteration 2 — breakpoint-only correction was insufficient
+
+The first candidate moved the automatic stack threshold from canonical `sm` to `md`. Fresh artifact `10601841164` from Golden run `35499670227` proved that 700px now stayed vertical, but human review of the 800px horizontal state still showed `Security` truncated as `Sec...`.
+
+This rules out a viewport-threshold-only fix. AppShell also restores its 288px sidebar at `lg`, so viewport width cannot reliably stand in for the actual Steps content track.
+
+The revised Core contract is:
+
+- below `md`: use the complete vertical responsive composition;
+- at/above `md`: each horizontal Step owns a readable `min-w-44` track;
+- the existing root `overflow-x-auto` absorbs constrained-container width pressure instead of sacrificing ordinary title readability;
+- explicitly verify 700px stacked, 800px horizontal, and 1024px AppShell/sidebar-constrained states;
+- keep the vertical-dot geometry evidence separate.
+
+Focus fallback evidence is also changed back to a full-page capture after moving the probe away from navigation, because a tight locator screenshot clipped the actual outline and was not independently reviewable.
