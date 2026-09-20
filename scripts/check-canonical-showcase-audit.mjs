@@ -60,6 +60,13 @@ for (const evidence of [
   "core-steps-desktop-inline",
   "core-steps-shell-constrained",
   "core-steps-vertical-dot",
+  "core-select-popup",
+  "core-cascader-columns",
+  "core-tree-select-single-popup",
+  "core-tree-select-multiple-popup",
+  "core-dropdown-popup",
+  "core-popover-popup",
+  "core-drawer-open",
 ]) {
   requireText(
     golden,
