@@ -191,7 +191,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | --- | --- | --- |
 | CSA-0 Stabilize | complete | Obsolete Blog AI reverse-migration PR closed; Blog Core Wave 2 merged to `gouno-blog/main` at `5e20df79`; Consumer expansion is frozen at this checkpoint. |
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
-| CSA-2 Core browser pass | in progress | Waves A–H manually accepted through input, feedback and Data Display families. Remaining Core layout/other families still require browser review. |
+| CSA-2 Core browser pass | in progress | Waves A–H manually accepted. Wave I candidate audits the remaining General + Layout foundation-facing Core families before residual Input/Textarea/CodeBlock/Other coverage. |
 | CSA-3 Pattern/Gouno pass | planned | |
 | CSA-4 Product Showcase pages | planned | |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
@@ -655,3 +655,31 @@ The defect was not suppressed with `force` clicking or a test-only bypass. Core 
 That path passes in Chromium and the resulting transformed-preview screenshot was inspected manually. Because the fix is local to a single modal surface, FI-001 global Overlay/Layering authority remains closed; no application-global z-index policy was reopened.
 
 Wave H acceptance remains family-scoped. **CSA-2 is still in progress** for the remaining Core catalog.
+
+
+## CSA-2 Wave I — General + Layout
+
+Status: **candidate / awaiting batched machine + rendered review**
+
+Wave I groups the remaining General and Layout surfaces because they jointly define the visual grammar that page/product compositions inherit. The batch is prepared completely before opening a PR so intermediate commits do not repeatedly consume CI/Golden/parity runs.
+
+General evidence:
+
+- Icon — decorative versus named semantics, semantic sizes, loading rotation and explicit pixel/rotation geometry;
+- Typography — document heading level remains independent from visual role; H1/H2 using `task` must render with identical typography metrics while `page` remains visually distinct;
+- Kbd — shortcut-token rhythm and native `kbd` ownership;
+- Badge — zero/overflow/status variants plus a real count update;
+- Tag — closable lifecycle, disabled close affordance and non-controlled checkable state;
+- Avatar — small/middle/large/custom size geometry plus square/circle shape behavior using deterministic image bytes.
+
+Layout evidence:
+
+- Space — wrapping/split composition and token-owned spacing;
+- Flex — row-reverse + wrap-reverse + numeric gap without child wrappers;
+- Grid — responsive 24-column behavior at 600 / 820 / 1100 viewport widths;
+- Separator — horizontal title/line variants and semantic vertical separator;
+- Card — real default → elevated transition while header/content/footer ownership remains stable;
+- Splitter — real keyboard resize with `aria-valuenow` transition;
+- Page Layout — Header/Sider/Content/Footer region semantics and canonical 240px Sider geometry.
+
+This candidate does **not** promote components by test existence. Acceptance requires one exact-head CI + Canonical Visual Golden + Blog Consumer Parity + Gosso Admin Consumer Parity cycle followed by direct human review of all Wave I rendered evidence. Any defect discovered by rendering must be fixed at its owning layer before acceptance.
