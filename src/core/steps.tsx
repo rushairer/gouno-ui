@@ -207,7 +207,7 @@ export function Steps({
           : "flex items-start gap-2 overflow-x-auto",
         responsive &&
           orientation === "horizontal" &&
-          "max-sm:flex-col max-sm:overflow-visible",
+          "max-md:flex-col max-md:overflow-visible",
         semanticClassNames.root,
         className,
       )}
@@ -346,7 +346,7 @@ export function Steps({
                     data-layout="desktop-inline"
                     className={cn(
                       "h-px min-w-4 flex-1 bg-border",
-                      responsive && "max-sm:hidden",
+                      responsive && "max-md:hidden",
                       semanticClassNames.connector,
                     )}
                     style={semanticStyles.connector}
@@ -393,7 +393,7 @@ export function Steps({
               orientation === "horizontal"
                 ? cn(
                     "min-w-36 flex-1",
-                    responsive && "max-sm:w-full max-sm:min-w-0 max-sm:flex-none max-sm:pb-3",
+                    responsive && "max-md:w-full max-md:min-w-0 max-md:flex-none max-md:pb-3",
                   )
                 : "w-full pb-3",
               type === "panel" && "rounded-lg border border-border p-3",
@@ -421,7 +421,7 @@ export function Steps({
                   ),
                   responsive &&
                     orientation === "horizontal" &&
-                    "max-sm:hidden",
+                    "max-md:hidden",
                   semanticClassNames.connector,
                 )}
                 style={semanticStyles.connector}
@@ -436,7 +436,7 @@ export function Steps({
                 data-slot="steps-connector"
                 data-layout="mobile-vertical"
                 className={cn(
-                  "absolute hidden bg-border max-sm:block",
+                  "absolute hidden bg-border max-md:block",
                   connectorClass("vertical"),
                   semanticClassNames.connector,
                 )}
@@ -457,7 +457,7 @@ export function Steps({
                   effectiveTitlePlacement === "vertical" && "flex-col items-start",
                   responsive &&
                     orientation === "horizontal" &&
-                    "max-sm:flex-row max-sm:items-start",
+                    "max-md:flex-row max-md:items-start",
                   type === "inline" && "items-center py-1",
                 )}
               >
@@ -472,7 +472,7 @@ export function Steps({
                   effectiveTitlePlacement === "vertical" && "flex-col items-start",
                   responsive &&
                     orientation === "horizontal" &&
-                    "max-sm:flex-row max-sm:items-start",
+                    "max-md:flex-row max-md:items-start",
                   type === "inline" && "items-center py-1",
                 )}
               >
