@@ -67,6 +67,12 @@ for (const evidence of [
   "core-dropdown-popup",
   "core-popover-popup",
   "core-drawer-open",
+  "core-tabs-reports-active",
+  "core-menu-inline-selection",
+  "core-collapse-accordion",
+  "core-pagination-page-7",
+  "core-breadcrumb-project-menu",
+  "core-anchor-contract-hash",
 ]) {
   requireText(
     golden,

@@ -355,6 +355,22 @@ componentReviews["pattern-dedicated-editor"] = {
   baseline: "FI-001 certified / 2026-09-18",
 };
 
+for (const [id, scope] of Object.entries({
+  "core-tabs": "CSA-2 Wave C manual-reviewed: real browser evidence confirms active-tab transition, selected indicator and panel ownership in the canonical Tabs demo.",
+  "core-menu": "CSA-2 Wave C manual-reviewed: inline hierarchy preserves submenu expansion, selected-leaf emphasis and disabled/action separation without visual ambiguity.",
+  "core-collapse": "CSA-2 Wave C manual-reviewed: accordion transition, expanded disclosure state, extra action placement and disabled panel treatment were inspected in Chromium.",
+  "core-pagination": "CSA-2 Wave C manual-reviewed: real page transition proves aria-current ownership and the selected-page visual state while preserving page-density/ellipsis geometry.",
+  "core-breadcrumb": "CSA-2 Wave C manual-reviewed: attached navigation menu preserves breadcrumb hierarchy, separator rhythm and popup anchoring in the rendered canonical demo.",
+  "core-anchor": "CSA-2 Wave C manual-reviewed: native hash navigation reaches the real target without fixed-header obstruction; browser assertions own hash/target correctness.",
+})) {
+  componentReviews[id] = {
+    status: "reviewed",
+    scope,
+    evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "CSA-2 Wave C manual-reviewed / 2026-09-20",
+  };
+}
+
 export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
   return review?.status === "reviewed" ? 100 : Math.min(fallback, 99);
 }

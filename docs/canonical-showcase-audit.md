@@ -312,3 +312,47 @@ Accepted rendered states:
 Manual review found **no Foundation reopening** in this wave. The active final Cascader/TreeSelect registry entries are the reviewed multi-level implementations; legacy simple snippets are not treated as canonical evidence.
 
 This acceptance is family-scoped. CSA-2 remains in progress for the remaining Core catalog.
+
+
+## CSA-2 Wave C — navigation / disclosure family
+
+Status: **in progress**
+
+Wave C targets interactive navigation/disclosure surfaces that were historically reviewed but did not yet have dedicated human-reviewable Canonical Golden states:
+
+- Tabs — real active-tab transition and panel ownership;
+- Menu — inline hierarchy, submenu expanded state and selected leaf;
+- Collapse — accordion transition and disclosure state;
+- Pagination — real page transition and current-page state;
+- Breadcrumb — real attached navigation menu;
+- Anchor — native hash navigation to a real target section.
+
+No component behavior is changed in the initial candidate. The generated Chromium artifact must be inspected manually before any Wave C family is promoted to CSA manual-reviewed evidence.
+
+
+## CSA-2 Wave C acceptance — navigation / disclosure family
+
+Wave C is accepted as **manual-reviewed rendered evidence**.
+
+Exact-head evidence for implementation head `ff53706553734c538ce7a72bc9f741e5b8e6c1c4`:
+
+- CI `35504322987` — success;
+- Canonical Visual Golden Smoke `35504322968` — success;
+- Blog Consumer Parity `35504322951` — success;
+- Gosso Admin Consumer Parity `35504323051` — success;
+- rendered artifact `10603377374` inspected directly.
+
+Accepted rendered/browser states:
+
+- Tabs — changed from 概览 to 报告; selected indicator, icon/text rhythm and owned panel content remain coherent;
+- Menu — Workspace submenu remains expanded while Roles is the selected leaf; hierarchy, disabled item and divider/action grouping remain legible;
+- Collapse — accordion moves from Public API to Interaction behavior; expanded body, extra Docs action and disabled panel retain clear ownership;
+- Pagination — base demo transitions from page 6 to page 7, with `aria-current=page`, selected-page emphasis, ellipsis geometry and neighboring navigation preserved;
+- Breadcrumb — Projects menu opens as an attached navigation popup without disrupting breadcrumb separator rhythm;
+- Anchor — clicking 交互契约 updates the real hash and reaches the target section without fixed-header obstruction.
+
+The first two Pagination browser attempts failed because the evidence locator incorrectly assumed visible page-number text was the localized accessible name. Core Pagination was not changed: implementation and existing focused tests already proved `aria-current=page`. The evidence was corrected to scope the canonical 基础用法 Card and use the visible page-number target while retaining the semantic post-click assertion.
+
+Manual review found **no Foundation reopening** in Wave C. Anchor acceptance is intentionally split: browser assertions prove hash/target behavior, while the rendered capture proves the target landing position; the screenshot alone is not treated as proof of Anchor state.
+
+This acceptance is family-scoped. CSA-2 remains in progress for the remaining Core catalog.

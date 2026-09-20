@@ -989,6 +989,120 @@ test("csa-core-drawer-overlay-evidence", async ({ page }, testInfo) => {
   await captureCanonicalAuditEvidence(page, testInfo, "core-drawer-open");
 });
 
+test("csa-core-tabs-interaction-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-tabs",
+    viewport: desktop,
+    ready: '[role="tablist"]',
+  });
+
+  const tablist = page.getByRole("tablist", { name: "工作区栏目" });
+  const overview = tablist.getByRole("tab", { name: "概览" });
+  const reports = tablist.getByRole("tab", { name: "报告" });
+  await expect(overview).toHaveAttribute("aria-selected", "true");
+  await reports.click();
+  await expect(reports).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByText("浏览已生成的分析报告。", { exact: true })).toBeVisible();
+  await captureCanonicalAuditEvidence(page, testInfo, "core-tabs-reports-active");
+});
+
+test("csa-core-menu-interaction-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-menu",
+    viewport: desktop,
+    ready: 'nav[aria-label="Workspace navigation"]',
+  });
+
+  const menu = page.getByRole("navigation", { name: "Workspace navigation" });
+  const workspace = menu.getByRole("menuitem", { name: /Workspace/ });
+  await expect(workspace).toHaveAttribute("aria-expanded", "true");
+  const roles = menu.getByRole("menuitem", { name: "Roles" });
+  await roles.click();
+  await expect(roles).toHaveAttribute("aria-current", "page");
+  await captureCanonicalAuditEvidence(page, testInfo, "core-menu-inline-selection");
+});
+
+test("csa-core-collapse-interaction-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-collapse",
+    viewport: desktop,
+    ready: '[data-slot="collapse"]',
+  });
+
+  const publicApi = page.getByRole("button", { name: /Public API/ });
+  const behavior = page.getByRole("button", { name: /Interaction behavior/ });
+  await expect(publicApi).toHaveAttribute("aria-expanded", "true");
+  await behavior.click();
+  await expect(behavior).toHaveAttribute("aria-expanded", "true");
+  await expect(publicApi).toHaveAttribute("aria-expanded", "false");
+  await expect(page.getByText("Accordion mode keeps exactly one panel active at a time.")).toBeVisible();
+  await captureCanonicalAuditEvidence(page, testInfo, "core-collapse-accordion");
+});
+
+test("csa-core-pagination-interaction-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-pagination",
+    viewport: desktop,
+    ready: 'nav[aria-label="Pagination"]',
+  });
+
+  const baseDemo = page
+    .getByRole("heading", { level: 3, name: "基础用法" })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const pagination = baseDemo.getByRole("navigation", { name: "Pagination" });
+  const page6 = pagination.locator('button[aria-current="page"]');
+  await expect(page6).toContainText("6");
+  const page7 = pagination.locator("button").filter({ hasText: /^7$/ });
+  await expect(page7).toHaveCount(1);
+  await page7.click();
+  await expect(page7).toHaveAttribute("aria-current", "page");
+  await captureCanonicalAuditEvidence(page, testInfo, "core-pagination-page-7");
+});
+
+test("csa-core-breadcrumb-menu-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-breadcrumb",
+    viewport: desktop,
+    ready: 'nav[aria-label="Breadcrumb"]',
+  });
+
+  const trigger = page.getByRole("button", { name: "Choose project" });
+  await trigger.click();
+  await expect(page.getByRole("menuitem", { name: "Gouno UI" })).toBeVisible();
+  await expect(page.getByRole("menuitem", { name: "Gosso" })).toBeVisible();
+  await captureCanonicalAuditEvidence(page, testInfo, "core-breadcrumb-project-menu");
+});
+
+test("csa-core-anchor-hash-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-anchor",
+    viewport: desktop,
+    ready: 'nav[aria-label="示例文章目录"]',
+  });
+
+  const anchor = page.getByRole("navigation", { name: "示例文章目录" });
+  const contract = anchor.getByRole("link", { name: "交互契约" });
+  await expect(contract).toHaveAttribute("href", "#anchor-contract");
+  await contract.click();
+  await expect
+    .poll(() => page.evaluate(() => window.location.hash))
+    .toBe("#anchor-contract");
+  await expect(page.locator("#anchor-contract")).toBeVisible();
+  await captureCanonicalAuditEvidence(page, testInfo, "core-anchor-contract-hash");
+});
+
 test("surface-gosso-overview-quick-link-card-ownership", async ({ page }) => {
   const scenario = {
     workspace: "gosso-admin",
