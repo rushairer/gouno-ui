@@ -435,3 +435,27 @@ Accepted rendered/browser states:
 The initial all-green Wave D artifact was deliberately rejected after direct visual review exposed CSA-D002. Acceptance happened only after owner classification, Showcase-only safe-area correction, static integration protection, rendered geometry assertions, fresh reciprocal consumer parity, and a second direct artifact review.
 
 No Foundation is reopened by Wave D. This acceptance is family-scoped; CSA-2 remains active for the remaining Core catalog.
+
+
+## CSA-2 Wave E — remaining Feedback family
+
+Status: **in progress**
+
+Wave E completes the remaining Feedback-family surfaces that still lack dedicated human-reviewable CSA browser evidence:
+
+- Progress — real 64% → 74% state transition, fill geometry and adjacent status/action rhythm;
+- Skeleton — two-Card loading structure, decorative placeholder ownership and visual density;
+- Tooltip — keyboard-focus opening, bottom-start anchoring and popup depth;
+- Tour — real two-step modal walkthrough, progress/action hierarchy and focus return after completion.
+
+The initial candidate changes only browser evidence, the durable CSA evidence guard and this audit entry. Core runtime behavior is not modified before direct rendered inspection.
+
+Acceptance requires all of the following on the same exact head:
+
+- CI;
+- Canonical Visual Golden;
+- Blog Consumer Parity;
+- Gosso Admin Consumer Parity;
+- direct inspection of the rendered Wave E artifact.
+
+Any visual/interaction defect discovered by the manual pass must be classified and fixed at its owning layer before Wave E can be accepted.
