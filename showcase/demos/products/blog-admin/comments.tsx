@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from "react";
-import { Bot, Check, EyeOff, Trash2 } from "lucide-react";
+import { Check, EyeOff, Sparkles, Trash2 } from "lucide-react";
 import {
   Alert,
   Badge,
@@ -185,7 +185,7 @@ export function BlogAdminCommentsDemo() {
 
       {selected.length > 0 ? (
         <BulkActionBar selectionLabel={`已选择 ${selected.length} 条评论`} onCancel={clearSelection}>
-          <Button size="small" icon={<Bot />} onClick={() => setAIOpen(true)}>交给 AI</Button>
+          <Button size="small" icon={<Sparkles />} onClick={() => setAIOpen(true)}>交给 AI</Button>
           <Button size="small" color="error" icon={<Trash2 />} onClick={() => setDeleteTarget({ kind: "batch" })}>删除</Button>
         </BulkActionBar>
       ) : null}
