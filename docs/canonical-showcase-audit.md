@@ -191,7 +191,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | --- | --- | --- |
 | CSA-0 Stabilize | complete | Obsolete Blog AI reverse-migration PR closed; Blog Core Wave 2 merged to `gouno-blog/main` at `5e20df79`; Consumer expansion is frozen at this checkpoint. |
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
-| CSA-2 Core browser pass | in progress | Waves A–G manually accepted through selection/direct-input and complex-input families. Remaining Core data-display/layout/other families still require browser review. |
+| CSA-2 Core browser pass | in progress | Waves A–H manually accepted through input, feedback and Data Display families. Remaining Core layout/other families still require browser review. |
 | CSA-3 Pattern/Gouno pass | planned | |
 | CSA-4 Product Showcase pages | planned | |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
@@ -574,3 +574,84 @@ Manual review found no Foundation/Core defect requiring reopening. The first Wav
 Native Date/Time/Color browser chrome is platform-owned. CSA acceptance covers the Gouno-owned web input geometry, state/focus treatment, value contract and composition; it does not attempt to restyle or automate operating-system picker chrome.
 
 This acceptance remains family-scoped. **CSA-2 is still in progress** for the remaining Core catalog.
+
+
+## CSA-2 Wave H — Data Display
+
+Status: **accepted / manual-reviewed**
+
+Wave H audits the Data Display family as composed browser surfaces rather than treating prior API/foundation coverage as sufficient:
+
+- List — localized Empty, active loading overlay and explicit Load More composition;
+- Descriptions — bordered vertical layout, long-value wrapping and single-column responsive collapse at 600px;
+- Calendar — controlled selected date, week-number column and real date-selection transition;
+- Image — deterministic fallback image, controlled preview overlay and zoom/rotate transform toolbar;
+- Table — selected/disabled row treatment, caption/footer ownership and compact/touch/sticky density variants;
+- Statistic — caller-owned label/value/suffix hierarchy without manufacturing a Card;
+- Timeline — alternate vertical and reversed horizontal layout semantics;
+- Tree — controlled selection plus check state on an expanded hierarchy.
+
+The Image browser evidence intercepts the remote demo image with deterministic SVG bytes. The audit therefore reviews Gouno preview/overlay/transform composition without making Canonical acceptance depend on a third-party image host.
+
+No component is promoted by this candidate. Open the PR only after the complete Wave H evidence/ledger batch is prepared so intermediate branch commits do not repeatedly run CI/Golden/reciprocal parity. Acceptance still requires exact-head CI, Canonical Visual Golden, Blog Consumer Parity, Gosso Admin Consumer Parity, and direct manual inspection of every generated Wave H screenshot.
+
+
+### CSA-D003 — Image preview action occlusion
+
+The first Wave H Golden run on `6391ecda` produced a real component defect in Image preview rather than an evidence-driver failure.
+
+Observed after the canonical controlled preview was opened, zoomed and rotated:
+
+- the transformed preview image expanded into the action-bar region;
+- the toolbar and Close control remained visibly rendered;
+- pointer hit-testing landed on the transformed `img`, so a real click on Close was intercepted;
+- the same transformed image could therefore obstruct other preview actions despite the controls appearing available.
+
+Classification: **Core Image interaction/local-stacking defect**. `core-image` is reopened for CSA-D003. The global Overlay/Layering Foundation is **not** reopened because this conflict is entirely inside one modal surface; the Overlay inventory explicitly classifies component-internal 1/2/10/20 stacking as local rather than application-global Layer authority.
+
+Candidate correction:
+
+- keep transformed media draggable and interactive;
+- give the preview action-bar wrapper explicit component-local stacking above transformed media;
+- keep the action bar shrink-stable at the bottom of the dialog;
+- retain the existing real-browser regression path: open controlled preview → zoom → rotate → click Close without force-click or DOM bypass.
+
+The correction is not accepted until a fresh exact-head Golden proves the ordinary user click reaches Close after transforms and the rendered evidence is inspected manually.
+
+
+## CSA-2 Wave H acceptance
+
+Status: **accepted / manual-reviewed**
+
+Accepted implementation head: `5692dff41f524a131f3b15d9a467ac3bc4a4dc30`.
+
+Exact-head machine evidence:
+
+- CI `35524048564` — success;
+- Canonical Visual Golden Smoke `35524048559` — success;
+- Blog Consumer Parity `35524048556` — success;
+- Gosso Admin Consumer Parity `35524048585` — success;
+- rendered Golden artifact `10608284046` — inspected directly.
+
+Manual rendered review accepted:
+
+- List — localized Empty and the loading/Load More composition remain legible without manufacturing another page surface;
+- Descriptions — at 600px the bordered vertical example collapses to a single readable column and the long Notes value wraps correctly;
+- Calendar — September 18 becomes the actual selected date while week numbers and today/selection distinction remain readable;
+- Image — after fallback load, controlled preview, zoom and rotate, the transformed image no longer pointer-occludes the visible action bar; toolbar and Close remain clearly usable;
+- Table — compact/touch density examples preserve table structure and selected/disabled/footer/caption treatment remains coherent;
+- Statistic — title/value/unit hierarchy remains compact and does not smuggle dashboard-card semantics into Core;
+- Timeline — alternate vertical and reversed horizontal variants retain clear rail/node/title alignment;
+- Tree — expanded hierarchy, selected Theme node and checked file state remain visually distinguishable.
+
+### CSA-D003 certification
+
+CSA-D003 is **certified** at `5692dff4`.
+
+The defect was not suppressed with `force` clicking or a test-only bypass. Core Image now gives the preview action-bar wrapper explicit component-local stacking above transformed preview media. The regression path performs the ordinary user sequence:
+
+`open controlled preview → zoom → rotate → ordinary Close click`.
+
+That path passes in Chromium and the resulting transformed-preview screenshot was inspected manually. Because the fix is local to a single modal surface, FI-001 global Overlay/Layering authority remains closed; no application-global z-index policy was reopened.
+
+Wave H acceptance remains family-scoped. **CSA-2 is still in progress** for the remaining Core catalog.

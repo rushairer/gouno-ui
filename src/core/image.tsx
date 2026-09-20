@@ -551,7 +551,7 @@ export function Image({
             >
               {renderedPreviewImage}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="relative z-10 flex shrink-0 items-center gap-2">
               {renderedToolbar}
               <IconButton
                 variant="text"

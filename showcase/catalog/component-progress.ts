@@ -429,6 +429,25 @@ for (const [id, scope] of Object.entries({
   };
 }
 
+
+for (const [id, scope] of Object.entries({
+  "core-list": "CSA-2 Wave H manual-reviewed: localized Empty, active loading overlay and explicit Load More composition preserve caller-owned list structure.",
+  "core-descriptions": "CSA-2 Wave H manual-reviewed: bordered vertical descriptions collapse to one readable column at 600px while long values wrap without product-specific wrappers.",
+  "core-calendar": "CSA-2 Wave H manual-reviewed: controlled selected-date state, ISO week-number column and a real September 10 → September 18 selection transition were inspected in Chromium.",
+  "core-image": "CSA-2 Wave H / CSA-D003 certified: preview zoom/rotation keeps transformed media interactive while the local action bar remains visually and pointer-wise above it; ordinary Close click succeeds after transforms.",
+  "core-table": "CSA-2 Wave H manual-reviewed: selected/disabled rows, footer/caption ownership and compact/touch/sticky density variants preserve canonical table hierarchy.",
+  "core-statistic": "CSA-2 Wave H manual-reviewed: label/value/suffix hierarchy remains compact and caller-owned without manufacturing a Card or trend policy.",
+  "core-timeline": "CSA-2 Wave H manual-reviewed: alternate vertical and reversed horizontal timelines preserve item/rail alignment and readable title/content ownership.",
+  "core-tree": "CSA-2 Wave H manual-reviewed: expanded hierarchy, controlled selection and checkbox state remain coherent after real select/check transitions.",
+})) {
+  componentReviews[id] = {
+    status: "reviewed",
+    scope,
+    evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "CSA-2 Wave H manual-reviewed / 2026-09-21",
+  };
+}
+
 export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
   return review?.status === "reviewed" ? 100 : Math.min(fallback, 99);
 }
