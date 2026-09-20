@@ -1857,15 +1857,15 @@ test("csa-core-calendar-selection-evidence", async ({ page }, testInfo) => {
   });
 
   const calendar = page.locator('[data-slot="calendar"]').first();
-  const selected = calendar.locator('button[data-calendar-date][aria-selected="true"]');
-  await expect(selected).toHaveAttribute("data-calendar-date", "2026-8-10");
+  const september10 = calendar.locator('button[data-calendar-date="2026-8-10"]');
+  const september18 = calendar.locator('button[data-calendar-date="2026-8-18"]');
+  await expect(september10).toHaveAttribute("aria-selected", "true");
   await expect(calendar.locator('[data-slot="calendar-week-number"]')).toHaveCount(6);
 
-  const next = calendar.locator('button[data-calendar-date="2026-8-18"]');
-  await expect(next).toBeVisible();
-  await next.click();
-  await expect(next).toHaveAttribute("aria-selected", "true");
-  await expect(selected).toHaveAttribute("aria-selected", "false");
+  await expect(september18).toBeVisible();
+  await september18.click();
+  await expect(september18).toHaveAttribute("aria-selected", "true");
+  await expect(september10).toHaveAttribute("aria-selected", "false");
 
   await calendar.screenshot({
     path: testInfo.outputPath("csa-core-calendar-september-18-selected.png"),
