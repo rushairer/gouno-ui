@@ -393,11 +393,11 @@ test("focus-canonical-fallback-and-component-ring", async ({ page }, testInfo) =
   expect(fallbackStyle.outlineWidth).toBe("2px");
   expect(fallbackStyle.outlineOffset).toBe("2px");
 
-  await fallback.screenshot({
-    path: testInfo.outputPath("csa-core-focus-fallback.png"),
-    animations: "disabled",
-    caret: "hide",
-  });
+  await captureCanonicalAuditEvidence(
+    page,
+    testInfo,
+    "core-focus-fallback",
+  );
 });
 
 test("overlay-semantic-modal-popup-ordering", async ({ page }, testInfo) => {
@@ -666,7 +666,7 @@ test("motion-reduced-preference-collapses-carousel-movement", async ({ page }) =
   ).toHaveCount(0);
 });
 
-test("responsive-steps-canonical-sm-stacking", async ({ page }, testInfo) => {
+test("responsive-steps-canonical-md-stacking", async ({ page }, testInfo) => {
   const scenario = {
     workspace: "gouno-ui",
     brand: "blog-admin",
@@ -722,6 +722,11 @@ test("responsive-steps-canonical-sm-stacking", async ({ page }, testInfo) => {
     )
     .toBe("column");
   await expectNoHorizontalDocumentOverflow(page);
+  await captureCanonicalAuditEvidence(
+    page,
+    testInfo,
+    "core-steps-intermediate-stack",
+  );
 
   await page.setViewportSize({ width: 800, height: 900 });
   await expect
@@ -729,6 +734,16 @@ test("responsive-steps-canonical-sm-stacking", async ({ page }, testInfo) => {
       steps.evaluate((element) => getComputedStyle(element).flexDirection),
     )
     .toBe("row");
+
+  const securityTitle = steps
+    .locator('[data-slot="steps-title"]')
+    .filter({ hasText: "Security" });
+  await expect(securityTitle).toHaveCount(1);
+  expect(
+    await securityTitle.evaluate(
+      (element) => element.scrollWidth <= element.clientWidth + 1,
+    ),
+  ).toBe(true);
 
   const desktopItem = steps.locator('[data-slot="steps-item"]').first();
   const desktopMarker = desktopItem.locator('[data-slot="steps-marker"]');
@@ -760,6 +775,23 @@ test("responsive-steps-canonical-sm-stacking", async ({ page }, testInfo) => {
     testInfo,
     "core-steps-desktop-inline",
   );
+
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await expect
+    .poll(() =>
+      steps.evaluate((element) => getComputedStyle(element).flexDirection),
+    )
+    .toBe("row");
+  expect(
+    await securityTitle.evaluate(
+      (element) => element.scrollWidth <= element.clientWidth + 1,
+    ),
+  ).toBe(true);
+  await steps.screenshot({
+    path: testInfo.outputPath("csa-core-steps-shell-constrained.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
 
   const verticalDot = page.locator(
     '[data-slot="steps"][data-type="dot"][data-orientation="vertical"]',
