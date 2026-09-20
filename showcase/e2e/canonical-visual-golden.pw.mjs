@@ -2033,6 +2033,430 @@ test("csa-core-tree-selection-check-evidence", async ({ page }, testInfo) => {
   });
 });
 
+
+test("csa-core-icon-semantics-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-icon",
+    viewport: desktop,
+    ready: '[data-slot="icon"]',
+  });
+
+  const card = page
+    .getByText("Decorative", { exact: true })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const icons = card.locator('[data-slot="icon"]');
+  await expect(icons).toHaveCount(4);
+  await expect(icons.nth(0)).toHaveAttribute("aria-hidden", "true");
+  await expect(card.getByRole("img", { name: "Completed" })).toBeVisible();
+  await expect(card.getByRole("img", { name: "Loading" })).toHaveClass(/animate-spin/);
+
+  const direction = card.getByRole("img", { name: "Direction" });
+  const directionStyle = await direction.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return { width: style.width, height: style.height, transform: element.style.transform };
+  });
+  expect(directionStyle.width).toBe("24px");
+  expect(directionStyle.height).toBe("24px");
+  expect(directionStyle.transform).toContain("rotate(45deg)");
+
+  await card.screenshot({
+    path: testInfo.outputPath("csa-core-icon-semantic-sizes.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-typography-role-hierarchy-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-typography",
+    viewport: desktop,
+    ready: '[data-typography-role]',
+  });
+
+  const card = page
+    .getByText("语义宿主与原生属性", { exact: true })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const pageTitle = card.getByRole("heading", { level: 1, name: "页面主标题" });
+  const nestedTask = card.getByRole("heading", { level: 2, name: "嵌套任务标题" });
+  const standaloneTask = card.getByRole("heading", {
+    level: 1,
+    name: "独立任务标题（同一视觉 role，不同 document level）",
+  });
+  const section = card.getByRole("heading", { level: 3, name: "区块标题" });
+
+  await expect(pageTitle).toHaveAttribute("data-typography-role", "page");
+  await expect(nestedTask).toHaveAttribute("data-typography-role", "task");
+  await expect(standaloneTask).toHaveAttribute("data-typography-role", "task");
+  await expect(section).toHaveAttribute("data-typography-role", "section");
+
+  const metrics = async (locator) =>
+    locator.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return { fontSize: style.fontSize, lineHeight: style.lineHeight, fontWeight: style.fontWeight };
+    });
+  expect(await metrics(standaloneTask)).toEqual(await metrics(nestedTask));
+  expect((await metrics(pageTitle)).fontSize).not.toBe((await metrics(nestedTask)).fontSize);
+
+  await card.screenshot({
+    path: testInfo.outputPath("csa-core-typography-semantic-hierarchy.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-kbd-shortcut-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-kbd",
+    viewport: desktop,
+    ready: "kbd",
+  });
+
+  const card = page
+    .getByText("Command palette", { exact: true })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const keys = card.locator("kbd");
+  await expect(keys).toHaveCount(4);
+  await expect(keys.nth(0)).toHaveText("⌘");
+  await expect(keys.nth(1)).toHaveText("K");
+  await expect(keys.nth(2)).toHaveText("⇧");
+  await expect(keys.nth(3)).toHaveText("Tab");
+
+  await card.screenshot({
+    path: testInfo.outputPath("csa-core-kbd-shortcuts.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-badge-dynamic-state-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-badge",
+    viewport: desktop,
+    ready: '[role="status"]',
+  });
+
+  const card = page
+    .getByText("当前计数：5", { exact: true })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  await expect(card.getByRole("status", { name: "5" })).toBeVisible();
+  await expect(card.getByRole("status", { name: "0" })).toBeVisible();
+  await expect(card.getByRole("status", { name: "99+" })).toBeVisible();
+  await expect(card.getByRole("status", { name: "999+" })).toBeVisible();
+
+  await card.getByRole("button", { name: "增加计数" }).click();
+  await expect(card.getByText("当前计数：6", { exact: true })).toBeVisible();
+  await expect(card.getByRole("status", { name: "6" })).toBeVisible();
+
+  await card.screenshot({
+    path: testInfo.outputPath("csa-core-badge-count-statuses.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-tag-interaction-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-tag",
+    viewport: desktop,
+    ready: '[data-slot="card"]',
+  });
+
+  const closableCard = page
+    .getByText("可关闭标签", { exact: true })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  await closableCard.getByRole("button", { name: "关闭 Release" }).click();
+  await expect(closableCard.getByText("Release", { exact: true })).toBeHidden();
+  await expect(closableCard.getByText("已关闭 Release 标签", { exact: true })).toBeVisible();
+  await expect(closableCard.getByRole("button", { name: "恢复标签" })).toBeVisible();
+  await expect(closableCard.getByRole("button", { name: "关闭 Disabled" })).toBeDisabled();
+
+  await closableCard.screenshot({
+    path: testInfo.outputPath("csa-core-tag-closable-lifecycle.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  const checkableCard = page
+    .getByText("非受控可选标签", { exact: true })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const typescript = checkableCard.getByRole("checkbox", { name: "TypeScript" });
+  await expect(typescript).toHaveAttribute("aria-checked", "true");
+  await typescript.click();
+  await expect(typescript).toHaveAttribute("aria-checked", "false");
+  await expect(checkableCard.getByText("已取消 TypeScript", { exact: true })).toBeVisible();
+
+  await checkableCard.screenshot({
+    path: testInfo.outputPath("csa-core-tag-checkable-state.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-avatar-size-shape-evidence", async ({ page }, testInfo) => {
+  await page.route("https://github.com/rushairer.png", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "image/svg+xml",
+      body: '<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96"><rect width="96" height="96" rx="48" fill="#cbd5e1"/><circle cx="48" cy="38" r="16" fill="#64748b"/><path d="M20 86c5-20 18-30 28-30s23 10 28 30" fill="#64748b"/></svg>',
+    });
+  });
+
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-avatar",
+    viewport: desktop,
+    ready: '[data-slot="avatar"]',
+  });
+
+  const firstAvatar = page.locator('[data-slot="avatar"]').first();
+  const card = firstAvatar.locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const avatars = card.locator('[data-slot="avatar"]');
+  await expect(avatars).toHaveCount(4);
+  await expect(avatars.nth(0)).toHaveAttribute("data-size", "small");
+  await expect(avatars.nth(1)).toHaveAttribute("data-size", "middle");
+  await expect(avatars.nth(2)).toHaveAttribute("data-size", "large");
+  await expect(avatars.nth(2)).toHaveAttribute("data-shape", "square");
+  await expect(avatars.nth(3)).toHaveAttribute("data-size", "custom");
+
+  const customBox = await avatars.nth(3).boundingBox();
+  expect(customBox?.width).toBeCloseTo(48, 0);
+  expect(customBox?.height).toBeCloseTo(48, 0);
+
+  await card.screenshot({
+    path: testInfo.outputPath("csa-core-avatar-size-shape.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-space-wrap-split-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-space",
+    viewport: { width: 600, height: 900 },
+    ready: '[data-slot="space"]',
+  });
+
+  const card = page
+    .getByText("换行与分隔内容", { exact: true })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const space = card.locator('[data-slot="space"]').first();
+  await expect(space).toHaveAttribute("data-orientation", "horizontal");
+  await expect(space.getByRole("button")).toHaveCount(4);
+  await expect(space.getByText("·", { exact: true })).toHaveCount(3);
+
+  await card.screenshot({
+    path: testInfo.outputPath("csa-core-space-wrap-split.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-flex-reverse-wrap-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-flex",
+    viewport: { width: 600, height: 900 },
+    ready: '[data-slot="flex"]',
+  });
+
+  const card = page
+    .getByText("反向、换行与数值 gap", { exact: true })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const flex = card.getByLabel("Flexible tags");
+  await expect(flex).toHaveAttribute("data-direction", "row-reverse");
+  await expect(flex).toHaveAttribute("data-wrap", "wrap-reverse");
+  await expect(flex).toHaveCSS("gap", "10px");
+  await expect(flex.getByText(/Item /)).toHaveCount(8);
+
+  await card.screenshot({
+    path: testInfo.outputPath("csa-core-flex-reverse-wrap.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-grid-responsive-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-grid",
+    viewport: { width: 600, height: 900 },
+    ready: '[data-slot="row"]',
+  });
+
+  const card = page
+    .getByText("24 栅格与响应式 Col", { exact: true })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const cols = card.locator('[data-slot="col"]');
+  await expect(cols).toHaveCount(4);
+
+  const positions = async () =>
+    Promise.all(
+      [0, 1, 2, 3].map(async (index) => {
+        const box = await cols.nth(index).boundingBox();
+        if (!box) throw new Error("missing grid col " + index);
+        return { x: Math.round(box.x), y: Math.round(box.y), width: Math.round(box.width) };
+      }),
+    );
+
+  let boxes = await positions();
+  expect(new Set(boxes.map((box) => box.y)).size).toBe(4);
+
+  await card.screenshot({
+    path: testInfo.outputPath("csa-core-grid-responsive-600.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await page.setViewportSize({ width: 820, height: 900 });
+  boxes = await positions();
+  expect(boxes[0].y).toBe(boxes[1].y);
+  expect(boxes[2].y).toBe(boxes[3].y);
+  expect(boxes[0].y).toBeLessThan(boxes[2].y);
+
+  await page.setViewportSize({ width: 1100, height: 900 });
+  boxes = await positions();
+  expect(new Set(boxes.map((box) => box.y)).size).toBe(1);
+
+  await card.screenshot({
+    path: testInfo.outputPath("csa-core-grid-responsive-1100.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-separator-variants-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-separator",
+    viewport: desktop,
+    ready: '[data-slot="separator"]',
+  });
+
+  const basicCard = page
+    .getByText("Centered section", { exact: true })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const horizontal = basicCard.locator('[data-slot="separator"]');
+  await expect(horizontal).toHaveCount(3);
+  for (let index = 0; index < 3; index += 1) {
+    await expect(horizontal.nth(index)).toHaveAttribute("data-orientation", "horizontal");
+  }
+
+  await basicCard.screenshot({
+    path: testInfo.outputPath("csa-core-separator-horizontal-variants.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  const verticalCard = page
+    .getByText("垂直与语义 Separator", { exact: true })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const semantic = verticalCard.getByRole("separator", { name: "Section separator" });
+  await expect(semantic).toHaveAttribute("aria-orientation", "vertical");
+
+  await verticalCard.screenshot({
+    path: testInfo.outputPath("csa-core-separator-vertical-semantic.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-card-variant-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-card",
+    viewport: desktop,
+    ready: '[data-slot="card"]',
+  });
+
+  const elevatedButton = page.getByRole("button", { name: "elevated", exact: true });
+  const demo = elevatedButton.locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const card = demo
+    .getByText("Release 0.2.0", { exact: true })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+
+  const beforeShadow = await card.evaluate((element) => getComputedStyle(element).boxShadow);
+  await elevatedButton.click();
+  const afterShadow = await card.evaluate((element) => getComputedStyle(element).boxShadow);
+  expect(afterShadow).not.toBe(beforeShadow);
+  await expect(card.getByText("Ready", { exact: true })).toBeVisible();
+  await expect(card.getByRole("button", { name: "查看变更" })).toBeVisible();
+
+  await demo.screenshot({
+    path: testInfo.outputPath("csa-core-card-elevated-composition.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-splitter-keyboard-resize-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-splitter",
+    viewport: desktop,
+    ready: '[data-slot="splitter"]',
+  });
+
+  const splitter = page.locator('[data-slot="splitter"]').first();
+  const handle = splitter.getByRole("separator");
+  await expect(handle).toHaveAttribute("aria-orientation", "vertical");
+  await expect(handle).toHaveAttribute("aria-valuenow", "36");
+
+  await handle.focus();
+  await handle.press("ArrowRight");
+  await expect(handle).toHaveAttribute("aria-valuenow", "37");
+
+  const card = splitter.locator('xpath=ancestor::*[@data-slot="card"][1]');
+  await card.screenshot({
+    path: testInfo.outputPath("csa-core-splitter-keyboard-resized.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-page-layout-region-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-page-layout",
+    viewport: desktop,
+    ready: '[data-layout="admin-shell"]',
+  });
+
+  const layout = page.locator('[data-layout="admin-shell"]');
+  await expect(layout.locator("header")).toContainText("Header / global actions");
+  await expect(layout.getByRole("complementary", { name: "Section navigation" })).toContainText("Sider / navigation");
+  await expect(layout.locator("main")).toContainText("Main content");
+  await expect(layout.locator("footer")).toContainText("Footer / status");
+
+  const siderBox = await layout.locator("aside").boundingBox();
+  expect(siderBox?.width).toBeCloseTo(240, 0);
+
+  const card = layout.locator('xpath=ancestor::*[@data-slot="card"][1]');
+  await card.screenshot({
+    path: testInfo.outputPath("csa-core-page-layout-regions.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
 test("surface-gosso-overview-quick-link-card-ownership", async ({ page }) => {
   const scenario = {
     workspace: "gosso-admin",
