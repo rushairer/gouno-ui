@@ -844,7 +844,10 @@ test("csa-core-select-popup-evidence", async ({ page }, testInfo) => {
     ready: '[data-slot="select"]',
   });
 
-  const root = page.locator('[data-slot="select"]').first();
+  const baseDemo = page
+    .getByRole("heading", { level: 3, name: "基础用法" })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const root = baseDemo.locator('[data-slot="select"]').first();
   const nativeSelect = root.locator('select[aria-hidden="true"]');
   await expect(nativeSelect).toHaveCount(1);
   expect(
