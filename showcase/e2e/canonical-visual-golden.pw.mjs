@@ -359,6 +359,11 @@ test("focus-canonical-fallback-and-component-ring", async ({ page }, testInfo) =
   expect(ownedStyle.focusVisible).toBe(true);
   expect(ownedStyle.outlineStyle).toBe("none");
   expect(ownedStyle.boxShadow).not.toBe(restingBoxShadow);
+  await captureCanonicalAuditEvidence(
+    page,
+    testInfo,
+    "core-focus-component-owned",
+  );
 
   await page.evaluate(() => {
     const probe = document.createElement("button");
@@ -366,8 +371,8 @@ test("focus-canonical-fallback-and-component-ring", async ({ page }, testInfo) =
     probe.type = "button";
     probe.textContent = "Focus fallback probe";
     probe.style.position = "fixed";
-    probe.style.left = "16px";
-    probe.style.bottom = "16px";
+    probe.style.right = "24px";
+    probe.style.bottom = "24px";
     document.body.appendChild(probe);
   });
 
@@ -388,11 +393,11 @@ test("focus-canonical-fallback-and-component-ring", async ({ page }, testInfo) =
   expect(fallbackStyle.outlineWidth).toBe("2px");
   expect(fallbackStyle.outlineOffset).toBe("2px");
 
-  await captureCanonicalAuditEvidence(
-    page,
-    testInfo,
-    "core-focus-owned-and-fallback",
-  );
+  await fallback.screenshot({
+    path: testInfo.outputPath("csa-core-focus-fallback.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
 });
 
 test("overlay-semantic-modal-popup-ordering", async ({ page }, testInfo) => {
@@ -574,11 +579,17 @@ test("showcase-config-provider-visibly-proves-locale-ownership", async ({ page }
     }),
   ).toContainText("Product-owned placeholder");
 
-  await captureCanonicalAuditEvidence(
-    page,
-    testInfo,
-    "core-config-provider-locales",
-  );
+  const localeSection = page
+    .getByRole("heading", {
+      name: "中英文 Provider 可见对照与显式覆盖",
+    })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  await expect(localeSection).toBeVisible();
+  await localeSection.screenshot({
+    path: testInfo.outputPath("csa-core-config-provider-locales.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
 });
 
 test("interaction-carousel-arrows-remain-clickable-while-draggable", async ({ page }, testInfo) => {
@@ -698,8 +709,21 @@ test("responsive-steps-canonical-sm-stacking", async ({ page }, testInfo) => {
   expect(mobileTitleBox.x).toBeGreaterThan(
     mobileMarkerBox.x + mobileMarkerBox.width,
   );
+  await captureCanonicalAuditEvidence(
+    page,
+    testInfo,
+    "core-steps-mobile-stack",
+  );
 
   await page.setViewportSize({ width: 700, height: 900 });
+  await expect
+    .poll(() =>
+      steps.evaluate((element) => getComputedStyle(element).flexDirection),
+    )
+    .toBe("column");
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.setViewportSize({ width: 800, height: 900 });
   await expect
     .poll(() =>
       steps.evaluate((element) => getComputedStyle(element).flexDirection),
@@ -731,6 +755,11 @@ test("responsive-steps-canonical-sm-stacking", async ({ page }, testInfo) => {
         (desktopMarkerBox.y + desktopMarkerBox.height / 2),
     ),
   ).toBeLessThanOrEqual(2);
+  await captureCanonicalAuditEvidence(
+    page,
+    testInfo,
+    "core-steps-desktop-inline",
+  );
 
   const verticalDot = page.locator(
     '[data-slot="steps"][data-type="dot"][data-orientation="vertical"]',
@@ -761,11 +790,12 @@ test("responsive-steps-canonical-sm-stacking", async ({ page }, testInfo) => {
   );
   expect(dotTitleBox.x).toBeGreaterThan(dotMarkerBox.x + dotMarkerBox.width);
 
-  await captureCanonicalAuditEvidence(
-    page,
-    testInfo,
-    "core-steps-responsive-and-vertical-dot",
-  );
+  await verticalDot.scrollIntoViewIfNeeded();
+  await verticalDot.screenshot({
+    path: testInfo.outputPath("csa-core-steps-vertical-dot.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
 });
 
 test("surface-gosso-overview-quick-link-card-ownership", async ({ page }) => {
