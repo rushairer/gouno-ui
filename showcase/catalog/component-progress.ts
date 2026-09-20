@@ -388,6 +388,20 @@ for (const [id, scope] of Object.entries({
   };
 }
 
+for (const [id, scope] of Object.entries({
+  "core-progress": "CSA-2 Wave E manual-reviewed: real browser evidence confirms a 64% → 74% state transition, fill geometry, localized value copy and adjacent decrement/increment action rhythm.",
+  "core-skeleton": "CSA-2 Wave E manual-reviewed: two-card loading structure preserves decorative placeholder ownership, consistent density and caller-owned surface boundaries.",
+  "core-tooltip": "CSA-2 Wave E manual-reviewed: keyboard focus opens the canonical tooltip with visible trigger focus, bottom-start anchoring, arrow geometry and popup depth.",
+  "core-tour": "CSA-2 Wave E manual-reviewed: the canonical two-step modal walkthrough preserves step/progress/action hierarchy, Fixture-safe modal depth and focus return after completion.",
+})) {
+  componentReviews[id] = {
+    status: "reviewed",
+    scope,
+    evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "CSA-2 Wave E manual-reviewed / 2026-09-20",
+  };
+}
+
 export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
   return review?.status === "reviewed" ? 100 : Math.min(fallback, 99);
 }

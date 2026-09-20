@@ -191,7 +191,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | --- | --- | --- |
 | CSA-0 Stabilize | complete | Obsolete Blog AI reverse-migration PR closed; Blog Core Wave 2 merged to `gouno-blog/main` at `5e20df79`; Consumer expansion is frozen at this checkpoint. |
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
-| CSA-2 Core browser pass | in progress | Wave A manually accepted for Focus, Modal/Popover, Form/Select, ConfigProvider, Carousel and Steps; additional Core families remain. |
+| CSA-2 Core browser pass | in progress | Waves A–E manually accepted across focus/forms/overlays, picker-popup, navigation/disclosure and the complete Feedback family; additional Core families remain. |
 | CSA-3 Pattern/Gouno pass | planned | |
 | CSA-4 Product Showcase pages | planned | |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
@@ -435,3 +435,51 @@ Accepted rendered/browser states:
 The initial all-green Wave D artifact was deliberately rejected after direct visual review exposed CSA-D002. Acceptance happened only after owner classification, Showcase-only safe-area correction, static integration protection, rendered geometry assertions, fresh reciprocal consumer parity, and a second direct artifact review.
 
 No Foundation is reopened by Wave D. This acceptance is family-scoped; CSA-2 remains active for the remaining Core catalog.
+
+
+## CSA-2 Wave E — remaining Feedback family
+
+Status: **accepted / manual-reviewed**
+
+Wave E completes the remaining Feedback-family surfaces that still lack dedicated human-reviewable CSA browser evidence:
+
+- Progress — real 64% → 74% state transition, fill geometry and adjacent status/action rhythm;
+- Skeleton — two-Card loading structure, decorative placeholder ownership and visual density;
+- Tooltip — keyboard-focus opening, bottom-start anchoring and popup depth;
+- Tour — real two-step modal walkthrough, progress/action hierarchy and focus return after completion.
+
+The initial candidate changes only browser evidence, the durable CSA evidence guard and this audit entry. Core runtime behavior is not modified before direct rendered inspection.
+
+Acceptance requires all of the following on the same exact head:
+
+- CI;
+- Canonical Visual Golden;
+- Blog Consumer Parity;
+- Gosso Admin Consumer Parity;
+- direct inspection of the rendered Wave E artifact.
+
+Any visual/interaction defect discovered by the manual pass must be classified and fixed at its owning layer before Wave E can be accepted.
+
+
+## CSA-2 Wave E acceptance — remaining Feedback family
+
+Wave E is accepted as **manual-reviewed rendered evidence**.
+
+Exact-head evidence for implementation head `9558a73579ed94e3123880a324773f31d014030d`:
+
+- CI `35506209175` — success;
+- Canonical Visual Golden Smoke `35506209152` — success;
+- Blog Consumer Parity `35506209186` — success;
+- Gosso Admin Consumer Parity `35506209177` — success;
+- rendered artifact `10604550138` inspected directly.
+
+Accepted rendered/browser states:
+
+- Progress — clicking 增加 moves the canonical state from 64% to 74%; the visual fill, accessible value, localized status text and neighboring controls stay coherent;
+- Skeleton — two loading Cards retain equal structure and density while all eight Skeleton blocks remain decorative; surrounding Card owns the surface;
+- Tooltip — keyboard focus opens the real Tooltip below the trigger with visible trigger focus, aligned popup/arrow geometry and canonical popup depth;
+- Tour — the walkthrough renders step 1 and step 2 as distinct modal states, keeps progress and navigation hierarchy clear, starts its product mask below Showcase tooling, and returns focus to 开始引导 after completion.
+
+Direct review found **no Wave E defect requiring Foundation or Core reopening**. The Tour review respects its current admitted contract: it is a modal walkthrough and does not imply target spotlight/anchoring capability that Core does not implement.
+
+With Wave E accepted, the Feedback family now has dedicated CSA browser evidence across Alert, Progress, Skeleton, Modal, Drawer, Popover, Tooltip, Popconfirm, Message, Notification, Empty, Result, Spin and Tour. CSA-2 remains active for the remaining Core catalog.

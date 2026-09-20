@@ -1285,6 +1285,131 @@ test("csa-core-spin-feedback-evidence", async ({ page }, testInfo) => {
   });
 });
 
+test("csa-core-progress-state-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-progress",
+    viewport: desktop,
+    ready: '[data-slot="progress"]',
+  });
+
+  const progress = page.getByRole("progressbar", { name: "上传进度" });
+  await expect(progress).toHaveAttribute("aria-valuenow", "64");
+  await expect(page.getByText("已完成 64%", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "增加" }).click();
+  await expect(progress).toHaveAttribute("aria-valuenow", "74");
+  await expect(page.getByText("已完成 74%", { exact: true })).toBeVisible();
+
+  const indicator = progress.locator('[data-slot="progress-indicator"]');
+  await expect(indicator).toHaveCSS("width", /.+/);
+
+  const card = progress.locator('xpath=ancestor::*[@data-slot="card"][1]');
+  await card.screenshot({
+    path: testInfo.outputPath("csa-core-progress-after-increase.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-skeleton-loading-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-skeleton",
+    viewport: desktop,
+    ready: '[data-slot="skeleton"]',
+  });
+
+  const loading = page.getByRole("status", { name: "文章列表加载中" });
+  await expect(loading).toBeVisible();
+  await expect(loading.locator('[data-slot="card"]')).toHaveCount(2);
+
+  const skeletons = loading.locator('[data-slot="skeleton"]');
+  await expect(skeletons).toHaveCount(8);
+  expect(
+    await skeletons.evaluateAll((elements) =>
+      elements.every((element) => element.getAttribute("aria-hidden") === "true"),
+    ),
+  ).toBe(true);
+
+  await loading.screenshot({
+    path: testInfo.outputPath("csa-core-skeleton-loading-grid.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-tooltip-keyboard-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-tooltip",
+    viewport: desktop,
+    ready: 'button:has-text("聚焦或悬停")',
+  });
+
+  const trigger = page.getByRole("button", { name: "聚焦或悬停" });
+  await trigger.focus();
+  await expect(trigger).toBeFocused();
+
+  const tooltip = page.locator('[data-slot="tooltip-content"]');
+  await expect(tooltip).toBeVisible();
+  await expect(tooltip).toContainText("补充说明");
+
+  const [triggerBox, tooltipBox] = await Promise.all([
+    trigger.boundingBox(),
+    tooltip.boundingBox(),
+  ]);
+  expect(triggerBox).not.toBeNull();
+  expect(tooltipBox).not.toBeNull();
+  expect(tooltipBox.y).toBeGreaterThan(triggerBox.y + triggerBox.height);
+
+  await captureCanonicalAuditEvidence(
+    page,
+    testInfo,
+    "core-tooltip-keyboard-open",
+  );
+});
+
+test("csa-core-tour-walkthrough-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-tour",
+    viewport: desktop,
+    ready: 'button:has-text("开始引导")',
+  });
+
+  const trigger = page.getByRole("button", { name: "开始引导" });
+  await trigger.click();
+
+  const first = page.getByRole("dialog", { name: "欢迎" });
+  await expect(first).toBeVisible();
+  await expect(first).toHaveAttribute("data-step-index", "0");
+  await expect(first.getByText("这是第一步。", { exact: true })).toBeVisible();
+  await expect(first.locator('[data-slot="tour-progress"]')).toHaveText("1 / 2");
+  await expect(first.getByRole("button", { name: "下一步" })).toBeVisible();
+  await captureCanonicalAuditEvidence(page, testInfo, "core-tour-step-1");
+
+  await first.getByRole("button", { name: "下一步" }).click();
+  const second = page.getByRole("dialog", { name: "组件目录" });
+  await expect(second).toBeVisible();
+  await expect(second).toHaveAttribute("data-step-index", "1");
+  await expect(
+    second.getByText("从左侧选择组件。", { exact: true }),
+  ).toBeVisible();
+  await expect(second.locator('[data-slot="tour-progress"]')).toHaveText("2 / 2");
+  await expect(second.getByRole("button", { name: "上一步" })).toBeVisible();
+  await expect(second.getByRole("button", { name: "完成" })).toBeVisible();
+  await captureCanonicalAuditEvidence(page, testInfo, "core-tour-step-2");
+
+  await second.getByRole("button", { name: "完成" }).click();
+  await expect(second).toBeHidden();
+  await expect(trigger).toBeFocused();
+});
+
 test("surface-gosso-overview-quick-link-card-ownership", async ({ page }) => {
   const scenario = {
     workspace: "gosso-admin",
