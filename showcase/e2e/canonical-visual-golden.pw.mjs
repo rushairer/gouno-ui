@@ -1410,6 +1410,164 @@ test("csa-core-tour-walkthrough-evidence", async ({ page }, testInfo) => {
   await expect(trigger).toBeFocused();
 });
 
+
+test("csa-core-checkbox-selection-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-checkbox",
+    viewport: desktop,
+    ready: 'input[type="checkbox"]',
+  });
+
+  const checkbox = page.getByRole("checkbox", { name: "接受条款" });
+  await expect(checkbox).toBeChecked();
+  await expect(page.getByText("当前：已接受", { exact: true })).toBeVisible();
+
+  await checkbox.click();
+  await expect(checkbox).not.toBeChecked();
+  await expect(page.getByText("当前：未接受", { exact: true })).toBeVisible();
+  await expect(page.getByRole("checkbox", { name: "已锁定选项" })).toBeDisabled();
+
+  await captureCanonicalAuditEvidence(page, testInfo, "core-checkbox-unchecked");
+});
+
+test("csa-core-radio-selection-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-radio",
+    viewport: desktop,
+    ready: 'input[type="radio"]',
+  });
+
+  const basic = page.getByRole("radio", { name: "基础版" });
+  const pro = page.getByRole("radio", { name: "专业版" });
+  await expect(basic).toBeChecked();
+  await expect(pro).not.toBeChecked();
+
+  await pro.click();
+  await expect(pro).toBeChecked();
+  await expect(basic).not.toBeChecked();
+  await expect(page.getByText("当前：专业版", { exact: true })).toBeVisible();
+  await expect(page.getByRole("radio", { name: "旧套餐" })).toBeDisabled();
+
+  await captureCanonicalAuditEvidence(page, testInfo, "core-radio-pro-selected");
+});
+
+test("csa-core-switch-selection-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-switch",
+    viewport: desktop,
+    ready: '[role="switch"]',
+  });
+
+  const notifications = page.getByRole("switch", { name: "启用通知" });
+  await expect(notifications).toBeChecked();
+  await expect(page.getByText("通知：开启", { exact: true })).toBeVisible();
+
+  await notifications.click();
+  await expect(notifications).not.toBeChecked();
+  await expect(page.getByText("通知：关闭", { exact: true })).toBeVisible();
+  await expect(page.getByRole("switch", { name: "系统策略" })).toBeDisabled();
+
+  await captureCanonicalAuditEvidence(page, testInfo, "core-switch-off");
+});
+
+test("csa-core-segmented-selection-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-segmented",
+    viewport: desktop,
+    ready: '[data-slot="segmented"]',
+  });
+
+  const group = page.getByRole("radiogroup", { name: "时间范围" });
+  const weekly = group.getByRole("radio", { name: "周" });
+  const monthly = group.getByRole("radio", { name: "月" });
+  await expect(weekly).toBeChecked();
+  await expect(monthly).not.toBeChecked();
+
+  await monthly.click();
+  await expect(monthly).toBeChecked();
+  await expect(weekly).not.toBeChecked();
+
+  await captureCanonicalAuditEvidence(page, testInfo, "core-segmented-month-selected");
+});
+
+test("csa-core-slider-keyboard-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-slider",
+    viewport: desktop,
+    ready: '[data-slot="slider"]',
+  });
+
+  const volume = page.getByRole("slider", { name: "音量" });
+  await expect(volume).toHaveValue("40");
+  await expect(page.getByText("音量：40", { exact: true })).toBeVisible();
+
+  await volume.focus();
+  await volume.press("ArrowRight");
+  await expect(volume).toHaveValue("45");
+  await expect(page.getByText("音量：45", { exact: true })).toBeVisible();
+  await expect(page.getByRole("slider", { name: "锁定范围" })).toBeDisabled();
+
+  await captureCanonicalAuditEvidence(page, testInfo, "core-slider-keyboard-45");
+});
+
+test("csa-core-rate-selection-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-rate",
+    viewport: desktop,
+    ready: '[data-slot="rate"]',
+  });
+
+  const group = page.getByRole("radiogroup", { name: "满意度" });
+  await expect(group.getByRole("radio", { name: "3" })).toHaveAttribute("aria-checked", "true");
+
+  const five = group.getByRole("radio", { name: "5" });
+  await five.click();
+  await expect(five).toHaveAttribute("aria-checked", "true");
+  await expect(page.getByText("当前：5", { exact: true })).toBeVisible();
+
+  const disabled = page.getByRole("radiogroup", { name: "只读评分示例" });
+  await expect(disabled).toHaveAttribute("aria-disabled", "true");
+
+  await captureCanonicalAuditEvidence(page, testInfo, "core-rate-five-selected");
+});
+
+test("csa-core-input-otp-entry-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-input-otp",
+    viewport: desktop,
+    ready: '[data-slot="input-otp"]',
+  });
+
+  const group = page.getByRole("group", { name: "短信验证码" });
+  const digits = group.locator('[data-slot="input-otp-input"]');
+  await expect(digits).toHaveCount(6);
+  await digits.nth(0).focus();
+  await page.keyboard.type("123456");
+
+  await expect(digits.nth(0)).toHaveValue("1");
+  await expect(digits.nth(5)).toHaveValue("6");
+  await expect(page.getByText("当前输入 6 / 6 位", { exact: true })).toBeVisible();
+
+  const locked = page.getByRole("group", { name: "已锁定验证码" });
+  await expect(locked).toHaveAttribute("aria-disabled", "true");
+
+  await captureCanonicalAuditEvidence(page, testInfo, "core-input-otp-complete");
+});
+
 test("surface-gosso-overview-quick-link-card-ownership", async ({ page }) => {
   const scenario = {
     workspace: "gosso-admin",
