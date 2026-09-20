@@ -50,6 +50,7 @@ describe("Responsive Foundation conformance", () => {
 
 
     const firstItem = document.querySelector('[data-slot="steps-item"]');
+    expect(firstItem?.className).toContain("min-w-44");
     expect(firstItem?.className).toContain("max-md:w-full");
     expect(firstItem?.className).toContain("max-md:min-w-0");
     expect(firstItem?.className).toContain("max-md:flex-none");
