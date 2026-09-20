@@ -48,13 +48,16 @@ for (const marker of [
 }
 
 for (const evidence of [
-  "core-focus-owned-and-fallback",
+  "core-focus-component-owned",
+  "core-focus-fallback",
   "core-modal-nested-popover",
   "core-form-select-open",
   "core-modal-focus-trap",
   "core-config-provider-locales",
   "core-carousel-after-next",
-  "core-steps-responsive-and-vertical-dot",
+  "core-steps-mobile-stack",
+  "core-steps-desktop-inline",
+  "core-steps-vertical-dot",
 ]) {
   requireText(
     golden,
