@@ -360,7 +360,7 @@ This acceptance is family-scoped. CSA-2 remains in progress for the remaining Co
 
 ## CSA-2 Wave D — feedback / status family
 
-Status: **in progress**
+Status: **accepted / manual-reviewed**
 
 Wave D targets rendered feedback/state surfaces where semantic correctness alone is insufficient:
 
@@ -377,7 +377,7 @@ The initial candidate changes only browser evidence and audit guards. No Core ru
 
 ### CSA-D002 — Showcase tooling occludes global notice overlays
 
-Status: **Wave D blocked pending re-review**
+Status: **resolved / accepted 2026-09-20**
 
 Direct inspection of Golden artifact `10603448285` found a rendered defect that automated success did not catch:
 
@@ -395,3 +395,43 @@ Correction contract:
 - Chromium evidence asserts rendered notice-region geometry is fully below the Showcase tools strip before screenshots are accepted.
 
 No Foundation is reopened by CSA-D002. Wave D remains blocked until fresh exact-head CI, Golden, Blog/Gosso parity and direct artifact review confirm the correction.
+
+
+### CSA-D002 resolution
+
+CSA-D002 is resolved without changing Core Message or Notification.
+
+The fix remains Showcase-owned:
+
+- `FixtureTools` continues to publish the measured `--showcase-tools-inset-top`;
+- Showcase CSS offsets `message-region` and `notification-region` to `tools inset + 1rem` only while a product preview is mounted;
+- `tests/showcase-fixture-dock.test.tsx` guards the integration contract;
+- Playwright verifies the rendered queue region is geometrically below the tooling strip before accepting screenshots.
+
+Fresh exact-head evidence for implementation head `85d7580551469633ab15c2371b6356d5f2a81c5b`:
+
+- CI `35505470539` — success;
+- Canonical Visual Golden Smoke `35505470593` — success;
+- Golden artifact `10603845661` — directly inspected;
+- Blog Consumer Parity `35505470549` — success;
+- Gosso Admin Consumer Parity `35505470579` — success.
+
+Manual re-review confirmed that both Message items and all three Notification items are fully visible below Showcase tooling. No Layer/Foundation authority was changed or reopened.
+
+## CSA-2 Wave D acceptance — feedback / status family
+
+Wave D is accepted as **manual-reviewed rendered evidence**.
+
+Accepted rendered/browser states:
+
+- Alert — success/info/warning/error tones remain distinguishable without changing component geometry; closable Alert keeps action/close/reset ownership coherent;
+- Popconfirm — destructive confirmation keeps modal depth, title/description hierarchy and cancel/delete action order clear while Showcase tooling stays outside the product mask;
+- Message — simultaneous success/error feedback is fully visible, vertically ordered and no longer clipped by Fixture tooling;
+- Notification — success/error/persistent notices remain fully visible, preserve semantic icon/tone and close affordances, and maintain consistent queue spacing;
+- Empty — contained empty state keeps icon/title/description/action rhythm with the surrounding Card owning the surface;
+- Result — success terminal state keeps icon/title/description/action hierarchy without introducing a competing surface;
+- Spin — busy overlay keeps prior content legible beneath the active spinner/tip state.
+
+The initial all-green Wave D artifact was deliberately rejected after direct visual review exposed CSA-D002. Acceptance happened only after owner classification, Showcase-only safe-area correction, static integration protection, rendered geometry assertions, fresh reciprocal consumer parity, and a second direct artifact review.
+
+No Foundation is reopened by Wave D. This acceptance is family-scoped; CSA-2 remains active for the remaining Core catalog.
