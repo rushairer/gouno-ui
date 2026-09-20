@@ -1171,6 +1171,19 @@ test("csa-core-message-feedback-evidence", async ({ page }, testInfo) => {
   await page.getByRole("button", { name: "错误", exact: true }).click();
   await expect(page.getByText("配置已保存", { exact: true })).toBeVisible();
   await expect(page.getByText("保存失败", { exact: true })).toBeVisible();
+
+  const tools = page.getByRole("region", { name: "Showcase 工具" });
+  const messageRegion = page.locator('[data-slot="message-region"]');
+  const [toolsBox, messageBox] = await Promise.all([
+    tools.boundingBox(),
+    messageRegion.boundingBox(),
+  ]);
+  expect(toolsBox).not.toBeNull();
+  expect(messageBox).not.toBeNull();
+  expect(messageBox.y).toBeGreaterThanOrEqual(
+    toolsBox.y + toolsBox.height + 15,
+  );
+
   await captureCanonicalAuditEvidence(page, testInfo, "core-message-success-error");
 });
 
@@ -1190,6 +1203,19 @@ test("csa-core-notification-feedback-evidence", async ({ page }, testInfo) => {
   await expect(page.getByText("构建失败", { exact: true })).toBeVisible();
   await expect(page.getByText("需要人工确认", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "关闭持久通知" })).toBeVisible();
+
+  const tools = page.getByRole("region", { name: "Showcase 工具" });
+  const notificationRegion = page.locator('[data-slot="notification-region"]');
+  const [toolsBox, notificationBox] = await Promise.all([
+    tools.boundingBox(),
+    notificationRegion.boundingBox(),
+  ]);
+  expect(toolsBox).not.toBeNull();
+  expect(notificationBox).not.toBeNull();
+  expect(notificationBox.y).toBeGreaterThanOrEqual(
+    toolsBox.y + toolsBox.height + 15,
+  );
+
   await captureCanonicalAuditEvidence(page, testInfo, "core-notification-mixed-stack");
 });
 
