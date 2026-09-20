@@ -56,7 +56,9 @@ for (const evidence of [
   "core-config-provider-locales",
   "core-carousel-after-next",
   "core-steps-mobile-stack",
+  "core-steps-intermediate-stack",
   "core-steps-desktop-inline",
+  "core-steps-shell-constrained",
   "core-steps-vertical-dot",
 ]) {
   requireText(
