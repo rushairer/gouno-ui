@@ -38,6 +38,11 @@ const workflows = [
     evidence: "gouno-ui-blog-consumer-parity-${{ github.run_id }}",
     requiredMarkers: [
       "Verify complete Blog parity harness",
+      "Verify current Blog certification freshness against candidate Showcase",
+      "check-showcase-parity-certifications.mjs",
+      'GOUNO_UI_CANONICAL_ROOT: ../upstream-gouno-ui',
+      'PARITY_STRICT_HISTORY: "1"',
+      "fetch-depth: 0",
       "test -f blog-frontend/e2e/showcase-parity.pw.mjs",
       "test -f blog-frontend/e2e/privileged-access-parity.pw.mjs",
       "test -f blog-frontend/e2e/public-showcase-parity.pw.mjs",
