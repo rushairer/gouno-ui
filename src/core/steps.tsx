@@ -392,7 +392,7 @@ export function Steps({
               "relative min-w-0",
               orientation === "horizontal"
                 ? cn(
-                    "min-w-36 flex-1",
+                    "min-w-44 flex-1",
                     responsive && "max-md:w-full max-md:min-w-0 max-md:flex-none max-md:pb-3",
                   )
                 : "w-full pb-3",
