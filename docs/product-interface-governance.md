@@ -65,6 +65,17 @@ AI Automation
    └─ Agents | Skills | Tools | 知识库 | 模型连接 | Sandbox 连接器
 ```
 
+### Blog Admin Knowledge Workspace contract
+
+`AI 设置 → 知识库` is a product-local canonical composition, not a generic Core component. The visible workspace must preserve this order:
+
+1. **索引概览** — indexed posts, chunks, queue/failure health and retrieval latency.
+2. **已索引内容** — concrete published posts, synchronization state, chunk count and last indexed time.
+3. **检索验证** — a user-entered query with matched evidence snippets, Citation ID, semantic score, lexical score and combined score.
+4. **Embedding 配置** — profile lifecycle and connection management, visually separated from knowledge content and retrieval evidence.
+
+Do not collapse this surface back into an infrastructure-only “three counters + Embedding profiles” panel. Product consumers may bind richer real data, but must retain the same semantic hierarchy.
+
 The second form gives operations and governance different route-family identities and removes a persistent two-dimensional navigation path.
 
 ### Allowed lower-level switching
