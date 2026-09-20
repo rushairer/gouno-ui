@@ -373,3 +373,25 @@ Wave D targets rendered feedback/state surfaces where semantic correctness alone
 - Spin — busy overlay, retained underlying content and tip relationship.
 
 The initial candidate changes only browser evidence and audit guards. No Core runtime behavior is changed before manual inspection. Wave D can be accepted only after exact-head CI, Golden, Blog/Gosso reciprocal parity and direct review of the generated Chromium artifact.
+
+
+### CSA-D002 — Showcase tooling occludes global notice overlays
+
+Status: **Wave D blocked pending re-review**
+
+Direct inspection of Golden artifact `10603448285` found a rendered defect that automated success did not catch:
+
+- the first Message item was partially clipped behind the top Showcase Fixture tooling strip;
+- the first Notification item was likewise hidden underneath the tooling strip;
+- later queue items remained visible, which made the defect easy to miss from DOM/role assertions alone.
+
+Classification: **Showcase Fixture integration defect**, not a Core Message/Notification runtime or Layer Foundation defect. Core correctly owns a viewport-level `top-4` notice inset. Fixture tooling is intentionally outside the runtime layer scale and already publishes `--showcase-tools-inset-top` for portaled Sheet safe-area correction.
+
+Correction contract:
+
+- in Fixture mode only, Message and Notification regions start at `showcase tools inset + 1rem`;
+- Core runtime files must not learn about Showcase tooling;
+- Fixture contract tests guard both notice-region selectors and the safe-area expression;
+- Chromium evidence asserts rendered notice-region geometry is fully below the Showcase tools strip before screenshots are accepted.
+
+No Foundation is reopened by CSA-D002. Wave D remains blocked until fresh exact-head CI, Golden, Blog/Gosso parity and direct artifact review confirm the correction.
