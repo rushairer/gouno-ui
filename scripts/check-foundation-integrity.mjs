@@ -915,6 +915,7 @@ if (responsive?.status !== "planned") {
   }
 
   for (const marker of [
+    "min-w-44 flex-1",
     "max-md:w-full max-md:min-w-0 max-md:flex-none max-md:pb-3",
     "max-md:flex-row max-md:items-start",
     'data-layout="mobile-vertical"',
