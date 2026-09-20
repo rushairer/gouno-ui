@@ -1,7 +1,7 @@
 # Responsive Foundation Inventory
 
-Status: FI-001 Phase 4 certified inventory.
-Updated: 2026-09-19
+Status: certified; CSA-D001 re-certified `core-steps` on 2026-09-20.
+Updated: 2026-09-20
 
 ## Canonical breakpoint authority
 
@@ -25,7 +25,7 @@ Core `Steps responsive={true}` was the only source/product responsive rule using
 
 The public API and Showcase documentation only promised that horizontal Steps stack on narrow screens; they did not define 531/532px as a compatibility contract. No canonical product fixture currently uses Steps, so there is no product dependency on that hidden threshold.
 
-Steps now uses `max-sm`. This makes the public responsive behavior resolve through the same `sm = 40rem` Foundation tier used elsewhere.
+Current Steps behavior uses canonical `md = 48rem` as the automatic stack threshold. Below `md`, the complete horizontal composition becomes vertical; at and above `md`, horizontal items retain a readable `min-w-44` track and the root `overflow-x-auto` owns constrained-container width pressure. This uses only canonical tiers and does not introduce an arbitrary breakpoint.
 
 ## Existing canonical consumers
 
@@ -102,3 +102,25 @@ Correction target:
 - visual evidence must separately show mobile/intermediate stacking, desktop inline layout, and vertical-dot geometry.
 
 Responsive is reopened only for `core-steps` until exact-head CI, Canonical Visual Golden, Blog Consumer Parity, Gosso Admin Consumer Parity, and manual screenshot review all pass.
+
+
+### CSA-D001 resolution / re-certification
+
+The final correction supersedes the earlier `sm` Steps threshold for current behavior:
+
+- below canonical `md` (48rem / 768px), the entire responsive Steps composition remains vertical;
+- at and above `md`, horizontal items keep a readable `min-w-44` track;
+- when an AppShell/sidebar or other container leaves less horizontal space than the track set requires, the Steps root owns horizontal overflow rather than truncating ordinary titles;
+- explicit vertical Steps and `responsive={false}` are unchanged.
+
+Human review accepted the exact-head rendered evidence for 700px stacked layout, 800px horizontal layout, 1024px AppShell-constrained horizontal overflow, vertical-dot geometry, and the related Focus evidence.
+
+Re-certification evidence:
+
+- CI run `35500169813` — success;
+- Canonical Visual Golden Smoke run `35500170014` — success;
+- Golden artifact `10601014647` — manually reviewed;
+- Blog Consumer Parity run `35500169770` — success;
+- Gosso Admin Consumer Parity run `35500169802` — success.
+
+Responsive is re-certified. The canonical breakpoint scale itself was never changed by CSA-D001.
