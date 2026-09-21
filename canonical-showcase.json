@@ -2,8 +2,8 @@
   "version": 1,
   "program": "CSA-001",
   "phase": "CSA-5",
-  "status": "candidate",
-  "updated": "2026-09-21",
+  "status": "frozen",
+  "updated": "2026-09-22",
   "baselineCommit": "bb2c052dbf54fa37dc98b3be7a8e1ccfc9c973df",
   "authorityOrder": [
     "Foundation / Core authority",
@@ -156,8 +156,9 @@
     ]
   },
   "consumerResume": {
-    "status": "pending-freeze-acceptance",
+    "status": "unblocked",
     "rules": [
+      "A frozen matrix authorizes Consumer reverse migration only after it is merged to the repository main branch.",
       "Reverse migration may use only surfaces present in this accepted Canonical matrix.",
       "A later reopened canonical review blocks propagation for the affected surface until manual re-certification.",
       "Changes touching a verified consumer canonical path require pull-request reciprocal parity before merge.",

@@ -74,6 +74,17 @@ const productIds = [
 ];
 const matrixIds = [...componentIds, ...productIds];
 
+for (const [group, expected] of Object.entries({
+  publicBlog: 12,
+  blogAdmin: 14,
+  gossoAdmin: 12,
+})) {
+  const actual = productGroups[group]?.length ?? 0;
+  if (actual !== expected) {
+    fail(`Canonical product subgroup ${group} expected ${expected} pages, got ${actual}.`);
+  }
+}
+
 for (const [label, values] of [
   ["catalog", catalogIds],
   ["matrix", matrixIds],
@@ -127,6 +138,23 @@ if (matrix.status === "frozen" && matrix.consumerResume?.status !== "unblocked")
 }
 if (matrix.status === "candidate" && matrix.consumerResume?.status !== "pending-freeze-acceptance") {
   fail("Candidate Canonical matrix must keep Consumer resume pending freeze acceptance.");
+}
+
+if (matrix.status === "frozen") {
+  for (const marker of [
+    "Status: **complete / canonical frozen**",
+    "| CSA-1 Foundation sanity | complete |",
+    "| CSA-2 Core browser pass | complete |",
+    "| CSA-3 Pattern/Gouno pass | complete |",
+    "| CSA-4 Product Showcase pages | complete |",
+    "| CSA-5 Canonical freeze / Consumer resume | complete |",
+    "## CSA-5 Canonical freeze acceptance",
+    "Consumer reverse migration may resume only from surfaces listed in that matrix after the freeze is merged to `main`.",
+  ]) {
+    if (!audit.includes(marker)) {
+      fail(`Frozen CSA-5 audit ledger is missing required marker: ${marker}`);
+    }
+  }
 }
 
 for (const marker of [
