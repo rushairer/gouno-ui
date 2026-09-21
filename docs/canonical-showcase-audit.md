@@ -190,7 +190,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | Phase | Status | Notes |
 | --- | --- | --- |
 | CSA-0 Stabilize | complete | Obsolete Blog AI reverse-migration PR closed; Blog Core Wave 2 merged to `gouno-blog/main` at `5e20df79`; Consumer expansion is frozen at this checkpoint. |
-| CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
+| CSA-1 Foundation sanity | complete | Batch 1 plus accepted CSA-2/CSA-3 rendered evidence cover Typography, Layout/Density, Surface/Elevation, Responsive, Overlay and Interaction State; no Foundation authority remains reopened. |
 | CSA-2 Core browser pass | complete | Waves A–J manually accepted across the full Core catalog. Wave J closes the final residual families; Modal is normalized from Wave A accepted nested-overlay and focus-trap evidence. |
 | CSA-3 Pattern/Gouno pass | complete | Waves K–M manually accepted across all 15 Pattern/Gouno catalog families. TabPanelLead and PrivilegedAccessGate are also accepted as non-catalog cross-product composition contracts. |
 | CSA-4 Product Showcase pages | planned | |
@@ -1054,3 +1054,27 @@ With Waves K, L and M accepted, **all 15 Pattern/Gouno catalog families now have
 TabPanelLead and PrivilegedAccessGate are also accepted as Showcase composition contracts because they govern repeated product-page structure even though they are not independent catalog entries.
 
 CSA-3 Pattern/Gouno composition pass is therefore complete. The next gate is **CSA-4 Product Showcase page certification**: Blog Admin, Gosso Admin and Public Blog page families must be inspected as product compositions using the now-certified Foundation/Core/Pattern grammar before Consumer reverse migration can resume as a final product-parity operation.
+
+
+## CSA-1 cumulative completion
+
+Status: **complete / cumulative manual-reviewed evidence**
+
+CSA-1 began as a representative sanity pass over FI-001 rather than a second exhaustive component program. Its first browser batch intentionally remained `in progress` because only a few product samples had been inspected at that point.
+
+The subsequent accepted CSA-2 and CSA-3 waves now provide substantially broader human-reviewed rendered evidence for every Foundation concern named by CSA-1:
+
+- **Typography** — Core Typography role hierarchy in Wave I; PageHeader in Wave K; Dedicated Editor task-title/document-level separation and Editor Form identity hierarchy in Wave M;
+- **Spacing / Layout / Density** — Space, Flex, Grid and Page Layout in Wave I; PageContainer/AppShell in Wave K; Collection/Record/Master-Detail/Settings in Wave L; Editor Form/Dedicated Editor in Wave M;
+- **Surface / Elevation** — Card depth in Wave I, Drawer/Popover/Modal ownership in Waves A–B, and repeated Card/section/action boundaries throughout Waves K–M;
+- **Responsive** — Steps intermediate-width correction in Wave A, Grid in Wave I, PageHeader/PageSkeleton/AppShell in Wave K, Master-Detail/Data Summary/Settings in Wave L, and Dedicated Editor/Editor Form/MarkdownEditor/TabPanelLead in Wave M;
+- **Overlay** — nested Modal + Popover and focus-trap evidence in Wave A, plus Drawer/Popover popup ownership in Wave B and privileged/Fixture overlay interaction in Wave M;
+- **Interaction State** — the full CSA-2 browser pass plus stateful Pattern evidence in Waves K–M covers keyboard, focus, selection, feedback, loading, empty, readonly, locked/unlocked/expiring and commit-boundary states.
+
+The important negative result is also cumulative: **no accepted CSA-2 or CSA-3 wave left a Foundation authority reopened**.
+
+The Wave A Steps finding does not contradict this conclusion. Human review rejected the first component implementation at constrained widths, then accepted a Core-level correction that preserved the existing breakpoint authority and gave the component readable minimum track ownership plus overflow behavior. The Foundation breakpoint scale itself was explicitly not reopened.
+
+Therefore CSA-1 no longer has an independent outstanding evidence gap. Its original Batch 1 evidence plus the much broader accepted CSA-2/CSA-3 corpus complete the intended Foundation presentation sanity pass.
+
+This completion does **not** certify product pages. CSA-4 remains responsible for whole-page product composition, state placement and cross-Pattern consistency before any Canonical freeze or Consumer-resume claim.
