@@ -4201,6 +4201,256 @@ test("csa-product-gosso-system-status-degraded", async ({ page }, testInfo) => {
   });
 });
 
+
+test("csa-product-gosso-admin-overview-role-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-overview",
+    viewport: { width: 1280, height: 900 },
+    ready: '[data-slot="card"]',
+  });
+
+  await expect(page.getByRole("heading", { level: 1, name: "身份管理控制台", exact: true })).toBeVisible();
+  await expect(page.getByText("客户端注册", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "打开 Fixture 控制", exact: true }).click();
+  await page.getByText("普通用户", { exact: true }).click();
+  await page.keyboard.press("Escape");
+
+  await expect(page.getByRole("heading", { level: 1, name: "个人账户与安全中心", exact: true })).toBeVisible();
+  await expect(page.getByText("系统管理权限受限", { exact: true })).toBeVisible();
+  await expect(page.getByText("个人资料与密码", { exact: true })).toBeVisible();
+  await expect(page.getByText("安全认证 (MFA 与通行密钥)", { exact: true })).toBeVisible();
+  await expect(page.getByText("活跃登录会话", { exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-admin-overview-user-role.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-gosso-admin-account-session-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-account-settings",
+    viewport: { width: 1280, height: 950 },
+    ready: '[role="tablist"]',
+  });
+
+  const sessionsTab = page.getByRole("tab", { name: /活跃会话/ });
+  await sessionsTab.click();
+  await expect(sessionsTab).toHaveAttribute("aria-selected", "true");
+
+  const mobileSession = page
+    .getByText("iPhone · Safari", { exact: true })
+    .locator("xpath=ancestor::tr[1]");
+  await expect(mobileSession).toBeVisible();
+  await mobileSession.getByRole("button", { name: "终止会话", exact: true }).click();
+
+  const dialog = page.getByRole("dialog", { name: "终止 iPhone · Safari 会话？", exact: true });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole("button", { name: "确认终止", exact: true }).click();
+
+  await expect(page.getByText("iPhone · Safari", { exact: true })).toBeHidden();
+  await expect(page.getByText("iPhone · Safari 会话已终止（Showcase 模拟）。", { exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-admin-account-session-terminated.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-gosso-admin-client-secret-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-system-clients",
+    viewport: { width: 1440, height: 1000 },
+    ready: "table",
+  });
+
+  await page.getByRole("button", { name: "注册客户端", exact: true }).first().click();
+  const editor = page.getByRole("dialog", { name: "注册 OAuth2 客户端", exact: true });
+  await expect(editor).toBeVisible();
+
+  await editor.getByPlaceholder("例如：Gouno Blog BFF", { exact: true }).fill("Wave P Confidential Client");
+  await editor.getByPlaceholder("https://example.com/auth/callback", { exact: true }).fill("https://wave-p.example.test/auth/callback");
+  await editor.getByText("Confidential client", { exact: true }).click();
+  await editor.getByRole("button", { name: "注册客户端", exact: true }).click();
+
+  const secret = page.getByRole("dialog", { name: "客户端密钥", exact: true });
+  await expect(secret).toBeVisible();
+  await expect(secret.getByText("请立即安全保存该密钥", { exact: true })).toBeVisible();
+  await expect(secret.getByText("wave-p-confidential-client", { exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-admin-client-secret.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-gosso-admin-user-role-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-system-users",
+    viewport: { width: 1360, height: 1000 },
+    ready: "table",
+  });
+
+  const userRow = page
+    .getByText("Content Editor", { exact: true })
+    .locator("xpath=ancestor::tr[1]");
+  await expect(userRow).toBeVisible();
+  await userRow.getByRole("button", { name: "管理 Content Editor 角色", exact: true }).click();
+
+  const dialog = page.getByRole("dialog", { name: "管理 Content Editor 的角色", exact: true });
+  await expect(dialog).toBeVisible();
+  await dialog.getByText("auditor", { exact: true }).click();
+  await dialog.getByRole("button", { name: "保存角色", exact: true }).click();
+
+  await expect(page.getByText("已更新“Content Editor”的角色（Showcase 模拟）。", { exact: true })).toBeVisible();
+  await expect(userRow.getByText("auditor", { exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-admin-user-role-updated.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-gosso-admin-audit-detail-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-system-audit-logs",
+    viewport: { width: 1360, height: 950 },
+    ready: "table",
+  });
+
+  await page.getByLabel("事件类型", { exact: true }).fill("oauth.client");
+  await page.getByRole("button", { name: "查询", exact: true }).click();
+
+  await expect(page.getByText("oauth.client.update", { exact: true })).toBeVisible();
+  await expect(page.getByText("oauth.secret.rotate", { exact: true })).toBeHidden();
+  await page.getByRole("button", { name: "查看", exact: true }).click();
+
+  const dialog = page.getByRole("dialog", { name: "审计事件详情", exact: true });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText("evt-1008", { exact: true })).toBeVisible();
+  await expect(dialog.getByText("Updated redirect URIs for gouno-blog-bff.", { exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-admin-audit-detail.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-gosso-admin-site-settings-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-system-site-settings",
+    viewport: { width: 1360, height: 1100 },
+    ready: '[data-slot="site-settings-login-preview"]',
+  });
+
+  const form = page.locator("form").first();
+  const productName = form.locator("input").first();
+  await expect(productName).toHaveValue("GOSSO");
+  await productName.fill("GOSSO Prime");
+
+  const preview = page.getByLabel("登录页预览", { exact: true });
+  await expect(preview.getByText("GOSSO Prime", { exact: true })).toBeVisible();
+  await expect(page.getByText("有未保存修改", { exact: true })).toBeVisible();
+  const save = page.getByRole("button", { name: "保存设置", exact: true });
+  await expect(save).toBeEnabled();
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-admin-site-settings-dirty.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await save.click();
+  await expect(page.getByText("所有修改已保存", { exact: true })).toBeVisible();
+  await expect(save).toBeDisabled();
+
+  await page.setViewportSize({ width: 600, height: 1100 });
+  await expectNoHorizontalDocumentOverflow(page);
+  const formBox = await form.boundingBox();
+  const previewBox = await preview.boundingBox();
+  if (!formBox || !previewBox) throw new Error("missing Gosso Site Settings mobile geometry");
+  expect(previewBox.y).toBeGreaterThanOrEqual(formBox.y + formBox.height - 2);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-admin-site-settings-mobile-saved.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-gosso-admin-system-status-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-system-status",
+    viewport: { width: 1280, height: 1050 },
+    ready: '[data-slot="card"]',
+  });
+
+  const fixture = page.getByRole("button", { name: "打开 Fixture 控制", exact: true });
+  await fixture.click();
+  await page.getByText("部分异常", { exact: true }).click();
+  await page.keyboard.press("Escape");
+
+  await expect(page.getByText("Redis 探针异常", { exact: true })).toBeVisible();
+  await expect(page.getByText("86 ms", { exact: true })).toBeVisible();
+  await expect(page.getByText("异常", { exact: true })).toBeVisible();
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-admin-system-status-degraded.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await fixture.click();
+  await page.getByText("不可用", { exact: true }).click();
+  await page.keyboard.press("Escape");
+
+  await expect(page.getByText("身份服务不可用", { exact: true })).toBeVisible();
+  await expect(page.getByText("503 Service Unavailable", { exact: true })).toBeVisible();
+
+  await page.setViewportSize({ width: 600, height: 1100 });
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-admin-system-status-unavailable-mobile.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
 test("surface-gosso-overview-quick-link-card-ownership", async ({ page }) => {
   const scenario = {
     workspace: "gosso-admin",
