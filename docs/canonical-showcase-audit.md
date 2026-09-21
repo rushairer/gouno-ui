@@ -1208,12 +1208,14 @@ Wave P begins Gosso Admin Product Showcase certification with the seven authenti
 
 Dedicated browser evidence covers:
 
-- **Overview** — switches from administrator to ordinary-user product context, verifies the permission notice and self-service quick-navigation family, then validates the 600px layout;
-- **Account Settings** — verifies the five account task tabs, drives a real TOTP enrollment from disabled → enrolling → enabled with backup-code recovery state, then validates the 600px composition;
-- **OAuth2 Clients** — opens the real registration editor, creates a confidential client with the high-privilege admin scope, and verifies the one-time client-secret surface;
-- **Users** — opens the real role-management dialog for a non-current account, adds the auditor role, commits the mutation and verifies explicit product feedback;
-- **Audit Logs** — applies real event/account filters, narrows to the expected security event and opens its event-detail modal;
-- **Site Settings** — edits the product name, verifies the live login-page preview and dirty state at 600px, then saves back to synchronized state;
-- **System Status** — switches to the degraded-health product state, verifies Redis degradation and probe latency, refreshes the status and retains coherent dashboard ownership.
+- **Overview** — begins in the administrator product context, switches through the explicit Fixture control to the ordinary-user context, verifies the restricted-system notice and all three self-service quick-navigation targets;
+- **Account Settings** — enters the real Active Sessions task, terminates a non-current iPhone Safari session through confirmation, and verifies both removal and explicit mutation feedback;
+- **OAuth2 Clients** — opens the real registration editor, creates a confidential client and verifies the one-time client-secret disclosure surface;
+- **Users** — opens the real role-management dialog for Content Editor, adds the auditor role, commits the mutation and verifies the updated role plus product feedback;
+- **Audit Logs** — applies a real event filter, narrows to the expected OAuth client event and opens its event-detail modal;
+- **Site Settings** — edits the product name, verifies the live login-page preview and dirty state, saves back to synchronized state, then validates 600px form/preview stacking;
+- **System Status** — switches through degraded and unavailable health states, verifies Redis degradation and probe latency, then validates the unavailable 503 state at 600px.
 
-Wave P reuses already-certified Core/Pattern/Gouno abstractions and does not promote Gosso pages into component completion. Acceptance requires exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity plus direct manual inspection of all seven dedicated Wave P captures.
+Nine dedicated captures are produced: one each for Overview, Account Settings, OAuth2 Clients, Users and Audit Logs, two for Site Settings, and two for System Status. Wave P reuses already-certified Core/Pattern/Gouno abstractions and does not promote Gosso pages into component completion.
+
+Acceptance requires exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity plus direct manual inspection of all nine dedicated Wave P captures.
