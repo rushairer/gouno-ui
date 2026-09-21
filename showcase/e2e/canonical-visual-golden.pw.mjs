@@ -3564,7 +3564,9 @@ test("csa-product-blog-article-detail-preview-mobile-evidence", async ({ page },
   });
 
   await page.getByRole("button", { name: "打开 Fixture 控制", exact: true }).click();
-  await page.getByRole("radiogroup", { name: "Blog ArticleDetail Fixture 状态", exact: true }).getByRole("radio", { name: "预览", exact: true }).check();
+  const articleDetailScenario = page.getByRole("radiogroup", { name: "Blog ArticleDetail Fixture 状态", exact: true });
+  await articleDetailScenario.getByText("预览", { exact: true }).click();
+  await expect(articleDetailScenario.getByRole("radio", { name: "预览", exact: true })).toBeChecked();
   await expect(page.getByText("管理员预览模式", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { level: 1, name: "从 OAuth2 BFF 到产品体验：安全边界如何影响前端架构", exact: true })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "文章目录", exact: true })).toBeVisible();
@@ -3694,7 +3696,9 @@ test("csa-product-blog-custom-page-lifecycle-evidence", async ({ page }, testInf
   });
 
   await page.getByRole("button", { name: "打开 Fixture 控制", exact: true }).click();
-  await page.getByRole("radiogroup", { name: "Blog CustomPage Fixture 状态", exact: true }).getByRole("radio", { name: "未找到", exact: true }).check();
+  const customPageScenario = page.getByRole("radiogroup", { name: "Blog CustomPage Fixture 状态", exact: true });
+  await customPageScenario.getByText("未找到", { exact: true }).click();
+  await expect(customPageScenario.getByRole("radio", { name: "未找到", exact: true })).toBeChecked();
   await expect(page.getByRole("heading", { level: 1, name: "页面不存在或已下线", exact: true })).toBeVisible();
 
   await page.setViewportSize({ width: 600, height: 1000 });
