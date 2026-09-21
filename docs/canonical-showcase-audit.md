@@ -193,7 +193,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
 | CSA-2 Core browser pass | complete | Waves A–J manually accepted across the full Core catalog. Wave J closes the final residual families; Modal is normalized from Wave A accepted nested-overlay and focus-trap evidence. |
 | CSA-3 Pattern/Gouno pass | complete | Waves K–M manually accepted across all 15 Pattern/Gouno catalog families. TabPanelLead and PrivilegedAccessGate are also accepted as non-catalog cross-product composition contracts. |
-| CSA-4 Product Showcase pages | in progress | Wave N accepted: Blog Admin content-management pages (Dashboard, Posts, Categories, Tags, Pages, Comments, Notifications, Media Library, Users). Wave O will audit Blog Admin deep-task pages. |
+| CSA-4 Product Showcase pages | in progress | Waves N–O accepted: the complete Blog Admin Product Showcase family is manually reviewed. Wave P will audit Gosso Admin product pages. |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
 
 ## Rule for future progress claims
@@ -1124,3 +1124,77 @@ The corrected governance model adds a separate `productReviews` ledger:
 - a new sealing assertion verifies product-review IDs exist in the Product catalog, never overlap `componentReviews`, retain evidence/baseline, and leave product migration progress unchanged.
 
 Wave N's rendered acceptance conclusions are unchanged. This correction only places that evidence in the correct governance layer.
+
+
+## CSA-4 Wave O — Blog Admin deep-task pages
+
+Status: **accepted / manual-reviewed**
+
+Wave O completes the Blog Admin Product Showcase family by reviewing the five high-depth task pages that Wave N intentionally excluded.
+
+Dedicated browser evidence covers:
+
+- **Post Editor** — full DocumentEditorShell ownership, real History tab and version dialog, restore mutation returning to Outline, then 600px canvas/inspector stacking without horizontal overflow;
+- **Page Editor** — page-specific no-navigator editor grammar, Inspector-owned template/navigation/Slug settings, real AI title candidate application, then 600px canvas/inspector stacking;
+- **AI Operations** — all four workspace tabs exist, Automation opens a real Workflow detail, and Run Center remains an evidence workspace rather than becoming a second configuration page. Existing Golden coverage in the same run also retains Workflow detail/editor mobile baselines;
+- **AI Settings** — six section tabs remain one product route, Skill editing uses the Dedicated Editor product path, and Model Connections return to the privileged-operation/TabPanelLead composition instead of inventing a second settings grammar;
+- **Site Settings** — real "save when MFA expires" flow preserves dirty draft state through lock → Step-Up → restore, remains usable at 600px, then commits and returns to synchronized state.
+
+Wave O does not re-certify DocumentEditorShell, MarkdownEditor, Dedicated Editor, TabPanelLead or PrivilegedAccessGate as abstractions; those were accepted under CSA-3. The question here is whether the complete Blog Admin products compose them correctly through real task transitions.
+
+Acceptance requires one exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity cycle plus direct manual review of all nine dedicated Wave O captures. Existing AI Operations mobile visual baselines may be used as supplemental product evidence, but cannot replace review of the new Run Center capture.
+
+
+### Wave O first-run evidence-scope corrections
+
+The first Wave O Golden run on `904b9e7c` passed **158/160** tests. Post Editor, AI Settings and Site Settings dedicated product evidence passed; Page Editor and AI Operations failed only at locator scope.
+
+Classification: **evidence-driver defects**, not Product/Pattern/Foundation defects.
+
+- **Page Editor:** the title candidate surface is rendered inside the editor and already owns the explicit accessible label `标题 AI 建议`. The first evidence unnecessarily used a cross-scoped `filter({ has: editor.getByRole(...) })`, so the relative descendant test never matched. The corrected path targets the real labeled Picker directly and separately verifies its `标题候选` radiogroup.
+- **AI Operations:** `运行中心` is intentionally both the active Tabs panel name and an inner region label. A page-wide `getByLabel("运行中心")` therefore produced a strict-mode double match. The corrected path targets the semantic `tabpanel[name="运行中心"]` and verifies evidence-center copy inside that panel.
+
+All interaction, responsive geometry and product ownership assertions remain unchanged. No runtime source is modified.
+
+
+## CSA-4 Wave O acceptance
+
+Status: **accepted / manual-reviewed**
+
+Accepted implementation head: `36a856ac4ee423c2d89bf3131cd22cd47ade73c7`.
+
+Exact-head machine evidence:
+
+- CI `35579698480` — success;
+- Canonical Visual Golden Smoke `35579698495` — success;
+- Blog Consumer Parity `35579698429` — success;
+- Gosso Admin Consumer Parity `35579698442` — success;
+- rendered Golden artifact `10629558838` — inspected directly.
+
+Accepted product-page scope:
+
+- **Post Editor** — History opens the real version-detail dialog, Restore mutates the document and returns to Outline, success feedback remains page-level, and the 600px restored state keeps editor ownership readable without horizontal overflow;
+- **Page Editor** — the page-specific editor keeps canvas content and Inspector responsibilities distinct, the real title AI candidate is applied through the field-scoped picker, and the 600px state stacks the product into one readable axis;
+- **AI Operations** — the route preserves one four-tab operational workspace, Automation enters real Workflow detail, and Run Center remains an evidence/trace center with run facts, execution steps and resource/interaction evidence rather than becoming a second settings page;
+- **AI Settings** — the six section tabs remain under one route-level PageHeader; Skill editing uses the accepted Dedicated Editor composition while Model Connections use the same privileged-operation Gate/TabPanelLead grammar accepted under CSA-3;
+- **Site Settings** — a dirty site-name draft survives simulated MFA expiry, Step-Up and privilege restoration, remains actionable at 600px, and the final save returns the page to synchronized state without losing tab/section ownership.
+
+All nine Wave O captures were manually inspected. No Product, Pattern/Gouno or Foundation defect required reopening.
+
+### Wave O evidence-driver history
+
+The first Wave O Golden run on `904b9e7c` passed 158/160 tests and exposed only two locator-scope issues:
+
+1. Page Editor over-scoped the already labeled `标题 AI 建议` picker through a relative descendant filter;
+2. AI Operations used page-wide `运行中心` labeling, which intentionally matches both the active tabpanel and the inner evidence region.
+
+The accepted evidence targets the real labeled Picker directly and the semantic `tabpanel[name="运行中心"]` respectively. All product-state, responsive and ownership assertions remain unchanged, and no runtime source was modified.
+
+## Blog Admin Product Showcase completion
+
+With Waves N and O accepted, **the complete Blog Admin Showcase product family is now manually certified under CSA-4**:
+
+- Wave N — Dashboard, Posts, Categories, Tags, Pages, Comments, Notifications, Media Library, Users;
+- Wave O — Post Editor, Page Editor, AI Operations, AI Settings, Site Settings.
+
+This does not complete CSA-4 globally. Gosso Admin and Public Blog product families still require the same product-level rendered review before Canonical freeze and Consumer reverse migration can resume.

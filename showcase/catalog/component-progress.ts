@@ -568,6 +568,22 @@ for (const [id, scope] of Object.entries({
   };
 }
 
+
+for (const [id, scope] of Object.entries({
+  "blog-admin-post-editor": "CSA-4 Wave O manual-reviewed: real History/restore workflow returns to Outline, preserves DocumentEditorShell ownership, and stacks navigator/canvas/inspector coherently at 600px without horizontal overflow.",
+  "blog-admin-page-editor": "CSA-4 Wave O manual-reviewed: page-specific editor keeps Inspector-owned template/navigation/Slug settings, applies a real title AI candidate, and stacks canvas/inspector cleanly at 600px.",
+  "blog-admin-ai-operations": "CSA-4 Wave O manual-reviewed: Overview/Queue/Automation/Run Center remain one product workspace; Workflow detail opens from Automation and Run Center stays an evidence center rather than duplicating configuration.",
+  "blog-admin-ai-settings": "CSA-4 Wave O manual-reviewed: six settings sections stay in one route; Skill editing uses the Dedicated Editor grammar and Model Connections reuse the canonical privileged-operation/TabPanelLead composition.",
+  "blog-admin-site-settings": "CSA-4 Wave O manual-reviewed: dirty draft survives MFA expiry, Step-Up and privilege restore, remains usable at 600px, then commits and returns the product to synchronized state.",
+})) {
+  productReviews[id] = {
+    status: "reviewed",
+    scope,
+    evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "CSA-4 Wave O manual-reviewed / 2026-09-21",
+  };
+}
+
 export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
   return review?.status === "reviewed" ? 100 : Math.min(fallback, 99);
 }

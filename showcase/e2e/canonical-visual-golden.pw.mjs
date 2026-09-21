@@ -3750,6 +3750,256 @@ test("csa-product-blog-admin-users-role-editor-evidence", async ({ page }, testI
   });
 });
 
+
+test("csa-product-blog-admin-post-editor-history-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-post-editor",
+    viewport: { width: 1440, height: 1000 },
+    ready: '[data-slot="document-editor-shell"]',
+  });
+
+  const editor = page.getByLabel("文章编辑器", { exact: true });
+  await expect(editor).toBeVisible();
+  await expect(editor.getByLabel("编辑器导航", { exact: true })).toBeVisible();
+  await expect(editor.getByLabel("文章编辑画布", { exact: true })).toBeVisible();
+  await expect(editor.getByLabel("文章元数据 Inspector", { exact: true })).toBeVisible();
+  await expect(editor.getByRole("textbox", { name: "文章正文 Markdown", exact: true })).toBeVisible();
+
+  await editor.getByRole("tab", { name: /^历史 2$/ }).click();
+  const history = editor.locator('[data-slot="post-history-list"]');
+  await expect(history).toBeVisible();
+  await history.getByRole("button", { name: /^查看 .* 的历史版本$/ }).first().click();
+
+  const dialog = page.getByRole("dialog", { name: "历史版本详情", exact: true });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("button", { name: "恢复版本", exact: true })).toBeVisible();
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-post-editor-history.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await dialog.getByRole("button", { name: "恢复版本", exact: true }).click();
+  await expect(dialog).toBeHidden();
+  await expect(page.getByText("已成功恢复历史版本。", { exact: true })).toBeVisible();
+  await expect(editor.getByRole("tab", { name: /^大纲 / })).toHaveAttribute("aria-selected", "true");
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.setViewportSize({ width: 600, height: 1100 });
+  await expectNoHorizontalDocumentOverflow(page);
+  const mobileCanvas = editor.getByLabel("文章编辑画布", { exact: true });
+  const mobileInspector = editor.getByLabel("文章元数据 Inspector", { exact: true });
+  const mobileBoxes = await Promise.all([mobileCanvas.boundingBox(), mobileInspector.boundingBox()]);
+  if (!mobileBoxes[0] || !mobileBoxes[1]) throw new Error("missing Post Editor mobile geometry");
+  expect(mobileBoxes[1].y).toBeGreaterThanOrEqual(mobileBoxes[0].y + mobileBoxes[0].height - 2);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-post-editor-mobile-restored.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-admin-page-editor-inspector-ai-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-page-editor",
+    viewport: { width: 1440, height: 1000 },
+    ready: '[data-slot="document-editor-shell"]',
+  });
+
+  const editor = page.getByLabel("单页编辑器", { exact: true });
+  await expect(editor).toBeVisible();
+  await expect(editor.getByLabel("单页编辑画布", { exact: true })).toBeVisible();
+  const inspector = editor.getByLabel("单页元数据 Inspector", { exact: true });
+  await expect(inspector).toBeVisible();
+  await expect(editor.getByLabel("编辑器导航", { exact: true })).toHaveCount(0);
+
+  await expect(inspector.getByRole("combobox", { name: "显示模板", exact: true })).toBeVisible();
+  await expect(inspector.getByRole("checkbox", { name: "显示在顶部主导航栏", exact: true })).toBeChecked();
+  await expect(inspector.getByRole("textbox", { name: "访问路径 (Slug)", exact: true })).toBeVisible();
+  await expect(inspector.getByRole("button", { name: "AI 优化路径与 SEO", exact: true })).toBeVisible();
+
+  await editor.getByRole("button", { name: "AI 生成标题候选", exact: true }).click();
+  const picker = editor.locator('[data-slot="ai-suggestion-picker"][aria-label="标题 AI 建议"]');
+  await expect(picker).toBeVisible();
+  await expect(picker.getByRole("radiogroup", { name: "标题候选", exact: true })).toBeVisible();
+  const second = picker.getByRole("radio").nth(1);
+  const candidate = await second.getAttribute("aria-label");
+  expect(candidate).toBeTruthy();
+  await second.click();
+  await picker.getByRole("button", { name: "使用所选", exact: true }).click();
+  await expect(editor.getByRole("textbox", { name: "标题", exact: true })).toHaveValue(candidate);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-page-editor-ai-inspector.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.setViewportSize({ width: 600, height: 1100 });
+  await expectNoHorizontalDocumentOverflow(page);
+  const mobileCanvas = editor.getByLabel("单页编辑画布", { exact: true });
+  const mobileInspector = editor.getByLabel("单页元数据 Inspector", { exact: true });
+  const mobileBoxes = await Promise.all([mobileCanvas.boundingBox(), mobileInspector.boundingBox()]);
+  if (!mobileBoxes[0] || !mobileBoxes[1]) throw new Error("missing Page Editor mobile geometry");
+  expect(mobileBoxes[1].y).toBeGreaterThanOrEqual(mobileBoxes[0].y + mobileBoxes[0].height - 2);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-page-editor-mobile-ai-inspector.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-admin-ai-operations-workspace-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-ai-operations",
+    viewport: { width: 1280, height: 1000 },
+    ready: '[role="tablist"]',
+  });
+
+  await expect(page.getByRole("heading", { level: 1, name: "AI 运营", exact: true })).toBeVisible();
+  const tabs = page.getByRole("tablist", { name: "AI 运营工作区", exact: true });
+  for (const name of ["概览", "待我处理", "自动化", "运行中心"]) {
+    await expect(tabs.getByRole("tab", { name: new RegExp(name) })).toBeVisible();
+  }
+
+  await tabs.getByRole("tab", { name: "自动化", exact: true }).click();
+  await page.getByRole("button", { name: "打开 Workflow：旧文维护", exact: true }).click();
+  await expect(page.getByRole("heading", { level: 2, name: "旧文维护", exact: true })).toBeVisible();
+  await expect(page.getByText("最近运行", { exact: true })).toBeVisible();
+
+  await tabs.getByRole("tab", { name: "运行中心", exact: true }).click();
+  const runCenter = page.getByRole("tabpanel", { name: "运行中心", exact: true });
+  await expect(runCenter).toBeVisible();
+  await expect(runCenter.getByText(/这里是证据中心，不是 Workflow 配置页/)).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-ai-operations-run-center.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-admin-ai-settings-deep-task-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-ai-settings",
+    viewport: { width: 1280, height: 1100 },
+    ready: '[role="tablist"]',
+  });
+
+  await expect(page.getByRole("heading", { level: 1, name: "AI 设置", exact: true })).toBeVisible();
+  const tabs = page.getByRole("tablist", { name: "AI 设置栏目", exact: true });
+  for (const name of ["Agents", "Skills", "Tools", "知识库", "模型连接", "Sandbox 连接器"]) {
+    await expect(tabs.getByRole("tab", { name, exact: true })).toBeVisible();
+  }
+
+  await tabs.getByRole("tab", { name: "Skills", exact: true }).click();
+  await page.getByRole("button", { name: "编辑", exact: true }).first().click();
+  const dedicated = page.locator('[data-pattern="dedicated-list-editor"]');
+  await expect(dedicated).toBeVisible();
+  await expect(dedicated.getByRole("heading", { level: 2, name: /编辑 Skill/ })).toBeVisible();
+  await expect(dedicated.getByRole("button", { name: "返回 Skill 列表", exact: true })).toBeVisible();
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-ai-settings-skill-dedicated.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await dedicated.getByRole("button", { name: "返回 Skill 列表", exact: true }).click();
+  await tabs.getByRole("tab", { name: "模型连接", exact: true }).click();
+  const providerGate = page.locator('[data-slot="blog-privileged-access-gate"]');
+  await expect(providerGate).toBeVisible();
+  await expect(page.locator('[data-pattern="tab-panel-lead"]')).toContainText("管理模型连接、密钥状态以及文本与图片生成的默认用途。");
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-ai-settings-provider-gate.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-admin-site-settings-step-up-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-site-settings",
+    viewport: { width: 1280, height: 1100 },
+    ready: '[role="tablist"]',
+  });
+
+  await expect(page.getByRole("heading", { level: 1, name: "站点设置", exact: true })).toBeVisible();
+  const tabs = page.getByRole("tablist", { name: "站点设置", exact: true });
+  for (const name of ["基础信息", "网站图标", "首页 Hero", "公开联系方式", "SEO"]) {
+    await expect(tabs.getByRole("tab", { name, exact: true })).toBeVisible();
+  }
+
+  await page.getByRole("button", { name: "打开 Fixture 控制", exact: true }).click();
+  const security = page.getByRole("radiogroup", { name: "站点设置安全状态", exact: true });
+  const expire = security.getByRole("radio", { name: "保存时过期", exact: true });
+  await expire.locator("xpath=ancestor::label[1]").click();
+  await expect(expire).toBeChecked();
+  await page.keyboard.press("Escape");
+
+  const siteName = page.getByRole("textbox", { name: "站点名称", exact: true });
+  await siteName.fill("Gouno Blog · Pending");
+  await expect(page.getByText("有未保存修改", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "保存设置", exact: true }).click();
+
+  await expect(page.getByText("近期 MFA 已过期，未保存草稿已暂存；完成 Step-Up 后会恢复。", { exact: true })).toBeVisible();
+  const gate = page.locator('[data-slot="blog-privileged-access-gate"]');
+  await expect(gate.getByText("高权限操作需要身份验证", { exact: true })).toBeVisible();
+
+  await gate.getByRole("button", { name: "解锁以修改设置", exact: true }).click();
+  await expect(page.getByText("MFA 已完成，待保存草稿已恢复，请再次保存。", { exact: true })).toBeVisible();
+  await expect(siteName).toHaveValue("Gouno Blog · Pending");
+  await expect(page.getByText("有未保存修改", { exact: true })).toBeVisible();
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-site-settings-step-up-restored.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await page.setViewportSize({ width: 600, height: 1200 });
+  await expectNoHorizontalDocumentOverflow(page);
+  await expect(page.getByText("有未保存修改", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "保存设置", exact: true })).toBeVisible();
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-site-settings-step-up-mobile.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await page.getByRole("button", { name: "保存设置", exact: true }).click();
+  await expect(page.getByText("站点设置已成功保存（Showcase 模拟）。", { exact: true })).toBeVisible();
+  await expect(page.getByText("当前设置已同步", { exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+});
+
 test("surface-gosso-overview-quick-link-card-ownership", async ({ page }) => {
   const scenario = {
     workspace: "gosso-admin",
