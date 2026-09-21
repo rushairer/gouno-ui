@@ -191,7 +191,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | --- | --- | --- |
 | CSA-0 Stabilize | complete | Obsolete Blog AI reverse-migration PR closed; Blog Core Wave 2 merged to `gouno-blog/main` at `5e20df79`; Consumer expansion is frozen at this checkpoint. |
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
-| CSA-2 Core browser pass | in progress | Waves A–I manually accepted. Wave J candidate closes Input/Textarea/CodeBlock/Other residuals and normalizes Modal from already-accepted Wave A browser evidence. |
+| CSA-2 Core browser pass | complete | Waves A–J manually accepted across the full Core catalog. Wave J closes the final residual families; Modal is normalized from Wave A accepted nested-overlay and focus-trap evidence. |
 | CSA-3 Pattern/Gouno pass | planned | |
 | CSA-4 Product Showcase pages | planned | |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
@@ -747,7 +747,7 @@ Direct artifact review found **no General/Layout Core or Foundation defect requi
 
 ## CSA-2 Wave J — residual Core closure
 
-Status: **candidate / awaiting batched machine + rendered review**
+Status: **accepted / manual-reviewed**
 
 Wave J is intentionally the final residual Core browser batch. It adds new rendered evidence only where CSA-2 still has a genuine gap:
 
@@ -775,3 +775,53 @@ Both failures are classified as **evidence-environment defects**, not Core defec
 - **BackTop:** the canonical embedded Showcase shell is exactly viewport-height and does not naturally create a scrollable `window`, while BackTop's documented contract intentionally listens to `window.scrollY`. The corrected browser evidence adds inert document height inside the test environment, performs a real `window.scrollTo`, then activates BackTop and requires `scrollY === 0`. The component is not changed to observe the Showcase's internal navigation scroller.
 
 Textarea, CodeBlock, FloatButton, QRCode, Watermark and Affix all passed on the first Wave J browser run. No runtime/Core change is justified by these two evidence failures.
+
+
+## CSA-2 Wave J acceptance and Core completion
+
+Status: **accepted / manual-reviewed**
+
+Accepted implementation head: `0e7de36152cd6e5ce0bf0f764dae6e42d7c7e87c`.
+
+Final exact-head machine evidence:
+
+- CI `35553995914` — success;
+- Canonical Visual Golden Smoke `35553996005` — success;
+- Blog Consumer Parity `35553995916` — success;
+- Gosso Admin Consumer Parity `35553995912` — success;
+- rendered Golden artifact `10618943468` — inspected directly.
+
+New Wave J browser evidence accepted:
+
+- Input — controlled `allowClear` clears `Gouno UI` to empty, returns/retains focus on the input and leaves prefix/value-copy geometry coherent;
+- Textarea — real edit to ten characters updates the visible `10 / 60` count while preserving the described-by relationship;
+- CodeBlock — real copy action changes feedback to `代码已复制`, and clipboard bytes equal the exact displayed canonical source;
+- FloatButton — native button and anchor modes remain distinct, and keyboard focus opens the actual Tooltip without replacing ARIA naming;
+- QRCode — the named canvas is 180 × 180 CSS/device geometry and contains actual dark rasterized QR modules;
+- Watermark — the generated SVG data-URL tile is visible while caller content and region semantics remain readable;
+- Affix — real scrolling of the demo overflow ancestor leaves the operation surface sticky at the intended top offset;
+- BackTop — after adding inert document height to make the Showcase test window genuinely scrollable, ordinary activation returns `window.scrollY` to zero under reduced-motion preference.
+
+### Wave J evidence-environment history
+
+The first Wave J run on `32569313` passed Textarea, CodeBlock, FloatButton, QRCode, Watermark and Affix but rejected Input and BackTop evidence for test-environment reasons:
+
+- Input hard-coded the Chinese clear label even though embedded `gouno-ui` fixtures intentionally inherit `enUS`;
+- BackTop was asked to scroll a viewport-height Showcase document whose `window` had no natural overflow.
+
+The accepted correction does not alter runtime components. Input evidence is scoped to the same canonical `input-group`, requires exactly one labeled clear action, and clicks it normally. BackTop evidence supplies inert document height in the browser test, performs a real window scroll, then clicks the real component. No force-click, page-global fallback or product-specific runtime workaround is used.
+
+### Modal evidence normalization
+
+`core-modal` is also marked manual-reviewed without generating redundant new screenshots. Wave A final evidence already accepted:
+
+- nested Modal + Popover layer ordering;
+- Modal focus-trap state.
+
+That evidence came from exact-head Golden run `35500170014`, artifact `10601014647`, alongside CI `35500169813`, Blog parity `35500169770` and Gosso parity `35500169802`. Wave J simply normalizes the already-reviewed Modal family into the component ledger.
+
+## CSA-2 completion
+
+With Wave J accepted, **every Core catalog family now has explicit real-browser manual review evidence or an explicitly normalized prior accepted browser path**. CSA-2 Core component real-browser pass is therefore complete.
+
+This does **not** mean the entire Showcase is Canonical. The next gate is CSA-3 Pattern/Gouno composition: page-level composition contracts such as Tab Panel Lead, Dedicated Editor, Editor Form, Collection, Record Detail, Master-Detail, PageHeader/Toolbar/Filter families and privileged-operation presentation still require family-by-family rendered review before CSA-4 Product page certification or Consumer resume.
