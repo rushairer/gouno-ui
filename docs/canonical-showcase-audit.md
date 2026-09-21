@@ -1198,3 +1198,22 @@ With Waves N and O accepted, **the complete Blog Admin Showcase product family i
 - Wave O — Post Editor, Page Editor, AI Operations, AI Settings, Site Settings.
 
 This does not complete CSA-4 globally. Gosso Admin and Public Blog product families still require the same product-level rendered review before Canonical freeze and Consumer reverse migration can resume.
+
+
+## CSA-4 Wave P — Gosso Admin authenticated product pages
+
+Status: **candidate / awaiting batched machine + rendered review**
+
+Wave P begins Gosso Admin Product Showcase certification with the seven authenticated application and system-management pages. It intentionally excludes Login, Forgot Password, Reset Password, Auth Callback and Not Found; those standalone authentication/error surfaces form Wave Q.
+
+Dedicated browser evidence covers:
+
+- **Overview** — switches from administrator to ordinary-user product context, verifies the permission notice and self-service quick-navigation family, then validates the 600px layout;
+- **Account Settings** — verifies the five account task tabs, drives a real TOTP enrollment from disabled → enrolling → enabled with backup-code recovery state, then validates the 600px composition;
+- **OAuth2 Clients** — opens the real registration editor, creates a confidential client with the high-privilege admin scope, and verifies the one-time client-secret surface;
+- **Users** — opens the real role-management dialog for a non-current account, adds the auditor role, commits the mutation and verifies explicit product feedback;
+- **Audit Logs** — applies real event/account filters, narrows to the expected security event and opens its event-detail modal;
+- **Site Settings** — edits the product name, verifies the live login-page preview and dirty state at 600px, then saves back to synchronized state;
+- **System Status** — switches to the degraded-health product state, verifies Redis degradation and probe latency, refreshes the status and retains coherent dashboard ownership.
+
+Wave P reuses already-certified Core/Pattern/Gouno abstractions and does not promote Gosso pages into component completion. Acceptance requires exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity plus direct manual inspection of all seven dedicated Wave P captures.
