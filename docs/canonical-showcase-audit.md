@@ -888,3 +888,22 @@ The first Golden run on `83b7f762` passed four of the five Wave K families and f
 The accepted evidence targets the demo's explicit caller-owned `data-page="settings"` contract instead. Geometry assertions were not weakened. The seven passing captures from first-run artifact `10619913436` were pre-reviewed, and the final PageContainer capture from artifact `10619874205` completed the family review.
 
 No Pattern/Gouno or Foundation defect requires reopening from Wave K. Historic API/FI `reviewed` flags have not been treated as a substitute for this browser-render acceptance.
+
+
+## CSA-3 Wave L — Admin data composition
+
+Status: **candidate / awaiting batched machine + rendered review**
+
+Wave L upgrades the five Showcase-only Admin data composition contracts from static ownership tests to rendered browser acceptance. These are intentionally not public runtime APIs; they are canonical composition references that keep product pages from rebuilding the same page-level grammar differently.
+
+Browser evidence covers:
+
+- **Collection** — summary → toolbar → data → pagination geometry, real search narrowing 3 rows to 1, then a no-result Empty state without moving pagination or rebuilding the outer composition;
+- **Record Detail** — identity → record-wide feedback → summary → sections vertical ownership, with Run-wide warning and summary remaining above record evidence sections;
+- **Master-Detail** — real D-31 → D-30 peer switching, desktop master/detail width ownership and 600px stacked composition;
+- **Settings** — feedback → semantic sections → one task action boundary, a real public-access Switch transition, and narrow-screen field stacking;
+- **Data Summary** — metric role ownership and responsive 4 / 2 / 1-column geometry at 1440 / 800 / 600 widths.
+
+This batch is deliberately composition-level: it does not promote Table, Input, Switch or Card again. Core behavior was completed under CSA-2; Wave L asks whether those Core pieces are being combined into one repeatable admin-page grammar.
+
+Acceptance requires one exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity cycle plus direct manual inspection of all nine Wave L captures.
