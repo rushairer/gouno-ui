@@ -3477,6 +3477,245 @@ test("csa-pattern-tab-lead-privileged-access-evidence", async ({ page }, testInf
 });
 
 
+
+test("csa-product-blog-home-browse-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog",
+    brand: "blog",
+    fixture: "blog-home",
+    viewport: desktop,
+    ready: "#public-main",
+  });
+
+  await expect(page.getByRole("heading", { level: 1, name: /把真实工程问题/ })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "精选文章", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "主题索引", exact: true })).toBeVisible();
+  await page.getByRole("link", { name: /查看全部/ }).click();
+  await expect(page.getByText("将进入 /articles（Showcase 模拟）。", { exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-home-browse.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-articles-search-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog",
+    brand: "blog",
+    fixture: "blog-articles",
+    viewport: desktop,
+    ready: "#public-main",
+  });
+
+  await expect(page.getByRole("heading", { level: 1, name: "全部文章", exact: true })).toBeVisible();
+  const search = page.getByRole("searchbox", { name: "搜索文章", exact: true });
+  await search.fill("Kubernetes");
+  await page.getByRole("button", { name: "搜索", exact: true }).click();
+  await expect(page.getByText("1 篇文章，持续记录问题、选择与实现。", { exact: true })).toBeVisible();
+  await expect(page.getByText("Kubernetes 里的任务分发：主从调度不是简单 RPC", { exact: true })).toBeVisible();
+  await expect(page.getByText("将进入 /search?q=Kubernetes（Showcase 模拟）。", { exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-articles-search.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-search-query-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog",
+    brand: "blog",
+    fixture: "blog-search",
+    viewport: desktop,
+    ready: "#public-main",
+  });
+
+  await expect(page.getByRole("heading", { level: 1, name: "“OAuth2”的搜索结果", exact: true })).toBeVisible();
+  const search = page.getByRole("searchbox", { name: "搜索文章", exact: true });
+  await search.fill("Kafka");
+  await page.getByRole("button", { name: "搜索", exact: true }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "“Kafka”的搜索结果", exact: true })).toBeVisible();
+  await expect(page.getByText("Kafka 背压实践：为什么并发更多不一定吞吐更高", { exact: true })).toBeVisible();
+  await expect(page.getByText("Kafka 15 分区为什么不是 15 个 goroutine 就最快", { exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-search-kafka.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-article-detail-preview-mobile-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog",
+    brand: "blog",
+    fixture: "blog-article-detail",
+    viewport: desktop,
+    ready: "#public-main",
+  });
+
+  await page.getByRole("button", { name: "打开 Fixture 控制", exact: true }).click();
+  const articleDetailScenario = page.getByRole("radiogroup", { name: "Blog ArticleDetail Fixture 状态", exact: true });
+  await articleDetailScenario.getByText("预览", { exact: true }).click();
+  await expect(articleDetailScenario.getByRole("radio", { name: "预览", exact: true })).toBeChecked();
+  await page.keyboard.press("Escape");
+  await expect(articleDetailScenario).toBeHidden();
+  await expect(page.getByText("管理员预览模式", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "从 OAuth2 BFF 到产品体验：安全边界如何影响前端架构", exact: true })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "文章目录", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "复制代码", exact: true })).toBeVisible();
+
+  await page.setViewportSize({ width: 600, height: 1200 });
+  await expectNoHorizontalDocumentOverflow(page);
+  await expect(page.getByText("管理员预览模式", { exact: true })).toBeVisible();
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-article-detail-preview-mobile.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-categories-navigation-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog",
+    brand: "blog",
+    fixture: "blog-categories",
+    viewport: desktop,
+    ready: "#public-main",
+  });
+
+  await expect(page.getByRole("heading", { level: 1, name: "分类", exact: true })).toBeVisible();
+  const category = page.getByText("架构与安全", { exact: true }).locator("xpath=ancestor::a[1]");
+  await category.click();
+  await expect(page.getByText("将进入 /categories/architecture-security（Showcase 模拟）。", { exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-categories-navigation.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-tags-navigation-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog",
+    brand: "blog",
+    fixture: "blog-tags",
+    viewport: desktop,
+    ready: "#public-main",
+  });
+
+  await expect(page.getByRole("heading", { level: 1, name: "标签", exact: true })).toBeVisible();
+  const tag = page.getByText("OAuth2", { exact: true }).locator("xpath=ancestor::a[1]");
+  await tag.click();
+  await expect(page.getByText("将进入 /tags/OAuth2（Showcase 模拟）。", { exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-tags-navigation.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-archive-navigation-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog",
+    brand: "blog",
+    fixture: "blog-archive",
+    viewport: desktop,
+    ready: "#public-main",
+  });
+
+  await expect(page.getByRole("heading", { level: 1, name: "归档", exact: true })).toBeVisible();
+  const article = page.getByText("从 OAuth2 BFF 到产品体验：安全边界如何影响前端架构", { exact: true }).locator("xpath=ancestor::a[1]");
+  await article.click();
+  await expect(page.getByText("将进入 /articles/oauth2-bff-product-experience（Showcase 模拟）。", { exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-archive-navigation.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-about-navigation-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog",
+    brand: "blog",
+    fixture: "blog-about",
+    viewport: desktop,
+    ready: "#public-main",
+  });
+
+  await expect(page.getByRole("heading", { level: 1, name: "关于 Gouno Blog", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "浏览文章", exact: true }).click();
+  await expect(page.getByText("将进入 /articles（Showcase 模拟）。", { exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-about-navigation.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-custom-page-lifecycle-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog",
+    brand: "blog",
+    fixture: "blog-custom-page",
+    viewport: desktop,
+    ready: "#public-main",
+  });
+
+  await expect(page.getByRole("heading", { level: 1, name: "Gouno UI 设计系统说明", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "复制代码", exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-custom-page-document.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await page.getByRole("button", { name: "打开 Fixture 控制", exact: true }).click();
+  const customPageScenario = page.getByRole("radiogroup", { name: "Blog CustomPage Fixture 状态", exact: true });
+  await customPageScenario.getByText("未找到", { exact: true }).click();
+  await expect(customPageScenario.getByRole("radio", { name: "未找到", exact: true })).toBeChecked();
+  await page.keyboard.press("Escape");
+  await expect(customPageScenario).toBeHidden();
+  await expect(page.getByRole("heading", { level: 1, name: "页面不存在或已下线", exact: true })).toBeVisible();
+
+  await page.setViewportSize({ width: 600, height: 1000 });
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-custom-page-not-found-mobile.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
 test("csa-product-blog-admin-dashboard-evidence", async ({ page }, testInfo) => {
   await prepareLightFixture(page, {
     workspace: "blog-admin",

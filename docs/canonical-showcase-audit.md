@@ -1358,3 +1358,94 @@ With Waves P and Q accepted, **all 12 Gosso Product Showcase pages are now manua
 - Wave Q — Login, Forgot Password, Reset Password, Auth Callback, Not Found.
 
 CSA-4 is not globally complete yet. The 12 Public Blog product pages remain the final Product Showcase family before CSA-5 Canonical freeze and Consumer reverse migration can resume.
+
+
+## CSA-4 Wave R — Public Blog content and discovery pages
+
+Status: **accepted / manual-reviewed**
+
+Wave R begins final-family CSA-4 certification with the nine Public Blog content, reading, discovery and document pages. Account Notifications, Account Settings and Not Found are intentionally deferred to Wave S because they introduce authenticated-account and route-recovery ownership distinct from public content discovery.
+
+Dedicated browser evidence covers:
+
+- **Home** — preserves the public reading/discovery hierarchy and drives the Featured Articles → all-articles navigation intent without introducing AppShell task chrome;
+- **Articles** — submits a real keyword search from the full article index, narrows to the Kubernetes result and preserves the collection/search ownership boundary;
+- **Search** — starts from the route-owned OAuth2 query, replaces it with Kafka, submits and verifies both matching articles under the updated result title;
+- **Article Detail** — enters administrator preview state, preserves article metadata/TOC/code-reading composition and validates the complete reading surface at 600px without horizontal document overflow;
+- **Categories** — uses the actual architecture/security category entry and verifies the category-detail navigation target;
+- **Tags** — uses the actual OAuth2 tag entry and verifies the tag-detail navigation target;
+- **Archive** — follows a real archived article entry and verifies the article-detail navigation target;
+- **About** — preserves the Blog-local document reading surface and drives the explicit continue-reading action toward the article index;
+- **Custom Page** — captures the loaded CMS-style document surface, then switches into the page-not-found lifecycle and validates its recovery composition at 600px.
+
+Ten dedicated captures are produced because Custom Page requires both loaded-document and not-found evidence. Wave R does not re-certify PublicShell, PageHeader, Alert, Result, CodeBlock, Anchor, Pagination or other already-reviewed primitives; the question is whether each public product route composes them coherently around reading and discovery intent.
+
+Acceptance requires exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity plus direct manual inspection of all ten dedicated Wave R captures.
+
+
+### Wave R first-run Segmented locator correction
+
+The first Wave R Golden run on `133c3763` passed **179/181** browser tests. Eight of the ten dedicated Wave R captures completed; Article Detail preview and Custom Page not-found timed out before changing Fixture state.
+
+Classification: **evidence-driver locator defect**, not a Public Blog Product, Pattern/Gouno or Core defect.
+
+Both failed paths used page-wide visible-text clicks against labels rendered inside Core `Segmented`. Core Segmented intentionally exposes its state options as native radio controls inside an explicitly named `radiogroup`; the product pages already provide stable accessible names through `aria-label`.
+
+The corrected evidence therefore targets the existing semantics directly:
+
+- Article Detail: `radiogroup[name="Blog ArticleDetail Fixture 状态"]` → `radio[name="预览"]`;
+- Custom Page: `radiogroup[name="Blog CustomPage Fixture 状态"]` → `radio[name="未找到"]`.
+
+No runtime source, product state, responsive assertion, capture scope or acceptance condition is changed. The remaining 179 tests, including every other Wave R product path, passed in the first run.
+
+
+### Wave R manual finding — Home Hero orphan line
+
+Direct review of the eight Wave R captures produced by the first run found a real **Public Blog Home product-layout defect** even though the Home evidence itself passed mechanically.
+
+At the 1440px canonical viewport, the Home Hero heading wrapped after `知`, leaving only `识。` on the second line. The heading hierarchy, content and responsive container were otherwise correct, but this two-character orphan makes the primary public landing surface visibly unfinished.
+
+Ownership: **Public Blog Home Hero composition**, not Core Typography. Applying a global Typography line-breaking rule would risk changing unrelated headings whose widths and editorial content differ.
+
+Correction:
+
+- keep the existing display heading token, semantic H1 and width cap;
+- add product-local balanced line wrapping to the Home Hero heading;
+- require a fresh Wave R Golden capture before acceptance so the corrected line composition is reviewed together with the two corrected Fixture-state captures.
+
+The other seven first-run successful Public Blog captures were inspected and showed no Product, Pattern/Gouno or Foundation defect requiring reopening.
+
+
+## CSA-4 Wave R acceptance
+
+Status: **accepted / manual-reviewed**
+
+Accepted implementation head: `e755c2101bdddc0110877495e2d6c9d72ad38021`.
+
+Exact-head machine evidence:
+
+- CI `35605090239` — success;
+- Canonical Visual Golden Smoke `35605090251` — success;
+- Blog Consumer Parity `35605090376` — success;
+- Gosso Admin Consumer Parity `35605090252` — success;
+- rendered Golden artifact `10640638852` — all ten dedicated Wave R captures inspected directly.
+
+Accepted product-page scope:
+
+- **Home** — public discovery remains reading-first rather than dashboard-like; the Hero heading now uses balanced wrapping and its four light/dark desktop/mobile canonical baselines were explicitly refreshed through the repository's main-only Golden refresh path;
+- **Articles** — full-index search narrows to the Kubernetes article while filter and pagination ownership remain on the collection route;
+- **Search** — the initial OAuth2 route query transitions to Kafka and renders the two matching articles beneath the updated route-owned result title;
+- **Article Detail** — preview mode remains an explicit product state while cover, metadata, TOC, code and long-form reading content stay coherent at 600px with the Showcase Fixture overlay dismissed before capture;
+- **Categories / Tags / Archive** — each discovery model keeps distinct information architecture and resolves real entries toward the expected detail route rather than collapsing into one generic list pattern;
+- **About** — the Blog-local document surface preserves project narrative and continue-reading navigation without importing admin application chrome;
+- **Custom Page** — loaded CMS document and not-found lifecycle stay in one route family; the mobile recovery surface is clean and unobstructed after Fixture tooling is dismissed.
+
+All ten final Wave R captures were manually inspected. No remaining Product, Pattern/Gouno or Foundation defect requires reopening.
+
+Wave R intentionally required multiple evidence corrections instead of accepting machine-green output prematurely:
+
+1. the first pass exposed hidden Fixture controls and stale Home snapshots after the real Hero text-balance correction;
+2. direct radio `.check()` then proved incorrect for Segmented because the visible label is the true pointer target; evidence was changed to user-like label clicks with checked-state assertions, without force-clicks or DOM mutation;
+3. a later machine-green run was still rejected during manual review because two mobile captures contained the open Showcase Fixture Popover; final evidence explicitly dismisses tooling before product screenshots.
+
+Public Blog CSA-4 is now **9/12 product pages certified**. Wave S remains: Account Notifications, Account Settings and Not Found. CSA-4 global completion and CSA-5 Canonical freeze remain blocked on that final three-page batch.
