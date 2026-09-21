@@ -3198,7 +3198,7 @@ test("csa-pattern-dedicated-editor-family-evidence", async ({ page }, testInfo) 
   const workspaceShell = preview.getByLabel("Workspace Editor 示例", { exact: true });
   await expect(workspaceShell).toBeVisible();
   await expect(workspaceShell.getByRole("navigation", { name: "文档大纲", exact: true })).toBeVisible();
-  await expect(workspaceShell.getByLabel("编辑器辅助配置", { exact: true })).toBeVisible();
+  await expect(workspaceShell.getByLabel("文档属性", { exact: true })).toBeVisible();
   await expect(workspaceShell.getByRole("button", { name: "保存", exact: true })).toBeDisabled();
 
   await preview.screenshot({
@@ -3352,8 +3352,9 @@ test("csa-pattern-ai-suggestion-picker-evidence", async ({ page }, testInfo) => 
   });
 
   await picker.getByRole("button", { name: "重新生成 AI 建议", exact: true }).click();
-  await expect(options.nth(0)).not.toBeChecked();
-  await expect(options.nth(2)).toBeChecked();
+  await expect(options.nth(0)).toBeChecked();
+  await expect(options.nth(1)).not.toBeChecked();
+  await expect(options.nth(2)).not.toBeChecked();
 
   await picker.getByRole("button", { name: "取消", exact: true }).click();
   await expect(page.locator('[data-slot="ai-suggestion-picker"]')).toBeHidden();
