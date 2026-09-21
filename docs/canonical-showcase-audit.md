@@ -1449,3 +1449,20 @@ Wave R intentionally required multiple evidence corrections instead of accepting
 3. a later machine-green run was still rejected during manual review because two mobile captures contained the open Showcase Fixture Popover; final evidence explicitly dismisses tooling before product screenshots.
 
 Public Blog CSA-4 is now **9/12 product pages certified**. Wave S remains: Account Notifications, Account Settings and Not Found. CSA-4 global completion and CSA-5 Canonical freeze remain blocked on that final three-page batch.
+
+
+## CSA-4 Wave S — Public Blog account and recovery pages
+
+Status: **candidate / awaiting batched machine + rendered review**
+
+Wave S is the final CSA-4 Product Showcase batch. It covers the three Public Blog routes intentionally left after Wave R: Account Notifications, Account Settings and Not Found.
+
+Dedicated browser evidence covers:
+
+- **Account Notifications** — switches to the unread view, marks one notification read, completes “mark all read” into the empty-unread state at 600px, and separately proves mutation failure remains transient while the notification list and unread count remain intact;
+- **Account Settings** — proves the Blog/GOSSO identity-security ownership boundary by driving the real GOSSO Admin handoff, then switches to the missing-admin-URL state and validates the recovery/error composition at 600px without inventing Blog-local password/MFA/profile controls;
+- **Not Found** — keeps unknown public paths inside PublicShell, preserves the three explicit recovery routes, drives the article-index recovery intent and validates the result surface at 600px.
+
+Five dedicated captures are produced. Fixture tooling is dismissed before product-state captures. Wave S reviews route-level product composition rather than re-certifying Result, Alert, Segmented, Card, Button, PageHeader or PublicShell primitives.
+
+Acceptance requires exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity plus direct manual inspection of all five dedicated Wave S captures. Acceptance of this batch completes all 36 CSA-4 Product Showcase pages and unblocks CSA-5 Canonical freeze.
