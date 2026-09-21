@@ -844,3 +844,16 @@ Wave K starts with the frame that later Pattern/Product families depend on:
 This first CSA-3 batch is deliberately limited to five foundational families. Admin data compositions will follow as Wave L; Editor/AI/Tab-panel/privileged-operation compositions follow as Wave M. No family is promoted by source markers or historic tests alone.
 
 Acceptance requires one exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity cycle plus direct manual inspection of all eight Wave K captures.
+
+
+### Wave K PageContainer evidence-scope correction
+
+The first Wave K Golden run on `83b7f762` passed BulkActionBar, PageHeader, PageSkeleton and AppShell browser evidence and failed only the PageContainer evidence locator.
+
+Classification: **evidence-driver defect**, not a Gouno PageContainer defect.
+
+The first locator filtered every `[data-slot="page-container"]` by descendant text. Because the embedded Showcase outer shell itself wraps the demo inside a PageContainer, both the outer Showcase track and the inner canonical PageContainer example contain `PageContainer content track` and therefore matched.
+
+The example already exposes a stronger caller-owned DOM contract: `data-page="settings"`. The corrected evidence targets `[data-slot="page-container"][data-page="settings"]` exactly and keeps all semantic geometry assertions unchanged: 24px page-stack gap, 1440px maximum-width authority and width containment.
+
+The seven rendered captures produced by the first run were pre-reviewed directly; no Pattern/Gouno/Foundation defect was identified in those passing states. Wave K still requires a fresh exact-head run and complete PageContainer capture before acceptance.

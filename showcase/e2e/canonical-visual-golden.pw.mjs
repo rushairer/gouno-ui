@@ -2740,7 +2740,7 @@ test("csa-gouno-page-container-track-evidence", async ({ page }, testInfo) => {
     ready: '[data-slot="page-container"]',
   });
 
-  const container = page.locator('[data-slot="page-container"]').filter({ hasText: "PageContainer content track" });
+  const container = page.locator('[data-slot="page-container"][data-page="settings"]');
   await expect(container).toHaveAttribute("data-page", "settings");
   const metrics = await container.evaluate((element) => {
     const style = getComputedStyle(element);
