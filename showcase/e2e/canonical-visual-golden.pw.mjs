@@ -3244,7 +3244,7 @@ test("csa-pattern-editor-form-composition-evidence", async ({ page }, testInfo) 
   const dedicated = surfaceGroup.getByRole("radio", { name: "Dedicated", exact: true });
   await dedicated.locator("xpath=ancestor::label[1]").click();
   await expect(dedicated).toBeChecked();
-  await expect(form.getByText(/外层由 dedicated surface 拥有/)).toBeVisible();
+  await expect(page.getByText(/深度配置：页面拥有完整任务上下文与 Back/)).toBeVisible();
 
   await form.screenshot({
     path: testInfo.outputPath("csa-pattern-editor-form-dedicated.png"),
@@ -3259,8 +3259,8 @@ test("csa-pattern-editor-form-composition-evidence", async ({ page }, testInfo) 
 
   await page.setViewportSize({ width: 600, height: 1300 });
   const nameInput = form.getByLabel("名称", { exact: true });
-  const statusSwitch = form.getByRole("switch", { name: "启用资产", exact: true });
-  const mobileFields = await Promise.all([nameInput.boundingBox(), statusSwitch.boundingBox()]);
+  const statusLabel = form.getByText("启用资产", { exact: true });
+  const mobileFields = await Promise.all([nameInput.boundingBox(), statusLabel.boundingBox()]);
   if (!mobileFields[0] || !mobileFields[1]) throw new Error("missing Editor Form mobile field geometry");
   expect(mobileFields[1].y).toBeGreaterThan(mobileFields[0].y);
 
