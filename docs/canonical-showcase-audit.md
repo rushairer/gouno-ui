@@ -694,3 +694,10 @@ Root cause: Playwright role-name matching is substring-based unless `exact: true
 Classification: **evidence-driver defect**, not a Core Badge defect. The rendered Badge API deliberately exposes both overflow examples, and the ambiguity exists only in the test locator. The correction keeps the same user-visible states and requires exact accessible-name matching for 5 / 0 / 99+ / 999+ / 6.
 
 The 12 successful Wave I rendered captures from artifact `10616039018` were pre-reviewed directly; no Core/Foundation defect was identified in those captures. Wave I still requires a fresh exact-head run and a complete artifact including Badge before acceptance.
+
+
+The second Wave I Golden run on `c41a8c8e` passed every new Wave I case except the same Badge evidence path, after exact accessible-name matching had been corrected.
+
+The remaining failure was again evidence-only: the test derived its Demo Card locator from the transient text `当前计数：5`. The real Badge state update succeeded, but after the click that text disappeared, so Playwright's live locator could no longer resolve the ancestor Card when checking `当前计数：6`.
+
+Correction: anchor the Badge evidence scope to the persistent `增加计数` action, then resolve its enclosing canonical Demo Card. This preserves strict same-demo ownership before and after the state transition and avoids any page-global fallback lookup. Core Badge remains unchanged and is not reopened.

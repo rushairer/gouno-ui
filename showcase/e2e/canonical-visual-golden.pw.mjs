@@ -2144,7 +2144,7 @@ test("csa-core-badge-dynamic-state-evidence", async ({ page }, testInfo) => {
   });
 
   const card = page
-    .getByText("当前计数：5", { exact: true })
+    .getByRole("button", { name: "增加计数" })
     .locator('xpath=ancestor::*[@data-slot="card"][1]');
   await expect(card.getByRole("status", { name: "5", exact: true })).toBeVisible();
   await expect(card.getByRole("status", { name: "0", exact: true })).toBeVisible();
