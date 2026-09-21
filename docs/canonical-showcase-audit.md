@@ -1,8 +1,9 @@
 # Gouno UI Canonical Showcase Audit
 
-Status: **active**
+Status: **complete / canonical frozen**
 Program id: **CSA-001**
 Started: 2026-09-20
+Completed: 2026-09-22
 
 ## Why this exists
 
@@ -26,9 +27,9 @@ Automated checks support the review; they do not replace it.
 
 ## Current migration policy
 
-Consumer expansion is paused while CSA-001 establishes the reviewed Canonical baseline.
+CSA-001 has established the frozen Canonical baseline in `canonical-showcase.json`. Consumer reverse migration may resume only from surfaces listed in that matrix after the freeze is merged to `main`.
 
-Existing verified Consumer certifications remain evidence, not automatic proof that the corresponding Showcase composition is globally canonical. If CSA-001 changes a canonical path covered by a verified Consumer, follow the recertification protocol in `AGENTS.md` before landing the change.
+Existing verified Consumer certifications remain evidence, not automatic proof that a later canonical change is safe to propagate. If a frozen surface is reopened or changed on a path covered by a verified Consumer, follow the recertification protocol in `AGENTS.md`: stop propagation, demote stale certification when required, land the canonical correction through reciprocal parity, manually re-review the Consumer, then restore certification with fresh evidence.
 
 ## Review states
 
@@ -185,16 +186,26 @@ The first sanity batch supports the existing FI-001 authorities for Typography, 
 
 This is deliberately weaker than a global Showcase certification. The reviewed states are evidence inputs for CSA-2/CSA-3; they do not authorize resuming Consumer expansion yet.
 
+## CSA-1 closure
+
+Status: **complete / Foundation authority retained**
+
+CSA-1 was defined as a representative presentation sanity pass over FI-001, not as a second exhaustive Foundation certification. Batch 1 directly exercised Typography hierarchy, spacing/layout/density, surface/elevation, responsive composition, overlay ownership and meaningful editor/state interactions in actual browser renders.
+
+The later CSA-2, CSA-3 and CSA-4 passes then supplied substantially broader rendered evidence across all 90 accepted Core / Theme / Pattern / Gouno surfaces and all 38 Product Showcase pages. Those reviews found and corrected component-local, pattern-local and product-local defects where necessary, but left **no unresolved Foundation-level reopen**. The review ledger contains no `status: "reopened"` entry at freeze.
+
+The accumulated evidence therefore supports the existing FI-001 Foundation authorities rather than reopening them. CSA-1 is closed before Canonical freeze.
+
 ## Progress
 
 | Phase | Status | Notes |
 | --- | --- | --- |
 | CSA-0 Stabilize | complete | Obsolete Blog AI reverse-migration PR closed; Blog Core Wave 2 merged to `gouno-blog/main` at `5e20df79`; Consumer expansion is frozen at this checkpoint. |
-| CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
+| CSA-1 Foundation sanity | complete | Representative batch plus the later CSA-2/3/4 rendered corpus leave no unresolved Foundation reopen; FI-001 authority is retained. |
 | CSA-2 Core browser pass | complete | Waves A–J manually accepted across the full Core catalog. Wave J closes the final residual families; Modal is normalized from Wave A accepted nested-overlay and focus-trap evidence. |
 | CSA-3 Pattern/Gouno pass | complete | Waves K–M manually accepted across all 15 Pattern/Gouno catalog families. TabPanelLead and PrivilegedAccessGate are also accepted as non-catalog cross-product composition contracts. |
 | CSA-4 Product Showcase pages | complete | Waves N–S accepted: all 38 Blog Admin, Gosso Admin and Public Blog Product Showcase pages are manually reviewed with rendered evidence. |
-| CSA-5 Canonical freeze / Consumer resume | ready | CSA-4 is complete; publish the accepted Canonical matrix before Consumer reverse migration resumes. |
+| CSA-5 Canonical freeze / Consumer resume | complete | Frozen matrix accounts for 90 component/composition surfaces + 38 product pages = all 128 Showcase catalog surfaces; Consumer resume is unblocked only from listed surfaces after merge to main. |
 
 ## Rule for future progress claims
 
@@ -1501,3 +1512,34 @@ With Waves N through S accepted, **all 38 Product Showcase pages are manually ce
 The earlier “36 pages” wording in the Wave S staging note and PR description was a counting error; the catalog contains 38 product pages. The ledger is corrected here before freeze.
 
 CSA-4 is now complete. CSA-5 Canonical freeze is unblocked and should operate on the accepted Core / Pattern / Gouno / Product review ledger rather than reopening already-certified product pages without new evidence.
+
+
+## CSA-5 Canonical freeze acceptance
+
+Status: **accepted / frozen**
+
+Freeze source baseline: `bb2c052dbf54fa37dc98b3be7a8e1ccfc9c973df` — the merge commit that completed CSA-4 Wave S.
+
+Accepted candidate head: `54f545921308de2f20f38c868bc1b942e2610524`.
+
+Candidate exact-head machine evidence:
+
+- CI `35617331424` — success;
+- Canonical Visual Golden Smoke `35617331269` — success;
+- Blog Consumer Parity `35617331221` — success;
+- Gosso Admin Consumer Parity `35617331435` — success.
+
+The machine-readable authority is `canonical-showcase.json`. Independent ledger reconciliation confirms:
+
+- 90 / 90 Core / Theme / Pattern / Gouno component-and-composition surfaces match `completedComponents`;
+- 38 / 38 Product Showcase pages match the CSA-4 manual-review ledger: Public Blog 12 + Blog Admin 14 + Gosso Admin 12;
+- all 128 / 128 Showcase catalog surfaces are present exactly once;
+- there is no unresolved `status: "reopened"` review at freeze.
+
+CSA-1 is also closed explicitly before freeze: its representative browser sanity evidence plus the much broader CSA-2/3/4 rendered corpus retain the existing FI-001 Foundation authorities and leave no unresolved Foundation-level reopen.
+
+The freeze guard now treats the matrix, phase ledger and Consumer-resume policy as one contract. A frozen matrix requires the CSA-1 through CSA-5 phase rows to be complete, the program status to be complete/frozen, the full product subgroup counts to remain 12 / 14 / 12, and Consumer resume to be `unblocked`.
+
+Consumer reverse migration may resume **only after this freeze lands on `main`**, and only from surfaces listed in the frozen matrix. This does not make Canonical immutable: later real evidence may mark a surface `reopened`, which immediately stops propagation for that affected surface until the canonical owner is corrected and manually re-certified.
+
+The freeze-promotion head must pass the same CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity gates again before PR #138 merges. No additional rendered page review is required for CSA-5 itself because this phase freezes the already manually reviewed CSA-1/2/3/4 evidence rather than creating a new visual surface.

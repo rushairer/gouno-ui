@@ -33,7 +33,6 @@ for (const marker of [
 
 for (const marker of [
   "Program id: **CSA-001**",
-  "Consumer expansion is paused",
   "manual-reviewed",
   "canonical",
   "reopened",
@@ -46,6 +45,17 @@ for (const marker of [
     `Canonical Showcase audit ledger is missing governance marker: ${marker}`,
   );
 }
+
+const canonicalFrozen = audit.includes("Status: **complete / canonical frozen**");
+requireText(
+  audit,
+  canonicalFrozen
+    ? "Consumer reverse migration may resume only from surfaces listed in that matrix after the freeze is merged to `main`."
+    : "Consumer expansion is paused",
+  canonicalFrozen
+    ? "Canonical Showcase audit ledger is frozen but missing the Consumer resume policy."
+    : "Canonical Showcase audit ledger is active but missing the Consumer pause policy.",
+);
 
 for (const evidence of [
   "core-focus-component-owned",

@@ -41,6 +41,9 @@ jobs:
       - name: Verify Canonical Showcase audit contract
         run: npm run lint:canonical-audit
 
+      - name: Verify CSA-5 Canonical freeze matrix
+        run: npm run lint:canonical-freeze
+
       - name: Verify JSX source hygiene
         run: npm run lint:source-hygiene
 

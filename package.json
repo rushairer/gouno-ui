@@ -71,13 +71,14 @@
     "test": "vitest run --environment jsdom",
     "lint:microcopy": "node scripts/check-microcopy-contract.mjs",
     "lint:parity": "node scripts/check-parity-maintenance-contract.mjs",
-    "verify": "npm run lint:microcopy && npm run lint:parity && npm run lint:foundation && npm run lint:canonical-audit && npm run lint:source-hygiene && npm run typecheck && npm test && npm run build && npm run showcase:build",
+    "verify": "npm run lint:microcopy && npm run lint:parity && npm run lint:foundation && npm run lint:canonical-audit && npm run lint:canonical-freeze && npm run lint:source-hygiene && npm run typecheck && npm test && npm run build && npm run showcase:build",
     "package:check": "node scripts/package-check.mjs",
     "release:check": "npm run verify && npm run package:check",
     "prepublishOnly": "npm run release:check",
     "lint:foundation": "node scripts/check-foundation-integrity.mjs",
     "lint:source-hygiene": "node scripts/check-jsx-source-hygiene.mjs",
-    "lint:canonical-audit": "node scripts/check-canonical-showcase-audit.mjs"
+    "lint:canonical-audit": "node scripts/check-canonical-showcase-audit.mjs",
+    "lint:canonical-freeze": "node scripts/check-canonical-freeze.mjs"
   },
   "peerDependencies": {
     "react": "^19.2.0",
