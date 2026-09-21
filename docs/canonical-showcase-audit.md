@@ -191,7 +191,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | --- | --- | --- |
 | CSA-0 Stabilize | complete | Obsolete Blog AI reverse-migration PR closed; Blog Core Wave 2 merged to `gouno-blog/main` at `5e20df79`; Consumer expansion is frozen at this checkpoint. |
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
-| CSA-2 Core browser pass | in progress | Waves A–H manually accepted through input, feedback and Data Display families. Remaining Core layout/other families still require browser review. |
+| CSA-2 Core browser pass | in progress | Waves A–I manually accepted through General, Layout, Data Entry, Navigation, Data Display and Feedback families. Residual Input/Textarea/CodeBlock/Other plus Modal ledger normalization remain. |
 | CSA-3 Pattern/Gouno pass | planned | |
 | CSA-4 Product Showcase pages | planned | |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
@@ -655,3 +655,91 @@ The defect was not suppressed with `force` clicking or a test-only bypass. Core 
 That path passes in Chromium and the resulting transformed-preview screenshot was inspected manually. Because the fix is local to a single modal surface, FI-001 global Overlay/Layering authority remains closed; no application-global z-index policy was reopened.
 
 Wave H acceptance remains family-scoped. **CSA-2 is still in progress** for the remaining Core catalog.
+
+
+## CSA-2 Wave I — General + Layout
+
+Status: **accepted / manual-reviewed**
+
+Wave I groups the remaining General and Layout surfaces because they jointly define the visual grammar that page/product compositions inherit. The batch is prepared completely before opening a PR so intermediate commits do not repeatedly consume CI/Golden/parity runs.
+
+General evidence:
+
+- Icon — decorative versus named semantics, semantic sizes, loading rotation and explicit pixel/rotation geometry;
+- Typography — document heading level remains independent from visual role; H1/H2 using `task` must render with identical typography metrics while `page` remains visually distinct;
+- Kbd — shortcut-token rhythm and native `kbd` ownership;
+- Badge — zero/overflow/status variants plus a real count update;
+- Tag — closable lifecycle, disabled close affordance and non-controlled checkable state;
+- Avatar — small/middle/large/custom size geometry plus square/circle shape behavior using deterministic image bytes.
+
+Layout evidence:
+
+- Space — wrapping/split composition and token-owned spacing;
+- Flex — row-reverse + wrap-reverse + numeric gap without child wrappers;
+- Grid — responsive 24-column behavior at 600 / 820 / 1100 viewport widths;
+- Separator — horizontal title/line variants and semantic vertical separator;
+- Card — real default → elevated transition while header/content/footer ownership remains stable;
+- Splitter — real keyboard resize with `aria-valuenow` transition;
+- Page Layout — Header/Sider/Content/Footer region semantics and canonical 240px Sider geometry.
+
+This candidate does **not** promote components by test existence. Acceptance requires one exact-head CI + Canonical Visual Golden + Blog Consumer Parity + Gosso Admin Consumer Parity cycle followed by direct human review of all Wave I rendered evidence. Any defect discovered by rendering must be fixed at its owning layer before acceptance.
+
+
+### Wave I Badge evidence-name correction
+
+The first Wave I Golden run on `e0dca147` executed 12 of 13 new Wave I tests successfully and failed only the Badge evidence locator.
+
+Root cause: Playwright role-name matching is substring-based unless `exact: true` is supplied. The evidence query for status name `99+` therefore matched both the real `99+` overflow badge and `999+`.
+
+Classification: **evidence-driver defect**, not a Core Badge defect. The rendered Badge API deliberately exposes both overflow examples, and the ambiguity exists only in the test locator. The correction keeps the same user-visible states and requires exact accessible-name matching for 5 / 0 / 99+ / 999+ / 6.
+
+The 12 successful Wave I rendered captures from artifact `10616039018` were pre-reviewed directly; no Core/Foundation defect was identified in those captures. Wave I still requires a fresh exact-head run and a complete artifact including Badge before acceptance.
+
+
+The second Wave I Golden run on `c41a8c8e` passed every new Wave I case except the same Badge evidence path, after exact accessible-name matching had been corrected.
+
+The remaining failure was again evidence-only: the test derived its Demo Card locator from the transient text `当前计数：5`. The real Badge state update succeeded, but after the click that text disappeared, so Playwright's live locator could no longer resolve the ancestor Card when checking `当前计数：6`.
+
+Correction: anchor the Badge evidence scope to the persistent `增加计数` action, then resolve its enclosing canonical Demo Card. This preserves strict same-demo ownership before and after the state transition and avoids any page-global fallback lookup. Core Badge remains unchanged and is not reopened.
+
+
+## CSA-2 Wave I acceptance
+
+Status: **accepted / manual-reviewed**
+
+Accepted implementation head: `41f83284407f815976ff089f446c3bd84da03720`.
+
+Exact-head machine evidence:
+
+- CI `35551508518` — success;
+- Canonical Visual Golden Smoke `35551508552` — success;
+- Blog Consumer Parity `35551508534` — success;
+- Gosso Admin Consumer Parity `35551508645` — success;
+- rendered Golden artifact `10618407856` — inspected directly.
+
+Accepted rendered/browser scope:
+
+- Icon — decorative versus named semantics, small/middle/large and explicit 24px sizing, loading spin and 45-degree rotation;
+- Typography — page/task/section roles preserve visual hierarchy while H1/H2 using the same `task` role render with identical typography metrics;
+- Kbd — paired keyboard tokens remain compact, aligned and native-semantic;
+- Badge — count 5 → 6, zero, 99+/999+ overflow, text, dot/status and offset/size variants remain readable without collisions;
+- Tag — Release close lifecycle, disabled close affordance and uncontrolled TypeScript checked → unchecked state preserve interaction hierarchy;
+- Avatar — small/middle/large/custom 48px sizing and square/circle geometry remain consistent;
+- Space — wrap/split example keeps action rhythm and separator ownership;
+- Flex — row-reverse + wrap-reverse + 10px numeric gap remains legible and wrapper-free;
+- Grid — responsive Col evidence renders 1 column at 600px, 2 columns at 820px and 4 columns at 1100px;
+- Separator — horizontal centered/start/end line variants and named vertical separator retain clear line/content rhythm;
+- Card — switching to elevated changes depth without changing header/content/footer composition;
+- Splitter — keyboard ArrowRight changes the horizontal split from 36/64 to 37/63 while the focused separator remains usable and visible;
+- Page Layout — Header/Sider/Content/Footer semantic regions preserve expected shell hierarchy and 240px Sider geometry.
+
+### Wave I evidence-driver history
+
+Wave I required two Badge evidence corrections before acceptance. Neither was a Core Badge defect:
+
+1. the first run used substring accessible-name matching, so `99+` also matched `999+`;
+2. the second run derived the Demo Card from transient `当前计数：5`, so the live locator invalidated itself after the real state update.
+
+The accepted evidence uses exact accessible names and anchors same-demo ownership to the persistent `增加计数` action. No page-global fallback or force interaction is used.
+
+Direct artifact review found **no General/Layout Core or Foundation defect requiring reopening**. Wave I acceptance is family-scoped; CSA-2 remains active only for the residual Core catalog.
