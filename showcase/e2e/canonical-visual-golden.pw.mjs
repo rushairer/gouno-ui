@@ -2893,6 +2893,247 @@ test("csa-gouno-app-shell-responsive-evidence", async ({ page }, testInfo) => {
   await expect(trigger).toBeFocused();
 });
 
+
+test("csa-pattern-collection-composition-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "pattern-collection-composition",
+    viewport: { width: 1440, height: 1000 },
+    ready: '[data-pattern="collection-composition"]',
+  });
+
+  const collection = page.locator('[data-pattern="collection-composition"]');
+  const summary = collection.locator('[data-slot="collection-summary"]');
+  const toolbar = collection.locator('[data-slot="collection-toolbar"]');
+  const data = collection.locator('[data-slot="collection-data-view"]');
+  const pagination = collection.locator('[data-slot="collection-pagination"]');
+
+  const orderedBoxes = await Promise.all([
+    summary.boundingBox(),
+    toolbar.boundingBox(),
+    data.boundingBox(),
+    pagination.boundingBox(),
+  ]);
+  if (orderedBoxes.some((box) => !box)) throw new Error("missing Collection composition geometry");
+  expect(orderedBoxes[0].y).toBeLessThan(orderedBoxes[1].y);
+  expect(orderedBoxes[1].y).toBeLessThan(orderedBoxes[2].y);
+  expect(orderedBoxes[2].y).toBeLessThan(orderedBoxes[3].y);
+
+  const search = collection.getByRole("textbox", { name: "搜索资产", exact: true });
+  await search.fill("安全巡检");
+  await expect(collection.getByText("1 / 3", { exact: true })).toBeVisible();
+  await expect(collection.getByText("安全巡检", { exact: true })).toBeVisible();
+  await expect(collection.getByText("内容维护", { exact: true })).toBeHidden();
+  await expect(collection.getByText("SEO Review", { exact: true })).toBeHidden();
+
+  await collection.screenshot({
+    path: testInfo.outputPath("csa-pattern-collection-filtered.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await search.fill("__no_matching_asset__");
+  await expect(collection.getByText("0 / 3", { exact: true })).toBeVisible();
+  await expect(collection.getByText("没有符合条件的资产", { exact: true })).toBeVisible();
+  await expect(pagination).toBeVisible();
+
+  await collection.screenshot({
+    path: testInfo.outputPath("csa-pattern-collection-empty.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-pattern-record-detail-composition-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "pattern-record-detail-composition",
+    viewport: { width: 1200, height: 1000 },
+    ready: '[data-pattern="record-detail-composition"]',
+  });
+
+  const detail = page.locator('[data-pattern="record-detail-composition"]');
+  const identity = detail.locator('[data-slot="record-identity"]');
+  const feedback = detail.locator('[data-slot="record-feedback"]');
+  const summary = detail.locator('[data-slot="record-summary"]');
+  const sections = detail.locator('[data-slot="record-sections"]');
+
+  await expect(identity.getByRole("heading", { level: 2, name: "Run #248 · 内容维护", exact: true })).toBeVisible();
+  await expect(feedback.getByText("存在 1 个待确认结果", { exact: true })).toBeVisible();
+  await expect(summary.getByRole("region", { name: "数据摘要", exact: true })).toBeVisible();
+  await expect(sections.getByText("执行事实", { exact: true })).toBeVisible();
+  await expect(sections.getByText("资源证据", { exact: true })).toBeVisible();
+  await expect(sections.getByText("步骤记录", { exact: true })).toBeVisible();
+
+  const boxes = await Promise.all([
+    identity.boundingBox(),
+    feedback.boundingBox(),
+    summary.boundingBox(),
+    sections.boundingBox(),
+  ]);
+  if (boxes.some((box) => !box)) throw new Error("missing Record Detail composition geometry");
+  expect(boxes[0].y).toBeLessThan(boxes[1].y);
+  expect(boxes[1].y).toBeLessThan(boxes[2].y);
+  expect(boxes[2].y).toBeLessThan(boxes[3].y);
+
+  await detail.screenshot({
+    path: testInfo.outputPath("csa-pattern-record-detail-order.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-pattern-master-detail-responsive-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "pattern-master-detail-composition",
+    viewport: { width: 1440, height: 1000 },
+    ready: '[data-pattern="master-detail-composition"]',
+  });
+
+  const composition = page.locator('[data-pattern="master-detail-composition"]');
+  const master = composition.locator('[data-slot="master-detail-master"]');
+  const detail = composition.locator('[data-slot="master-detail-detail"]');
+
+  const first = master.getByRole("button", { name: /确认文章分类/ });
+  const second = master.getByRole("button", { name: /批准外部写入/ });
+  await expect(first).toHaveAttribute("aria-pressed", "true");
+  await expect(second).toHaveAttribute("aria-pressed", "false");
+
+  await second.click();
+  await expect(second).toHaveAttribute("aria-pressed", "true");
+  await expect(detail.getByRole("heading", { level: 2, name: "批准外部写入", exact: true })).toBeVisible();
+  await expect(detail.getByText(/D-30 · 当前 Detail 只描述所选对象/)).toBeVisible();
+
+  const desktop = await Promise.all([master.boundingBox(), detail.boundingBox()]);
+  if (!desktop[0] || !desktop[1]) throw new Error("missing Master-Detail desktop geometry");
+  expect(desktop[1].x).toBeGreaterThan(desktop[0].x + desktop[0].width - 2);
+  expect(desktop[1].width).toBeGreaterThan(desktop[0].width);
+
+  await composition.screenshot({
+    path: testInfo.outputPath("csa-pattern-master-detail-desktop-selected.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await page.setViewportSize({ width: 600, height: 1100 });
+  const mobile = await Promise.all([master.boundingBox(), detail.boundingBox()]);
+  if (!mobile[0] || !mobile[1]) throw new Error("missing Master-Detail mobile geometry");
+  expect(mobile[1].y).toBeGreaterThanOrEqual(mobile[0].y + mobile[0].height - 2);
+  expect(Math.abs(mobile[1].width - mobile[0].width)).toBeLessThan(3);
+
+  await composition.screenshot({
+    path: testInfo.outputPath("csa-pattern-master-detail-mobile-stacked.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-pattern-settings-composition-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "pattern-settings-composition",
+    viewport: { width: 1100, height: 1100 },
+    ready: '[data-pattern="settings-composition"]',
+  });
+
+  const settings = page.locator('[data-pattern="settings-composition"]');
+  const feedback = settings.locator('[data-slot="settings-feedback"]');
+  const sections = settings.locator('[data-slot="settings-sections"]');
+  const actions = settings.locator('[data-slot="settings-actions"]');
+
+  await expect(feedback.getByText("设置会影响新请求", { exact: true })).toBeVisible();
+  await expect(sections.locator('[data-pattern="settings-section"]')).toHaveCount(2);
+  await expect(actions.getByRole("button", { name: "重置", exact: true })).toBeVisible();
+  await expect(actions.getByRole("button", { name: "保存设置", exact: true })).toBeVisible();
+
+  const boxes = await Promise.all([
+    feedback.boundingBox(),
+    sections.boundingBox(),
+    actions.boundingBox(),
+  ]);
+  if (boxes.some((box) => !box)) throw new Error("missing Settings composition geometry");
+  expect(boxes[0].y).toBeLessThan(boxes[1].y);
+  expect(boxes[1].y).toBeLessThan(boxes[2].y);
+
+  const publicAccess = settings.getByRole("switch", { name: "允许公开访问", exact: true });
+  await expect(publicAccess).toHaveAttribute("aria-checked", "true");
+  await publicAccess.click();
+  await expect(publicAccess).toHaveAttribute("aria-checked", "false");
+
+  await settings.screenshot({
+    path: testInfo.outputPath("csa-pattern-settings-toggle-off.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await page.setViewportSize({ width: 600, height: 1200 });
+  const siteName = settings.getByLabel("站点名称", { exact: true });
+  const switchBox = await publicAccess.boundingBox();
+  const siteNameBox = await siteName.boundingBox();
+  if (!switchBox || !siteNameBox) throw new Error("missing Settings mobile field geometry");
+  expect(switchBox.y).toBeGreaterThan(siteNameBox.y);
+
+  await settings.screenshot({
+    path: testInfo.outputPath("csa-pattern-settings-mobile.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-pattern-data-summary-responsive-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "pattern-data-summary-composition",
+    viewport: { width: 1440, height: 900 },
+    ready: '[data-pattern="data-summary-composition"]',
+  });
+
+  const summary = page.locator('[data-pattern="data-summary-composition"]');
+  const metrics = summary.locator(':scope > div');
+  await expect(metrics).toHaveCount(4);
+  await expect(summary.locator('[data-typography-role="metric-compact"]')).toHaveCount(4);
+
+  const positions = async () =>
+    Promise.all(
+      [0, 1, 2, 3].map(async (index) => {
+        const box = await metrics.nth(index).boundingBox();
+        if (!box) throw new Error("missing Data Summary metric " + index);
+        return { x: Math.round(box.x), y: Math.round(box.y), width: Math.round(box.width) };
+      }),
+    );
+
+  let boxes = await positions();
+  expect(new Set(boxes.map((box) => box.y)).size).toBe(1);
+
+  await summary.screenshot({
+    path: testInfo.outputPath("csa-pattern-data-summary-1440.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await page.setViewportSize({ width: 800, height: 900 });
+  boxes = await positions();
+  expect(boxes[0].y).toBe(boxes[1].y);
+  expect(boxes[2].y).toBe(boxes[3].y);
+  expect(boxes[2].y).toBeGreaterThan(boxes[0].y);
+
+  await page.setViewportSize({ width: 600, height: 900 });
+  boxes = await positions();
+  expect(new Set(boxes.map((box) => box.y)).size).toBe(4);
+
+  await summary.screenshot({
+    path: testInfo.outputPath("csa-pattern-data-summary-600.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
 test("surface-gosso-overview-quick-link-card-ownership", async ({ page }) => {
   const scenario = {
     workspace: "gosso-admin",
