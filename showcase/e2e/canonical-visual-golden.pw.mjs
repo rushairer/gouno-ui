@@ -3134,6 +3134,348 @@ test("csa-pattern-data-summary-responsive-evidence", async ({ page }, testInfo) 
   });
 });
 
+
+test("csa-pattern-dedicated-editor-family-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "pattern-dedicated-editor",
+    viewport: { width: 1440, height: 1100 },
+    ready: '[aria-label="Dedicated Editor Canonical Preview"]',
+  });
+
+  const preview = page.locator('[aria-label="Dedicated Editor Canonical Preview"]');
+  const lead = preview.locator('[data-pattern="dedicated-editor-lead"]');
+  const layout = preview.locator('[data-pattern="dedicated-editor-layout"]');
+  const taskTitle = lead.getByRole("heading", {
+    level: 2,
+    name: "编辑自动化资产：内容维护",
+    exact: true,
+  });
+
+  await expect(taskTitle).toHaveAttribute("data-typography-role", "task");
+  await expect(layout.locator("aside", { hasText: "执行计划" })).toBeVisible();
+
+  const primary = layout.locator(":scope > div").first();
+  const secondary = layout.locator(":scope > aside");
+  const desktop = await Promise.all([primary.boundingBox(), secondary.boundingBox()]);
+  if (!desktop[0] || !desktop[1]) throw new Error("missing Dedicated Editor desktop geometry");
+  expect(desktop[1].x).toBeGreaterThan(desktop[0].x + desktop[0].width - 2);
+
+  const stateGroup = page.getByRole("radiogroup", { name: "Dedicated Editor 状态", exact: true });
+  const errorState = stateGroup.getByRole("radio", { name: "Error", exact: true });
+  await errorState.locator("xpath=ancestor::label[1]").click();
+  await expect(errorState).toBeChecked();
+  await expect(preview.getByText("保存失败", { exact: true })).toBeVisible();
+
+  await preview.screenshot({
+    path: testInfo.outputPath("csa-pattern-dedicated-editor-error-desktop.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await page.setViewportSize({ width: 600, height: 1200 });
+  const mobile = await Promise.all([primary.boundingBox(), secondary.boundingBox()]);
+  if (!mobile[0] || !mobile[1]) throw new Error("missing Dedicated Editor mobile geometry");
+  expect(mobile[1].y).toBeGreaterThanOrEqual(mobile[0].y + mobile[0].height - 2);
+  expect(Math.abs(mobile[1].width - mobile[0].width)).toBeLessThan(3);
+
+  await preview.screenshot({
+    path: testInfo.outputPath("csa-pattern-dedicated-editor-mobile-stacked.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  const subtypeGroup = page.getByRole("radiogroup", { name: "Dedicated Editor 类型", exact: true });
+  const workspace = subtypeGroup.getByRole("radio", { name: "Workspace", exact: true });
+  await workspace.locator("xpath=ancestor::label[1]").click();
+  await expect(workspace).toBeChecked();
+
+  const readOnly = stateGroup.getByRole("radio", { name: "Read only", exact: true });
+  await readOnly.locator("xpath=ancestor::label[1]").click();
+  await expect(readOnly).toBeChecked();
+
+  const workspaceShell = preview.getByLabel("Workspace Editor 示例", { exact: true });
+  await expect(workspaceShell).toBeVisible();
+  await expect(workspaceShell.getByRole("navigation", { name: "文档大纲", exact: true })).toBeVisible();
+  await expect(workspaceShell.getByLabel("文档属性", { exact: true })).toBeVisible();
+  await expect(workspaceShell.getByRole("button", { name: "保存", exact: true })).toBeDisabled();
+
+  await preview.screenshot({
+    path: testInfo.outputPath("csa-pattern-dedicated-editor-workspace-readonly.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-pattern-editor-form-composition-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "pattern-editor-form-composition",
+    viewport: { width: 1200, height: 1100 },
+    ready: '[data-pattern="editor-form-composition"]',
+  });
+
+  const form = page.locator('[data-pattern="editor-form-composition"]');
+  const identity = form.locator('[data-slot="editor-identity"]');
+  const feedback = form.getByText("存在未保存变更", { exact: true }).locator('xpath=ancestor::*[@data-slot="alert"][1]');
+  const sections = form.locator('[data-pattern="editor-form-section"]');
+  const actions = form.locator('[data-pattern="editor-form-actions"]');
+
+  await expect(sections).toHaveCount(2);
+  await expect(feedback).toBeVisible();
+  await expect(actions.getByRole("button", { name: "保存", exact: true })).toBeVisible();
+
+  const order = await Promise.all([
+    identity.boundingBox(),
+    feedback.boundingBox(),
+    sections.first().boundingBox(),
+    sections.nth(1).boundingBox(),
+    actions.boundingBox(),
+  ]);
+  if (order.some((box) => !box)) throw new Error("missing Editor Form composition geometry");
+  expect(order[0].y).toBeLessThan(order[1].y);
+  expect(order[1].y).toBeLessThan(order[2].y);
+  expect(order[2].y).toBeLessThan(order[3].y);
+  expect(order[3].y).toBeLessThan(order[4].y);
+
+  const surfaceGroup = page.getByRole("radiogroup", { name: "编辑器 Surface", exact: true });
+  const dedicated = surfaceGroup.getByRole("radio", { name: "Dedicated", exact: true });
+  await dedicated.locator("xpath=ancestor::label[1]").click();
+  await expect(dedicated).toBeChecked();
+  await expect(page.getByText(/深度配置：页面拥有完整任务上下文与 Back/)).toBeVisible();
+
+  await form.screenshot({
+    path: testInfo.outputPath("csa-pattern-editor-form-dedicated.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await page.getByRole("button", { name: "隐藏反馈", exact: true }).click();
+  await expect(form.getByText("存在未保存变更", { exact: true })).toBeHidden();
+  await page.getByRole("button", { name: "显示反馈", exact: true }).click();
+  await expect(form.getByText("存在未保存变更", { exact: true })).toBeVisible();
+
+  await page.setViewportSize({ width: 600, height: 1300 });
+  const nameInput = sections.first().locator('input:not([role="switch"])').first();
+  const statusLabel = form.getByText("启用资产", { exact: true });
+  const mobileFields = await Promise.all([nameInput.boundingBox(), statusLabel.boundingBox()]);
+  if (!mobileFields[0] || !mobileFields[1]) throw new Error("missing Editor Form mobile field geometry");
+  expect(mobileFields[1].y).toBeGreaterThan(mobileFields[0].y);
+
+  await form.screenshot({
+    path: testInfo.outputPath("csa-pattern-editor-form-mobile.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-pattern-markdown-editor-interaction-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "pattern-markdown-editor",
+    viewport: { width: 1200, height: 1000 },
+    ready: '[data-slot="markdown-editor"]',
+  });
+
+  const editor = page.locator('[data-slot="markdown-editor"]');
+  const textarea = editor.getByRole("textbox", { name: "MarkdownEditor Demo 正文", exact: true });
+  const toolbar = editor.getByRole("toolbar", { name: "Markdown 编辑工具栏", exact: true });
+
+  await expect(editor).toHaveAttribute("data-mode", "edit");
+  await textarea.selectText();
+  await toolbar.getByRole("button", { name: "AI 写作", exact: true }).click();
+  await expect(textarea).toHaveValue("AI 生成内容");
+
+  await toolbar.getByRole("button", { name: "分屏", exact: true }).click();
+  await expect(editor).toHaveAttribute("data-mode", "split");
+  await expect(editor.locator('[data-slot="markdown-editor-split"]')).toBeVisible();
+  await expect(editor.getByLabel("MarkdownEditor Demo 预览", { exact: true })).toContainText("AI 生成内容");
+
+  await editor.screenshot({
+    path: testInfo.outputPath("csa-pattern-markdown-editor-split.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await page.setViewportSize({ width: 600, height: 1000 });
+  const toolbarGeometry = await toolbar.evaluate((element) => ({
+    clientWidth: element.clientWidth,
+    scrollWidth: element.scrollWidth,
+    wrap: element.getAttribute("data-adaptive-wrap"),
+  }));
+  expect(toolbarGeometry.scrollWidth).toBeLessThanOrEqual(toolbarGeometry.clientWidth + 1);
+  await expect(toolbar.getByRole("button", { name: "分屏", exact: true })).toBeHidden();
+
+  await editor.screenshot({
+    path: testInfo.outputPath("csa-pattern-markdown-editor-mobile-toolbar.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await toolbar.getByRole("button", { name: "预览", exact: true }).click();
+  await expect(editor).toHaveAttribute("data-mode", "preview");
+  await expect(textarea).toBeHidden();
+  await expect(editor.getByLabel("MarkdownEditor Demo 预览", { exact: true })).toContainText("AI 生成内容");
+});
+
+test("csa-pattern-ai-suggestion-picker-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "pattern-ai-suggestion-picker",
+    viewport: { width: 1000, height: 900 },
+    ready: '[data-slot="ai-suggestion-picker"]',
+  });
+
+  const pickerDemo = page
+    .getByRole("heading", { level: 3, name: "候选选择后统一应用", exact: true })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const picker = pickerDemo.locator('[data-slot="ai-suggestion-picker"]');
+  const currentTitle = pickerDemo.getByRole("textbox", { name: "当前标题", exact: true });
+  const group = picker.getByRole("radiogroup", { name: "标题候选列表", exact: true });
+  const options = group.getByRole("radio");
+  await expect(options).toHaveCount(3);
+  await expect(options.nth(0)).toBeChecked();
+
+  const second = options.nth(1);
+  const secondValue = await second.getAttribute("aria-label");
+  expect(secondValue).toBeTruthy();
+  await second.click();
+  await expect(second).toBeChecked();
+  await picker.getByRole("button", { name: "使用所选", exact: true }).click();
+  await expect(currentTitle).toHaveValue(secondValue);
+
+  await picker.screenshot({
+    path: testInfo.outputPath("csa-pattern-ai-picker-applied.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await picker.getByRole("button", { name: "重新生成 AI 建议", exact: true }).click();
+  await expect(options.nth(0)).toBeChecked();
+  await expect(options.nth(1)).not.toBeChecked();
+  await expect(options.nth(2)).not.toBeChecked();
+
+  await picker.getByRole("button", { name: "取消", exact: true }).click();
+  await expect(pickerDemo.locator('[data-slot="ai-suggestion-picker"]')).toBeHidden();
+  await pickerDemo.getByRole("button", { name: "重新打开 AI 建议", exact: true }).click();
+  await expect(pickerDemo.locator('[data-slot="ai-suggestion-picker"]')).toBeVisible();
+});
+
+test("csa-pattern-ai-suggestion-review-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "pattern-ai-suggestion-review",
+    viewport: { width: 1000, height: 900 },
+    ready: '[data-slot="ai-suggestion-review"]',
+  });
+
+  const reviewDemo = page
+    .getByRole("heading", { level: 3, name: "多字段建议先审阅再提交", exact: true })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const review = reviewDemo.locator('[data-slot="ai-suggestion-review"]');
+  const slug = review.getByRole("checkbox", { name: "应用 Slug 建议", exact: true });
+  const seoTitle = review.getByRole("checkbox", { name: "应用 SEO 标题 建议", exact: true });
+  const seoDescription = review.getByRole("checkbox", { name: "应用 SEO 描述 建议", exact: true });
+
+  await expect(slug).toBeChecked();
+  await expect(seoTitle).toBeChecked();
+  await expect(seoDescription).toBeChecked();
+  await seoDescription.click();
+  await expect(seoDescription).not.toBeChecked();
+
+  const apply = review.getByRole("button", { name: "应用 2 项建议", exact: true });
+  await expect(apply).toBeEnabled();
+  await apply.click();
+  await expect(reviewDemo.getByText("最近应用：slug、seo-title", { exact: true })).toBeVisible();
+
+  await review.screenshot({
+    path: testInfo.outputPath("csa-pattern-ai-review-two-applied.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await review.getByRole("button", { name: "取消", exact: true }).click();
+  await expect(reviewDemo.locator('[data-slot="ai-suggestion-review"]')).toBeHidden();
+  await reviewDemo.getByRole("button", { name: "重新打开 AI 建议", exact: true }).click();
+  await expect(reviewDemo.locator('[data-slot="ai-suggestion-review"]')).toBeVisible();
+});
+
+test("csa-pattern-tab-lead-privileged-access-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-ai-settings",
+    viewport: { width: 1280, height: 1100 },
+    ready: '[role="tablist"]',
+  });
+
+  await page.getByRole("tab", { name: "模型连接", exact: true }).click();
+
+  const lead = page.locator('[data-pattern="tab-panel-lead"]').filter({
+    hasText: "管理模型连接、密钥状态以及文本与图片生成的默认用途。",
+  });
+  await expect(lead).toBeVisible();
+  const addProvider = lead.getByRole("button", { name: "添加模型连接", exact: true });
+  await expect(addProvider).toBeEnabled();
+
+  const fixtureButton = page.getByRole("button", { name: "打开 Fixture 控制", exact: true });
+  await fixtureButton.click();
+  const security = page.getByRole("radiogroup", { name: "AI 设置高权限安全状态", exact: true });
+  const locked = security.getByRole("radio", { name: "已锁定", exact: true });
+  await locked.locator("xpath=ancestor::label[1]").click();
+  await expect(locked).toBeChecked();
+  await page.keyboard.press("Escape");
+
+  const gate = page.locator('[data-slot="blog-privileged-access-gate"]');
+  await expect(gate.getByText("高权限操作需要身份验证", { exact: true })).toBeVisible();
+  await expect(addProvider).toBeDisabled();
+  await expect(gate.locator("[inert]")).toHaveCount(1);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-pattern-privileged-access-locked.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await gate.getByRole("button", { name: "解锁以管理模型连接", exact: true }).click();
+  await expect(gate.getByText("高权限操作已解锁", { exact: true })).toBeVisible();
+  await expect(addProvider).toBeEnabled();
+  await expect(gate.locator("[inert]")).toHaveCount(0);
+
+  await fixtureButton.click();
+  const expiring = page
+    .getByRole("radiogroup", { name: "AI 设置高权限安全状态", exact: true })
+    .getByRole("radio", { name: "操作时过期", exact: true });
+  await expiring.locator("xpath=ancestor::label[1]").click();
+  await expect(expiring).toBeChecked();
+  await page.keyboard.press("Escape");
+  await expect(gate.getByText("近期 MFA 即将过期", { exact: true })).toBeVisible();
+  await expect(gate.getByRole("button", { name: "重新锁定", exact: true })).toBeVisible();
+
+  await page.setViewportSize({ width: 600, height: 1200 });
+  const description = lead.getByText(
+    "管理模型连接、密钥状态以及文本与图片生成的默认用途。",
+    { exact: true },
+  );
+  const exportButton = lead.getByRole("button", { name: "导出模型连接", exact: true });
+  const mobileLead = await Promise.all([description.boundingBox(), exportButton.boundingBox()]);
+  if (!mobileLead[0] || !mobileLead[1]) throw new Error("missing TabPanelLead mobile geometry");
+  expect(mobileLead[1].y).toBeGreaterThan(mobileLead[0].y);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-pattern-tab-lead-privileged-expiring-mobile.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
 test("surface-gosso-overview-quick-link-card-ownership", async ({ page }) => {
   const scenario = {
     workspace: "gosso-admin",
