@@ -888,3 +888,72 @@ The first Golden run on `83b7f762` passed four of the five Wave K families and f
 The accepted evidence targets the demo's explicit caller-owned `data-page="settings"` contract instead. Geometry assertions were not weakened. The seven passing captures from first-run artifact `10619913436` were pre-reviewed, and the final PageContainer capture from artifact `10619874205` completed the family review.
 
 No Pattern/Gouno or Foundation defect requires reopening from Wave K. Historic API/FI `reviewed` flags have not been treated as a substitute for this browser-render acceptance.
+
+
+## CSA-3 Wave L — Admin data composition
+
+Status: **accepted / manual-reviewed**
+
+Wave L upgrades the five Showcase-only Admin data composition contracts from static ownership tests to rendered browser acceptance. These are intentionally not public runtime APIs; they are canonical composition references that keep product pages from rebuilding the same page-level grammar differently.
+
+Browser evidence covers:
+
+- **Collection** — summary → toolbar → data → pagination geometry, real search narrowing 3 rows to 1, then a no-result Empty state without moving pagination or rebuilding the outer composition;
+- **Record Detail** — identity → record-wide feedback → summary → sections vertical ownership, with Run-wide warning and summary remaining above record evidence sections;
+- **Master-Detail** — real D-31 → D-30 peer switching, desktop master/detail width ownership and 600px stacked composition;
+- **Settings** — feedback → semantic sections → one task action boundary, a real public-access Switch transition, and narrow-screen field stacking;
+- **Data Summary** — metric role ownership and responsive 4 / 2 / 1-column geometry at 1440 / 800 / 600 widths.
+
+This batch is deliberately composition-level: it does not promote Table, Input, Switch or Card again. Core behavior was completed under CSA-2; Wave L asks whether those Core pieces are being combined into one repeatable admin-page grammar.
+
+Acceptance requires one exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity cycle plus direct manual inspection of all nine Wave L captures.
+
+
+### Wave L Settings switch evidence-state correction
+
+The first Wave L Golden run on `18883ede` passed Collection, Record Detail, Master-Detail and Data Summary and failed only the Settings switch state assertion.
+
+Classification: **evidence-driver defect**, not a Core Switch or Settings composition defect.
+
+The canonical Core Switch deliberately renders a native checkbox input with `role="switch"`. Its checked state is the native DOM `checked` property; it does not duplicate that state into an `aria-checked` attribute. The failed evidence incorrectly asserted the latter.
+
+The corrected browser evidence uses Playwright's native-state-aware `toBeChecked()`, performs an ordinary click, and then requires `not.toBeChecked()`. All Settings composition order, responsive field geometry and screenshot assertions remain unchanged. No runtime component or composition implementation is modified.
+
+
+The second Wave L Golden run on `0722cf03` confirmed the native checked-state assertion but failed when the evidence attempted a pointer click on the visually hidden `sr-only` switch input. The visible label/track is the intended user hit target; clicking the hidden input directly caused pointer interception by surrounding Card content.
+
+Classification remains **evidence-driver defect**. The accepted interaction path must click the visible `允许公开访问` label text in the same Settings composition, then verify the underlying native switch becomes unchecked. This is stricter user-path evidence than a force-click and requires no runtime change.
+
+
+## CSA-3 Wave L acceptance
+
+Status: **accepted / manual-reviewed**
+
+Accepted implementation head: `3d254251182fbd9433921f89b2378f86e0346369`.
+
+Exact-head machine evidence:
+
+- CI `35558937369` — success;
+- Canonical Visual Golden Smoke `35558937341` — success;
+- Blog Consumer Parity `35558937285` — success;
+- Gosso Admin Consumer Parity `35558937270` — success;
+- rendered Golden artifact `10621277995` — inspected directly.
+
+Accepted rendered/browser scope:
+
+- **Collection** — summary → toolbar → data → pagination geometry remains stable while search narrows the data set from 3 rows to 1 and then to an Empty state; pagination remains in its canonical slot;
+- **Record Detail** — identity, Run-wide warning, four-metric summary and record evidence sections remain one readable vertical ownership chain;
+- **Master-Detail** — selecting D-30 updates the detail without losing queue context; at 1440px the detail track is wider than the master track, while at 600px the two tracks stack on one axis;
+- **Settings** — feedback remains above two semantic Sections and one bottom action boundary; the public-access Switch transitions through its visible label hit target; the 600px state stacks fields without collapsing Section/action ownership;
+- **Data Summary** — four metric cells render one row at 1440px, two rows of two at 800px and four single-column rows at 600px while retaining the compact metric typography role.
+
+### Wave L evidence-driver history
+
+Two Golden iterations corrected the Settings evidence without changing runtime:
+
+1. the first evidence incorrectly expected a native checkbox/switch to duplicate checked state into an `aria-checked` attribute; the canonical implementation correctly uses the native `checked` property;
+2. the second evidence clicked the visually hidden `sr-only` input directly; the accepted path clicks the visible `允许公开访问` label text, then verifies the native switch becomes unchecked.
+
+No force-click, DOM state mutation or product-specific workaround is used. Collection, Record Detail, Master-Detail and Data Summary passed every Wave L browser iteration.
+
+Direct review of all nine Wave L captures found **no Pattern/Foundation defect requiring reopening**. The five Showcase-only Admin data compositions are now explicitly CSA-3 manual-reviewed; their older static/API review flags are no longer the basis for acceptance.
