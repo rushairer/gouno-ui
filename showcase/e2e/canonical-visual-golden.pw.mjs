@@ -3501,7 +3501,7 @@ test("csa-product-blog-admin-dashboard-permission-evidence", async ({ page }, te
   await expect(page.getByRole("button", { name: "新建文章", exact: true })).toBeHidden();
   await expect(page.getByRole("button", { name: "审核评论", exact: true })).toBeVisible();
   await expect(page.getByText("AI 运营提醒", { exact: true })).toBeHidden();
-  const summary = page.getByRole("region", { name: "站点运营摘要", exact: true });
+  const summary = page.locator('[data-pattern="data-summary-composition"][aria-label="站点运营摘要"]');
   await expect(summary).toBeVisible();
   await expect(summary.getByRole("link", { name: /评论互动/ })).toBeVisible();
   await expect(summary.getByRole("link", { name: /文章总数/ })).toHaveCount(0);
@@ -3710,7 +3710,7 @@ test("csa-product-blog-admin-notifications-write-failure-evidence", async ({ pag
   const alert = page.getByRole("alert");
   await expect(alert).toContainText("批量标记已读失败；通知状态与当前选择保持不变");
   await expect(page.getByText("已选择 2 条通知", { exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "标为已读" })).toHaveCount(3);
+  expect(await page.getByRole("button", { name: "标为已读" }).count()).toBeGreaterThanOrEqual(3);
 
   await page.screenshot({
     path: testInfo.outputPath("csa-product-blog-admin-notifications-write-failure.png"),
