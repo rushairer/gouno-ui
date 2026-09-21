@@ -1268,3 +1268,22 @@ All nine final Wave P captures were manually inspected. No remaining Product, Pa
 The first Golden run on `2856b264` exposed a real duplicate-Message defect in the Gosso System Management Showcase adapter. The corrected implementation keeps the strict Users assertion unchanged and also removes the duplicate success feedback visible in Client registration and Site Settings save evidence.
 
 Wave P certifies the seven authenticated Gosso Admin product pages. Login, Forgot Password, Reset Password, Auth Callback and Not Found remain the explicit Wave Q scope.
+
+
+## CSA-4 Wave Q — Gosso authentication and error surfaces
+
+Status: **candidate / awaiting batched machine + rendered review**
+
+Wave Q completes the Gosso Product Showcase family with the five standalone authentication and error surfaces that Wave P intentionally excluded: Login, Forgot Password, Reset Password, Auth Callback and Not Found.
+
+Dedicated browser evidence covers:
+
+- **Login** — performs a real password submit into MFA, completes the second factor and captures the successful authenticated state; the same route then switches through Fixture control into Sudo/step-up, completes strong authentication and validates the 600px composition;
+- **Forgot Password** — proves the submit action is disabled until an email is present, exercises the neutral successful response that does not disclose whether an account exists, then switches to the service-failure state and validates the non-enumerating error copy at 600px;
+- **Reset Password** — exercises minimum-length validation, mismatch validation and a successful reset before switching to an expired-link state where the reset form is unavailable; both successful and 600px expired states are captured;
+- **Auth Callback** — starts in Authorization Code + PKCE processing, switches to the successful recovered-session state, then to callback failure at 600px and finally drives the retry action back to processing;
+- **Not Found** — validates the standalone Result anatomy, requested path and both recovery actions at 600px, then uses the real “返回概览” action and requires navigation back to the Gosso Overview product page.
+
+Nine dedicated captures are produced: two each for Login, Forgot Password, Reset Password and Auth Callback, plus one Not Found mobile capture. Wave Q reviews complete product-state composition; it does not re-certify AuthSurface, Alert, FormField, Result, Button or other already-reviewed Core/Pattern primitives.
+
+Acceptance requires exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity plus direct manual inspection of all nine dedicated Wave Q captures.
