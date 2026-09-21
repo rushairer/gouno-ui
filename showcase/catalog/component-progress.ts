@@ -498,6 +498,22 @@ componentReviews["core-modal"] = {
   baseline: "CSA-2 Wave A evidence normalized / 2026-09-21",
 };
 
+
+for (const [id, scope] of Object.entries({
+  "pattern-bulk-action-bar": "CSA-3 Wave K manual-reviewed: selected-context ownership, real 3 → 2 selection transition, caller-owned archive feedback, cancel disappearance and selection restoration preserve one canonical collection-action grammar.",
+  "gouno-page-container": "CSA-3 Wave K manual-reviewed: the rendered content track consumes the canonical 90rem max-width and 24px page-stack rhythm without page-local geometry authority.",
+  "gouno-page-header": "CSA-3 Wave K manual-reviewed: route-level page H1, description and action group remain one desktop row and collapse to a readable single-axis mobile composition below md.",
+  "gouno-page-skeleton": "CSA-3 Wave K manual-reviewed: status/busy semantics remain stable while collection loading changes from desktop table geometry to mobile Card geometry; form/dashboard variants remain sibling loading contracts.",
+  "gouno-app-shell": "CSA-3 Wave K manual-reviewed: desktop shell owns header/288px navigation/main regions, mobile owns a real Sheet navigation path, and closing through navigation returns focus to the trigger.",
+})) {
+  componentReviews[id] = {
+    status: "reviewed",
+    scope,
+    evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "CSA-3 Wave K manual-reviewed / 2026-09-21",
+  };
+}
+
 export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
   return review?.status === "reviewed" ? 100 : Math.min(fallback, 99);
 }

@@ -134,6 +134,14 @@ for (const evidence of [
   "core-kbd-shortcuts",
   "core-typography-semantic-hierarchy",
   "core-icon-semantic-sizes",
+  "gouno-app-shell-mobile-navigation",
+  "gouno-app-shell-desktop",
+  "gouno-page-skeleton-collection-mobile",
+  "gouno-page-skeleton-collection-desktop",
+  "gouno-page-header-mobile",
+  "gouno-page-header-desktop",
+  "gouno-page-container-track",
+  "pattern-bulk-action-bar-two-selected",
 ]) {
   requireText(
     golden,
@@ -152,5 +160,5 @@ if (failures.length) {
 }
 
 process.stdout.write(
-  "Canonical Showcase audit contract: manual-first governance and Core browser evidence are preserved.\n",
+  "Canonical Showcase audit contract: manual-first governance and CSA browser evidence are preserved.\n",
 );

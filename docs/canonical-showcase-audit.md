@@ -192,7 +192,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | CSA-0 Stabilize | complete | Obsolete Blog AI reverse-migration PR closed; Blog Core Wave 2 merged to `gouno-blog/main` at `5e20df79`; Consumer expansion is frozen at this checkpoint. |
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
 | CSA-2 Core browser pass | complete | Waves A–J manually accepted across the full Core catalog. Wave J closes the final residual families; Modal is normalized from Wave A accepted nested-overlay and focus-trap evidence. |
-| CSA-3 Pattern/Gouno pass | planned | |
+| CSA-3 Pattern/Gouno pass | in progress | Wave K page-frame/action grammar accepted: AppShell, PageContainer, PageHeader, PageSkeleton and BulkActionBar. Wave L admin-data compositions are next. |
 | CSA-4 Product Showcase pages | planned | |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
 
@@ -825,3 +825,66 @@ That evidence came from exact-head Golden run `35500170014`, artifact `106010146
 With Wave J accepted, **every Core catalog family now has explicit real-browser manual review evidence or an explicitly normalized prior accepted browser path**. CSA-2 Core component real-browser pass is therefore complete.
 
 This does **not** mean the entire Showcase is Canonical. The next gate is CSA-3 Pattern/Gouno composition: page-level composition contracts such as Tab Panel Lead, Dedicated Editor, Editor Form, Collection, Record Detail, Master-Detail, PageHeader/Toolbar/Filter families and privileged-operation presentation still require family-by-family rendered review before CSA-4 Product page certification or Consumer resume.
+
+
+## CSA-3 Wave K — page frame and collection actions
+
+Status: **accepted / manual-reviewed**
+
+CSA-3 does not inherit an older `reviewed` flag as proof of rendered composition quality. Historic API tests, FI-001 certification and focused product evidence remain useful inputs, but this phase requires direct browser inspection of the actual page-composition contract.
+
+Wave K starts with the frame that later Pattern/Product families depend on:
+
+- **AppShell** — desktop header/sidebar/main composition, canonical 288px navigation track, embedded PageContainer, mobile navigation trigger, real Sheet navigation and focus return after closing through a navigation action;
+- **PageContainer** — the semantic `layout-page-container` track consumes the 90rem maximum-width and 1.5rem page-stack gap authority rather than reintroducing page-local geometry;
+- **PageHeader** — route-level H1/description/actions stay one row at desktop width and stack into a clear single content axis below `md`;
+- **PageSkeleton** — collection/form/dashboard loading regions retain status/busy semantics; the collection skeleton switches from desktop table geometry to mobile Cards rather than shrinking a table;
+- **BulkActionBar** — real selection count changes, business-action feedback, cancel-selection disappearance and restoration verify that the Pattern owns selected-context/action rhythm while callers retain selection/business state.
+
+This first CSA-3 batch is deliberately limited to five foundational families. Admin data compositions will follow as Wave L; Editor/AI/Tab-panel/privileged-operation compositions follow as Wave M. No family is promoted by source markers or historic tests alone.
+
+Acceptance requires one exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity cycle plus direct manual inspection of all eight Wave K captures.
+
+
+### Wave K PageContainer evidence-scope correction
+
+The first Wave K Golden run on `83b7f762` passed BulkActionBar, PageHeader, PageSkeleton and AppShell browser evidence and failed only the PageContainer evidence locator.
+
+Classification: **evidence-driver defect**, not a Gouno PageContainer defect.
+
+The first locator filtered every `[data-slot="page-container"]` by descendant text. Because the embedded Showcase outer shell itself wraps the demo inside a PageContainer, both the outer Showcase track and the inner canonical PageContainer example contain `PageContainer content track` and therefore matched.
+
+The example already exposes a stronger caller-owned DOM contract: `data-page="settings"`. The corrected evidence targets `[data-slot="page-container"][data-page="settings"]` exactly and keeps all semantic geometry assertions unchanged: 24px page-stack gap, 1440px maximum-width authority and width containment.
+
+The seven rendered captures produced by the first run were pre-reviewed directly; no Pattern/Gouno/Foundation defect was identified in those passing states. Wave K still requires a fresh exact-head run and complete PageContainer capture before acceptance.
+
+
+## CSA-3 Wave K acceptance
+
+Status: **accepted / manual-reviewed**
+
+Accepted implementation head: `8de5e2f28d8fc460679a9a94b2c47ec8777af5c3`.
+
+Exact-head machine evidence:
+
+- CI `35555236319` — success;
+- Canonical Visual Golden Smoke `35555236414` — success;
+- Blog Consumer Parity `35555236370` — success;
+- Gosso Admin Consumer Parity `35555236326` — success;
+- rendered Golden artifact `10619874205` — inspected directly.
+
+Accepted composition evidence:
+
+- **BulkActionBar** — selection changes 3 → 2 without the Pattern owning product state; archive feedback remains caller-owned; cancel removes the toolbar and restoring selection recreates the same canonical action grammar;
+- **PageContainer** — the actual `data-page="settings"` example renders a centered semantic content track with computed 24px page-stack gap and 1440px maximum-width authority;
+- **PageHeader** — desktop title/description/actions preserve one top-aligned composition; at 600px the action group moves below the description rather than compressing the title axis;
+- **PageSkeleton** — collection skeleton uses table geometry on desktop and four Card rows on mobile while retaining the same named busy region; form/dashboard remain sibling loading contracts;
+- **AppShell** — desktop nested demo renders header, 288px sidebar, navigation and main/PageContainer ownership; at mobile width the sidebar disappears, the real left Sheet opens, navigation remains usable, and choosing a navigation item closes the Sheet and returns focus to the trigger.
+
+### Wave K evidence-driver history
+
+The first Golden run on `83b7f762` passed four of the five Wave K families and failed only PageContainer scope resolution. The embedded Showcase outer shell also uses PageContainer and contains the demo text, so text-descendant filtering matched both outer and inner tracks.
+
+The accepted evidence targets the demo's explicit caller-owned `data-page="settings"` contract instead. Geometry assertions were not weakened. The seven passing captures from first-run artifact `10619913436` were pre-reviewed, and the final PageContainer capture from artifact `10619874205` completed the family review.
+
+No Pattern/Gouno or Foundation defect requires reopening from Wave K. Historic API/FI `reviewed` flags have not been treated as a substitute for this browser-render acceptance.
