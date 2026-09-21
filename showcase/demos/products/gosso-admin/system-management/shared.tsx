@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { IconButton, MessageProvider, Modal, Text, useMessage } from "../../../../../src/core";
 import { FixtureDock } from "../../../../components/fixture-dock";
 import { TabPanelFeedback, TabPanelLead } from "../../../../components/tab-panel-lead";
@@ -24,9 +24,14 @@ export const ManagementPanelFeedback = TabPanelFeedback;
 
 function FixtureMessageContent({ children }: { children: ReactNode }) {
   const message = useMessage();
+  const emittedContent = useRef<ReactNode | undefined>(undefined);
+
   useEffect(() => {
+    if (Object.is(emittedContent.current, children)) return;
+    emittedContent.current = children;
     message.success(children);
   }, [children, message]);
+
   return null;
 }
 

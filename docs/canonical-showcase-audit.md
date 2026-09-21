@@ -1219,3 +1219,21 @@ Dedicated browser evidence covers:
 Nine dedicated captures are produced: one each for Overview, Account Settings, OAuth2 Clients, Users and Audit Logs, two for Site Settings, and two for System Status. Wave P reuses already-certified Core/Pattern/Gouno abstractions and does not promote Gosso pages into component completion.
 
 Acceptance requires exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity plus direct manual inspection of all nine dedicated Wave P captures.
+
+
+### Wave P duplicate Message defect
+
+The first Wave P Golden run on `2856b264` passed 166/167 browser tests and failed only the Gosso Admin Users role-update evidence because **two identical success Messages were actually rendered** after one role save.
+
+This is a real Showcase product defect, not a locator ambiguity. The Showcase root runs under React `StrictMode`, and the System Management `FixtureMessageContent` adapter imperatively called `message.success(children)` from an effect. StrictMode replays that effect during development/browser verification, so one product mutation enqueued the same Message twice.
+
+Ownership: the defect belongs to the Gosso System Management Showcase Message adapter. Core `MessageProvider` is not reopened: its imperative API correctly displays every explicit call it receives.
+
+Correction:
+
+- keep Message as the presentation owner rather than replacing it with Alert;
+- make the fixture adapter idempotent for the same content within one mounted adapter instance;
+- still emit again when the business status content genuinely changes or the adapter remounts for a later mutation;
+- keep the existing exact browser assertion unchanged, so duplicate DOM messages continue to fail rather than being hidden with `.first()`.
+
+No force-click or test-only suppression is used.
