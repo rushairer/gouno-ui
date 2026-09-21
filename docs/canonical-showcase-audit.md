@@ -191,7 +191,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | --- | --- | --- |
 | CSA-0 Stabilize | complete | Obsolete Blog AI reverse-migration PR closed; Blog Core Wave 2 merged to `gouno-blog/main` at `5e20df79`; Consumer expansion is frozen at this checkpoint. |
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
-| CSA-2 Core browser pass | in progress | Waves A–I manually accepted through General, Layout, Data Entry, Navigation, Data Display and Feedback families. Residual Input/Textarea/CodeBlock/Other plus Modal ledger normalization remain. |
+| CSA-2 Core browser pass | in progress | Waves A–I manually accepted. Wave J candidate closes Input/Textarea/CodeBlock/Other residuals and normalizes Modal from already-accepted Wave A browser evidence. |
 | CSA-3 Pattern/Gouno pass | planned | |
 | CSA-4 Product Showcase pages | planned | |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
@@ -743,3 +743,23 @@ Wave I required two Badge evidence corrections before acceptance. Neither was a 
 The accepted evidence uses exact accessible names and anchors same-demo ownership to the persistent `增加计数` action. No page-global fallback or force interaction is used.
 
 Direct artifact review found **no General/Layout Core or Foundation defect requiring reopening**. Wave I acceptance is family-scoped; CSA-2 remains active only for the residual Core catalog.
+
+
+## CSA-2 Wave J — residual Core closure
+
+Status: **candidate / awaiting batched machine + rendered review**
+
+Wave J is intentionally the final residual Core browser batch. It adds new rendered evidence only where CSA-2 still has a genuine gap:
+
+- Input — controlled value and real allowClear lifecycle with focus retention;
+- Textarea — controlled edit plus live character-count relationship;
+- CodeBlock — real copy action, copied feedback and clipboard bytes equal to the displayed canonical source;
+- FloatButton — button versus anchor semantics plus keyboard-focus Tooltip;
+- QRCode — 180px named canvas plus proof that QR modules were actually rasterized, not merely an empty canvas;
+- Watermark — generated SVG tile is present while content-region semantics remain caller-owned;
+- Affix — real scrolling inside the demo's overflow ancestor proves sticky containment;
+- BackTop — real window scroll followed by ordinary click returns to scrollY=0 under reduced-motion preference.
+
+`core-modal` receives no redundant new capture in Wave J. Wave A already accepted two stronger browser paths on exact-head evidence: nested Modal + Popover layer ordering and Modal focus trapping. Wave J will normalize that accepted evidence into the component review ledger rather than pretending the family was never manually reviewed.
+
+Acceptance requires the same exact-head gate as prior waves: CI, Canonical Visual Golden, Blog Consumer Parity, Gosso Admin Consumer Parity, and direct review of every newly generated Wave J screenshot. A defect found here must be repaired at its owning layer before CSA-2 can complete.

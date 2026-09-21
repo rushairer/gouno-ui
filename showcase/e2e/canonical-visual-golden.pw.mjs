@@ -2580,6 +2580,22 @@ test("csa-core-qrcode-canvas-evidence", async ({ page }, testInfo) => {
   const box = await canvas.boundingBox();
   expect(box?.width).toBeCloseTo(180, 0);
   expect(box?.height).toBeCloseTo(180, 0);
+  await expect.poll(() =>
+    canvas.evaluate((element) => {
+      const context = element.getContext("2d");
+      if (!context) return false;
+      const pixels = context.getImageData(0, 0, element.width, element.height).data;
+      for (let index = 0; index < pixels.length; index += 4) {
+        if (
+          pixels[index] < 100 &&
+          pixels[index + 1] < 100 &&
+          pixels[index + 2] < 100 &&
+          pixels[index + 3] > 0
+        ) return true;
+      }
+      return false;
+    }),
+  ).toBe(true);
 
   const card = canvas.locator('xpath=ancestor::*[@data-slot="card"][1]');
   await card.screenshot({
