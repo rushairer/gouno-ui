@@ -2853,7 +2853,7 @@ test("csa-gouno-app-shell-responsive-evidence", async ({ page }, testInfo) => {
     ready: '[data-slot="app-shell"]',
   });
 
-  const shell = page.locator('[data-slot="app-shell"]').filter({ hasText: "Gouno Admin" }).first();
+  const shell = page.getByText("Gouno Admin", { exact: true }).locator('xpath=ancestor::*[@data-slot="app-shell"][1]');
   await expect(shell.getByText("Gouno Admin", { exact: true })).toBeVisible();
   await expect(shell.getByRole("navigation", { name: "示例应用导航", exact: true })).toBeVisible();
   await expect(shell.locator("main")).toContainText("Main / children");
