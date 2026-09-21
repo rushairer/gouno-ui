@@ -3476,6 +3476,280 @@ test("csa-pattern-tab-lead-privileged-access-evidence", async ({ page }, testInf
   });
 });
 
+
+test("csa-product-blog-admin-dashboard-permission-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-dashboard",
+    viewport: { width: 1280, height: 1100 },
+    ready: '[data-slot="page-header"]',
+  });
+
+  await expect(page.getByRole("heading", { level: 1, name: "数据概览", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "新建文章", exact: true })).toBeVisible();
+  await expect(page.getByText("AI 运营提醒", { exact: true })).toBeVisible();
+
+  const fixtureButton = page.getByRole("button", { name: "打开 Fixture 控制", exact: true });
+  await fixtureButton.click();
+  const capabilityGroup = page.getByRole("radiogroup", { name: "Dashboard 权限场景", exact: true });
+  const moderator = capabilityGroup.getByRole("radio", { name: "审核员", exact: true });
+  await moderator.locator("xpath=ancestor::label[1]").click();
+  await expect(moderator).toBeChecked();
+  await page.keyboard.press("Escape");
+
+  await expect(page.getByRole("button", { name: "新建文章", exact: true })).toBeHidden();
+  await expect(page.getByRole("button", { name: "审核评论", exact: true })).toBeVisible();
+  await expect(page.getByText("AI 运营提醒", { exact: true })).toBeHidden();
+  const summary = page.getByRole("region", { name: "站点运营摘要", exact: true });
+  await expect(summary).toBeVisible();
+  await expect(summary.getByRole("link", { name: /评论互动/ })).toBeVisible();
+  await expect(summary.getByRole("link", { name: /文章总数/ })).toHaveCount(0);
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-dashboard-reviewer.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-admin-posts-ai-batch-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-posts",
+    viewport: { width: 1280, height: 1100 },
+    ready: "table",
+  });
+
+  const table = page.getByRole("table");
+  const rowSelection = table.getByRole("checkbox", {
+    name: /选择文章 从真实产品抽象一套可维护的 UI 组件体系/,
+  });
+  await rowSelection.click();
+  await expect(rowSelection).toBeChecked();
+
+  const toolbar = page.getByRole("toolbar", { name: "批量操作", exact: true });
+  await expect(toolbar).toContainText("已选择 1 篇");
+  await toolbar.getByRole("button", { name: "交给 AI", exact: true }).click();
+
+  const dialog = page.getByRole("dialog", { name: "将所选文章交给 AI", exact: true });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText("已选择 1 项资源；Workflow 默认只能访问这些目标。", { exact: true })).toBeVisible();
+  await expect(dialog.getByRole("combobox", { name: "Workflow", exact: true })).toBeVisible();
+  await expect(dialog.getByText(/资源范围：post-101/)).toBeVisible();
+  await expect(dialog.getByRole("button", { name: "运行", exact: true })).toBeEnabled();
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-posts-ai-batch.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-admin-categories-slug-ai-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-categories",
+    viewport: { width: 1280, height: 1000 },
+    ready: '[data-slot="page-header"]',
+  });
+
+  await page.getByRole("button", { name: "新建分类", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "新建分类", exact: true });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole("textbox", { name: "分类名称", exact: true }).fill("Design System");
+  await dialog.getByRole("button", { name: "AI 生成 Slug 候选", exact: true }).click();
+
+  const picker = dialog.getByLabel("Slug AI 建议", { exact: true });
+  await expect(picker).toBeVisible();
+  const candidates = picker.getByRole("radiogroup", { name: "Slug 候选", exact: true }).getByRole("radio");
+  await expect(candidates).toHaveCount(3);
+  await expect(candidates.first()).toBeChecked();
+  await expect(dialog.getByRole("button", { name: "创建分类", exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-categories-slug-ai.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-admin-tags-partial-failure-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-tags",
+    viewport: { width: 1100, height: 1000 },
+    ready: '[data-slot="page-header"]',
+  });
+
+  await page.getByRole("button", { name: "打开 Fixture 控制", exact: true }).click();
+  const scenario = page
+    .getByRole("radiogroup", { name: "标签页 Fixture 状态", exact: true })
+    .getByRole("radio", { name: "批量部分失败", exact: true });
+  await scenario.locator("xpath=ancestor::label[1]").click();
+  await expect(scenario).toBeChecked();
+  await page.keyboard.press("Escape");
+
+  await page.getByRole("checkbox", { name: "选择标签 React", exact: true }).click();
+  await page.getByRole("checkbox", { name: "选择标签 OAuth", exact: true }).click();
+  const toolbar = page.getByRole("toolbar", { name: "批量操作", exact: true });
+  await toolbar.getByRole("button", { name: "删除", exact: true }).click();
+  const confirm = page.getByRole("dialog");
+  await confirm.getByRole("button", { name: "确认删除", exact: true }).click();
+
+  await expect(page.getByText("React", { exact: true })).toBeHidden();
+  await expect(page.getByText("OAuth", { exact: true })).toBeVisible();
+  await expect(page.getByText("已选择 1 个标签", { exact: true })).toBeVisible();
+  await expect(page.getByText(/已删除 1 个标签；1 个未删除/)).toBeVisible();
+  await expect(page.getByRole("toolbar", { name: "批量操作", exact: true })).toBeVisible();
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-tags-partial-failure.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-admin-pages-mobile-pagination-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-pages",
+    viewport: { width: 600, height: 1200 },
+    ready: '[data-slot="page-header"]',
+  });
+
+  await expect(page.getByRole("heading", { level: 1, name: "单页", exact: true })).toBeVisible();
+  await expect(page.getByRole("table")).toBeHidden();
+  const list = page.getByRole("list", { name: "单页列表", exact: true });
+  await expect(list).toBeVisible();
+  await expect(list.getByText("关于我", { exact: true })).toBeVisible();
+
+  const pagination = page.getByRole("navigation", { name: "单页分页", exact: true });
+  await expect(pagination).toContainText("1-4 / 6 页");
+  await pagination.getByRole("button", { name: "Page 2", exact: true }).click();
+  await expect(pagination).toContainText("5-6 / 6 页");
+  await expect(list.getByText("站点历史", { exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-pages-mobile-page-2.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-admin-comments-reported-queue-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-comments",
+    viewport: { width: 1100, height: 1000 },
+    ready: '[data-slot="page-header"]',
+  });
+
+  const reportedOnly = page.getByRole("checkbox", { name: "仅看被举报", exact: true });
+  await reportedOnly.click();
+  await expect(reportedOnly).toBeChecked();
+
+  const list = page.getByRole("list", { name: "评论审核列表", exact: true });
+  await expect(list.getByText("Kai", { exact: true })).toBeVisible();
+  await expect(list.getByText("Lina", { exact: true })).toBeHidden();
+  await expect(list.getByText("被举报 2 次", { exact: true })).toBeVisible();
+
+  const kai = page.getByRole("checkbox", { name: "选择评论 1202", exact: true });
+  await kai.click();
+  await expect(kai).toBeChecked();
+  const toolbar = page.getByRole("toolbar", { name: "批量操作", exact: true });
+  await expect(toolbar).toContainText("已选择 1 条评论");
+  await expect(toolbar.getByRole("button", { name: "交给 AI", exact: true })).toBeVisible();
+  await expect(toolbar.getByRole("button", { name: "删除", exact: true })).toBeVisible();
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-comments-reported-selected.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-admin-notifications-write-failure-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-notifications",
+    viewport: { width: 1100, height: 1100 },
+    ready: '[data-slot="page-header"]',
+  });
+
+  await page.getByRole("checkbox", { name: "选择通知 AI 工作流执行失败", exact: true }).click();
+  await page.getByRole("checkbox", { name: "选择通知 新的评论回复", exact: true }).click();
+
+  await page.getByRole("button", { name: "打开 Fixture 控制", exact: true }).click();
+  const mutation = page
+    .getByRole("radiogroup", { name: "通知写操作场景", exact: true })
+    .getByRole("radio", { name: "写操作失败", exact: true });
+  await mutation.locator("xpath=ancestor::label[1]").click();
+  await expect(mutation).toBeChecked();
+  await page.keyboard.press("Escape");
+
+  const toolbar = page.getByRole("toolbar", { name: "批量操作", exact: true });
+  await expect(toolbar).toContainText("已选择 2 条通知");
+  await toolbar.getByRole("button", { name: "标为已读", exact: true }).click();
+
+  const alert = page.getByRole("alert");
+  await expect(alert).toContainText("批量标记已读失败；通知状态与当前选择保持不变");
+  await expect(page.getByText("已选择 2 条通知", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "标为已读" })).toHaveCount(3);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-notifications-write-failure.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-admin-media-reference-block-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-media-library",
+    viewport: { width: 1280, height: 1100 },
+    ready: '[data-slot="page-header"]',
+  });
+
+  await page.getByRole("button", { name: "删除媒体 oauth-bff-flow.svg", exact: true }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.getByText("删除媒体", { exact: true })).toBeVisible();
+  await dialog.getByRole("button", { name: "永久删除", exact: true }).click();
+
+  const alert = page.getByRole("alert");
+  await expect(alert).toContainText("该媒体仍被文章引用，移除引用后才能删除。");
+  await expect(page.getByText("oauth-bff-flow.svg", { exact: true })).toBeVisible();
+  await expect(alert.getByRole("link", { name: "OAuth 2.0 BFF 实践", exact: true })).toHaveAttribute("href", "/admin/posts/101/edit");
+  await expect(alert.getByRole("link", { name: "浏览器 Session 边界", exact: true })).toHaveAttribute("href", "/admin/posts/102/edit");
+  await expect(page.getByRole("list", { name: "媒体资源", exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-media-reference-block.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
 test("surface-gosso-overview-quick-link-card-ownership", async ({ page }) => {
   const scenario = {
     workspace: "gosso-admin",
