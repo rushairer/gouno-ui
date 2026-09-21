@@ -3062,7 +3062,7 @@ test("csa-pattern-settings-composition-evidence", async ({ page }, testInfo) => 
 
   const publicAccess = settings.getByRole("switch", { name: "允许公开访问", exact: true });
   await expect(publicAccess).toBeChecked();
-  await publicAccess.click();
+  await settings.getByText("允许公开访问", { exact: true }).click();
   await expect(publicAccess).not.toBeChecked();
 
   await settings.screenshot({

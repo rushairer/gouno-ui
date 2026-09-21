@@ -918,3 +918,8 @@ Classification: **evidence-driver defect**, not a Core Switch or Settings compos
 The canonical Core Switch deliberately renders a native checkbox input with `role="switch"`. Its checked state is the native DOM `checked` property; it does not duplicate that state into an `aria-checked` attribute. The failed evidence incorrectly asserted the latter.
 
 The corrected browser evidence uses Playwright's native-state-aware `toBeChecked()`, performs an ordinary click, and then requires `not.toBeChecked()`. All Settings composition order, responsive field geometry and screenshot assertions remain unchanged. No runtime component or composition implementation is modified.
+
+
+The second Wave L Golden run on `0722cf03` confirmed the native checked-state assertion but failed when the evidence attempted a pointer click on the visually hidden `sr-only` switch input. The visible label/track is the intended user hit target; clicking the hidden input directly caused pointer interception by surrounding Card content.
+
+Classification remains **evidence-driver defect**. The accepted interaction path must click the visible `允许公开访问` label text in the same Settings composition, then verify the underlying native switch becomes unchecked. This is stricter user-path evidence than a force-click and requires no runtime change.
