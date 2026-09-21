@@ -584,6 +584,24 @@ for (const [id, scope] of Object.entries({
   };
 }
 
+
+for (const [id, scope] of Object.entries({
+  "gosso-overview": "CSA-4 Wave P manual-reviewed: administrator context switches to the ordinary-user account center with explicit permission boundaries and three coherent self-service navigation targets.",
+  "gosso-account-settings": "CSA-4 Wave P manual-reviewed: the Active Sessions task terminates a non-current session through confirmation, removes the revoked session and surfaces one explicit product feedback message.",
+  "gosso-system-clients": "CSA-4 Wave P manual-reviewed: OAuth2 client registration preserves client configuration ownership and confidential-client creation flows into a single one-time secret disclosure surface.",
+  "gosso-system-users": "CSA-4 Wave P manual-reviewed: role management updates Content Editor through the dedicated modal, persists the auditor role and emits one non-duplicated success Message.",
+  "gosso-system-audit-logs": "CSA-4 Wave P manual-reviewed: event filtering narrows the audit collection and the selected event opens a focused read-only evidence modal without losing collection context.",
+  "gosso-system-site-settings": "CSA-4 Wave P manual-reviewed: branding edits update the live login preview, dirty/save state remains explicit, and the form/preview ownership stacks coherently at 600px.",
+  "gosso-system-status": "CSA-4 Wave P manual-reviewed: degraded and unavailable health states preserve alert, metric and dependency ownership through the 503 mobile composition.",
+})) {
+  productReviews[id] = {
+    status: "reviewed",
+    scope,
+    evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "CSA-4 Wave P manual-reviewed / 2026-09-21",
+  };
+}
+
 export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
   return review?.status === "reviewed" ? 100 : Math.min(fallback, 99);
 }

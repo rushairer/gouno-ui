@@ -1202,7 +1202,7 @@ This does not complete CSA-4 globally. Gosso Admin and Public Blog product famil
 
 ## CSA-4 Wave P — Gosso Admin authenticated product pages
 
-Status: **candidate / awaiting batched machine + rendered review**
+Status: **accepted / manual-reviewed**
 
 Wave P begins Gosso Admin Product Showcase certification with the seven authenticated application and system-management pages. It intentionally excludes Login, Forgot Password, Reset Password, Auth Callback and Not Found; those standalone authentication/error surfaces form Wave Q.
 
@@ -1237,3 +1237,34 @@ Correction:
 - keep the existing exact browser assertion unchanged, so duplicate DOM messages continue to fail rather than being hidden with `.first()`.
 
 No force-click or test-only suppression is used.
+
+
+## CSA-4 Wave P acceptance
+
+Status: **accepted / manual-reviewed**
+
+Accepted implementation head: `ad088f1a7026fc10cd69e2dd657ee3dfb5d7bcf1`.
+
+Exact-head machine evidence:
+
+- CI `35588289635` — success;
+- Canonical Visual Golden Smoke `35588289780` — success;
+- Blog Consumer Parity `35588289761` — success;
+- Gosso Admin Consumer Parity `35588289676` — success;
+- rendered Golden artifact `10633581871` — all nine dedicated Wave P captures inspected directly.
+
+Accepted product-page scope:
+
+- **Overview** — administrator and ordinary-user contexts remain visibly distinct; restricted system-management ownership is explicit while account self-service navigation remains available and coherent;
+- **Account Settings** — Active Sessions preserves one focused account-security task, terminates the selected non-current session through confirmation and returns to a stable table with explicit success feedback;
+- **OAuth2 Clients** — confidential-client registration retains the collection behind the editor and exposes the generated secret exactly once in a dedicated disclosure modal;
+- **Users** — role editing remains row-owned, persists the auditor role and now emits exactly one success Message after the StrictMode duplicate-feedback defect was corrected;
+- **Audit Logs** — filtering and event detail preserve the relationship between the audit collection and the selected immutable evidence record;
+- **Site Settings** — branding draft, live login preview, dirty/save lifecycle and 600px form→preview stacking remain one coherent settings task;
+- **System Status** — degraded Redis health and unavailable 503 states preserve alert→summary→dependency ownership and remain readable at 600px.
+
+All nine final Wave P captures were manually inspected. No remaining Product, Pattern/Gouno or Foundation defect requires reopening.
+
+The first Golden run on `2856b264` exposed a real duplicate-Message defect in the Gosso System Management Showcase adapter. The corrected implementation keeps the strict Users assertion unchanged and also removes the duplicate success feedback visible in Client registration and Site Settings save evidence.
+
+Wave P certifies the seven authenticated Gosso Admin product pages. Login, Forgot Password, Reset Password, Auth Callback and Not Found remain the explicit Wave Q scope.
