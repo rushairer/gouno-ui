@@ -3827,8 +3827,9 @@ test("csa-product-blog-admin-page-editor-inspector-ai-evidence", async ({ page }
   await expect(inspector.getByRole("button", { name: "AI 优化路径与 SEO", exact: true })).toBeVisible();
 
   await editor.getByRole("button", { name: "AI 生成标题候选", exact: true }).click();
-  const picker = editor.locator('[data-slot="ai-suggestion-picker"]').filter({ has: editor.getByRole("radiogroup", { name: "标题候选", exact: true }) });
+  const picker = editor.locator('[data-slot="ai-suggestion-picker"][aria-label="标题 AI 建议"]');
   await expect(picker).toBeVisible();
+  await expect(picker.getByRole("radiogroup", { name: "标题候选", exact: true })).toBeVisible();
   const second = picker.getByRole("radio").nth(1);
   const candidate = await second.getAttribute("aria-label");
   expect(candidate).toBeTruthy();
@@ -3881,8 +3882,9 @@ test("csa-product-blog-admin-ai-operations-workspace-evidence", async ({ page },
   await expect(page.getByText("最近运行", { exact: true })).toBeVisible();
 
   await tabs.getByRole("tab", { name: "运行中心", exact: true }).click();
-  await expect(page.getByLabel("运行中心", { exact: true })).toBeVisible();
-  await expect(page.getByText(/这里是证据中心，不是 Workflow 配置页/)).toBeVisible();
+  const runCenter = page.getByRole("tabpanel", { name: "运行中心", exact: true });
+  await expect(runCenter).toBeVisible();
+  await expect(runCenter.getByText(/这里是证据中心，不是 Workflow 配置页/)).toBeVisible();
   await expectNoHorizontalDocumentOverflow(page);
 
   await page.screenshot({

@@ -1143,3 +1143,15 @@ Dedicated browser evidence covers:
 Wave O does not re-certify DocumentEditorShell, MarkdownEditor, Dedicated Editor, TabPanelLead or PrivilegedAccessGate as abstractions; those were accepted under CSA-3. The question here is whether the complete Blog Admin products compose them correctly through real task transitions.
 
 Acceptance requires one exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity cycle plus direct manual review of all nine dedicated Wave O captures. Existing AI Operations mobile visual baselines may be used as supplemental product evidence, but cannot replace review of the new Run Center capture.
+
+
+### Wave O first-run evidence-scope corrections
+
+The first Wave O Golden run on `904b9e7c` passed **158/160** tests. Post Editor, AI Settings and Site Settings dedicated product evidence passed; Page Editor and AI Operations failed only at locator scope.
+
+Classification: **evidence-driver defects**, not Product/Pattern/Foundation defects.
+
+- **Page Editor:** the title candidate surface is rendered inside the editor and already owns the explicit accessible label `标题 AI 建议`. The first evidence unnecessarily used a cross-scoped `filter({ has: editor.getByRole(...) })`, so the relative descendant test never matched. The corrected path targets the real labeled Picker directly and separately verifies its `标题候选` radiogroup.
+- **AI Operations:** `运行中心` is intentionally both the active Tabs panel name and an inner region label. A page-wide `getByLabel("运行中心")` therefore produced a strict-mode double match. The corrected path targets the semantic `tabpanel[name="运行中心"]` and verifies evidence-center copy inside that panel.
+
+All interaction, responsive geometry and product ownership assertions remain unchanged. No runtime source is modified.
