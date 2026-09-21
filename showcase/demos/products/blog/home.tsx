@@ -73,7 +73,7 @@ export function BlogHomeDemo({
           <div className="flex flex-col gap-12 md:gap-16">
             <section className="grid items-center gap-8 border-b pb-10 md:grid-cols-[minmax(0,1fr)_320px]">
               <div>
-                <Heading level={1} variant="display" className="max-w-3xl text-balance whitespace-pre-line">
+                <Heading level={1} variant="display" className="max-w-3xl whitespace-pre-line text-balance">
                   把真实工程问题，写成可以长期复用的知识。
                 </Heading>
                 <p className="mt-5 max-w-2xl type-reading-lead text-muted-foreground">
