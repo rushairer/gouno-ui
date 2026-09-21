@@ -5,6 +5,7 @@ import { AuthSurface, DividerLabel } from "./shared";
 
 type LoginScenario = "password" | "mfa" | "sudo";
 type LoginFeedback = { type: AlertType; message: string };
+type LoginCompletion = "login" | "sudo";
 
 const scenarios = [
   { label: "密码登录", value: "password" },
@@ -18,11 +19,13 @@ export function GossoLoginDemo() {
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
   const [feedback, setFeedback] = useState<LoginFeedback | null>(null);
+  const [completion, setCompletion] = useState<LoginCompletion | null>(null);
 
   const selectScenario = (next: LoginScenario) => {
     setScenario(next);
     setCode("");
     setFeedback(null);
+    setCompletion(null);
   };
 
   const submitPassword = (event: FormEvent) => {
@@ -33,6 +36,7 @@ export function GossoLoginDemo() {
     }
     setScenario("mfa");
     setCode("");
+    setCompletion(null);
     setFeedback({ type: "info", message: "密码验证通过；fixture 模拟服务端要求第二因素。" });
   };
 
@@ -42,6 +46,7 @@ export function GossoLoginDemo() {
       setFeedback({ type: "error", message: "请输入 6–8 位动态验证码。" });
       return;
     }
+    setCompletion(scenario === "sudo" ? "sudo" : "login");
     setFeedback({
       type: "success",
       message: scenario === "sudo" ? "强认证已完成（Showcase 模拟）。" : "登录成功（Showcase 模拟）。",
@@ -64,7 +69,13 @@ export function GossoLoginDemo() {
     >
       {feedback ? <Alert type={feedback.type} showIcon title={feedback.message} className="mb-5" /> : null}
 
-      {scenario === "password" ? (
+      {completion ? (
+        <Text size="sm" tone="muted" className="text-center">
+          {completion === "sudo"
+            ? "强认证挑战已经结束；真实产品会继续刚才的高风险管理操作。"
+            : "登录挑战已经结束；真实产品会返回发起登录的 Gouno 产品。"}
+        </Text>
+      ) : scenario === "password" ? (
         <form onSubmit={submitPassword} className="flex flex-col gap-4">
           <FormField label="用户名" required>
             <Input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" />
@@ -75,7 +86,17 @@ export function GossoLoginDemo() {
           <div className="text-right"><a className="type-caption type-weight-medium text-primary hover:underline" href="#gosso-forgot-password">忘记密码？</a></div>
           <Button type="submit" variant="solid" color="primary" className="w-full">登录</Button>
           <DividerLabel>或</DividerLabel>
-          <Button type="button" icon={<KeyRound />} className="w-full" onClick={() => setFeedback({ type: "success", message: "通行密钥登录成功（Showcase 模拟）。" })}>使用通行密钥登录</Button>
+          <Button
+            type="button"
+            icon={<KeyRound />}
+            className="w-full"
+            onClick={() => {
+              setCompletion("login");
+              setFeedback({ type: "success", message: "通行密钥登录成功（Showcase 模拟）。" });
+            }}
+          >
+            使用通行密钥登录
+          </Button>
         </form>
       ) : (
         <form onSubmit={submitMfa} className="flex flex-col gap-4">
@@ -90,7 +111,20 @@ export function GossoLoginDemo() {
           </FormField>
           <Button type="submit" variant="solid" color="primary" className="w-full">{scenario === "sudo" ? "完成强认证" : "验证并登录"}</Button>
           <DividerLabel>或</DividerLabel>
-          <Button type="button" icon={<KeyRound />} className="w-full" onClick={() => setFeedback({ type: "success", message: scenario === "sudo" ? "通行密钥强认证成功（Showcase 模拟）。" : "通行密钥登录成功（Showcase 模拟）。" })}>使用通行密钥</Button>
+          <Button
+            type="button"
+            icon={<KeyRound />}
+            className="w-full"
+            onClick={() => {
+              setCompletion(scenario === "sudo" ? "sudo" : "login");
+              setFeedback({
+                type: "success",
+                message: scenario === "sudo" ? "通行密钥强认证成功（Showcase 模拟）。" : "通行密钥登录成功（Showcase 模拟）。",
+              });
+            }}
+          >
+            使用通行密钥
+          </Button>
           <Button type="button" variant="ghost" className="w-full" onClick={() => selectScenario("password")}>返回密码登录</Button>
         </form>
       )}

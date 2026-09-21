@@ -1298,3 +1298,24 @@ Classification: **evidence-driver locator defect**, not a Product or Core FormFi
 The failure snapshots prove that the rendered controls have the correct accessible names: `密码`, `邮箱`, `新密码` and `确认密码`. Core `FormField` also owns the expected `htmlFor` / `aria-labelledby` relationship. The failed evidence used Playwright `getByLabel(..., { exact: true })`, which matches the rendered label text; required fields also render a visual `*` marker, so exact label-text matching does not resolve even though the control's accessible name is correct.
 
 The corrected evidence targets the control semantics directly with `getByRole("textbox", { name: ..., exact: true })`. The same correction is applied proactively to the required `动态验证码` fields in MFA and Sudo. No product implementation, Core FormField behavior, business-state assertion or interaction sequence is weakened.
+
+
+### Wave Q manual finding — completed Login challenges remained actionable
+
+The corrected-locator exact-head run on `4fcec5c3` passed all four machine gates, including the complete Golden suite. Direct inspection of the nine Wave Q captures nevertheless found a real **Login product-state defect**:
+
+- after MFA success, the page simultaneously displayed `登录成功（Showcase 模拟）。` and the still-actionable `需要多因素认证` challenge;
+- after Sudo success, the page simultaneously displayed `强认证已完成（Showcase 模拟）。` and the still-actionable Administrator step-up form.
+
+This is not a Core Alert/FormField issue and is not an evidence problem. A completed authentication challenge cannot remain the active task surface after the same page declares success.
+
+Ownership: **Gosso Login Product Showcase state machine**.
+
+Correction:
+
+- successful MFA/passkey login enters a terminal login-completion state and removes the login challenge controls;
+- successful Sudo/passkey step-up enters a terminal Sudo-completion state and removes the step-up challenge controls;
+- changing Fixture scenario clears completion and starts the selected challenge cleanly;
+- the browser evidence now requires the success message and completion explanation while explicitly requiring the prior challenge title/action to be hidden.
+
+The machine-green run is therefore not accepted as Wave Q manual evidence; a fresh rendered run must prove the corrected post-success ownership.

@@ -4269,6 +4269,9 @@ test("csa-product-gosso-login-auth-evidence", async ({ page }, testInfo) => {
   await page.getByRole("textbox", { name: "动态验证码", exact: true }).fill("123456");
   await page.getByRole("button", { name: "验证并登录", exact: true }).click();
   await expect(page.getByText("登录成功（Showcase 模拟）。", { exact: true })).toBeVisible();
+  await expect(page.getByText("登录挑战已经结束；真实产品会返回发起登录的 Gouno 产品。", { exact: true })).toBeVisible();
+  await expect(page.getByText("需要多因素认证", { exact: true })).toBeHidden();
+  await expect(page.getByRole("button", { name: "验证并登录", exact: true })).toBeHidden();
   await expectNoHorizontalDocumentOverflow(page);
 
   await page.screenshot({
@@ -4288,6 +4291,9 @@ test("csa-product-gosso-login-auth-evidence", async ({ page }, testInfo) => {
   await page.getByRole("textbox", { name: "动态验证码", exact: true }).fill("654321");
   await page.getByRole("button", { name: "完成强认证", exact: true }).click();
   await expect(page.getByText("强认证已完成（Showcase 模拟）。", { exact: true })).toBeVisible();
+  await expect(page.getByText("强认证挑战已经结束；真实产品会继续刚才的高风险管理操作。", { exact: true })).toBeVisible();
+  await expect(page.getByText("Administrator", { exact: true })).toBeHidden();
+  await expect(page.getByRole("button", { name: "完成强认证", exact: true })).toBeHidden();
 
   await page.setViewportSize({ width: 600, height: 900 });
   await expectNoHorizontalDocumentOverflow(page);
