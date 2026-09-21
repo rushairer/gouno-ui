@@ -4000,6 +4000,207 @@ test("csa-product-blog-admin-site-settings-step-up-evidence", async ({ page }, t
   await expectNoHorizontalDocumentOverflow(page);
 });
 
+
+test("csa-product-gosso-overview-role-mobile", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-overview",
+    viewport: desktop,
+    ready: '[data-slot="card"]',
+  });
+
+  await page.getByText("普通用户", { exact: true }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "个人账户与安全中心", exact: true })).toBeVisible();
+  await expect(page.getByText("系统管理权限受限", { exact: true })).toBeVisible();
+  await expect(page.getByText("个人资料与密码", { exact: true })).toBeVisible();
+
+  await page.setViewportSize({ width: 600, height: 1100 });
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-overview-role-mobile.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-gosso-account-mfa-mobile", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-account-settings",
+    viewport: desktop,
+    ready: '[role="tablist"]',
+  });
+
+  for (const name of [/个人资料/, /修改密码/, /多因素认证/, /通行密钥/, /活跃会话/]) {
+    await expect(page.getByRole("tab", { name })).toBeVisible();
+  }
+
+  await page.getByRole("tab", { name: /多因素认证/ }).click();
+  await expect(page.getByText("账户已受 TOTP 保护", { exact: true })).toBeVisible();
+  await page.getByText("未启用", { exact: true }).click();
+  await page.getByRole("button", { name: "配置身份验证器", exact: true }).click();
+  await expect(page.getByLabel("GOSSO MFA 配置二维码", { exact: true })).toBeVisible();
+  await page.getByLabel("动态验证码", { exact: true }).fill("123456");
+  await page.getByRole("button", { name: "验证并启用", exact: true }).click();
+  await expect(page.getByText("TOTP 已启用（Showcase 模拟）。", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "恢复备用代码", exact: true })).toBeVisible();
+
+  await page.setViewportSize({ width: 600, height: 1200 });
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-account-mfa-mobile.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-gosso-clients-confidential-secret", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-system-clients",
+    viewport: desktop,
+    ready: "table",
+  });
+
+  await page.getByRole("button", { name: "注册客户端", exact: true }).first().click();
+  const editor = page.getByRole("dialog", { name: "注册 OAuth2 客户端", exact: true });
+  await expect(editor).toBeVisible();
+  await editor.getByLabel("客户端名称", { exact: true }).fill("Wave P Confidential Client");
+  await editor.getByLabel("Redirect URI", { exact: true }).fill("https://wave-p.example.test/callback");
+  await editor.getByRole("checkbox", { name: "Confidential client", exact: true }).check();
+  await editor.getByRole("checkbox", { name: "admin", exact: true }).check();
+  await expect(editor.getByText("高权限 Scope", { exact: true })).toBeVisible();
+  await editor.getByRole("button", { name: "注册客户端", exact: true }).click();
+
+  const secret = page.getByRole("dialog", { name: "客户端密钥", exact: true });
+  await expect(secret).toBeVisible();
+  await expect(secret.getByText("请立即安全保存该密钥", { exact: true })).toBeVisible();
+  await expect(secret.getByText("wave-p-confidential-client", { exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-clients-confidential-secret.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-gosso-users-role-update", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-system-users",
+    viewport: desktop,
+    ready: "table",
+  });
+
+  await page.getByLabel("管理 Content Editor 角色", { exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "管理 Content Editor 的角色", exact: true });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole("checkbox", { name: "auditor", exact: true }).check();
+  await dialog.getByRole("button", { name: "保存角色", exact: true }).click();
+  await expect(page.getByText("已更新“Content Editor”的角色（Showcase 模拟）。", { exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-users-role-update.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-gosso-audit-filtered-detail", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-system-audit-logs",
+    viewport: desktop,
+    ready: "table",
+  });
+
+  await page.getByLabel("事件类型", { exact: true }).fill("oauth.client");
+  await page.getByLabel("Account ID", { exact: true }).fill("usr-admin");
+  await page.getByRole("button", { name: "查询", exact: true }).click();
+  await expect(page.getByText("oauth.client.update", { exact: true })).toBeVisible();
+  await expect(page.getByText("1 条审计事件", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "查看", exact: true }).click();
+
+  const dialog = page.getByRole("dialog", { name: "审计事件详情", exact: true });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText("evt-1008", { exact: true })).toBeVisible();
+  await expect(dialog.getByText("Updated redirect URIs for gouno-blog-bff.", { exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-audit-filtered-detail.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-gosso-site-settings-dirty-mobile", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-system-site-settings",
+    viewport: desktop,
+    ready: '[data-slot="site-settings-login-preview"]',
+  });
+
+  await page.getByLabel("产品名称", { exact: true }).fill("GOSSO Identity");
+  await expect(page.getByText("有未保存修改", { exact: true })).toBeVisible();
+  const preview = page.locator('[data-slot="site-settings-login-preview"]');
+  await expect(preview.getByText("GOSSO Identity", { exact: true })).toBeVisible();
+
+  await page.setViewportSize({ width: 600, height: 1200 });
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-site-settings-dirty-mobile.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await page.getByRole("button", { name: "保存设置", exact: true }).click();
+  await expect(page.getByText("站点设置已保存（Showcase 模拟）。", { exact: true })).toBeVisible();
+  await expect(page.getByText("所有修改已保存", { exact: true })).toBeVisible();
+});
+
+test("csa-product-gosso-system-status-degraded", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-system-status",
+    viewport: desktop,
+    ready: '[data-slot="card"]',
+  });
+
+  await page.getByText("部分异常", { exact: true }).click();
+  await expect(page.getByText("Redis 探针异常", { exact: true })).toBeVisible();
+  await expect(page.getByText("86 ms", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "刷新状态", exact: true }).click();
+  await expect(page.getByText("刷新次数：1", { exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-system-status-degraded.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
 test("surface-gosso-overview-quick-link-card-ownership", async ({ page }) => {
   const scenario = {
     workspace: "gosso-admin",
