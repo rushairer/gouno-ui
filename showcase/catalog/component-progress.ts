@@ -472,6 +472,32 @@ for (const [id, scope] of Object.entries({
   };
 }
 
+
+for (const [id, scope] of Object.entries({
+  "core-input": "CSA-2 Wave J manual-reviewed: controlled allowClear lifecycle clears the value, preserves focus and keeps prefix/status ownership coherent without locale-dependent evidence.",
+  "core-textarea": "CSA-2 Wave J manual-reviewed: controlled edit updates the live 10 / 60 character count while the textarea retains the canonical aria-describedby relationship.",
+  "core-code-block": "CSA-2 Wave J manual-reviewed: copy action writes the exact displayed canonical source to the clipboard and exposes copied feedback without changing code-surface ownership.",
+  "core-float-button": "CSA-2 Wave J manual-reviewed: button and anchor modes preserve native semantics while keyboard focus opens the real Tooltip without replacing the accessible name.",
+  "core-qrcode": "CSA-2 Wave J manual-reviewed: named 180px canvas renders actual dark QR modules and retains caller-owned accessibility semantics.",
+  "core-watermark": "CSA-2 Wave J manual-reviewed: generated SVG watermark tile remains decorative while the content region keeps caller-owned semantics and readable content hierarchy.",
+  "core-affix": "CSA-2 Wave J manual-reviewed: real scrolling inside the demo overflow ancestor proves sticky containment and canonical top-offset behavior.",
+  "core-back-top": "CSA-2 Wave J manual-reviewed: with a genuinely scrollable window, ordinary activation returns scrollY to 0 under reduced-motion preference without changing the component contract.",
+})) {
+  componentReviews[id] = {
+    status: "reviewed",
+    scope,
+    evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "CSA-2 Wave J manual-reviewed / 2026-09-21",
+  };
+}
+
+componentReviews["core-modal"] = {
+  status: "reviewed",
+  scope: "CSA-2 Modal ledger normalization: Wave A already manually accepted nested Modal + Popover layering and Modal focus-trap behavior on exact-head Chromium evidence; Wave J records that accepted browser coverage without manufacturing redundant captures.",
+  evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+  baseline: "CSA-2 Wave A evidence normalized / 2026-09-21",
+};
+
 export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
   return review?.status === "reviewed" ? 100 : Math.min(fallback, 99);
 }
