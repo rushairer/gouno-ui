@@ -1381,3 +1381,19 @@ Dedicated browser evidence covers:
 Ten dedicated captures are produced because Custom Page requires both loaded-document and not-found evidence. Wave R does not re-certify PublicShell, PageHeader, Alert, Result, CodeBlock, Anchor, Pagination or other already-reviewed primitives; the question is whether each public product route composes them coherently around reading and discovery intent.
 
 Acceptance requires exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity plus direct manual inspection of all ten dedicated Wave R captures.
+
+
+### Wave R first-run Segmented locator correction
+
+The first Wave R Golden run on `133c3763` passed **179/181** browser tests. Eight of the ten dedicated Wave R captures completed; Article Detail preview and Custom Page not-found timed out before changing Fixture state.
+
+Classification: **evidence-driver locator defect**, not a Public Blog Product, Pattern/Gouno or Core defect.
+
+Both failed paths used page-wide visible-text clicks against labels rendered inside Core `Segmented`. Core Segmented intentionally exposes its state options as native radio controls inside an explicitly named `radiogroup`; the product pages already provide stable accessible names through `aria-label`.
+
+The corrected evidence therefore targets the existing semantics directly:
+
+- Article Detail: `radiogroup[name="Blog ArticleDetail Fixture 状态"]` → `radio[name="预览"]`;
+- Custom Page: `radiogroup[name="Blog CustomPage Fixture 状态"]` → `radio[name="未找到"]`.
+
+No runtime source, product state, responsive assertion, capture scope or acceptance condition is changed. The remaining 179 tests, including every other Wave R product path, passed in the first run.
