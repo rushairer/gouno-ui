@@ -530,6 +530,22 @@ for (const [id, scope] of Object.entries({
   };
 }
 
+
+for (const [id, scope] of Object.entries({
+  "pattern-dedicated-editor": "CSA-3 Wave M manual-reviewed: Configuration and Workspace subtypes preserve task-title hierarchy, feedback placement, desktop primary/secondary ownership, 600px collapse, DocumentEditorShell navigator/canvas/inspector ownership and read-only action state.",
+  "pattern-editor-form-composition": "CSA-3 Wave M manual-reviewed: identity, form-wide feedback, semantic Sections and one task action boundary stay ordered across surface context changes, feedback lifecycle and mobile single-axis field stacking.",
+  "pattern-markdown-editor": "CSA-3 Wave M manual-reviewed: product-owned AI toolbar insertion, Edit/Split/Preview transitions, preview ownership and 600px adaptive icon toolbar work without horizontal overflow.",
+  "pattern-ai-suggestion-picker": "CSA-3 Wave M manual-reviewed: mutually exclusive radio candidates, one explicit Apply boundary, regenerate reset and dismiss/reopen lifecycle remain attached to the same canonical example instance.",
+  "pattern-ai-suggestion-review": "CSA-3 Wave M manual-reviewed: checkbox review of related field changes, counted Apply boundary and dismiss/reopen lifecycle preserve explicit human review before commit.",
+})) {
+  componentReviews[id] = {
+    status: "reviewed",
+    scope,
+    evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "CSA-3 Wave M manual-reviewed / 2026-09-21",
+  };
+}
+
 export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
   return review?.status === "reviewed" ? 100 : Math.min(fallback, 99);
 }

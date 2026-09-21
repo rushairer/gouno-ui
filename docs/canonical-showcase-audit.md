@@ -192,7 +192,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | CSA-0 Stabilize | complete | Obsolete Blog AI reverse-migration PR closed; Blog Core Wave 2 merged to `gouno-blog/main` at `5e20df79`; Consumer expansion is frozen at this checkpoint. |
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
 | CSA-2 Core browser pass | complete | Waves A–J manually accepted across the full Core catalog. Wave J closes the final residual families; Modal is normalized from Wave A accepted nested-overlay and focus-trap evidence. |
-| CSA-3 Pattern/Gouno pass | in progress | Wave K page-frame/action grammar accepted: AppShell, PageContainer, PageHeader, PageSkeleton and BulkActionBar. Wave L admin-data compositions are next. |
+| CSA-3 Pattern/Gouno pass | complete | Waves K–M manually accepted across all 15 Pattern/Gouno catalog families. TabPanelLead and PrivilegedAccessGate are also accepted as non-catalog cross-product composition contracts. |
 | CSA-4 Product Showcase pages | planned | |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
 
@@ -961,7 +961,7 @@ Direct review of all nine Wave L captures found **no Pattern/Foundation defect r
 
 ## CSA-3 Wave M — editor, AI and privileged-operation composition
 
-Status: **candidate / awaiting batched machine + rendered review**
+Status: **accepted / manual-reviewed**
 
 Wave M is the final planned CSA-3 composition batch. It deliberately re-reviews historically `reviewed` editor/AI Pattern entries in a real browser rather than treating older API/static checks as current rendered acceptance.
 
@@ -1005,3 +1005,52 @@ The third Wave M Golden run on `92f27531` passed 145/146 tests. Dedicated Editor
 Classification: **evidence-driver defect**.
 
 The evidence used `input[type="text"]`, but HTML's default text input does not require an explicit serialized `type="text"` attribute. The corrected locator stays inside the first canonical Editor Form Section and selects its first non-Switch input: `input:not([role="switch"])`. This preserves the intended responsive geometry assertion while avoiding a DOM-serialization assumption. No runtime or composition code changes.
+
+
+## CSA-3 Wave M acceptance
+
+Status: **accepted / manual-reviewed**
+
+Accepted implementation head: `aee10e6c0742a477c78b8bfb6b4751ef3c7155c2`.
+
+Exact-head machine evidence:
+
+- CI `35565816030` — success;
+- Canonical Visual Golden Smoke `35565816055` — success;
+- Blog Consumer Parity `35565816014` — success;
+- Gosso Admin Consumer Parity `35565815994` — success;
+- rendered Golden artifact `10623968378` — inspected directly.
+
+Accepted rendered/browser scope:
+
+- **Dedicated Editor** — Configuration subtype keeps the task title independent from document heading level, places Error feedback above the body, preserves primary/secondary desktop ownership and collapses into one 600px axis; Workspace subtype proves the real DocumentEditorShell navigator/canvas/inspector contract and read-only action state;
+- **Editor Form composition** — identity → form-wide feedback → Sections → task actions remains stable while the Fixture changes surface context, feedback hides/restores normally, and the first two fields stack vertically at 600px without changing section/action ownership;
+- **MarkdownEditor** — selecting the demo body and invoking the product-owned `AI 写作` action replaces the selection, Split renders editor + preview, 600px toolbar stays within its own width with Split hidden, and Preview retains the inserted content;
+- **AISuggestionPicker** — the first canonical example owns exactly three mutually exclusive radio candidates, selection changes without committing, one `使用所选` action writes back the chosen value, regenerate resets selection and dismiss/reopen remains attached to the same example instance;
+- **AISuggestionReview** — related field changes stay explicit checkboxes, deselecting one changes the commit boundary to `应用 2 项建议`, Apply records exactly those two keys, and dismiss/reopen retains the same example lifecycle;
+- **TabPanelLead + PrivilegedAccessGate** — in the real Blog Admin AI Settings fixture, provider actions remain enabled when unlocked, locked state hides privileged content behind inert ownership and exposes one Step-Up action, unlock restores content/actions, expiring state uses the same Gate grammar, and 600px TabPanelLead moves actions below the description without duplicating a panel title.
+
+### Wave M evidence-driver history
+
+Wave M required several evidence corrections before acceptance, but none exposed a runtime defect:
+
+1. page-wide AI suggestion locators merged the normal and narrow canonical examples; evidence was scoped to the exact DemoSection Card;
+2. dismissing the first AI example caused a live page-wide locator to retarget the still-visible narrow example; the stable DemoSection owner now anchors the lifecycle;
+3. PrivilegedAccess state controls live inside Fixture Dock tooling; evidence now opens the visible Fixture controls, changes state there, closes tooling, then interacts with the real product Gate;
+4. Editor Form evidence initially assumed a label/input association and later an explicit serialized `type="text"`; the accepted mobile geometry stays inside the first canonical Section and targets its first non-Switch input, which matches the actual low-level Field/Input contract.
+
+No force-click, hidden state mutation, page-global fallback or runtime workaround is used in the accepted paths.
+
+Direct review of all eleven Wave M captures found **no Editor/AI/TabPanelLead/PrivilegedAccess Pattern or Foundation defect requiring reopening**.
+
+## CSA-3 completion
+
+With Waves K, L and M accepted, **all 15 Pattern/Gouno catalog families now have explicit CSA-3 rendered browser acceptance**:
+
+- Wave K — AppShell, PageContainer, PageHeader, PageSkeleton, BulkActionBar;
+- Wave L — Collection, Record Detail, Master-Detail, Settings, Data Summary;
+- Wave M — Dedicated Editor, Editor Form, MarkdownEditor, AI Suggestion Picker, AI Suggestion Review.
+
+TabPanelLead and PrivilegedAccessGate are also accepted as Showcase composition contracts because they govern repeated product-page structure even though they are not independent catalog entries.
+
+CSA-3 Pattern/Gouno composition pass is therefore complete. The next gate is **CSA-4 Product Showcase page certification**: Blog Admin, Gosso Admin and Public Blog page families must be inspected as product compositions using the now-certified Foundation/Core/Pattern grammar before Consumer reverse migration can resume as a final product-parity operation.
