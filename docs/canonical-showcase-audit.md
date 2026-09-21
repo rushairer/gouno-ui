@@ -957,3 +957,23 @@ Two Golden iterations corrected the Settings evidence without changing runtime:
 No force-click, DOM state mutation or product-specific workaround is used. Collection, Record Detail, Master-Detail and Data Summary passed every Wave L browser iteration.
 
 Direct review of all nine Wave L captures found **no Pattern/Foundation defect requiring reopening**. The five Showcase-only Admin data compositions are now explicitly CSA-3 manual-reviewed; their older static/API review flags are no longer the basis for acceptance.
+
+
+## CSA-3 Wave M — editor, AI and privileged-operation composition
+
+Status: **candidate / awaiting batched machine + rendered review**
+
+Wave M is the final planned CSA-3 composition batch. It deliberately re-reviews historically `reviewed` editor/AI Pattern entries in a real browser rather than treating older API/static checks as current rendered acceptance.
+
+Browser evidence covers:
+
+- **Dedicated Editor** — configuration subtype task-title semantics, primary/secondary desktop geometry, Error feedback, 600px single-axis collapse, Workspace subtype, navigator/canvas/inspector ownership and Read-only action state;
+- **Editor Form composition** — identity → form-wide feedback → Sections → task actions ordering, surface-context switching, feedback hide/show lifecycle and narrow-screen field stacking;
+- **MarkdownEditor** — real selection replacement through the product-owned AI toolbar action, Edit → Split → Preview state changes, rendered preview ownership and 600px adaptive toolbar without horizontal overflow;
+- **AISuggestionPicker** — radio candidate selection, one explicit Apply boundary, regenerate selection reset and dismiss/reopen lifecycle;
+- **AISuggestionReview** — checkbox review of related changes, counted two-item Apply boundary and dismiss/reopen lifecycle;
+- **TabPanelLead + privileged-operation presentation** — validated inside the real Blog Admin AI Settings fixture rather than an isolated mock: provider actions, locked MFA gate with inert content, normal unlock, expiring state, and mobile lead/action stacking.
+
+Wave M intentionally does not promote every Blog Admin AI Settings page. The product fixture here is evidence for two cross-page composition contracts—TabPanelLead and PrivilegedAccessGate. Full product-page family certification remains CSA-4.
+
+Acceptance requires one exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity cycle plus direct manual review of all eleven Wave M captures. If accepted, the Pattern/Gouno composition scope named by CSA-3 will be complete and the program can advance to CSA-4 Product Showcase pages.
