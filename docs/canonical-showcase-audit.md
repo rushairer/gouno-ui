@@ -193,7 +193,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
 | CSA-2 Core browser pass | complete | Waves A–J manually accepted across the full Core catalog. Wave J closes the final residual families; Modal is normalized from Wave A accepted nested-overlay and focus-trap evidence. |
 | CSA-3 Pattern/Gouno pass | complete | Waves K–M manually accepted across all 15 Pattern/Gouno catalog families. TabPanelLead and PrivilegedAccessGate are also accepted as non-catalog cross-product composition contracts. |
-| CSA-4 Product Showcase pages | planned | |
+| CSA-4 Product Showcase pages | in progress | Wave N candidate audits Blog Admin content-management product pages: Dashboard, Posts, Categories, Tags, Pages, Comments, Notifications, Media Library and Users. |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
 
 ## Rule for future progress claims
@@ -1054,3 +1054,26 @@ With Waves K, L and M accepted, **all 15 Pattern/Gouno catalog families now have
 TabPanelLead and PrivilegedAccessGate are also accepted as Showcase composition contracts because they govern repeated product-page structure even though they are not independent catalog entries.
 
 CSA-3 Pattern/Gouno composition pass is therefore complete. The next gate is **CSA-4 Product Showcase page certification**: Blog Admin, Gosso Admin and Public Blog page families must be inspected as product compositions using the now-certified Foundation/Core/Pattern grammar before Consumer reverse migration can resume as a final product-parity operation.
+
+
+## CSA-4 Wave N — Blog Admin content-management pages
+
+Status: **candidate / awaiting batched machine + rendered review**
+
+CSA-4 changes the unit of review from Component/Pattern to the **actual product page**. Core and Pattern behaviors remain prerequisites from CSA-2/CSA-3; a product page is accepted only when those authorities are composed coherently in the real Showcase route, including page hierarchy, state placement, responsive behavior and task interaction.
+
+Wave N covers nine Blog Admin content-management pages:
+
+- **Dashboard** — route-level PageHeader, four-metric operating summary, traffic visualization and create permission action;
+- **Posts** — search/status/category/tag filter grammar, real row selection, BulkActionBar ownership and desktop table → mobile list transition without losing selection context;
+- **Categories** — Collection composition into the real New Category Drawer, including Editor Form anatomy and field-scoped Slug AI affordance;
+- **Tags** — card-grid resource management with real tag selection and canonical AI/delete bulk action grammar;
+- **Pages** — collection filters, single-page selection and canonical AI/delete bulk action grammar;
+- **Comments** — moderation filter ownership, real comment selection, then reported-only filtering clearing stale selection context;
+- **Notifications** — independent notification list, status/type filtering, real selection and successful bulk mark-read mutation returning the page to unselected state;
+- **Media Library** — media collection/search/type grammar into the real Upload Drawer with Upload and Alt Text task fields;
+- **Users** — member directory into the real role editor, preserving the boundary between Blog product roles and external GOSSO identity/account management.
+
+Wave N intentionally does **not** certify Post/Page Editors, AI Operations/Settings or Site Settings; those high-depth task pages are Wave O. It also does not re-certify BulkActionBar, Editor Form, PageHeader or other Pattern/Gouno families already accepted under CSA-3.
+
+Acceptance requires exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity plus direct manual inspection of all ten Wave N captures. Any visual/composition defect found here must be repaired at the owning Product/Pattern/Foundation layer instead of weakening the browser evidence.
