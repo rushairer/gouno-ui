@@ -3258,7 +3258,7 @@ test("csa-pattern-editor-form-composition-evidence", async ({ page }, testInfo) 
   await expect(form.getByText("存在未保存变更", { exact: true })).toBeVisible();
 
   await page.setViewportSize({ width: 600, height: 1300 });
-  const nameInput = sections.first().locator('input[type="text"]').first();
+  const nameInput = sections.first().locator('input:not([role="switch"])').first();
   const statusLabel = form.getByText("启用资产", { exact: true });
   const mobileFields = await Promise.all([nameInput.boundingBox(), statusLabel.boundingBox()]);
   if (!mobileFields[0] || !mobileFields[1]) throw new Error("missing Editor Form mobile field geometry");

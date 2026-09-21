@@ -998,3 +998,10 @@ The second Wave M Golden run on `05cd607c` confirmed the PrivilegedAccessGate/Ta
 - **AI Picker / Review lifecycle:** scoping to `.first()` solved duplicate-state assertions, but after the first example dismissed itself the live page-wide locator retargeted to the still-visible narrow-container example. The accepted evidence must scope to the stable DemoSection Card by its canonical example heading, so dismiss/reopen assertions remain attached to the same React example instance.
 
 The Privileged operation path passed after opening the Fixture Dock through its visible trigger, selecting the visible Segmented labels, closing Fixture tooling, and interacting with the real product Gate. Dedicated Editor and MarkdownEditor also remained stable. No runtime change is justified by this run.
+
+
+The third Wave M Golden run on `92f27531` passed 145/146 tests. Dedicated Editor, MarkdownEditor, AI Picker, AI Review and the real AI Settings TabPanelLead/PrivilegedAccessGate path all passed. Only Editor Form mobile geometry remained.
+
+Classification: **evidence-driver defect**.
+
+The evidence used `input[type="text"]`, but HTML's default text input does not require an explicit serialized `type="text"` attribute. The corrected locator stays inside the first canonical Editor Form Section and selects its first non-Switch input: `input:not([role="switch"])`. This preserves the intended responsive geometry assertion while avoiding a DOM-serialization assumption. No runtime or composition code changes.
