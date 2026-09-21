@@ -638,6 +638,21 @@ for (const [id, scope] of Object.entries({
   };
 }
 
+
+for (const [id, scope] of Object.entries({
+  "blog-account-notifications": "CSA-4 Wave S manual-reviewed: unread filtering and mark-read mutations converge cleanly into the empty-unread state; mutation failure remains transient feedback while preserving the underlying notification list and unread count.",
+  "blog-account-settings": "CSA-4 Wave S manual-reviewed: Blog keeps identity-security ownership with GOSSO rather than inventing local credential controls; the real GOSSO Admin handoff and missing-admin-URL recovery remain coherent through 600px.",
+  "blog-not-found": "CSA-4 Wave S manual-reviewed: unknown public routes remain inside PublicShell with explicit home/article/search recovery actions; article recovery feedback and the 600px Result composition remain readable without horizontal overflow.",
+})) {
+  productReviews[id] = {
+    status: "reviewed",
+    scope,
+    evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "CSA-4 Wave S manual-reviewed / 2026-09-21",
+  };
+}
+
+
 export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
   return review?.status === "reviewed" ? 100 : Math.min(fallback, 99);
 }

@@ -193,8 +193,8 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
 | CSA-2 Core browser pass | complete | Waves A–J manually accepted across the full Core catalog. Wave J closes the final residual families; Modal is normalized from Wave A accepted nested-overlay and focus-trap evidence. |
 | CSA-3 Pattern/Gouno pass | complete | Waves K–M manually accepted across all 15 Pattern/Gouno catalog families. TabPanelLead and PrivilegedAccessGate are also accepted as non-catalog cross-product composition contracts. |
-| CSA-4 Product Showcase pages | in progress | Waves N–Q accepted: Blog Admin and Gosso Admin Product Showcase families are manually reviewed. Public Blog remains before CSA-5. |
-| CSA-5 Canonical freeze / Consumer resume | planned | |
+| CSA-4 Product Showcase pages | complete | Waves N–S accepted: all 38 Blog Admin, Gosso Admin and Public Blog Product Showcase pages are manually reviewed with rendered evidence. |
+| CSA-5 Canonical freeze / Consumer resume | ready | CSA-4 is complete; publish the accepted Canonical matrix before Consumer reverse migration resumes. |
 
 ## Rule for future progress claims
 
@@ -1449,3 +1449,55 @@ Wave R intentionally required multiple evidence corrections instead of accepting
 3. a later machine-green run was still rejected during manual review because two mobile captures contained the open Showcase Fixture Popover; final evidence explicitly dismisses tooling before product screenshots.
 
 Public Blog CSA-4 is now **9/12 product pages certified**. Wave S remains: Account Notifications, Account Settings and Not Found. CSA-4 global completion and CSA-5 Canonical freeze remain blocked on that final three-page batch.
+
+
+## CSA-4 Wave S — Public Blog account and recovery pages
+
+Status: **accepted / manual-reviewed**
+
+Wave S is the final CSA-4 Product Showcase batch. It covers the three Public Blog routes intentionally left after Wave R: Account Notifications, Account Settings and Not Found.
+
+Dedicated browser evidence covers:
+
+- **Account Notifications** — switches to the unread view, marks one notification read, completes “mark all read” into the empty-unread state at 600px, and separately proves mutation failure remains transient while the notification list and unread count remain intact;
+- **Account Settings** — proves the Blog/GOSSO identity-security ownership boundary by driving the real GOSSO Admin handoff, then switches to the missing-admin-URL state and validates the recovery/error composition at 600px without inventing Blog-local password/MFA/profile controls;
+- **Not Found** — keeps unknown public paths inside PublicShell, preserves the three explicit recovery routes, drives the article-index recovery intent and validates the result surface at 600px.
+
+Five dedicated captures are produced. Fixture tooling is dismissed before product-state captures. Wave S reviews route-level product composition rather than re-certifying Result, Alert, Segmented, Card, Button, PageHeader or PublicShell primitives.
+
+Acceptance requires exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity plus direct manual inspection of all five dedicated Wave S captures. Acceptance of this batch completes all 38 CSA-4 Product Showcase pages and unblocks CSA-5 Canonical freeze.
+
+
+## CSA-4 Wave S acceptance
+
+Status: **accepted / manual-reviewed**
+
+Accepted implementation head: `ab2ccdbcb7c87c7730cf196fdac7cb88cccaac76`.
+
+Exact-head machine evidence:
+
+- CI `35614258821` — success;
+- Canonical Visual Golden Smoke `35614258726` — success;
+- Blog Consumer Parity `35614259025` — success;
+- Gosso Admin Consumer Parity `35614258783` — success;
+- rendered Golden artifact `10646030983` — all five dedicated Wave S captures inspected directly.
+
+Accepted product-page scope:
+
+- **Account Notifications** — unread filtering and successful mark-read mutations converge into an explicit zero-unread empty state at 600px; the independent mutation-error path keeps the list and unread count intact while surfacing transient failure feedback;
+- **Account Settings** — Blog does not invent password, MFA, passkey or session-management controls that belong to GOSSO; the normal route drives the real GOSSO Admin handoff intent, while missing identity-center configuration produces a focused recovery/error surface that remains coherent at 600px;
+- **Not Found** — unknown public paths remain inside PublicShell, expose home/article/search recovery actions and keep the Result composition readable at 600px after driving the article-index recovery intent.
+
+All five final Wave S captures were manually inspected. No remaining Product, Pattern/Gouno or Foundation defect requires reopening.
+
+## CSA-4 Product Showcase completion
+
+With Waves N through S accepted, **all 38 Product Showcase pages are manually certified under CSA-4**:
+
+- Blog Admin — 14 pages;
+- Gosso Admin — 12 pages;
+- Public Blog — 12 pages.
+
+The earlier “36 pages” wording in the Wave S staging note and PR description was a counting error; the catalog contains 38 product pages. The ledger is corrected here before freeze.
+
+CSA-4 is now complete. CSA-5 Canonical freeze is unblocked and should operate on the accepted Core / Pattern / Gouno / Product review ledger rather than reopening already-certified product pages without new evidence.
