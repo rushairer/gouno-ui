@@ -4261,12 +4261,12 @@ test("csa-product-gosso-login-auth-evidence", async ({ page }, testInfo) => {
   });
 
   await expect(page.getByRole("heading", { level: 1, name: "统一身份中心", exact: true })).toBeVisible();
-  await page.getByLabel("密码", { exact: true }).fill("WaveQ-Password!");
+  await page.getByRole("textbox", { name: "密码", exact: true }).fill("WaveQ-Password!");
   await page.getByRole("button", { name: "登录", exact: true }).click();
 
   await expect(page.getByText("密码验证通过；fixture 模拟服务端要求第二因素。", { exact: true })).toBeVisible();
   await expect(page.getByText("需要多因素认证", { exact: true })).toBeVisible();
-  await page.getByLabel("动态验证码", { exact: true }).fill("123456");
+  await page.getByRole("textbox", { name: "动态验证码", exact: true }).fill("123456");
   await page.getByRole("button", { name: "验证并登录", exact: true }).click();
   await expect(page.getByText("登录成功（Showcase 模拟）。", { exact: true })).toBeVisible();
   await expectNoHorizontalDocumentOverflow(page);
@@ -4285,7 +4285,7 @@ test("csa-product-gosso-login-auth-evidence", async ({ page }, testInfo) => {
 
   await expect(page.getByRole("heading", { level: 1, name: "验证敏感操作", exact: true })).toBeVisible();
   await expect(page.getByText("Administrator", { exact: true })).toBeVisible();
-  await page.getByLabel("动态验证码", { exact: true }).fill("654321");
+  await page.getByRole("textbox", { name: "动态验证码", exact: true }).fill("654321");
   await page.getByRole("button", { name: "完成强认证", exact: true }).click();
   await expect(page.getByText("强认证已完成（Showcase 模拟）。", { exact: true })).toBeVisible();
 
@@ -4309,7 +4309,7 @@ test("csa-product-gosso-forgot-password-evidence", async ({ page }, testInfo) =>
     ready: "form",
   });
 
-  const email = page.getByLabel("邮箱", { exact: true });
+  const email = page.getByRole("textbox", { name: "邮箱", exact: true });
   const submit = page.getByRole("button", { name: "发送重置链接", exact: true });
   await expect(submit).toBeDisabled();
   await email.fill("security@example.test");
@@ -4354,8 +4354,8 @@ test("csa-product-gosso-reset-password-evidence", async ({ page }, testInfo) => 
     ready: "form",
   });
 
-  const password = page.getByLabel("新密码", { exact: true });
-  const confirm = page.getByLabel("确认密码", { exact: true });
+  const password = page.getByRole("textbox", { name: "新密码", exact: true });
+  const confirm = page.getByRole("textbox", { name: "确认密码", exact: true });
   const submit = page.getByRole("button", { name: "重置密码", exact: true });
 
   await password.fill("short");

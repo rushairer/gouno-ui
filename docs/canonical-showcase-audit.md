@@ -1287,3 +1287,14 @@ Dedicated browser evidence covers:
 Nine dedicated captures are produced: two each for Login, Forgot Password, Reset Password and Auth Callback, plus one Not Found mobile capture. Wave Q reviews complete product-state composition; it does not re-certify AuthSurface, Alert, FormField, Result, Button or other already-reviewed Core/Pattern primitives.
 
 Acceptance requires exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity plus direct manual inspection of all nine dedicated Wave Q captures.
+
+
+### Wave Q first-run FormField locator correction
+
+The first Wave Q Golden run on `7c3c295f` passed **169/172** browser tests. Callback and Not Found completed fully; Login, Forgot Password and Reset Password each timed out before their first field mutation.
+
+Classification: **evidence-driver locator defect**, not a Product or Core FormField defect.
+
+The failure snapshots prove that the rendered controls have the correct accessible names: `密码`, `邮箱`, `新密码` and `确认密码`. Core `FormField` also owns the expected `htmlFor` / `aria-labelledby` relationship. The failed evidence used Playwright `getByLabel(..., { exact: true })`, which matches the rendered label text; required fields also render a visual `*` marker, so exact label-text matching does not resolve even though the control's accessible name is correct.
+
+The corrected evidence targets the control semantics directly with `getByRole("textbox", { name: ..., exact: true })`. The same correction is applied proactively to the required `动态验证码` fields in MFA and Sudo. No product implementation, Core FormField behavior, business-state assertion or interaction sequence is weakened.
