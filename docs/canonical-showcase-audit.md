@@ -1198,3 +1198,73 @@ With Waves N and O accepted, **the complete Blog Admin Showcase product family i
 - Wave O — Post Editor, Page Editor, AI Operations, AI Settings, Site Settings.
 
 This does not complete CSA-4 globally. Gosso Admin and Public Blog product families still require the same product-level rendered review before Canonical freeze and Consumer reverse migration can resume.
+
+
+## CSA-4 Wave P — Gosso Admin authenticated product pages
+
+Status: **accepted / manual-reviewed**
+
+Wave P begins Gosso Admin Product Showcase certification with the seven authenticated application and system-management pages. It intentionally excludes Login, Forgot Password, Reset Password, Auth Callback and Not Found; those standalone authentication/error surfaces form Wave Q.
+
+Dedicated browser evidence covers:
+
+- **Overview** — begins in the administrator product context, switches through the explicit Fixture control to the ordinary-user context, verifies the restricted-system notice and all three self-service quick-navigation targets;
+- **Account Settings** — enters the real Active Sessions task, terminates a non-current iPhone Safari session through confirmation, and verifies both removal and explicit mutation feedback;
+- **OAuth2 Clients** — opens the real registration editor, creates a confidential client and verifies the one-time client-secret disclosure surface;
+- **Users** — opens the real role-management dialog for Content Editor, adds the auditor role, commits the mutation and verifies the updated role plus product feedback;
+- **Audit Logs** — applies a real event filter, narrows to the expected OAuth client event and opens its event-detail modal;
+- **Site Settings** — edits the product name, verifies the live login-page preview and dirty state, saves back to synchronized state, then validates 600px form/preview stacking;
+- **System Status** — switches through degraded and unavailable health states, verifies Redis degradation and probe latency, then validates the unavailable 503 state at 600px.
+
+Nine dedicated captures are produced: one each for Overview, Account Settings, OAuth2 Clients, Users and Audit Logs, two for Site Settings, and two for System Status. Wave P reuses already-certified Core/Pattern/Gouno abstractions and does not promote Gosso pages into component completion.
+
+Acceptance requires exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity plus direct manual inspection of all nine dedicated Wave P captures.
+
+
+### Wave P duplicate Message defect
+
+The first Wave P Golden run on `2856b264` passed 166/167 browser tests and failed only the Gosso Admin Users role-update evidence because **two identical success Messages were actually rendered** after one role save.
+
+This is a real Showcase product defect, not a locator ambiguity. The Showcase root runs under React `StrictMode`, and the System Management `FixtureMessageContent` adapter imperatively called `message.success(children)` from an effect. StrictMode replays that effect during development/browser verification, so one product mutation enqueued the same Message twice.
+
+Ownership: the defect belongs to the Gosso System Management Showcase Message adapter. Core `MessageProvider` is not reopened: its imperative API correctly displays every explicit call it receives.
+
+Correction:
+
+- keep Message as the presentation owner rather than replacing it with Alert;
+- make the fixture adapter idempotent for the same content within one mounted adapter instance;
+- still emit again when the business status content genuinely changes or the adapter remounts for a later mutation;
+- keep the existing exact browser assertion unchanged, so duplicate DOM messages continue to fail rather than being hidden with `.first()`.
+
+No force-click or test-only suppression is used.
+
+
+## CSA-4 Wave P acceptance
+
+Status: **accepted / manual-reviewed**
+
+Accepted implementation head: `ad088f1a7026fc10cd69e2dd657ee3dfb5d7bcf1`.
+
+Exact-head machine evidence:
+
+- CI `35588289635` — success;
+- Canonical Visual Golden Smoke `35588289780` — success;
+- Blog Consumer Parity `35588289761` — success;
+- Gosso Admin Consumer Parity `35588289676` — success;
+- rendered Golden artifact `10633581871` — all nine dedicated Wave P captures inspected directly.
+
+Accepted product-page scope:
+
+- **Overview** — administrator and ordinary-user contexts remain visibly distinct; restricted system-management ownership is explicit while account self-service navigation remains available and coherent;
+- **Account Settings** — Active Sessions preserves one focused account-security task, terminates the selected non-current session through confirmation and returns to a stable table with explicit success feedback;
+- **OAuth2 Clients** — confidential-client registration retains the collection behind the editor and exposes the generated secret exactly once in a dedicated disclosure modal;
+- **Users** — role editing remains row-owned, persists the auditor role and now emits exactly one success Message after the StrictMode duplicate-feedback defect was corrected;
+- **Audit Logs** — filtering and event detail preserve the relationship between the audit collection and the selected immutable evidence record;
+- **Site Settings** — branding draft, live login preview, dirty/save lifecycle and 600px form→preview stacking remain one coherent settings task;
+- **System Status** — degraded Redis health and unavailable 503 states preserve alert→summary→dependency ownership and remain readable at 600px.
+
+All nine final Wave P captures were manually inspected. No remaining Product, Pattern/Gouno or Foundation defect requires reopening.
+
+The first Golden run on `2856b264` exposed a real duplicate-Message defect in the Gosso System Management Showcase adapter. The corrected implementation keeps the strict Users assertion unchanged and also removes the duplicate success feedback visible in Client registration and Site Settings save evidence.
+
+Wave P certifies the seven authenticated Gosso Admin product pages. Login, Forgot Password, Reset Password, Auth Callback and Not Found remain the explicit Wave Q scope.
