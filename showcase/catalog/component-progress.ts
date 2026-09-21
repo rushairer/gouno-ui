@@ -602,6 +602,22 @@ for (const [id, scope] of Object.entries({
   };
 }
 
+
+for (const [id, scope] of Object.entries({
+  "gosso-login": "CSA-4 Wave Q manual-reviewed: password authentication advances through MFA into a terminal completion state, Sudo step-up also closes its challenge on success, and both flows preserve coherent desktop/mobile ownership.",
+  "gosso-forgot-password": "CSA-4 Wave Q manual-reviewed: submission stays neutral about account existence, service failure preserves the same anti-enumeration boundary, and the mobile error state remains a focused recovery task.",
+  "gosso-reset-password": "CSA-4 Wave Q manual-reviewed: length/mismatch validation, successful reset and expired-link recovery form one coherent password-reset state machine with the form removed after completion or expiry.",
+  "gosso-callback": "CSA-4 Wave Q manual-reviewed: Authorization Code + PKCE processing resolves into distinct success/failure terminal states and the failure retry action cleanly returns to processing.",
+  "gosso-not-found": "CSA-4 Wave Q manual-reviewed: the missing-route Result remains readable at 600px and its primary recovery action navigates back into the real Gosso Overview product context.",
+})) {
+  productReviews[id] = {
+    status: "reviewed",
+    scope,
+    evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "CSA-4 Wave Q manual-reviewed / 2026-09-21",
+  };
+}
+
 export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
   return review?.status === "reviewed" ? 100 : Math.min(fallback, 99);
 }
