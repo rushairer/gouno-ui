@@ -3716,6 +3716,142 @@ test("csa-product-blog-custom-page-lifecycle-evidence", async ({ page }, testInf
   });
 });
 
+
+test("csa-product-blog-account-notifications-mutation-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog",
+    brand: "blog",
+    fixture: "blog-account-notifications",
+    viewport: desktop,
+    ready: "#public-main",
+  });
+
+  await expect(page.getByRole("heading", { level: 1, name: "通知", exact: true })).toBeVisible();
+  await expect(page.getByText("2 条未读", { exact: true })).toBeVisible();
+
+  const filter = page.getByRole("radiogroup", { name: "通知筛选", exact: true });
+  await filter.getByText("未读", { exact: true }).click();
+  await expect(filter.getByRole("radio", { name: "未读", exact: true })).toBeChecked();
+
+  await page.getByRole("button", { name: "标为已读", exact: true }).first().click();
+  await expect(page.getByText("1 条未读", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "全部标为已读", exact: true }).click();
+  await expect(page.getByText("0 条未读", { exact: true })).toBeVisible();
+  await expect(page.getByText("没有未读通知", { exact: true })).toBeVisible();
+
+  await page.setViewportSize({ width: 600, height: 1100 });
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-account-notifications-read-mobile.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-account-notifications-error-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog",
+    brand: "blog",
+    fixture: "blog-account-notifications",
+    viewport: desktop,
+    ready: "#public-main",
+  });
+
+  await page.getByRole("button", { name: "打开 Fixture 控制", exact: true }).click();
+  const scenarios = page.getByRole("radiogroup", { name: "Account Notifications Fixture 状态", exact: true });
+  await scenarios.getByText("操作失败", { exact: true }).click();
+  await expect(scenarios.getByRole("radio", { name: "操作失败", exact: true })).toBeChecked();
+  await page.keyboard.press("Escape");
+  await expect(scenarios).toBeHidden();
+
+  await page.getByRole("button", { name: "标为已读", exact: true }).first().click();
+  await expect(page.getByRole("alert")).toContainText("通知操作失败");
+  await expect(page.getByText("标记已读失败，通知列表保持可用，请稍后重试。", { exact: true })).toBeVisible();
+  await expect(page.getByText("2 条未读", { exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-account-notifications-error.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-account-settings-boundary-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog",
+    brand: "blog",
+    fixture: "blog-account-settings",
+    viewport: desktop,
+    ready: "#public-main",
+  });
+
+  await expect(page.getByRole("heading", { level: 1, name: "账户设置", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: /账户安全由 GOSSO Admin 管理/ })).toBeVisible();
+  await expect(page.getByText("paw@example.test", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "打开 GOSSO Admin", exact: true }).click();
+  await expect(page.getByText("将进入 https://sso.example.test/account-settings（Showcase 模拟）。", { exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-account-settings-boundary.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await page.getByRole("button", { name: "打开 Fixture 控制", exact: true }).click();
+  const scenarios = page.getByRole("radiogroup", { name: "Account Settings Fixture 状态", exact: true });
+  await scenarios.getByText("缺少身份中心地址", { exact: true }).click();
+  await expect(scenarios.getByRole("radio", { name: "缺少身份中心地址", exact: true })).toBeChecked();
+  await page.keyboard.press("Escape");
+  await expect(scenarios).toBeHidden();
+
+  await expect(page.getByText("当前会话未提供身份管理中心地址，请联系管理员配置 GOSSO Admin URL。", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "打开 GOSSO Admin", exact: true })).toBeHidden();
+
+  await page.setViewportSize({ width: 600, height: 1000 });
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-account-settings-missing-url-mobile.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-blog-not-found-recovery-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog",
+    brand: "blog",
+    fixture: "blog-not-found",
+    viewport: desktop,
+    ready: "#public-main",
+  });
+
+  await expect(page.getByRole("heading", { level: 1, name: "页面未找到", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "返回首页", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "浏览文章", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "搜索内容", exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "浏览文章", exact: true }).click();
+  await expect(page.getByText("将进入 /articles（Showcase 模拟）。", { exact: true })).toBeVisible();
+
+  await page.setViewportSize({ width: 600, height: 1000 });
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-not-found-recovery-mobile.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
 test("csa-product-blog-admin-dashboard-evidence", async ({ page }, testInfo) => {
   await prepareLightFixture(page, {
     workspace: "blog-admin",
