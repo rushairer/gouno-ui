@@ -618,6 +618,26 @@ for (const [id, scope] of Object.entries({
   };
 }
 
+
+for (const [id, scope] of Object.entries({
+  "blog-home": "CSA-4 Wave R manual-reviewed: public reading/discovery hierarchy stays dominant, Featured Articles drives the all-articles intent, and the balanced Hero remains coherent across refreshed desktop/mobile light/dark baselines.",
+  "blog-articles": "CSA-4 Wave R manual-reviewed: the full article index owns search/filter/pagination; a real Kubernetes query narrows to one result without converting the public collection into dashboard-style chrome.",
+  "blog-search": "CSA-4 Wave R manual-reviewed: the route-owned OAuth2 query can be replaced by Kafka, updates the result heading and preserves both matching article results under the same public search composition.",
+  "blog-article-detail": "CSA-4 Wave R manual-reviewed: administrator preview remains an explicit reading-state notice while article metadata, cover, TOC, code and long-form content compose without horizontal overflow at 600px.",
+  "blog-categories": "CSA-4 Wave R manual-reviewed: category discovery preserves the public index hierarchy and a real architecture/security entry resolves to the expected category-detail navigation intent.",
+  "blog-tags": "CSA-4 Wave R manual-reviewed: tag discovery remains a compact public index and the OAuth2 entry resolves to the expected tag-detail navigation intent.",
+  "blog-archive": "CSA-4 Wave R manual-reviewed: chronological grouping remains the primary ownership model and a real archived entry resolves to its article-detail navigation intent.",
+  "blog-about": "CSA-4 Wave R manual-reviewed: Blog-local document reading grammar keeps project context and principles readable while the continue-reading action resolves toward the article index.",
+  "blog-custom-page": "CSA-4 Wave R manual-reviewed: the loaded CMS-style document and its not-found lifecycle share one Blog-local document route family; the 600px not-found recovery state remains clean after Showcase tooling is dismissed.",
+})) {
+  productReviews[id] = {
+    status: "reviewed",
+    scope,
+    evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "CSA-4 Wave R manual-reviewed / 2026-09-21",
+  };
+}
+
 export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
   return review?.status === "reviewed" ? 100 : Math.min(fallback, 99);
 }
