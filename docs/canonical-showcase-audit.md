@@ -1358,3 +1358,26 @@ With Waves P and Q accepted, **all 12 Gosso Product Showcase pages are now manua
 - Wave Q — Login, Forgot Password, Reset Password, Auth Callback, Not Found.
 
 CSA-4 is not globally complete yet. The 12 Public Blog product pages remain the final Product Showcase family before CSA-5 Canonical freeze and Consumer reverse migration can resume.
+
+
+## CSA-4 Wave R — Public Blog content and discovery pages
+
+Status: **candidate / awaiting batched machine + rendered review**
+
+Wave R begins final-family CSA-4 certification with the nine Public Blog content, reading, discovery and document pages. Account Notifications, Account Settings and Not Found are intentionally deferred to Wave S because they introduce authenticated-account and route-recovery ownership distinct from public content discovery.
+
+Dedicated browser evidence covers:
+
+- **Home** — preserves the public reading/discovery hierarchy and drives the Featured Articles → all-articles navigation intent without introducing AppShell task chrome;
+- **Articles** — submits a real keyword search from the full article index, narrows to the Kubernetes result and preserves the collection/search ownership boundary;
+- **Search** — starts from the route-owned OAuth2 query, replaces it with Kafka, submits and verifies both matching articles under the updated result title;
+- **Article Detail** — enters administrator preview state, preserves article metadata/TOC/code-reading composition and validates the complete reading surface at 600px without horizontal document overflow;
+- **Categories** — uses the actual architecture/security category entry and verifies the category-detail navigation target;
+- **Tags** — uses the actual OAuth2 tag entry and verifies the tag-detail navigation target;
+- **Archive** — follows a real archived article entry and verifies the article-detail navigation target;
+- **About** — preserves the Blog-local document reading surface and drives the explicit continue-reading action toward the article index;
+- **Custom Page** — captures the loaded CMS-style document surface, then switches into the page-not-found lifecycle and validates its recovery composition at 600px.
+
+Ten dedicated captures are produced because Custom Page requires both loaded-document and not-found evidence. Wave R does not re-certify PublicShell, PageHeader, Alert, Result, CodeBlock, Anchor, Pagination or other already-reviewed primitives; the question is whether each public product route composes them coherently around reading and discovery intent.
+
+Acceptance requires exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity plus direct manual inspection of all ten dedicated Wave R captures.
