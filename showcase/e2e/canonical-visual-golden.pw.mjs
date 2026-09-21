@@ -2697,6 +2697,202 @@ test("csa-core-back-top-return-evidence", async ({ page }, testInfo) => {
   });
 });
 
+
+test("csa-pattern-bulk-action-bar-lifecycle-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "pattern-bulk-action-bar",
+    viewport: desktop,
+    ready: '[data-slot="bulk-action-bar"]',
+  });
+
+  const toolbar = page.getByRole("toolbar", { name: "批量操作", exact: true });
+  await expect(toolbar).toContainText("已选择 3 项");
+  await expect(toolbar.locator('[data-slot="bulk-action-bar-actions"]')).toBeVisible();
+
+  await page.getByRole("button", { name: "文章 C", exact: true }).click();
+  await expect(toolbar).toContainText("已选择 2 项");
+  await page.getByRole("button", { name: "归档", exact: true }).click();
+  await expect(page.getByText("已归档 2 项。", { exact: true })).toBeVisible();
+
+  const demo = toolbar.locator('xpath=ancestor::*[@data-slot="card"][1]');
+  await demo.screenshot({
+    path: testInfo.outputPath("csa-pattern-bulk-action-bar-two-selected.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await toolbar.getByRole("button", { name: "取消", exact: true }).click();
+  await expect(toolbar).toBeHidden();
+  const restore = page.getByRole("button", { name: "恢复选择", exact: true });
+  await expect(restore).toBeVisible();
+  await restore.click();
+  await expect(page.getByRole("toolbar", { name: "批量操作", exact: true })).toContainText("已选择 3 项");
+});
+
+test("csa-gouno-page-container-track-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "gouno-page-container",
+    viewport: desktop,
+    ready: '[data-slot="page-container"]',
+  });
+
+  const container = page.locator('[data-slot="page-container"]').filter({ hasText: "PageContainer content track" });
+  await expect(container).toHaveAttribute("data-page", "settings");
+  const metrics = await container.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      gap: style.gap,
+      maxWidth: style.maxWidth,
+      width: element.getBoundingClientRect().width,
+      parentWidth: element.parentElement?.getBoundingClientRect().width ?? 0,
+    };
+  });
+  expect(metrics.gap).toBe("24px");
+  expect(metrics.maxWidth).toBe("1440px");
+  expect(metrics.width).toBeLessThanOrEqual(metrics.parentWidth);
+
+  const card = container.locator('xpath=ancestor::*[@data-slot="card"][1]');
+  await card.screenshot({
+    path: testInfo.outputPath("csa-gouno-page-container-track.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-gouno-page-header-responsive-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "gouno-page-header",
+    viewport: { width: 1100, height: 800 },
+    ready: '[data-slot="page-header"]',
+  });
+
+  const header = page.locator('[data-slot="page-header"]').filter({ hasText: "OAuth2 客户端" }).first();
+  const heading = header.getByRole("heading", { level: 1, name: "OAuth2 客户端", exact: true });
+  const description = header.getByText("注册和维护身份平台客户端、回调地址与授权范围。", { exact: true });
+  const refresh = header.getByRole("button", { name: "刷新", exact: true });
+  const register = header.getByRole("button", { name: "注册客户端", exact: true });
+
+  await expect(heading).toHaveAttribute("data-typography-role", "page");
+  await expect(description).toBeVisible();
+  await expect(refresh).toBeVisible();
+  await expect(register).toBeVisible();
+
+  const desktopBoxes = await Promise.all([heading.boundingBox(), refresh.boundingBox()]);
+  if (!desktopBoxes[0] || !desktopBoxes[1]) throw new Error("missing PageHeader desktop geometry");
+  expect(Math.abs(desktopBoxes[0].y - desktopBoxes[1].y)).toBeLessThan(24);
+
+  await header.screenshot({
+    path: testInfo.outputPath("csa-gouno-page-header-desktop.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await page.setViewportSize({ width: 600, height: 800 });
+  const mobileDescription = await description.boundingBox();
+  const mobileAction = await refresh.boundingBox();
+  if (!mobileDescription || !mobileAction) throw new Error("missing PageHeader mobile geometry");
+  expect(mobileAction.y).toBeGreaterThan(mobileDescription.y + mobileDescription.height);
+
+  await header.screenshot({
+    path: testInfo.outputPath("csa-gouno-page-header-mobile.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-gouno-page-skeleton-responsive-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "gouno-page-skeleton",
+    viewport: { width: 1100, height: 1000 },
+    ready: '[data-slot="page-skeleton"]',
+  });
+
+  const collection = page.getByRole("status", { name: "资源列表加载中", exact: true });
+  const form = page.getByRole("status", { name: "设置表单加载中", exact: true });
+  const dashboard = page.getByRole("status", { name: "数据概览加载中", exact: true });
+
+  await expect(collection).toHaveAttribute("data-layout", "collection");
+  await expect(collection).toHaveAttribute("aria-busy", "true");
+  await expect(form).toHaveAttribute("data-layout", "form");
+  await expect(dashboard).toHaveAttribute("data-layout", "dashboard");
+  await expect(collection.locator("table")).toBeVisible();
+
+  await collection.screenshot({
+    path: testInfo.outputPath("csa-gouno-page-skeleton-collection-desktop.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await page.setViewportSize({ width: 600, height: 1000 });
+  await expect(collection.locator("table")).toBeHidden();
+  const mobileCards = collection.locator('[data-slot="card"]');
+  await expect(mobileCards).toHaveCount(4);
+  await expect(mobileCards.first()).toBeVisible();
+
+  await collection.screenshot({
+    path: testInfo.outputPath("csa-gouno-page-skeleton-collection-mobile.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-gouno-app-shell-responsive-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "gouno-app-shell",
+    viewport: { width: 1280, height: 900 },
+    ready: '[data-slot="app-shell"]',
+  });
+
+  const shell = page.locator('[data-slot="app-shell"]').filter({ hasText: "Gouno Admin" }).first();
+  await expect(shell.getByText("Gouno Admin", { exact: true })).toBeVisible();
+  await expect(shell.getByRole("navigation", { name: "示例应用导航", exact: true })).toBeVisible();
+  await expect(shell.locator("main")).toContainText("Main / children");
+  await expect(shell.locator('[data-slot="page-container"]')).toBeVisible();
+  await expect(shell.locator('a[href^="#app-shell-main-"]')).toHaveCount(1);
+
+  const sider = shell.locator("aside");
+  await expect(sider).toBeVisible();
+  const siderBox = await sider.boundingBox();
+  expect(siderBox?.width).toBeCloseTo(288, 0);
+
+  await shell.screenshot({
+    path: testInfo.outputPath("csa-gouno-app-shell-desktop.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await page.setViewportSize({ width: 600, height: 900 });
+  await expect(sider).toBeHidden();
+  const trigger = shell.getByRole("button", { name: "示例应用导航", exact: true });
+  await expect(trigger).toBeVisible();
+  await trigger.click();
+
+  const dialog = page.getByRole("dialog").filter({ hasText: "Gouno Admin" });
+  await expect(dialog).toBeVisible();
+  const mobileNav = dialog.getByRole("navigation", { name: "示例应用导航", exact: true });
+  await expect(mobileNav.getByText("OAuth2 客户端", { exact: true })).toBeVisible();
+
+  await dialog.screenshot({
+    path: testInfo.outputPath("csa-gouno-app-shell-mobile-navigation.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await mobileNav.getByText("概览", { exact: true }).click();
+  await expect(dialog).toBeHidden();
+  await expect(trigger).toBeFocused();
+});
+
 test("surface-gosso-overview-quick-link-card-ownership", async ({ page }) => {
   const scenario = {
     workspace: "gosso-admin",
