@@ -193,8 +193,8 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
 | CSA-2 Core browser pass | complete | Waves A–J manually accepted across the full Core catalog. Wave J closes the final residual families; Modal is normalized from Wave A accepted nested-overlay and focus-trap evidence. |
 | CSA-3 Pattern/Gouno pass | complete | Waves K–M manually accepted across all 15 Pattern/Gouno catalog families. TabPanelLead and PrivilegedAccessGate are also accepted as non-catalog cross-product composition contracts. |
-| CSA-4 Product Showcase pages | in progress | Waves N–Q accepted: Blog Admin and Gosso Admin Product Showcase families are manually reviewed. Public Blog remains before CSA-5. |
-| CSA-5 Canonical freeze / Consumer resume | planned | |
+| CSA-4 Product Showcase pages | complete | Waves N–S accepted: all 38 Blog Admin, Gosso Admin and Public Blog Product Showcase pages are manually reviewed with rendered evidence. |
+| CSA-5 Canonical freeze / Consumer resume | ready | CSA-4 is complete; publish the accepted Canonical matrix before Consumer reverse migration resumes. |
 
 ## Rule for future progress claims
 
