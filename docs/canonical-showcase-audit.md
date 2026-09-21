@@ -977,3 +977,16 @@ Browser evidence covers:
 Wave M intentionally does not promote every Blog Admin AI Settings page. The product fixture here is evidence for two cross-page composition contracts—TabPanelLead and PrivilegedAccessGate. Full product-page family certification remains CSA-4.
 
 Acceptance requires one exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity cycle plus direct manual review of all eleven Wave M captures. If accepted, the Pattern/Gouno composition scope named by CSA-3 will be complete and the program can advance to CSA-4 Product Showcase pages.
+
+
+### Wave M first-run evidence-scope corrections
+
+The first Wave M Golden run on `bdc6582a` passed the Dedicated Editor and MarkdownEditor cases and failed four evidence paths without exposing a runtime defect.
+
+Classification: **evidence-driver defects**.
+
+- **Editor Form:** the evidence tried to resolve the Name input through visible Field text even though the low-level Field contract does not manufacture a label/input association. The canonical example already owns a stable `name="name"`; mobile geometry now targets that real input.
+- **AI Picker / Review:** each Pattern page intentionally renders both a standard-width and a narrow-container instance from the same example source. Page-wide `data-slot` locators merged both independent examples (6 radios instead of 3; duplicate checkboxes). Evidence now explicitly scopes to the first canonical example instance.
+- **Privileged operation:** the security-state Segmented control lives inside the Fixture Dock Popover. The failed evidence attempted to operate it while the Popover was closed. The corrected user path opens Fixture controls, selects the visible state label, closes the Fixture overlay, then interacts with the real product Gate; expiring state reopens Fixture controls the same way.
+
+No force click, hidden-control mutation or runtime change is introduced. The failing evidence is tightened to the actual visible UI ownership instead.

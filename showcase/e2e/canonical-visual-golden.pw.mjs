@@ -3258,7 +3258,7 @@ test("csa-pattern-editor-form-composition-evidence", async ({ page }, testInfo) 
   await expect(form.getByText("存在未保存变更", { exact: true })).toBeVisible();
 
   await page.setViewportSize({ width: 600, height: 1300 });
-  const nameInput = form.getByLabel("名称", { exact: true });
+  const nameInput = form.locator('input[name="name"]');
   const statusLabel = form.getByText("启用资产", { exact: true });
   const mobileFields = await Promise.all([nameInput.boundingBox(), statusLabel.boundingBox()]);
   if (!mobileFields[0] || !mobileFields[1]) throw new Error("missing Editor Form mobile field geometry");
@@ -3330,8 +3330,8 @@ test("csa-pattern-ai-suggestion-picker-evidence", async ({ page }, testInfo) => 
     ready: '[data-slot="ai-suggestion-picker"]',
   });
 
-  const picker = page.locator('[data-slot="ai-suggestion-picker"]');
-  const currentTitle = page.getByRole("textbox", { name: "当前标题", exact: true });
+  const picker = page.locator('[data-slot="ai-suggestion-picker"]').first();
+  const currentTitle = page.getByRole("textbox", { name: "当前标题", exact: true }).first();
   const group = picker.getByRole("radiogroup", { name: "标题候选列表", exact: true });
   const options = group.getByRole("radio");
   await expect(options).toHaveCount(3);
@@ -3357,9 +3357,9 @@ test("csa-pattern-ai-suggestion-picker-evidence", async ({ page }, testInfo) => 
   await expect(options.nth(2)).not.toBeChecked();
 
   await picker.getByRole("button", { name: "取消", exact: true }).click();
-  await expect(page.locator('[data-slot="ai-suggestion-picker"]')).toBeHidden();
+  await expect(page.locator('[data-slot="ai-suggestion-picker"]').first()).toBeHidden();
   await page.getByRole("button", { name: "重新打开 AI 建议", exact: true }).click();
-  await expect(page.locator('[data-slot="ai-suggestion-picker"]')).toBeVisible();
+  await expect(page.locator('[data-slot="ai-suggestion-picker"]').first()).toBeVisible();
 });
 
 test("csa-pattern-ai-suggestion-review-evidence", async ({ page }, testInfo) => {
@@ -3371,7 +3371,7 @@ test("csa-pattern-ai-suggestion-review-evidence", async ({ page }, testInfo) => 
     ready: '[data-slot="ai-suggestion-review"]',
   });
 
-  const review = page.locator('[data-slot="ai-suggestion-review"]');
+  const review = page.locator('[data-slot="ai-suggestion-review"]').first();
   const slug = review.getByRole("checkbox", { name: "应用 Slug 建议", exact: true });
   const seoTitle = review.getByRole("checkbox", { name: "应用 SEO 标题 建议", exact: true });
   const seoDescription = review.getByRole("checkbox", { name: "应用 SEO 描述 建议", exact: true });
@@ -3385,7 +3385,7 @@ test("csa-pattern-ai-suggestion-review-evidence", async ({ page }, testInfo) => 
   const apply = review.getByRole("button", { name: "应用 2 项建议", exact: true });
   await expect(apply).toBeEnabled();
   await apply.click();
-  await expect(page.getByText("最近应用：slug、seo-title", { exact: true })).toBeVisible();
+  await expect(page.getByText("最近应用：slug、seo-title", { exact: true }).first()).toBeVisible();
 
   await review.screenshot({
     path: testInfo.outputPath("csa-pattern-ai-review-two-applied.png"),
@@ -3394,9 +3394,9 @@ test("csa-pattern-ai-suggestion-review-evidence", async ({ page }, testInfo) => 
   });
 
   await review.getByRole("button", { name: "取消", exact: true }).click();
-  await expect(page.locator('[data-slot="ai-suggestion-review"]')).toBeHidden();
+  await expect(page.locator('[data-slot="ai-suggestion-review"]').first()).toBeHidden();
   await page.getByRole("button", { name: "重新打开 AI 建议", exact: true }).click();
-  await expect(page.locator('[data-slot="ai-suggestion-review"]')).toBeVisible();
+  await expect(page.locator('[data-slot="ai-suggestion-review"]').first()).toBeVisible();
 });
 
 test("csa-pattern-tab-lead-privileged-access-evidence", async ({ page }, testInfo) => {
@@ -3417,10 +3417,13 @@ test("csa-pattern-tab-lead-privileged-access-evidence", async ({ page }, testInf
   const addProvider = lead.getByRole("button", { name: "添加模型连接", exact: true });
   await expect(addProvider).toBeEnabled();
 
+  const fixtureButton = page.getByRole("button", { name: "打开 Fixture 控制", exact: true });
+  await fixtureButton.click();
   const security = page.getByRole("radiogroup", { name: "AI 设置高权限安全状态", exact: true });
   const locked = security.getByRole("radio", { name: "已锁定", exact: true });
   await locked.locator("xpath=ancestor::label[1]").click();
   await expect(locked).toBeChecked();
+  await page.keyboard.press("Escape");
 
   const gate = page.locator('[data-slot="blog-privileged-access-gate"]');
   await expect(gate.getByText("高权限操作需要身份验证", { exact: true })).toBeVisible();
@@ -3439,9 +3442,13 @@ test("csa-pattern-tab-lead-privileged-access-evidence", async ({ page }, testInf
   await expect(addProvider).toBeEnabled();
   await expect(gate.locator("[inert]")).toHaveCount(0);
 
-  const expiring = security.getByRole("radio", { name: "操作时过期", exact: true });
+  await fixtureButton.click();
+  const expiring = page
+    .getByRole("radiogroup", { name: "AI 设置高权限安全状态", exact: true })
+    .getByRole("radio", { name: "操作时过期", exact: true });
   await expiring.locator("xpath=ancestor::label[1]").click();
   await expect(expiring).toBeChecked();
+  await page.keyboard.press("Escape");
   await expect(gate.getByText("近期 MFA 即将过期", { exact: true })).toBeVisible();
   await expect(gate.getByRole("button", { name: "重新锁定", exact: true })).toBeVisible();
 
