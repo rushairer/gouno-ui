@@ -448,6 +448,30 @@ for (const [id, scope] of Object.entries({
   };
 }
 
+
+for (const [id, scope] of Object.entries({
+  "core-icon": "CSA-2 Wave I manual-reviewed: decorative/named semantics, semantic sizing, loading rotation and explicit pixel/rotation geometry were inspected in Chromium.",
+  "core-typography": "CSA-2 Wave I manual-reviewed: document heading level remains independent from visual role; H1/H2 task-role metrics match while page/section hierarchy remains visually distinct.",
+  "core-kbd": "CSA-2 Wave I manual-reviewed: native kbd tokens preserve compact shortcut rhythm without introducing a second shortcut grammar.",
+  "core-badge": "CSA-2 Wave I manual-reviewed: zero, overflow, text, dot/status and size/offset variants remain coherent, and real count state transitions from 5 to 6.",
+  "core-tag": "CSA-2 Wave I manual-reviewed: closable lifecycle, disabled close affordance and uncontrolled checkable transitions remain visually and semantically distinct.",
+  "core-avatar": "CSA-2 Wave I manual-reviewed: small/middle/large/custom size geometry and circle/square shape contracts render consistently with deterministic image evidence.",
+  "core-space": "CSA-2 Wave I manual-reviewed: wrap/split composition preserves token-owned spacing and parent-owned outer rhythm.",
+  "core-flex": "CSA-2 Wave I manual-reviewed: row-reverse, wrap-reverse and numeric gap preserve direct-child layout without wrapper leakage.",
+  "core-grid": "CSA-2 Wave I manual-reviewed: 24-column responsive layout renders one column at 600px, two columns at 820px and four columns at 1100px.",
+  "core-separator": "CSA-2 Wave I manual-reviewed: horizontal titled line variants and semantic vertical separator preserve line/content ownership and surrounding spacing.",
+  "core-card": "CSA-2 Wave I manual-reviewed: default-to-elevated transition changes surface depth while header/content/footer hierarchy and action placement remain stable.",
+  "core-splitter": "CSA-2 Wave I manual-reviewed: keyboard resize changes the canonical 36/64 split to 37/63 with visible focused separator ownership and readable panels.",
+  "core-page-layout": "CSA-2 Wave I manual-reviewed: Header/Sider/Content/Footer semantic regions preserve canonical admin-shell geometry including the 240px Sider.",
+})) {
+  componentReviews[id] = {
+    status: "reviewed",
+    scope,
+    evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "CSA-2 Wave I manual-reviewed / 2026-09-21",
+  };
+}
+
 export function reviewedProgress(review: ComponentReview | undefined, fallback: number) {
   return review?.status === "reviewed" ? 100 : Math.min(fallback, 99);
 }
