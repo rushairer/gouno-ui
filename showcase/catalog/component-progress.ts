@@ -1,6 +1,6 @@
 // Showcase completion is reviewed evidence, not architecture status. Keep this
 // list limited to canonical components whose API/examples/source/a11y/tests have
-// been reviewed together. Product pages use their migration status directly.
+// been reviewed together. Product pages keep migration progress separate; CSA-4 certification uses productReviews.
 const completedComponents = new Set([
   "core-config-provider",
   "core-button",
@@ -547,6 +547,8 @@ for (const [id, scope] of Object.entries({
 }
 
 
+export const productReviews: Record<string, ComponentReview> = {};
+
 for (const [id, scope] of Object.entries({
   "blog-admin-dashboard": "CSA-4 Wave N manual-reviewed: route-level page hierarchy, four-metric operating summary, traffic visualization and create permission action compose coherently as the real Blog Admin Dashboard.",
   "blog-admin-posts": "CSA-4 Wave N manual-reviewed: search/status/category/tag filters, real row selection, BulkActionBar ownership and desktop table to 600px card-list transition preserve task context without horizontal overflow.",
@@ -558,7 +560,7 @@ for (const [id, scope] of Object.entries({
   "blog-admin-media-library": "CSA-4 Wave N manual-reviewed: media collection/search/type grammar flows into the real Upload Drawer with Upload and Alt Text fields while page/card actions remain visually subordinate.",
   "blog-admin-users": "CSA-4 Wave N manual-reviewed: member directory flows into the role editor while keeping Blog product-role ownership distinct from external GOSSO identity/account management.",
 })) {
-  componentReviews[id] = {
+  productReviews[id] = {
     status: "reviewed",
     scope,
     evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs"],

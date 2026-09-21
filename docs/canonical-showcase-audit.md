@@ -1108,3 +1108,19 @@ Accepted product-page scope:
 All ten Wave N captures were manually inspected. No product, Pattern/Gouno or Foundation defect required reopening, and the first exact-head Golden run passed without evidence-driver correction.
 
 Wave N acceptance does not certify the remaining Blog Admin deep-task pages. Post Editor, Page Editor, AI Operations, AI Settings and Site Settings remain the explicit Wave O scope.
+
+
+### Wave N product-review ledger boundary correction
+
+The first Wave N acceptance-ledger head `29a3eb11` correctly passed the already-accepted product browser evidence but CI rejected its governance placement: the acceptance commit inserted `blog-admin-*` IDs into `componentReviews`.
+
+That rejection is **intentional architecture protection**, not a test to weaken. `componentReviews` is sealed to the canonical Core/Theme/Pattern/Gouno catalog. Product pages have separate migration progress and must not become pseudo-components merely because CSA-4 reviews them.
+
+The corrected governance model adds a separate `productReviews` ledger:
+
+- `componentReviews` remains exactly aligned to canonical component-family catalog IDs;
+- `productReviews` may contain only real Product Showcase IDs (`blog-*`, `blog-admin-*`, `gosso-*`);
+- CSA-4 product review status does not alter product migration progress through `componentProgress`;
+- a new sealing assertion verifies product-review IDs exist in the Product catalog, never overlap `componentReviews`, retain evidence/baseline, and leave product migration progress unchanged.
+
+Wave N's rendered acceptance conclusions are unchanged. This correction only places that evidence in the correct governance layer.
