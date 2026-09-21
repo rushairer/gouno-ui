@@ -3258,7 +3258,7 @@ test("csa-pattern-editor-form-composition-evidence", async ({ page }, testInfo) 
   await expect(form.getByText("存在未保存变更", { exact: true })).toBeVisible();
 
   await page.setViewportSize({ width: 600, height: 1300 });
-  const nameInput = form.locator('input[name="name"]');
+  const nameInput = sections.first().locator('input[type="text"]').first();
   const statusLabel = form.getByText("启用资产", { exact: true });
   const mobileFields = await Promise.all([nameInput.boundingBox(), statusLabel.boundingBox()]);
   if (!mobileFields[0] || !mobileFields[1]) throw new Error("missing Editor Form mobile field geometry");
@@ -3330,8 +3330,11 @@ test("csa-pattern-ai-suggestion-picker-evidence", async ({ page }, testInfo) => 
     ready: '[data-slot="ai-suggestion-picker"]',
   });
 
-  const picker = page.locator('[data-slot="ai-suggestion-picker"]').first();
-  const currentTitle = page.getByRole("textbox", { name: "当前标题", exact: true }).first();
+  const pickerDemo = page
+    .getByRole("heading", { level: 3, name: "候选选择后统一应用", exact: true })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const picker = pickerDemo.locator('[data-slot="ai-suggestion-picker"]');
+  const currentTitle = pickerDemo.getByRole("textbox", { name: "当前标题", exact: true });
   const group = picker.getByRole("radiogroup", { name: "标题候选列表", exact: true });
   const options = group.getByRole("radio");
   await expect(options).toHaveCount(3);
@@ -3357,9 +3360,9 @@ test("csa-pattern-ai-suggestion-picker-evidence", async ({ page }, testInfo) => 
   await expect(options.nth(2)).not.toBeChecked();
 
   await picker.getByRole("button", { name: "取消", exact: true }).click();
-  await expect(page.locator('[data-slot="ai-suggestion-picker"]').first()).toBeHidden();
-  await page.getByRole("button", { name: "重新打开 AI 建议", exact: true }).click();
-  await expect(page.locator('[data-slot="ai-suggestion-picker"]').first()).toBeVisible();
+  await expect(pickerDemo.locator('[data-slot="ai-suggestion-picker"]')).toBeHidden();
+  await pickerDemo.getByRole("button", { name: "重新打开 AI 建议", exact: true }).click();
+  await expect(pickerDemo.locator('[data-slot="ai-suggestion-picker"]')).toBeVisible();
 });
 
 test("csa-pattern-ai-suggestion-review-evidence", async ({ page }, testInfo) => {
@@ -3371,7 +3374,10 @@ test("csa-pattern-ai-suggestion-review-evidence", async ({ page }, testInfo) => 
     ready: '[data-slot="ai-suggestion-review"]',
   });
 
-  const review = page.locator('[data-slot="ai-suggestion-review"]').first();
+  const reviewDemo = page
+    .getByRole("heading", { level: 3, name: "多字段建议先审阅再提交", exact: true })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const review = reviewDemo.locator('[data-slot="ai-suggestion-review"]');
   const slug = review.getByRole("checkbox", { name: "应用 Slug 建议", exact: true });
   const seoTitle = review.getByRole("checkbox", { name: "应用 SEO 标题 建议", exact: true });
   const seoDescription = review.getByRole("checkbox", { name: "应用 SEO 描述 建议", exact: true });
@@ -3385,7 +3391,7 @@ test("csa-pattern-ai-suggestion-review-evidence", async ({ page }, testInfo) => 
   const apply = review.getByRole("button", { name: "应用 2 项建议", exact: true });
   await expect(apply).toBeEnabled();
   await apply.click();
-  await expect(page.getByText("最近应用：slug、seo-title", { exact: true }).first()).toBeVisible();
+  await expect(reviewDemo.getByText("最近应用：slug、seo-title", { exact: true })).toBeVisible();
 
   await review.screenshot({
     path: testInfo.outputPath("csa-pattern-ai-review-two-applied.png"),
@@ -3394,9 +3400,9 @@ test("csa-pattern-ai-suggestion-review-evidence", async ({ page }, testInfo) => 
   });
 
   await review.getByRole("button", { name: "取消", exact: true }).click();
-  await expect(page.locator('[data-slot="ai-suggestion-review"]').first()).toBeHidden();
-  await page.getByRole("button", { name: "重新打开 AI 建议", exact: true }).click();
-  await expect(page.locator('[data-slot="ai-suggestion-review"]').first()).toBeVisible();
+  await expect(reviewDemo.locator('[data-slot="ai-suggestion-review"]')).toBeHidden();
+  await reviewDemo.getByRole("button", { name: "重新打开 AI 建议", exact: true }).click();
+  await expect(reviewDemo.locator('[data-slot="ai-suggestion-review"]')).toBeVisible();
 });
 
 test("csa-pattern-tab-lead-privileged-access-evidence", async ({ page }, testInfo) => {

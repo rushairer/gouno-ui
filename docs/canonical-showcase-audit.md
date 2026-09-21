@@ -990,3 +990,11 @@ Classification: **evidence-driver defects**.
 - **Privileged operation:** the security-state Segmented control lives inside the Fixture Dock Popover. The failed evidence attempted to operate it while the Popover was closed. The corrected user path opens Fixture controls, selects the visible state label, closes the Fixture overlay, then interacts with the real product Gate; expiring state reopens Fixture controls the same way.
 
 No force click, hidden-control mutation or runtime change is introduced. The failing evidence is tightened to the actual visible UI ownership instead.
+
+
+The second Wave M Golden run on `05cd607c` confirmed the PrivilegedAccessGate/TabPanelLead path and left only three evidence-scope issues:
+
+- **Editor Form:** the example intentionally leaves low-level Input naming to the consumer and therefore has no `name="name"` attribute. Responsive geometry must target the actual first text input inside the first canonical Editor Form Section rather than inventing a business attribute.
+- **AI Picker / Review lifecycle:** scoping to `.first()` solved duplicate-state assertions, but after the first example dismissed itself the live page-wide locator retargeted to the still-visible narrow-container example. The accepted evidence must scope to the stable DemoSection Card by its canonical example heading, so dismiss/reopen assertions remain attached to the same React example instance.
+
+The Privileged operation path passed after opening the Fixture Dock through its visible trigger, selecting the visible Segmented labels, closing Fixture tooling, and interacting with the real product Gate. Dedicated Editor and MarkdownEditor also remained stable. No runtime change is justified by this run.
