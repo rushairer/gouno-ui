@@ -2457,6 +2457,218 @@ test("csa-core-page-layout-region-evidence", async ({ page }, testInfo) => {
   });
 });
 
+
+test("csa-core-input-clear-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-input",
+    viewport: desktop,
+    ready: '[data-slot="input-group"]',
+  });
+
+  const card = page
+    .getByText("受控与清除", { exact: true })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const input = card.locator("input").first();
+  await expect(input).toHaveValue("Gouno UI");
+  await expect(card.getByText("当前值：Gouno UI", { exact: true })).toBeVisible();
+
+  await card.getByRole("button", { name: "清除输入", exact: true }).click();
+  await expect(input).toHaveValue("");
+  await expect(input).toBeFocused();
+  await expect(card.getByText("当前值：（空）", { exact: true })).toBeVisible();
+
+  await card.screenshot({
+    path: testInfo.outputPath("csa-core-input-cleared.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-textarea-count-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-textarea",
+    viewport: desktop,
+    ready: "textarea",
+  });
+
+  const card = page
+    .getByText("字符计数与受控值", { exact: true })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const textarea = card.locator("textarea").first();
+  await textarea.fill("1234567890");
+  await expect(textarea).toHaveValue("1234567890");
+  await expect(card.getByText("10 / 60", { exact: true })).toBeVisible();
+  const describedBy = await textarea.getAttribute("aria-describedby");
+  expect(describedBy).toBeTruthy();
+
+  await card.screenshot({
+    path: testInfo.outputPath("csa-core-textarea-count-10.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-code-block-copy-evidence", async ({ page }, testInfo) => {
+  await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-code-block",
+    viewport: desktop,
+    ready: '[data-slot="code-block"]',
+  });
+
+  const codeBlock = page.locator('[data-slot="code-block"]').first();
+  const card = codeBlock.locator('xpath=ancestor::*[@data-slot="card"][1]');
+  await expect(codeBlock).toHaveAttribute("data-language", "tsx");
+  const renderedCode = await codeBlock.locator('[data-slot="code-block-code"]').textContent();
+
+  const copy = codeBlock.getByRole("button", { name: "复制代码", exact: true });
+  await copy.click();
+  await expect(codeBlock.getByRole("button", { name: "代码已复制", exact: true })).toBeVisible();
+  const clipboard = await page.evaluate(() => navigator.clipboard.readText());
+  expect(clipboard).toBe(renderedCode);
+
+  await card.screenshot({
+    path: testInfo.outputPath("csa-core-code-block-copied.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-float-button-tooltip-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-float-button",
+    viewport: desktop,
+    ready: '[data-slot="float-button"]',
+  });
+
+  const button = page.getByRole("button", { name: "新建内容", exact: true });
+  const link = page.getByRole("link", { name: "跳转到说明", exact: true });
+  await expect(button).toBeVisible();
+  await expect(link).toHaveAttribute("href", "#float-button-target");
+
+  await button.focus();
+  const tooltip = page.getByRole("tooltip");
+  await expect(tooltip).toContainText("新建内容");
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-core-float-button-tooltip.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-qrcode-canvas-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-qrcode",
+    viewport: desktop,
+    ready: '[data-slot="qrcode"]',
+  });
+
+  const canvas = page.getByRole("img", { name: "Gouno MFA 配置二维码", exact: true });
+  await expect(canvas).toHaveAttribute("width", "180");
+  await expect(canvas).toHaveAttribute("height", "180");
+  const box = await canvas.boundingBox();
+  expect(box?.width).toBeCloseTo(180, 0);
+  expect(box?.height).toBeCloseTo(180, 0);
+
+  const card = canvas.locator('xpath=ancestor::*[@data-slot="card"][1]');
+  await card.screenshot({
+    path: testInfo.outputPath("csa-core-qrcode-canvas.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-watermark-tile-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-watermark",
+    viewport: desktop,
+    ready: '[data-slot="watermark"]',
+  });
+
+  const watermark = page.locator('[data-slot="watermark"]').first();
+  await expect(watermark).toHaveAttribute("aria-label", "评审内容区域");
+  const backgroundImage = await watermark.evaluate((element) => getComputedStyle(element).backgroundImage);
+  expect(backgroundImage).toContain("data:image/svg+xml");
+  await expect(watermark.getByText("发布前检查", { exact: true })).toBeVisible();
+
+  const card = watermark.locator('xpath=ancestor::*[@data-slot="card"][1]');
+  await card.screenshot({
+    path: testInfo.outputPath("csa-core-watermark-tile.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-affix-container-scroll-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-affix",
+    viewport: desktop,
+    ready: '[data-slot="affix"]',
+  });
+
+  const affix = page.getByLabel("固定操作区");
+  const scrollContainer = affix.locator('xpath=ancestor::div[contains(@class,"overflow-auto")][1]');
+  const before = await affix.boundingBox();
+  const scrollBox = await scrollContainer.boundingBox();
+  if (!before || !scrollBox) throw new Error("missing Affix geometry");
+
+  await scrollContainer.evaluate((element) => {
+    element.scrollTop = 180;
+  });
+  await expect.poll(() => scrollContainer.evaluate((element) => element.scrollTop)).toBeGreaterThan(100);
+
+  const after = await affix.boundingBox();
+  if (!after) throw new Error("missing sticky Affix geometry");
+  expect(after.y).toBeLessThan(before.y);
+  expect(after.y).toBeGreaterThanOrEqual(scrollBox.y);
+  expect(after.y).toBeLessThan(scrollBox.y + 40);
+
+  await scrollContainer.screenshot({
+    path: testInfo.outputPath("csa-core-affix-sticky.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-core-back-top-return-evidence", async ({ page }, testInfo) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await prepareLightFixture(page, {
+    workspace: "gouno-ui",
+    brand: "blog-admin",
+    fixture: "core-back-top",
+    viewport: { width: 1000, height: 650 },
+    ready: '[data-slot="back-top"]',
+  });
+
+  const button = page.getByRole("button", { name: "回到顶部", exact: true });
+  await page.evaluate(() => window.scrollTo(0, 500));
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(100);
+  await button.click();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+
+  const card = button.locator('xpath=ancestor::*[@data-slot="card"][1]');
+  await card.screenshot({
+    path: testInfo.outputPath("csa-core-back-top-returned.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
 test("surface-gosso-overview-quick-link-card-ownership", async ({ page }) => {
   const scenario = {
     workspace: "gosso-admin",
