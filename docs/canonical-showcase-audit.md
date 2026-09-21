@@ -194,7 +194,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | CSA-2 Core browser pass | complete | Waves A–J manually accepted across the full Core catalog. Wave J closes the final residual families; Modal is normalized from Wave A accepted nested-overlay and focus-trap evidence. |
 | CSA-3 Pattern/Gouno pass | complete | Waves K–M manually accepted across all 15 Pattern/Gouno catalog families. TabPanelLead and PrivilegedAccessGate are also accepted as non-catalog cross-product composition contracts. |
 | CSA-4 Product Showcase pages | complete | Waves N–S accepted: all 38 Blog Admin, Gosso Admin and Public Blog Product Showcase pages are manually reviewed with rendered evidence. |
-| CSA-5 Canonical freeze / Consumer resume | ready | CSA-4 is complete; publish the accepted Canonical matrix before Consumer reverse migration resumes. |
+| CSA-5 Canonical freeze / Consumer resume | in progress | Candidate matrix accounts for 90 component/composition surfaces + 38 product pages = all 128 Showcase catalog surfaces; Consumer resume remains paused until freeze acceptance. |
 
 ## Rule for future progress claims
 
@@ -1501,3 +1501,20 @@ With Waves N through S accepted, **all 38 Product Showcase pages are manually ce
 The earlier “36 pages” wording in the Wave S staging note and PR description was a counting error; the catalog contains 38 product pages. The ledger is corrected here before freeze.
 
 CSA-4 is now complete. CSA-5 Canonical freeze is unblocked and should operate on the accepted Core / Pattern / Gouno / Product review ledger rather than reopening already-certified product pages without new evidence.
+
+
+## CSA-5 Canonical freeze candidate
+
+Status: **candidate / awaiting machine verification**
+
+Freeze baseline: `bb2c052dbf54fa37dc98b3be7a8e1ccfc9c973df` — the merge commit that completed CSA-4 Wave S.
+
+The machine-readable matrix is `canonical-showcase.json`. It accounts for the full accepted Showcase catalog:
+
+- 90 Core / Theme / Pattern / Gouno component-and-composition surfaces;
+- 38 Product Showcase pages (Public Blog 12 + Blog Admin 14 + Gosso Admin 12);
+- 128 / 128 catalog surfaces total, with no duplicate or unaccounted ids.
+
+The freeze guard `scripts/check-canonical-freeze.mjs` cross-checks the matrix against the live Showcase catalog, `completedComponents`, the CSA-4 Product review ledger and reopened-review state. CI must fail if a catalog surface drifts outside the matrix or an accepted review is reopened without re-certification.
+
+Consumer reverse migration remains paused during this candidate step. Freeze acceptance will change the matrix to `frozen`, mark Consumer resume `unblocked`, and publish the final CSA-5 acceptance record only after the matrix guard and existing CI / visual / reciprocal parity gates pass together.
