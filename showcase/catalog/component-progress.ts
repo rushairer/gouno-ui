@@ -1,6 +1,6 @@
 // Showcase completion is reviewed evidence, not architecture status. Keep this
 // list limited to canonical components whose API/examples/source/a11y/tests have
-// been reviewed together. Product pages use their migration status directly.
+// been reviewed together. Product pages keep migration progress separate; CSA-4 certification uses productReviews.
 const completedComponents = new Set([
   "core-config-provider",
   "core-button",
@@ -543,6 +543,28 @@ for (const [id, scope] of Object.entries({
     scope,
     evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs"],
     baseline: "CSA-3 Wave M manual-reviewed / 2026-09-21",
+  };
+}
+
+
+export const productReviews: Record<string, ComponentReview> = {};
+
+for (const [id, scope] of Object.entries({
+  "blog-admin-dashboard": "CSA-4 Wave N manual-reviewed: route-level page hierarchy, four-metric operating summary, traffic visualization and create permission action compose coherently as the real Blog Admin Dashboard.",
+  "blog-admin-posts": "CSA-4 Wave N manual-reviewed: search/status/category/tag filters, real row selection, BulkActionBar ownership and desktop table to 600px card-list transition preserve task context without horizontal overflow.",
+  "blog-admin-categories": "CSA-4 Wave N manual-reviewed: Collection page flows into the real New Category Drawer using canonical Editor Form anatomy and a field-scoped Slug AI affordance.",
+  "blog-admin-tags": "CSA-4 Wave N manual-reviewed: tag card-grid resource management preserves selection state and the shared AI/delete BulkActionBar grammar without page-local action drift.",
+  "blog-admin-pages": "CSA-4 Wave N manual-reviewed: single-page collection filters and selection preserve the same AI/delete bulk task boundary as other managed content resources.",
+  "blog-admin-comments": "CSA-4 Wave N manual-reviewed: moderation filter ownership, real selection and reported-only filtering correctly clear stale bulk-selection context while preserving the review list.",
+  "blog-admin-notifications": "CSA-4 Wave N manual-reviewed: independent notification filtering and selection use canonical bulk actions; successful mark-read mutation clears selection and surfaces product feedback.",
+  "blog-admin-media-library": "CSA-4 Wave N manual-reviewed: media collection/search/type grammar flows into the real Upload Drawer with Upload and Alt Text fields while page/card actions remain visually subordinate.",
+  "blog-admin-users": "CSA-4 Wave N manual-reviewed: member directory flows into the role editor while keeping Blog product-role ownership distinct from external GOSSO identity/account management.",
+})) {
+  productReviews[id] = {
+    status: "reviewed",
+    scope,
+    evidence: ["docs/canonical-showcase-audit.md", "showcase/e2e/canonical-visual-golden.pw.mjs"],
+    baseline: "CSA-4 Wave N manual-reviewed / 2026-09-21",
   };
 }
 

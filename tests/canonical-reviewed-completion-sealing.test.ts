@@ -1,9 +1,10 @@
 import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { componentReviews, reviewedProgress } from "../showcase/catalog/component-progress";
+import { componentProgress, componentReviews, productReviews, reviewedProgress } from "../showcase/catalog/component-progress";
 import { showcaseCatalog } from "../showcase/catalog";
 
 const canonicalId = /^(core|theme|pattern|gouno)-/;
+const productId = /^(?:blog(?:-admin)?|gosso)-/;
 
 describe("canonical reviewed-completion sealing", () => {
   it("keeps the reviewed completion set exactly aligned with the canonical Showcase catalog", () => {
@@ -15,6 +16,26 @@ describe("canonical reviewed-completion sealing", () => {
     );
     expect(Object.keys(componentReviews).sort()).toEqual([...catalogIds].sort());
     for (const [id, review] of Object.entries(componentReviews)) {
+      expect(review.scope.trim(), id).not.toBe("");
+      expect(review.baseline.trim(), id).not.toBe("");
+      expect(review.evidence.length, id).toBeGreaterThan(0);
+      for (const path of review.evidence) expect(existsSync(path), `${id}: ${path}`).toBe(true);
+    }
+  });
+
+  it("keeps CSA-4 product certification separate from canonical component completion", () => {
+    const productCatalogIds = new Set(
+      showcaseCatalog
+        .flatMap((group) => group.items)
+        .map((page) => page.id)
+        .filter((id) => productId.test(id)),
+    );
+
+    expect(Object.keys(productReviews).length).toBeGreaterThan(0);
+    for (const [id, review] of Object.entries(productReviews)) {
+      expect(productCatalogIds.has(id), id).toBe(true);
+      expect(componentReviews[id], id).toBeUndefined();
+      expect(componentProgress(id, 73), id).toBe(73);
       expect(review.scope.trim(), id).not.toBe("");
       expect(review.baseline.trim(), id).not.toBe("");
       expect(review.evidence.length, id).toBeGreaterThan(0);
