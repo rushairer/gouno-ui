@@ -1397,3 +1397,20 @@ The corrected evidence therefore targets the existing semantics directly:
 - Custom Page: `radiogroup[name="Blog CustomPage Fixture 状态"]` → `radio[name="未找到"]`.
 
 No runtime source, product state, responsive assertion, capture scope or acceptance condition is changed. The remaining 179 tests, including every other Wave R product path, passed in the first run.
+
+
+### Wave R manual finding — Home Hero orphan line
+
+Direct review of the eight Wave R captures produced by the first run found a real **Public Blog Home product-layout defect** even though the Home evidence itself passed mechanically.
+
+At the 1440px canonical viewport, the Home Hero heading wrapped after `知`, leaving only `识。` on the second line. The heading hierarchy, content and responsive container were otherwise correct, but this two-character orphan makes the primary public landing surface visibly unfinished.
+
+Ownership: **Public Blog Home Hero composition**, not Core Typography. Applying a global Typography line-breaking rule would risk changing unrelated headings whose widths and editorial content differ.
+
+Correction:
+
+- keep the existing display heading token, semantic H1 and width cap;
+- add product-local balanced line wrapping to the Home Hero heading;
+- require a fresh Wave R Golden capture before acceptance so the corrected line composition is reviewed together with the two corrected Fixture-state captures.
+
+The other seven first-run successful Public Blog captures were inspected and showed no Product, Pattern/Gouno or Foundation defect requiring reopening.
