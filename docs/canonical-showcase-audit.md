@@ -193,7 +193,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
 | CSA-2 Core browser pass | complete | Waves A–J manually accepted across the full Core catalog. Wave J closes the final residual families; Modal is normalized from Wave A accepted nested-overlay and focus-trap evidence. |
 | CSA-3 Pattern/Gouno pass | complete | Waves K–M manually accepted across all 15 Pattern/Gouno catalog families. TabPanelLead and PrivilegedAccessGate are also accepted as non-catalog cross-product composition contracts. |
-| CSA-4 Product Showcase pages | in progress | Waves N–O accepted: the complete Blog Admin Product Showcase family is manually reviewed. Wave P will audit Gosso Admin product pages. |
+| CSA-4 Product Showcase pages | in progress | Waves N–Q accepted: Blog Admin and Gosso Admin Product Showcase families are manually reviewed. Public Blog remains before CSA-5. |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
 
 ## Rule for future progress claims
@@ -1268,3 +1268,93 @@ All nine final Wave P captures were manually inspected. No remaining Product, Pa
 The first Golden run on `2856b264` exposed a real duplicate-Message defect in the Gosso System Management Showcase adapter. The corrected implementation keeps the strict Users assertion unchanged and also removes the duplicate success feedback visible in Client registration and Site Settings save evidence.
 
 Wave P certifies the seven authenticated Gosso Admin product pages. Login, Forgot Password, Reset Password, Auth Callback and Not Found remain the explicit Wave Q scope.
+
+
+## CSA-4 Wave Q — Gosso authentication and error surfaces
+
+Status: **accepted / manual-reviewed**
+
+Wave Q completes the Gosso Product Showcase family with the five standalone authentication and error surfaces that Wave P intentionally excluded: Login, Forgot Password, Reset Password, Auth Callback and Not Found.
+
+Dedicated browser evidence covers:
+
+- **Login** — performs a real password submit into MFA, completes the second factor and captures the successful authenticated state; the same route then switches through Fixture control into Sudo/step-up, completes strong authentication and validates the 600px composition;
+- **Forgot Password** — proves the submit action is disabled until an email is present, exercises the neutral successful response that does not disclose whether an account exists, then switches to the service-failure state and validates the non-enumerating error copy at 600px;
+- **Reset Password** — exercises minimum-length validation, mismatch validation and a successful reset before switching to an expired-link state where the reset form is unavailable; both successful and 600px expired states are captured;
+- **Auth Callback** — starts in Authorization Code + PKCE processing, switches to the successful recovered-session state, then to callback failure at 600px and finally drives the retry action back to processing;
+- **Not Found** — validates the standalone Result anatomy, requested path and both recovery actions at 600px, then uses the real “返回概览” action and requires navigation back to the Gosso Overview product page.
+
+Nine dedicated captures are produced: two each for Login, Forgot Password, Reset Password and Auth Callback, plus one Not Found mobile capture. Wave Q reviews complete product-state composition; it does not re-certify AuthSurface, Alert, FormField, Result, Button or other already-reviewed Core/Pattern primitives.
+
+Acceptance requires exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity plus direct manual inspection of all nine dedicated Wave Q captures.
+
+
+### Wave Q first-run FormField locator correction
+
+The first Wave Q Golden run on `7c3c295f` passed **169/172** browser tests. Callback and Not Found completed fully; Login, Forgot Password and Reset Password each timed out before their first field mutation.
+
+Classification: **evidence-driver locator defect**, not a Product or Core FormField defect.
+
+The failure snapshots prove that the rendered controls have the correct accessible names: `密码`, `邮箱`, `新密码` and `确认密码`. Core `FormField` also owns the expected `htmlFor` / `aria-labelledby` relationship. The failed evidence used Playwright `getByLabel(..., { exact: true })`, which matches the rendered label text; required fields also render a visual `*` marker, so exact label-text matching does not resolve even though the control's accessible name is correct.
+
+The corrected evidence targets the control semantics directly with `getByRole("textbox", { name: ..., exact: true })`. The same correction is applied proactively to the required `动态验证码` fields in MFA and Sudo. No product implementation, Core FormField behavior, business-state assertion or interaction sequence is weakened.
+
+
+### Wave Q manual finding — completed Login challenges remained actionable
+
+The corrected-locator exact-head run on `4fcec5c3` passed all four machine gates, including the complete Golden suite. Direct inspection of the nine Wave Q captures nevertheless found a real **Login product-state defect**:
+
+- after MFA success, the page simultaneously displayed `登录成功（Showcase 模拟）。` and the still-actionable `需要多因素认证` challenge;
+- after Sudo success, the page simultaneously displayed `强认证已完成（Showcase 模拟）。` and the still-actionable Administrator step-up form.
+
+This is not a Core Alert/FormField issue and is not an evidence problem. A completed authentication challenge cannot remain the active task surface after the same page declares success.
+
+Ownership: **Gosso Login Product Showcase state machine**.
+
+Correction:
+
+- successful MFA/passkey login enters a terminal login-completion state and removes the login challenge controls;
+- successful Sudo/passkey step-up enters a terminal Sudo-completion state and removes the step-up challenge controls;
+- changing Fixture scenario clears completion and starts the selected challenge cleanly;
+- the browser evidence now requires the success message and completion explanation while explicitly requiring the prior challenge title/action to be hidden.
+
+The machine-green run is therefore not accepted as Wave Q manual evidence; a fresh rendered run must prove the corrected post-success ownership.
+
+
+## CSA-4 Wave Q acceptance
+
+Status: **accepted / manual-reviewed**
+
+Accepted implementation head: `3ce3491aed304e5687071d680eaa7f7abca3537d`.
+
+Exact-head machine evidence:
+
+- CI `35591324011` — success;
+- Canonical Visual Golden Smoke `35591324022` — success;
+- Blog Consumer Parity `35591324049` — success;
+- Gosso Admin Consumer Parity `35591324004` — success;
+- rendered Golden artifact `10634848063` — all nine dedicated Wave Q captures inspected directly.
+
+Accepted product-page scope:
+
+- **Login** — password → MFA completes into a terminal authenticated state with the old challenge removed; Sudo/step-up likewise closes its Administrator challenge after success and remains coherent at 600px;
+- **Forgot Password** — the successful request and service-error paths both avoid account-existence disclosure while keeping one clear retry surface;
+- **Reset Password** — minimum-length and mismatch validation lead to a clean successful terminal state, while an expired link removes the reset form and leaves one explicit recovery path;
+- **Auth Callback** — PKCE processing resolves into distinct success and failure states; failure remains readable at 600px and the retry action returns to processing;
+- **Not Found** — the requested path and recovery actions remain readable at 600px, and “返回概览” navigates back to the actual Gosso Overview route.
+
+All nine final Wave Q captures were manually inspected. No remaining Product, Pattern/Gouno or Foundation defect requires reopening.
+
+Wave Q required two corrections before acceptance:
+
+1. the first run exposed an evidence-driver locator mismatch on required FormField labels even though the controls had correct accessible names;
+2. a later machine-green run exposed a real Login Product state-machine defect during manual review because successful MFA/Sudo challenges remained actionable. The product now transitions both success paths into explicit terminal completion states, and the evidence requires the prior challenge controls to be hidden.
+
+## Gosso Product Showcase completion
+
+With Waves P and Q accepted, **all 12 Gosso Product Showcase pages are now manually certified under CSA-4**:
+
+- Wave P — Overview, Account Settings, OAuth2 Clients, Users, Audit Logs, Site Settings, System Status;
+- Wave Q — Login, Forgot Password, Reset Password, Auth Callback, Not Found.
+
+CSA-4 is not globally complete yet. The 12 Public Blog product pages remain the final Product Showcase family before CSA-5 Canonical freeze and Consumer reverse migration can resume.

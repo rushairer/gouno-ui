@@ -4250,6 +4250,237 @@ test("csa-product-gosso-admin-system-status-evidence", async ({ page }, testInfo
   });
 });
 
+
+test("csa-product-gosso-login-auth-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-login",
+    viewport: { width: 1280, height: 900 },
+    ready: "form",
+  });
+
+  await expect(page.getByRole("heading", { level: 1, name: "统一身份中心", exact: true })).toBeVisible();
+  await page.getByRole("textbox", { name: "密码", exact: true }).fill("WaveQ-Password!");
+  await page.getByRole("button", { name: "登录", exact: true }).click();
+
+  await expect(page.getByText("密码验证通过；fixture 模拟服务端要求第二因素。", { exact: true })).toBeVisible();
+  await expect(page.getByText("需要多因素认证", { exact: true })).toBeVisible();
+  await page.getByRole("textbox", { name: "动态验证码", exact: true }).fill("123456");
+  await page.getByRole("button", { name: "验证并登录", exact: true }).click();
+  await expect(page.getByText("登录成功（Showcase 模拟）。", { exact: true })).toBeVisible();
+  await expect(page.getByText("登录挑战已经结束；真实产品会返回发起登录的 Gouno 产品。", { exact: true })).toBeVisible();
+  await expect(page.getByText("需要多因素认证", { exact: true })).toBeHidden();
+  await expect(page.getByRole("button", { name: "验证并登录", exact: true })).toBeHidden();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-login-mfa-success.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  const fixture = page.getByRole("button", { name: "打开 Fixture 控制", exact: true });
+  await fixture.click();
+  await page.getByText("Sudo", { exact: true }).click();
+  await page.keyboard.press("Escape");
+
+  await expect(page.getByRole("heading", { level: 1, name: "验证敏感操作", exact: true })).toBeVisible();
+  await expect(page.getByText("Administrator", { exact: true })).toBeVisible();
+  await page.getByRole("textbox", { name: "动态验证码", exact: true }).fill("654321");
+  await page.getByRole("button", { name: "完成强认证", exact: true }).click();
+  await expect(page.getByText("强认证已完成（Showcase 模拟）。", { exact: true })).toBeVisible();
+  await expect(page.getByText("强认证挑战已经结束；真实产品会继续刚才的高风险管理操作。", { exact: true })).toBeVisible();
+  await expect(page.getByText("Administrator", { exact: true })).toBeHidden();
+  await expect(page.getByRole("button", { name: "完成强认证", exact: true })).toBeHidden();
+
+  await page.setViewportSize({ width: 600, height: 900 });
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-login-sudo-mobile.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-gosso-forgot-password-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-forgot-password",
+    viewport: { width: 1100, height: 850 },
+    ready: "form",
+  });
+
+  const email = page.getByRole("textbox", { name: "邮箱", exact: true });
+  const submit = page.getByRole("button", { name: "发送重置链接", exact: true });
+  await expect(submit).toBeDisabled();
+  await email.fill("security@example.test");
+  await expect(submit).toBeEnabled();
+  await submit.click();
+
+  await expect(page.getByText("重置请求已受理", { exact: true })).toBeVisible();
+  await expect(page.getByText("如果该邮箱对应有效账户，重置链接已经发送（Showcase 模拟）。", { exact: true })).toBeVisible();
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-forgot-password-submitted.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  const fixture = page.getByRole("button", { name: "打开 Fixture 控制", exact: true });
+  await fixture.click();
+  await page.getByText("失败", { exact: true }).click();
+  await page.keyboard.press("Escape");
+
+  await expect(page.getByText("重置请求暂时失败", { exact: true })).toBeVisible();
+  await expect(page.getByText("身份服务暂时无法处理请求，请稍后重试。该错误不会暴露账户是否存在。", { exact: true })).toBeVisible();
+
+  await page.setViewportSize({ width: 600, height: 850 });
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-forgot-password-error-mobile.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-gosso-reset-password-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-reset-password",
+    viewport: { width: 1100, height: 900 },
+    ready: "form",
+  });
+
+  const password = page.getByRole("textbox", { name: "新密码", exact: true });
+  const confirm = page.getByRole("textbox", { name: "确认密码", exact: true });
+  const submit = page.getByRole("button", { name: "重置密码", exact: true });
+
+  await password.fill("short");
+  await confirm.fill("short");
+  await submit.click();
+  await expect(page.getByText("新密码至少需要 12 个字符。", { exact: true })).toBeVisible();
+
+  await password.fill("WaveQ-Password-123!");
+  await confirm.fill("WaveQ-Different-456!");
+  await submit.click();
+  await expect(page.getByText("两次输入的密码不一致。", { exact: true })).toBeVisible();
+
+  await confirm.fill("WaveQ-Password-123!");
+  await submit.click();
+  await expect(page.getByText("密码已重置（Showcase 模拟）。", { exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-reset-password-success.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  const fixture = page.getByRole("button", { name: "打开 Fixture 控制", exact: true });
+  await fixture.click();
+  await page.getByText("已过期", { exact: true }).click();
+  await page.keyboard.press("Escape");
+
+  await expect(page.getByText("密码重置链接已过期", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "重置密码", exact: true })).toBeHidden();
+
+  await page.setViewportSize({ width: 600, height: 850 });
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-reset-password-expired-mobile.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+});
+
+test("csa-product-gosso-callback-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-callback",
+    viewport: { width: 1100, height: 850 },
+    ready: '[role="status"]',
+  });
+
+  await expect(page.getByText("正在验证 OAuth 2.0 Authorization Code + PKCE 回调…", { exact: true })).toBeVisible();
+
+  const fixture = page.getByRole("button", { name: "打开 Fixture 控制", exact: true });
+  await fixture.click();
+  await page.getByText("成功", { exact: true }).click();
+  await page.keyboard.press("Escape");
+
+  await expect(page.getByRole("heading", { level: 1, name: "身份验证完成", exact: true })).toBeVisible();
+  await expect(page.getByText("授权回调已完成", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "继续访问目标应用", exact: true })).toBeVisible();
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-callback-success.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await fixture.click();
+  await page.getByText("失败", { exact: true }).click();
+  await page.keyboard.press("Escape");
+
+  await expect(page.getByRole("heading", { level: 1, name: "身份验证失败", exact: true })).toBeVisible();
+  await expect(page.getByText("CALLBACK_PARAMS_MISSING", { exact: true })).toBeVisible();
+
+  await page.setViewportSize({ width: 600, height: 850 });
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-callback-error-mobile.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await page.getByRole("button", { name: "返回首页并重试", exact: true }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "正在完成身份验证", exact: true })).toBeVisible();
+  await expect(page.getByText("正在验证 OAuth 2.0 Authorization Code + PKCE 回调…", { exact: true })).toBeVisible();
+});
+
+test("csa-product-gosso-not-found-evidence", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "gosso-admin",
+    brand: "gosso-admin",
+    fixture: "gosso-not-found",
+    viewport: { width: 600, height: 850 },
+    ready: "body",
+  });
+
+  await expect(page.getByRole("heading", { level: 1, name: "页面不存在", exact: true })).toBeVisible();
+  await expect(page.getByText("/unknown-route", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "返回概览", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "返回上一页", exact: true })).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-gosso-not-found-mobile.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await page.getByRole("button", { name: "返回概览", exact: true }).click();
+  await expect(page).toHaveURL(/#gosso-overview$/);
+  await expect(page.getByRole("heading", { level: 1, name: "身份管理控制台", exact: true })).toBeVisible();
+});
+
 test("surface-gosso-overview-quick-link-card-ownership", async ({ page }) => {
   const scenario = {
     workspace: "gosso-admin",
