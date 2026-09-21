@@ -763,3 +763,15 @@ Wave J is intentionally the final residual Core browser batch. It adds new rende
 `core-modal` receives no redundant new capture in Wave J. Wave A already accepted two stronger browser paths on exact-head evidence: nested Modal + Popover layer ordering and Modal focus trapping. Wave J will normalize that accepted evidence into the component review ledger rather than pretending the family was never manually reviewed.
 
 Acceptance requires the same exact-head gate as prior waves: CI, Canonical Visual Golden, Blog Consumer Parity, Gosso Admin Consumer Parity, and direct review of every newly generated Wave J screenshot. A defect found here must be repaired at its owning layer before CSA-2 can complete.
+
+
+### Wave J evidence-environment correction
+
+The first Wave J Golden run on `32569313` passed 6 of the 8 newly added residual-Core cases and failed only Input clear plus BackTop.
+
+Both failures are classified as **evidence-environment defects**, not Core defects:
+
+- **Input:** embedded Gouno UI fixtures intentionally inherit the default `enUS` component locale, while the first test hard-coded the Chinese accessible name `清除输入`. The corrected evidence scopes to the same canonical `input-group`, requires exactly one clear action with a non-empty accessible label, clicks it normally, and still verifies value clearing plus focus retention. Runtime localization remains unchanged.
+- **BackTop:** the canonical embedded Showcase shell is exactly viewport-height and does not naturally create a scrollable `window`, while BackTop's documented contract intentionally listens to `window.scrollY`. The corrected browser evidence adds inert document height inside the test environment, performs a real `window.scrollTo`, then activates BackTop and requires `scrollY === 0`. The component is not changed to observe the Showcase's internal navigation scroller.
+
+Textarea, CodeBlock, FloatButton, QRCode, Watermark and Affix all passed on the first Wave J browser run. No runtime/Core change is justified by these two evidence failures.

@@ -2474,7 +2474,10 @@ test("csa-core-input-clear-evidence", async ({ page }, testInfo) => {
   await expect(input).toHaveValue("Gouno UI");
   await expect(card.getByText("当前值：Gouno UI", { exact: true })).toBeVisible();
 
-  await card.getByRole("button", { name: "清除输入", exact: true }).click();
+  const clear = card.locator('[data-slot="input-group"] button');
+  await expect(clear).toHaveCount(1);
+  await expect(clear).toHaveAttribute("aria-label", /.+/);
+  await clear.click();
   await expect(input).toHaveValue("");
   await expect(input).toBeFocused();
   await expect(card.getByText("当前值：（空）", { exact: true })).toBeVisible();
@@ -2672,6 +2675,15 @@ test("csa-core-back-top-return-evidence", async ({ page }, testInfo) => {
   });
 
   const button = page.getByRole("button", { name: "回到顶部", exact: true });
+  await page.evaluate(() => {
+    const spacer = document.createElement("div");
+    spacer.dataset.csaBackTopSpacer = "true";
+    spacer.style.height = "1600px";
+    spacer.style.width = "1px";
+    spacer.setAttribute("aria-hidden", "true");
+    document.body.appendChild(spacer);
+  });
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollHeight)).toBeGreaterThan(1000);
   await page.evaluate(() => window.scrollTo(0, 500));
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(100);
   await button.click();
