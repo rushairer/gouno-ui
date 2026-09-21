@@ -3788,6 +3788,21 @@ test("csa-product-blog-admin-post-editor-history-evidence", async ({ page }, tes
   await expect(page.getByText("已成功恢复历史版本。", { exact: true })).toBeVisible();
   await expect(editor.getByRole("tab", { name: /^大纲 / })).toHaveAttribute("aria-selected", "true");
   await expectNoHorizontalDocumentOverflow(page);
+
+  await page.setViewportSize({ width: 600, height: 1100 });
+  await expectNoHorizontalDocumentOverflow(page);
+  const mobileCanvas = editor.getByLabel("文章编辑画布", { exact: true });
+  const mobileInspector = editor.getByLabel("文章元数据 Inspector", { exact: true });
+  const mobileBoxes = await Promise.all([mobileCanvas.boundingBox(), mobileInspector.boundingBox()]);
+  if (!mobileBoxes[0] || !mobileBoxes[1]) throw new Error("missing Post Editor mobile geometry");
+  expect(mobileBoxes[1].y).toBeGreaterThanOrEqual(mobileBoxes[0].y + mobileBoxes[0].height - 2);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-post-editor-mobile-restored.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
 });
 
 test("csa-product-blog-admin-page-editor-inspector-ai-evidence", async ({ page }, testInfo) => {
@@ -3828,6 +3843,21 @@ test("csa-product-blog-admin-page-editor-inspector-ai-evidence", async ({ page }
     caret: "hide",
   });
   await expectNoHorizontalDocumentOverflow(page);
+
+  await page.setViewportSize({ width: 600, height: 1100 });
+  await expectNoHorizontalDocumentOverflow(page);
+  const mobileCanvas = editor.getByLabel("单页编辑画布", { exact: true });
+  const mobileInspector = editor.getByLabel("单页元数据 Inspector", { exact: true });
+  const mobileBoxes = await Promise.all([mobileCanvas.boundingBox(), mobileInspector.boundingBox()]);
+  if (!mobileBoxes[0] || !mobileBoxes[1]) throw new Error("missing Page Editor mobile geometry");
+  expect(mobileBoxes[1].y).toBeGreaterThanOrEqual(mobileBoxes[0].y + mobileBoxes[0].height - 2);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-page-editor-mobile-ai-inspector.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
 });
 
 test("csa-product-blog-admin-ai-operations-workspace-evidence", async ({ page }, testInfo) => {
@@ -3894,9 +3924,17 @@ test("csa-product-blog-admin-ai-settings-deep-task-evidence", async ({ page }, t
 
   await dedicated.getByRole("button", { name: "返回 Skill 列表", exact: true }).click();
   await tabs.getByRole("tab", { name: "模型连接", exact: true }).click();
-  await expect(page.locator('[data-slot="blog-privileged-access-gate"]')).toBeVisible();
+  const providerGate = page.locator('[data-slot="blog-privileged-access-gate"]');
+  await expect(providerGate).toBeVisible();
   await expect(page.locator('[data-pattern="tab-panel-lead"]')).toContainText("管理模型连接、密钥状态以及文本与图片生成的默认用途。");
   await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-ai-settings-provider-gate.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
 });
 
 test("csa-product-blog-admin-site-settings-step-up-evidence", async ({ page }, testInfo) => {
@@ -3937,6 +3975,18 @@ test("csa-product-blog-admin-site-settings-step-up-evidence", async ({ page }, t
 
   await page.screenshot({
     path: testInfo.outputPath("csa-product-blog-admin-site-settings-step-up-restored.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await page.setViewportSize({ width: 600, height: 1200 });
+  await expectNoHorizontalDocumentOverflow(page);
+  await expect(page.getByText("有未保存修改", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "保存设置", exact: true })).toBeVisible();
+
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-site-settings-step-up-mobile.png"),
     fullPage: true,
     animations: "disabled",
     caret: "hide",

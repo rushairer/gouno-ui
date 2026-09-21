@@ -193,7 +193,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
 | CSA-2 Core browser pass | complete | Waves A–J manually accepted across the full Core catalog. Wave J closes the final residual families; Modal is normalized from Wave A accepted nested-overlay and focus-trap evidence. |
 | CSA-3 Pattern/Gouno pass | complete | Waves K–M manually accepted across all 15 Pattern/Gouno catalog families. TabPanelLead and PrivilegedAccessGate are also accepted as non-catalog cross-product composition contracts. |
-| CSA-4 Product Showcase pages | in progress | Wave N accepted: Blog Admin content-management pages (Dashboard, Posts, Categories, Tags, Pages, Comments, Notifications, Media Library, Users). Wave O will audit Blog Admin deep-task pages. |
+| CSA-4 Product Showcase pages | in progress | Wave N accepted. Wave O candidate audits the five remaining Blog Admin deep-task pages: Post Editor, Page Editor, AI Operations, AI Settings and Site Settings. |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
 
 ## Rule for future progress claims
@@ -1124,3 +1124,22 @@ The corrected governance model adds a separate `productReviews` ledger:
 - a new sealing assertion verifies product-review IDs exist in the Product catalog, never overlap `componentReviews`, retain evidence/baseline, and leave product migration progress unchanged.
 
 Wave N's rendered acceptance conclusions are unchanged. This correction only places that evidence in the correct governance layer.
+
+
+## CSA-4 Wave O — Blog Admin deep-task pages
+
+Status: **candidate / awaiting batched machine + rendered review**
+
+Wave O completes the Blog Admin Product Showcase family by reviewing the five high-depth task pages that Wave N intentionally excluded.
+
+Dedicated browser evidence covers:
+
+- **Post Editor** — full DocumentEditorShell ownership, real History tab and version dialog, restore mutation returning to Outline, then 600px canvas/inspector stacking without horizontal overflow;
+- **Page Editor** — page-specific no-navigator editor grammar, Inspector-owned template/navigation/Slug settings, real AI title candidate application, then 600px canvas/inspector stacking;
+- **AI Operations** — all four workspace tabs exist, Automation opens a real Workflow detail, and Run Center remains an evidence workspace rather than becoming a second configuration page. Existing Golden coverage in the same run also retains Workflow detail/editor mobile baselines;
+- **AI Settings** — six section tabs remain one product route, Skill editing uses the Dedicated Editor product path, and Model Connections return to the privileged-operation/TabPanelLead composition instead of inventing a second settings grammar;
+- **Site Settings** — real "save when MFA expires" flow preserves dirty draft state through lock → Step-Up → restore, remains usable at 600px, then commits and returns to synchronized state.
+
+Wave O does not re-certify DocumentEditorShell, MarkdownEditor, Dedicated Editor, TabPanelLead or PrivilegedAccessGate as abstractions; those were accepted under CSA-3. The question here is whether the complete Blog Admin products compose them correctly through real task transitions.
+
+Acceptance requires one exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity cycle plus direct manual review of all nine dedicated Wave O captures. Existing AI Operations mobile visual baselines may be used as supplemental product evidence, but cannot replace review of the new Run Center capture.
