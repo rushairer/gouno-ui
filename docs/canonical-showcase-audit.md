@@ -193,7 +193,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | CSA-1 Foundation sanity | complete | Batch 1 plus accepted CSA-2/CSA-3 rendered evidence cover Typography, Layout/Density, Surface/Elevation, Responsive, Overlay and Interaction State; no Foundation authority remains reopened. |
 | CSA-2 Core browser pass | complete | Waves A–J manually accepted across the full Core catalog. Wave J closes the final residual families; Modal is normalized from Wave A accepted nested-overlay and focus-trap evidence. |
 | CSA-3 Pattern/Gouno pass | complete | Waves K–M manually accepted across all 15 Pattern/Gouno catalog families. TabPanelLead and PrivilegedAccessGate are also accepted as non-catalog cross-product composition contracts. |
-| CSA-4 Product Showcase pages | planned | |
+| CSA-4 Product Showcase pages | in progress | Wave N candidate audits the Blog Admin content-management / collection page family: Dashboard, Posts, Categories, Tags, Pages, Comments, Notifications and Media Library. |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
 
 ## Rule for future progress claims
@@ -1078,3 +1078,27 @@ The Wave A Steps finding does not contradict this conclusion. Human review rejec
 Therefore CSA-1 no longer has an independent outstanding evidence gap. Its original Batch 1 evidence plus the much broader accepted CSA-2/CSA-3 corpus complete the intended Foundation presentation sanity pass.
 
 This completion does **not** certify product pages. CSA-4 remains responsible for whole-page product composition, state placement and cross-Pattern consistency before any Canonical freeze or Consumer-resume claim.
+
+
+## CSA-4 Wave N — Blog Admin content-management pages
+
+Status: **candidate / awaiting batched machine + rendered review**
+
+CSA-4 changes the unit of review from Component/Pattern to whole product pages. A page is not accepted merely because every component it uses has already passed CSA-2/CSA-3: the product can still drift through page-local hierarchy, state placement, permission behavior, responsive collection structure or inconsistent task transitions.
+
+Wave N deliberately groups the eight Blog Admin content-management / collection pages and leaves task-heavy editors, AI administration, member management and Site Settings for a later Blog Admin wave.
+
+Browser evidence covers one high-value product path per page, while existing base light/dark/mobile Golden states remain supporting evidence:
+
+- **Dashboard** — switch the real Fixture permission context from Administrator to Moderator; verify primary action becomes `审核评论`, AI-management alert content disappears, content metrics retain allowed destinations and the full page remains overflow-safe;
+- **Posts** — select a real desktop row, preserve sticky BulkActionBar context and open the actual Workflow launcher with immutable one-post resource scope;
+- **Categories** — open the canonical create Drawer, enter a real category name and expose the embedded Slug `AISuggestionPicker` without breaking Drawer/page overlay ownership;
+- **Tags** — exercise partial batch-delete failure and verify successful items disappear while failed items remain selected with error feedback and BulkActionBar continuity;
+- **Pages** — at 600px verify the desktop Table gives way to the mobile Card list, then paginate to page 2 without horizontal overflow or collection-context loss;
+- **Comments** — enable reported-only moderation, reduce the queue to the reported comment, then select it and verify moderation/AI batch context remains page-owned;
+- **Notifications** — select two notifications, switch Fixture writes to failure, attempt batch mark-read and verify both row state and selection survive under an error alert;
+- **Media Library** — attempt to delete referenced media and verify the product blocks deletion, preserves the asset and surfaces concrete referencing-post destinations in the error state.
+
+The intent is not to re-test Core Checkbox, Modal, Drawer, Alert or BulkActionBar in isolation. Those contracts are already certified. Wave N asks whether Blog Admin combines them into coherent product tasks and preserves the correct state ownership when the task changes.
+
+Acceptance requires one exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity cycle plus direct human review of all eight new Wave N product captures. Any page-level defect discovered here must be fixed in the Showcase product composition before that page family can be certified.
