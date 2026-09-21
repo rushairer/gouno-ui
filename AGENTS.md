@@ -121,6 +121,16 @@ When manual review finds a repeated/systemic defect:
 
 The durable execution ledger for this pass is `docs/canonical-showcase-audit.md`. FI-001 remains historical foundation certification evidence; this audit does not silently reopen a Foundation unless an observed rendered defect demonstrates that the certified authority is actually wrong or incomplete.
 
+## CSA-5 frozen Canonical matrix
+
+The durable machine-readable freeze is `canonical-showcase.json`.
+
+- Consumer reverse migration may resume only when that matrix is `frozen`, and only from surfaces listed in it.
+- A new Showcase catalog surface is not Canonical merely because it renders or passes CI; it must complete the same manual-first review path and be added to the matrix through an explicit freeze update.
+- If a listed component, composition or product review is later marked `reopened`, propagation for that affected surface stops until the defect is resolved, rendered evidence is manually re-reviewed, and the matrix is re-certified.
+- Do not edit matrix counts or remove catalog ids merely to make the freeze guard green. The matrix must remain a lossless accounting of the accepted Showcase catalog.
+- Consumer resume remains **manual-first plus reciprocal parity**: reciprocal automation protects already-reviewed bindings, but cannot create or renew manual certification on its own.
+
 ## Showcase evidence rule
 
 Showcase has two roles:
