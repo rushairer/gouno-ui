@@ -193,7 +193,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
 | CSA-2 Core browser pass | complete | Waves A–J manually accepted across the full Core catalog. Wave J closes the final residual families; Modal is normalized from Wave A accepted nested-overlay and focus-trap evidence. |
 | CSA-3 Pattern/Gouno pass | complete | Waves K–M manually accepted across all 15 Pattern/Gouno catalog families. TabPanelLead and PrivilegedAccessGate are also accepted as non-catalog cross-product composition contracts. |
-| CSA-4 Product Showcase pages | in progress | Wave N candidate audits Blog Admin content-management product pages: Dashboard, Posts, Categories, Tags, Pages, Comments, Notifications, Media Library and Users. |
+| CSA-4 Product Showcase pages | in progress | Wave N accepted: Blog Admin content-management pages (Dashboard, Posts, Categories, Tags, Pages, Comments, Notifications, Media Library, Users). Wave O will audit Blog Admin deep-task pages. |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
 
 ## Rule for future progress claims
@@ -1058,7 +1058,7 @@ CSA-3 Pattern/Gouno composition pass is therefore complete. The next gate is **C
 
 ## CSA-4 Wave N — Blog Admin content-management pages
 
-Status: **candidate / awaiting batched machine + rendered review**
+Status: **accepted / manual-reviewed**
 
 CSA-4 changes the unit of review from Component/Pattern to the **actual product page**. Core and Pattern behaviors remain prerequisites from CSA-2/CSA-3; a product page is accepted only when those authorities are composed coherently in the real Showcase route, including page hierarchy, state placement, responsive behavior and task interaction.
 
@@ -1077,3 +1077,34 @@ Wave N covers nine Blog Admin content-management pages:
 Wave N intentionally does **not** certify Post/Page Editors, AI Operations/Settings or Site Settings; those high-depth task pages are Wave O. It also does not re-certify BulkActionBar, Editor Form, PageHeader or other Pattern/Gouno families already accepted under CSA-3.
 
 Acceptance requires exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity plus direct manual inspection of all ten Wave N captures. Any visual/composition defect found here must be repaired at the owning Product/Pattern/Foundation layer instead of weakening the browser evidence.
+
+
+## CSA-4 Wave N acceptance
+
+Status: **accepted / manual-reviewed**
+
+Accepted implementation head: `d0cd27ae879c4146a1d6797f85c95a5bc3d27b91`.
+
+Exact-head machine evidence:
+
+- CI `35568761005` — success;
+- Canonical Visual Golden Smoke `35568761320` — success;
+- Blog Consumer Parity `35568761106` — success;
+- Gosso Admin Consumer Parity `35568761029` — success;
+- rendered Golden artifact `10625101996` — inspected directly.
+
+Accepted product-page scope:
+
+- **Dashboard** — PageHeader, create permission action, four KPI cards, traffic visualization and downstream operating sections retain a clear route-level hierarchy;
+- **Posts** — four-filter toolbar, single-row selection, canonical BulkActionBar and 600px table → Card-list transition preserve the same selected-resource context without horizontal overflow;
+- **Categories** — New Category opens the real Drawer, which uses canonical Editor Form anatomy and keeps Slug AI attached to the Slug field rather than creating page-global AI noise;
+- **Tags** — card-grid selection exposes the same AI/delete bulk action language used elsewhere;
+- **Pages** — filter/selection/bulk grammar matches other managed-content collections;
+- **Comments** — selecting a comment creates one bulk boundary; switching to reported-only intentionally clears stale selection and leaves the moderation list as the active context;
+- **Notifications** — status/type filtering, selection and successful bulk mark-read mutation return to an unselected list and surface explicit product feedback;
+- **Media Library** — media grid and page actions remain behind the Upload Drawer; upload and Alt Text fields form one focused task without Drawer/header overlap;
+- **Users** — the member role editor keeps Blog role assignment inside the product while the surrounding copy/actions continue to route identity/account responsibility to GOSSO.
+
+All ten Wave N captures were manually inspected. No product, Pattern/Gouno or Foundation defect required reopening, and the first exact-head Golden run passed without evidence-driver correction.
+
+Wave N acceptance does not certify the remaining Blog Admin deep-task pages. Post Editor, Page Editor, AI Operations, AI Settings and Site Settings remain the explicit Wave O scope.
