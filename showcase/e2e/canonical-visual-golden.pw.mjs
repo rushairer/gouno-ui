@@ -3061,9 +3061,9 @@ test("csa-pattern-settings-composition-evidence", async ({ page }, testInfo) => 
   expect(boxes[1].y).toBeLessThan(boxes[2].y);
 
   const publicAccess = settings.getByRole("switch", { name: "允许公开访问", exact: true });
-  await expect(publicAccess).toHaveAttribute("aria-checked", "true");
+  await expect(publicAccess).toBeChecked();
   await publicAccess.click();
-  await expect(publicAccess).toHaveAttribute("aria-checked", "false");
+  await expect(publicAccess).not.toBeChecked();
 
   await settings.screenshot({
     path: testInfo.outputPath("csa-pattern-settings-toggle-off.png"),

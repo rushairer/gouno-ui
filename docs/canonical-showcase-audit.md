@@ -907,3 +907,14 @@ Browser evidence covers:
 This batch is deliberately composition-level: it does not promote Table, Input, Switch or Card again. Core behavior was completed under CSA-2; Wave L asks whether those Core pieces are being combined into one repeatable admin-page grammar.
 
 Acceptance requires one exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity cycle plus direct manual inspection of all nine Wave L captures.
+
+
+### Wave L Settings switch evidence-state correction
+
+The first Wave L Golden run on `18883ede` passed Collection, Record Detail, Master-Detail and Data Summary and failed only the Settings switch state assertion.
+
+Classification: **evidence-driver defect**, not a Core Switch or Settings composition defect.
+
+The canonical Core Switch deliberately renders a native checkbox input with `role="switch"`. Its checked state is the native DOM `checked` property; it does not duplicate that state into an `aria-checked` attribute. The failed evidence incorrectly asserted the latter.
+
+The corrected browser evidence uses Playwright's native-state-aware `toBeChecked()`, performs an ordinary click, and then requires `not.toBeChecked()`. All Settings composition order, responsive field geometry and screenshot assertions remain unchanged. No runtime component or composition implementation is modified.
