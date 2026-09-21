@@ -192,7 +192,7 @@ This is deliberately weaker than a global Showcase certification. The reviewed s
 | CSA-0 Stabilize | complete | Obsolete Blog AI reverse-migration PR closed; Blog Core Wave 2 merged to `gouno-blog/main` at `5e20df79`; Consumer expansion is frozen at this checkpoint. |
 | CSA-1 Foundation sanity | in progress | Batch 1 covers Categories, AI Settings tab leads, Dedicated Agent/Skill editors, Provider Drawer and mobile Post Editor; no Foundation reopened. |
 | CSA-2 Core browser pass | complete | Waves A–J manually accepted across the full Core catalog. Wave J closes the final residual families; Modal is normalized from Wave A accepted nested-overlay and focus-trap evidence. |
-| CSA-3 Pattern/Gouno pass | planned | |
+| CSA-3 Pattern/Gouno pass | in progress | Wave K candidate audits the foundational page frame and collection-action grammar: AppShell, PageContainer, PageHeader, PageSkeleton and BulkActionBar. |
 | CSA-4 Product Showcase pages | planned | |
 | CSA-5 Canonical freeze / Consumer resume | planned | |
 
@@ -825,3 +825,22 @@ That evidence came from exact-head Golden run `35500170014`, artifact `106010146
 With Wave J accepted, **every Core catalog family now has explicit real-browser manual review evidence or an explicitly normalized prior accepted browser path**. CSA-2 Core component real-browser pass is therefore complete.
 
 This does **not** mean the entire Showcase is Canonical. The next gate is CSA-3 Pattern/Gouno composition: page-level composition contracts such as Tab Panel Lead, Dedicated Editor, Editor Form, Collection, Record Detail, Master-Detail, PageHeader/Toolbar/Filter families and privileged-operation presentation still require family-by-family rendered review before CSA-4 Product page certification or Consumer resume.
+
+
+## CSA-3 Wave K — page frame and collection actions
+
+Status: **candidate / awaiting batched machine + rendered review**
+
+CSA-3 does not inherit an older `reviewed` flag as proof of rendered composition quality. Historic API tests, FI-001 certification and focused product evidence remain useful inputs, but this phase requires direct browser inspection of the actual page-composition contract.
+
+Wave K starts with the frame that later Pattern/Product families depend on:
+
+- **AppShell** — desktop header/sidebar/main composition, canonical 288px navigation track, embedded PageContainer, mobile navigation trigger, real Sheet navigation and focus return after closing through a navigation action;
+- **PageContainer** — the semantic `layout-page-container` track consumes the 90rem maximum-width and 1.5rem page-stack gap authority rather than reintroducing page-local geometry;
+- **PageHeader** — route-level H1/description/actions stay one row at desktop width and stack into a clear single content axis below `md`;
+- **PageSkeleton** — collection/form/dashboard loading regions retain status/busy semantics; the collection skeleton switches from desktop table geometry to mobile Cards rather than shrinking a table;
+- **BulkActionBar** — real selection count changes, business-action feedback, cancel-selection disappearance and restoration verify that the Pattern owns selected-context/action rhythm while callers retain selection/business state.
+
+This first CSA-3 batch is deliberately limited to five foundational families. Admin data compositions will follow as Wave L; Editor/AI/Tab-panel/privileged-operation compositions follow as Wave M. No family is promoted by source markers or historic tests alone.
+
+Acceptance requires one exact-head CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity cycle plus direct manual inspection of all eight Wave K captures.
