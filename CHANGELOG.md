@@ -4,6 +4,12 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.4.9] - 2026-09-22
+
+### Fixed
+- Select and TreeSelect multi-value triggers keep the shared picker chevron anchored to the trailing edge instead of letting selected tags consume the trigger width.
+- Preserve canonical single-value Select, TreeSelect and Cascader trigger geometry while adding focused unit and browser regression coverage for picker alignment.
+
 ## [0.4.8] - 2026-09-19
 
 ### Fixed
