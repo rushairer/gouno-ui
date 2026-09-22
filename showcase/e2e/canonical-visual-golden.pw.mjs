@@ -183,6 +183,23 @@ async function expectNoHorizontalDocumentOverflow(page) {
   expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.viewport + 1);
 }
 
+async function expectTrailingPickerChevron(control, trigger) {
+  const chevron = trigger.locator('[data-slot="picker-chevron"]');
+  await expect(chevron).toHaveCount(1);
+
+  const [controlBox, chevronBox] = await Promise.all([
+    control.boundingBox(),
+    chevron.boundingBox(),
+  ]);
+  expect(controlBox).toBeTruthy();
+  expect(chevronBox).toBeTruthy();
+
+  const rightInset =
+    controlBox.x + controlBox.width - (chevronBox.x + chevronBox.width);
+  expect(rightInset).toBeGreaterThanOrEqual(8);
+  expect(rightInset).toBeLessThanOrEqual(20);
+}
+
 async function captureCanonicalAuditEvidence(page, testInfo, name) {
   await page.screenshot({
     path: testInfo.outputPath(`csa-${name}.png`),
@@ -861,6 +878,26 @@ test("csa-core-select-popup-evidence", async ({ page }, testInfo) => {
   ).toEqual({ opacity: "0", pointerEvents: "none" });
 
   const trigger = root.getByRole("combobox");
+  await expectTrailingPickerChevron(
+    root.locator('[data-slot="select-control"]'),
+    trigger,
+  );
+
+  const tagsDemo = page
+    .getByRole("heading", { level: 3, name: "多选 Tags 与搜索" })
+    .locator('xpath=ancestor::*[@data-slot="card"][1]');
+  const tagsRoot = tagsDemo.locator('[data-slot="select"]').first();
+  const tagsTrigger = tagsRoot.getByRole("combobox", { name: "负责团队" });
+  await expectTrailingPickerChevron(
+    tagsRoot.locator('[data-slot="select-control"]'),
+    tagsTrigger,
+  );
+  await tagsDemo.screenshot({
+    path: testInfo.outputPath("csa-core-select-multiple-chevron.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+
   await trigger.click();
   await expect(trigger).toHaveAttribute("aria-expanded", "true");
   const list = page.locator('[data-slot="select-list"]:visible');
@@ -927,6 +964,15 @@ test("csa-core-tree-select-popup-evidence", async ({ page }, testInfo) => {
   const multipleRoot = roots.nth(1);
   const multipleTrigger = multipleRoot.getByRole("combobox", {
     name: "关联主题",
+  });
+  await expectTrailingPickerChevron(
+    multipleRoot.locator('[data-slot="tree-select-control"]'),
+    multipleTrigger,
+  );
+  await multipleRoot.screenshot({
+    path: testInfo.outputPath("csa-core-tree-select-multiple-chevron.png"),
+    animations: "disabled",
+    caret: "hide",
   });
   await multipleTrigger.click();
   await expect(multipleTrigger).toHaveAttribute("aria-expanded", "true");

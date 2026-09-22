@@ -88,6 +88,8 @@ describe("TreeSelect 6D7", () => {
     );
 
     const trigger = screen.getByRole("combobox", { name: "Topics" });
+    expect(trigger.className).toContain("flex-none");
+    expect(trigger.className).not.toContain("flex-1");
     expect(trigger.textContent).toContain("Guide");
     expect(trigger.textContent).toContain("API");
     await userEvent.click(trigger);

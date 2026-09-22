@@ -128,7 +128,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
                 else if (event.key === "Enter" || event.key === " ") { event.preventDefault(); if (open) selectActive(); else setOpen(true); }
                 else if (event.key === "Escape" && open) { event.preventDefault(); setOpen(false); }
               }}
-              className={cn(pickerTriggerClass, multi && hasValue ? "shrink-0" : "flex-1")}>
+              className={pickerTriggerClass({ fill: !(multi && hasValue) })}>
               <span className={cn("min-w-0 flex-1 truncate", !hasValue && "text-muted-foreground", multi && hasValue && "sr-only")}>{multi && hasValue ? selectedOptions.map((option) => typeof option.label === "string" ? option.label : option.value).join(", ") : display ?? resolvedPlaceholder}</span>
               <PickerChevron />
             </button>

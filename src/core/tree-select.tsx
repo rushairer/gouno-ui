@@ -252,10 +252,9 @@ export const TreeSelect = forwardRef<HTMLSelectElement, TreeSelectProps>(
                   aria-invalid={invalid}
                   aria-required={required || ariaRequired || undefined}
                   disabled={disabled}
-                  className={cn(
-                    pickerTriggerClass,
-                    multiple && selectedValues.length ? "shrink-0" : "flex-1",
-                  )}
+                  className={pickerTriggerClass({
+                    fill: !(multiple && selectedValues.length),
+                  })}
                   onKeyDown={(event) => {
                     if (
                       event.key === "ArrowDown" ||
