@@ -259,7 +259,7 @@ export const Cascader = forwardRef<HTMLDivElement, CascaderProps>(
                   aria-describedby={ariaDescribedBy}
                   aria-invalid={invalid}
                   disabled={disabled}
-                  className={pickerTriggerClass}
+                  className={pickerTriggerClass()}
                   onKeyDown={(event) => {
                     if (
                       event.key === "ArrowDown" ||

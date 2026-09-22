@@ -20,7 +20,10 @@ describe("Core data entry controls", () => {
   it("renders searchable multi-select options as removable tags", () => {
     const onChange = vi.fn();
     render(<Select aria-label="Topics" mode="multiple" showSearch defaultValue={["ui"]} onChange={onChange}><option value="ui">UI</option><option value="api">API</option></Select>);
-    fireEvent.click(screen.getByRole("combobox", { name: "Topics" }));
+    const trigger = screen.getByRole("combobox", { name: "Topics" });
+    expect(trigger.className).toContain("flex-none");
+    expect(trigger.className).not.toContain("flex-1");
+    fireEvent.click(trigger);
     fireEvent.change(screen.getByRole("combobox", { name: "Search options" }), { target: { value: "API" } });
     fireEvent.click(screen.getByRole("option", { name: "API" }));
     expect(screen.getByRole("button", { name: "Remove API" })).toBeTruthy();

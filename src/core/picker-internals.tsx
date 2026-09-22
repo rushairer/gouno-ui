@@ -28,8 +28,18 @@ export function pickerControlClass({
   );
 }
 
-export const pickerTriggerClass =
-  "flex min-w-0 flex-1 items-center gap-2 self-stretch text-left outline-none disabled:cursor-not-allowed";
+interface PickerTriggerClassOptions {
+  fill?: boolean;
+}
+
+export function pickerTriggerClass({
+  fill = true,
+}: PickerTriggerClassOptions = {}) {
+  return cn(
+    "flex min-w-0 items-center gap-2 self-stretch text-left outline-none disabled:cursor-not-allowed",
+    fill ? "flex-1" : "flex-none",
+  );
+}
 
 export function PickerChevron({
   className,
@@ -38,6 +48,7 @@ export function PickerChevron({
   return (
     <ChevronDown
       aria-hidden="true"
+      data-slot="picker-chevron"
       className={cn("size-4 shrink-0 text-muted-foreground", className)}
       {...props}
     />
