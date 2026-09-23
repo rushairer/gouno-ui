@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Clock3, GitBranch, ShieldCheck, Wrench } from "lucide-react";
+import { ArrowLeft, Clock3, GitBranch, ShieldCheck, Wrench } from "lucide-react";
 import {
   Alert,
   Button,
@@ -565,6 +565,9 @@ export function AIOpsRecordsPanel({
   onRouteChange: (target: AIOpsRecordsTarget) => void;
 }) {
   const [record, setRecord] = useState<"workflow" | "agent">(initialRecord);
+  const [mobilePane, setMobilePane] = useState<"master" | "detail">(
+    initialRunId ? "detail" : "master",
+  );
   const [workflowId, setWorkflowId] = useState(0);
   const [status, setStatus] = useState("");
   const [resolvedInteractions, setResolvedInteractions] = useState<Set<number>>(
@@ -614,6 +617,7 @@ export function AIOpsRecordsPanel({
 
   const selectRecord = (next: "workflow" | "agent") => {
     setRecord(next);
+    setMobilePane("master");
     onRouteChange({ record: next });
   };
 
@@ -652,6 +656,7 @@ export function AIOpsRecordsPanel({
               onChange={(value) => {
                 const next = Number(value) || 0;
                 setWorkflowId(next);
+                setMobilePane("master");
                 onRouteChange({
                   record: "workflow",
                   workflow: next || undefined,
@@ -668,7 +673,14 @@ export function AIOpsRecordsPanel({
             <Select
               aria-label="按状态筛选 Workflow 运行"
               value={status}
-              onChange={(value) => setStatus(String(value))}
+              onChange={(value) => {
+                setStatus(String(value));
+                setMobilePane("master");
+                onRouteChange({
+                  record: "workflow",
+                  workflow: workflowId || undefined,
+                });
+              }}
             >
               <option value="">全部状态</option>
               <option value="active">运行中</option>
@@ -682,11 +694,12 @@ export function AIOpsRecordsPanel({
           <div
             data-slot="ops-master-detail"
             data-pattern="master-detail-composition"
+            data-mobile-pane={mobilePane}
             className="grid items-stretch gap-6 xl:grid-cols-[19rem_minmax(0,1fr)]"
           >
             <section
               data-slot="ops-rail"
-              className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-lg border bg-background"
+              className={`${mobilePane === "detail" ? "hidden md:flex" : "flex"} min-h-0 min-w-0 flex-col overflow-hidden rounded-lg border bg-background`}
               aria-label="Workflow Runs"
             >
               <div className="shrink-0 border-b px-[18px] py-4">
@@ -722,6 +735,7 @@ export function AIOpsRecordsPanel({
                       selected={selectedWorkflowRun?.id === run.id}
                       onClick={() => {
                         setSelectedWorkflowRunId(run.id);
+                        setMobilePane("detail");
                         onRouteChange({
                           record: "workflow",
                           workflow: run.workflowId,
@@ -737,30 +751,51 @@ export function AIOpsRecordsPanel({
                 )}
               </div>
             </section>
-            {selectedWorkflowRun ? (
-              <WorkflowRunDetail
-                run={selectedWorkflowRun}
-                resolvedInteractions={resolvedInteractions}
-                onResolveInteraction={(id) =>
-                  setResolvedInteractions(
-                    (current) => new Set([...current, id]),
-                  )
-                }
-              />
-            ) : (
-              <Empty title="选择一个 Run 查看证据" />
-            )}
+            <div
+              data-slot="ops-detail-pane"
+              className={`${mobilePane === "master" ? "hidden md:block" : "block"} min-w-0`}
+            >
+              <div className="mb-4 md:hidden">
+                <Button
+                  variant="ghost"
+                  icon={<ArrowLeft />}
+                  onClick={() => {
+                    setMobilePane("master");
+                    onRouteChange({
+                      record: "workflow",
+                      workflow: workflowId || undefined,
+                    });
+                  }}
+                >
+                  返回运行列表
+                </Button>
+              </div>
+              {selectedWorkflowRun ? (
+                <WorkflowRunDetail
+                  run={selectedWorkflowRun}
+                  resolvedInteractions={resolvedInteractions}
+                  onResolveInteraction={(id) =>
+                    setResolvedInteractions(
+                      (current) => new Set([...current, id]),
+                    )
+                  }
+                />
+              ) : (
+                <Empty title="选择一个 Run 查看证据" />
+              )}
+            </div>
           </div>
         </div>
       ) : (
         <div
           data-slot="ops-master-detail"
           data-pattern="master-detail-composition"
+          data-mobile-pane={mobilePane}
           className="grid min-w-0 items-stretch gap-6 xl:grid-cols-[19rem_minmax(0,1fr)]"
         >
           <section
             data-slot="ops-rail"
-            className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-lg border bg-background"
+            className={`${mobilePane === "detail" ? "hidden md:flex" : "flex"} min-h-0 min-w-0 flex-col overflow-hidden rounded-lg border bg-background`}
             aria-label="Agent Runs"
           >
             <div className="border-b px-[18px] py-4">
@@ -792,13 +827,31 @@ export function AIOpsRecordsPanel({
                   selected={selectedAgentRun?.id === run.id}
                   onClick={() => {
                     setSelectedAgentRunId(run.id);
+                    setMobilePane("detail");
                     onRouteChange({ record: "agent", run: run.id });
                   }}
                 />
               ))}
             </div>
           </section>
-          {selectedAgentRun ? <AgentRunDetail run={selectedAgentRun} /> : null}
+          <div
+            data-slot="ops-detail-pane"
+            className={`${mobilePane === "master" ? "hidden md:block" : "block"} min-w-0`}
+          >
+            <div className="mb-4 md:hidden">
+              <Button
+                variant="ghost"
+                icon={<ArrowLeft />}
+                onClick={() => {
+                  setMobilePane("master");
+                  onRouteChange({ record: "agent" });
+                }}
+              >
+                返回运行列表
+              </Button>
+            </div>
+            {selectedAgentRun ? <AgentRunDetail run={selectedAgentRun} /> : null}
+          </div>
         </div>
       )}
     </div>

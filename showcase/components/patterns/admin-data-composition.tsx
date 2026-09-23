@@ -84,23 +84,29 @@ export function RecordDetailComposition({
 export function MasterDetailComposition({
   master,
   detail,
+  mobilePane = "master",
 }: {
   master: ReactNode;
   detail: ReactNode;
+  mobilePane?: "master" | "detail";
 }) {
   return (
     <section
       data-pattern="master-detail-composition"
+      data-mobile-pane={mobilePane}
       className="grid min-h-[30rem] min-w-0 overflow-hidden rounded-xl border bg-background xl:grid-cols-[minmax(18rem,0.72fr)_minmax(0,1.55fr)]"
     >
       <aside
         data-slot="master-detail-master"
         aria-label="Master"
-        className="min-w-0 border-b bg-muted/[0.08] xl:border-b-0 xl:border-r"
+        className={`${mobilePane === "detail" ? "hidden md:block" : "block"} min-w-0 border-b bg-muted/[0.08] xl:border-b-0 xl:border-r`}
       >
         {master}
       </aside>
-      <div data-slot="master-detail-detail" className="min-w-0">
+      <div
+        data-slot="master-detail-detail"
+        className={`${mobilePane === "master" ? "hidden md:block" : "block"} min-w-0`}
+      >
         {detail}
       </div>
     </section>

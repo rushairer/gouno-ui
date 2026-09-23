@@ -3066,13 +3066,28 @@ test("csa-pattern-master-detail-responsive-evidence", async ({ page }, testInfo)
   });
 
   await page.setViewportSize({ width: 600, height: 1100 });
-  const mobile = await Promise.all([master.boundingBox(), detail.boundingBox()]);
-  if (!mobile[0] || !mobile[1]) throw new Error("missing Master-Detail mobile geometry");
-  expect(mobile[1].y).toBeGreaterThanOrEqual(mobile[0].y + mobile[0].height - 2);
-  expect(Math.abs(mobile[1].width - mobile[0].width)).toBeLessThan(3);
+  await expect(composition).toHaveAttribute("data-mobile-pane", "detail");
+  await expect(master).toBeHidden();
+  await expect(detail).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "返回待处理列表", exact: true }),
+  ).toBeVisible();
 
   await composition.screenshot({
-    path: testInfo.outputPath("csa-pattern-master-detail-mobile-stacked.png"),
+    path: testInfo.outputPath("csa-pattern-master-detail-mobile-detail.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await page
+    .getByRole("button", { name: "返回待处理列表", exact: true })
+    .click();
+  await expect(composition).toHaveAttribute("data-mobile-pane", "master");
+  await expect(master).toBeVisible();
+  await expect(detail).toBeHidden();
+
+  await composition.screenshot({
+    path: testInfo.outputPath("csa-pattern-master-detail-mobile-master.png"),
     animations: "disabled",
     caret: "hide",
   });
@@ -4327,6 +4342,109 @@ test("csa-product-blog-admin-ai-operations-workspace-evidence", async ({ page },
     animations: "disabled",
     caret: "hide",
   });
+});
+
+test("csa-product-blog-admin-ai-operations-inbox-mobile-drill-in", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-ai-operations",
+    viewport: { width: 390, height: 844 },
+    ready: '[role="tablist"]',
+  });
+
+  await page.getByRole("tab", { name: /待我处理/ }).click();
+  const frame = page.locator('[data-slot="ops-master-detail"]').first();
+  const rail = frame.locator('[data-slot="ops-rail"]');
+  const detailPane = frame.locator('[data-slot="ops-detail-pane"]');
+  await expect(frame).toHaveAttribute("data-mobile-pane", "master");
+  await expect(rail).toBeVisible();
+  await expect(detailPane).toBeHidden();
+
+  await rail.getByRole("button").first().click();
+  await expect(frame).toHaveAttribute("data-mobile-pane", "detail");
+  await expect(rail).toBeHidden();
+  await expect(detailPane).toBeVisible();
+  await expect(
+    detailPane.getByRole("button", {
+      name: "返回决策队列",
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath(
+      "csa-product-blog-admin-ai-operations-inbox-mobile-detail.png",
+    ),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await detailPane
+    .getByRole("button", { name: "返回决策队列", exact: true })
+    .click();
+  await expect(frame).toHaveAttribute("data-mobile-pane", "master");
+  await expect(rail).toBeVisible();
+  await expect(detailPane).toBeHidden();
+});
+
+test("csa-product-blog-admin-ai-operations-run-center-mobile-drill-in", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-ai-operations",
+    viewport: { width: 390, height: 844 },
+    ready: '[role="tablist"]',
+  });
+
+  await page.getByRole("tab", { name: "运行中心", exact: true }).click();
+  const frame = page.locator('[data-slot="ops-master-detail"]').first();
+  const rail = frame.locator('[data-slot="ops-rail"]');
+  const detailPane = frame.locator('[data-slot="ops-detail-pane"]');
+  await expect(frame).toHaveAttribute("data-mobile-pane", "master");
+  await expect(rail).toBeVisible();
+  await expect(detailPane).toBeHidden();
+
+  await rail.getByRole("button").first().click();
+  await expect(frame).toHaveAttribute("data-mobile-pane", "detail");
+  await expect(rail).toBeHidden();
+  await expect(detailPane).toBeVisible();
+  await expect(
+    detailPane.getByRole("button", {
+      name: "返回运行列表",
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
+
+  await page.screenshot({
+    path: testInfo.outputPath(
+      "csa-product-blog-admin-ai-operations-run-center-mobile-detail.png",
+    ),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+
+  await detailPane
+    .getByRole("button", { name: "返回运行列表", exact: true })
+    .click();
+  await expect(frame).toHaveAttribute("data-mobile-pane", "master");
+  await expect(rail).toBeVisible();
+  await expect(detailPane).toBeHidden();
+
+  await page.getByRole("button", { name: "Agent 运行", exact: true }).click();
+  const agentFrame = page.locator('[data-slot="ops-master-detail"]').first();
+  const agentRail = agentFrame.locator('[data-slot="ops-rail"]');
+  const agentDetailPane = agentFrame.locator('[data-slot="ops-detail-pane"]');
+  await expect(agentFrame).toHaveAttribute("data-mobile-pane", "master");
+  await agentRail.getByRole("button").first().click();
+  await expect(agentFrame).toHaveAttribute("data-mobile-pane", "detail");
+  await expect(agentRail).toBeHidden();
+  await expect(agentDetailPane).toBeVisible();
+  await expectNoHorizontalDocumentOverflow(page);
 });
 
 test("csa-product-blog-admin-ai-settings-deep-task-evidence", async ({ page }, testInfo) => {

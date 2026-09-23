@@ -239,6 +239,7 @@ const queue = [
 
 export function PatternMasterDetailCompositionDemo() {
   const [selected, setSelected] = useState(queue[0]);
+  const [mobilePane, setMobilePane] = useState<"master" | "detail">("master");
 
   return (
     <div className="flex flex-col gap-6">
@@ -253,6 +254,7 @@ export function PatternMasterDetailCompositionDemo() {
       />
 
       <MasterDetailComposition
+        mobilePane={mobilePane}
         master={(
           <div className="flex h-full min-h-0 flex-col">
             <div className="border-b p-4">
@@ -266,7 +268,10 @@ export function PatternMasterDetailCompositionDemo() {
                   block
                   className="h-auto justify-start rounded-none border-b px-4 py-4 text-left"
                   aria-pressed={selected.id === item.id}
-                  onClick={() => setSelected(item)}
+                  onClick={() => {
+                    setSelected(item);
+                    setMobilePane("detail");
+                  }}
                 >
                   <span className="min-w-0">
                     <strong className="block text-sm">{item.title}</strong>
@@ -279,6 +284,15 @@ export function PatternMasterDetailCompositionDemo() {
         )}
         detail={(
           <div className="flex flex-col gap-5 p-5">
+            <div className="md:hidden">
+              <Button
+                variant="ghost"
+                icon={<ArrowLeft />}
+                onClick={() => setMobilePane("master")}
+              >
+                返回待处理列表
+              </Button>
+            </div>
             <div className="flex flex-col gap-2 border-b pb-5">
               <div className="flex flex-wrap items-center gap-2">
                 <Heading level={2}>{selected.title}</Heading>

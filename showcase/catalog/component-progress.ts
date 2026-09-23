@@ -518,7 +518,7 @@ for (const [id, scope] of Object.entries({
 for (const [id, scope] of Object.entries({
   "pattern-collection-composition": "CSA-3 Wave L manual-reviewed: summary, toolbar, data view and pagination keep stable ownership through real 3 → 1 → 0-result filtering without rebuilding the outer collection grammar.",
   "pattern-record-detail-composition": "CSA-3 Wave L manual-reviewed: identity, record-wide feedback, summary and evidence sections preserve one vertical ownership order with Run-wide state above record-local content.",
-  "pattern-master-detail-composition": "CSA-3 Wave L manual-reviewed: real peer switching preserves selected context while desktop master/detail width ownership collapses into a coherent single-axis mobile stack.",
+  "pattern-master-detail-composition": "CSA-A004 corrected: peer switching preserves selected context; desktop remains dual-pane, tablet stacks both panes, and mobile uses one active pane with an explicit return path to master.",
   "pattern-settings-composition": "CSA-3 Wave L manual-reviewed: feedback, semantic sections and one task action boundary stay ordered across desktop/mobile while the visible Switch label drives the real checked-state transition.",
   "pattern-data-summary-composition": "CSA-3 Wave L manual-reviewed: semantic metric roles preserve 4 / 2 / 1-column responsive geometry at 1440 / 800 / 600 widths and remain ahead of detailed data.",
 })) {
