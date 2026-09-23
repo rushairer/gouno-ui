@@ -379,13 +379,13 @@ function SkillEditor({
             <DedicatedEditorSection title="Tool 授权" description="只勾选这项能力真正需要的 Tool；建议模式应避免写入型能力。">
               <div className="grid gap-3 sm:grid-cols-2">
                 {fixture.tools.map((tool) => (
-                  <label key={tool.name} className="flex items-start gap-3 rounded-md border p-4">
+                  <label key={tool.name} className="flex min-w-0 items-start gap-3 rounded-md border p-4">
                     <Checkbox
                       name={`capability:${tool.name}`}
                       defaultChecked={initial?.capabilities.includes(tool.name) ?? false}
                     />
-                    <span className="min-w-0">
-                      <strong className="block type-family-mono type-body-sm type-weight-semibold">{tool.name}</strong>
+                    <span className="min-w-0 flex-1">
+                      <strong className="block min-w-0 type-family-mono type-body-sm type-weight-semibold [overflow-wrap:anywhere]">{tool.name}</strong>
                       <Text size="xs" tone="muted">{tool.description}</Text>
                       <Text size="xs" tone="muted">风险：{tool.risk === "high" ? "高" : tool.risk === "medium" ? "中" : "低"}</Text>
                     </span>
