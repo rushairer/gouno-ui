@@ -7,7 +7,18 @@ async function source(path) {
   return readFile(resolve(root, path), "utf8");
 }
 
-const [agents, audit, golden, postEditor, pageEditor, mediaLibrary, editorShared] = await Promise.all([
+const [
+  agents,
+  audit,
+  golden,
+  postEditor,
+  pageEditor,
+  mediaLibrary,
+  editorShared,
+  adminDataComposition,
+  aiOpsInbox,
+  aiOpsRecords,
+] = await Promise.all([
   source("AGENTS.md"),
   source("docs/canonical-showcase-audit.md"),
   source("showcase/e2e/canonical-visual-golden.pw.mjs"),
@@ -15,6 +26,9 @@ const [agents, audit, golden, postEditor, pageEditor, mediaLibrary, editorShared
   source("showcase/demos/products/blog-admin/page-editor.tsx"),
   source("showcase/demos/products/blog-admin/media-library.tsx"),
   source("showcase/demos/products/blog-admin/editor-shared.tsx"),
+  source("showcase/components/patterns/admin-data-composition.tsx"),
+  source("showcase/demos/products/blog-admin/ai/operations/overview-inbox.tsx"),
+  source("showcase/demos/products/blog-admin/ai/operations/automation-records.tsx"),
 ]);
 
 const failures = [];
@@ -217,7 +231,10 @@ for (const evidence of [
   "pattern-data-summary-1440",
   "pattern-settings-mobile",
   "pattern-settings-toggle-off",
-  "pattern-master-detail-mobile-stacked",
+  "pattern-master-detail-mobile-detail",
+  "pattern-master-detail-mobile-master",
+  "csa-product-blog-admin-ai-operations-inbox-mobile-detail",
+  "csa-product-blog-admin-ai-operations-run-center-mobile-detail",
   "pattern-master-detail-desktop-selected",
   "pattern-record-detail-order",
   "pattern-collection-empty",
@@ -237,6 +254,43 @@ for (const evidence of [
   );
 }
 
+
+for (const marker of [
+  'mobilePane?: "master" | "detail"',
+  'data-mobile-pane={mobilePane}',
+  '"hidden md:block"',
+]) {
+  requireText(
+    adminDataComposition,
+    marker,
+    `MasterDetailComposition must preserve mobile single-pane ownership: ${marker}`,
+  );
+}
+
+for (const [sourcePath, content, backLabel] of [
+  [
+    "showcase/demos/products/blog-admin/ai/operations/overview-inbox.tsx",
+    aiOpsInbox,
+    "返回决策队列",
+  ],
+  [
+    "showcase/demos/products/blog-admin/ai/operations/automation-records.tsx",
+    aiOpsRecords,
+    "返回运行列表",
+  ],
+]) {
+  for (const marker of [
+    'setMobilePane("detail")',
+    'data-mobile-pane={mobilePane}',
+    backLabel,
+  ]) {
+    requireText(
+      content,
+      marker,
+      `${sourcePath}: mobile Master/Detail drill-in contract is missing ${marker}`,
+    );
+  }
+}
 
 for (const marker of [
   'className="cursor-pointer select-none pe-12 type-body-sm type-weight-semibold"',
