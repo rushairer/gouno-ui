@@ -7,13 +7,14 @@ async function source(path) {
   return readFile(resolve(root, path), "utf8");
 }
 
-const [agents, audit, golden, postEditor, pageEditor, mediaLibrary] = await Promise.all([
+const [agents, audit, golden, postEditor, pageEditor, mediaLibrary, editorShared] = await Promise.all([
   source("AGENTS.md"),
   source("docs/canonical-showcase-audit.md"),
   source("showcase/e2e/canonical-visual-golden.pw.mjs"),
   source("showcase/demos/products/blog-admin/post-editor.tsx"),
   source("showcase/demos/products/blog-admin/page-editor.tsx"),
   source("showcase/demos/products/blog-admin/media-library.tsx"),
+  source("showcase/demos/products/blog-admin/editor-shared.tsx"),
 ]);
 
 const failures = [];
@@ -237,27 +238,41 @@ for (const evidence of [
 }
 
 
+for (const marker of [
+  'className="cursor-pointer select-none pe-12 type-body-sm type-weight-semibold"',
+  'className="absolute end-0 top-2.5 z-10"',
+  'className="type-body-sm type-weight-medium"',
+]) {
+  requireText(
+    editorShared,
+    marker,
+    `showcase/demos/products/blog-admin/editor-shared.tsx: shared editor composition must preserve semantic Typography and logical geometry: ${marker}`,
+  );
+}
+for (const retired of [
+  'pr-12 text-sm font-semibold',
+  'absolute right-0 top-2.5',
+]) {
+  if (editorShared.includes(retired)) {
+    failures.push(
+      `showcase/demos/products/blog-admin/editor-shared.tsx: retired physical/raw editor anatomy returned: ${retired}`,
+    );
+  }
+}
+
 for (const [path, content] of [
   ["showcase/demos/products/blog-admin/post-editor.tsx", postEditor],
   ["showcase/demos/products/blog-admin/page-editor.tsx", pageEditor],
 ]) {
-  for (const marker of [
-    'className="cursor-pointer select-none pe-12 type-body-sm type-weight-semibold"',
-    'className="absolute end-0 top-2.5 z-10"',
-  ]) {
-    requireText(
-      content,
-      marker,
-      `${path}: InspectorSection must preserve semantic Typography and logical inline-end action geometry: ${marker}`,
-    );
-  }
-  for (const retired of [
-    'pr-12 text-sm font-semibold',
-    'absolute right-0 top-2.5',
-  ]) {
-    if (content.includes(retired)) {
+  requireText(
+    content,
+    'import { FieldActionHeader, InspectorSection } from "./editor-shared";',
+    `${path}: Post/Page editor family must consume the shared private editor composition`,
+  );
+  for (const duplicated of ["function InspectorSection", "function FieldActionHeader"]) {
+    if (content.includes(duplicated)) {
       failures.push(
-        `${path}: retired physical/raw InspectorSection anatomy returned: ${retired}`,
+        `${path}: duplicated page-private editor composition returned: ${duplicated}`,
       );
     }
   }

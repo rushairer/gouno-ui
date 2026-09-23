@@ -1575,6 +1575,7 @@ The Blog Product matches those fixtures, so this is classified as a Canonical-so
 Candidate correction:
 
 - Inspector title uses `type-body-sm type-weight-semibold`;
+- Post/Page Editor consume one shared Showcase-private `editor-shared.tsx` composition rather than maintaining duplicated page-private helpers;
 - inline action geometry uses `pe-12` + `end-0`;
 - Media Library selection uses `start-2`;
 - Canonical audit source guards reject the retired raw/physical anatomy;

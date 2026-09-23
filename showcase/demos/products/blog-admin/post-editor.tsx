@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type ReactNode } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
   Check,
@@ -47,6 +47,7 @@ import { FixtureDock } from "../../../components/fixture-dock";
 import { FixtureNotification } from "./fixture-notification";
 import { MarkdownPreview } from "../../../components/markdown-preview";
 import { copyText } from "../../../lib/copy-text";
+import { FieldActionHeader, InspectorSection } from "./editor-shared";
 
 type EditorRoute = "edit" | "new" | "readonly";
 type FixtureScenario = "ready" | "loading" | "error" | "conflict";
@@ -204,57 +205,6 @@ function versionExcerpt(content: string) {
     .split("\n")
     .map((line) => line.trim())
     .find((line) => line && !line.startsWith("#")) ?? "暂无版本摘要";
-}
-
-function InspectorSection({
-  title,
-  action,
-  children,
-}: {
-  title: string;
-  action?: ReactNode;
-  children: ReactNode;
-}) {
-  return (
-    <details open className="relative border-b py-4 last:border-b-0">
-      <summary className="cursor-pointer select-none pe-12 type-body-sm type-weight-semibold">{title}</summary>
-      {action ? <div className="absolute end-0 top-2.5 z-10">{action}</div> : null}
-      <div className="mt-4 flex flex-col gap-4">{children}</div>
-    </details>
-  );
-}
-
-function FieldActionHeader({
-  label,
-  actionLabel,
-  onAction,
-  disabled = false,
-  required = false,
-}: {
-  label: string;
-  actionLabel: string;
-  onAction: () => void;
-  disabled?: boolean;
-  required?: boolean;
-}) {
-  return (
-    <div className="mb-2 flex min-h-8 items-center justify-between gap-3">
-      <div className="type-body-sm type-weight-medium">
-        {label}{required ? <span aria-hidden="true" className="text-destructive">*</span> : null}
-      </div>
-      <Button
-        type="button"
-        size="small"
-        variant="text"
-        icon={<Sparkles />}
-        onClick={onAction}
-        disabled={disabled}
-        aria-label={actionLabel}
-        title={actionLabel}
-        className="size-8 px-0"
-      />
-    </div>
-  );
 }
 
 function renderPostPreview(value: string) {
