@@ -248,7 +248,7 @@ export function BlogAdminTagsDemo() {
                   />
                   <strong className="truncate type-body-sm type-weight-semibold text-foreground">{tag.name}</strong>
                 </div>
-                <Tag color="default" className="shrink-0 font-mono">{tag.postCount} 篇</Tag>
+                <Tag color="default" className="shrink-0 type-family-mono">{tag.postCount} 篇</Tag>
               </div>
               <div className="mt-4 flex flex-wrap items-center justify-end gap-1 border-t pt-3" aria-label={`标签 ${tag.name} 操作`}>
                 <Button
