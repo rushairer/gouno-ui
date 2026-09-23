@@ -295,6 +295,18 @@ export const aiSettingsFixture: AISettingsFixture = {
       risk: "low",
     },
     {
+      name: "analytics.list_low_engagement_posts",
+      description: "列出浏览量足够但互动率较低的已发布文章。",
+      surfaces: ["agent"],
+      risk: "low",
+    },
+    {
+      name: "content.propose_distribution_draft",
+      description: "生成外部分发渠道的候选文案草稿，提交前仍需人工确认。",
+      surfaces: ["agent"],
+      risk: "medium",
+    },
+    {
       name: "citation_check",
       description: "核验候选引用、时间与来源一致性。",
       surfaces: ["agent"],
