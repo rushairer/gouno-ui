@@ -1599,3 +1599,39 @@ Manual rendered review:
 - Paired Showcase/Product screenshots confirm no unintended LTR visual drift from the semantic/logical-direction correction.
 
 Canonical acceptance is restored for these Showcase scopes. Blog Product remains intentionally `needs-manual-recertification` until the merged Canonical anatomy is propagated and reviewed there.
+
+
+## CSA-A003 — Blog Admin residual DL-17 Typography hardening
+
+Status: **reopened / correction candidate**
+
+Date: 2026-09-23
+
+The post-freeze Final Drift Audit found one coherent residual defect family across the frozen Blog Admin Canonical corpus: a small set of raw Tailwind typography utilities survived the earlier Typography migration.
+
+DL-17 already defines the governing rule: product-facing typography must use semantic `type-*` roles instead of reconstructing size, weight, font family, line-height or tracking through raw `text-*`, `font-*`, `leading-*` or `tracking-*` utilities.
+
+Confirmed Canonical seams in this batch:
+
+- Dashboard Top Posts rank/title/metric typography;
+- Post Editor history item density and Slug field;
+- Page Editor Slug field;
+- Categories Slug field;
+- Tags count badge;
+- Media Library blocked-reference list;
+- Site Settings RSS field;
+- AI Operations workflow/run row weight;
+- AI Settings Skill technical text fields.
+
+Candidate correction uses semantic equivalents only, preserving rendered intent:
+
+- `font-mono` → `type-family-mono`;
+- `font-medium` → `type-weight-medium`;
+- `font-normal` → `type-weight-regular`;
+- `text-sm` → `type-body-sm`.
+
+A corpus-level Canonical guard now scans the full Blog Admin Showcase ownership set, including nested AI product files, and rejects future raw DL-17 typography utilities.
+
+The corresponding Blog certifications were demoted together before this candidate was prepared: `blog-admin-ai`, `blog-admin-core-wave1`, `blog-admin-core-wave2` and `blog-admin-core-wave3`.
+
+After exact-head CI, visual evidence and reciprocal parity succeed, manually review the retained affected states, merge the Canonical correction, append the post-freeze amendment record, then propagate the semantic roles to the Product as one Consumer batch.
