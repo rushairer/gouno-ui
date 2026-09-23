@@ -780,9 +780,8 @@ export function AIOpsInboxPanel({
     : allItems[0]?.key || "";
   const [selectedKey, setSelectedKey] = useState(defaultKey);
   const [filter, setFilter] = useState<DecisionFilter>("all");
-  const [mobilePane, setMobilePane] = useState<"master" | "detail">(
-    selectedApprovalId ? "detail" : "master",
-  );
+  const [mobilePane, setMobilePane] =
+    useState<"master" | "detail">("master");
 
   const items = allItems.filter((item) => {
     if (filter === "all") return true;
