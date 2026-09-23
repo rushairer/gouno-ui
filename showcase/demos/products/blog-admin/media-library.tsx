@@ -352,7 +352,7 @@ export function BlogAdminMediaLibraryDemo() {
       {feedback ? (
         <Alert type={feedback.type} showIcon title={feedback.text} closable={{ onClose: clearOperationFeedback }}>
           {blockedReferences.length > 0 ? (
-            <ul className="mt-2 flex flex-col gap-1 text-sm">
+            <ul className="mt-2 flex flex-col gap-1 type-body-sm">
               {blockedReferences.map((reference) => (
                 <li key={`${reference.postId}-${reference.title}`}>
                   <a
