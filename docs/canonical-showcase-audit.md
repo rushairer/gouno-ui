@@ -1650,13 +1650,13 @@ Canonical acceptance is restored for the listed scopes. The affected Blog certif
 
 ## CSA-A004 — Master/Detail mobile drill-in hardening
 
-Status: **reopened / correction candidate**
+Status: **canonical corrected / Consumer recertification pending**
 
 Date: 2026-09-23
 
 The Final Drift Audit found a governance contradiction rather than a new Foundation defect.
 
-The binding Master/Detail contract in `docs/patterns/admin-data-composition.md` and the Blog Admin AI Operations product specification both require narrow mobile layouts to show **one active pane** with an explicit return path to the master/list. Tablet may stack master and detail; desktop keeps both panes side-by-side. However, the historical CSA-3 Wave L Golden evidence explicitly asserted a **600px stacked composition**, and the current Pattern/Product implementations inherited that acceptance.
+The binding Master/Detail contract in `docs/patterns/admin-data-composition.md` and the Blog Admin AI Operations product specification require narrow mobile layouts to show **one active pane** with an explicit return path to the master/list. Tablet may stack master and detail; desktop keeps both panes side-by-side. Historical CSA-3 Wave L browser acceptance had instead certified a **600px stacked composition**, so the acceptance evidence had drifted from the written contract and the AI Operations implementation specification.
 
 Classification:
 
@@ -1666,18 +1666,39 @@ Classification:
 - no change to tablet stacked ownership;
 - no change to the intentional AI Operations dense-row 16px × 18px padding contract.
 
-Candidate correction:
+Merged Canonical correction:
 
+- PR #146;
+- merge commit `69019c4175bde817d56c5037f95fbc382b122c98`;
 - Showcase-private `MasterDetailComposition` owns an explicit `mobilePane` state contract;
 - the Pattern demo drills Master → Detail below 768px and exposes a visible return-to-master action;
-- Blog Admin AI Operations Decision Inbox follows the same mobile Queue → Workbench drill-in;
+- Blog Admin AI Operations Decision Inbox follows the same mobile Queue → Workbench drill-in and remains Queue-first even when desktop selection context is preselected;
 - Blog Admin AI Operations Workflow/Agent Run Center follows the same mobile Run List → Run Detail drill-in;
 - filters and record-type switches return mobile ownership to the master list;
-- deep-linked Run evidence may enter directly into the detail pane;
-- tablet (768–1279) continues to render stacked master/detail;
+- explicit Run deep links may enter directly into the detail pane;
+- tablet (768–1279) continues to render stacked master/detail through the guarded `md` breakpoint;
 - desktop (>=1280) continues to render the established two-column geometry;
-- Golden evidence replaces the retired 600px stacked assertion with explicit mobile master/detail state transitions and adds product-level Inbox/Run Center mobile evidence.
+- the retired 600px stacked Golden assertion is replaced by explicit mobile master/detail state transitions plus product-level Inbox/Run Center mobile evidence;
+- canonical source guards reject removal of the mobile pane contract or its explicit return paths.
 
-The historical Wave L record remains intact as historical evidence; this amendment corrects its responsive acceptance conclusion rather than rewriting history.
+Exact-head pre-merge evidence for `364ab8c6f5ca2e1a1edaeb1ab7c4094997e38755`:
 
-Blog certifications are already intentionally reopened for CSA-A003 Typography propagation. To avoid redundant Consumer churn and repeated CI, CSA-A004 should be folded into the same next Blog Product recertification batch after Canonical acceptance.
+- CI `35858244361` — success;
+- Canonical Visual Golden Smoke `35858244366` — success;
+- Blog Consumer Parity `35858244487` — success;
+- Gosso Admin Consumer Parity `35858244362` — success;
+- Golden artifact `10748906265` — `gouno-ui-canonical-visual-golden-35858244366`, SHA-256 `62179898962f6cc1104ce6cd44f811bdd11a9789de3d75bf888c1ccffee524b1`;
+- Blog paired parity artifact `10749085199` — `gouno-ui-blog-consumer-parity-35858244487`, SHA-256 `261e950619158768e0600b775533b71a944af4ce2593b4cd3858750eacc06adb`;
+- Gosso paired parity artifact `10749015352` — `gouno-ui-gosso-admin-consumer-parity-35858244362`, SHA-256 `3001239c705166381436520c30607cb780a3aa65e37037bb32928eb85f1b2b74`.
+
+Manual rendered review of the exact-head Golden artifact:
+
+- Pattern Master state shows only the searchable peer list on mobile; Detail is absent from the active pane.
+- Pattern Detail state shows one selected object, a visible `返回待处理列表` path and no residual Master rail.
+- Blog Admin AI Operations Inbox drills from Decision Queue into one Decision Workbench pane and exposes `返回决策队列` without horizontal overflow.
+- Blog Admin AI Operations Run Center drills from the Run list into one Run evidence pane and exposes `返回运行列表`; page-level Workflow/status filters remain above the task region as specified rather than being misclassified as rail content.
+- Existing desktop evidence retains dual-pane ownership; the guarded `md`/ `xl` responsive contract preserves tablet stacked and desktop dual-pane behavior.
+
+The historical Wave L record remains intact as historical evidence; CSA-A004 corrects its responsive acceptance conclusion rather than rewriting history.
+
+Canonical acceptance is restored for the affected Showcase scopes. Blog Product remains intentionally pending manual re-certification because CSA-A003 Typography propagation and CSA-A004 Master/Detail propagation should be absorbed into one Consumer batch rather than creating redundant reverse-migration cycles.
