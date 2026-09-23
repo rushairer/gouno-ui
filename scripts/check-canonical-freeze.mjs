@@ -64,6 +64,10 @@ if (!/^[0-9a-f]{40}$/.test(matrix.baselineCommit ?? "")) {
   fail("Canonical matrix baselineCommit must be a full Git commit SHA.");
 }
 
+if (!/^[0-9a-f]{40}$/.test(matrix.latestCanonicalRef ?? "")) {
+  fail("Canonical matrix latestCanonicalRef must be a full Git commit SHA.");
+}
+
 const catalogIds = idsFrom(catalog);
 const componentIds = matrix.componentAndCompositionSurfaces ?? [];
 const productGroups = matrix.productPages ?? {};
@@ -73,6 +77,60 @@ const productIds = [
   ...(productGroups.gossoAdmin ?? []),
 ];
 const matrixIds = [...componentIds, ...productIds];
+
+const amendments = matrix.postFreezeAmendments ?? [];
+const amendmentIds = [];
+let previousAmendmentDate = "";
+for (const amendment of amendments) {
+  amendmentIds.push(amendment.id);
+  if (!/^CSA-A\d{3}$/.test(amendment.id ?? "")) {
+    fail(`Canonical amendment id must match CSA-A###: ${amendment.id ?? "missing"}.`);
+  }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(amendment.date ?? "")) {
+    fail(`${amendment.id ?? "Canonical amendment"}: date must use YYYY-MM-DD.`);
+  }
+  if (previousAmendmentDate && amendment.date < previousAmendmentDate) {
+    fail(`${amendment.id}: amendments must remain chronological.`);
+  }
+  previousAmendmentDate = amendment.date ?? previousAmendmentDate;
+  if (!/^[0-9a-f]{40}$/.test(amendment.commit ?? "")) {
+    fail(`${amendment.id ?? "Canonical amendment"}: commit must be a full Git SHA.`);
+  }
+  if (amendment.commit === matrix.baselineCommit) {
+    fail(`${amendment.id}: post-freeze amendment cannot reuse the original CSA-5 baseline commit.`);
+  }
+  if (!["canonical-correction", "canonical-hardening"].includes(amendment.kind)) {
+    fail(`${amendment.id}: unsupported amendment kind ${amendment.kind ?? "missing"}.`);
+  }
+  if (!amendment.summary?.trim()) {
+    fail(`${amendment.id}: summary is required.`);
+  }
+  const scopes = amendment.scopes ?? [];
+  if (!scopes.length) {
+    fail(`${amendment.id}: at least one canonical scope is required.`);
+  }
+  const repeatedScopes = duplicates(scopes);
+  if (repeatedScopes.length) {
+    fail(`${amendment.id}: duplicate scopes: ${repeatedScopes.join(", ")}.`);
+  }
+  const unknownScopes = scopes.filter((scope) => !matrixIds.includes(scope));
+  if (unknownScopes.length) {
+    fail(`${amendment.id}: unknown canonical scopes: ${unknownScopes.join(", ")}.`);
+  }
+}
+
+const repeatedAmendmentIds = duplicates(amendmentIds);
+if (repeatedAmendmentIds.length) {
+  fail(`Canonical amendment ledger contains duplicate ids: ${repeatedAmendmentIds.join(", ")}`);
+}
+
+const expectedLatestCanonicalRef =
+  amendments.length > 0 ? amendments[amendments.length - 1].commit : matrix.baselineCommit;
+if (matrix.latestCanonicalRef !== expectedLatestCanonicalRef) {
+  fail(
+    `latestCanonicalRef must match the newest post-freeze amendment commit (${expectedLatestCanonicalRef}).`,
+  );
+}
 
 for (const [group, expected] of Object.entries({
   publicBlog: 12,
@@ -149,6 +207,7 @@ if (matrix.status === "frozen") {
     "| CSA-4 Product Showcase pages | complete |",
     "| CSA-5 Canonical freeze / Consumer resume | complete |",
     "## CSA-5 Canonical freeze acceptance",
+    "## Post-freeze Canonical amendments",
     "Consumer reverse migration may resume only from surfaces listed in that matrix after the freeze is merged to `main`.",
   ]) {
     if (!audit.includes(marker)) {
@@ -177,5 +236,5 @@ if (failures.length) {
 }
 
 process.stdout.write(
-  `Canonical freeze contract: ${matrixIds.length}/${catalogIds.length} Showcase surfaces are accounted for; status=${matrix.status}.\n`,
+  `Canonical freeze contract: ${matrixIds.length}/${catalogIds.length} Showcase surfaces are accounted for; status=${matrix.status}; amendments=${amendments.length}.\n`,
 );

@@ -31,6 +31,23 @@ CSA-001 has established the frozen Canonical baseline in `canonical-showcase.jso
 
 Existing verified Consumer certifications remain evidence, not automatic proof that a later canonical change is safe to propagate. If a frozen surface is reopened or changed on a path covered by a verified Consumer, follow the recertification protocol in `AGENTS.md`: stop propagation, demote stale certification when required, land the canonical correction through reciprocal parity, manually re-review the Consumer, then restore certification with fresh evidence.
 
+## Post-freeze Canonical amendments
+
+The original CSA-5 `baselineCommit` is an immutable acceptance anchor. It is **not** rewritten after every later correction. Reviewed changes to an already-frozen Canonical surface are appended to `canonical-showcase.json#postFreezeAmendments`, while `latestCanonicalRef` points to the newest recorded Canonical amendment.
+
+This keeps two facts distinct:
+
+- what was accepted when CSA-5 originally froze;
+- what later reviewed corrections have legitimately advanced the living Canonical Reference.
+
+A post-freeze amendment must name the exact canonical scope(s), the merged commit, the correction/hardening intent and known Consumer impact. It does not create a new Canonical surface; new surfaces still require an explicit matrix/freeze update and manual-first acceptance.
+
+Current ledger:
+
+- `CSA-A001` — 2026-09-23 — `blog-admin-ai-settings` — Tool authorization cards now contain long technical identifiers without horizontal overflow; Blog Admin was manually re-certified with fresh browser/parity evidence against `cb629669cf94ec2edced6543dfdafc7444f84c6d`.
+
+Future maintainers must append a new amendment instead of silently moving the original `baselineCommit`.
+
 ## Review states
 
 | State | Meaning |

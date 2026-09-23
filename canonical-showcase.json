@@ -164,5 +164,21 @@
       "Changes touching a verified consumer canonical path require pull-request reciprocal parity before merge.",
       "Consumer certification remains manual-first; green automated checks cannot renew stale manual certification."
     ]
-  }
+  },
+  "latestCanonicalRef": "cb629669cf94ec2edced6543dfdafc7444f84c6d",
+  "postFreezeAmendments": [
+    {
+      "id": "CSA-A001",
+      "date": "2026-09-23",
+      "commit": "cb629669cf94ec2edced6543dfdafc7444f84c6d",
+      "kind": "canonical-correction",
+      "scopes": [
+        "blog-admin-ai-settings"
+      ],
+      "summary": "Contain long AI Settings Tool identifiers inside their authorization cards and add browser geometry coverage.",
+      "consumerImpact": {
+        "rushairer/gouno-blog": "recertified"
+      }
+    }
+  ]
 }
