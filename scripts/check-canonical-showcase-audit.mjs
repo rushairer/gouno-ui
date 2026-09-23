@@ -289,6 +289,45 @@ if (mediaLibrary.includes("absolute left-2 top-2")) {
   );
 }
 
+
+const blogAdminDl17Paths = [
+  "showcase/demos/products/blog-admin/dashboard.tsx",
+  "showcase/demos/products/blog-admin/posts.tsx",
+  "showcase/demos/products/blog-admin/post-editor.tsx",
+  "showcase/demos/products/blog-admin/editor-shared.tsx",
+  "showcase/demos/products/blog-admin/categories.tsx",
+  "showcase/demos/products/blog-admin/tags.tsx",
+  "showcase/demos/products/blog-admin/pages.tsx",
+  "showcase/demos/products/blog-admin/page-editor.tsx",
+  "showcase/demos/products/blog-admin/comments.tsx",
+  "showcase/demos/products/blog-admin/notifications.tsx",
+  "showcase/demos/products/blog-admin/media-library.tsx",
+  "showcase/demos/products/blog-admin/users.tsx",
+  "showcase/demos/products/blog-admin/site-settings.tsx",
+  "showcase/demos/products/blog-admin/ai/operations/automation-management.tsx",
+  "showcase/demos/products/blog-admin/ai/operations/automation-records.tsx",
+  "showcase/demos/products/blog-admin/ai/operations/canonical-patterns.tsx",
+  "showcase/demos/products/blog-admin/ai/operations/index.tsx",
+  "showcase/demos/products/blog-admin/ai/operations/overview-inbox.tsx",
+  "showcase/demos/products/blog-admin/ai/operations/workflow-editor.tsx",
+  "showcase/demos/products/blog-admin/ai/operations/workflow-execution.tsx",
+  "showcase/demos/products/blog-admin/ai/settings/editors.tsx",
+  "showcase/demos/products/blog-admin/ai/settings/index.tsx",
+  "showcase/demos/products/blog-admin/ai/settings/sections.tsx",
+];
+
+const rawDl17Typography =
+  /(?<!type-)(?:text-(?:xs|sm|base|lg|xl|2xl|3xl|4xl|\[[^\]]+\])|font-(?:sans|serif|mono|normal|medium|semibold|bold|light|thin|black|\[[^\]]+\])|leading-(?:none|tight|snug|normal|relaxed|loose|\d+|\[[^\]]+\])|tracking-(?:tighter|tight|normal|wide|wider|widest|\[[^\]]+\]))(?![A-Za-z0-9_-])/g;
+
+for (const dl17Path of blogAdminDl17Paths) {
+  const dl17Source = await source(dl17Path);
+  for (const match of dl17Source.matchAll(rawDl17Typography)) {
+    failures.push(
+      `${dl17Path}: DL-17 raw Typography utility must use a semantic type-* role instead: ${match[0]}`,
+    );
+  }
+}
+
 if (failures.length) {
   process.stderr.write(
     "Canonical Showcase audit contract failed:\n" +
