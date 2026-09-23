@@ -80,15 +80,21 @@ describe("admin data composition contracts", () => {
     expect(summary?.compareDocumentPosition(sections as Node) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
-  it("keeps Master and Detail ownership separate while allowing repeated peer switching", () => {
+  it("keeps Master and Detail ownership separate while mobile drill-in has an explicit return path", () => {
     const { container } = render(<PatternMasterDetailCompositionDemo />);
+    const composition = container.querySelector('[data-pattern="master-detail-composition"]');
     expect(container.querySelector('[data-slot="master-detail-master"]')).toBeTruthy();
     expect(container.querySelector('[data-slot="master-detail-detail"]')).toBeTruthy();
+    expect(composition).toHaveAttribute("data-mobile-pane", "master");
     expect(screen.getByRole("heading", { level: 2, name: "确认文章分类" })).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: /批准外部写入/ }));
+    expect(composition).toHaveAttribute("data-mobile-pane", "detail");
     expect(screen.getByRole("heading", { level: 2, name: "批准外部写入" })).toBeTruthy();
     expect(screen.getByText(/D-30/)).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "返回待处理列表" }));
+    expect(composition).toHaveAttribute("data-mobile-pane", "master");
   });
 
   it("keeps Settings feedback before semantic sections and one task action boundary", () => {
