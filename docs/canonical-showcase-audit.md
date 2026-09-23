@@ -1578,6 +1578,6 @@ Candidate correction:
 - inline action geometry uses `pe-12` + `end-0`;
 - Media Library selection uses `start-2`;
 - Canonical audit source guards reject the retired raw/physical anatomy;
-- existing visual/browser suites remain responsible for proving no LTR geometry regression.
+- browser evidence now captures the Media Library selected-card state directly, in addition to the existing editor Inspector and upload Drawer evidence.
 
 After candidate CI/visual/reciprocal parity succeeds, inspect the rendered affected states, merge the Canonical correction, append the post-freeze amendment record, propagate the exact anatomy to Blog Product, and manually re-certify Wave 3.

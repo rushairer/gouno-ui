@@ -4126,6 +4126,19 @@ test("csa-product-blog-admin-media-upload-evidence", async ({ page }, testInfo) 
   await expect(page.getByRole("heading", { level: 1, name: "媒体库", exact: true })).toBeVisible();
   await expect(page.getByRole("textbox", { name: "搜索媒体", exact: true })).toBeVisible();
   await expect(page.getByRole("combobox", { name: "媒体类型", exact: true })).toBeVisible();
+
+  const selection = page.getByRole("checkbox", { name: /^选择媒体 / }).first();
+  await selection.check();
+  await expect(selection).toBeChecked();
+  await page.screenshot({
+    path: testInfo.outputPath("csa-product-blog-admin-media-selection.png"),
+    fullPage: true,
+    animations: "disabled",
+    caret: "hide",
+  });
+  await expectNoHorizontalDocumentOverflow(page);
+  await selection.uncheck();
+
   await page.getByRole("button", { name: "上传图片", exact: true }).click();
 
   const dialog = page.getByRole("dialog", { name: "上传图片", exact: true });

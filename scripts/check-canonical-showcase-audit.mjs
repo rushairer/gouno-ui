@@ -194,6 +194,7 @@ for (const evidence of [
   "product-blog-admin-post-editor-mobile-restored",
   "product-blog-admin-post-editor-history",
   "product-blog-admin-media-upload-drawer",
+  "csa-product-blog-admin-media-selection",
   "product-blog-admin-notifications-mark-read",
   "product-blog-admin-comments-reported-only",
   "product-blog-admin-pages-selected",
