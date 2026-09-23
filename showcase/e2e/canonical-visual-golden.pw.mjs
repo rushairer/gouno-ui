@@ -5355,6 +5355,23 @@ test("blog-admin-ai-settings-skill-editor-visual-evidence", async ({ page }, tes
   await page.getByRole("button", { name: "编辑" }).first().click();
   await expect(page.getByRole("heading", { level: 2, name: /编辑 Skill/ })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Tool 授权" })).toBeVisible();
+
+  const stressToolName = page.getByText("analytics.list_low_engagement_posts", { exact: true });
+  await expect(stressToolName).toBeVisible();
+  const stressToolCard = stressToolName.locator("xpath=ancestor::label[1]");
+  const stressGeometry = await stressToolName.evaluate((element) => ({
+    clientWidth: element.clientWidth,
+    scrollWidth: element.scrollWidth,
+    overflowWrap: getComputedStyle(element).overflowWrap,
+  }));
+  const cardGeometry = await stressToolCard.evaluate((element) => ({
+    clientWidth: element.clientWidth,
+    scrollWidth: element.scrollWidth,
+  }));
+  expect(stressGeometry.overflowWrap).toBe("anywhere");
+  expect(stressGeometry.scrollWidth).toBeLessThanOrEqual(stressGeometry.clientWidth + 1);
+  expect(cardGeometry.scrollWidth).toBeLessThanOrEqual(cardGeometry.clientWidth + 1);
+
   const governanceHeading = page.getByRole("heading", { name: "默认治理限制" });
   await expect(governanceHeading).toBeVisible();
   await expectNoHorizontalDocumentOverflow(page);
