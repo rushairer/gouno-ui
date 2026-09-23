@@ -165,7 +165,7 @@
       "Consumer certification remains manual-first; green automated checks cannot renew stale manual certification."
     ]
   },
-  "latestCanonicalRef": "a265ccf68b1fb05f54f137de3d836d8b647ced40",
+  "latestCanonicalRef": "39e781245082728aaf06141a81f26a9095f0eaf0",
   "postFreezeAmendments": [
     {
       "id": "CSA-A001",
@@ -194,6 +194,24 @@
       "consumerImpact": {
         "rushairer/gouno-blog": "recertified"
       }
+    },
+    {
+      "id": "CSA-A003",
+      "date": "2026-09-23",
+      "commit": "39e781245082728aaf06141a81f26a9095f0eaf0",
+      "kind": "canonical-hardening",
+      "scopes": [
+        "blog-admin-dashboard",
+        "blog-admin-post-editor",
+        "blog-admin-page-editor",
+        "blog-admin-categories",
+        "blog-admin-tags",
+        "blog-admin-media-library",
+        "blog-admin-site-settings",
+        "blog-admin-ai-operations",
+        "blog-admin-ai-settings"
+      ],
+      "summary": "Finish the Blog Admin DL-17 semantic typography migration and guard the complete Canonical Blog Admin corpus against raw typography utilities."
     }
   ]
 }

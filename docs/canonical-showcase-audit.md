@@ -1603,35 +1603,46 @@ Canonical acceptance is restored for these Showcase scopes. Blog Product remains
 
 ## CSA-A003 — Blog Admin residual DL-17 Typography hardening
 
-Status: **reopened / correction candidate**
+Status: **canonical corrected / Consumer recertification pending**
 
 Date: 2026-09-23
 
-The post-freeze Final Drift Audit found one coherent residual defect family across the frozen Blog Admin Canonical corpus: a small set of raw Tailwind typography utilities survived the earlier Typography migration.
+The post-freeze Final Drift Audit found one coherent residual defect family across the frozen Blog Admin Canonical corpus: a small set of raw Tailwind typography utilities had survived the earlier Typography migration.
 
-DL-17 already defines the governing rule: product-facing typography must use semantic `type-*` roles instead of reconstructing size, weight, font family, line-height or tracking through raw `text-*`, `font-*`, `leading-*` or `tracking-*` utilities.
+DL-17 already defines the governing rule: product-facing typography uses semantic `type-*` roles rather than reconstructing size, weight, font family, line-height or tracking through raw `text-*`, `font-*`, `leading-*` or `tracking-*` utilities.
 
-Confirmed Canonical seams in this batch:
+Merged Canonical correction:
 
-- Dashboard Top Posts rank/title/metric typography;
-- Post Editor history item density and Slug field;
-- Page Editor Slug field;
-- Categories Slug field;
-- Tags count badge;
-- Media Library blocked-reference list;
-- Site Settings RSS field;
-- AI Operations workflow/run row weight;
-- AI Settings Skill technical text fields.
+- merge commit `39e781245082728aaf06141a81f26a9095f0eaf0`;
+- Dashboard Top Posts rank/title/metric typography uses semantic roles;
+- Post/Page Editor Slug/history typography uses semantic roles;
+- Categories, Tags, Media Library and Site Settings no longer use raw typography utilities in the reviewed seams;
+- AI Operations row weight and AI Settings Skill technical fields use semantic roles;
+- a corpus-level Canonical guard scans the complete Blog Admin Showcase ownership set, including nested AI files, and rejects future DL-17 raw typography utilities.
 
-Candidate correction uses semantic equivalents only, preserving rendered intent:
+Semantic substitutions preserve rendered intent:
 
 - `font-mono` → `type-family-mono`;
 - `font-medium` → `type-weight-medium`;
 - `font-normal` → `type-weight-regular`;
 - `text-sm` → `type-body-sm`.
 
-A corpus-level Canonical guard now scans the full Blog Admin Showcase ownership set, including nested AI product files, and rejects future raw DL-17 typography utilities.
+Exact-head evidence for `f8e6cad48eec7b94db374b8329eb3085c254082b`:
 
-The corresponding Blog certifications were demoted together before this candidate was prepared: `blog-admin-ai`, `blog-admin-core-wave1`, `blog-admin-core-wave2` and `blog-admin-core-wave3`.
+- CI `35848231776` — success;
+- Canonical Visual Golden Smoke `35848231797` — success;
+- Blog Consumer Parity `35848231756` attempt 2 — success;
+- Gosso Admin Consumer Parity `35848231752` — success;
+- Golden artifact `10744666344` — `gouno-ui-canonical-visual-golden-35848231797`, SHA-256 `105567fed4087402f6fa0fc084b8fe93b72778a890d3f13661f9d5c2cab4fc04`;
+- Blog paired parity artifact `10744253218` — `gouno-ui-blog-consumer-parity-35848231756`, SHA-256 `e5adcc17949c3fab4c0237b11db29a56e3abf82a10e6124f711325f4b0950f0b`.
 
-After exact-head CI, visual evidence and reciprocal parity succeed, manually review the retained affected states, merge the Canonical correction, append the post-freeze amendment record, then propagate the semantic roles to the Product as one Consumer batch.
+Manual rendered review:
+
+- Dashboard preserves metric/table hierarchy without rank/title/metric size or weight drift.
+- Post/Page Editor preserve history/Slug density and technical mono semantics without wrapping or inspector geometry regressions.
+- Categories, Tags, Media Library and Site Settings retain their previous spacing and control geometry.
+- AI Operations workflow rows retain the intended neutral row weight.
+- AI Settings Skill editor retains the intended technical-text treatment after moving to semantic mono roles.
+- Paired Showcase/Product evidence confirms that the semantic class migration does not create unintended visual divergence.
+
+Canonical acceptance is restored for the listed scopes. The affected Blog certifications intentionally remain `needs-manual-recertification` until the accepted semantic Typography roles are propagated to Product and manually reviewed there.
