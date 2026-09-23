@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import {
   AlertTriangle,
+  ArrowLeft,
   Check,
   ChevronRight,
   CircleAlert,
@@ -779,6 +780,9 @@ export function AIOpsInboxPanel({
     : allItems[0]?.key || "";
   const [selectedKey, setSelectedKey] = useState(defaultKey);
   const [filter, setFilter] = useState<DecisionFilter>("all");
+  const [mobilePane, setMobilePane] = useState<"master" | "detail">(
+    selectedApprovalId ? "detail" : "master",
+  );
 
   const items = allItems.filter((item) => {
     if (filter === "all") return true;
@@ -814,7 +818,10 @@ export function AIOpsInboxPanel({
             size="small"
             variant={filter === key ? "solid" : "outline"}
             color={filter === key ? "primary" : undefined}
-            onClick={() => setFilter(key)}
+            onClick={() => {
+              setFilter(key);
+              setMobilePane("master");
+            }}
           >
             {label}
           </Button>
@@ -824,11 +831,12 @@ export function AIOpsInboxPanel({
       <div
         data-slot="ops-master-detail"
         data-pattern="master-detail-composition"
+        data-mobile-pane={mobilePane}
         className="grid min-h-[34rem] items-stretch overflow-hidden rounded-lg border bg-background xl:grid-cols-[minmax(18rem,0.72fr)_minmax(0,1.55fr)]"
       >
         <section
           data-slot="ops-rail"
-          className="flex min-h-0 min-w-0 flex-col border-b xl:border-b-0 xl:border-r"
+          className={`${mobilePane === "detail" ? "hidden md:flex" : "flex"} min-h-0 min-w-0 flex-col border-b xl:border-b-0 xl:border-r`}
           aria-label="Decision Queue"
         >
           <div className="shrink-0 border-b px-[18px] py-4">
@@ -862,6 +870,7 @@ export function AIOpsInboxPanel({
                   selected={selected?.key === item.key}
                   onClick={() => {
                     setSelectedKey(item.key);
+                    setMobilePane("detail");
                     if (item.kind === "approval") onSelectApproval(item.id);
                   }}
                 />
@@ -873,7 +882,20 @@ export function AIOpsInboxPanel({
             )}
           </div>
         </section>
-        <section className="min-w-0" aria-label="Decision Workbench">
+        <section
+          data-slot="ops-detail-pane"
+          className={`${mobilePane === "master" ? "hidden md:block" : "block"} min-w-0`}
+          aria-label="Decision Workbench"
+        >
+          <div className="border-b p-4 md:hidden">
+            <Button
+              variant="ghost"
+              icon={<ArrowLeft />}
+              onClick={() => setMobilePane("master")}
+            >
+              返回决策队列
+            </Button>
+          </div>
           <DecisionWorkbench
             item={selected}
             onReviewApproval={onReviewApproval}
