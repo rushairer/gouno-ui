@@ -165,7 +165,7 @@
       "Consumer certification remains manual-first; green automated checks cannot renew stale manual certification."
     ]
   },
-  "latestCanonicalRef": "cb629669cf94ec2edced6543dfdafc7444f84c6d",
+  "latestCanonicalRef": "a265ccf68b1fb05f54f137de3d836d8b647ced40",
   "postFreezeAmendments": [
     {
       "id": "CSA-A001",
@@ -179,6 +179,18 @@
       "consumerImpact": {
         "rushairer/gouno-blog": "recertified"
       }
+    },
+    {
+      "id": "CSA-A002",
+      "date": "2026-09-23",
+      "commit": "a265ccf68b1fb05f54f137de3d836d8b647ced40",
+      "kind": "canonical-hardening",
+      "scopes": [
+        "blog-admin-post-editor",
+        "blog-admin-page-editor",
+        "blog-admin-media-library"
+      ],
+      "summary": "Unify Blog Admin editor Inspector composition behind a shared Showcase-private helper, use semantic Typography and logical inline geometry, and harden Media Library selection anchoring."
     }
   ]
 }

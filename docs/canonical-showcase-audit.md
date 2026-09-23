@@ -1564,21 +1564,38 @@ The freeze-promotion head must pass the same CI, Canonical Visual Golden, Blog C
 
 ## CSA-A002 — Editor Inspector semantic typography / logical direction hardening
 
-Status: **reopened / correction candidate**
+Status: **canonical corrected / Consumer recertification pending**
 
 Date: 2026-09-23
 
 Final drift review found that the frozen Blog Admin Post Editor and Page Editor still carried one pre-token Inspector seam: `InspectorSection` used raw `text-sm font-semibold` and physical `pr-12/right-0` geometry for its title/action pair. Media Library likewise anchored the selection control with physical `left-2`.
 
-The Blog Product matches those fixtures, so this is classified as a Canonical-source defect rather than Consumer divergence. Blog `blog-admin-core-wave3` certification was demoted before this candidate was prepared.
+The Blog Product matched those fixtures, so this was classified as a Canonical-source defect rather than Consumer divergence. Blog `blog-admin-core-wave3` certification was demoted before the Canonical correction was prepared.
 
-Candidate correction:
+Merged Canonical correction:
 
+- merge commit `a265ccf68b1fb05f54f137de3d836d8b647ced40`;
 - Inspector title uses `type-body-sm type-weight-semibold`;
 - Post/Page Editor consume one shared Showcase-private `editor-shared.tsx` composition rather than maintaining duplicated page-private helpers;
 - inline action geometry uses `pe-12` + `end-0`;
 - Media Library selection uses `start-2`;
-- Canonical audit source guards reject the retired raw/physical anatomy;
-- browser evidence now captures the Media Library selected-card state directly, in addition to the existing editor Inspector and upload Drawer evidence.
+- Canonical audit source guards reject the retired raw/physical anatomy and duplicated editor helpers;
+- browser evidence directly captures the Media Library selected-card state in addition to editor Inspector evidence.
 
-After candidate CI/visual/reciprocal parity succeeds, inspect the rendered affected states, merge the Canonical correction, append the post-freeze amendment record, propagate the exact anatomy to Blog Product, and manually re-certify Wave 3.
+Exact-head pre-merge evidence for `78c0617864e91626b95becd72be3eb99beba2db3`:
+
+- CI `35838385226` — success;
+- Canonical Visual Golden Smoke `35838385105` — success;
+- Blog Consumer Parity `35838384958` — success;
+- Gosso Admin Consumer Parity `35838385061` — success;
+- Golden artifact `10740417678` — `gouno-ui-canonical-visual-golden-35838385105`, SHA-256 `52756013c9092e234467743ec15bd19a392831b7f198ca356f16e66df6ecb135`;
+- Blog paired parity artifact `10741115001` — `gouno-ui-blog-consumer-parity-35838384958`, SHA-256 `c3f96511fb9338b98b6b10516c8771d6d67a1bd7f984d2c3ac5580826cc5b2b7`.
+
+Manual rendered review:
+
+- Post Editor desktop evidence keeps Inspector section labels, disclosure markers and inline-end AI actions aligned without collision or horizontal overflow.
+- Page Editor desktop evidence keeps the same hierarchy and alignment under the shared helper.
+- Media Library selected-card evidence keeps the checkbox inside the card's inline-start corner; selection toolbar and grid geometry remain stable.
+- Paired Showcase/Product screenshots confirm no unintended LTR visual drift from the semantic/logical-direction correction.
+
+Canonical acceptance is restored for these Showcase scopes. Blog Product remains intentionally `needs-manual-recertification` until the merged Canonical anatomy is propagated and reviewed there.
