@@ -397,7 +397,7 @@ export function BlogAdminCategoriesDemo() {
               <div className="flex items-center gap-2">
                 <Input
                   aria-label="Slug 标识"
-                  className="min-w-0 flex-1 font-mono"
+                  className="min-w-0 flex-1 type-family-mono"
                   required
                   value={draft.slug}
                   onChange={(event) => {

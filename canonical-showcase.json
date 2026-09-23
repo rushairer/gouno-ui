@@ -190,7 +190,10 @@
         "blog-admin-page-editor",
         "blog-admin-media-library"
       ],
-      "summary": "Unify Blog Admin editor Inspector composition behind a shared Showcase-private helper, use semantic Typography and logical inline geometry, and harden Media Library selection anchoring."
+      "summary": "Unify Blog Admin editor Inspector composition behind a shared Showcase-private helper, use semantic Typography and logical inline geometry, and harden Media Library selection anchoring.",
+      "consumerImpact": {
+        "rushairer/gouno-blog": "recertified"
+      }
     }
   ]
 }

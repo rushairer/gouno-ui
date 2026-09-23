@@ -390,7 +390,7 @@ export function BlogAdminSiteSettingsDemo() {
                     <Input type="url" value={settings.github_url} onChange={(event) => field("github_url", event.target.value)} />
                   </FormField>
                   <FormField label="RSS" hint="站内路径以 / 开头，也可使用完整 http(s) URL。">
-                    <Input className="font-mono" value={settings.rss_url} onChange={(event) => field("rss_url", event.target.value)} placeholder="/feed.xml" />
+                    <Input className="type-family-mono" value={settings.rss_url} onChange={(event) => field("rss_url", event.target.value)} placeholder="/feed.xml" />
                   </FormField>
                 </SettingsSurface>
               ),

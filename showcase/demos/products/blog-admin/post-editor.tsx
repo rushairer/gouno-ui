@@ -632,7 +632,7 @@ export function BlogAdminPostEditorDemo({
               <ChoiceButton
                 key={version.id}
                 type="button"
-                className="h-auto min-h-0 w-full items-start rounded-md px-2.5 py-2.5 text-left text-sm whitespace-normal transition-colors hover:bg-muted/70 [&>span]:min-w-0 [&>span]:w-full"
+                className="h-auto min-h-0 w-full items-start rounded-md px-2.5 py-2.5 text-left type-body-sm whitespace-normal transition-colors hover:bg-muted/70 [&>span]:min-w-0 [&>span]:w-full"
                 onClick={() => setRestoreTarget(version)}
                 aria-label={`查看 ${version.createdAt} 的历史版本`}
               >
@@ -884,7 +884,7 @@ return;
     />
   ) : null}
   <Field label="访问路径 (Slug)" required hint="访问路径为 /articles/<slug>">
-    <Input aria-label="访问路径 (Slug)" className="font-mono" value={post.slug} onChange={(event) => updatePost("slug", event.target.value)} />
+    <Input aria-label="访问路径 (Slug)" className="type-family-mono" value={post.slug} onChange={(event) => updatePost("slug", event.target.value)} />
   </Field>
   <Field label="SEO 标题" hint={`${post.seoTitle.length}/60`}>
     <Input aria-label="SEO 标题" maxLength={60} value={post.seoTitle} onChange={(event) => updatePost("seoTitle", event.target.value)} placeholder="留空时默认使用标题" />
