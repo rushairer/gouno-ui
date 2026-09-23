@@ -518,7 +518,7 @@ for (const [id, scope] of Object.entries({
 for (const [id, scope] of Object.entries({
   "pattern-collection-composition": "CSA-3 Wave L manual-reviewed: summary, toolbar, data view and pagination keep stable ownership through real 3 → 1 → 0-result filtering without rebuilding the outer collection grammar.",
   "pattern-record-detail-composition": "CSA-3 Wave L manual-reviewed: identity, record-wide feedback, summary and evidence sections preserve one vertical ownership order with Run-wide state above record-local content.",
-  "pattern-master-detail-composition": "CSA-3 Wave L manual-reviewed: real peer switching preserves selected context while desktop master/detail width ownership collapses into a coherent single-axis mobile stack.",
+  "pattern-master-detail-composition": "CSA-A004 corrected: peer switching preserves selected context; desktop remains dual-pane, tablet stacks both panes, and mobile uses one active pane with an explicit return path to master.",
   "pattern-settings-composition": "CSA-3 Wave L manual-reviewed: feedback, semantic sections and one task action boundary stay ordered across desktop/mobile while the visible Switch label drives the real checked-state transition.",
   "pattern-data-summary-composition": "CSA-3 Wave L manual-reviewed: semantic metric roles preserve 4 / 2 / 1-column responsive geometry at 1440 / 800 / 600 widths and remain ahead of detailed data.",
 })) {
@@ -572,7 +572,7 @@ for (const [id, scope] of Object.entries({
 for (const [id, scope] of Object.entries({
   "blog-admin-post-editor": "CSA-4 Wave O manual-reviewed: real History/restore workflow returns to Outline, preserves DocumentEditorShell ownership, and stacks navigator/canvas/inspector coherently at 600px without horizontal overflow.",
   "blog-admin-page-editor": "CSA-4 Wave O manual-reviewed: page-specific editor keeps Inspector-owned template/navigation/Slug settings, applies a real title AI candidate, and stacks canvas/inspector cleanly at 600px.",
-  "blog-admin-ai-operations": "CSA-4 Wave O manual-reviewed: Overview/Queue/Automation/Run Center remain one product workspace; Workflow detail opens from Automation and Run Center stays an evidence center rather than duplicating configuration.",
+  "blog-admin-ai-operations": "CSA-A004 corrected: Overview/Queue/Automation/Run Center remain one product workspace; Inbox and Run Center keep desktop/tablet peer context while mobile drills into one detail pane with an explicit return path.",
   "blog-admin-ai-settings": "CSA-4 Wave O manual-reviewed: six settings sections stay in one route; Skill editing uses the Dedicated Editor grammar and Model Connections reuse the canonical privileged-operation/TabPanelLead composition.",
   "blog-admin-site-settings": "CSA-4 Wave O manual-reviewed: dirty draft survives MFA expiry, Step-Up and privilege restore, remains usable at 600px, then commits and returns the product to synchronized state.",
 })) {
