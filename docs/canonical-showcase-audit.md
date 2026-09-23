@@ -1560,3 +1560,24 @@ The freeze guard now treats the matrix, phase ledger and Consumer-resume policy 
 Consumer reverse migration may resume **only after this freeze lands on `main`**, and only from surfaces listed in the frozen matrix. This does not make Canonical immutable: later real evidence may mark a surface `reopened`, which immediately stops propagation for that affected surface until the canonical owner is corrected and manually re-certified.
 
 The freeze-promotion head must pass the same CI, Canonical Visual Golden, Blog Consumer Parity and Gosso Admin Consumer Parity gates again before PR #138 merges. No additional rendered page review is required for CSA-5 itself because this phase freezes the already manually reviewed CSA-1/2/3/4 evidence rather than creating a new visual surface.
+
+
+## CSA-A002 — Editor Inspector semantic typography / logical direction hardening
+
+Status: **reopened / correction candidate**
+
+Date: 2026-09-23
+
+Final drift review found that the frozen Blog Admin Post Editor and Page Editor still carried one pre-token Inspector seam: `InspectorSection` used raw `text-sm font-semibold` and physical `pr-12/right-0` geometry for its title/action pair. Media Library likewise anchored the selection control with physical `left-2`.
+
+The Blog Product matches those fixtures, so this is classified as a Canonical-source defect rather than Consumer divergence. Blog `blog-admin-core-wave3` certification was demoted before this candidate was prepared.
+
+Candidate correction:
+
+- Inspector title uses `type-body-sm type-weight-semibold`;
+- inline action geometry uses `pe-12` + `end-0`;
+- Media Library selection uses `start-2`;
+- Canonical audit source guards reject the retired raw/physical anatomy;
+- existing visual/browser suites remain responsible for proving no LTR geometry regression.
+
+After candidate CI/visual/reciprocal parity succeeds, inspect the rendered affected states, merge the Canonical correction, append the post-freeze amendment record, propagate the exact anatomy to Blog Product, and manually re-certify Wave 3.

@@ -7,10 +7,13 @@ async function source(path) {
   return readFile(resolve(root, path), "utf8");
 }
 
-const [agents, audit, golden] = await Promise.all([
+const [agents, audit, golden, postEditor, pageEditor, mediaLibrary] = await Promise.all([
   source("AGENTS.md"),
   source("docs/canonical-showcase-audit.md"),
   source("showcase/e2e/canonical-visual-golden.pw.mjs"),
+  source("showcase/demos/products/blog-admin/post-editor.tsx"),
+  source("showcase/demos/products/blog-admin/page-editor.tsx"),
+  source("showcase/demos/products/blog-admin/media-library.tsx"),
 ]);
 
 const failures = [];
@@ -229,6 +232,44 @@ for (const evidence of [
     golden,
     evidence,
     `Canonical visual browser suite is missing CSA evidence capture: ${evidence}`,
+  );
+}
+
+
+for (const [path, content] of [
+  ["showcase/demos/products/blog-admin/post-editor.tsx", postEditor],
+  ["showcase/demos/products/blog-admin/page-editor.tsx", pageEditor],
+]) {
+  for (const marker of [
+    'className="cursor-pointer select-none pe-12 type-body-sm type-weight-semibold"',
+    'className="absolute end-0 top-2.5 z-10"',
+  ]) {
+    requireText(
+      content,
+      marker,
+      `${path}: InspectorSection must preserve semantic Typography and logical inline-end action geometry: ${marker}`,
+    );
+  }
+  for (const retired of [
+    'pr-12 text-sm font-semibold',
+    'absolute right-0 top-2.5',
+  ]) {
+    if (content.includes(retired)) {
+      failures.push(
+        `${path}: retired physical/raw InspectorSection anatomy returned: ${retired}`,
+      );
+    }
+  }
+}
+
+requireText(
+  mediaLibrary,
+  'className="absolute start-2 top-2 z-10 rounded-md bg-background/85 p-1 backdrop-blur"',
+  "showcase/demos/products/blog-admin/media-library.tsx: media selection affordance must remain anchored to logical inline-start",
+);
+if (mediaLibrary.includes("absolute left-2 top-2")) {
+  failures.push(
+    "showcase/demos/products/blog-admin/media-library.tsx: physical left selection anchoring must not return",
   );
 }
 

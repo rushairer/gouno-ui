@@ -153,8 +153,8 @@ function InspectorSection({
 }) {
   return (
     <details open className="relative border-b py-4 last:border-b-0">
-      <summary className="cursor-pointer select-none pr-12 text-sm font-semibold">{title}</summary>
-      {action ? <div className="absolute right-0 top-2.5 z-10">{action}</div> : null}
+      <summary className="cursor-pointer select-none pe-12 type-body-sm type-weight-semibold">{title}</summary>
+      {action ? <div className="absolute end-0 top-2.5 z-10">{action}</div> : null}
       <div className="mt-4 flex flex-col gap-4">{children}</div>
     </details>
   );
