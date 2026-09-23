@@ -1646,3 +1646,38 @@ Manual rendered review:
 - Paired Showcase/Product evidence confirms that the semantic class migration does not create unintended visual divergence.
 
 Canonical acceptance is restored for the listed scopes. The affected Blog certifications intentionally remain `needs-manual-recertification` until the accepted semantic Typography roles are propagated to Product and manually reviewed there.
+
+
+## CSA-A004 — Master/Detail mobile drill-in hardening
+
+Status: **reopened / correction candidate**
+
+Date: 2026-09-23
+
+The Final Drift Audit found a governance contradiction rather than a new Foundation defect.
+
+The binding Master/Detail contract in `docs/patterns/admin-data-composition.md` and the Blog Admin AI Operations product specification both require narrow mobile layouts to show **one active pane** with an explicit return path to the master/list. Tablet may stack master and detail; desktop keeps both panes side-by-side. However, the historical CSA-3 Wave L Golden evidence explicitly asserted a **600px stacked composition**, and the current Pattern/Product implementations inherited that acceptance.
+
+Classification:
+
+- Canonical responsive acceptance defect;
+- no Core/Foundation reopening;
+- no change to desktop dual-pane ownership;
+- no change to tablet stacked ownership;
+- no change to the intentional AI Operations dense-row 16px × 18px padding contract.
+
+Candidate correction:
+
+- Showcase-private `MasterDetailComposition` owns an explicit `mobilePane` state contract;
+- the Pattern demo drills Master → Detail below 768px and exposes a visible return-to-master action;
+- Blog Admin AI Operations Decision Inbox follows the same mobile Queue → Workbench drill-in;
+- Blog Admin AI Operations Workflow/Agent Run Center follows the same mobile Run List → Run Detail drill-in;
+- filters and record-type switches return mobile ownership to the master list;
+- deep-linked Run evidence may enter directly into the detail pane;
+- tablet (768–1279) continues to render stacked master/detail;
+- desktop (>=1280) continues to render the established two-column geometry;
+- Golden evidence replaces the retired 600px stacked assertion with explicit mobile master/detail state transitions and adds product-level Inbox/Run Center mobile evidence.
+
+The historical Wave L record remains intact as historical evidence; this amendment corrects its responsive acceptance conclusion rather than rewriting history.
+
+Blog certifications are already intentionally reopened for CSA-A003 Typography propagation. To avoid redundant Consumer churn and repeated CI, CSA-A004 should be folded into the same next Blog Product recertification batch after Canonical acceptance.
