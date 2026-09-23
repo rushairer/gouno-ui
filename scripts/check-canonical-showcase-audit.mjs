@@ -7,10 +7,14 @@ async function source(path) {
   return readFile(resolve(root, path), "utf8");
 }
 
-const [agents, audit, golden] = await Promise.all([
+const [agents, audit, golden, postEditor, pageEditor, mediaLibrary, editorShared] = await Promise.all([
   source("AGENTS.md"),
   source("docs/canonical-showcase-audit.md"),
   source("showcase/e2e/canonical-visual-golden.pw.mjs"),
+  source("showcase/demos/products/blog-admin/post-editor.tsx"),
+  source("showcase/demos/products/blog-admin/page-editor.tsx"),
+  source("showcase/demos/products/blog-admin/media-library.tsx"),
+  source("showcase/demos/products/blog-admin/editor-shared.tsx"),
 ]);
 
 const failures = [];
@@ -191,6 +195,7 @@ for (const evidence of [
   "product-blog-admin-post-editor-mobile-restored",
   "product-blog-admin-post-editor-history",
   "product-blog-admin-media-upload-drawer",
+  "csa-product-blog-admin-media-selection",
   "product-blog-admin-notifications-mark-read",
   "product-blog-admin-comments-reported-only",
   "product-blog-admin-pages-selected",
@@ -229,6 +234,58 @@ for (const evidence of [
     golden,
     evidence,
     `Canonical visual browser suite is missing CSA evidence capture: ${evidence}`,
+  );
+}
+
+
+for (const marker of [
+  'className="cursor-pointer select-none pe-12 type-body-sm type-weight-semibold"',
+  'className="absolute end-0 top-2.5 z-10"',
+  'className="type-body-sm type-weight-medium"',
+]) {
+  requireText(
+    editorShared,
+    marker,
+    `showcase/demos/products/blog-admin/editor-shared.tsx: shared editor composition must preserve semantic Typography and logical geometry: ${marker}`,
+  );
+}
+for (const retired of [
+  'pr-12 text-sm font-semibold',
+  'absolute right-0 top-2.5',
+]) {
+  if (editorShared.includes(retired)) {
+    failures.push(
+      `showcase/demos/products/blog-admin/editor-shared.tsx: retired physical/raw editor anatomy returned: ${retired}`,
+    );
+  }
+}
+
+for (const [path, content] of [
+  ["showcase/demos/products/blog-admin/post-editor.tsx", postEditor],
+  ["showcase/demos/products/blog-admin/page-editor.tsx", pageEditor],
+]) {
+  requireText(
+    content,
+    'import { FieldActionHeader, InspectorSection } from "./editor-shared";',
+    `${path}: Post/Page editor family must consume the shared private editor composition`,
+  );
+  for (const duplicated of ["function InspectorSection", "function FieldActionHeader"]) {
+    if (content.includes(duplicated)) {
+      failures.push(
+        `${path}: duplicated page-private editor composition returned: ${duplicated}`,
+      );
+    }
+  }
+}
+
+requireText(
+  mediaLibrary,
+  'className="absolute start-2 top-2 z-10 rounded-md bg-background/85 p-1 backdrop-blur"',
+  "showcase/demos/products/blog-admin/media-library.tsx: media selection affordance must remain anchored to logical inline-start",
+);
+if (mediaLibrary.includes("absolute left-2 top-2")) {
+  failures.push(
+    "showcase/demos/products/blog-admin/media-library.tsx: physical left selection anchoring must not return",
   );
 }
 

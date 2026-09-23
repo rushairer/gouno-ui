@@ -429,7 +429,7 @@ export function BlogAdminMediaLibraryDemo() {
           {visibleAssets.map((asset) => (
             <Card key={asset.id} padding="none" role="listitem" className="group overflow-hidden transition-all hover:border-primary/40">
               <div className="relative aspect-video overflow-hidden border-b bg-muted/40">
-                <div className="absolute left-2 top-2 z-10 rounded-md bg-background/85 p-1 backdrop-blur">
+                <div className="absolute start-2 top-2 z-10 rounded-md bg-background/85 p-1 backdrop-blur">
                   <Checkbox
                     aria-label={`选择媒体 ${asset.filename}`}
                     checked={selected.includes(asset.id)}
