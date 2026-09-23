@@ -217,6 +217,10 @@ describe("Blog Admin AI canonical redesign contract", () => {
     expect(screen.getByText("默认治理限制")).toBeTruthy();
     expect(screen.getByLabelText(/固定指令/)).toBeTruthy();
     expect(screen.getByRole("checkbox", { name: /web_research/ })).toBeTruthy();
+    const longToolName = screen.getByText("analytics.list_low_engagement_posts", { exact: true });
+    expect(longToolName).toBeTruthy();
+    expect(longToolName.className).toContain("[overflow-wrap:anywhere]");
+    expect(longToolName.parentElement?.className).toContain("flex-1");
     expect(screen.getByLabelText(/内容发布策略/)).toBeTruthy();
     expect(screen.getByLabelText("Max steps")).toBeTruthy();
     expect(screen.getByLabelText(/默认日运行上限/)).toBeTruthy();
