@@ -371,7 +371,7 @@ function SkillEditor({
                   <Input name="summary" defaultValue={initial?.summary} />
                 </Field>
                 <Field label="固定指令" hint="固定在 Skill Version 中；Agent 不能覆盖。">
-                  <Textarea name="systemPrompt" defaultValue={initial?.systemPrompt} rows={7} className="font-mono" />
+                  <Textarea name="systemPrompt" defaultValue={initial?.systemPrompt} rows={7} className="type-family-mono" />
                 </Field>
               </div>
             </DedicatedEditorSection>
@@ -400,7 +400,7 @@ function SkillEditor({
                   name="inputSchema"
                   defaultValue={JSON.stringify(inputSchema, null, 2)}
                   rows={7}
-                  className="font-mono"
+                  className="type-family-mono"
                 />
               </Field>
             </DedicatedEditorSection>
