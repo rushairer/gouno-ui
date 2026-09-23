@@ -477,10 +477,10 @@ export function BlogAdminDashboardDemo() {
                   <TableBody>
                     {summary.topPosts.map((post, index) => (
                       <TableRow key={post.id}>
-                        <TableCell className="text-center font-mono type-caption text-muted-foreground">{index + 1}</TableCell>
-                        <TableCell className="font-medium">{post.title}</TableCell>
-                        <TableCell className="text-right font-mono type-caption text-muted-foreground">{post.views.toLocaleString()}</TableCell>
-                        <TableCell className="text-right font-mono type-caption text-muted-foreground">{post.likes.toLocaleString()}</TableCell>
+                        <TableCell className="text-center type-family-mono type-caption text-muted-foreground">{index + 1}</TableCell>
+                        <TableCell className="type-weight-medium">{post.title}</TableCell>
+                        <TableCell className="text-right type-family-mono type-caption text-muted-foreground">{post.views.toLocaleString()}</TableCell>
+                        <TableCell className="text-right type-family-mono type-caption text-muted-foreground">{post.likes.toLocaleString()}</TableCell>
                         <TableCell className="text-right">
                           <div className="inline-flex min-w-max flex-nowrap items-center justify-end gap-1">
                             <IconButton
