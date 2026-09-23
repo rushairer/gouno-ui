@@ -85,16 +85,16 @@ describe("admin data composition contracts", () => {
     const composition = container.querySelector('[data-pattern="master-detail-composition"]');
     expect(container.querySelector('[data-slot="master-detail-master"]')).toBeTruthy();
     expect(container.querySelector('[data-slot="master-detail-detail"]')).toBeTruthy();
-    expect(composition).toHaveAttribute("data-mobile-pane", "master");
+    expect(composition?.getAttribute("data-mobile-pane")).toBe("master");
     expect(screen.getByRole("heading", { level: 2, name: "确认文章分类" })).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: /批准外部写入/ }));
-    expect(composition).toHaveAttribute("data-mobile-pane", "detail");
+    expect(composition?.getAttribute("data-mobile-pane")).toBe("detail");
     expect(screen.getByRole("heading", { level: 2, name: "批准外部写入" })).toBeTruthy();
     expect(screen.getByText(/D-30/)).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "返回待处理列表" }));
-    expect(composition).toHaveAttribute("data-mobile-pane", "master");
+    expect(composition?.getAttribute("data-mobile-pane")).toBe("master");
   });
 
   it("keeps Settings feedback before semantic sections and one task action boundary", () => {
