@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { DatabaseZap, KeyRound, LockKeyhole } from "lucide-react";
 import {
   Button,
@@ -18,6 +18,7 @@ import type {
   AgentFixture,
   AISettingsFixture,
   ConnectorFixture,
+  ConnectorKind,
   EmbeddingProfileFixture,
   ProviderFixture,
   SkillFixture,
@@ -618,21 +619,25 @@ function EmbeddingEditor({ value, onSave, onCancel, surface = "page" }: { value:
 
 function ConnectorEditor({ value, onSave, onCancel, surface = "page" }: { value: ConnectorFixture | "new"; onSave: (result: AISettingsEditorResult) => void; onCancel: () => void; surface?: AISettingsEditorSurface }) {
   const initial = value === "new" ? undefined : value;
+  const [kind, setKind] = useState<ConnectorKind>(initial?.kind || "newsletter");
+  const [sandbox, setSandbox] = useState(initial?.sandbox ?? true);
+
   return (
     <Form
       id="ai-settings-connector-editor"
       onFinish={(_, values) => {
+        const credential = text(values, "credential");
         onSave({
           kind: "connector",
           id: initial?.id,
           value: {
             name: text(values, "name", initial?.name || "Sandbox Connector"),
-            kind: text(values, "kind", initial?.kind || "newsletter"),
-            status: initial?.status || "disabled",
-            scope: text(values, "scope", initial?.scope || "Sandbox only"),
-            sandbox: checked(values, "sandbox"),
-            hasCredential: checked(values, "hasCredential"),
-            lastChecked: "刚刚",
+            kind,
+            enabled: checked(values, "enabled"),
+            sandbox,
+            configJson: text(values, "configJson", initial?.configJson || "{\n  \"rate_limit_per_minute\": 10\n}"),
+            hasCredential: Boolean(credential || initial?.hasCredential),
+            credentialLast4: credential ? credential.slice(-4) : initial?.credentialLast4,
           },
         });
       }}
@@ -641,17 +646,25 @@ function ConnectorEditor({ value, onSave, onCancel, surface = "page" }: { value:
         {surface === "page" ? (
           <ContextualEditorHeader
             title={initial ? `编辑 Connector：${initial.name}` : "添加 Connector Profile"}
-            description="连接器只暴露显式授权能力；真实 OAuth、凭据和网络调用不进入 Showcase。"
+            description="连接器只暴露显式授权能力；Fixture 使用假配置与假凭据，不执行真实 OAuth 或网络调用。"
             icon={<LockKeyhole />}
           />
         ) : null}
         <div className="grid gap-5 xl:grid-cols-2">
-          <EditorFormSurfaceSection title="连接身份" description="定义 Connector 的产品名称、类型和允许访问的范围。">
+          <EditorFormSurfaceSection title="连接身份" description="定义 Connector 的产品名称、类型和启停状态；四种类型保持同一治理入口。">
             <div className="flex flex-col gap-5">
               <FormGrid columns={2}>
                 <Field label="Profile 名称" required><Input name="name" defaultValue={initial?.name} placeholder="search-console" /></Field>
                 <Field label="类型">
-                  <Select name="kind" defaultValue={initial?.kind || "newsletter"}>
+                  <Select
+                    name="kind"
+                    value={kind}
+                    onChange={(value) => {
+                      const next = (Array.isArray(value) ? value[0] : value) as ConnectorKind;
+                      setKind(next || "newsletter");
+                      if (next !== "search_console") setSandbox(true);
+                    }}
+                  >
                     <option value="search_console">Search Console</option>
                     <option value="newsletter">Newsletter</option>
                     <option value="social">Social</option>
@@ -659,13 +672,40 @@ function ConnectorEditor({ value, onSave, onCancel, surface = "page" }: { value:
                   </Select>
                 </Field>
               </FormGrid>
-              <Field label="授权范围"><Input name="scope" defaultValue={initial?.scope} placeholder="只读公网研究" /></Field>
+              <Field label="状态">
+                <Switch name="enabled" defaultChecked={initial?.enabled ?? true} label="启用 Connector" />
+              </Field>
             </div>
           </EditorFormSurfaceSection>
-          <EditorFormSurfaceSection title="运行与凭据" description="Sandbox 与凭据状态显式分离，避免把已配置凭据误解为允许生产写入。">
-            <div className="flex flex-col gap-4">
-              <Switch name="sandbox" defaultChecked={initial?.sandbox ?? true} label="Sandbox" />
-              <Switch name="hasCredential" defaultChecked={initial?.hasCredential ?? false} label="已配置凭据" />
+          <EditorFormSurfaceSection title="运行与凭据" description="Sandbox、配置 JSON 与凭据状态显式分离；只有 Search Console 可以切换到只读 Google OAuth。">
+            <div className="flex flex-col gap-5">
+              {kind === "search_console" ? (
+                <Field label="连接模式">
+                  <Switch
+                    name="sandbox"
+                    checked={sandbox}
+                    onChange={(event) => setSandbox(event.currentTarget.checked)}
+                    label="Sandbox（关闭后为只读 Google OAuth）"
+                  />
+                </Field>
+              ) : (
+                <Alert type="info" showIcon title="Sandbox only" description="Newsletter、Social 与 Webhook 在当前产品边界内只允许 Sandbox Mock，不执行真实外部写入。" />
+              )}
+              <Field label="配置 JSON">
+                <Textarea
+                  name="configJson"
+                  className="type-family-mono"
+                  defaultValue={initial?.configJson || "{\n  \"rate_limit_per_minute\": 10\n}"}
+                  rows={6}
+                  placeholder='{"client_id":"fixture-client","site_url":"sc-domain:example.com","rate_limit_per_minute":10}'
+                />
+              </Field>
+              <Field
+                label={sandbox ? "凭据（Fixture 可选）" : "Google OAuth Client Secret（Fixture 占位）"}
+                hint={initial?.hasCredential ? `已配置凭据 •••• ${initial.credentialLast4 || "----"}；留空表示保留现有状态。` : "Showcase 永不保存真实凭据；输入值只用于模拟掩码状态。"}
+              >
+                <Input name="credential" type="password" autoComplete="off" placeholder={initial?.hasCredential ? "留空以保留" : "fixture-secret"} />
+              </Field>
             </div>
           </EditorFormSurfaceSection>
         </div>
