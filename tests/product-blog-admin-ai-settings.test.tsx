@@ -99,11 +99,22 @@ describe("Blog Admin AI Settings route family", () => {
     expect(screen.getByRole("button", { name: "添加模型连接" })).toBeTruthy();
     expect(screen.getByRole("heading", { level: 2, name: "默认用途" })).toBeTruthy();
     expect(screen.getByText("API Key •••• 4821")).toBeTruthy();
+    expect(
+      screen.getByText("DeepSeek · OpenAI Compatible · deepseek-chat"),
+    ).toBeTruthy();
 
     fireEvent.click(screen.getAllByRole("button", { name: "测试连接" })[0]);
     expect(screen.getByText("OpenAI GPT-5.6：连接测试成功。")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "添加模型连接" }));
     const providerDrawer = screen.getByRole("dialog", { name: "添加模型连接" });
+    expect(within(providerDrawer).getByLabelText("供应商")).toBeTruthy();
+    expect(within(providerDrawer).getByLabelText("接口协议")).toBeTruthy();
+    expect(
+      within(providerDrawer).getByRole("option", { name: "DeepSeek" }),
+    ).toBeTruthy();
+    expect(
+      within(providerDrawer).getByRole("option", { name: "Anthropic Messages" }),
+    ).toBeTruthy();
     expect(within(providerDrawer).getByRole("button", { name: "保存模型连接" })).toBeTruthy();
     fireEvent.click(within(providerDrawer).getByRole("button", { name: "取消" }));
     expect(screen.getByRole("heading", { level: 2, name: "默认用途" })).toBeTruthy();
