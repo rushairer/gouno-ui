@@ -105,6 +105,9 @@ describe("Blog Admin AI Settings route family", () => {
     fireEvent.click(screen.getByRole("button", { name: "添加模型连接" }));
     const providerDrawer = screen.getByRole("dialog", { name: "添加模型连接" });
     expect(within(providerDrawer).getByRole("button", { name: "保存模型连接" })).toBeTruthy();
+    expect(within(providerDrawer).getByRole("option", { name: "DeepSeek" })).toBeTruthy();
+    expect(within(providerDrawer).getByRole("option", { name: "Alibaba Bailian / Qwen" })).toBeTruthy();
+    expect(within(providerDrawer).getByRole("option", { name: "Baidu Qianfan" })).toBeTruthy();
     fireEvent.click(within(providerDrawer).getByRole("button", { name: "取消" }));
     expect(screen.getByRole("heading", { level: 2, name: "默认用途" })).toBeTruthy();
   });
@@ -182,7 +185,8 @@ describe("Blog Admin AI Settings route family", () => {
     expect(screen.getByRole("button", { name: "添加 Connector Profile" })).toBeTruthy();
     expect(screen.getByRole("heading", { level: 2, name: "Outbox 沙箱" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "加入 Outbox" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "OAuth Web Research Sandbox" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "连接 Google Search Console Read-only" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "开始 Mock OAuth Media Sandbox" })).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "添加 Connector Profile" }));
     const connectorDrawer = screen.getByRole("dialog", { name: "添加 Connector Profile" });
@@ -195,8 +199,8 @@ describe("Blog Admin AI Settings route family", () => {
     fireEvent.click(screen.getByRole("button", { name: "批准 fixture-304" }));
     expect(screen.getByText("Outbox #304 已更新为已批准。")).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("button", { name: "OAuth Web Research Sandbox" }));
-    expect(screen.getByText(/Web Research Sandbox 已模拟完成 Mock OAuth 回调/)).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "开始 Mock OAuth Media Sandbox" }));
+    expect(screen.getByText(/Media Sandbox 已模拟完成 Mock OAuth 回调/)).toBeTruthy();
     expect(aiSettingsFixture.connectorOutbox.some((item) => item.status === "failed")).toBe(true);
   });
 
