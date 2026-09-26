@@ -1702,3 +1702,47 @@ Manual rendered review of the exact-head Golden artifact:
 The historical Wave L record remains intact as historical evidence; CSA-A004 corrects its responsive acceptance conclusion rather than rewriting history.
 
 Canonical acceptance is restored for the affected Showcase scopes. Blog Product remains intentionally pending manual re-certification because CSA-A003 Typography propagation and CSA-A004 Master/Detail propagation should be absorbed into one Consumer batch rather than creating redundant reverse-migration cycles.
+
+## CSA-A005 — AI Provider vendor / protocol separation
+
+Status: **canonical corrected / Consumer recertification pending**
+
+Date: 2026-09-26
+
+The reopened Connector / Integration Hub work exposed a semantic defect in the frozen Blog Admin AI Settings Model Connections surface: the historical `providerType` field mixed two independent concepts—commercial/model vendor identity and the wire protocol used to call that vendor. This made OpenAI-compatible vendors appear as if they were OpenAI itself and provided no stable Canonical contract for providers that expose more than one protocol family.
+
+Classification:
+
+- Canonical Product-contract correction in `blog-admin-ai-settings`;
+- no Core/Foundation reopening;
+- no new generic Gouno abstraction;
+- existing `PrivilegedAccessGate`, `TabPanelLead`, Drawer, Field and FormGrid ownership remains unchanged.
+
+Merged Canonical correction:
+
+- PR #149;
+- merge commit `aa0c113ec0ca4ee02a9cd79f35eb0a9389488b77`;
+- Provider fixtures replace mixed `providerType` state with independent `vendor` and `protocol` fields;
+- Model Connection editor presents connection name + vendor as product identity, then protocol + Base URL + Model as runtime request identity;
+- connection cards render `vendor · protocol · model` so compatible vendors are no longer mislabeled as OpenAI;
+- mainstream vendor identities remain Showcase/product-local data rather than becoming a Core component API;
+- product tests lock the semantic separation without assuming native `<select>` implementation details.
+
+Exact-head pre-merge evidence for `da9cff76d21faa89a8f9380a4cbce246add15203`:
+
+- CI `36238617270` — success;
+- Canonical Visual Golden Smoke `36238617272` — success;
+- Blog Consumer Parity `36238617296` — success;
+- Gosso Admin Consumer Parity `36238617268` — success;
+- Golden artifact `10904682463` — `gouno-ui-canonical-visual-golden-36238617272`, SHA-256 `c69ef816e5d36c6c6e585ae34801ce28e53b5b3dcf986e36a6abc68640920f39`.
+
+Manual rendered review of the exact-head Golden artifact:
+
+- AI Settings keeps one route-level settings grammar and the existing Model Connections tab ownership.
+- The privileged-operation gate, default-purpose controls and model-connection card grid retain their established geometry.
+- Provider cards render product identity explicitly, including `OpenAI · OpenAI Compatible · gpt-5.6-sol`, `自定义 / 兼容服务 · OpenAI Compatible · gpt-image-2` and `DeepSeek · OpenAI Compatible · deepseek-chat`.
+- The third DeepSeek card, long Base URLs and action rows remain contained without horizontal overflow or alignment drift.
+- The exact Golden corpus does not include an opened Provider Drawer capture. Drawer field semantics are therefore supported by exact-head product tests rather than being claimed as manually rendered evidence.
+
+Canonical acceptance is restored for the `blog-admin-ai-settings` Model Connections contract. Blog Product remains intentionally `needs-manual-recertification` until the vendor/protocol contract is propagated, its browser evidence is reviewed, and the reopened U04b certification is closed.
+

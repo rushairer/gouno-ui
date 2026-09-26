@@ -3,7 +3,7 @@
   "program": "CSA-001",
   "phase": "CSA-5",
   "status": "frozen",
-  "updated": "2026-09-22",
+  "updated": "2026-09-26",
   "baselineCommit": "bb2c052dbf54fa37dc98b3be7a8e1ccfc9c973df",
   "authorityOrder": [
     "Foundation / Core authority",
@@ -165,7 +165,7 @@
       "Consumer certification remains manual-first; green automated checks cannot renew stale manual certification."
     ]
   },
-  "latestCanonicalRef": "69019c4175bde817d56c5037f95fbc382b122c98",
+  "latestCanonicalRef": "aa0c113ec0ca4ee02a9cd79f35eb0a9389488b77",
   "postFreezeAmendments": [
     {
       "id": "CSA-A001",
@@ -223,6 +223,19 @@
         "blog-admin-ai-operations"
       ],
       "summary": "Correct Master/Detail responsive ownership so mobile uses a single active pane with an explicit return path while tablet remains stacked and desktop remains dual-pane."
+    },
+    {
+      "id": "CSA-A005",
+      "date": "2026-09-26",
+      "commit": "aa0c113ec0ca4ee02a9cd79f35eb0a9389488b77",
+      "kind": "canonical-correction",
+      "scopes": [
+        "blog-admin-ai-settings"
+      ],
+      "summary": "Separate AI model vendor identity from wire protocol in canonical Model Connections while preserving the existing privileged settings composition and product-local ownership.",
+      "consumerImpact": {
+        "rushairer/gouno-blog": "needs-manual-recertification"
+      }
     }
   ]
 }
