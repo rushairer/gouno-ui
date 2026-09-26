@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { DatabaseZap, KeyRound, LockKeyhole } from "lucide-react";
 import {
   Button,
@@ -18,8 +18,11 @@ import type {
   AgentFixture,
   AISettingsFixture,
   ConnectorFixture,
+  ConnectorKind,
   EmbeddingProfileFixture,
   ProviderFixture,
+  ProviderProtocol,
+  ProviderVendor,
   SkillFixture,
 } from "./fixtures";
 import {
@@ -479,8 +482,49 @@ function SkillEditor({
   );
 }
 
+const providerVendorPresets: Record<
+  ProviderVendor,
+  { label: string; protocol: ProviderProtocol; baseUrl: string; protocolMode: string; model: string }
+> = {
+  openai: { label: "OpenAI", protocol: "openai", baseUrl: "https://api.openai.com", protocolMode: "responses", model: "gpt-5.6" },
+  anthropic: { label: "Anthropic Claude", protocol: "anthropic", baseUrl: "https://api.anthropic.com", protocolMode: "", model: "claude-sonnet-4-5" },
+  google: { label: "Google Gemini", protocol: "gemini", baseUrl: "https://generativelanguage.googleapis.com", protocolMode: "generate_content", model: "gemini-3.1-pro-preview" },
+  deepseek: { label: "DeepSeek", protocol: "openai", baseUrl: "https://api.deepseek.com", protocolMode: "chat_completions", model: "deepseek-chat" },
+  alibaba_bailian: { label: "Alibaba Bailian / Qwen", protocol: "openai", baseUrl: "https://dashscope.aliyuncs.com/compatible-mode/v1", protocolMode: "chat_completions", model: "qwen-plus" },
+  volcengine_ark: { label: "Volcengine Ark / Doubao", protocol: "openai", baseUrl: "https://ark.cn-beijing.volces.com/api/v3", protocolMode: "chat_completions", model: "doubao-seed" },
+  tencent_hunyuan: { label: "Tencent Hunyuan", protocol: "openai", baseUrl: "https://api.hunyuan.cloud.tencent.com/v1", protocolMode: "chat_completions", model: "hunyuan-turbos-latest" },
+  baidu_qianfan: { label: "Baidu Qianfan", protocol: "openai", baseUrl: "https://qianfan.baidubce.com/v2", protocolMode: "chat_completions", model: "ernie-4.0-turbo-8k" },
+  moonshot: { label: "Moonshot / Kimi", protocol: "openai", baseUrl: "https://api.moonshot.cn/v1", protocolMode: "chat_completions", model: "kimi-k2.5" },
+  zhipu: { label: "Zhipu GLM", protocol: "openai", baseUrl: "https://open.bigmodel.cn/api/paas/v4", protocolMode: "chat_completions", model: "glm-5" },
+  siliconflow: { label: "SiliconFlow", protocol: "openai", baseUrl: "https://api.siliconflow.cn/v1", protocolMode: "chat_completions", model: "deepseek-ai/DeepSeek-V3.2" },
+  minimax: { label: "MiniMax", protocol: "openai", baseUrl: "https://api.minimaxi.com", protocolMode: "chat_completions", model: "MiniMax-M2.7" },
+  custom: { label: "Custom / compatible", protocol: "openai", baseUrl: "", protocolMode: "chat_completions", model: "model-name" },
+};
+
 function ProviderEditor({ value, onSave, onCancel, surface = "page" }: { value: ProviderFixture | "new"; onSave: (result: AISettingsEditorResult) => void; onCancel: () => void; surface?: AISettingsEditorSurface }) {
   const initial = value === "new" ? undefined : value;
+  const [vendor, setVendor] = useState<ProviderVendor>(initial?.vendor || "openai");
+  const [providerType, setProviderType] = useState<ProviderProtocol>(initial?.providerType || "openai");
+  const [protocolMode, setProtocolMode] = useState(initial?.protocolMode || "responses");
+  const [baseUrl, setBaseUrl] = useState(initial?.baseUrl || providerVendorPresets[vendor].baseUrl);
+  const [model, setModel] = useState(initial?.model || providerVendorPresets[vendor].model);
+
+  const applyVendor = (next: ProviderVendor) => {
+    const preset = providerVendorPresets[next];
+    setVendor(next);
+    if (next !== "custom") {
+      setProviderType(preset.protocol);
+      setProtocolMode(preset.protocolMode);
+      setBaseUrl(preset.baseUrl);
+      setModel(preset.model);
+    }
+  };
+
+  const applyProtocol = (next: ProviderProtocol) => {
+    setProviderType(next);
+    setProtocolMode(next === "openai" ? "chat_completions" : next === "gemini" ? "generate_content" : "");
+  };
+
   return (
     <Form
       id="ai-settings-provider-editor"
@@ -490,9 +534,11 @@ function ProviderEditor({ value, onSave, onCancel, surface = "page" }: { value: 
           id: initial?.id,
           value: {
             name: text(values, "name", initial?.name || "Model Connection"),
-            providerType: text(values, "providerType", initial?.providerType || "openai-compatible"),
-            model: text(values, "model", initial?.model || "model-name"),
-            baseUrl: text(values, "baseUrl", initial?.baseUrl || "https://api.example.com/v1"),
+            vendor,
+            providerType,
+            protocolMode,
+            model: model || "model-name",
+            baseUrl,
             apiKeyLast4: text(values, "apiKeyLast4", initial?.apiKeyLast4 || "••••"),
             enabled: checked(values, "enabled"),
             defaultWriting: initial?.defaultWriting ?? false,
@@ -505,37 +551,67 @@ function ProviderEditor({ value, onSave, onCancel, surface = "page" }: { value: 
         {surface === "page" ? (
           <ContextualEditorHeader
             title={initial ? `编辑模型连接：${initial.name}` : "添加模型连接"}
-            description="连接身份、端点与凭据状态分组展示；真实 API Key 仍由服务端加密保存。"
+            description="平台身份与接口协议分离；同一个 OpenAI-compatible 适配器可以服务多个国内外模型平台。"
             icon={<KeyRound />}
           />
         ) : null}
         <div className="grid gap-5 xl:grid-cols-2">
-          <EditorFormSurfaceSection title="连接身份" description="定义这条模型连接在产品中的名称和协议类型。">
-            <FormGrid columns={2}>
+          <EditorFormSurfaceSection title="连接身份" description="平台用于识别服务商和预设；协议决定实际 wire format，两者不再混为一个字段。">
+            <div className="flex flex-col gap-5">
               <Field label="连接名称" required>
-                <Input name="name" defaultValue={initial?.name} placeholder="OpenAI Production" />
+                <Input name="name" defaultValue={initial?.name} placeholder="Production Writer" />
               </Field>
-              <Field label="Provider 类型">
-                <Select name="providerType" defaultValue={initial?.providerType || "openai-compatible"}>
-                  <option value="openai-compatible">OpenAI compatible</option>
-                  <option value="anthropic">Anthropic</option>
-                  <option value="image">Image gateway</option>
-                </Select>
-              </Field>
-            </FormGrid>
+              <FormGrid columns={2}>
+                <Field label="平台">
+                  <Select
+                    value={vendor}
+                    onChange={(next) => applyVendor((Array.isArray(next) ? next[0] : next) as ProviderVendor)}
+                  >
+                    {Object.entries(providerVendorPresets).map(([key, preset]) => (
+                      <option key={key} value={key}>{preset.label}</option>
+                    ))}
+                  </Select>
+                </Field>
+                <Field label="接口协议">
+                  <Select
+                    value={providerType}
+                    onChange={(next) => applyProtocol((Array.isArray(next) ? next[0] : next) as ProviderProtocol)}
+                  >
+                    <option value="openai">OpenAI-compatible</option>
+                    <option value="anthropic">Anthropic Messages-compatible</option>
+                    <option value="gemini">Gemini native</option>
+                  </Select>
+                </Field>
+              </FormGrid>
+            </div>
           </EditorFormSurfaceSection>
-          <EditorFormSurfaceSection title="模型与端点" description="运行时请求只使用这里明确配置的端点和模型。">
+          <EditorFormSurfaceSection title="模型与端点" description="Base URL 表示平台 API root；兼容协议按该 root 追加 operation path，不强制所有平台使用 /v1。">
             <div className="flex flex-col gap-5">
               <Field label="Base URL" required>
-                <Input name="baseUrl" defaultValue={initial?.baseUrl} placeholder="https://api.openai.com/v1" />
+                <Input value={baseUrl} onChange={(event) => setBaseUrl(event.target.value)} placeholder="https://api.example.com/v1" />
               </Field>
               <Field label="Model" required>
-                <Input name="model" defaultValue={initial?.model} placeholder="gpt-5.6-sol" />
+                <Input value={model} onChange={(event) => setModel(event.target.value)} placeholder={providerVendorPresets[vendor].model} />
               </Field>
+              {providerType === "openai" ? (
+                <Field label="接口模式">
+                  <Select value={protocolMode || "chat_completions"} onChange={(next) => setProtocolMode(String(Array.isArray(next) ? next[0] : next))}>
+                    <option value="chat_completions">Chat Completions</option>
+                    <option value="responses">Responses API</option>
+                  </Select>
+                </Field>
+              ) : providerType === "gemini" ? (
+                <Field label="接口模式">
+                  <Select value={protocolMode || "generate_content"} onChange={(next) => setProtocolMode(String(Array.isArray(next) ? next[0] : next))}>
+                    <option value="generate_content">GenerateContent</option>
+                    <option value="predict">Predict</option>
+                  </Select>
+                </Field>
+              ) : null}
             </div>
           </EditorFormSurfaceSection>
         </div>
-        <EditorFormSurfaceSection title="凭据与状态" description="Showcase 只展示掩码与启停状态，不接触真实密钥。">
+        <EditorFormSurfaceSection title="凭据与状态" description="Showcase 只展示掩码与启停状态，不保存真实 API Key。">
           <FormGrid columns={2}>
             <Field label="API Key 后四位" hint="仅用于展示密钥已保存状态；不输入真实凭证。">
               <Input name="apiKeyLast4" defaultValue={initial?.apiKeyLast4} maxLength={4} placeholder="1234" />
@@ -618,21 +694,25 @@ function EmbeddingEditor({ value, onSave, onCancel, surface = "page" }: { value:
 
 function ConnectorEditor({ value, onSave, onCancel, surface = "page" }: { value: ConnectorFixture | "new"; onSave: (result: AISettingsEditorResult) => void; onCancel: () => void; surface?: AISettingsEditorSurface }) {
   const initial = value === "new" ? undefined : value;
+  const [kind, setKind] = useState<ConnectorKind>(initial?.kind || "newsletter");
+  const [sandbox, setSandbox] = useState(initial?.sandbox ?? true);
+
   return (
     <Form
       id="ai-settings-connector-editor"
       onFinish={(_, values) => {
+        const credential = text(values, "credential");
         onSave({
           kind: "connector",
           id: initial?.id,
           value: {
             name: text(values, "name", initial?.name || "Sandbox Connector"),
-            kind: text(values, "kind", initial?.kind || "newsletter"),
-            status: initial?.status || "disabled",
-            scope: text(values, "scope", initial?.scope || "Sandbox only"),
-            sandbox: checked(values, "sandbox"),
-            hasCredential: checked(values, "hasCredential"),
-            lastChecked: "刚刚",
+            kind,
+            enabled: checked(values, "enabled"),
+            sandbox,
+            configJson: text(values, "configJson", initial?.configJson || "{\n  \"rate_limit_per_minute\": 10\n}"),
+            hasCredential: Boolean(credential || initial?.hasCredential),
+            credentialLast4: credential ? credential.slice(-4) : initial?.credentialLast4,
           },
         });
       }}
@@ -641,17 +721,25 @@ function ConnectorEditor({ value, onSave, onCancel, surface = "page" }: { value:
         {surface === "page" ? (
           <ContextualEditorHeader
             title={initial ? `编辑 Connector：${initial.name}` : "添加 Connector Profile"}
-            description="连接器只暴露显式授权能力；真实 OAuth、凭据和网络调用不进入 Showcase。"
+            description="连接器只暴露显式授权能力；Fixture 使用假配置与假凭据，不执行真实 OAuth 或网络调用。"
             icon={<LockKeyhole />}
           />
         ) : null}
         <div className="grid gap-5 xl:grid-cols-2">
-          <EditorFormSurfaceSection title="连接身份" description="定义 Connector 的产品名称、类型和允许访问的范围。">
+          <EditorFormSurfaceSection title="连接身份" description="定义 Connector 的产品名称、类型和启停状态；四种类型保持同一治理入口。">
             <div className="flex flex-col gap-5">
               <FormGrid columns={2}>
                 <Field label="Profile 名称" required><Input name="name" defaultValue={initial?.name} placeholder="search-console" /></Field>
                 <Field label="类型">
-                  <Select name="kind" defaultValue={initial?.kind || "newsletter"}>
+                  <Select
+                    name="kind"
+                    value={kind}
+                    onChange={(value) => {
+                      const next = (Array.isArray(value) ? value[0] : value) as ConnectorKind;
+                      setKind(next || "newsletter");
+                      if (next !== "search_console") setSandbox(true);
+                    }}
+                  >
                     <option value="search_console">Search Console</option>
                     <option value="newsletter">Newsletter</option>
                     <option value="social">Social</option>
@@ -659,13 +747,40 @@ function ConnectorEditor({ value, onSave, onCancel, surface = "page" }: { value:
                   </Select>
                 </Field>
               </FormGrid>
-              <Field label="授权范围"><Input name="scope" defaultValue={initial?.scope} placeholder="只读公网研究" /></Field>
+              <Field label="状态">
+                <Switch name="enabled" defaultChecked={initial?.enabled ?? true} label="启用 Connector" />
+              </Field>
             </div>
           </EditorFormSurfaceSection>
-          <EditorFormSurfaceSection title="运行与凭据" description="Sandbox 与凭据状态显式分离，避免把已配置凭据误解为允许生产写入。">
-            <div className="flex flex-col gap-4">
-              <Switch name="sandbox" defaultChecked={initial?.sandbox ?? true} label="Sandbox" />
-              <Switch name="hasCredential" defaultChecked={initial?.hasCredential ?? false} label="已配置凭据" />
+          <EditorFormSurfaceSection title="运行与凭据" description="Sandbox、配置 JSON 与凭据状态显式分离；只有 Search Console 可以切换到只读 Google OAuth。">
+            <div className="flex flex-col gap-5">
+              {kind === "search_console" ? (
+                <Field label="连接模式">
+                  <Switch
+                    name="sandbox"
+                    checked={sandbox}
+                    onChange={(event) => setSandbox(event.currentTarget.checked)}
+                    label="Sandbox（关闭后为只读 Google OAuth）"
+                  />
+                </Field>
+              ) : (
+                <Alert type="info" showIcon title="Sandbox only" description="Newsletter、Social 与 Webhook 在当前产品边界内只允许 Sandbox Mock，不执行真实外部写入。" />
+              )}
+              <Field label="配置 JSON">
+                <Textarea
+                  name="configJson"
+                  className="type-family-mono"
+                  defaultValue={initial?.configJson || "{\n  \"rate_limit_per_minute\": 10\n}"}
+                  rows={6}
+                  placeholder='{"client_id":"fixture-client","site_url":"sc-domain:example.com","rate_limit_per_minute":10}'
+                />
+              </Field>
+              <Field
+                label={sandbox ? "凭据（Fixture 可选）" : "Google OAuth Client Secret（Fixture 占位）"}
+                hint={initial?.hasCredential ? `已配置凭据 •••• ${initial.credentialLast4 || "----"}；留空表示保留现有状态。` : "Showcase 永不保存真实凭据；输入值只用于模拟掩码状态。"}
+              >
+                <Input name="credential" type="password" autoComplete="off" placeholder={initial?.hasCredential ? "留空以保留" : "fixture-secret"} />
+              </Field>
             </div>
           </EditorFormSurfaceSection>
         </div>

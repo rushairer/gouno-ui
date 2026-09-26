@@ -298,7 +298,7 @@ function ProviderList({ providers, actions }: { providers: ProviderFixture[]; ac
         {providers.map((provider) => (
           <Card key={provider.id} padding="base">
             <div className="flex h-full flex-col gap-4">
-              <div className="flex items-start justify-between gap-3"><div><strong>{provider.name}</strong><Text size="xs" tone="muted">{provider.providerType} · {provider.model}</Text></div><Tag color={provider.enabled ? "success" : "default"}>{provider.enabled ? "可用" : "停用"}</Tag></div>
+              <div className="flex items-start justify-between gap-3"><div><strong>{provider.name}</strong><Text size="xs" tone="muted">{provider.vendor} · {provider.providerType} · {provider.model}</Text></div><Tag color={provider.enabled ? "success" : "default"}>{provider.enabled ? "可用" : "停用"}</Tag></div>
               <Text size="xs" tone="muted" className="break-all">{provider.baseUrl}</Text>
               <Text size="xs" tone="muted">API Key •••• {provider.apiKeyLast4}</Text>
               <div className="flex flex-wrap gap-2">{provider.defaultWriting ? <Tag color="primary">默认文本模型</Tag> : null}{provider.defaultImage ? <Tag color="primary">默认图片模型</Tag> : null}</div>
@@ -335,14 +335,21 @@ function ConnectorList({ fixture, actions }: { fixture: AISettingsFixture; actio
   return (
     <div className="flex flex-col gap-5">
       <TabPanelFeedback>
-        <Alert type="info" showIcon title="Sandbox connector 边界" description="Showcase 只模拟 Profile、OAuth 状态和 Outbox 状态迁移；不保存真实凭据，也不执行真实网络投递。" />
+        <Alert type="info" showIcon title="Connector 安全边界" description="Showcase 使用 Fixture 凭据和状态；Search Console 表达只读 OAuth，其余 Connector 当前仍以 Sandbox Outbox 演示审批、Mock 投递、重试和撤销。" />
       </TabPanelFeedback>
       <Card padding="none" className="overflow-hidden">
         <CardContent className="divide-y p-0">
           {fixture.connectors.map((connector) => (
             <div key={connector.id} className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
-              <div><div className="flex flex-wrap items-center gap-2"><strong>{connector.name}</strong><Tag color={connector.status === "connected" ? "success" : connector.status === "degraded" ? "warning" : "default"}>{connector.status === "connected" ? "已连接" : connector.status === "degraded" ? "降级" : "已停用"}</Tag></div><Text size="xs" tone="muted">{connector.kind} · {connector.sandbox ? "sandbox" : "read-only OAuth"} · {connector.scope}</Text><Text size="xs" tone="muted">{connector.hasCredential ? "凭据已配置" : "未配置凭据"} · {connector.lastChecked}</Text></div>
-              <div className="flex min-w-max flex-nowrap gap-1"><IconButton label={`OAuth ${connector.name}`} icon={<KeyRound />} variant="ghost" onClick={() => actions.onStartConnectorOAuth(connector)} /><IconButton label={`编辑 ${connector.name}`} icon={<Edit2 />} variant="ghost" onClick={() => actions.onEditConnector(connector)} /></div>
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <strong>{connector.name}</strong>
+                  <Tag color={connector.enabled ? "success" : "default"}>{connector.enabled ? "已启用" : "已停用"}</Tag>
+                </div>
+                <Text size="xs" tone="muted">{connector.kind} · {connector.sandbox ? "sandbox" : "read-only OAuth"}</Text>
+                <Text size="xs" tone="muted">{connector.hasCredential ? `凭据 •••• ${connector.credentialLast4 || "----"}` : "未配置凭据"}</Text>
+              </div>
+              <div className="flex min-w-max flex-nowrap gap-1"><IconButton label={connector.sandbox ? `开始 Mock OAuth ${connector.name}` : `连接 Google ${connector.name}`} icon={<KeyRound />} variant="ghost" onClick={() => actions.onStartConnectorOAuth(connector)} /><IconButton label={`编辑 ${connector.name}`} icon={<Edit2 />} variant="ghost" onClick={() => actions.onEditConnector(connector)} /></div>
             </div>
           ))}
         </CardContent>
@@ -353,7 +360,7 @@ function ConnectorList({ fixture, actions }: { fixture: AISettingsFixture; actio
           <div className="divide-y">
             {fixture.connectorOutbox.map((item) => {
               const connector = connectorMap.get(item.connectorId);
-              return <div key={item.id} className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"><div><strong>#{item.id} · {item.idempotencyKey}</strong><Text size="xs" tone="muted">{connector?.name || "未知 Profile"} · {outboxLabel(item.status)}{item.error ? ` · ${item.error}` : ""}</Text></div><OutboxActions item={item} onAction={actions.onOutboxAction} /></div>;
+              return <div key={item.id} className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"><div><div className="flex flex-wrap items-center gap-2"><strong>#{item.id} · {item.idempotencyKey}</strong><Tag color={item.status === "delivered" ? "success" : item.status === "failed" ? "error" : item.status === "awaiting_approval" ? "warning" : item.status === "approved" ? "primary" : "default"}>{outboxLabel(item.status)}</Tag></div><Text size="xs" tone="muted">{connector?.name || "未知 Profile"} · 尝试 {item.attempts} 次{item.error ? ` · ${item.error}` : ""}</Text></div><OutboxActions item={item} onAction={actions.onOutboxAction} /></div>;
             })}
           </div>
         </div>

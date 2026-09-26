@@ -54,10 +54,29 @@ export type ToolFixture = {
   risk: "low" | "medium" | "high";
 };
 
+export type ProviderVendor =
+  | "custom"
+  | "openai"
+  | "anthropic"
+  | "google"
+  | "deepseek"
+  | "alibaba_bailian"
+  | "volcengine_ark"
+  | "tencent_hunyuan"
+  | "baidu_qianfan"
+  | "moonshot"
+  | "zhipu"
+  | "siliconflow"
+  | "minimax";
+
+export type ProviderProtocol = "openai" | "anthropic" | "gemini";
+
 export type ProviderFixture = {
   id: number;
   name: string;
-  providerType: string;
+  vendor: ProviderVendor;
+  providerType: ProviderProtocol;
+  protocolMode: string;
   model: string;
   baseUrl: string;
   apiKeyLast4: string;
@@ -96,15 +115,17 @@ export type KnowledgeSearchResultFixture = {
   score: number;
 };
 
+export type ConnectorKind = "search_console" | "newsletter" | "social" | "webhook";
+
 export type ConnectorFixture = {
   id: number;
   name: string;
-  kind: string;
-  status: "connected" | "degraded" | "disabled";
-  scope: string;
+  kind: ConnectorKind;
+  enabled: boolean;
   sandbox: boolean;
+  configJson: string;
   hasCredential: boolean;
-  lastChecked: string;
+  credentialLast4?: string;
 };
 
 export type ConnectorOutboxStatus =
@@ -118,7 +139,9 @@ export type ConnectorOutboxFixture = {
   id: number;
   connectorId: number;
   idempotencyKey: string;
+  payloadJson: string;
   status: ConnectorOutboxStatus;
+  attempts: number;
   error?: string;
 };
 
@@ -429,9 +452,11 @@ export const aiSettingsFixture: AISettingsFixture = {
     {
       id: 51,
       name: "OpenAI GPT-5.6",
-      providerType: "openai-compatible",
+      vendor: "openai",
+      providerType: "openai",
+      protocolMode: "responses",
       model: "gpt-5.6-sol",
-      baseUrl: "https://api.openai.com/v1",
+      baseUrl: "https://api.openai.com",
       apiKeyLast4: "4821",
       enabled: true,
       defaultWriting: true,
@@ -439,10 +464,12 @@ export const aiSettingsFixture: AISettingsFixture = {
     },
     {
       id: 52,
-      name: "Image Gateway",
-      providerType: "image",
-      model: "gpt-image-2",
-      baseUrl: "https://images.example.internal/v1",
+      name: "Gemini Image",
+      vendor: "google",
+      providerType: "gemini",
+      protocolMode: "generate_content",
+      model: "gemini-3.1-flash-image",
+      baseUrl: "https://generativelanguage.googleapis.com",
       apiKeyLast4: "1397",
       enabled: true,
       defaultWriting: false,
@@ -450,12 +477,27 @@ export const aiSettingsFixture: AISettingsFixture = {
     },
     {
       id: 53,
-      name: "Fallback Writer",
-      providerType: "openai-compatible",
-      model: "backup-model",
-      baseUrl: "https://fallback.example.internal/v1",
+      name: "DeepSeek Backup",
+      vendor: "deepseek",
+      providerType: "openai",
+      protocolMode: "chat_completions",
+      model: "deepseek-chat",
+      baseUrl: "https://api.deepseek.com",
       apiKeyLast4: "9026",
       enabled: false,
+      defaultWriting: false,
+      defaultImage: false,
+    },
+    {
+      id: 54,
+      name: "Qwen Plus",
+      vendor: "alibaba_bailian",
+      providerType: "openai",
+      protocolMode: "chat_completions",
+      model: "qwen-plus",
+      baseUrl: "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      apiKeyLast4: "2718",
+      enabled: true,
       defaultWriting: false,
       defaultImage: false,
     },
@@ -463,33 +505,41 @@ export const aiSettingsFixture: AISettingsFixture = {
   connectors: [
     {
       id: 41,
-      name: "Web Research Sandbox",
+      name: "Search Console Read-only",
       kind: "search_console",
-      status: "connected",
-      scope: "只读公网研究",
-      sandbox: true,
+      enabled: true,
+      sandbox: false,
+      configJson: "{\n  \"client_id\": \"fixture-client.apps.googleusercontent.com\",\n  \"site_url\": \"sc-domain:example.com\",\n  \"rate_limit_per_minute\": 10\n}",
       hasCredential: true,
-      lastChecked: "2026-09-08 21:40",
+      credentialLast4: "4821",
     },
     {
       id: 42,
       name: "Media Sandbox",
       kind: "webhook",
-      status: "connected",
-      scope: "仅媒体候选与生成产物",
+      enabled: true,
       sandbox: true,
+      configJson: "{\n  \"rate_limit_per_minute\": 10\n}",
       hasCredential: true,
-      lastChecked: "2026-09-08 21:38",
+      credentialLast4: "1397",
     },
     {
       id: 43,
       name: "Source Archive",
       kind: "newsletter",
-      status: "degraded",
-      scope: "历史引用归档",
+      enabled: true,
       sandbox: true,
+      configJson: "{\n  \"rate_limit_per_minute\": 6\n}",
       hasCredential: false,
-      lastChecked: "2026-09-08 21:35",
+    },
+    {
+      id: 44,
+      name: "Social Preview",
+      kind: "social",
+      enabled: false,
+      sandbox: true,
+      configJson: "{\n  \"rate_limit_per_minute\": 4\n}",
+      hasCredential: false,
     },
   ],
   connectorOutbox: [
@@ -497,20 +547,26 @@ export const aiSettingsFixture: AISettingsFixture = {
       id: 301,
       connectorId: 42,
       idempotencyKey: "run-702-media-preview",
+      payloadJson: "{\n  \"source\": \"ai-workbench\",\n  \"message\": \"sandbox media preview\"\n}",
       status: "awaiting_approval",
+      attempts: 0,
     },
     {
       id: 302,
       connectorId: 43,
       idempotencyKey: "run-698-source-sync",
+      payloadJson: "{\n  \"source\": \"ai-workbench\",\n  \"message\": \"sandbox source sync\"\n}",
       status: "failed",
+      attempts: 2,
       error: "Sandbox mock timeout",
     },
     {
       id: 303,
-      connectorId: 41,
-      idempotencyKey: "run-690-search-console",
+      connectorId: 42,
+      idempotencyKey: "run-690-webhook-preview",
+      payloadJson: "{\n  \"source\": \"ai-workbench\",\n  \"message\": \"sandbox delivery evidence\"\n}",
       status: "delivered",
+      attempts: 1,
     },
   ],
 };

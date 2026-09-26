@@ -223,7 +223,25 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
   const importProviders = () => {
     setFixture((current) => {
       const id = nextId(current.providers);
-      return { ...current, providers: [...current.providers, { id, name: `Imported Gateway ${id}`, providerType: "openai-compatible", model: "imported-model", baseUrl: "https://imported.example/v1", apiKeyLast4: "0000", enabled: false, defaultWriting: false, defaultImage: false }] };
+      return {
+        ...current,
+        providers: [
+          ...current.providers,
+          {
+            id,
+            name: `Imported Gateway ${id}`,
+            vendor: "custom",
+            providerType: "openai",
+            protocolMode: "chat_completions",
+            model: "imported-model",
+            baseUrl: "https://imported.example/v1",
+            apiKeyLast4: "0000",
+            enabled: false,
+            defaultWriting: false,
+            defaultImage: false,
+          },
+        ],
+      };
     });
     setNotice({ type: "success", text: "已模拟导入模型连接配置；真实密钥不会进入 Showcase。" });
   };
@@ -234,28 +252,56 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
   };
 
   const startConnectorOAuth = (connector: ConnectorFixture) => {
-    setFixture((current) => ({ ...current, connectors: current.connectors.map((item) => item.id === connector.id ? { ...item, status: "connected", hasCredential: true, lastChecked: "刚刚" } : item) }));
+    setFixture((current) => ({
+      ...current,
+      connectors: current.connectors.map((item) =>
+        item.id === connector.id
+          ? { ...item, hasCredential: true, credentialLast4: item.credentialLast4 || "4821" }
+          : item,
+      ),
+    }));
     setNotice({ type: "info", text: `${connector.name} 已模拟完成${connector.sandbox ? " Mock" : "只读"} OAuth 回调。` });
   };
 
   const queueOutbox = () => {
-    const connector = fixture.connectors[0];
+    const connector = fixture.connectors.find(
+      (item) => item.enabled && item.sandbox && item.hasCredential,
+    );
     if (!connector) {
       setNotice({ type: "warning", text: "请先添加 Connector Profile。" });
       return;
     }
     setFixture((current) => {
       const id = nextId(current.connectorOutbox);
-      const item: ConnectorOutboxFixture = { id, connectorId: connector.id, idempotencyKey: `fixture-${id}`, status: "awaiting_approval" };
+      const item: ConnectorOutboxFixture = {
+        id,
+        connectorId: connector.id,
+        idempotencyKey: `fixture-${id}`,
+        payloadJson: "{\n  \"source\": \"showcase\",\n  \"message\": \"sandbox preview\"\n}",
+        status: "awaiting_approval",
+        attempts: 0,
+      };
       return { ...current, connectorOutbox: [item, ...current.connectorOutbox] };
     });
     setNotice({ type: "success", text: "Outbox 项已加入待审批队列。" });
   };
 
   const actOnOutbox: AISettingsSectionActions["onOutboxAction"] = (item, action) => {
-    const nextStatus = { approve: "approved", deliver: "delivered", retry: "awaiting_approval", revoke: "revoked" }[action] as ConnectorOutboxFixture["status"];
-    setFixture((current) => ({ ...current, connectorOutbox: current.connectorOutbox.map((currentItem) => currentItem.id === item.id ? { ...currentItem, status: nextStatus, error: action === "retry" ? undefined : currentItem.error } : currentItem) }));
-    setNotice({ type: "success", text: `Outbox #${item.id} 已更新为${nextStatus === "approved" ? "已批准" : nextStatus === "delivered" ? "已模拟投递" : nextStatus === "revoked" ? "已撤销" : "待审批"}。` });
+    const nextStatus = { approve: "approved", deliver: "delivered", retry: "approved", revoke: "revoked" }[action] as ConnectorOutboxFixture["status"];
+    setFixture((current) => ({
+      ...current,
+      connectorOutbox: current.connectorOutbox.map((currentItem) =>
+        currentItem.id === item.id
+          ? {
+              ...currentItem,
+              status: nextStatus,
+              attempts: action === "deliver" ? currentItem.attempts + 1 : currentItem.attempts,
+              error: action === "retry" ? undefined : currentItem.error,
+            }
+          : currentItem,
+      ),
+    }));
+    setNotice({ type: "success", text: `Outbox #${item.id} 已更新为${nextStatus === "approved" ? "已批准" : nextStatus === "delivered" ? "已模拟投递" : nextStatus === "revoked" ? "已撤销" : "已批准"}。` });
   };
 
   const testConnection = (name: string, kind: "provider" | "embedding") => {
