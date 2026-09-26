@@ -298,7 +298,7 @@ function ProviderList({ providers, actions }: { providers: ProviderFixture[]; ac
         {providers.map((provider) => (
           <Card key={provider.id} padding="base">
             <div className="flex h-full flex-col gap-4">
-              <div className="flex items-start justify-between gap-3"><div><strong>{provider.name}</strong><Text size="xs" tone="muted">{provider.providerType} · {provider.model}</Text></div><Tag color={provider.enabled ? "success" : "default"}>{provider.enabled ? "可用" : "停用"}</Tag></div>
+              <div className="flex items-start justify-between gap-3"><div><strong>{provider.name}</strong><Text size="xs" tone="muted">{provider.vendor} · {provider.providerType} · {provider.model}</Text></div><Tag color={provider.enabled ? "success" : "default"}>{provider.enabled ? "可用" : "停用"}</Tag></div>
               <Text size="xs" tone="muted" className="break-all">{provider.baseUrl}</Text>
               <Text size="xs" tone="muted">API Key •••• {provider.apiKeyLast4}</Text>
               <div className="flex flex-wrap gap-2">{provider.defaultWriting ? <Tag color="primary">默认文本模型</Tag> : null}{provider.defaultImage ? <Tag color="primary">默认图片模型</Tag> : null}</div>
