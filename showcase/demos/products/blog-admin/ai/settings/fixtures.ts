@@ -96,15 +96,17 @@ export type KnowledgeSearchResultFixture = {
   score: number;
 };
 
+export type ConnectorKind = "search_console" | "newsletter" | "social" | "webhook";
+
 export type ConnectorFixture = {
   id: number;
   name: string;
-  kind: string;
-  status: "connected" | "degraded" | "disabled";
-  scope: string;
+  kind: ConnectorKind;
+  enabled: boolean;
   sandbox: boolean;
+  configJson: string;
   hasCredential: boolean;
-  lastChecked: string;
+  credentialLast4?: string;
 };
 
 export type ConnectorOutboxStatus =
@@ -118,7 +120,9 @@ export type ConnectorOutboxFixture = {
   id: number;
   connectorId: number;
   idempotencyKey: string;
+  payloadJson: string;
   status: ConnectorOutboxStatus;
+  attempts: number;
   error?: string;
 };
 
@@ -463,33 +467,41 @@ export const aiSettingsFixture: AISettingsFixture = {
   connectors: [
     {
       id: 41,
-      name: "Web Research Sandbox",
+      name: "Search Console Read-only",
       kind: "search_console",
-      status: "connected",
-      scope: "只读公网研究",
-      sandbox: true,
+      enabled: true,
+      sandbox: false,
+      configJson: "{\n  \"client_id\": \"fixture-client.apps.googleusercontent.com\",\n  \"site_url\": \"sc-domain:example.com\",\n  \"rate_limit_per_minute\": 10\n}",
       hasCredential: true,
-      lastChecked: "2026-09-08 21:40",
+      credentialLast4: "4821",
     },
     {
       id: 42,
       name: "Media Sandbox",
       kind: "webhook",
-      status: "connected",
-      scope: "仅媒体候选与生成产物",
+      enabled: true,
       sandbox: true,
+      configJson: "{\n  \"rate_limit_per_minute\": 10\n}",
       hasCredential: true,
-      lastChecked: "2026-09-08 21:38",
+      credentialLast4: "1397",
     },
     {
       id: 43,
       name: "Source Archive",
       kind: "newsletter",
-      status: "degraded",
-      scope: "历史引用归档",
+      enabled: true,
       sandbox: true,
+      configJson: "{\n  \"rate_limit_per_minute\": 6\n}",
       hasCredential: false,
-      lastChecked: "2026-09-08 21:35",
+    },
+    {
+      id: 44,
+      name: "Social Preview",
+      kind: "social",
+      enabled: false,
+      sandbox: true,
+      configJson: "{\n  \"rate_limit_per_minute\": 4\n}",
+      hasCredential: false,
     },
   ],
   connectorOutbox: [
@@ -497,20 +509,26 @@ export const aiSettingsFixture: AISettingsFixture = {
       id: 301,
       connectorId: 42,
       idempotencyKey: "run-702-media-preview",
+      payloadJson: "{\n  \"source\": \"ai-workbench\",\n  \"message\": \"sandbox media preview\"\n}",
       status: "awaiting_approval",
+      attempts: 0,
     },
     {
       id: 302,
       connectorId: 43,
       idempotencyKey: "run-698-source-sync",
+      payloadJson: "{\n  \"source\": \"ai-workbench\",\n  \"message\": \"sandbox source sync\"\n}",
       status: "failed",
+      attempts: 2,
       error: "Sandbox mock timeout",
     },
     {
       id: 303,
-      connectorId: 41,
-      idempotencyKey: "run-690-search-console",
+      connectorId: 42,
+      idempotencyKey: "run-690-webhook-preview",
+      payloadJson: "{\n  \"source\": \"ai-workbench\",\n  \"message\": \"sandbox delivery evidence\"\n}",
       status: "delivered",
+      attempts: 1,
     },
   ],
 };
