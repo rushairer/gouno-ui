@@ -264,7 +264,9 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
   };
 
   const queueOutbox = () => {
-    const connector = fixture.connectors[0];
+    const connector = fixture.connectors.find(
+      (item) => item.enabled && item.sandbox && item.hasCredential,
+    );
     if (!connector) {
       setNotice({ type: "warning", text: "请先添加 Connector Profile。" });
       return;
