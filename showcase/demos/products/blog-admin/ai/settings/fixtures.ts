@@ -54,10 +54,25 @@ export type ToolFixture = {
   risk: "low" | "medium" | "high";
 };
 
+export type ProviderVendor =
+  | "openai"
+  | "anthropic"
+  | "google"
+  | "deepseek"
+  | "alibaba"
+  | "volcengine"
+  | "moonshot"
+  | "tencent"
+  | "zhipu"
+  | "custom";
+
+export type ProviderProtocol = "openai" | "anthropic" | "gemini";
+
 export type ProviderFixture = {
   id: number;
   name: string;
-  providerType: string;
+  vendor: ProviderVendor;
+  protocol: ProviderProtocol;
   model: string;
   baseUrl: string;
   apiKeyLast4: string;
@@ -429,7 +444,8 @@ export const aiSettingsFixture: AISettingsFixture = {
     {
       id: 51,
       name: "OpenAI GPT-5.6",
-      providerType: "openai-compatible",
+      vendor: "openai",
+      protocol: "openai",
       model: "gpt-5.6-sol",
       baseUrl: "https://api.openai.com/v1",
       apiKeyLast4: "4821",
@@ -440,7 +456,8 @@ export const aiSettingsFixture: AISettingsFixture = {
     {
       id: 52,
       name: "Image Gateway",
-      providerType: "image",
+      vendor: "custom",
+      protocol: "openai",
       model: "gpt-image-2",
       baseUrl: "https://images.example.internal/v1",
       apiKeyLast4: "1397",
@@ -450,10 +467,11 @@ export const aiSettingsFixture: AISettingsFixture = {
     },
     {
       id: 53,
-      name: "Fallback Writer",
-      providerType: "openai-compatible",
-      model: "backup-model",
-      baseUrl: "https://fallback.example.internal/v1",
+      name: "DeepSeek Fallback",
+      vendor: "deepseek",
+      protocol: "openai",
+      model: "deepseek-chat",
+      baseUrl: "https://api.deepseek.com",
       apiKeyLast4: "9026",
       enabled: false,
       defaultWriting: false,
