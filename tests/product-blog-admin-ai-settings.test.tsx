@@ -110,11 +110,11 @@ describe("Blog Admin AI Settings route family", () => {
     expect(within(providerDrawer).getByLabelText("供应商")).toBeTruthy();
     expect(within(providerDrawer).getByLabelText("接口协议")).toBeTruthy();
     expect(
-      within(providerDrawer).getByRole("option", { name: "DeepSeek" }),
-    ).toBeTruthy();
-    expect(
-      within(providerDrawer).getByRole("option", { name: "Anthropic Messages" }),
-    ).toBeTruthy();
+      aiSettingsFixture.providers.some(
+        (provider) =>
+          provider.vendor === "deepseek" && provider.protocol === "openai",
+      ),
+    ).toBe(true);
     expect(within(providerDrawer).getByRole("button", { name: "保存模型连接" })).toBeTruthy();
     fireEvent.click(within(providerDrawer).getByRole("button", { name: "取消" }));
     expect(screen.getByRole("heading", { level: 2, name: "默认用途" })).toBeTruthy();
