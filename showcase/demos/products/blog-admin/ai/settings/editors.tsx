@@ -21,6 +21,8 @@ import type {
   ConnectorKind,
   EmbeddingProfileFixture,
   ProviderFixture,
+  ProviderProtocol,
+  ProviderVendor,
   SkillFixture,
 } from "./fixtures";
 import {
@@ -480,8 +482,49 @@ function SkillEditor({
   );
 }
 
+const providerVendorPresets: Record<
+  ProviderVendor,
+  { label: string; protocol: ProviderProtocol; baseUrl: string; protocolMode: string; model: string }
+> = {
+  openai: { label: "OpenAI", protocol: "openai", baseUrl: "https://api.openai.com", protocolMode: "responses", model: "gpt-5.6" },
+  anthropic: { label: "Anthropic Claude", protocol: "anthropic", baseUrl: "https://api.anthropic.com", protocolMode: "", model: "claude-sonnet-4-5" },
+  google: { label: "Google Gemini", protocol: "gemini", baseUrl: "https://generativelanguage.googleapis.com", protocolMode: "generate_content", model: "gemini-3.1-pro-preview" },
+  deepseek: { label: "DeepSeek", protocol: "openai", baseUrl: "https://api.deepseek.com", protocolMode: "chat_completions", model: "deepseek-chat" },
+  alibaba_bailian: { label: "Alibaba Bailian / Qwen", protocol: "openai", baseUrl: "https://dashscope.aliyuncs.com/compatible-mode/v1", protocolMode: "chat_completions", model: "qwen-plus" },
+  volcengine_ark: { label: "Volcengine Ark / Doubao", protocol: "openai", baseUrl: "https://ark.cn-beijing.volces.com/api/v3", protocolMode: "chat_completions", model: "doubao-seed" },
+  tencent_hunyuan: { label: "Tencent Hunyuan", protocol: "openai", baseUrl: "https://api.hunyuan.cloud.tencent.com/v1", protocolMode: "chat_completions", model: "hunyuan-turbos-latest" },
+  baidu_qianfan: { label: "Baidu Qianfan", protocol: "openai", baseUrl: "https://qianfan.baidubce.com/v2", protocolMode: "chat_completions", model: "ernie-4.0-turbo-8k" },
+  moonshot: { label: "Moonshot / Kimi", protocol: "openai", baseUrl: "https://api.moonshot.cn/v1", protocolMode: "chat_completions", model: "kimi-k2.5" },
+  zhipu: { label: "Zhipu GLM", protocol: "openai", baseUrl: "https://open.bigmodel.cn/api/paas/v4", protocolMode: "chat_completions", model: "glm-5" },
+  siliconflow: { label: "SiliconFlow", protocol: "openai", baseUrl: "https://api.siliconflow.cn/v1", protocolMode: "chat_completions", model: "deepseek-ai/DeepSeek-V3.2" },
+  minimax: { label: "MiniMax", protocol: "openai", baseUrl: "https://api.minimaxi.com", protocolMode: "chat_completions", model: "MiniMax-M2.7" },
+  custom: { label: "Custom / compatible", protocol: "openai", baseUrl: "", protocolMode: "chat_completions", model: "model-name" },
+};
+
 function ProviderEditor({ value, onSave, onCancel, surface = "page" }: { value: ProviderFixture | "new"; onSave: (result: AISettingsEditorResult) => void; onCancel: () => void; surface?: AISettingsEditorSurface }) {
   const initial = value === "new" ? undefined : value;
+  const [vendor, setVendor] = useState<ProviderVendor>(initial?.vendor || "openai");
+  const [providerType, setProviderType] = useState<ProviderProtocol>(initial?.providerType || "openai");
+  const [protocolMode, setProtocolMode] = useState(initial?.protocolMode || "responses");
+  const [baseUrl, setBaseUrl] = useState(initial?.baseUrl || providerVendorPresets[vendor].baseUrl);
+  const [model, setModel] = useState(initial?.model || providerVendorPresets[vendor].model);
+
+  const applyVendor = (next: ProviderVendor) => {
+    const preset = providerVendorPresets[next];
+    setVendor(next);
+    if (next !== "custom") {
+      setProviderType(preset.protocol);
+      setProtocolMode(preset.protocolMode);
+      setBaseUrl(preset.baseUrl);
+      setModel(preset.model);
+    }
+  };
+
+  const applyProtocol = (next: ProviderProtocol) => {
+    setProviderType(next);
+    setProtocolMode(next === "openai" ? "chat_completions" : next === "gemini" ? "generate_content" : "");
+  };
+
   return (
     <Form
       id="ai-settings-provider-editor"
@@ -491,9 +534,11 @@ function ProviderEditor({ value, onSave, onCancel, surface = "page" }: { value: 
           id: initial?.id,
           value: {
             name: text(values, "name", initial?.name || "Model Connection"),
-            providerType: text(values, "providerType", initial?.providerType || "openai-compatible"),
-            model: text(values, "model", initial?.model || "model-name"),
-            baseUrl: text(values, "baseUrl", initial?.baseUrl || "https://api.example.com/v1"),
+            vendor,
+            providerType,
+            protocolMode,
+            model: model || "model-name",
+            baseUrl,
             apiKeyLast4: text(values, "apiKeyLast4", initial?.apiKeyLast4 || "••••"),
             enabled: checked(values, "enabled"),
             defaultWriting: initial?.defaultWriting ?? false,
@@ -506,37 +551,67 @@ function ProviderEditor({ value, onSave, onCancel, surface = "page" }: { value: 
         {surface === "page" ? (
           <ContextualEditorHeader
             title={initial ? `编辑模型连接：${initial.name}` : "添加模型连接"}
-            description="连接身份、端点与凭据状态分组展示；真实 API Key 仍由服务端加密保存。"
+            description="平台身份与接口协议分离；同一个 OpenAI-compatible 适配器可以服务多个国内外模型平台。"
             icon={<KeyRound />}
           />
         ) : null}
         <div className="grid gap-5 xl:grid-cols-2">
-          <EditorFormSurfaceSection title="连接身份" description="定义这条模型连接在产品中的名称和协议类型。">
-            <FormGrid columns={2}>
+          <EditorFormSurfaceSection title="连接身份" description="平台用于识别服务商和预设；协议决定实际 wire format，两者不再混为一个字段。">
+            <div className="flex flex-col gap-5">
               <Field label="连接名称" required>
-                <Input name="name" defaultValue={initial?.name} placeholder="OpenAI Production" />
+                <Input name="name" defaultValue={initial?.name} placeholder="Production Writer" />
               </Field>
-              <Field label="Provider 类型">
-                <Select name="providerType" defaultValue={initial?.providerType || "openai-compatible"}>
-                  <option value="openai-compatible">OpenAI compatible</option>
-                  <option value="anthropic">Anthropic</option>
-                  <option value="image">Image gateway</option>
-                </Select>
-              </Field>
-            </FormGrid>
+              <FormGrid columns={2}>
+                <Field label="平台">
+                  <Select
+                    value={vendor}
+                    onChange={(next) => applyVendor((Array.isArray(next) ? next[0] : next) as ProviderVendor)}
+                  >
+                    {Object.entries(providerVendorPresets).map(([key, preset]) => (
+                      <option key={key} value={key}>{preset.label}</option>
+                    ))}
+                  </Select>
+                </Field>
+                <Field label="接口协议">
+                  <Select
+                    value={providerType}
+                    onChange={(next) => applyProtocol((Array.isArray(next) ? next[0] : next) as ProviderProtocol)}
+                  >
+                    <option value="openai">OpenAI-compatible</option>
+                    <option value="anthropic">Anthropic Messages-compatible</option>
+                    <option value="gemini">Gemini native</option>
+                  </Select>
+                </Field>
+              </FormGrid>
+            </div>
           </EditorFormSurfaceSection>
-          <EditorFormSurfaceSection title="模型与端点" description="运行时请求只使用这里明确配置的端点和模型。">
+          <EditorFormSurfaceSection title="模型与端点" description="Base URL 表示平台 API root；兼容协议按该 root 追加 operation path，不强制所有平台使用 /v1。">
             <div className="flex flex-col gap-5">
               <Field label="Base URL" required>
-                <Input name="baseUrl" defaultValue={initial?.baseUrl} placeholder="https://api.openai.com/v1" />
+                <Input value={baseUrl} onChange={(event) => setBaseUrl(event.target.value)} placeholder="https://api.example.com/v1" />
               </Field>
               <Field label="Model" required>
-                <Input name="model" defaultValue={initial?.model} placeholder="gpt-5.6-sol" />
+                <Input value={model} onChange={(event) => setModel(event.target.value)} placeholder={providerVendorPresets[vendor].model} />
               </Field>
+              {providerType === "openai" ? (
+                <Field label="接口模式">
+                  <Select value={protocolMode || "chat_completions"} onChange={(next) => setProtocolMode(String(Array.isArray(next) ? next[0] : next))}>
+                    <option value="chat_completions">Chat Completions</option>
+                    <option value="responses">Responses API</option>
+                  </Select>
+                </Field>
+              ) : providerType === "gemini" ? (
+                <Field label="接口模式">
+                  <Select value={protocolMode || "generate_content"} onChange={(next) => setProtocolMode(String(Array.isArray(next) ? next[0] : next))}>
+                    <option value="generate_content">GenerateContent</option>
+                    <option value="predict">Predict</option>
+                  </Select>
+                </Field>
+              ) : null}
             </div>
           </EditorFormSurfaceSection>
         </div>
-        <EditorFormSurfaceSection title="凭据与状态" description="Showcase 只展示掩码与启停状态，不接触真实密钥。">
+        <EditorFormSurfaceSection title="凭据与状态" description="Showcase 只展示掩码与启停状态，不保存真实 API Key。">
           <FormGrid columns={2}>
             <Field label="API Key 后四位" hint="仅用于展示密钥已保存状态；不输入真实凭证。">
               <Input name="apiKeyLast4" defaultValue={initial?.apiKeyLast4} maxLength={4} placeholder="1234" />
