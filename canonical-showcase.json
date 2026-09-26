@@ -228,7 +228,7 @@
       "id": "CSA-A005",
       "date": "2026-09-26",
       "commit": "aa0c113ec0ca4ee02a9cd79f35eb0a9389488b77",
-      "kind": "canonical-product-contract-correction",
+      "kind": "canonical-correction",
       "scopes": [
         "blog-admin-ai-settings"
       ],
