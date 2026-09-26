@@ -54,10 +54,29 @@ export type ToolFixture = {
   risk: "low" | "medium" | "high";
 };
 
+export type ProviderVendor =
+  | "custom"
+  | "openai"
+  | "anthropic"
+  | "google"
+  | "deepseek"
+  | "alibaba_bailian"
+  | "volcengine_ark"
+  | "tencent_hunyuan"
+  | "baidu_qianfan"
+  | "moonshot"
+  | "zhipu"
+  | "siliconflow"
+  | "minimax";
+
+export type ProviderProtocol = "openai" | "anthropic" | "gemini";
+
 export type ProviderFixture = {
   id: number;
   name: string;
-  providerType: string;
+  vendor: ProviderVendor;
+  providerType: ProviderProtocol;
+  protocolMode: string;
   model: string;
   baseUrl: string;
   apiKeyLast4: string;
@@ -433,9 +452,11 @@ export const aiSettingsFixture: AISettingsFixture = {
     {
       id: 51,
       name: "OpenAI GPT-5.6",
-      providerType: "openai-compatible",
+      vendor: "openai",
+      providerType: "openai",
+      protocolMode: "responses",
       model: "gpt-5.6-sol",
-      baseUrl: "https://api.openai.com/v1",
+      baseUrl: "https://api.openai.com",
       apiKeyLast4: "4821",
       enabled: true,
       defaultWriting: true,
@@ -443,10 +464,12 @@ export const aiSettingsFixture: AISettingsFixture = {
     },
     {
       id: 52,
-      name: "Image Gateway",
-      providerType: "image",
-      model: "gpt-image-2",
-      baseUrl: "https://images.example.internal/v1",
+      name: "Gemini Image",
+      vendor: "google",
+      providerType: "gemini",
+      protocolMode: "generate_content",
+      model: "gemini-3.1-flash-image",
+      baseUrl: "https://generativelanguage.googleapis.com",
       apiKeyLast4: "1397",
       enabled: true,
       defaultWriting: false,
@@ -454,12 +477,27 @@ export const aiSettingsFixture: AISettingsFixture = {
     },
     {
       id: 53,
-      name: "Fallback Writer",
-      providerType: "openai-compatible",
-      model: "backup-model",
-      baseUrl: "https://fallback.example.internal/v1",
+      name: "DeepSeek Backup",
+      vendor: "deepseek",
+      providerType: "openai",
+      protocolMode: "chat_completions",
+      model: "deepseek-chat",
+      baseUrl: "https://api.deepseek.com",
       apiKeyLast4: "9026",
       enabled: false,
+      defaultWriting: false,
+      defaultImage: false,
+    },
+    {
+      id: 54,
+      name: "Qwen Plus",
+      vendor: "alibaba_bailian",
+      providerType: "openai",
+      protocolMode: "chat_completions",
+      model: "qwen-plus",
+      baseUrl: "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      apiKeyLast4: "2718",
+      enabled: true,
       defaultWriting: false,
       defaultImage: false,
     },
