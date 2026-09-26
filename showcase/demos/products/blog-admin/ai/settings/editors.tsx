@@ -66,7 +66,7 @@ export function getAISettingsEditorPresentation(editor: Exclude<AISettingsEditor
     case "provider":
       return {
         title: name ? `编辑模型连接：${name}` : "添加模型连接",
-        description: "配置模型协议、端点、凭据状态与启停状态。",
+        description: "分别配置供应商身份、接口协议、端点、模型与凭据状态。",
         submitLabel: "保存模型连接",
         formId: "ai-settings-provider-editor",
       };
@@ -490,7 +490,8 @@ function ProviderEditor({ value, onSave, onCancel, surface = "page" }: { value: 
           id: initial?.id,
           value: {
             name: text(values, "name", initial?.name || "Model Connection"),
-            providerType: text(values, "providerType", initial?.providerType || "openai-compatible"),
+            vendor: text(values, "vendor", initial?.vendor || "openai") as ProviderFixture["vendor"],
+            protocol: text(values, "protocol", initial?.protocol || "openai") as ProviderFixture["protocol"],
             model: text(values, "model", initial?.model || "model-name"),
             baseUrl: text(values, "baseUrl", initial?.baseUrl || "https://api.example.com/v1"),
             apiKeyLast4: text(values, "apiKeyLast4", initial?.apiKeyLast4 || "••••"),
@@ -510,25 +511,41 @@ function ProviderEditor({ value, onSave, onCancel, surface = "page" }: { value: 
           />
         ) : null}
         <div className="grid gap-5 xl:grid-cols-2">
-          <EditorFormSurfaceSection title="连接身份" description="定义这条模型连接在产品中的名称和协议类型。">
+          <EditorFormSurfaceSection title="连接身份" description="连接名称与供应商只表达产品身份；具体请求格式由接口协议单独决定。">
             <FormGrid columns={2}>
               <Field label="连接名称" required>
                 <Input name="name" defaultValue={initial?.name} placeholder="OpenAI Production" />
               </Field>
-              <Field label="Provider 类型">
-                <Select name="providerType" defaultValue={initial?.providerType || "openai-compatible"}>
-                  <option value="openai-compatible">OpenAI compatible</option>
+              <Field label="供应商">
+                <Select name="vendor" defaultValue={initial?.vendor || "openai"}>
+                  <option value="openai">OpenAI</option>
                   <option value="anthropic">Anthropic</option>
-                  <option value="image">Image gateway</option>
+                  <option value="google">Google Gemini</option>
+                  <option value="deepseek">DeepSeek</option>
+                  <option value="alibaba">Alibaba Model Studio / Qwen</option>
+                  <option value="volcengine">Volcengine Ark / Doubao</option>
+                  <option value="moonshot">Moonshot / Kimi</option>
+                  <option value="tencent">Tencent Hunyuan</option>
+                  <option value="zhipu">Zhipu GLM</option>
+                  <option value="custom">自定义 / 兼容服务</option>
                 </Select>
               </Field>
             </FormGrid>
           </EditorFormSurfaceSection>
-          <EditorFormSurfaceSection title="模型与端点" description="运行时请求只使用这里明确配置的端点和模型。">
+          <EditorFormSurfaceSection title="模型与端点" description="接口协议、端点和模型共同决定运行时请求；供应商身份不再替代协议选择。">
             <div className="flex flex-col gap-5">
-              <Field label="Base URL" required>
-                <Input name="baseUrl" defaultValue={initial?.baseUrl} placeholder="https://api.openai.com/v1" />
-              </Field>
+              <FormGrid columns={2}>
+                <Field label="接口协议">
+                  <Select name="protocol" defaultValue={initial?.protocol || "openai"}>
+                    <option value="openai">OpenAI Compatible</option>
+                    <option value="anthropic">Anthropic Messages</option>
+                    <option value="gemini">Gemini Native</option>
+                  </Select>
+                </Field>
+                <Field label="Base URL" required>
+                  <Input name="baseUrl" defaultValue={initial?.baseUrl} placeholder="https://api.openai.com/v1" />
+                </Field>
+              </FormGrid>
               <Field label="Model" required>
                 <Input name="model" defaultValue={initial?.model} placeholder="gpt-5.6-sol" />
               </Field>

@@ -280,6 +280,29 @@ function KnowledgePanel({ fixture, actions }: { fixture: AISettingsFixture["know
   );
 }
 
+function providerVendorLabel(vendor: ProviderFixture["vendor"]) {
+  return {
+    openai: "OpenAI",
+    anthropic: "Anthropic",
+    google: "Google Gemini",
+    deepseek: "DeepSeek",
+    alibaba: "Alibaba Model Studio / Qwen",
+    volcengine: "Volcengine Ark / Doubao",
+    moonshot: "Moonshot / Kimi",
+    tencent: "Tencent Hunyuan",
+    zhipu: "Zhipu GLM",
+    custom: "自定义 / 兼容服务",
+  }[vendor];
+}
+
+function providerProtocolLabel(protocol: ProviderFixture["protocol"]) {
+  return {
+    openai: "OpenAI Compatible",
+    anthropic: "Anthropic Messages",
+    gemini: "Gemini Native",
+  }[protocol];
+}
+
 function ProviderList({ providers, actions }: { providers: ProviderFixture[]; actions: AISettingsSectionActions }) {
   const writing = providers.find((item) => item.defaultWriting)?.id;
   const image = providers.find((item) => item.defaultImage)?.id;
@@ -298,7 +321,7 @@ function ProviderList({ providers, actions }: { providers: ProviderFixture[]; ac
         {providers.map((provider) => (
           <Card key={provider.id} padding="base">
             <div className="flex h-full flex-col gap-4">
-              <div className="flex items-start justify-between gap-3"><div><strong>{provider.name}</strong><Text size="xs" tone="muted">{provider.providerType} · {provider.model}</Text></div><Tag color={provider.enabled ? "success" : "default"}>{provider.enabled ? "可用" : "停用"}</Tag></div>
+              <div className="flex items-start justify-between gap-3"><div><strong>{provider.name}</strong><Text size="xs" tone="muted">{providerVendorLabel(provider.vendor)} · {providerProtocolLabel(provider.protocol)} · {provider.model}</Text></div><Tag color={provider.enabled ? "success" : "default"}>{provider.enabled ? "可用" : "停用"}</Tag></div>
               <Text size="xs" tone="muted" className="break-all">{provider.baseUrl}</Text>
               <Text size="xs" tone="muted">API Key •••• {provider.apiKeyLast4}</Text>
               <div className="flex flex-wrap gap-2">{provider.defaultWriting ? <Tag color="primary">默认文本模型</Tag> : null}{provider.defaultImage ? <Tag color="primary">默认图片模型</Tag> : null}</div>
