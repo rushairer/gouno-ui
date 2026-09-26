@@ -223,7 +223,7 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
   const importProviders = () => {
     setFixture((current) => {
       const id = nextId(current.providers);
-      return { ...current, providers: [...current.providers, { id, name: `Imported Gateway ${id}`, providerType: "openai-compatible", model: "imported-model", baseUrl: "https://imported.example/v1", apiKeyLast4: "0000", enabled: false, defaultWriting: false, defaultImage: false }] };
+      return { ...current, providers: [...current.providers, { id, name: `Imported Gateway ${id}`, vendor: "custom", protocol: "openai", model: "imported-model", baseUrl: "https://imported.example/v1", apiKeyLast4: "0000", enabled: false, defaultWriting: false, defaultImage: false }] };
     });
     setNotice({ type: "success", text: "已模拟导入模型连接配置；真实密钥不会进入 Showcase。" });
   };
