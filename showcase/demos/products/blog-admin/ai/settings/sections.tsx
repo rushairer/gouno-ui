@@ -390,6 +390,170 @@ function ConnectorList({ fixture, actions }: { fixture: AISettingsFixture; actio
   );
 }
 
+function externalResultLabel(result: AISettingsFixture["externalApi"]["audits"][number]["result"]) {
+  if (result === "success") return "成功";
+  if (result === "denied") return "拒绝";
+  if (result === "rate_limited") return "限流";
+  return "失败";
+}
+
+function ExternalAPIAccess({
+  fixture,
+  actions,
+}: {
+  fixture: AISettingsFixture;
+  actions: AISettingsSectionActions;
+}) {
+  const activeClients = fixture.externalApi.clients.filter(
+    (item) => item.enabled && !item.revokedAt,
+  ).length;
+  const deniedCalls = fixture.externalApi.audits.filter(
+    (item) => item.result !== "success",
+  ).length;
+  const clientMap = new Map(
+    fixture.externalApi.clients.map((item) => [item.id, item]),
+  );
+
+  return (
+    <div className="flex flex-col gap-5">
+      <TabPanelFeedback>
+        <Alert
+          type="info"
+          showIcon
+          title="Server-to-server only"
+          description="External API 使用独立 gouno_live_* 机器凭据；浏览器 Origin 会被拒绝，Blog BFF Cookie 与 GOSSO Bearer Token 都不能替代这张凭据。"
+        />
+      </TabPanelFeedback>
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <Card padding="base">
+          <Text size="xs" tone="muted">启用 Client</Text>
+          <Heading level={2}>{activeClients}</Heading>
+        </Card>
+        <Card padding="base">
+          <Text size="xs" tone="muted">可授权 Capability</Text>
+          <Heading level={2}>{fixture.externalApi.capabilities.length}</Heading>
+        </Card>
+        <Card padding="base">
+          <Text size="xs" tone="muted">最近调用样本</Text>
+          <Heading level={2}>{fixture.externalApi.audits.length}</Heading>
+        </Card>
+        <Card padding="base">
+          <Text size="xs" tone="muted">拒绝 / 限流 / 失败</Text>
+          <Heading level={2}>{deniedCalls}</Heading>
+        </Card>
+      </div>
+
+      <Card padding="none" className="overflow-hidden">
+        <CardContent className="divide-y p-0">
+          {fixture.externalApi.clients.map((client) => (
+            <div
+              key={client.id}
+              className="flex flex-col gap-4 p-6 xl:flex-row xl:items-start xl:justify-between"
+            >
+              <div className="min-w-0 space-y-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <strong>{client.name}</strong>
+                  <Tag
+                    color={
+                      client.revokedAt
+                        ? "error"
+                        : client.enabled
+                          ? "success"
+                          : "default"
+                    }
+                  >
+                    {client.revokedAt ? "已撤销" : client.enabled ? "已启用" : "已停用"}
+                  </Tag>
+                  <Tag>只读</Tag>
+                </div>
+                <Text size="xs" tone="muted" className="type-family-mono break-all">
+                  {client.keyPrefix}…
+                </Text>
+                <div className="flex flex-wrap gap-2">
+                  {client.capabilities.map((capability) => (
+                    <Tag key={capability}>{capability}</Tag>
+                  ))}
+                </div>
+                <Text size="xs" tone="muted">
+                  {client.rateLimitPerMinute}/min · 过期 {client.expiresAt || "未设置"} · 最近使用 {client.lastUsedAt || "尚未使用"}
+                  {client.revokedAt ? " · 撤销 " + client.revokedAt : ""}
+                </Text>
+              </div>
+              {!client.revokedAt ? (
+                <div className="flex min-w-max flex-nowrap items-center gap-1">
+                  <IconButton
+                    label={"编辑 " + client.name}
+                    icon={<Edit2 />}
+                    variant="ghost"
+                    onClick={() => actions.onEditExternalClient(client)}
+                  />
+                  <IconButton
+                    label={"轮换 " + client.name + " 密钥"}
+                    icon={<RotateCcw />}
+                    variant="ghost"
+                    onClick={() => actions.onRotateExternalClient(client)}
+                  />
+                  <IconButton
+                    label={"撤销 " + client.name}
+                    icon={<ShieldOff />}
+                    variant="ghost"
+                    color="error"
+                    onClick={() => actions.onRevokeExternalClient(client)}
+                  />
+                </div>
+              ) : null}
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      <Card padding="base">
+        <div className="flex flex-col gap-4">
+          <div>
+            <Heading level={2} variant="compact">调用审计</Heading>
+            <Text size="sm" tone="muted">
+              审计只保存 Capability、结果、来源与参数摘要，不回显 API Key，也不保存原始调用参数。
+            </Text>
+          </div>
+          <div className="divide-y">
+            {fixture.externalApi.audits.map((audit) => {
+              const client = clientMap.get(audit.clientId);
+              return (
+                <div
+                  key={audit.id}
+                  className="grid gap-2 py-4 first:pt-0 last:pb-0 md:grid-cols-[minmax(0,1fr)_auto_auto] md:items-center"
+                >
+                  <div className="min-w-0">
+                    <strong className="type-family-mono type-body-sm type-weight-semibold [overflow-wrap:anywhere]">
+                      {audit.capability}
+                    </strong>
+                    <Text size="xs" tone="muted">
+                      {client?.name || "已删除 Client"} · {audit.sourceIp} · {audit.createdAt}
+                    </Text>
+                  </div>
+                  <Tag
+                    color={
+                      audit.result === "success"
+                        ? "success"
+                        : audit.result === "rate_limited"
+                          ? "warning"
+                          : "error"
+                    }
+                  >
+                    {externalResultLabel(audit.result)} · HTTP {audit.statusCode}
+                  </Tag>
+                  <Text size="xs" tone="muted">{audit.durationMs} ms</Text>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
 export function AISettingsSectionLead({ section, actions, disabled = false }: { section: AISettingsSection; actions: AISettingsSectionActions; disabled?: boolean }) {
   switch (section) {
     case "agents":
