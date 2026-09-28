@@ -4,7 +4,8 @@ export type AISettingsSection =
   | "tools"
   | "knowledge"
   | "providers"
-  | "connectors";
+  | "connectors"
+  | "api-access";
 
 export type AgentFixture = {
   id: number;
@@ -137,6 +138,29 @@ export type ConnectorOutboxFixture = {
   error?: string;
 };
 
+export type ExternalAPIClientFixture = {
+  id: number;
+  name: string;
+  keyPrefix: string;
+  capabilities: string[];
+  enabled: boolean;
+  rateLimitPerMinute: number;
+  expiresAt?: string;
+  lastUsedAt?: string;
+  revokedAt?: string;
+};
+
+export type ExternalAPIAuditFixture = {
+  id: number;
+  clientId: number;
+  capability: string;
+  result: "success" | "denied" | "failed" | "rate_limited";
+  statusCode: number;
+  sourceIp: string;
+  durationMs: number;
+  createdAt: string;
+};
+
 export type AISettingsFixture = {
   agents: AgentFixture[];
   skills: SkillFixture[];
@@ -161,6 +185,11 @@ export type AISettingsFixture = {
   providers: ProviderFixture[];
   connectors: ConnectorFixture[];
   connectorOutbox: ConnectorOutboxFixture[];
+  externalApi: {
+    capabilities: string[];
+    clients: ExternalAPIClientFixture[];
+    audits: ExternalAPIAuditFixture[];
+  };
 };
 
 const objectInputSchema = {
@@ -531,4 +560,102 @@ export const aiSettingsFixture: AISettingsFixture = {
       status: "delivered",
     },
   ],
+  externalApi: {
+    capabilities: [
+      "content.list_posts",
+      "content.get_post",
+      "content.search_posts",
+      "content.list_tags",
+      "content.list_pages",
+      "content.get_page",
+      "content.find_related",
+      "content.search_knowledge",
+      "content.list_stale_posts",
+      "content.list_orphan_posts",
+      "content.list_categories",
+      "analytics.get_summary",
+      "analytics.list_low_engagement_posts",
+    ],
+    clients: [
+      {
+        id: 91,
+        name: "Analytics Warehouse",
+        keyPrefix: "gouno_live_Q7Y8n4p2",
+        capabilities: [
+          "analytics.get_summary",
+          "analytics.list_low_engagement_posts",
+        ],
+        enabled: true,
+        rateLimitPerMinute: 120,
+        expiresAt: "2026-12-31",
+        lastUsedAt: "2 分钟前",
+      },
+      {
+        id: 92,
+        name: "Search Sync",
+        keyPrefix: "gouno_live_M4s9K2w6",
+        capabilities: [
+          "content.search_posts",
+          "content.get_post",
+          "content.list_tags",
+        ],
+        enabled: true,
+        rateLimitPerMinute: 60,
+        expiresAt: "2027-03-31",
+        lastUsedAt: "18 分钟前",
+      },
+      {
+        id: 93,
+        name: "Legacy Exporter",
+        keyPrefix: "gouno_live_R3v0K8d1",
+        capabilities: ["content.list_posts"],
+        enabled: false,
+        rateLimitPerMinute: 30,
+        lastUsedAt: "2026-09-20 10:14",
+        revokedAt: "2026-09-21 09:30",
+      },
+    ],
+    audits: [
+      {
+        id: 501,
+        clientId: 91,
+        capability: "analytics.get_summary",
+        result: "success",
+        statusCode: 200,
+        sourceIp: "10.20.0.18",
+        durationMs: 42,
+        createdAt: "刚刚",
+      },
+      {
+        id: 502,
+        clientId: 92,
+        capability: "content.search_posts",
+        result: "success",
+        statusCode: 200,
+        sourceIp: "10.20.0.24",
+        durationMs: 68,
+        createdAt: "3 分钟前",
+      },
+      {
+        id: 503,
+        clientId: 92,
+        capability: "content.get_page",
+        result: "denied",
+        statusCode: 403,
+        sourceIp: "10.20.0.24",
+        durationMs: 2,
+        createdAt: "11 分钟前",
+      },
+      {
+        id: 504,
+        clientId: 91,
+        capability: "analytics.get_summary",
+        result: "rate_limited",
+        statusCode: 429,
+        sourceIp: "10.20.0.18",
+        durationMs: 1,
+        createdAt: "42 分钟前",
+      },
+    ],
+  },
 };
