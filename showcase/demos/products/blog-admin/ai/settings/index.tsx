@@ -134,6 +134,7 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
   const [editor, setEditor] = useState<AISettingsEditorState>(null);
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
   const [oneTimeKey, setOneTimeKey] = useState<{ clientName: string; apiKey: string } | null>(null);
+  const [revokeTarget, setRevokeTarget] = useState<ExternalAPIClientFixture | null>(null);
   const [mutationScenario, setMutationScenario] = useState<MutationScenario>("success");
   const [security, setSecurity] = useState<PrivilegedAccessState>("unlocked");
   const rootRef = useRef<HTMLDivElement>(null);
@@ -144,6 +145,7 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
     setEditor(null);
     setDeleteTarget(null);
     setOneTimeKey(null);
+    setRevokeTarget(null);
   };
 
   const saveEditor = (result: AISettingsEditorResult) => {
@@ -297,6 +299,21 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
     setNotice({ type: "success", text: `${name}：${kind === "embedding" ? "Embedding " : ""}连接测试成功。` });
   };
 
+  const confirmRevokeExternalClient = () => {
+    if (!revokeTarget) return;
+    const client = revokeTarget;
+    setFixture((current) => ({
+      ...current,
+      externalApiClients: current.externalApiClients.map((item) =>
+        item.id === client.id
+          ? { ...item, enabled: false, revoked: true }
+          : item,
+      ),
+    }));
+    setRevokeTarget(null);
+    setNotice({ type: "warning", text: `${client.name} 已撤销；该 Key 不可恢复。` });
+  };
+
   const actions: AISettingsSectionActions = {
     onCreateAgent: () => {
       if (!fixture.providers.some((item) => item.enabled)) {
@@ -361,15 +378,8 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
       setNotice({ type: "success", text: `${client.name} 的 API Key 已轮换；旧 Key 立即失效。` });
     },
     onRevokeExternalClient: (client) => {
-      setFixture((current) => ({
-        ...current,
-        externalApiClients: current.externalApiClients.map((item) =>
-          item.id === client.id
-            ? { ...item, enabled: false, revoked: true }
-            : item,
-        ),
-      }));
-      setNotice({ type: "warning", text: `${client.name} 已撤销；该 Key 不可恢复。` });
+      setRevokeTarget(client);
+      setNotice(null);
     },
     onCreateConnector: () => setEditor({ kind: "connector", value: "new" }),
     onEditConnector: (connector) => setEditor({ kind: "connector", value: connector }),
@@ -523,6 +533,20 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
           </div>
         ) : null}
       </Drawer>
+
+      <Modal
+        open={Boolean(revokeTarget)}
+        title="确认撤销 API Client"
+        description="撤销后该 Client 的当前 API Key 立即失效，且不能恢复；如需再次接入必须重新创建 Client。"
+        onOpenChange={(open) => { if (!open) setRevokeTarget(null); }}
+        onOk={confirmRevokeExternalClient}
+        okText="撤销并使 Key 失效"
+        cancelText="取消"
+        okButtonProps={{ variant: "solid", color: "error" }}
+        closeOnBackdrop
+      >
+        <Text>确定撤销「{revokeTarget?.name || ""}」吗？</Text>
+      </Modal>
 
       <Modal
         open={Boolean(oneTimeKey)}
