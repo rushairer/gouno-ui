@@ -160,6 +160,14 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
       return;
     }
 
+    if (result.kind === "external-client" && result.id === undefined) {
+      const id = nextId(fixture.externalApi.clients);
+      setOneTimeSecret({
+        clientName: result.value.name,
+        apiKey: "gouno_live_fixture_" + id + "_shown_once",
+      });
+    }
+
     setFixture((current) => {
       switch (result.kind) {
         case "agent": {
@@ -181,6 +189,24 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
         case "connector": {
           const item = { id: result.id ?? nextId(current.connectors), ...result.value };
           return { ...current, connectors: upsert(current.connectors, item, result.id) };
+        }
+        case "external-client": {
+          const id = result.id ?? nextId(current.externalApi.clients);
+          const existing = current.externalApi.clients.find((item) => item.id === result.id);
+          const item: ExternalAPIClientFixture = {
+            id,
+            keyPrefix: existing?.keyPrefix || "gouno_live_fixture_" + id,
+            lastUsedAt: existing?.lastUsedAt,
+            revokedAt: existing?.revokedAt,
+            ...result.value,
+          };
+          return {
+            ...current,
+            externalApi: {
+              ...current.externalApi,
+              clients: upsert(current.externalApi.clients, item, result.id),
+            },
+          };
         }
       }
     });
