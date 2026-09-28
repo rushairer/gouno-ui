@@ -234,7 +234,7 @@
       ],
       "summary": "Separate AI model vendor identity from wire protocol in canonical Model Connections while preserving the existing privileged settings composition and product-local ownership.",
       "consumerImpact": {
-        "rushairer/gouno-blog": "needs-manual-recertification"
+        "rushairer/gouno-blog": "recertified"
       }
     }
   ]

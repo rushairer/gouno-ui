@@ -1744,5 +1744,18 @@ Manual rendered review of the exact-head Golden artifact:
 - The third DeepSeek card, long Base URLs and action rows remain contained without horizontal overflow or alignment drift.
 - The exact Golden corpus does not include an opened Provider Drawer capture. Drawer field semantics are therefore supported by exact-head product tests rather than being claimed as manually rendered evidence.
 
-Canonical acceptance is restored for the `blog-admin-ai-settings` Model Connections contract. Blog Product remains intentionally `needs-manual-recertification` until the vendor/protocol contract is propagated, its browser evidence is reviewed, and the reopened U04b certification is closed.
+Canonical acceptance is restored for the `blog-admin-ai-settings` Model Connections contract.
+
+### Blog consumer recertification — 2026-09-28
+
+The staged consumer handshake has now completed its upstream half:
+
+- Blog Provider vendor/protocol propagation merged through Blog PR #295; merge commit `6cb74fed407611cd1e7efee262d0d804d251495b`.
+- The exact reviewed Product head is `ec92d2748f186b0831cce6f78df913d1676506cf`.
+- Exact-head Blog CI `36404210434`, Blog Showcase Parity `36404210431`, UI Browser Acceptance `36404210415`, Images `36404210362` and Gosso Release BFF Compatibility `36404210429` all succeeded.
+- Blog retained paired parity artifact `10962245898` (`sha256:fbde8c8b10e616aad5e4d92efd9da86b63d3f32c786bbcb28268dce61367b004`) and Browser Acceptance artifact `10961722110` (`sha256:c5fad0ed2fef0e9ae5da0b1e6dcdd0ccf406436b2ad026c140c6c8b7ee640e26`).
+- Blog PR #297 merged the fresh manual-review refs/evidence to main while deliberately retaining local status `needs-manual-recertification`; merge commit `715ff1f74545781f5d01eb32221d2c7a1643bf1c`.
+- The Blog-side staged review records Gouno UI ref `9a1aa7ebf897525856a49642db8e7a63b2d1088d`, which contains CSA-A005 commit `aa0c113ec0ca4ee02a9cd79f35eb0a9389488b77`.
+
+With those facts on Blog main, CSA-A005 may mark `rushairer/gouno-blog` as `recertified`. Reciprocal Blog Consumer Parity must pass on this candidate before the upstream state is merged. Blog may promote its local certification back to `verified` only after this upstream recertified state is on Gouno UI main.
 
