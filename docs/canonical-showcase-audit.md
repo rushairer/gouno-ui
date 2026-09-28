@@ -40,7 +40,7 @@ This keeps two facts distinct:
 - what was accepted when CSA-5 originally froze;
 - what later reviewed corrections have legitimately advanced the living Canonical Reference.
 
-A post-freeze amendment must name the exact canonical scope(s), the merged commit, the correction/hardening intent and known Consumer impact. It does not create a new Canonical surface; new surfaces still require an explicit matrix/freeze update and manual-first acceptance.
+A post-freeze amendment must name the exact canonical scope(s), the merged commit, its correction/hardening/extension intent and known Consumer impact. A `canonical-extension` may add product capability only inside an already-listed matrix surface and must declare Consumer impact; it does not admit a new catalog/page/component ID. A genuinely new Canonical surface still requires an explicit matrix/count update and manual-first freeze acceptance.
 
 Current ledger:
 
@@ -1759,3 +1759,53 @@ The staged consumer handshake has now completed its upstream half:
 
 With those facts on Blog main, CSA-A005 may mark `rushairer/gouno-blog` as `recertified`. Reciprocal Blog Consumer Parity must pass on this candidate before the upstream state is merged. Blog may promote its local certification back to `verified` only after this upstream recertified state is on Gouno UI main.
 
+
+
+## CSA-A006 — External API Access management extension
+
+Status: **canonical extension accepted / Blog Consumer recertification pending**
+
+Date: 2026-09-28
+
+The user-authorized Connector / external capability program adds a new product capability inside the already-frozen `blog-admin-ai-settings` page: managing server-to-server API Clients that can call an explicit read-only subset of the Blog Tool Registry.
+
+Classification:
+
+- `canonical-extension` inside the existing `blog-admin-ai-settings` matrix surface;
+- no new Core/Foundation component or generic Pattern/Gouno abstraction;
+- no new Showcase catalog/page/component ID;
+- existing Tabs, `TabPanelLead`, privileged-access gate, Drawer, Field, Form composition and Modal ownership remain unchanged;
+- Blog Consumer must complete a fresh reverse migration and manual-first recertification before this extension is considered propagated.
+
+Merged Canonical extension:
+
+- PR #152;
+- merge commit `6941ec3cebeec48e07952bfc714086c98d6af373`;
+- API Access is a distinct AI Settings tab, separate from outbound Sandbox Connectors;
+- API Client policy includes explicit read-only Capability allowlist, per-minute limit, optional expiry and enabled state;
+- creation/rotation returns a one-time API Key result state; the full key is not represented as durable fixture state;
+- revocation is irreversible in the Canonical interaction model;
+- Client list, external Capability catalog and recent invocation audit are separate information layers;
+- browser code is explicitly warned not to persist or use long-lived machine credentials;
+- the external capability fixture uses public/published-only content scopes and excludes administrative analytics summaries.
+
+Exact-head pre-merge evidence for `6eeedacba5e399369d75cada061fb5225bc24f6b`:
+
+- CI `36418492709` — success;
+- Canonical Visual Golden Smoke `36418492734` — success;
+- Blog Consumer Parity `36418492705` — success;
+- Gosso Admin Consumer Parity `36418492717` — success;
+- Golden artifact `10969040882` — `gouno-ui-canonical-visual-golden-36418492734`, SHA-256 `884d853cc65b57e4e5362ce5527f04fe10c07b7eee501bb5cbbab3a7cdbba74b`;
+- Blog paired parity artifact `10968916043` — `gouno-ui-blog-consumer-parity-36418492705`, SHA-256 `d71906d9c78fc705b9d7af18992ce05a072734767e73a794c624873eff36f7a0`.
+
+Manual review of the candidate confirmed the intended Canonical structure:
+
+- API Access remains one peer route-level AI Settings tab rather than being nested under Connector.
+- The privileged policy boundary owns Client/key mutations.
+- API Clients, grantable read-only Capability inventory and invocation evidence are visually distinct.
+- The contextual Drawer uses the established editor-form composition for Client identity, policy and Capability allowlist.
+- The one-time key Modal has a non-dismissible-by-backdrop acknowledgement path and a browser-use warning.
+- Long Capability identifiers remain contained by semantic mono/body typography and wrapping.
+- No real credential or network call exists in Showcase fixture state.
+
+The reciprocal parity run above validates already-covered Blog AI Settings composition, but the current Blog Product does not yet implement this newly added API Access tab. Therefore CSA-A006 intentionally records `rushairer/gouno-blog` as `needs-manual-recertification`. Product reverse migration must land before A006 may be promoted to `recertified`.
