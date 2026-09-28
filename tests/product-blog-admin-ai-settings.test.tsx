@@ -25,6 +25,8 @@ describe("Blog Admin AI Settings route family", () => {
     expect(parseAISettingsRoute("?section=unknown")).toBe("agents");
     expect(formatAISettingsRoute("agents")).toBe("/admin/ai-settings");
     expect(formatAISettingsRoute("connectors")).toBe("/admin/ai-settings?section=connectors");
+    expect(parseAISettingsRoute("?section=api-access")).toBe("api-access");
+    expect(formatAISettingsRoute("api-access")).toBe("/admin/ai-settings?section=api-access");
   });
 
   it("exposes one route-level H1 and exactly one page-local tablist", () => {
@@ -32,7 +34,7 @@ describe("Blog Admin AI Settings route family", () => {
 
     expect(screen.getByRole("heading", { level: 1, name: "AI 设置" })).toBeTruthy();
     expect(screen.getAllByRole("tablist")).toHaveLength(1);
-    for (const name of ["Agents", "Skills", "Tools", "知识库", "模型连接", "Sandbox 连接器"]) {
+    for (const name of ["Agents", "Skills", "Tools", "知识库", "模型连接", "Sandbox 连接器", "API 访问"]) {
       expect(screen.getByRole("tab", { name })).toBeTruthy();
     }
 
@@ -209,6 +211,79 @@ describe("Blog Admin AI Settings route family", () => {
     fireEvent.click(screen.getByRole("button", { name: "OAuth Web Research Sandbox" }));
     expect(screen.getByText(/Web Research Sandbox 已模拟完成 Mock OAuth 回调/)).toBeTruthy();
     expect(aiSettingsFixture.connectorOutbox.some((item) => item.status === "failed")).toBe(true);
+  });
+
+  it("separates inbound API access from outbound Connector integrations", () => {
+    render(<BlogAdminAISettingsDemo initialSection="api-access" />);
+
+    expect(screen.getByRole("tab", { name: "API 访问" })).toBeTruthy();
+    expect(screen.getByText("Server-to-server only")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "创建 API Client" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "调用审计" })).toBeTruthy();
+    expect(screen.getByText("Analytics Warehouse", { selector: "strong" })).toBeTruthy();
+    expect(screen.getByText("analytics.get_summary", { selector: "strong" })).toBeTruthy();
+    expect(screen.queryByRole("heading", { level: 2, name: "Outbox 沙箱" })).toBeNull();
+    expect(
+      screen.getByText(/浏览器 Origin 会被拒绝.*Blog BFF Cookie.*GOSSO Bearer Token/),
+    ).toBeTruthy();
+  });
+
+  it("creates, rotates and revokes an external API Client with one-time secrets", () => {
+    render(<BlogAdminAISettingsDemo initialSection="api-access" />);
+
+    fireEvent.click(screen.getByRole("button", { name: "创建 API Client" }));
+    const clientDrawer = screen.getByRole("dialog", { name: "创建 API Client" });
+    fireEvent.change(within(clientDrawer).getByLabelText(/Client 名称/), {
+      target: { value: "Reporting Worker" },
+    });
+    fireEvent.click(
+      within(clientDrawer).getByText("content.search_posts", { selector: "strong" })
+        .closest("label")!
+        .querySelector("input")!,
+    );
+    fireEvent.click(
+      within(clientDrawer).getByRole("button", { name: "保存 API Client" }),
+    );
+
+    const secretDialog = screen.getByRole("dialog", { name: "保存 API Key" });
+    expect(within(secretDialog).getByText(/gouno_live_fixture_/)).toBeTruthy();
+    expect(within(secretDialog).getByText("关闭后无法再次查看")).toBeTruthy();
+    fireEvent.click(
+      within(secretDialog).getByRole("button", { name: "我已安全保存" }),
+    );
+
+    expect(screen.getByText("Reporting Worker", { selector: "strong" })).toBeTruthy();
+    expect(screen.getByText("content.search_posts")).toBeTruthy();
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "轮换 Reporting Worker 密钥" }),
+    );
+    const rotatedSecret = screen.getByRole("dialog", { name: "保存 API Key" });
+    expect(within(rotatedSecret).getByText(/gouno_live_rotated_/)).toBeTruthy();
+    fireEvent.click(
+      within(rotatedSecret).getByRole("button", { name: "我已安全保存" }),
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "撤销 Reporting Worker" }),
+    );
+    expect(screen.getByText("已撤销")).toBeTruthy();
+    expect(
+      screen.queryByRole("button", { name: "轮换 Reporting Worker 密钥" }),
+    ).toBeNull();
+  });
+
+  it("protects external API machine credentials behind the shared privileged gate", () => {
+    render(<BlogAdminAISettingsDemo initialSection="api-access" />);
+    fireEvent.click(screen.getByRole("button", { name: "打开 Fixture 控制" }));
+    fireEvent.click(screen.getByRole("radio", { name: "已锁定" }));
+
+    expect(screen.getByText("高权限操作需要身份验证")).toBeTruthy();
+    expect(screen.getByText("API 访问与机器凭据保护")).toBeTruthy();
+    expect(screen.queryByText("Analytics Warehouse", { selector: "strong" })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "解锁以管理 API 访问" }));
+    expect(screen.getByText("高权限操作已解锁")).toBeTruthy();
+    expect(screen.getByText("Analytics Warehouse", { selector: "strong" })).toBeTruthy();
   });
 
   it("keeps governance behavior product-local while the navigation depth stays flat", () => {
