@@ -99,12 +99,36 @@ for (const amendment of amendments) {
   if (amendment.commit === matrix.baselineCommit) {
     fail(`${amendment.id}: post-freeze amendment cannot reuse the original CSA-5 baseline commit.`);
   }
-  if (!["canonical-correction", "canonical-hardening"].includes(amendment.kind)) {
+  if (
+    ![
+      "canonical-correction",
+      "canonical-hardening",
+      "canonical-extension",
+    ].includes(amendment.kind)
+  ) {
     fail(`${amendment.id}: unsupported amendment kind ${amendment.kind ?? "missing"}.`);
   }
   if (!amendment.summary?.trim()) {
     fail(`${amendment.id}: summary is required.`);
   }
+  const consumerImpact = amendment.consumerImpact ?? {};
+  const supportedConsumerImpact = new Set([
+    "needs-manual-recertification",
+    "recertified",
+    "not-affected",
+  ]);
+  for (const [consumer, impact] of Object.entries(consumerImpact)) {
+    if (!supportedConsumerImpact.has(impact)) {
+      fail(`${amendment.id}: unsupported consumerImpact for ${consumer}: ${impact}.`);
+    }
+  }
+  if (
+    amendment.kind === "canonical-extension" &&
+    Object.keys(consumerImpact).length === 0
+  ) {
+    fail(`${amendment.id}: canonical-extension must declare consumerImpact.`);
+  }
+
   const scopes = amendment.scopes ?? [];
   if (!scopes.length) {
     fail(`${amendment.id}: at least one canonical scope is required.`);
