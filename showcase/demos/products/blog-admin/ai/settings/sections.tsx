@@ -36,6 +36,7 @@ import type {
   ConnectorOutboxFixture,
   ConnectorOutboxStatus,
   EmbeddingProfileFixture,
+  ExternalAPIClientFixture,
   ProviderFixture,
   SkillFixture,
 } from "./fixtures";
@@ -66,6 +67,10 @@ export interface AISettingsSectionActions {
   onTestProvider: (provider: ProviderFixture) => void;
   onEditProvider: (provider: ProviderFixture) => void;
   onDeleteProvider: (provider: ProviderFixture) => void;
+  onCreateExternalClient: () => void;
+  onEditExternalClient: (client: ExternalAPIClientFixture) => void;
+  onRotateExternalClient: (client: ExternalAPIClientFixture) => void;
+  onRevokeExternalClient: (client: ExternalAPIClientFixture) => void;
   onCreateConnector: () => void;
   onEditConnector: (connector: ConnectorFixture) => void;
   onStartConnectorOAuth: (connector: ConnectorFixture) => void;
@@ -338,6 +343,129 @@ function ProviderList({ providers, actions }: { providers: ProviderFixture[]; ac
   );
 }
 
+function ExternalAPIAccessPanel({ fixture, actions }: { fixture: AISettingsFixture; actions: AISettingsSectionActions }) {
+  const clientMap = new Map(fixture.externalApiClients.map((client) => [client.id, client]));
+  return (
+    <div className="flex flex-col gap-5">
+      <TabPanelFeedback>
+        <Alert
+          type="info"
+          showIcon
+          title="Server-to-server API 边界"
+          description="长期 API Key 只供服务端调用；浏览器请求不会使用这条通道。v1 仅开放显式授权的 read-only Capability。"
+        />
+      </TabPanelFeedback>
+
+      <section className="flex flex-col gap-3" aria-labelledby="external-clients-title">
+        <div>
+          <Heading id="external-clients-title" level={2} variant="compact">API Clients</Heading>
+          <Text size="sm" tone="muted">
+            每个 Client 独立控制 Capability 白名单、限流和到期时间；Key 前缀用于审计定位，不是可用凭据。
+          </Text>
+        </div>
+        <Card padding="none" className="overflow-hidden">
+          <CardContent className="divide-y p-0">
+            {fixture.externalApiClients.map((client) => (
+              <div key={client.id} className="flex flex-col gap-4 p-6 xl:flex-row xl:items-start xl:justify-between">
+                <div className="min-w-0 space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <strong>{client.name}</strong>
+                    <Tag color={client.revoked ? "error" : client.enabled ? "success" : "default"}>
+                      {client.revoked ? "已撤销" : client.enabled ? "已启用" : "已停用"}
+                    </Tag>
+                    <Tag>{client.rateLimitPerMinute}/min</Tag>
+                  </div>
+                  <Text size="xs" tone="muted" className="type-family-mono">{client.keyPrefix}••••</Text>
+                  <div className="flex flex-wrap gap-2">
+                    {client.capabilities.map((capability) => <Tag key={capability}>{capability}</Tag>)}
+                  </div>
+                  <Text size="xs" tone="muted">
+                    {client.expiresAt ? `到期：${client.expiresAt}` : "不自动到期"} · 最近调用：{client.lastUsedAt || "尚未调用"}
+                  </Text>
+                </div>
+                <div className="flex min-w-max flex-nowrap items-center gap-1">
+                  <IconButton
+                    label={`编辑 ${client.name}`}
+                    icon={<Edit2 />}
+                    variant="ghost"
+                    disabled={client.revoked}
+                    onClick={() => actions.onEditExternalClient(client)}
+                  />
+                  <IconButton
+                    label={`轮换 ${client.name} Key`}
+                    icon={<RotateCcw />}
+                    variant="ghost"
+                    disabled={client.revoked}
+                    onClick={() => actions.onRotateExternalClient(client)}
+                  />
+                  <IconButton
+                    label={`撤销 ${client.name}`}
+                    icon={<ShieldOff />}
+                    variant="ghost"
+                    color="error"
+                    disabled={client.revoked}
+                    onClick={() => actions.onRevokeExternalClient(client)}
+                  />
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </section>
+
+      <section className="flex flex-col gap-3" aria-labelledby="external-capabilities-title">
+        <div>
+          <Heading id="external-capabilities-title" level={2} variant="compact">可授权 Capability</Heading>
+          <Text size="sm" tone="muted">目录来自同一个 Tool Registry，但只有 external surface 上的 read-only 能力可被 API Client 授权。</Text>
+        </div>
+        <Card padding="none" className="overflow-hidden">
+          <CardContent className="divide-y p-0">
+            {fixture.externalCapabilities.map((capability) => (
+              <div key={capability.name} className="grid gap-2 p-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+                <div className="min-w-0">
+                  <strong className="type-family-mono type-body-sm type-weight-semibold [overflow-wrap:anywhere]">
+                    {capability.name}
+                  </strong>
+                  <Text size="xs" tone="muted">{capability.description}</Text>
+                </div>
+                <Tag color="success">read-only</Tag>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </section>
+
+      <section className="flex flex-col gap-3" aria-labelledby="external-audits-title">
+        <div>
+          <Heading id="external-audits-title" level={2} variant="compact">最近调用</Heading>
+          <Text size="sm" tone="muted">审计只记录 Capability、结果、耗时和输入摘要，不保存完整 API Key 或原始参数。</Text>
+        </div>
+        <Card padding="none" className="overflow-hidden">
+          <CardContent className="divide-y p-0">
+            {fixture.externalApiAudits.map((audit) => {
+              const client = clientMap.get(audit.clientId);
+              return (
+                <div key={audit.id} className="grid gap-3 p-6 md:grid-cols-[minmax(0,1fr)_auto_auto] md:items-center">
+                  <div className="min-w-0">
+                    <strong className="type-family-mono type-body-sm type-weight-semibold [overflow-wrap:anywhere]">
+                      {audit.capability}
+                    </strong>
+                    <Text size="xs" tone="muted">{client?.name || `Client #${audit.clientId}`} · {audit.createdAt}</Text>
+                  </div>
+                  <Tag color={audit.result === "success" ? "success" : audit.result === "denied" ? "warning" : "error"}>
+                    {audit.result} · HTTP {audit.statusCode}
+                  </Tag>
+                  <Text size="xs" tone="muted">{audit.durationMs} ms</Text>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      </section>
+    </div>
+  );
+}
+
 function outboxLabel(status: ConnectorOutboxStatus) {
   return { awaiting_approval: "待审批", approved: "已批准", delivered: "已模拟投递", failed: "失败，可重试", revoked: "已撤销" }[status];
 }
@@ -426,6 +554,11 @@ export function AISettingsSectionLead({ section, actions, disabled = false }: { 
           </>
         )}
       />;
+    case "api-access":
+      return <TabPanelLead
+        description="把 Blog 的受控只读 Capability 提供给服务端调用方；Client 独立持有 scope、限流与到期策略。"
+        actions={<Button size="small" variant="solid" color="primary" icon={<Plus />} disabled={disabled} onClick={actions.onCreateExternalClient}>创建 API Client</Button>}
+      />;
     case "connectors":
       return <TabPanelLead
         description="管理 Agent 可访问的 Sandbox 外部能力、OAuth 边界与 Outbox 审批链路。"
@@ -441,6 +574,7 @@ export function AISettingsSectionPanel({ fixture, section, actions }: { fixture:
     case "tools": return <ToolList fixture={fixture} />;
     case "knowledge": return <KnowledgePanel fixture={fixture.knowledge} actions={actions} />;
     case "providers": return <ProviderList providers={fixture.providers} actions={actions} />;
+    case "api-access": return <ExternalAPIAccessPanel fixture={fixture} actions={actions} />;
     case "connectors": return <ConnectorList fixture={fixture} actions={actions} />;
   }
 }
