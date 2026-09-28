@@ -40,7 +40,7 @@ This keeps two facts distinct:
 - what was accepted when CSA-5 originally froze;
 - what later reviewed corrections have legitimately advanced the living Canonical Reference.
 
-A post-freeze amendment must name the exact canonical scope(s), the merged commit, the correction/hardening intent and known Consumer impact. It does not create a new Canonical surface; new surfaces still require an explicit matrix/freeze update and manual-first acceptance.
+A post-freeze amendment must name the exact canonical scope(s), the merged commit, its correction/hardening/extension intent and known Consumer impact. A `canonical-extension` may add product capability only inside an already-listed matrix surface and must declare Consumer impact; it does not admit a new catalog/page/component ID. A genuinely new Canonical surface still requires an explicit matrix/count update and manual-first freeze acceptance.
 
 Current ledger:
 
@@ -1759,3 +1759,69 @@ The staged consumer handshake has now completed its upstream half:
 
 With those facts on Blog main, CSA-A005 may mark `rushairer/gouno-blog` as `recertified`. Reciprocal Blog Consumer Parity must pass on this candidate before the upstream state is merged. Blog may promote its local certification back to `verified` only after this upstream recertified state is on Gouno UI main.
 
+
+
+## CSA-A006 — External API Access management extension
+
+Status: **canonical extension accepted / Blog Consumer recertification pending**
+
+Date: 2026-09-28
+
+The user-authorized Connector / external capability program adds a new product capability inside the already-frozen `blog-admin-ai-settings` page: managing server-to-server API Clients that can call an explicit read-only subset of the Blog Tool Registry.
+
+Classification:
+
+- `canonical-extension` inside the existing `blog-admin-ai-settings` matrix surface;
+- no new Core/Foundation component or generic Pattern/Gouno abstraction;
+- no new Showcase catalog/page/component ID;
+- existing Tabs, `TabPanelLead`, privileged-access gate, Drawer, Field, Form composition and Modal ownership remain unchanged;
+- Blog Consumer must complete a fresh reverse migration and manual-first recertification before this extension is considered propagated.
+
+Canonical extension history:
+
+- PR #152 introduced the API Access surface and merged as `6941ec3cebeec48e07952bfc714086c98d6af373`.
+- A006 manual review then identified two lifecycle/documentation defects before Consumer propagation: irreversible revocation had no confirmation, and the management surface did not expose the actual machine invocation contract.
+- Canonical hardening commit `cc1962c83c2c82cf59f0b063c9e48096dbf4a3ff` is therefore the accepted A006 code ref and the value recorded by `latestCanonicalRef`.
+- API Access is a distinct AI Settings tab, separate from outbound Sandbox Connectors.
+- API Client policy includes explicit read-only Capability allowlist, per-minute limit, optional expiry and enabled state.
+- creation/rotation returns a one-time API Key result state; the full key is not represented as durable fixture state.
+- irreversible revocation now requires an explicit destructive confirmation before the fixture key is invalidated.
+- the management surface now documents the real server-to-server entry points: `GET /api/external/v1/capabilities` and `POST /api/external/v1/capabilities/{name}/invoke`, plus Bearer authorization and the no-browser-CORS boundary.
+- Client list, external Capability catalog and recent invocation audit are separate information layers.
+- browser code is explicitly warned not to persist or use long-lived machine credentials.
+- the external capability fixture uses public/published-only content scopes and excludes administrative analytics summaries.
+
+Initial #152 evidence for `6eeedacba5e399369d75cada061fb5225bc24f6b` (superseded as final A006 evidence by the follow-up hardening):
+
+- CI `36418492709` — success;
+- Canonical Visual Golden Smoke `36418492734` — success;
+- Blog Consumer Parity `36418492705` — success;
+- Gosso Admin Consumer Parity `36418492717` — success;
+- Golden artifact `10969040882` — `gouno-ui-canonical-visual-golden-36418492734`, SHA-256 `884d853cc65b57e4e5362ce5527f04fe10c07b7eee501bb5cbbab3a7cdbba74b`;
+- Blog paired parity artifact `10968916043` — `gouno-ui-blog-consumer-parity-36418492705`, SHA-256 `d71906d9c78fc705b9d7af18992ce05a072734767e73a794c624873eff36f7a0`.
+
+Manual review of the candidate confirmed the intended Canonical structure:
+
+- API Access remains one peer route-level AI Settings tab rather than being nested under Connector.
+- The privileged policy boundary owns Client/key mutations.
+- API Clients, grantable read-only Capability inventory and invocation evidence are visually distinct.
+- The contextual Drawer uses the established editor-form composition for Client identity, policy and Capability allowlist.
+- The one-time key Modal has a non-dismissible-by-backdrop acknowledgement path and a browser-use warning.
+- Revocation requires a separate destructive confirmation explaining that the current key becomes immediately invalid and cannot be restored.
+- A dedicated invocation-protocol surface identifies the catalog/invoke endpoints, Bearer header shape, server-to-server ownership and browser Origin rejection.
+- Long Capability identifiers and endpoint paths remain contained by semantic mono/body typography and wrapping.
+- No real credential or network call exists in Showcase fixture state.
+
+Final exact-head evidence for the hardened A006 candidate `fd850e39ba399badaf6191c26af814c33e05e282`:
+
+- CI `36420445491` — success;
+- Canonical Visual Golden Smoke `36420445422` — success;
+- Blog Consumer Parity `36420445402` — success;
+- Gosso Admin Consumer Parity `36420445495` — success;
+- Golden artifact `10969422188` — `gouno-ui-canonical-visual-golden-36420445422`, SHA-256 `9bf98caf46c7af259cbe7f4eafe46cd9b5427ae696b7aa6db036708e2952541f`;
+- Blog paired parity artifact `10969740095` — `gouno-ui-blog-consumer-parity-36420445402`, SHA-256 `88c7d29ea22486561f815d71f90677bc4db0a5ad920826fc1873e8cf9125c1a6`;
+- Gosso paired parity artifact `10968884057` — `gouno-ui-gosso-admin-consumer-parity-36420445495`, SHA-256 `f016b63800eeaf8262d1d26839b6128fd7e089d26e22d9f801aa363fe46f43c7`.
+
+This evidence closes the Canonical-side A006 acceptance. Blog Consumer propagation remains intentionally pending until the new API Access Product surface is implemented and manually re-certified.
+
+The reciprocal parity run above validates already-covered Blog AI Settings composition, but the current Blog Product does not yet implement this newly added API Access tab. Therefore CSA-A006 intentionally records `rushairer/gouno-blog` as `needs-manual-recertification`. Product reverse migration must land before A006 may be promoted to `recertified`.

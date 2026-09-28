@@ -130,7 +130,8 @@ The durable machine-readable freeze is `canonical-showcase.json`.
 - If a listed component, composition or product review is later marked `reopened`, propagation for that affected surface stops until the defect is resolved, rendered evidence is manually re-reviewed, and the matrix is re-certified.
 - Do not edit matrix counts or remove catalog ids merely to make the freeze guard green. The matrix must remain a lossless accounting of the accepted Showcase catalog.
 - Consumer resume remains **manual-first plus reciprocal parity**: reciprocal automation protects already-reviewed bindings, but cannot create or renew manual certification on its own.
-- The original `baselineCommit` is immutable. Reviewed post-freeze corrections to listed Canonical surfaces must append `postFreezeAmendments` and advance `latestCanonicalRef`; do not rewrite the CSA-5 acceptance anchor to hide Canonical history.
+- The original `baselineCommit` is immutable. Reviewed post-freeze corrections, hardening, or explicitly authorized product extensions inside an already-listed Canonical surface must append `postFreezeAmendments` and advance `latestCanonicalRef`; do not rewrite the CSA-5 acceptance anchor to hide Canonical history.
+- A `canonical-extension` does not admit a new catalog/page/component ID. It is only for new product capability inside an existing matrix surface and must declare Consumer impact. A genuinely new Showcase surface still requires an explicit matrix/count update plus manual-first freeze acceptance before propagation.
 
 ## Showcase evidence rule
 

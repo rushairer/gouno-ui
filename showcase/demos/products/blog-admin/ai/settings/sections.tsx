@@ -356,6 +356,40 @@ function ExternalAPIAccessPanel({ fixture, actions }: { fixture: AISettingsFixtu
         />
       </TabPanelFeedback>
 
+      <Card padding="base">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <Heading level={2} variant="compact">调用协议</Heading>
+              <Tag color="success">server-to-server</Tag>
+            </div>
+            <Text size="sm" tone="muted">
+              调用方先读取已授权 Capability 目录，再按名称执行；长期 API Key 只放在服务端 Authorization Header 中。
+            </Text>
+          </div>
+          <div className="grid gap-3 lg:grid-cols-2">
+            <div className="rounded-md border p-4">
+              <Text size="xs" tone="muted">Capability 目录</Text>
+              <strong className="mt-1 block type-family-mono type-body-sm type-weight-semibold [overflow-wrap:anywhere]">
+                GET /api/external/v1/capabilities
+              </strong>
+            </div>
+            <div className="rounded-md border p-4">
+              <Text size="xs" tone="muted">执行已授权 Capability</Text>
+              <strong className="mt-1 block type-family-mono type-body-sm type-weight-semibold [overflow-wrap:anywhere]">
+                {"POST /api/external/v1/capabilities/{name}/invoke"}
+              </strong>
+            </div>
+          </div>
+          <Text size="xs" tone="muted" className="type-family-mono [overflow-wrap:anywhere]">
+            Authorization: Bearer gouno_live_…
+          </Text>
+          <Text size="xs" tone="muted">
+            该入口不提供浏览器 CORS；带 Origin 的浏览器请求会被拒绝。完整请求/响应结构以 OpenAPI 契约为准。
+          </Text>
+        </div>
+      </Card>
+
       <section className="flex flex-col gap-3" aria-labelledby="external-clients-title">
         <div>
           <Heading id="external-clients-title" level={2} variant="compact">API Clients</Heading>

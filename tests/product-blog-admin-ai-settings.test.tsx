@@ -193,6 +193,11 @@ describe("Blog Admin AI Settings route family", () => {
     openTab("API Access");
 
     expect(screen.getByText("External API Client 与长期密钥保护")).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "调用协议" })).toBeTruthy();
+    expect(screen.getByText("GET /api/external/v1/capabilities")).toBeTruthy();
+    expect(
+      screen.getByText("POST /api/external/v1/capabilities/{name}/invoke"),
+    ).toBeTruthy();
     expect(screen.getByRole("heading", { level: 2, name: "API Clients" })).toBeTruthy();
     expect(screen.getByRole("heading", { level: 2, name: "可授权 Capability" })).toBeTruthy();
     expect(screen.getByRole("heading", { level: 2, name: "最近调用" })).toBeTruthy();
@@ -229,6 +234,11 @@ describe("Blog Admin AI Settings route family", () => {
     fireEvent.click(screen.getByRole("button", { name: "我已安全保存" }));
 
     fireEvent.click(screen.getByRole("button", { name: "撤销 Knowledge Export Worker" }));
+    const revokeDialog = screen.getByRole("dialog", { name: "确认撤销 API Client" });
+    expect(within(revokeDialog).getByText("确定撤销「Knowledge Export Worker」吗？")).toBeTruthy();
+    fireEvent.click(
+      within(revokeDialog).getByRole("button", { name: "撤销并使 Key 失效" }),
+    );
     expect(screen.getByText("Knowledge Export Worker 已撤销；该 Key 不可恢复。")).toBeTruthy();
   });
 
