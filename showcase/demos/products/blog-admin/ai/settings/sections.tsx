@@ -36,6 +36,7 @@ import type {
   ConnectorOutboxFixture,
   ConnectorOutboxStatus,
   EmbeddingProfileFixture,
+  ExternalAPIClientFixture,
   ProviderFixture,
   SkillFixture,
 } from "./fixtures";
@@ -71,6 +72,10 @@ export interface AISettingsSectionActions {
   onStartConnectorOAuth: (connector: ConnectorFixture) => void;
   onQueueOutbox: () => void;
   onOutboxAction: (item: ConnectorOutboxFixture, action: "approve" | "deliver" | "retry" | "revoke") => void;
+  onCreateExternalClient: () => void;
+  onEditExternalClient: (client: ExternalAPIClientFixture) => void;
+  onRotateExternalClient: (client: ExternalAPIClientFixture) => void;
+  onRevokeExternalClient: (client: ExternalAPIClientFixture) => void;
 }
 
 function AgentList({ fixture, actions }: { fixture: AISettingsFixture; actions: AISettingsSectionActions }) {
