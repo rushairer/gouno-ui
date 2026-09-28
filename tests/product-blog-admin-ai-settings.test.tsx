@@ -22,8 +22,10 @@ describe("Blog Admin AI Settings route family", () => {
   it("uses stable section routes instead of nesting product navigation inside AI Operations", () => {
     expect(parseAISettingsRoute("/admin/ai-settings")).toBe("agents");
     expect(parseAISettingsRoute("/admin/ai-settings?section=providers")).toBe("providers");
+    expect(parseAISettingsRoute("/admin/ai-settings?section=api-access")).toBe("api-access");
     expect(parseAISettingsRoute("?section=unknown")).toBe("agents");
     expect(formatAISettingsRoute("agents")).toBe("/admin/ai-settings");
+    expect(formatAISettingsRoute("api-access")).toBe("/admin/ai-settings?section=api-access");
     expect(formatAISettingsRoute("connectors")).toBe("/admin/ai-settings?section=connectors");
   });
 
@@ -32,7 +34,7 @@ describe("Blog Admin AI Settings route family", () => {
 
     expect(screen.getByRole("heading", { level: 1, name: "AI 设置" })).toBeTruthy();
     expect(screen.getAllByRole("tablist")).toHaveLength(1);
-    for (const name of ["Agents", "Skills", "Tools", "知识库", "模型连接", "Sandbox 连接器"]) {
+    for (const name of ["Agents", "Skills", "Tools", "知识库", "模型连接", "API Access", "Sandbox 连接器"]) {
       expect(screen.getByRole("tab", { name })).toBeTruthy();
     }
 
@@ -184,6 +186,50 @@ describe("Blog Admin AI Settings route family", () => {
     expect(within(embeddingDrawer).getByRole("button", { name: "保存 Embedding" })).toBeTruthy();
     fireEvent.click(within(embeddingDrawer).getByRole("button", { name: "取消" }));
     expect(screen.getByRole("button", { name: "测试 Blog Knowledge" })).toBeTruthy();
+  });
+
+  it("manages server-only API clients with explicit read scopes and one-time keys", () => {
+    render(<BlogAdminAISettingsDemo />);
+    openTab("API Access");
+
+    expect(screen.getByText("External API Client 与长期密钥保护")).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "API Clients" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "可授权 Capability" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 2, name: "最近调用" })).toBeTruthy();
+    expect(screen.getByText("Editorial Reporting SDK", { selector: "strong" })).toBeTruthy();
+    expect(
+      screen.getAllByText("content.list_published_posts").length,
+    ).toBeGreaterThan(0);
+    expect(screen.getAllByText("read-only").length).toBe(
+      aiSettingsFixture.externalCapabilities.length,
+    );
+    expect(screen.queryByDisplayValue(/gouno_live_A7k3Q2p9.+/)).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "创建 API Client" }));
+    const drawer = screen.getByRole("dialog", { name: "创建 API Client" });
+    expect(within(drawer).getByText("Capability 白名单")).toBeTruthy();
+    expect(
+      within(drawer).getByText(
+        "为服务端调用方分配显式只读 Capability、限流和到期策略；API Key 仅在创建或轮换后显示一次。",
+      ),
+    ).toBeTruthy();
+    fireEvent.change(within(drawer).getByLabelText(/Client 名称/), {
+      target: { value: "Partner Reporting Worker" },
+    });
+    fireEvent.click(within(drawer).getByRole("button", { name: "保存 API Client" }));
+
+    const keyDialog = screen.getByRole("dialog", { name: "保存一次性 API Key" });
+    expect(within(keyDialog).getByText("不要放入浏览器代码")).toBeTruthy();
+    expect((within(keyDialog).getByLabelText("一次性 API Key") as HTMLInputElement).value).toContain("gouno_live_");
+    fireEvent.click(within(keyDialog).getByRole("button", { name: "我已安全保存" }));
+    expect(screen.getByText("Partner Reporting Worker", { selector: "strong" })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "轮换 Editorial Reporting SDK Key" }));
+    expect(screen.getByRole("dialog", { name: "保存一次性 API Key" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "我已安全保存" }));
+
+    fireEvent.click(screen.getByRole("button", { name: "撤销 Knowledge Export Worker" }));
+    expect(screen.getByText("Knowledge Export Worker 已撤销；该 Key 不可恢复。")).toBeTruthy();
   });
 
   it("represents Connector profile OAuth and Outbox approval state transitions without real services", () => {
