@@ -4,6 +4,7 @@ export type AISettingsSection =
   | "tools"
   | "knowledge"
   | "providers"
+  | "api-access"
   | "connectors";
 
 export type AgentFixture = {
@@ -111,6 +112,33 @@ export type KnowledgeSearchResultFixture = {
   score: number;
 };
 
+export type ExternalCapabilityFixture = {
+  name: string;
+  description: string;
+};
+
+export type ExternalAPIClientFixture = {
+  id: number;
+  name: string;
+  keyPrefix: string;
+  capabilities: string[];
+  enabled: boolean;
+  rateLimitPerMinute: number;
+  expiresAt?: string;
+  lastUsedAt?: string;
+  revoked: boolean;
+};
+
+export type ExternalAPIAuditFixture = {
+  id: number;
+  clientId: number;
+  capability: string;
+  result: "success" | "denied" | "failed" | "rate_limited";
+  statusCode: number;
+  durationMs: number;
+  createdAt: string;
+};
+
 export type ConnectorFixture = {
   id: number;
   name: string;
@@ -159,6 +187,9 @@ export type AISettingsFixture = {
     };
   };
   providers: ProviderFixture[];
+  externalCapabilities: ExternalCapabilityFixture[];
+  externalApiClients: ExternalAPIClientFixture[];
+  externalApiAudits: ExternalAPIAuditFixture[];
   connectors: ConnectorFixture[];
   connectorOutbox: ConnectorOutboxFixture[];
 };
@@ -476,6 +507,107 @@ export const aiSettingsFixture: AISettingsFixture = {
       enabled: false,
       defaultWriting: false,
       defaultImage: false,
+    },
+  ],
+  externalCapabilities: [
+    {
+      name: "content.list_published_posts",
+      description: "通过公开内容边界分页读取已发布文章目录与基础元数据。",
+    },
+    {
+      name: "content.get_published_post",
+      description: "通过公开内容边界读取一篇已发布文章的完整内容与元数据。",
+    },
+    {
+      name: "content.search_posts",
+      description: "按关键词和受控条件检索 Blog 文章。",
+    },
+    {
+      name: "content.list_published_pages",
+      description: "读取已发布独立页面目录。",
+    },
+    {
+      name: "content.get_published_page",
+      description: "通过公开内容边界按 Slug 读取一个已发布独立页面。",
+    },
+    {
+      name: "content.search_knowledge",
+      description: "查询已发布内容形成的知识索引与证据片段。",
+    },
+    {
+      name: "content.list_tags",
+      description: "读取已发布文章实际使用的标签目录。",
+    },
+    {
+      name: "content.list_stale_posts",
+      description: "按维护周期读取长期未更新的已发布文章。",
+    },
+    {
+      name: "content.list_orphan_posts",
+      description: "读取缺少站内引用关系的已发布文章。",
+    },
+    {
+      name: "analytics.list_low_engagement_posts",
+      description: "读取已发布文章的低互动清单用于外部分析。",
+    },
+  ],
+  externalApiClients: [
+    {
+      id: 91,
+      name: "Editorial Reporting SDK",
+      keyPrefix: "gouno_live_A7k3Q2p9",
+      capabilities: [
+        "content.list_published_posts",
+        "content.get_published_post",
+        "analytics.list_low_engagement_posts",
+      ],
+      enabled: true,
+      rateLimitPerMinute: 120,
+      expiresAt: "2026-12-31 23:59",
+      lastUsedAt: "2026-09-28 13:42",
+      revoked: false,
+    },
+    {
+      id: 92,
+      name: "Knowledge Export Worker",
+      keyPrefix: "gouno_live_K9m2V6s4",
+      capabilities: [
+        "content.search_posts",
+        "content.search_knowledge",
+      ],
+      enabled: false,
+      rateLimitPerMinute: 30,
+      lastUsedAt: "2026-09-27 22:16",
+      revoked: false,
+    },
+  ],
+  externalApiAudits: [
+    {
+      id: 701,
+      clientId: 91,
+      capability: "analytics.get_summary",
+      result: "success",
+      statusCode: 200,
+      durationMs: 42,
+      createdAt: "2026-09-28 13:42:18",
+    },
+    {
+      id: 702,
+      clientId: 91,
+      capability: "content.get_published_post",
+      result: "success",
+      statusCode: 200,
+      durationMs: 31,
+      createdAt: "2026-09-28 13:41:52",
+    },
+    {
+      id: 703,
+      clientId: 92,
+      capability: "content.get_published_post",
+      result: "denied",
+      statusCode: 403,
+      durationMs: 1,
+      createdAt: "2026-09-27 22:16:04",
     },
   ],
   connectors: [
