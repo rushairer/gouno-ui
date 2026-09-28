@@ -600,6 +600,11 @@ export function AISettingsSectionLead({ section, actions, disabled = false }: { 
         description="管理 Agent 可访问的 Sandbox 外部能力、OAuth 边界与 Outbox 审批链路。"
         actions={<Button size="small" variant="solid" color="primary" icon={<Plus />} disabled={disabled} onClick={actions.onCreateConnector}>添加 Connector Profile</Button>}
       />;
+    case "api-access":
+      return <TabPanelLead
+        description="向可信服务端开放 Blog 的显式只读 Capability；Client scope、速率、过期、轮换与审计共同构成机器访问边界。"
+        actions={<Button size="small" variant="solid" color="primary" icon={<Plus />} disabled={disabled} onClick={actions.onCreateExternalClient}>创建 API Client</Button>}
+      />;
   }
 }
 
@@ -611,5 +616,6 @@ export function AISettingsSectionPanel({ fixture, section, actions }: { fixture:
     case "knowledge": return <KnowledgePanel fixture={fixture.knowledge} actions={actions} />;
     case "providers": return <ProviderList providers={fixture.providers} actions={actions} />;
     case "connectors": return <ConnectorList fixture={fixture} actions={actions} />;
+    case "api-access": return <ExternalAPIAccess fixture={fixture} actions={actions} />;
   }
 }
