@@ -51,7 +51,7 @@ describe("Editor Form composition contract", () => {
     const categories = read("blog-admin/categories.tsx");
     const clients = read("gosso-admin/system-management/clients.tsx");
 
-    expect(aiSettings.match(/data-pattern="editor-form-composition"/g)).toHaveLength(5);
+    expect(aiSettings.match(/data-pattern="editor-form-composition"/g)).toHaveLength(6);
     expect(categories).toContain('data-pattern="editor-form-composition"');
     expect(clients).toContain('id="system-client-editor" data-pattern="editor-form-composition"');
     expect(workflow).toContain(
