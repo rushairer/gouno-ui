@@ -19,6 +19,7 @@ import type {
   AISettingsFixture,
   ConnectorFixture,
   EmbeddingProfileFixture,
+  ExternalAPIClientFixture,
   ProviderFixture,
   SkillFixture,
 } from "./fixtures";
@@ -35,6 +36,7 @@ export type AISettingsEditorState =
   | { kind: "provider"; value: ProviderFixture | "new" }
   | { kind: "embedding"; value: EmbeddingProfileFixture | "new" }
   | { kind: "connector"; value: ConnectorFixture | "new" }
+  | { kind: "external-client"; value: ExternalAPIClientFixture | "new" }
   | null;
 
 export type AISettingsEditorResult =
@@ -42,7 +44,12 @@ export type AISettingsEditorResult =
   | { kind: "skill"; id?: number; value: Omit<SkillFixture, "id"> }
   | { kind: "provider"; id?: number; value: Omit<ProviderFixture, "id"> }
   | { kind: "embedding"; id?: number; value: Omit<EmbeddingProfileFixture, "id"> }
-  | { kind: "connector"; id?: number; value: Omit<ConnectorFixture, "id"> };
+  | { kind: "connector"; id?: number; value: Omit<ConnectorFixture, "id"> }
+  | {
+      kind: "external-client";
+      id?: number;
+      value: Omit<ExternalAPIClientFixture, "id" | "keyPrefix" | "lastUsedAt" | "revokedAt">;
+    };
 
 export type AISettingsEditorSurface = "page" | "drawer";
 
@@ -83,6 +90,13 @@ export function getAISettingsEditorPresentation(editor: Exclude<AISettingsEditor
         description: "配置 Connector 的产品身份、授权范围、Sandbox 与凭据状态。",
         submitLabel: "保存 Connector",
         formId: "ai-settings-connector-editor",
+      };
+    case "external-client":
+      return {
+        title: name ? `编辑 API Client：${name}` : "创建 API Client",
+        description: "为可信服务端创建独立机器凭据，并显式收窄可调用的只读 Blog Capability。",
+        submitLabel: "保存 API Client",
+        formId: "ai-settings-external-client-editor",
       };
   }
 }
@@ -573,6 +587,111 @@ function ProviderEditor({ value, onSave, onCancel, surface = "page" }: { value: 
   );
 }
 
+function ExternalAPIClientEditor({
+  value,
+  fixture,
+  onSave,
+  onCancel,
+  surface = "page",
+}: {
+  value: ExternalAPIClientFixture | "new";
+  fixture: AISettingsFixture;
+  onSave: (result: AISettingsEditorResult) => void;
+  onCancel: () => void;
+  surface?: AISettingsEditorSurface;
+}) {
+  const initial = value === "new" ? undefined : value;
+  return (
+    <Form
+      id="ai-settings-external-client-editor"
+      onFinish={(_, values) => {
+        const capabilities = fixture.externalApi.capabilities.filter((name) =>
+          checked(values, `capability:${name}`),
+        );
+        onSave({
+          kind: "external-client",
+          id: initial?.id,
+          value: {
+            name: text(values, "name", initial?.name || "Server Integration"),
+            capabilities,
+            enabled: checked(values, "enabled"),
+            rateLimitPerMinute: numberValue(
+              values,
+              "rateLimitPerMinute",
+              initial?.rateLimitPerMinute ?? 60,
+            ),
+            expiresAt: text(values, "expiresAt", initial?.expiresAt || "") || undefined,
+          },
+        });
+      }}
+    >
+      <div data-pattern="editor-form-composition" className="flex flex-col gap-5">
+        {surface === "page" ? (
+          <ContextualEditorHeader
+            title={initial ? `编辑 API Client：${initial.name}` : "创建 API Client"}
+            description="机器凭据只用于服务端到服务端调用；浏览器请求与普通 Blog BFF 会话保持隔离。"
+            icon={<KeyRound />}
+          />
+        ) : null}
+        <EditorFormSurfaceSection
+          title="Client 身份与生命周期"
+          description="名称、启停、速率和过期时间定义这张机器凭据的运营边界。"
+        >
+          <div className="flex flex-col gap-5">
+            <Field label="Client 名称" required>
+              <Input name="name" defaultValue={initial?.name} placeholder="Analytics Warehouse" />
+            </Field>
+            <FormGrid columns={2}>
+              <Field label="每分钟请求上限">
+                <Input
+                  name="rateLimitPerMinute"
+                  type="number"
+                  min={1}
+                  max={6000}
+                  defaultValue={String(initial?.rateLimitPerMinute ?? 60)}
+                />
+              </Field>
+              <Field label="过期日期" hint="生产凭据建议设置明确过期时间。">
+                <Input name="expiresAt" type="date" defaultValue={initial?.expiresAt} />
+              </Field>
+            </FormGrid>
+            <Field label="状态">
+              <Switch name="enabled" defaultChecked={initial?.enabled ?? true} label="启用 API Client" />
+            </Field>
+          </div>
+        </EditorFormSurfaceSection>
+        <EditorFormSurfaceSection
+          title="只读 Capability 授权"
+          description="只有显式勾选且声明 external surface 的 read Tool 才能被调用；write / propose 不进入 v1。"
+        >
+          <div className="grid gap-3 sm:grid-cols-2">
+            {fixture.externalApi.capabilities.map((name) => (
+              <label key={name} className="flex min-w-0 items-start gap-3 rounded-md border p-4">
+                <Checkbox
+                  name={`capability:${name}`}
+                  defaultChecked={initial?.capabilities.includes(name) ?? false}
+                />
+                <span className="min-w-0 flex-1">
+                  <strong className="block type-family-mono type-body-sm type-weight-semibold [overflow-wrap:anywhere]">
+                    {name}
+                  </strong>
+                  <Text size="xs" tone="muted">external · read-only</Text>
+                </span>
+              </label>
+            ))}
+          </div>
+        </EditorFormSurfaceSection>
+        {surface === "page" ? (
+          <FormActions>
+            <Button type="button" variant="outline" onClick={onCancel}>取消</Button>
+            <Button type="submit" variant="solid" color="primary">保存 API Client</Button>
+          </FormActions>
+        ) : null}
+      </div>
+    </Form>
+  );
+}
+
 function EmbeddingEditor({ value, onSave, onCancel, surface = "page" }: { value: EmbeddingProfileFixture | "new"; onSave: (result: AISettingsEditorResult) => void; onCancel: () => void; surface?: AISettingsEditorSurface }) {
   const initial = value === "new" ? undefined : value;
   return (
@@ -709,5 +828,7 @@ export function AISettingsEditor({ editor, fixture, onSave, onCancel, surface = 
       return <EmbeddingEditor value={editor.value} onSave={onSave} onCancel={onCancel} surface={surface} />;
     case "connector":
       return <ConnectorEditor value={editor.value} onSave={onSave} onCancel={onCancel} surface={surface} />;
+    case "external-client":
+      return <ExternalAPIClientEditor value={editor.value} fixture={fixture} onSave={onSave} onCancel={onCancel} surface={surface} />;
   }
 }
