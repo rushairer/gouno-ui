@@ -1777,19 +1777,21 @@ Classification:
 - existing Tabs, `TabPanelLead`, privileged-access gate, Drawer, Field, Form composition and Modal ownership remain unchanged;
 - Blog Consumer must complete a fresh reverse migration and manual-first recertification before this extension is considered propagated.
 
-Merged Canonical extension:
+Canonical extension history:
 
-- PR #152;
-- merge commit `6941ec3cebeec48e07952bfc714086c98d6af373`;
-- API Access is a distinct AI Settings tab, separate from outbound Sandbox Connectors;
-- API Client policy includes explicit read-only Capability allowlist, per-minute limit, optional expiry and enabled state;
-- creation/rotation returns a one-time API Key result state; the full key is not represented as durable fixture state;
-- revocation is irreversible in the Canonical interaction model;
-- Client list, external Capability catalog and recent invocation audit are separate information layers;
-- browser code is explicitly warned not to persist or use long-lived machine credentials;
+- PR #152 introduced the API Access surface and merged as `6941ec3cebeec48e07952bfc714086c98d6af373`.
+- A006 manual review then identified two lifecycle/documentation defects before Consumer propagation: irreversible revocation had no confirmation, and the management surface did not expose the actual machine invocation contract.
+- Canonical hardening commit `cc1962c83c2c82cf59f0b063c9e48096dbf4a3ff` is therefore the accepted A006 code ref and the value recorded by `latestCanonicalRef`.
+- API Access is a distinct AI Settings tab, separate from outbound Sandbox Connectors.
+- API Client policy includes explicit read-only Capability allowlist, per-minute limit, optional expiry and enabled state.
+- creation/rotation returns a one-time API Key result state; the full key is not represented as durable fixture state.
+- irreversible revocation now requires an explicit destructive confirmation before the fixture key is invalidated.
+- the management surface now documents the real server-to-server entry points: `GET /api/external/v1/capabilities` and `POST /api/external/v1/capabilities/{name}/invoke`, plus Bearer authorization and the no-browser-CORS boundary.
+- Client list, external Capability catalog and recent invocation audit are separate information layers.
+- browser code is explicitly warned not to persist or use long-lived machine credentials.
 - the external capability fixture uses public/published-only content scopes and excludes administrative analytics summaries.
 
-Exact-head pre-merge evidence for `6eeedacba5e399369d75cada061fb5225bc24f6b`:
+Initial #152 evidence for `6eeedacba5e399369d75cada061fb5225bc24f6b` (superseded as final A006 evidence by the follow-up hardening):
 
 - CI `36418492709` — success;
 - Canonical Visual Golden Smoke `36418492734` — success;
@@ -1805,7 +1807,11 @@ Manual review of the candidate confirmed the intended Canonical structure:
 - API Clients, grantable read-only Capability inventory and invocation evidence are visually distinct.
 - The contextual Drawer uses the established editor-form composition for Client identity, policy and Capability allowlist.
 - The one-time key Modal has a non-dismissible-by-backdrop acknowledgement path and a browser-use warning.
-- Long Capability identifiers remain contained by semantic mono/body typography and wrapping.
+- Revocation requires a separate destructive confirmation explaining that the current key becomes immediately invalid and cannot be restored.
+- A dedicated invocation-protocol surface identifies the catalog/invoke endpoints, Bearer header shape, server-to-server ownership and browser Origin rejection.
+- Long Capability identifiers and endpoint paths remain contained by semantic mono/body typography and wrapping.
 - No real credential or network call exists in Showcase fixture state.
+
+Final exact-head CI/Golden/reciprocal evidence for the hardened A006 candidate will be recorded after this amendment ledger candidate passes its own gates.
 
 The reciprocal parity run above validates already-covered Blog AI Settings composition, but the current Blog Product does not yet implement this newly added API Access tab. Therefore CSA-A006 intentionally records `rushairer/gouno-blog` as `needs-manual-recertification`. Product reverse migration must land before A006 may be promoted to `recertified`.

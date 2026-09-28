@@ -165,7 +165,7 @@
       "Consumer certification remains manual-first; green automated checks cannot renew stale manual certification."
     ]
   },
-  "latestCanonicalRef": "6941ec3cebeec48e07952bfc714086c98d6af373",
+  "latestCanonicalRef": "cc1962c83c2c82cf59f0b063c9e48096dbf4a3ff",
   "postFreezeAmendments": [
     {
       "id": "CSA-A001",
@@ -240,7 +240,7 @@
     {
       "id": "CSA-A006",
       "date": "2026-09-28",
-      "commit": "6941ec3cebeec48e07952bfc714086c98d6af373",
+      "commit": "cc1962c83c2c82cf59f0b063c9e48096dbf4a3ff",
       "kind": "canonical-extension",
       "scopes": [
         "blog-admin-ai-settings"
