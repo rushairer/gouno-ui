@@ -7,7 +7,7 @@ import {
   ListChecks,
   LockKeyhole,
 } from "lucide-react";
-import { Alert, Button, Drawer, Modal, Segmented, TabPanel, Tabs, Text } from "../../../../../../src/core";
+import { Alert, Button, Drawer, Input, Modal, Segmented, TabPanel, Tabs, Text } from "../../../../../../src/core";
 import { PageHeader } from "../../../../../../src/gouno";
 import { FixtureDock } from "../../../../../components/fixture-dock";
 import { DedicatedEditorLead } from "../../../../../components/patterns/dedicated-editor";
@@ -25,6 +25,7 @@ import {
   type ConnectorOutboxFixture,
   type ConnectorFixture,
   type EmbeddingProfileFixture,
+  type ExternalAPIClientFixture,
   type ProviderFixture,
   type SkillFixture,
 } from "./fixtures";
@@ -41,6 +42,7 @@ const validSections = new Set<AISettingsSection>([
   "tools",
   "knowledge",
   "providers",
+  "api-access",
   "connectors",
 ]);
 
@@ -50,7 +52,8 @@ const tabs = [
   { key: "tools", label: "Tools", icon: <GitBranch aria-hidden="true" className="size-4" /> },
   { key: "knowledge", label: "知识库", icon: <DatabaseZap aria-hidden="true" className="size-4" /> },
   { key: "providers", label: "模型连接", icon: <KeyRound aria-hidden="true" className="size-4" /> },
-  { key: "connectors", label: "Sandbox 连接器", icon: <LockKeyhole aria-hidden="true" className="size-4" /> },
+  { key: "api-access", label: "API Access", icon: <LockKeyhole aria-hidden="true" className="size-4" /> },
+  { key: "connectors", label: "Sandbox 连接器", icon: <GitBranch aria-hidden="true" className="size-4" /> },
 ] as const;
 
 type Notice = { type: "success" | "warning" | "info" | "error"; text: string } | null;
@@ -101,6 +104,12 @@ function cloneFixture(): AISettingsFixture {
       },
     },
     providers: aiSettingsFixture.providers.map((item) => ({ ...item })),
+    externalCapabilities: aiSettingsFixture.externalCapabilities.map((item) => ({ ...item })),
+    externalApiClients: aiSettingsFixture.externalApiClients.map((item) => ({
+      ...item,
+      capabilities: [...item.capabilities],
+    })),
+    externalApiAudits: aiSettingsFixture.externalApiAudits.map((item) => ({ ...item })),
     connectors: aiSettingsFixture.connectors.map((item) => ({ ...item })),
     connectorOutbox: aiSettingsFixture.connectorOutbox.map((item) => ({ ...item })),
   };
@@ -124,6 +133,7 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
   const [notice, setNotice] = useState<Notice>(null);
   const [editor, setEditor] = useState<AISettingsEditorState>(null);
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
+  const [oneTimeKey, setOneTimeKey] = useState<{ clientName: string; apiKey: string } | null>(null);
   const [mutationScenario, setMutationScenario] = useState<MutationScenario>("success");
   const [security, setSecurity] = useState<PrivilegedAccessState>("unlocked");
   const rootRef = useRef<HTMLDivElement>(null);
@@ -133,6 +143,7 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
     setNotice(null);
     setEditor(null);
     setDeleteTarget(null);
+    setOneTimeKey(null);
   };
 
   const saveEditor = (result: AISettingsEditorResult) => {
@@ -162,6 +173,18 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
           const item = { id: result.id ?? nextId(current.knowledge.profiles), ...result.value };
           return { ...current, knowledge: { ...current.knowledge, profiles: upsert(current.knowledge.profiles, item, result.id) } };
         }
+        case "external-client": {
+          const id = result.id ?? nextId(current.externalApiClients);
+          const item: ExternalAPIClientFixture = {
+            id,
+            ...result.value,
+            keyPrefix: result.id ? result.value.keyPrefix : `gouno_live_demo_${id}`,
+          };
+          return {
+            ...current,
+            externalApiClients: upsert(current.externalApiClients, item, result.id),
+          };
+        }
         case "connector": {
           const item = { id: result.id ?? nextId(current.connectors), ...result.value };
           return { ...current, connectors: upsert(current.connectors, item, result.id) };
@@ -169,6 +192,14 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
       }
     });
     setEditor(null);
+    if (result.kind === "external-client" && result.id === undefined) {
+      setOneTimeKey({
+        clientName: result.value.name,
+        apiKey: "gouno_live_demo-only-shown-once_7Qx9N2m4V6p8",
+      });
+      setNotice({ type: "success", text: `${result.value.name} 已创建；请立即保存一次性 API Key。` });
+      return;
+    }
     setNotice({ type: "success", text: `${result.value.name} 已保存到静态 Fixture。` });
   };
 
@@ -312,6 +343,34 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
     onTestProvider: (provider) => testConnection(provider.name, "provider"),
     onEditProvider: (provider) => setEditor({ kind: "provider", value: provider }),
     onDeleteProvider: (provider) => setDeleteTarget({ kind: "provider", value: provider }),
+    onCreateExternalClient: () => setEditor({ kind: "external-client", value: "new" }),
+    onEditExternalClient: (client) => setEditor({ kind: "external-client", value: client }),
+    onRotateExternalClient: (client) => {
+      setFixture((current) => ({
+        ...current,
+        externalApiClients: current.externalApiClients.map((item) =>
+          item.id === client.id
+            ? { ...item, keyPrefix: `gouno_live_rotated_${client.id}` }
+            : item,
+        ),
+      }));
+      setOneTimeKey({
+        clientName: client.name,
+        apiKey: "gouno_live_rotated-demo-only_4Ms8T2q7K5v1",
+      });
+      setNotice({ type: "success", text: `${client.name} 的 API Key 已轮换；旧 Key 立即失效。` });
+    },
+    onRevokeExternalClient: (client) => {
+      setFixture((current) => ({
+        ...current,
+        externalApiClients: current.externalApiClients.map((item) =>
+          item.id === client.id
+            ? { ...item, enabled: false, revoked: true }
+            : item,
+        ),
+      }));
+      setNotice({ type: "warning", text: `${client.name} 已撤销；该 Key 不可恢复。` });
+    },
     onCreateConnector: () => setEditor({ kind: "connector", value: "new" }),
     onEditConnector: (connector) => setEditor({ kind: "connector", value: connector }),
     onStartConnectorOAuth: startConnectorOAuth,
@@ -331,7 +390,13 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
           description: "添加、编辑、删除 Embedding 配置或执行全量重建需要近期多因素身份认证。",
           actionLabel: "解锁以管理知识库",
         }
-      : null;
+      : section === "api-access"
+        ? {
+            title: "External API Client 与长期密钥保护",
+            description: "创建、修改、轮换或撤销服务端 API Client 会改变外部访问权限，需要近期多因素身份认证。",
+            actionLabel: "解锁以管理 API Access",
+          }
+        : null;
 
   const pageEditor = editor && (editor.kind === "agent" || editor.kind === "skill") ? editor : null;
   const drawerEditor = editor && editor.kind !== "agent" && editor.kind !== "skill" ? editor : null;
@@ -358,7 +423,7 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
     <div ref={rootRef} className="flex flex-col gap-6">
       <FixtureDock
         route={formatAISettingsRoute(section)}
-        note="AI 设置是独立的管理路由族；Showcase 模拟 CRUD、保存/删除/连接失败、MFA 后配置、OAuth 与 Outbox 状态，但不保存真实凭证或调用真实 Agent/Connector API。"
+        note="AI 设置是独立的管理路由族；Showcase 模拟 CRUD、Provider、API Client、OAuth 与 Outbox 状态，但不保存真实凭证，也不调用真实 Agent/Connector/External API。"
         controls={(
           <div className="flex flex-col gap-3">
             <Segmented<MutationScenario>
@@ -378,7 +443,7 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
           </div>
         )}
       />
-      <PageHeader title="AI 设置" description="管理 Agent、Skill、Tool、知识索引、模型连接与 Sandbox 连接器。" />
+      <PageHeader title="AI 设置" description="管理 Agent、Skill、Tool、知识索引、模型连接、API Access 与 Sandbox 连接器。" />
       <Tabs<AISettingsSection> activeKey={section} items={tabs} onChange={changeSection} ariaLabel="AI 设置栏目">
         <TabPanel value={section}>
           <div className="flex flex-col gap-5">
@@ -458,6 +523,33 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
           </div>
         ) : null}
       </Drawer>
+
+      <Modal
+        open={Boolean(oneTimeKey)}
+        title="保存一次性 API Key"
+        description="完整 Key 只在创建或轮换后展示一次；关闭后无法再次查看，只能重新轮换。Showcase 使用不可用的演示值。"
+        onOpenChange={(open) => { if (!open) setOneTimeKey(null); }}
+        onOk={() => setOneTimeKey(null)}
+        okText="我已安全保存"
+        cancelText="关闭"
+        closeOnBackdrop={false}
+      >
+        <div className="flex flex-col gap-3">
+          <Text>{oneTimeKey?.clientName}</Text>
+          <Input
+            readOnly
+            className="type-family-mono"
+            value={oneTimeKey?.apiKey || ""}
+            aria-label="一次性 API Key"
+          />
+          <Alert
+            type="warning"
+            showIcon
+            title="不要放入浏览器代码"
+            description="这个长期凭据只供服务端调用；真实产品只保存其哈希，不保存明文。"
+          />
+        </div>
+      </Modal>
 
       <Modal
         open={Boolean(deleteTarget)}
