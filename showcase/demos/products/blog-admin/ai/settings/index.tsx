@@ -449,7 +449,7 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
     <div ref={rootRef} className="flex flex-col gap-6">
       <FixtureDock
         route={formatAISettingsRoute(section)}
-        note="AI 设置是独立的管理路由族；Showcase 模拟 CRUD、保存/删除/连接失败、MFA 后配置、OAuth 与 Outbox 状态，但不保存真实凭证或调用真实 Agent/Connector API。"
+        note="AI 设置是独立的管理路由族；Showcase 模拟 CRUD、保存/删除/连接失败、MFA 后配置、OAuth、Outbox 与 External API Client 生命周期，但不保存真实凭证或调用真实 Agent/Connector/External API。"
         controls={(
           <div className="flex flex-col gap-3">
             <Segmented<MutationScenario>
@@ -549,6 +549,36 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
           </div>
         ) : null}
       </Drawer>
+
+      <Modal
+        open={Boolean(oneTimeSecret)}
+        title="保存 API Key"
+        description="这张机器凭据只展示一次。复制后请保存到服务端 Secret Manager，不要写入浏览器代码、前端环境变量或日志。"
+        onOpenChange={(open) => {
+          if (!open) setOneTimeSecret(null);
+        }}
+        onOk={() => setOneTimeSecret(null)}
+        okText="我已安全保存"
+        cancelButtonProps={{ style: { display: "none" } }}
+        closeOnBackdrop={false}
+      >
+        <div className="flex flex-col gap-3">
+          <Text>
+            Client：<strong>{oneTimeSecret?.clientName}</strong>
+          </Text>
+          <div className="rounded-md border bg-muted/20 p-4">
+            <code className="break-all type-family-mono type-body-sm">
+              {oneTimeSecret?.apiKey}
+            </code>
+          </div>
+          <Alert
+            type="warning"
+            showIcon
+            title="关闭后无法再次查看"
+            description="后端只保存密钥摘要；遗失时必须轮换，而不是找回原密钥。"
+          />
+        </div>
+      </Modal>
 
       <Modal
         open={Boolean(deleteTarget)}
