@@ -359,6 +359,49 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
     onStartConnectorOAuth: startConnectorOAuth,
     onQueueOutbox: queueOutbox,
     onOutboxAction: actOnOutbox,
+    onCreateExternalClient: () =>
+      setEditor({ kind: "external-client", value: "new" }),
+    onEditExternalClient: (client) =>
+      setEditor({ kind: "external-client", value: client }),
+    onRotateExternalClient: (client) => {
+      const rotatedPrefix = "gouno_live_rotated_" + client.id;
+      setFixture((current) => ({
+        ...current,
+        externalApi: {
+          ...current.externalApi,
+          clients: current.externalApi.clients.map((item) =>
+            item.id === client.id
+              ? { ...item, keyPrefix: rotatedPrefix }
+              : item,
+          ),
+        },
+      }));
+      setOneTimeSecret({
+        clientName: client.name,
+        apiKey: rotatedPrefix + "_shown_once",
+      });
+      setNotice({
+        type: "success",
+        text: client.name + " 的旧密钥已立即失效，新密钥只展示一次。",
+      });
+    },
+    onRevokeExternalClient: (client) => {
+      setFixture((current) => ({
+        ...current,
+        externalApi: {
+          ...current.externalApi,
+          clients: current.externalApi.clients.map((item) =>
+            item.id === client.id
+              ? { ...item, enabled: false, revokedAt: "刚刚" }
+              : item,
+          ),
+        },
+      }));
+      setNotice({
+        type: "warning",
+        text: client.name + " 已撤销；历史调用审计继续保留。",
+      });
+    },
   };
 
   const privilegedPolicy = section === "providers"
@@ -373,7 +416,13 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
           description: "添加、编辑、删除 Embedding 配置或执行全量重建需要近期多因素身份认证。",
           actionLabel: "解锁以管理知识库",
         }
-      : null;
+      : section === "api-access"
+        ? {
+            title: "API 访问与机器凭据保护",
+            description: "创建、修改、轮换或撤销 External API Client 会改变机器访问边界，需要近期多因素身份认证。",
+            actionLabel: "解锁以管理 API 访问",
+          }
+        : null;
 
   const pageEditor = editor && (editor.kind === "agent" || editor.kind === "skill") ? editor : null;
   const drawerEditor = editor && editor.kind !== "agent" && editor.kind !== "skill" ? editor : null;
@@ -420,7 +469,7 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
           </div>
         )}
       />
-      <PageHeader title="AI 设置" description="管理 Agent、Skill、Tool、知识索引、模型连接与 Sandbox 连接器。" />
+      <PageHeader title="AI 设置" description="管理 Agent、Skill、Tool、知识索引、模型连接、Sandbox 连接器与机器 API 访问。" />
       <Tabs<AISettingsSection> activeKey={section} items={tabs} onChange={changeSection} ariaLabel="AI 设置栏目">
         <TabPanel value={section}>
           <div className="flex flex-col gap-5">
