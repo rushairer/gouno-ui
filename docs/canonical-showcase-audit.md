@@ -1812,6 +1812,16 @@ Manual review of the candidate confirmed the intended Canonical structure:
 - Long Capability identifiers and endpoint paths remain contained by semantic mono/body typography and wrapping.
 - No real credential or network call exists in Showcase fixture state.
 
-Final exact-head CI/Golden/reciprocal evidence for the hardened A006 candidate will be recorded after this amendment ledger candidate passes its own gates.
+Final exact-head evidence for the hardened A006 candidate `fd850e39ba399badaf6191c26af814c33e05e282`:
+
+- CI `36420445491` — success;
+- Canonical Visual Golden Smoke `36420445422` — success;
+- Blog Consumer Parity `36420445402` — success;
+- Gosso Admin Consumer Parity `36420445495` — success;
+- Golden artifact `10969422188` — `gouno-ui-canonical-visual-golden-36420445422`, SHA-256 `9bf98caf46c7af259cbe7f4eafe46cd9b5427ae696b7aa6db036708e2952541f`;
+- Blog paired parity artifact `10969740095` — `gouno-ui-blog-consumer-parity-36420445402`, SHA-256 `88c7d29ea22486561f815d71f90677bc4db0a5ad920826fc1873e8cf9125c1a6`;
+- Gosso paired parity artifact `10968884057` — `gouno-ui-gosso-admin-consumer-parity-36420445495`, SHA-256 `f016b63800eeaf8262d1d26839b6128fd7e089d26e22d9f801aa363fe46f43c7`.
+
+This evidence closes the Canonical-side A006 acceptance. Blog Consumer propagation remains intentionally pending until the new API Access Product surface is implemented and manually re-certified.
 
 The reciprocal parity run above validates already-covered Blog AI Settings composition, but the current Blog Product does not yet implement this newly added API Access tab. Therefore CSA-A006 intentionally records `rushairer/gouno-blog` as `needs-manual-recertification`. Product reverse migration must land before A006 may be promoted to `recertified`.
