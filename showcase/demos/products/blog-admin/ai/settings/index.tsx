@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   Bot,
+  Braces,
   DatabaseZap,
   GitBranch,
   KeyRound,
@@ -25,6 +26,7 @@ import {
   type ConnectorOutboxFixture,
   type ConnectorFixture,
   type EmbeddingProfileFixture,
+  type ExternalAPIClientFixture,
   type ProviderFixture,
   type SkillFixture,
 } from "./fixtures";
@@ -42,6 +44,7 @@ const validSections = new Set<AISettingsSection>([
   "knowledge",
   "providers",
   "connectors",
+  "api-access",
 ]);
 
 const tabs = [
@@ -51,6 +54,7 @@ const tabs = [
   { key: "knowledge", label: "知识库", icon: <DatabaseZap aria-hidden="true" className="size-4" /> },
   { key: "providers", label: "模型连接", icon: <KeyRound aria-hidden="true" className="size-4" /> },
   { key: "connectors", label: "Sandbox 连接器", icon: <LockKeyhole aria-hidden="true" className="size-4" /> },
+  { key: "api-access", label: "API 访问", icon: <Braces aria-hidden="true" className="size-4" /> },
 ] as const;
 
 type Notice = { type: "success" | "warning" | "info" | "error"; text: string } | null;
@@ -103,6 +107,14 @@ function cloneFixture(): AISettingsFixture {
     providers: aiSettingsFixture.providers.map((item) => ({ ...item })),
     connectors: aiSettingsFixture.connectors.map((item) => ({ ...item })),
     connectorOutbox: aiSettingsFixture.connectorOutbox.map((item) => ({ ...item })),
+    externalApi: {
+      capabilities: [...aiSettingsFixture.externalApi.capabilities],
+      clients: aiSettingsFixture.externalApi.clients.map((item) => ({
+        ...item,
+        capabilities: [...item.capabilities],
+      })),
+      audits: aiSettingsFixture.externalApi.audits.map((item) => ({ ...item })),
+    },
   };
 }
 
@@ -126,6 +138,10 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
   const [mutationScenario, setMutationScenario] = useState<MutationScenario>("success");
   const [security, setSecurity] = useState<PrivilegedAccessState>("unlocked");
+  const [oneTimeSecret, setOneTimeSecret] = useState<{
+    clientName: string;
+    apiKey: string;
+  } | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
 
   const changeSection = (next: AISettingsSection) => {
@@ -142,6 +158,14 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
         text: `${result.value.name} 保存失败；编辑内容与当前表单保持不变，可直接重试（Showcase 模拟）。`,
       });
       return;
+    }
+
+    if (result.kind === "external-client" && result.id === undefined) {
+      const id = nextId(fixture.externalApi.clients);
+      setOneTimeSecret({
+        clientName: result.value.name,
+        apiKey: "gouno_live_fixture_" + id + "_shown_once",
+      });
     }
 
     setFixture((current) => {
@@ -165,6 +189,24 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
         case "connector": {
           const item = { id: result.id ?? nextId(current.connectors), ...result.value };
           return { ...current, connectors: upsert(current.connectors, item, result.id) };
+        }
+        case "external-client": {
+          const id = result.id ?? nextId(current.externalApi.clients);
+          const existing = current.externalApi.clients.find((item) => item.id === result.id);
+          const item: ExternalAPIClientFixture = {
+            id,
+            keyPrefix: existing?.keyPrefix || "gouno_live_fixture_" + id,
+            lastUsedAt: existing?.lastUsedAt,
+            revokedAt: existing?.revokedAt,
+            ...result.value,
+          };
+          return {
+            ...current,
+            externalApi: {
+              ...current.externalApi,
+              clients: upsert(current.externalApi.clients, item, result.id),
+            },
+          };
         }
       }
     });
@@ -317,6 +359,49 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
     onStartConnectorOAuth: startConnectorOAuth,
     onQueueOutbox: queueOutbox,
     onOutboxAction: actOnOutbox,
+    onCreateExternalClient: () =>
+      setEditor({ kind: "external-client", value: "new" }),
+    onEditExternalClient: (client) =>
+      setEditor({ kind: "external-client", value: client }),
+    onRotateExternalClient: (client) => {
+      const rotatedPrefix = "gouno_live_rotated_" + client.id;
+      setFixture((current) => ({
+        ...current,
+        externalApi: {
+          ...current.externalApi,
+          clients: current.externalApi.clients.map((item) =>
+            item.id === client.id
+              ? { ...item, keyPrefix: rotatedPrefix }
+              : item,
+          ),
+        },
+      }));
+      setOneTimeSecret({
+        clientName: client.name,
+        apiKey: rotatedPrefix + "_shown_once",
+      });
+      setNotice({
+        type: "success",
+        text: client.name + " 的旧密钥已立即失效，新密钥只展示一次。",
+      });
+    },
+    onRevokeExternalClient: (client) => {
+      setFixture((current) => ({
+        ...current,
+        externalApi: {
+          ...current.externalApi,
+          clients: current.externalApi.clients.map((item) =>
+            item.id === client.id
+              ? { ...item, enabled: false, revokedAt: "刚刚" }
+              : item,
+          ),
+        },
+      }));
+      setNotice({
+        type: "warning",
+        text: client.name + " 已撤销；历史调用审计继续保留。",
+      });
+    },
   };
 
   const privilegedPolicy = section === "providers"
@@ -331,7 +416,13 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
           description: "添加、编辑、删除 Embedding 配置或执行全量重建需要近期多因素身份认证。",
           actionLabel: "解锁以管理知识库",
         }
-      : null;
+      : section === "api-access"
+        ? {
+            title: "API 访问与机器凭据保护",
+            description: "创建、修改、轮换或撤销 External API Client 会改变机器访问边界，需要近期多因素身份认证。",
+            actionLabel: "解锁以管理 API 访问",
+          }
+        : null;
 
   const pageEditor = editor && (editor.kind === "agent" || editor.kind === "skill") ? editor : null;
   const drawerEditor = editor && editor.kind !== "agent" && editor.kind !== "skill" ? editor : null;
@@ -358,7 +449,7 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
     <div ref={rootRef} className="flex flex-col gap-6">
       <FixtureDock
         route={formatAISettingsRoute(section)}
-        note="AI 设置是独立的管理路由族；Showcase 模拟 CRUD、保存/删除/连接失败、MFA 后配置、OAuth 与 Outbox 状态，但不保存真实凭证或调用真实 Agent/Connector API。"
+        note="AI 设置是独立的管理路由族；Showcase 模拟 CRUD、保存/删除/连接失败、MFA 后配置、OAuth、Outbox 与 External API Client 生命周期，但不保存真实凭证或调用真实 Agent/Connector/External API。"
         controls={(
           <div className="flex flex-col gap-3">
             <Segmented<MutationScenario>
@@ -378,7 +469,7 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
           </div>
         )}
       />
-      <PageHeader title="AI 设置" description="管理 Agent、Skill、Tool、知识索引、模型连接与 Sandbox 连接器。" />
+      <PageHeader title="AI 设置" description="管理 Agent、Skill、Tool、知识索引、模型连接、Sandbox 连接器与机器 API 访问。" />
       <Tabs<AISettingsSection> activeKey={section} items={tabs} onChange={changeSection} ariaLabel="AI 设置栏目">
         <TabPanel value={section}>
           <div className="flex flex-col gap-5">
@@ -458,6 +549,36 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
           </div>
         ) : null}
       </Drawer>
+
+      <Modal
+        open={Boolean(oneTimeSecret)}
+        title="保存 API Key"
+        description="这张机器凭据只展示一次。复制后请保存到服务端 Secret Manager，不要写入浏览器代码、前端环境变量或日志。"
+        onOpenChange={(open) => {
+          if (!open) setOneTimeSecret(null);
+        }}
+        onOk={() => setOneTimeSecret(null)}
+        okText="我已安全保存"
+        cancelButtonProps={{ style: { display: "none" } }}
+        closeOnBackdrop={false}
+      >
+        <div className="flex flex-col gap-3">
+          <Text>
+            Client：<strong>{oneTimeSecret?.clientName}</strong>
+          </Text>
+          <div className="rounded-md border bg-muted/20 p-4">
+            <code className="break-all type-family-mono type-body-sm">
+              {oneTimeSecret?.apiKey}
+            </code>
+          </div>
+          <Alert
+            type="warning"
+            showIcon
+            title="关闭后无法再次查看"
+            description="后端只保存密钥摘要；遗失时必须轮换，而不是找回原密钥。"
+          />
+        </div>
+      </Modal>
 
       <Modal
         open={Boolean(deleteTarget)}
