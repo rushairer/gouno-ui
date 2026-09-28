@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   Bot,
+  Braces,
   DatabaseZap,
   GitBranch,
   KeyRound,
@@ -25,6 +26,7 @@ import {
   type ConnectorOutboxFixture,
   type ConnectorFixture,
   type EmbeddingProfileFixture,
+  type ExternalAPIClientFixture,
   type ProviderFixture,
   type SkillFixture,
 } from "./fixtures";
@@ -42,6 +44,7 @@ const validSections = new Set<AISettingsSection>([
   "knowledge",
   "providers",
   "connectors",
+  "api-access",
 ]);
 
 const tabs = [
@@ -51,6 +54,7 @@ const tabs = [
   { key: "knowledge", label: "知识库", icon: <DatabaseZap aria-hidden="true" className="size-4" /> },
   { key: "providers", label: "模型连接", icon: <KeyRound aria-hidden="true" className="size-4" /> },
   { key: "connectors", label: "Sandbox 连接器", icon: <LockKeyhole aria-hidden="true" className="size-4" /> },
+  { key: "api-access", label: "API 访问", icon: <Braces aria-hidden="true" className="size-4" /> },
 ] as const;
 
 type Notice = { type: "success" | "warning" | "info" | "error"; text: string } | null;
@@ -103,6 +107,14 @@ function cloneFixture(): AISettingsFixture {
     providers: aiSettingsFixture.providers.map((item) => ({ ...item })),
     connectors: aiSettingsFixture.connectors.map((item) => ({ ...item })),
     connectorOutbox: aiSettingsFixture.connectorOutbox.map((item) => ({ ...item })),
+    externalApi: {
+      capabilities: [...aiSettingsFixture.externalApi.capabilities],
+      clients: aiSettingsFixture.externalApi.clients.map((item) => ({
+        ...item,
+        capabilities: [...item.capabilities],
+      })),
+      audits: aiSettingsFixture.externalApi.audits.map((item) => ({ ...item })),
+    },
   };
 }
 
@@ -126,6 +138,10 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
   const [mutationScenario, setMutationScenario] = useState<MutationScenario>("success");
   const [security, setSecurity] = useState<PrivilegedAccessState>("unlocked");
+  const [oneTimeSecret, setOneTimeSecret] = useState<{
+    clientName: string;
+    apiKey: string;
+  } | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
 
   const changeSection = (next: AISettingsSection) => {
