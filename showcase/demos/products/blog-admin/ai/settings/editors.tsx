@@ -19,6 +19,7 @@ import type {
   AISettingsFixture,
   ConnectorFixture,
   EmbeddingProfileFixture,
+  ExternalAPIClientFixture,
   ProviderFixture,
   SkillFixture,
 } from "./fixtures";
@@ -34,6 +35,7 @@ export type AISettingsEditorState =
   | { kind: "skill"; value: SkillFixture | "new" }
   | { kind: "provider"; value: ProviderFixture | "new" }
   | { kind: "embedding"; value: EmbeddingProfileFixture | "new" }
+  | { kind: "external-client"; value: ExternalAPIClientFixture | "new" }
   | { kind: "connector"; value: ConnectorFixture | "new" }
   | null;
 
@@ -42,6 +44,7 @@ export type AISettingsEditorResult =
   | { kind: "skill"; id?: number; value: Omit<SkillFixture, "id"> }
   | { kind: "provider"; id?: number; value: Omit<ProviderFixture, "id"> }
   | { kind: "embedding"; id?: number; value: Omit<EmbeddingProfileFixture, "id"> }
+  | { kind: "external-client"; id?: number; value: Omit<ExternalAPIClientFixture, "id"> }
   | { kind: "connector"; id?: number; value: Omit<ConnectorFixture, "id"> };
 
 export type AISettingsEditorSurface = "page" | "drawer";
@@ -76,6 +79,13 @@ export function getAISettingsEditorPresentation(editor: Exclude<AISettingsEditor
         description: "配置知识索引使用的模型、端点、向量维度与凭据状态。",
         submitLabel: "保存 Embedding",
         formId: "ai-settings-embedding-editor",
+      };
+    case "external-client":
+      return {
+        title: name ? `编辑 API Client：${name}` : "创建 API Client",
+        description: "为服务端调用方分配显式只读 Capability、限流和到期策略；API Key 仅在创建或轮换后显示一次。",
+        submitLabel: "保存 API Client",
+        formId: "ai-settings-external-client-editor",
       };
     case "connector":
       return {
@@ -633,6 +643,132 @@ function EmbeddingEditor({ value, onSave, onCancel, surface = "page" }: { value:
   );
 }
 
+function ExternalAPIClientEditor({
+  value,
+  fixture,
+  onSave,
+  onCancel,
+  surface = "page",
+}: {
+  value: ExternalAPIClientFixture | "new";
+  fixture: AISettingsFixture;
+  onSave: (result: AISettingsEditorResult) => void;
+  onCancel: () => void;
+  surface?: AISettingsEditorSurface;
+}) {
+  const initial = value === "new" ? undefined : value;
+  return (
+    <Form
+      id="ai-settings-external-client-editor"
+      onFinish={(_, values) => {
+        const capabilities = fixture.externalCapabilities
+          .filter((capability) => checked(values, `external-capability:${capability.name}`))
+          .map((capability) => capability.name);
+        onSave({
+          kind: "external-client",
+          id: initial?.id,
+          value: {
+            name: text(values, "name", initial?.name || "External Client"),
+            keyPrefix: initial?.keyPrefix || "pending-one-time-key",
+            capabilities,
+            enabled: checked(values, "enabled"),
+            rateLimitPerMinute: numberValue(
+              values,
+              "rateLimitPerMinute",
+              initial?.rateLimitPerMinute ?? 60,
+            ),
+            expiresAt: text(values, "expiresAt", initial?.expiresAt || "") || undefined,
+            lastUsedAt: initial?.lastUsedAt,
+            revoked: initial?.revoked ?? false,
+          },
+        });
+      }}
+    >
+      <div data-pattern="editor-form-composition" className="flex flex-col gap-5">
+        {surface === "page" ? (
+          <ContextualEditorHeader
+            title={initial ? `编辑 API Client：${initial.name}` : "创建 API Client"}
+            description="API Client 只用于服务端调用；浏览器前端不得保存或使用长期 API Key。"
+            icon={<KeyRound />}
+          />
+        ) : null}
+
+        <div className="grid gap-5 xl:grid-cols-2">
+          <EditorFormSurfaceSection
+            title="Client 身份"
+            description="名称用于识别调用方；Key 前缀只用于审计定位，不是可用凭据。"
+          >
+            <div className="flex flex-col gap-5">
+              <Field label="Client 名称" required>
+                <Input name="name" defaultValue={initial?.name} placeholder="Editorial Reporting SDK" />
+              </Field>
+              {initial ? (
+                <Field label="Key 前缀">
+                  <Input value={initial.keyPrefix} readOnly className="type-family-mono" />
+                </Field>
+              ) : (
+                <Text size="xs" tone="muted">
+                  保存后生成高熵 API Key；完整 Key 只显示一次，Showcase 不持久化真实密钥。
+                </Text>
+              )}
+              <Switch name="enabled" defaultChecked={initial?.enabled ?? true} label="启用 Client" />
+            </div>
+          </EditorFormSurfaceSection>
+
+          <EditorFormSurfaceSection
+            title="调用策略"
+            description="限流和到期时间属于 Client 策略；撤销后不能重新启用同一密钥。"
+          >
+            <div className="flex flex-col gap-5">
+              <Field label="每分钟请求上限">
+                <Input
+                  name="rateLimitPerMinute"
+                  type="number"
+                  min={1}
+                  max={6000}
+                  defaultValue={String(initial?.rateLimitPerMinute ?? 60)}
+                />
+              </Field>
+              <Field label="到期时间" hint="留空表示不自动到期；生产环境建议设置轮换周期。">
+                <Input name="expiresAt" defaultValue={initial?.expiresAt} placeholder="2026-12-31 23:59" />
+              </Field>
+            </div>
+          </EditorFormSurfaceSection>
+        </div>
+
+        <EditorFormSurfaceSection
+          title="Capability 白名单"
+          description="v1 只允许显式授权的 read-only Capability；写入和提案能力不会出现在这里。"
+        >
+          <div className="grid gap-3 sm:grid-cols-2">
+            {fixture.externalCapabilities.map((capability) => (
+              <label key={capability.name} className="flex min-w-0 items-start gap-3 rounded-md border p-4">
+                <Checkbox
+                  name={`external-capability:${capability.name}`}
+                  defaultChecked={initial?.capabilities.includes(capability.name) ?? false}
+                />
+                <span className="min-w-0 flex-1">
+                  <strong className="block type-family-mono type-body-sm type-weight-semibold [overflow-wrap:anywhere]">
+                    {capability.name}
+                  </strong>
+                  <Text size="xs" tone="muted">{capability.description}</Text>
+                </span>
+              </label>
+            ))}
+          </div>
+        </EditorFormSurfaceSection>
+
+        {surface === "page" ? (
+          <FormActions>
+            <Button type="button" variant="outline" onClick={onCancel}>取消</Button>
+            <Button type="submit" variant="solid" color="primary">保存 API Client</Button>
+          </FormActions>
+        ) : null}
+      </div>
+    </Form>
+  );
+}
+
 function ConnectorEditor({ value, onSave, onCancel, surface = "page" }: { value: ConnectorFixture | "new"; onSave: (result: AISettingsEditorResult) => void; onCancel: () => void; surface?: AISettingsEditorSurface }) {
   const initial = value === "new" ? undefined : value;
   return (
@@ -707,6 +843,8 @@ export function AISettingsEditor({ editor, fixture, onSave, onCancel, surface = 
       return <ProviderEditor value={editor.value} onSave={onSave} onCancel={onCancel} surface={surface} />;
     case "embedding":
       return <EmbeddingEditor value={editor.value} onSave={onSave} onCancel={onCancel} surface={surface} />;
+    case "external-client":
+      return <ExternalAPIClientEditor value={editor.value} fixture={fixture} onSave={onSave} onCancel={onCancel} surface={surface} />;
     case "connector":
       return <ConnectorEditor value={editor.value} onSave={onSave} onCancel={onCancel} surface={surface} />;
   }
