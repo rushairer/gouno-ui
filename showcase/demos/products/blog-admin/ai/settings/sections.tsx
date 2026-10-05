@@ -504,6 +504,14 @@ function outboxLabel(status: ConnectorOutboxStatus) {
   return { awaiting_approval: "待审批", approved: "已批准", delivered: "已模拟投递", failed: "失败，可重试", revoked: "已撤销" }[status];
 }
 
+function outboxTone(status: ConnectorOutboxStatus) {
+  if (status === "delivered") return "success" as const;
+  if (status === "failed") return "error" as const;
+  if (status === "awaiting_approval") return "warning" as const;
+  if (status === "approved") return "primary" as const;
+  return "default" as const;
+}
+
 function OutboxActions({ item, onAction }: { item: ConnectorOutboxFixture; onAction: AISettingsSectionActions["onOutboxAction"] }) {
   return (
     <div className="flex min-w-max flex-nowrap items-center gap-1">
@@ -520,25 +528,99 @@ function ConnectorList({ fixture, actions }: { fixture: AISettingsFixture; actio
   return (
     <div className="flex flex-col gap-5">
       <TabPanelFeedback>
-        <Alert type="info" showIcon title="Sandbox connector 边界" description="Showcase 只模拟 Profile、OAuth 状态和 Outbox 状态迁移；不保存真实凭据，也不执行真实网络投递。" />
+        <Alert
+          type="info"
+          showIcon
+          title="Connector 安全边界"
+          description="Search Console 可表达只读 Google OAuth；其余 Connector 保持 Sandbox Mock。Outbox 必须先审批，再进行不可外发的 Mock 投递。"
+        />
       </TabPanelFeedback>
       <Card padding="none" className="overflow-hidden">
         <CardContent className="divide-y p-0">
           {fixture.connectors.map((connector) => (
-            <div key={connector.id} className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
-              <div><div className="flex flex-wrap items-center gap-2"><strong>{connector.name}</strong><Tag color={connector.status === "connected" ? "success" : connector.status === "degraded" ? "warning" : "default"}>{connector.status === "connected" ? "已连接" : connector.status === "degraded" ? "降级" : "已停用"}</Tag></div><Text size="xs" tone="muted">{connector.kind} · {connector.sandbox ? "sandbox" : "read-only OAuth"} · {connector.scope}</Text><Text size="xs" tone="muted">{connector.hasCredential ? "凭据已配置" : "未配置凭据"} · {connector.lastChecked}</Text></div>
-              <div className="flex min-w-max flex-nowrap gap-1"><IconButton label={`OAuth ${connector.name}`} icon={<KeyRound />} variant="ghost" onClick={() => actions.onStartConnectorOAuth(connector)} /><IconButton label={`编辑 ${connector.name}`} icon={<Edit2 />} variant="ghost" onClick={() => actions.onEditConnector(connector)} /></div>
+            <div
+              key={connector.id}
+              className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <strong>{connector.name}</strong>
+                  <Tag color={connector.enabled ? "success" : "default"}>
+                    {connector.enabled ? "已启用" : "已停用"}
+                  </Tag>
+                </div>
+                <Text size="xs" tone="muted">
+                  {connector.kind} · {connector.sandbox ? "sandbox" : "read-only OAuth"}
+                </Text>
+                <Text size="xs" tone="muted">
+                  {connector.hasCredential
+                    ? `凭据 •••• ${connector.credentialLast4 || "----"}`
+                    : "未配置凭据"}
+                </Text>
+              </div>
+              <div className="flex min-w-max flex-nowrap gap-1">
+                <IconButton
+                  label={
+                    connector.kind === "search_console" && !connector.sandbox
+                      ? `连接 Google ${connector.name}`
+                      : `开始 Mock OAuth ${connector.name}`
+                  }
+                  icon={<KeyRound />}
+                  variant="ghost"
+                  onClick={() => actions.onStartConnectorOAuth(connector)}
+                />
+                <IconButton
+                  label={`编辑 ${connector.name}`}
+                  icon={<Edit2 />}
+                  variant="ghost"
+                  onClick={() => actions.onEditConnector(connector)}
+                />
+              </div>
             </div>
           ))}
         </CardContent>
       </Card>
       <Card padding="base">
         <div className="flex flex-col gap-5">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"><div><Heading level={2} variant="compact">Outbox 沙箱</Heading><Text size="sm" tone="muted">先审批，再进行不可外发的 Mock 投递；幂等键避免重复入队。</Text></div><Button size="small" variant="outline" icon={<Plus />} onClick={actions.onQueueOutbox}>加入 Outbox</Button></div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <Heading level={2} variant="compact">Outbox 沙箱</Heading>
+              <Text size="sm" tone="muted">
+                先审批，再进行不可外发的 Mock 投递；幂等键避免重复入队。
+              </Text>
+            </div>
+            <Button
+              size="small"
+              variant="outline"
+              icon={<Plus />}
+              onClick={actions.onQueueOutbox}
+            >
+              加入 Outbox
+            </Button>
+          </div>
           <div className="divide-y">
             {fixture.connectorOutbox.map((item) => {
               const connector = connectorMap.get(item.connectorId);
-              return <div key={item.id} className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"><div><strong>#{item.id} · {item.idempotencyKey}</strong><Text size="xs" tone="muted">{connector?.name || "未知 Profile"} · {outboxLabel(item.status)}{item.error ? ` · ${item.error}` : ""}</Text></div><OutboxActions item={item} onAction={actions.onOutboxAction} /></div>;
+              return (
+                <div
+                  key={item.id}
+                  className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <strong>#{item.id} · {item.idempotencyKey}</strong>
+                      <Tag color={outboxTone(item.status)}>
+                        {outboxLabel(item.status)}
+                      </Tag>
+                    </div>
+                    <Text size="xs" tone="muted">
+                      {connector?.name || "未知 Profile"} · 尝试 {item.attempts} 次
+                      {item.error ? ` · ${item.error}` : ""}
+                    </Text>
+                  </div>
+                  <OutboxActions item={item} onAction={actions.onOutboxAction} />
+                </div>
+              );
             })}
           </div>
         </div>

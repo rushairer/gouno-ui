@@ -242,29 +242,61 @@ describe("Blog Admin AI Settings route family", () => {
     expect(screen.getByText("Knowledge Export Worker 已撤销；该 Key 不可恢复。")).toBeTruthy();
   });
 
-  it("represents Connector profile OAuth and Outbox approval state transitions without real services", () => {
+  it("mirrors the real Connector profile and Outbox contract without invented status fields", () => {
+    expect(
+      aiSettingsFixture.connectors.every(
+        (connector) =>
+          "enabled" in connector &&
+          "config" in connector &&
+          !("status" in connector) &&
+          !("scope" in connector) &&
+          !("lastChecked" in connector),
+      ),
+    ).toBe(true);
+    expect(
+      aiSettingsFixture.connectorOutbox.every(
+        (item) => "payload" in item && "attempts" in item,
+      ),
+    ).toBe(true);
+
     render(<BlogAdminAISettingsDemo />);
     openTab("Sandbox 连接器");
 
     expect(screen.getByRole("button", { name: "添加 Connector Profile" })).toBeTruthy();
     expect(screen.getByRole("heading", { level: 2, name: "Outbox 沙箱" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "加入 Outbox" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "OAuth Web Research Sandbox" })).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: "连接 Google Search Console Read-only" }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: "开始 Mock OAuth Media Sandbox" }),
+    ).toBeTruthy();
+    expect(screen.getByText("凭据 •••• 4821")).toBeTruthy();
+    expect(screen.getByText(/Source Archive · 尝试 2 次/)).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "添加 Connector Profile" }));
     const connectorDrawer = screen.getByRole("dialog", { name: "添加 Connector Profile" });
+    expect(within(connectorDrawer).getByText("连接身份")).toBeTruthy();
+    expect(within(connectorDrawer).getByText("运行与凭据")).toBeTruthy();
+    expect(within(connectorDrawer).getByLabelText("配置 JSON")).toBeTruthy();
     expect(within(connectorDrawer).getByRole("button", { name: "保存 Connector" })).toBeTruthy();
     fireEvent.click(within(connectorDrawer).getByRole("button", { name: "取消" }));
-    expect(screen.getByRole("heading", { level: 2, name: "Outbox 沙箱" })).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "加入 Outbox" }));
     expect(screen.getByText("#304 · fixture-304", { selector: "strong" })).toBeTruthy();
+    expect(screen.getByText(/Media Sandbox · 尝试 0 次/)).toBeTruthy();
+
     fireEvent.click(screen.getByRole("button", { name: "批准 fixture-304" }));
     expect(screen.getByText("Outbox #304 已更新为已批准。")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Mock 投递 fixture-304" }));
+    expect(screen.getByText("Outbox #304 已更新为已模拟投递。")).toBeTruthy();
+    expect(screen.getByText(/Media Sandbox · 尝试 1 次/)).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("button", { name: "OAuth Web Research Sandbox" }));
-    expect(screen.getByText(/Web Research Sandbox 已模拟完成 Mock OAuth 回调/)).toBeTruthy();
-    expect(aiSettingsFixture.connectorOutbox.some((item) => item.status === "failed")).toBe(true);
+    fireEvent.click(screen.getByRole("button", { name: "重试 run-698-source-sync" }));
+    expect(screen.getByText("Outbox #302 已更新为已批准。")).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "开始 Mock OAuth Media Sandbox" }));
+    expect(screen.getByText(/Media Sandbox 已模拟完成 Mock OAuth 回调/)).toBeTruthy();
   });
 
   it("keeps governance behavior product-local while the navigation depth stays flat", () => {
