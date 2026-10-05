@@ -288,7 +288,13 @@ describe("Blog Admin AI Settings route family", () => {
     expect(screen.getByText("Outbox #304 已更新为已批准。")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Mock 投递 fixture-304" }));
     expect(screen.getByText("Outbox #304 已更新为已模拟投递。")).toBeTruthy();
-    expect(screen.getByText(/Media Sandbox · 尝试 1 次/)).toBeTruthy();
+    const queuedItemRow = screen
+      .getByText("#304 · fixture-304", { selector: "strong" })
+      .closest('div[class*="sm:flex-row"]');
+    expect(queuedItemRow).not.toBeNull();
+    expect(
+      within(queuedItemRow as HTMLElement).getByText(/Media Sandbox · 尝试 1 次/),
+    ).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "重试 run-698-source-sync" }));
     expect(screen.getByText("Outbox #302 已更新为已批准。")).toBeTruthy();
