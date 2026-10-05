@@ -1840,3 +1840,11 @@ The Blog Product half of the CSA-A006 handshake is now on `rushairer/gouno-blog/
 
 With those facts now on Blog main, CSA-A006 may mark `rushairer/gouno-blog` as `recertified`. This candidate must still pass reciprocal Blog Consumer Parity against the merged Blog main branch before the upstream state is merged. Blog may promote its local `blog-admin-ai` certification back to `verified` only after this upstream `recertified` state is on Gouno UI main.
 
+Reciprocal candidate evidence for Gouno UI head `2009e87dba02ef70107e4c9b4d8c95f65c241316`:
+
+- Gouno UI CI `37320236490` — **success**.
+- Blog Consumer Parity `37320236447` — **success** against current merged Blog main.
+- Blog Consumer Parity artifact `11349747496` — `gouno-ui-blog-consumer-parity-37320236447`, `sha256:d0c169935372c83cc13aec57a501575d0faa86b244e7828f7a1bb2c493274310`.
+
+This reciprocal run closes the substantive upstream acceptance. The remaining change in this PR is evidence retention only; the final PR head must still keep CI and Blog Consumer Parity green before merge.
+
