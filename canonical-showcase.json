@@ -3,7 +3,7 @@
   "program": "CSA-001",
   "phase": "CSA-5",
   "status": "frozen",
-  "updated": "2026-09-28",
+  "updated": "2026-10-05",
   "baselineCommit": "bb2c052dbf54fa37dc98b3be7a8e1ccfc9c973df",
   "authorityOrder": [
     "Foundation / Core authority",
@@ -247,7 +247,7 @@
       ],
       "summary": "Add the API Access management surface for server-to-server read-only Blog Capability export, including client policy, one-time key lifecycle, revocation and invocation audit composition.",
       "consumerImpact": {
-        "rushairer/gouno-blog": "needs-manual-recertification"
+        "rushairer/gouno-blog": "recertified"
       }
     }
   ]
