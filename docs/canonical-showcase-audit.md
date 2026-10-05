@@ -1825,3 +1825,18 @@ Final exact-head evidence for the hardened A006 candidate `fd850e39ba399badaf619
 This evidence closes the Canonical-side A006 acceptance. Blog Consumer propagation remains intentionally pending until the new API Access Product surface is implemented and manually re-certified.
 
 The reciprocal parity run above validates already-covered Blog AI Settings composition, but the current Blog Product does not yet implement this newly added API Access tab. Therefore CSA-A006 intentionally records `rushairer/gouno-blog` as `needs-manual-recertification`. Product reverse migration must land before A006 may be promoted to `recertified`.
+
+### Blog consumer recertification — 2026-10-05
+
+The Blog Product half of the CSA-A006 handshake is now on `rushairer/gouno-blog/main` with fresh manual-first evidence:
+
+- Blog PR #303 reverse-migrated the Canonical API Access surface and squash-merged as `504caf623940ee3cab3fd18f3a95f8b32d6f7e07`.
+- The exact reviewed Product head is `0a74d106bb60cc21b15acba76437d9f4dacdaa8f`.
+- Exact-head Blog CI `37304332154`, Blog Showcase Parity `37304332103`, UI Browser Acceptance `37304332030`, and Images `37304331937` all succeeded.
+- Blog retained paired parity artifact `11342544288` (`sha256:91a105717f396f6bb4c189a0469ac84859e9fdc9d443226fac4e1abfdeb1b398`).
+- Blog retained Browser Acceptance artifact `11342698521` (`sha256:80bb808584a917244fce1408af0439c6b6b30b602fdc79dc2c4742b4d305880d`).
+- Blog PR #304 then merged the fresh A006 manual-review/ledger staging to main as `f8e1cc036eac8acc4cd60859643e639e440a5ad1` while deliberately retaining local status `needs-manual-recertification`.
+- The staged Blog review records Gouno UI main ref `65e087d1b0cc6658f778a8ea31ca7536e520b748`, which contains the accepted CSA-A006 Canonical extension.
+
+With those facts now on Blog main, CSA-A006 may mark `rushairer/gouno-blog` as `recertified`. This candidate must still pass reciprocal Blog Consumer Parity against the merged Blog main branch before the upstream state is merged. Blog may promote its local `blog-admin-ai` certification back to `verified` only after this upstream `recertified` state is on Gouno UI main.
+
