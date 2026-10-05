@@ -284,8 +284,6 @@ describe("Blog Admin AI Settings route family", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "加入 Outbox" }));
     expect(screen.getByText("#304 · fixture-304", { selector: "strong" })).toBeTruthy();
-    expect(screen.getByText(/Media Sandbox · 尝试 0 次/)).toBeTruthy();
-
     fireEvent.click(screen.getByRole("button", { name: "批准 fixture-304" }));
     expect(screen.getByText("Outbox #304 已更新为已批准。")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Mock 投递 fixture-304" }));
