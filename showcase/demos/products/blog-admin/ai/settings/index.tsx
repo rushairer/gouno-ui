@@ -110,8 +110,14 @@ function cloneFixture(): AISettingsFixture {
       capabilities: [...item.capabilities],
     })),
     externalApiAudits: aiSettingsFixture.externalApiAudits.map((item) => ({ ...item })),
-    connectors: aiSettingsFixture.connectors.map((item) => ({ ...item })),
-    connectorOutbox: aiSettingsFixture.connectorOutbox.map((item) => ({ ...item })),
+    connectors: aiSettingsFixture.connectors.map((item) => ({
+      ...item,
+      config: { ...item.config },
+    })),
+    connectorOutbox: aiSettingsFixture.connectorOutbox.map((item) => ({
+      ...item,
+      payload: { ...item.payload },
+    })),
   };
 }
 
@@ -285,27 +291,60 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
     });
   };
 
-  const queueOutbox = () => {
-    const connector = fixture.connectors.find(
-      (item) => item.enabled && item.sandbox && item.hasCredential,
-    );
+  const queueOutbox: AISettingsSectionActions["onQueueOutbox"] = ({
+    connectorId,
+    idempotencyKey,
+    payloadJson,
+  }) => {
+    const connector = fixture.connectors.find((item) => item.id === connectorId);
     if (!connector) {
+      setNotice({ type: "warning", text: "请选择 Connector Profile。" });
+      return false;
+    }
+    if (!connector.enabled || !connector.sandbox || !connector.hasCredential) {
       setNotice({
         type: "warning",
-        text: "请先启用一个带凭据的 Sandbox Connector Profile。",
+        text: "只有已启用、Sandbox 且已配置凭据的 Connector 才能加入 Outbox。",
       });
-      return;
+      return false;
     }
+
+    const key = idempotencyKey.trim();
+    if (!key) {
+      setNotice({ type: "warning", text: "请输入幂等键。" });
+      return false;
+    }
+
+    let payload: Record<string, unknown>;
+    try {
+      const parsed = JSON.parse(payloadJson);
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+        throw new Error("Payload must be an object.");
+      }
+      payload = parsed as Record<string, unknown>;
+    } catch {
+      setNotice({ type: "error", text: "Payload JSON 必须是有效的 JSON 对象。" });
+      return false;
+    }
+
+    const existing = fixture.connectorOutbox.find(
+      (item) => item.connectorId === connectorId && item.idempotencyKey === key,
+    );
+    if (existing) {
+      setNotice({
+        type: "info",
+        text: `幂等键已命中现有 Outbox #${existing.id}；未重复入队。`,
+      });
+      return false;
+    }
+
     setFixture((current) => {
       const id = nextId(current.connectorOutbox);
       const item: ConnectorOutboxFixture = {
         id,
-        connectorId: connector.id,
-        idempotencyKey: `fixture-${id}`,
-        payload: {
-          source: "showcase",
-          message: "sandbox preview",
-        },
+        connectorId,
+        idempotencyKey: key,
+        payload,
         status: "awaiting_approval",
         attempts: 0,
       };
@@ -315,6 +354,7 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
       };
     });
     setNotice({ type: "success", text: "Outbox 项已加入待审批队列。" });
+    return true;
   };
 
   const actOnOutbox: AISettingsSectionActions["onOutboxAction"] = (

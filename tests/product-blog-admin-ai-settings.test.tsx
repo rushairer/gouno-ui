@@ -265,6 +265,9 @@ describe("Blog Admin AI Settings route family", () => {
     expect(screen.getByRole("button", { name: "添加 Connector Profile" })).toBeTruthy();
     expect(screen.getByRole("heading", { level: 2, name: "Outbox 沙箱" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "加入 Outbox" })).toBeTruthy();
+    expect(screen.getByRole("combobox", { name: "Profile" })).toBeTruthy();
+    expect(screen.getByLabelText("幂等键")).toBeTruthy();
+    expect(screen.getByLabelText("Payload JSON")).toBeTruthy();
     expect(
       screen.getByRole("button", { name: "连接 Google Search Console Read-only" }),
     ).toBeTruthy();
@@ -282,8 +285,21 @@ describe("Blog Admin AI Settings route family", () => {
     expect(within(connectorDrawer).getByRole("button", { name: "保存 Connector" })).toBeTruthy();
     fireEvent.click(within(connectorDrawer).getByRole("button", { name: "取消" }));
 
+    const profile = screen.getByRole("combobox", { name: "Profile" });
+    expect(profile).toBeTruthy();
+    expect(screen.getByLabelText("幂等键")).toBeTruthy();
+    expect(screen.getByLabelText("Payload JSON")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "加入 Outbox" }).hasAttribute("disabled")).toBe(true);
+
+    fireEvent.click(profile);
+    fireEvent.click(screen.getByRole("option", { name: "Media Sandbox" }));
+    fireEvent.change(screen.getByLabelText("幂等键"), {
+      target: { value: "fixture-304" },
+    });
     fireEvent.click(screen.getByRole("button", { name: "加入 Outbox" }));
+
     expect(screen.getByText("#304 · fixture-304", { selector: "strong" })).toBeTruthy();
+    expect((screen.getByLabelText("幂等键") as HTMLInputElement).value).toBe("");
     fireEvent.click(screen.getByRole("button", { name: "批准 fixture-304" }));
     expect(screen.getByText("Outbox #304 已更新为已批准。")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Mock 投递 fixture-304" }));

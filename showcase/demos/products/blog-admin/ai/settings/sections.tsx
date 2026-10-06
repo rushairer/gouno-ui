@@ -20,12 +20,15 @@ import {
   Button,
   Card,
   CardContent,
+  Field,
+  FormGrid,
   Heading,
   IconButton,
   Input,
   Select,
   Tag,
   Text,
+  Textarea,
 } from "../../../../../../src/core";
 import { TabPanelFeedback, TabPanelLead } from "../../../../../components/tab-panel-lead";
 import type {
@@ -74,7 +77,11 @@ export interface AISettingsSectionActions {
   onCreateConnector: () => void;
   onEditConnector: (connector: ConnectorFixture) => void;
   onStartConnectorOAuth: (connector: ConnectorFixture) => void;
-  onQueueOutbox: () => void;
+  onQueueOutbox: (input: {
+    connectorId: number;
+    idempotencyKey: string;
+    payloadJson: string;
+  }) => boolean;
   onOutboxAction: (item: ConnectorOutboxFixture, action: "approve" | "deliver" | "retry" | "revoke") => void;
 }
 
@@ -525,6 +532,12 @@ function OutboxActions({ item, onAction }: { item: ConnectorOutboxFixture; onAct
 
 function ConnectorList({ fixture, actions }: { fixture: AISettingsFixture; actions: AISettingsSectionActions }) {
   const connectorMap = new Map(fixture.connectors.map((item) => [item.id, item]));
+  const [selectedProfile, setSelectedProfile] = useState("");
+  const [idempotencyKey, setIdempotencyKey] = useState("");
+  const [payloadJson, setPayloadJson] = useState(
+    '{"source":"ai-workbench","message":"sandbox preview"}',
+  );
+
   return (
     <div className="flex flex-col gap-5">
       <TabPanelFeedback>
@@ -580,49 +593,97 @@ function ConnectorList({ fixture, actions }: { fixture: AISettingsFixture; actio
           ))}
         </CardContent>
       </Card>
-      <Card padding="base">
-        <div className="flex flex-col gap-5">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <Heading level={2} variant="compact">Outbox 沙箱</Heading>
-              <Text size="sm" tone="muted">
-                先审批，再进行不可外发的 Mock 投递；幂等键避免重复入队。
-              </Text>
-            </div>
-            <Button
-              size="small"
-              variant="outline"
-              icon={<Plus />}
-              onClick={actions.onQueueOutbox}
-            >
-              加入 Outbox
-            </Button>
-          </div>
-          <div className="divide-y">
-            {fixture.connectorOutbox.map((item) => {
-              const connector = connectorMap.get(item.connectorId);
-              return (
-                <div
-                  key={item.id}
-                  className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
+
+      <Card padding="none" className="overflow-hidden">
+        <div className="border-b px-6 py-5">
+          <Heading level={2} variant="compact">Outbox 沙箱</Heading>
+          <Text size="sm" tone="muted">
+            先审批，再进行不可外发的 Mock 投递；幂等键避免重复入队。
+          </Text>
+        </div>
+
+        <CardContent className="p-6">
+          <div className="flex flex-col gap-5">
+            <FormGrid columns={2}>
+              <Field label="Profile">
+                <Select
+                  aria-label="Profile"
+                  value={selectedProfile}
+                  onChange={(value) =>
+                    setSelectedProfile(String(Array.isArray(value) ? value[0] || "" : value || ""))
+                  }
                 >
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <strong>#{item.id} · {item.idempotencyKey}</strong>
-                      <Tag color={outboxTone(item.status)}>
-                        {outboxLabel(item.status)}
-                      </Tag>
-                    </div>
-                    <Text size="xs" tone="muted">
-                      {connector?.name || "未知 Profile"} · 尝试 {item.attempts} 次
-                      {item.error ? ` · ${item.error}` : ""}
-                    </Text>
-                  </div>
-                  <OutboxActions item={item} onAction={actions.onOutboxAction} />
-                </div>
-              );
-            })}
+                  <option value="">选择 Profile</option>
+                  {fixture.connectors.map((connector) => (
+                    <option key={connector.id} value={String(connector.id)}>
+                      {connector.name}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+              <Field label="幂等键">
+                <Input
+                  aria-label="幂等键"
+                  value={idempotencyKey}
+                  onChange={(event) => setIdempotencyKey(event.target.value)}
+                  placeholder="run-2026-08-03"
+                />
+              </Field>
+            </FormGrid>
+            <Field label="Payload JSON">
+              <Textarea
+                aria-label="Payload JSON"
+                className="type-family-mono"
+                value={payloadJson}
+                onChange={(event) => setPayloadJson(event.target.value)}
+                rows={4}
+              />
+            </Field>
+            <div className="flex justify-end">
+              <Button
+                variant="outline"
+                type="button"
+                icon={<Play />}
+                disabled={!selectedProfile || !idempotencyKey.trim()}
+                onClick={() => {
+                  const queued = actions.onQueueOutbox({
+                    connectorId: Number(selectedProfile),
+                    idempotencyKey,
+                    payloadJson,
+                  });
+                  if (queued) setIdempotencyKey("");
+                }}
+              >
+                加入 Outbox
+              </Button>
+            </div>
           </div>
+        </CardContent>
+
+        <div className="border-t">
+          {fixture.connectorOutbox.map((item) => {
+            const connector = connectorMap.get(item.connectorId);
+            return (
+              <div
+                key={item.id}
+                className="flex flex-col gap-3 px-6 py-4 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <strong>#{item.id} · {item.idempotencyKey}</strong>
+                    <Tag color={outboxTone(item.status)}>
+                      {outboxLabel(item.status)}
+                    </Tag>
+                  </div>
+                  <Text size="xs" tone="muted" className="mt-1">
+                    {connector?.name || "未知 Profile"} · 尝试 {item.attempts} 次
+                    {item.error ? ` · ${item.error}` : ""}
+                  </Text>
+                </div>
+                <OutboxActions item={item} onAction={actions.onOutboxAction} />
+              </div>
+            );
+          })}
         </div>
       </Card>
     </div>
