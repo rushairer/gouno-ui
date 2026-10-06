@@ -110,8 +110,14 @@ function cloneFixture(): AISettingsFixture {
       capabilities: [...item.capabilities],
     })),
     externalApiAudits: aiSettingsFixture.externalApiAudits.map((item) => ({ ...item })),
-    connectors: aiSettingsFixture.connectors.map((item) => ({ ...item })),
-    connectorOutbox: aiSettingsFixture.connectorOutbox.map((item) => ({ ...item })),
+    connectors: aiSettingsFixture.connectors.map((item) => ({
+      ...item,
+      config: { ...item.config },
+    })),
+    connectorOutbox: aiSettingsFixture.connectorOutbox.map((item) => ({
+      ...item,
+      payload: { ...item.payload },
+    })),
   };
 }
 
@@ -267,28 +273,128 @@ export function BlogAdminAISettingsDemo({ initialSection = "agents" }: { initial
   };
 
   const startConnectorOAuth = (connector: ConnectorFixture) => {
-    setFixture((current) => ({ ...current, connectors: current.connectors.map((item) => item.id === connector.id ? { ...item, status: "connected", hasCredential: true, lastChecked: "刚刚" } : item) }));
-    setNotice({ type: "info", text: `${connector.name} 已模拟完成${connector.sandbox ? " Mock" : "只读"} OAuth 回调。` });
+    setFixture((current) => ({
+      ...current,
+      connectors: current.connectors.map((item) =>
+        item.id === connector.id
+          ? {
+              ...item,
+              hasCredential: true,
+              credentialLast4: item.credentialLast4 || "4821",
+            }
+          : item,
+      ),
+    }));
+    setNotice({
+      type: "info",
+      text: `${connector.name} 已模拟完成${connector.sandbox ? " Mock" : "只读"} OAuth 回调。`,
+    });
   };
 
-  const queueOutbox = () => {
-    const connector = fixture.connectors[0];
+  const queueOutbox: AISettingsSectionActions["onQueueOutbox"] = ({
+    connectorId,
+    idempotencyKey,
+    payloadJson,
+  }) => {
+    const connector = fixture.connectors.find((item) => item.id === connectorId);
     if (!connector) {
-      setNotice({ type: "warning", text: "请先添加 Connector Profile。" });
-      return;
+      setNotice({ type: "warning", text: "请选择 Connector Profile。" });
+      return false;
     }
+    if (!connector.enabled || !connector.sandbox || !connector.hasCredential) {
+      setNotice({
+        type: "warning",
+        text: "只有已启用、Sandbox 且已配置凭据的 Connector 才能加入 Outbox。",
+      });
+      return false;
+    }
+
+    const key = idempotencyKey.trim();
+    if (!key) {
+      setNotice({ type: "warning", text: "请输入幂等键。" });
+      return false;
+    }
+
+    let payload: Record<string, unknown>;
+    try {
+      const parsed = JSON.parse(payloadJson);
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+        throw new Error("Payload must be an object.");
+      }
+      payload = parsed as Record<string, unknown>;
+    } catch {
+      setNotice({ type: "error", text: "Payload JSON 必须是有效的 JSON 对象。" });
+      return false;
+    }
+
+    const existing = fixture.connectorOutbox.find(
+      (item) => item.connectorId === connectorId && item.idempotencyKey === key,
+    );
+    if (existing) {
+      setNotice({
+        type: "info",
+        text: `幂等键已命中现有 Outbox #${existing.id}；未重复入队。`,
+      });
+      return false;
+    }
+
     setFixture((current) => {
       const id = nextId(current.connectorOutbox);
-      const item: ConnectorOutboxFixture = { id, connectorId: connector.id, idempotencyKey: `fixture-${id}`, status: "awaiting_approval" };
-      return { ...current, connectorOutbox: [item, ...current.connectorOutbox] };
+      const item: ConnectorOutboxFixture = {
+        id,
+        connectorId,
+        idempotencyKey: key,
+        payload,
+        status: "awaiting_approval",
+        attempts: 0,
+      };
+      return {
+        ...current,
+        connectorOutbox: [item, ...current.connectorOutbox],
+      };
     });
     setNotice({ type: "success", text: "Outbox 项已加入待审批队列。" });
+    return true;
   };
 
-  const actOnOutbox: AISettingsSectionActions["onOutboxAction"] = (item, action) => {
-    const nextStatus = { approve: "approved", deliver: "delivered", retry: "awaiting_approval", revoke: "revoked" }[action] as ConnectorOutboxFixture["status"];
-    setFixture((current) => ({ ...current, connectorOutbox: current.connectorOutbox.map((currentItem) => currentItem.id === item.id ? { ...currentItem, status: nextStatus, error: action === "retry" ? undefined : currentItem.error } : currentItem) }));
-    setNotice({ type: "success", text: `Outbox #${item.id} 已更新为${nextStatus === "approved" ? "已批准" : nextStatus === "delivered" ? "已模拟投递" : nextStatus === "revoked" ? "已撤销" : "待审批"}。` });
+  const actOnOutbox: AISettingsSectionActions["onOutboxAction"] = (
+    item,
+    action,
+  ) => {
+    const nextStatus = {
+      approve: "approved",
+      deliver: "delivered",
+      retry: "approved",
+      revoke: "revoked",
+    }[action] as ConnectorOutboxFixture["status"];
+    setFixture((current) => ({
+      ...current,
+      connectorOutbox: current.connectorOutbox.map((currentItem) =>
+        currentItem.id === item.id
+          ? {
+              ...currentItem,
+              status: nextStatus,
+              attempts:
+                action === "deliver"
+                  ? currentItem.attempts + 1
+                  : currentItem.attempts,
+              error: action === "retry" ? undefined : currentItem.error,
+            }
+          : currentItem,
+      ),
+    }));
+    setNotice({
+      type: "success",
+      text: `Outbox #${item.id} 已更新为${
+        nextStatus === "approved"
+          ? "已批准"
+          : nextStatus === "delivered"
+            ? "已模拟投递"
+            : nextStatus === "revoked"
+              ? "已撤销"
+              : "已批准"
+      }。`,
+    });
   };
 
   const testConnection = (name: string, kind: "provider" | "embedding") => {
