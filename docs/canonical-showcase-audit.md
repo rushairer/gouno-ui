@@ -1848,3 +1848,59 @@ Reciprocal candidate evidence for Gouno UI head `2009e87dba02ef70107e4c9b4d8c95f
 
 This reciprocal run closes the substantive upstream acceptance. The remaining change in this PR is evidence retention only; the final PR head must still keep CI and Blog Consumer Parity green before merge.
 
+## CSA-A007 — Sandbox Connector Product-fidelity correction
+
+Status: **canonical correction accepted / Blog Consumer recertification pending**
+
+Date: 2026-10-06
+
+CSA-A007 corrects the frozen `blog-admin-ai-settings` Sandbox Connector surface so the Canonical Fixture and interaction contract represent the real Connector Product model rather than synthetic connection-health metadata.
+
+Classification:
+
+- `canonical-correction` within the existing `blog-admin-ai-settings` scope;
+- no new Core/Foundation primitive or generic Pattern;
+- no new Showcase catalog/page/component ID;
+- Provider vendor/protocol semantics from CSA-A005 remain unchanged;
+- API Access semantics from CSA-A006 remain unchanged;
+- the affected Blog consumer must complete a fresh manual-first recertification before returning to `verified`.
+
+Accepted Canonical ref:
+
+`5a7689a14348581444e6123dd309a6c2021da7dd`
+
+The accepted code merged through Gouno UI PR #156 as:
+
+`1003c024a2a9c1711230e443782ae090f6b29c49`
+
+Canonical corrections:
+
+- Connector identity now uses the real Product concepts `kind`, `enabled`, `sandbox`, configuration object, and masked credential state.
+- Synthetic `connected/degraded`, `scope`, and `lastChecked` Fixture state is removed from the Canonical contract.
+- The Fixture represents all four real Connector kinds: Search Console, Newsletter, Social, and Webhook.
+- Search Console may switch to read-only Google OAuth; current Newsletter/Social/Webhook behavior remains Sandbox Mock only.
+- The contextual Drawer uses the established editor-form composition with semantic Switch controls for enabled/Sandbox state and semantic mono typography for JSON configuration.
+- Outbox records expose the real payload, attempt counter, approval/delivery/failure/retry/revoke lifecycle and idempotency key.
+- Retry follows the real Product/backend transition `failed -> approved`.
+- Queue eligibility mirrors the Product/backend boundary: a profile must be enabled, Sandbox, and credentialed.
+- Outbox queue composition requires explicit Profile, idempotency key, and Payload JSON input rather than silently selecting a Connector.
+- Fixture payload/config values remain fake; no real credential or external network call is introduced by Showcase.
+
+Exact-head evidence for `5a7689a14348581444e6123dd309a6c2021da7dd`:
+
+- CI `37431746763` — **success**.
+- Canonical Visual Golden Smoke `37431746934` — **success**.
+- Blog Consumer Parity `37431746831` — **success**.
+- Gosso Admin Consumer Parity `37431746791` — **success**.
+- Golden artifact `11397029625` — `gouno-ui-canonical-visual-golden-37431746934`, SHA-256 `eba630716f8fd762f1dd16e56a8cebd25198090ef520f52fc0cf15c11cece87a`.
+- Blog paired parity artifact `11397252253` — `gouno-ui-blog-consumer-parity-37431746831`, SHA-256 `b25adc6bd88762565fef1a1271bbcb16c7092ace69c9ad914a0f15fad1b0d495`.
+- Gosso paired parity artifact `11397416242` — `gouno-ui-gosso-admin-consumer-parity-37431746791`, SHA-256 `d019a07fca97ba54a05fe54441b6424f19102cefb2a14906f59e4fdaeb4011b0`.
+
+Manual-first review did not stop at automated green gates. The first accepted candidate evidence exposed that the paired viewport did not retain a reviewable Outbox form and that the real Blog Product still contained historical Connector Drawer drift. Those findings intentionally moved to the Blog recertification line rather than being hidden by the successful structural parity result.
+
+Blog already reopened its local `blog-admin-ai` certification through Blog PR #306 and merge `8cdfc0d88bbb90cd440d7d99e156f2a900af97b8`. CSA-A007 therefore records:
+
+`consumerImpact["rushairer/gouno-blog"] = "needs-manual-recertification"`
+
+The amendment must remain pending for Blog until the Product-side Drawer/Outbox fidelity fixes, fresh paired evidence, reciprocal parity and final manual review have completed.
+
