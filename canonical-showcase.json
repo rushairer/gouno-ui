@@ -3,7 +3,7 @@
   "program": "CSA-001",
   "phase": "CSA-5",
   "status": "frozen",
-  "updated": "2026-10-05",
+  "updated": "2026-10-06",
   "baselineCommit": "bb2c052dbf54fa37dc98b3be7a8e1ccfc9c973df",
   "authorityOrder": [
     "Foundation / Core authority",
@@ -165,7 +165,7 @@
       "Consumer certification remains manual-first; green automated checks cannot renew stale manual certification."
     ]
   },
-  "latestCanonicalRef": "cc1962c83c2c82cf59f0b063c9e48096dbf4a3ff",
+  "latestCanonicalRef": "5a7689a14348581444e6123dd309a6c2021da7dd",
   "postFreezeAmendments": [
     {
       "id": "CSA-A001",
@@ -248,6 +248,19 @@
       "summary": "Add the API Access management surface for server-to-server read-only Blog Capability export, including client policy, one-time key lifecycle, revocation and invocation audit composition.",
       "consumerImpact": {
         "rushairer/gouno-blog": "recertified"
+      }
+    },
+    {
+      "id": "CSA-A007",
+      "date": "2026-10-06",
+      "commit": "5a7689a14348581444e6123dd309a6c2021da7dd",
+      "kind": "canonical-correction",
+      "scopes": [
+        "blog-admin-ai-settings"
+      ],
+      "summary": "Correct the Sandbox Connector canonical fixture and interaction contract to the real Product model: kind/enabled/sandbox/config/credential identity, approval-gated Outbox payload/attempts state, explicit queue inputs and read-only Search Console OAuth boundary.",
+      "consumerImpact": {
+        "rushairer/gouno-blog": "needs-manual-recertification"
       }
     }
   ]
