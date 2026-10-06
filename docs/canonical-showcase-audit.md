@@ -1848,3 +1848,71 @@ Reciprocal candidate evidence for Gouno UI head `2009e87dba02ef70107e4c9b4d8c95f
 
 This reciprocal run closes the substantive upstream acceptance. The remaining change in this PR is evidence retention only; the final PR head must still keep CI and Blog Consumer Parity green before merge.
 
+## CSA-A007 — Sandbox Connector Product fidelity correction
+
+Status: **canonical correction accepted / Blog Consumer recertification pending**
+
+Date: 2026-10-06
+
+CSA-A007 corrects the existing `blog-admin-ai-settings` Sandbox Connector Canonical surface after manual Product-vs-Showcase review found that the frozen Fixture had drifted away from the already-shipped Blog Connector contract.
+
+Classification:
+
+- `canonical-correction` inside the existing `blog-admin-ai-settings` matrix surface;
+- no new Core/Foundation component, generic Pattern, catalog ID, page ID or component ID;
+- the correction removes synthetic state rather than inventing a new Product contract;
+- Blog remains manual-first and must complete reciprocal recertification before this amendment is considered propagated.
+
+Accepted Canonical code history:
+
+- Gouno UI PR #156 merged as `1003c024a2a9c1711230e443782ae090f6b29c49`.
+- The accepted A007 code ref is `5a7689a14348581444e6123dd309a6c2021da7dd`, now recorded by `latestCanonicalRef`.
+- Synthetic Connector fields `connected/degraded`, `scope` and `lastChecked` were removed from Canonical Fixture state.
+- Canonical Connector identity now follows the real Product contract: `kind / enabled / sandbox / config / credential state`.
+- All four real Connector kinds are represented: Search Console, Newsletter, Social and Webhook.
+- Search Console may represent read-only Google OAuth; Newsletter, Social and Webhook remain Sandbox Mock only.
+- Outbox now carries explicit Profile, idempotency key and Payload JSON queue input instead of silently selecting a Fixture Connector.
+- Queue eligibility mirrors the backend guard: the Connector must be enabled, Sandbox and credentialed.
+- Outbox evidence includes `payload`, `attempts`, approval, mock delivery, retry, revoke and the real `failed -> approved` retry transition.
+
+Exact-head Canonical evidence for `5a7689a14348581444e6123dd309a6c2021da7dd`:
+
+- CI `37431746763` — **success**.
+- Canonical Visual Golden Smoke `37431746934` — **success**.
+- Blog Consumer Parity `37431746831` — **success**.
+- Gosso Admin Consumer Parity `37431746791` — **success**.
+- Golden artifact `11397029625` — `gouno-ui-canonical-visual-golden-37431746934`, `sha256:eba630716f8fd762f1dd16e56a8cebd25198090ef520f52fc0cf15c11cece87a`.
+- Blog paired parity artifact `11397252253` — `gouno-ui-blog-consumer-parity-37431746831`, `sha256:b25adc6bd88762565fef1a1271bbcb16c7092ace69c9ad914a0f15fad1b0d495`.
+- Gosso paired parity artifact `11397416242` — `gouno-ui-gosso-admin-consumer-parity-37431746791`, `sha256:d019a07fca97ba54a05fe54441b6424f19102cefb2a14906f59e4fdaeb4011b0`.
+
+Manual-first review deliberately rejected an earlier all-green candidate because automated parity did not preserve reviewable evidence for the complete Outbox queue form. The candidate was corrected before acceptance so the Canonical surface exposes Profile, idempotency key and Payload JSON explicitly. This is retained as a process lesson: green automation is necessary but does not replace visual/semantic review of the actual Product contract.
+
+### Blog Product propagation — 2026-10-06
+
+Blog Product review then found and corrected the remaining Product-side drift rather than weakening Canonical:
+
+- Blog PR #307 merged as `71b831ef3790a20d9f346e6caf11c3fbbeeb963a`.
+- The exact reviewed Product head is `547e514e6c26f5799e264b53bc0f65c5f4ccf837`.
+- Connector Drawer now uses the canonical Switch semantics for enabled/Sandbox state, `Profile 名称` required-field semantics and semantic mono typography.
+- Non-Search-Console kinds explicitly preserve the Sandbox-only/no-real-external-write boundary.
+- Product Outbox now exposes the real `attempts` audit value.
+- Paired e2e Connector fixtures were aligned with the A007 Canonical data set so visual review measures UI/interaction fidelity rather than fixture-name noise.
+- Dedicated Outbox locator screenshots retain Profile / idempotency key / Payload JSON / status / attempts evidence without AppShell scroll artifacts.
+
+Exact-head Blog evidence for `547e514e6c26f5799e264b53bc0f65c5f4ccf837`:
+
+- CI `37438126060` — **success**.
+- Images `37438126077` — **success**.
+- Blog Showcase Parity `37438125889` — **success**.
+- UI Browser Acceptance `37438126076` — **success**.
+- Paired parity artifact `11399943359` — `blog-showcase-parity-37438125889`, `sha256:51d2d4355081b7e76438c064d9348f4cf65a9c6c0fdf6c9c3452c3aed8e24d13`.
+- Browser Acceptance artifact `11400641062` — `blog-browser-acceptance-37438126076`, `sha256:a8dcae5ecb8083984066336fef380d50c814d11837401e0ecdb382d645e36874`.
+
+Manual paired inspection of the final evidence confirms:
+
+- the same four Connector Profiles, kind, Sandbox/read-only OAuth, enabled and credential states are represented;
+- the Outbox Card composition, queue fields, actions, status chips, attempts and error presentation align across Showcase and Product;
+- the Connector Drawer composition and control semantics align while Product-specific credential wording remains intentionally real rather than copying Fixture-only text.
+
+The Blog local `blog-admin-ai` certification intentionally remains `needs-manual-recertification`. After this pending A007 ledger state is on Gouno UI main, a separate reciprocal candidate must promote `rushairer/gouno-blog` to `recertified` and pass Blog Consumer Parity against the merged Blog main. Only then may Blog return its local certification to `verified`.
+
