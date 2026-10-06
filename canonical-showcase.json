@@ -260,7 +260,7 @@
       ],
       "summary": "Correct the Sandbox Connector canonical model to match the real Product Profile / credential / Outbox contract, including explicit queue input, attempts, approval, retry and delivery semantics.",
       "consumerImpact": {
-        "rushairer/gouno-blog": "needs-manual-recertification"
+        "rushairer/gouno-blog": "recertified"
       }
     }
   ]

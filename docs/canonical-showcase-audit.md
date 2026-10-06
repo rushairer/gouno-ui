@@ -1916,3 +1916,19 @@ Manual paired inspection of the final evidence confirms:
 
 The Blog local `blog-admin-ai` certification intentionally remains `needs-manual-recertification`. After this pending A007 ledger state is on Gouno UI main, a separate reciprocal candidate must promote `rushairer/gouno-blog` to `recertified` and pass Blog Consumer Parity against the merged Blog main. Only then may Blog return its local certification to `verified`.
 
+### Blog consumer recertification — 2026-10-06
+
+The Blog Product half of the CSA-A007 handshake is now on `rushairer/gouno-blog/main` with fresh manual-first evidence:
+
+- Blog PR #307 merged as `71b831ef3790a20d9f346e6caf11c3fbbeeb963a`.
+- The exact reviewed Product head is `547e514e6c26f5799e264b53bc0f65c5f4ccf837`.
+- Exact-head Blog CI `37438126060`, Images `37438126077`, Blog Showcase Parity `37438125889`, and UI Browser Acceptance `37438126076` all succeeded.
+- Blog retained paired parity artifact `11399943359` (`sha256:51d2d4355081b7e76438c064d9348f4cf65a9c6c0fdf6c9c3452c3aed8e24d13`).
+- Blog retained Browser Acceptance artifact `11400641062` (`sha256:a8dcae5ecb8083984066336fef380d50c814d11837401e0ecdb382d645e36874`).
+- Manual review confirmed the four Connector Profiles, Drawer control semantics and complete Outbox queue/status composition against Canonical A007.
+- Blog local certification intentionally remains `needs-manual-recertification` until the upstream `recertified` state is merged.
+
+The A007 pending ledger itself was merged to Gouno UI main as `6bc3d7dae217b9e398c9f0cd6c46375ae737e778` after exact-head CI `37440976392` and Blog Consumer Parity `37440976238` both succeeded against the already-corrected Blog main. Paired artifact `11401013734` (`sha256:5ecc4f5bc5d8777ad23855143e404a161cab1220dbe195255f37429c377ca02c`) retains that reciprocal evidence.
+
+With those facts now on both main branches, CSA-A007 may promote `rushairer/gouno-blog` from `needs-manual-recertification` to `recertified`. This candidate must still keep its own exact-head CI and Blog Consumer Parity green before merge. Blog may restore its local `blog-admin-ai` certification to `verified` only after this upstream `recertified` state is on Gouno UI main.
+
