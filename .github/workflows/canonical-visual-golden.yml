@@ -30,7 +30,7 @@ concurrency:
 jobs:
   golden:
     if: "${{ github.event_name != 'push' || github.event.head_commit.message != 'chore(showcase): refresh canonical visual goldens' }}"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - name: Checkout candidate
@@ -69,7 +69,7 @@ jobs:
   # canonical visual changes; normal comparison runs remain read-only.
   refresh:
     if: "${{ github.event_name == 'push' && github.event.head_commit.message == 'chore(showcase): refresh canonical visual goldens' }}"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     permissions:
       contents: write
