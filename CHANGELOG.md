@@ -4,6 +4,12 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Changed
+- Pin Playwright browser, consumer-parity, and visual-golden jobs to ubuntu-24.04; ubuntu-latest has moved to Ubuntu 26.04, which Playwright 1.55.0 does not support.
+
+### Changed
+- Refresh SHA-pinned setup-node to v7.1.0 and upload-artifact to v7.0.2 across CI, release, visual-golden, and consumer-parity workflows.
+
 ## [0.4.9] - 2026-09-22
 
 ### Fixed

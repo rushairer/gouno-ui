@@ -205,3 +205,7 @@ Prefer one reviewable commit per coherent migration/hardening stage when practic
 ## Scope boundaries
 
 This package contains no authentication, API access, connector behavior or application session state. Showcase fixtures are static and never call real services. Do not modify the old vendored UI package from this repository.
+
+## Browser test runner baseline
+
+- Playwright 1.55.0 browser-install, consumer-parity, and visual-golden jobs must run on the explicit ubuntu-24.04 image. Do not use ubuntu-latest for these jobs until the pinned Playwright version explicitly supports the new runner image; runner-image changes must be validated across both consumer parity suites and visual-golden tests.
