@@ -65,5 +65,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: showcase/dist
-          force_orphan: true
+          # Preserve deploy history and use a normal push, as required by the
+          # release train's no-force-push rule.
+          force_orphan: false
           enable_jekyll: false
