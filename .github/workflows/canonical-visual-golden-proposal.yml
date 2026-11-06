@@ -1,0 +1,79 @@
+name: Propose Canonical Visual Goldens
+
+on:
+  workflow_dispatch:
+    inputs:
+      candidate_branch:
+        description: "Existing non-default review branch (never main/master)"
+        required: true
+        type: string
+      candidate_sha:
+        description: "Exact 40-character candidate commit to render for review"
+        required: true
+        type: string
+
+# This workflow can only produce review artifacts. It cannot push snapshots,
+# merge a PR, publish Pages, or change a certification ledger.
+permissions:
+  contents: read
+
+jobs:
+  propose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Validate review target
+        env:
+          CANDIDATE_BRANCH: ${{ inputs.candidate_branch }}
+          CANDIDATE_SHA: ${{ inputs.candidate_sha }}
+        run: |
+          set -euo pipefail
+          [[ "$CANDIDATE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$CANDIDATE_BRANCH" != main && "$CANDIDATE_BRANCH" != master ]]
+          git check-ref-format "refs/heads/$CANDIDATE_BRANCH"
+
+      - name: Checkout exact candidate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.candidate_sha }}
+          persist-credentials: false
+
+      - name: Bind proposal to the current review branch
+        env:
+          CANDIDATE_BRANCH: ${{ inputs.candidate_branch }}
+          CANDIDATE_SHA: ${{ inputs.candidate_sha }}
+        run: |
+          set -euo pipefail
+          actual=$(git ls-remote origin "refs/heads/$CANDIDATE_BRANCH" | cut -f1)
+          test "$actual" = "$CANDIDATE_SHA"
+          test "$(git rev-parse HEAD)" = "$CANDIDATE_SHA"
+          printf 'Candidate: %s\nBranch: %s\nStatus: proposed, not approved\n' \
+            "$CANDIDATE_SHA" "$CANDIDATE_BRANCH" > golden-proposal.txt
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install candidate and pinned browser
+        run: |
+          npm ci
+          npm install --no-save --ignore-scripts @playwright/test@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Render proposed baselines without changing the repository
+        run: npx playwright test --config=showcase/e2e/canonical-visual-golden.config.mjs --update-snapshots
+
+      - name: Retain proposed baselines and rendered evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: gouno-ui-golden-proposal-${{ github.run_id }}
+          path: |
+            golden-proposal.txt
+            showcase/e2e/canonical-visual-golden.pw.mjs-snapshots
+            playwright-report-canonical-visual-golden
+            test-results/canonical-visual-golden
+          if-no-files-found: error
+          retention-days: 14
