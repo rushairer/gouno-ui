@@ -151,9 +151,23 @@ async function prepareLightFixture(page, scenario) {
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   await expect(page.locator("html")).toHaveAttribute("data-brand", scenario.brand);
   await expect(page.locator(scenario.ready).first()).toBeVisible();
-  await page.evaluate(async () => {
-    await document.fonts.ready;
+  await expectCanonicalFonts(page);
+}
+
+async function expectCanonicalFonts(page) {
+  const faces = await page.evaluate(async () => {
+    await Promise.all([
+      document.fonts.load('400 14px "Inter Variable"'),
+      document.fonts.load('400 14px "JetBrains Mono"'),
+    ]);
+    return [...document.fonts]
+      .filter((face) => ["Inter Variable", "JetBrains Mono"].includes(face.family))
+      .map((face) => ({ family: face.family, status: face.status }));
   });
+  expect(faces).toEqual([
+    { family: "Inter Variable", status: "loaded" },
+    { family: "JetBrains Mono", status: "loaded" },
+  ]);
 }
 
 async function prepareDarkFixture(page, scenario) {
@@ -170,9 +184,7 @@ async function prepareDarkFixture(page, scenario) {
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await expect(page.locator("html")).toHaveAttribute("data-brand", scenario.brand);
   await expect(page.locator(scenario.ready).first()).toBeVisible();
-  await page.evaluate(async () => {
-    await document.fonts.ready;
-  });
+  await expectCanonicalFonts(page);
 }
 
 async function expectNoHorizontalDocumentOverflow(page) {

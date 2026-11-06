@@ -1,0 +1,93 @@
+# Showcase font delivery correction — 2026-11-06
+
+Status: implementation and supplemental browser review complete; CI/golden and
+reciprocal consumer acceptance required before merge. This record is not a
+maintainer's GOSSO Admin/Blog certification or Staging approval.
+
+## Observed failure and owner
+
+Public Pages on main `b706b6c25c6252c7f55500b69eb08e17c1de554b` requested Inter
+and JetBrains Mono under `https://rushairer.github.io/src/fonts/`, returned 404,
+and reported both FontFace statuses as error. Source base.css refers to sibling
+fonts that the npm build copies to dist/fonts. Showcase imports source CSS;
+Tailwind rebases those URLs relative to showcase/styles before Vite resolves
+them. Compilation and existing golden/geometry checks did not verify delivery.
+
+The owner is Showcase asset resolution. Its Vite config now resolves both source
+and rebased font URLs to the already-locked Fontsource dependency files. Vite
+emits hashed assets with the repository's Pages base. No src component, CSS
+contract, package version, dependency, frozen ID or acceptance anchor changes.
+@gouno/ui remains 0.4.9; this does not require npm 0.4.10.
+
+## Real browser evidence
+
+Native Chromium opened both the development server and a preview of the
+GITHUB_ACTIONS=true production build served under /gouno-ui/. Both font requests
+returned 200 and both faces reported loaded. The Pages build uses:
+
+- /gouno-ui/assets/inter-latin-wght-normal-Dx4kXJAl.woff2
+- /gouno-ui/assets/jetbrains-mono-latin-400-normal-V6pRDFza.woff2
+
+Supplemental captures re-rendered 36 Product/Showcase cases: Admin System Status
+including scrolled capabilities/security, and Blog AI Settings/Operations tabs,
+at desktop light and mobile dark widths. No font error or document overflow was
+observed in those captures. Selected rendered surfaces were inspected for the
+intended font, hierarchy, table/form wrapping and lower panels. This is partial
+assistant review with deterministic Product API fixtures, not a maintainer's
+complete manual-first review, live service mutation or operational acceptance.
+Evidence is retained outside Git in the release workspace's
+`docs/quality/final-evidence-2026-11/font-repair/` directory.
+
+The canonical browser helper now explicitly loads both faces and asserts loaded
+statuses. Waiting only for document.fonts.ready also resolves after font errors,
+so it cannot establish successful font delivery.
+
+## Preserved gates
+
+Run the full verify/package checks, unchanged visual comparison and both
+reciprocal consumer suites. No golden file, screenshot threshold, scenario,
+certification status or required CI job was altered to conceal a difference.
+If the existing goldens encode fallback-font rendering, retain their failing
+comparison evidence and use the explicitly guarded review/refresh process;
+never silently accept or regenerate them. Admin/Blog manual certification and
+real Staging/backup/rollback acceptance still independently block releases.
+
+## Controlled baseline proposal and assistant review
+
+The unchanged ordinary comparison at source
+`e501f3caad5892373dca0f9394ad1c606c26a232` retained **41 failed screenshot
+comparisons and 146 passing behavioral tests** in run
+[42200075506](https://github.com/rushairer/gouno-ui/actions/runs/42200075506).
+The failure archive `13495025095` was independently downloaded and SHA-256
+matched: `bfeb8aefc9d990f7dcf522b72902d6c0bb5a6a2154aabf17e929a9182b8381a3`.
+
+The artifact-only controlled proposal workflow then rendered that exact source
+under Ubuntu 24.04 / Playwright 1.55.0:
+[42202321247, attempt 2](https://github.com/rushairer/gouno-ui/actions/runs/42202321247/attempts/2),
+**187 passed**. Attempt 1 was canceled and is not acceptance evidence. The
+completed proposal archive `13495902857` passed independent SHA-256 and ZIP CRC
+verification: `696eea2961dad1ff9a98314ed4ba9651819d68aefc45298e065e8a1da307ec2a`.
+
+Reviewer type: **AI assistant**, November 6; not maintainer consumer sign-off.
+All 41 original actual captures were inspected in labelled browser contact
+sheets; selected full-size expected/actual forms, Workflow Editor, mobile
+editor, Client modal and real development/Pages-preview surfaces were also
+inspected. Every one of those 41 proposed PNGs is byte-identical to its original
+reviewed CI actual. The two remaining desktop login PNGs were inspected at full
+size. Candidate/previous snapshots keep the same 43 names and scenarios.
+
+Observed differences follow the corrected Latin metrics/weights and wrapping.
+Card/form/table boundaries, modal focus ring, dark surfaces, mobile single-column
+flow and public reading composition remain consistent. No source component,
+fixture content, public CSS definition or dependency changed. Local horizontal
+Tabs scrolling remains intentional; static screenshots do not certify every
+below-fold or accessibility state.
+
+The restored fonts are byte-identical to published @gouno/ui 0.4.9 fonts:
+Inter SHA-256 `3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62`,
+JetBrains Mono `14425ba9c695763c1547f48a206b7aa60350a33ae23de09f0407877f3fcd89eb`.
+The 43 proposal images are imported for a **fresh ordinary comparison**, not
+accepted through a skipped job. Thresholds and behavioral assertions remain
+unchanged. Require that comparison, full CI and both consumers before merge;
+then verify main CI, Pages deploy SHA and actual public font delivery. Admin
+and Blog personal/manual certification and operational gates remain pending.
