@@ -4,6 +4,9 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Fixed
+- Bundle the installed Inter and JetBrains Mono assets for source-based Showcase development and GitHub Pages instead of leaving unresolved source-font URLs. Canonical browser checks now require both font faces to load. The published 0.4.9 package and public component APIs are unchanged.
+
 ### Changed
 - Pin Playwright browser, consumer-parity, and visual-golden jobs to ubuntu-24.04; ubuntu-latest has moved to Ubuntu 26.04, which Playwright 1.55.0 does not support.
 
