@@ -51,3 +51,43 @@ If the existing goldens encode fallback-font rendering, retain their failing
 comparison evidence and use the explicitly guarded review/refresh process;
 never silently accept or regenerate them. Admin/Blog manual certification and
 real Staging/backup/rollback acceptance still independently block releases.
+
+## Controlled baseline proposal and assistant review
+
+The unchanged ordinary comparison at source
+`e501f3caad5892373dca0f9394ad1c606c26a232` retained **41 failed screenshot
+comparisons and 146 passing behavioral tests** in run
+[42200075506](https://github.com/rushairer/gouno-ui/actions/runs/42200075506).
+The failure archive `13495025095` was independently downloaded and SHA-256
+matched: `bfeb8aefc9d990f7dcf522b72902d6c0bb5a6a2154aabf17e929a9182b8381a3`.
+
+The artifact-only controlled proposal workflow then rendered that exact source
+under Ubuntu 24.04 / Playwright 1.55.0:
+[42202321247, attempt 2](https://github.com/rushairer/gouno-ui/actions/runs/42202321247/attempts/2),
+**187 passed**. Attempt 1 was canceled and is not acceptance evidence. The
+completed proposal archive `13495902857` passed independent SHA-256 and ZIP CRC
+verification: `696eea2961dad1ff9a98314ed4ba9651819d68aefc45298e065e8a1da307ec2a`.
+
+Reviewer type: **AI assistant**, November 6; not maintainer consumer sign-off.
+All 41 original actual captures were inspected in labelled browser contact
+sheets; selected full-size expected/actual forms, Workflow Editor, mobile
+editor, Client modal and real development/Pages-preview surfaces were also
+inspected. Every one of those 41 proposed PNGs is byte-identical to its original
+reviewed CI actual. The two remaining desktop login PNGs were inspected at full
+size. Candidate/previous snapshots keep the same 43 names and scenarios.
+
+Observed differences follow the corrected Latin metrics/weights and wrapping.
+Card/form/table boundaries, modal focus ring, dark surfaces, mobile single-column
+flow and public reading composition remain consistent. No source component,
+fixture content, public CSS definition or dependency changed. Local horizontal
+Tabs scrolling remains intentional; static screenshots do not certify every
+below-fold or accessibility state.
+
+The restored fonts are byte-identical to published @gouno/ui 0.4.9 fonts:
+Inter SHA-256 `3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62`,
+JetBrains Mono `14425ba9c695763c1547f48a206b7aa60350a33ae23de09f0407877f3fcd89eb`.
+The 43 proposal images are imported for a **fresh ordinary comparison**, not
+accepted through a skipped job. Thresholds and behavioral assertions remain
+unchanged. Require that comparison, full CI and both consumers before merge;
+then verify main CI, Pages deploy SHA and actual public font delivery. Admin
+and Blog personal/manual certification and operational gates remain pending.
