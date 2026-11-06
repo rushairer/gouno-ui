@@ -24,3 +24,7 @@ credentials. It uploads evidence only; it cannot push, merge, publish or certify
 A successful generator is not a passing comparison or certification. No
 snapshot may be replaced to hide an unexplained layout, interaction or API
 regression. Consumer manual-first and operational release gates still apply.
+
+Pages publication also preserves the existing gh-pages history. The pinned
+publisher's force_orphan=true path invokes git push --force; force_orphan=false
+uses an ordinary push. Release preparation must not rewrite deployment history.
