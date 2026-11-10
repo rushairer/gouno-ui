@@ -4,6 +4,9 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Security
+- Refresh only development-tool lock entries to remediate Vite, Vitest/mocker, source-map-js and undici advisories. The npm package version remains 0.4.9; runtime dependencies, component sources and canonical fixtures are unchanged.
+
 ### Fixed
 - Bundle the installed Inter and JetBrains Mono assets for source-based Showcase development and GitHub Pages instead of leaving unresolved source-font URLs. Canonical browser checks now require both font faces to load. The published 0.4.9 package and public component APIs are unchanged.
 
