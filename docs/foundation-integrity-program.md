@@ -1,6 +1,6 @@
 # Gouno UI Foundation Integrity Program
 
-Status: complete; maintenance mode. CSA-D001 re-certified Responsive/core-steps on 2026-09-20.
+Status: complete; maintenance mode. CSA-D001 re-certified Responsive/core-steps on 2026-09-20. The closed defect report is archived at [docs/history/foundation-integrity-closed-defects-2026-09.md](history/foundation-integrity-closed-defects-2026-09.md); do not treat its old “Next action” text as a current backlog.
 Program id: **FI-001**
 Started: 2026-09-18
 Completed: 2026-09-19

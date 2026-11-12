@@ -1,4 +1,6 @@
-# Foundation Integrity Open Defects
+# Foundation Integrity — closed defect history (2026-09)
+
+> **Historical resolved-defect register (reclassified 2026-11-12).** Every FI-D/CSA-D item in this file has a recorded resolution/certification. Earlier “Next action” paragraphs are preserved as the original investigation plan, **not active unresolved tasks**. For current canonical review state use `foundation-integrity.json`, [Foundation program](../foundation-integrity-program.md) and [Canonical Showcase audit](../canonical-showcase-audit.md).
 
 Updated: 2026-09-19
 

@@ -48,7 +48,7 @@ components/primitives + lib → Core → Theme → Patterns → Gouno
 
 `src/legacy` has been removed from the current source tree. Historical implementations live in Git history; do not recreate a Legacy, Candidates or Incubator source layer.
 
-See [`docs/architecture.md`](docs/architecture.md) and [`docs/product-driven-development.md`](docs/product-driven-development.md).
+Start with the [documentation index](docs/README.md), then [`docs/architecture.md`](docs/architecture.md) and [`docs/product-driven-development.md`](docs/product-driven-development.md). The index distinguishes live contracts from completed Foundation Integrity and historical migration evidence.
 
 ## Public entry points
 
