@@ -38,6 +38,14 @@ The outer surface can differ. The internal field and section rhythm does not.
 - `Field` owns label/help/error spacing;
 - `FormGrid` owns responsive columns but does not change the vertical rhythm around itself.
 
+### Drawer is a narrow container, regardless of viewport
+
+- Default to a **single vertical section stack** in contextual Drawers, including on desktop. A `720px` Drawer is not an `xl`-width form because the page viewport is wide.
+- Default ordinary Drawer fields to one column. A small pair is optional only when short, semantically related values retain sufficient width inside the actual Drawer body; a viewport `md`/`xl` class alone does not prove that.
+- Base URLs, model identifiers, API keys, credentials, long names, schemas and JSON/code fields take the available full width. Never nest a two-column `FormGrid` inside a two-column Drawer section grid.
+- A section is a semantic grouping, **not** an entitlement to a bordered Card or a peer column. Use open headings/dividers unless a bounded surface materially improves the task.
+- Preserve the sequence, feedback and Drawer footer for create/edit. Inspect rendered geometry at desktop and mobile widths, including long-field containment; source-level utility-string parity alone is insufficient.
+
 Avoid compensating `mt-*`, `mb-*` or nested padding whose only purpose is to make one editor resemble another.
 
 ## Feedback ownership

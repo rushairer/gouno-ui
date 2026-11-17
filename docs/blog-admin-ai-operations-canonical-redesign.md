@@ -449,6 +449,9 @@ Provider / Connector：
 - field label → helper → control 为一个 Field Unit
 - 两个相关 numeric limit 可两列
 - 不相关字段禁止为了填满网格强行并排
+- **Drawer 优先纵向**：无论外层桌面视口多宽，Provider / Embedding / API Client / Connector 的 Drawer 都是窄容器；语义分区按操作顺序自上而下排列，不得仅靠 `xl:grid-cols-2` 把分区强行左右平铺
+- Drawer 字段默认单列；Base URL、Model ID、API Key、密钥、JSON 与长名称必须保证全宽可编辑。只有容器实际容得下时，才允许少量相关短字段局部并列
+- Drawer 内的 Card 不是强制装饰；语义分组可以用开放标题与分割线，必须避免重复表面边框和多层 Grid
 - section 之间 24px
 - field group 内 16px
 - Save / Cancel 固定在编辑器末尾或 Drawer footer，不漂在随机位置

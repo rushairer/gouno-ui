@@ -397,7 +397,7 @@ For normal application content:
 - a custom semantic section may remain product-local when its layout genuinely differs from Card, but it must declare that semantic reason through structure/data attributes and keep the shared 24px edge axis;
 - nested sections inside an existing surface should use open structure, dividers or subtle treatment before adding another bounded Card.
 
-For editor forms, this rule combines with PI-09: the editor surface owns its outer boundary while form sections own only the grouping needed inside that editor.
+For editor forms, this rule combines with PI-09: the editor surface owns its outer boundary while form sections own only the grouping needed inside that editor. **A Drawer is narrow even at desktop viewport sizes**: keep its peer form sections on one vertical axis by default. Do not use viewport-only `xl:grid-cols-2` on Drawer section siblings or force unrelated fields into columns to fill available space. Prefer a readable full-width input for URLs, model identifiers, secrets and structured JSON; a pair of compact fields requires verified content-container space. Section Cards may remain only when they communicate a real boundary, not as a prerequisite for a two-column layout.
 
 This rule does not require a public `SectionSurface` component. Showcase-private composition helpers may encode the canonical anatomy for validation.
 
