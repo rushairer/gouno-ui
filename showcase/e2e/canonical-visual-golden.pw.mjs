@@ -3551,6 +3551,58 @@ test("csa-pattern-tab-lead-privileged-access-evidence", async ({ page }, testInf
 
 
 
+test("blog-admin-ai-settings-drawers-use-vertical-content-geometry", async ({ page }, testInfo) => {
+  await prepareLightFixture(page, {
+    workspace: "blog-admin",
+    brand: "blog-admin",
+    fixture: "blog-admin-ai-settings",
+    viewport: { width: 1440, height: 900 },
+    ready: '[role="tablist"]',
+  });
+
+  for (const { tab, createLabel, sectionCount } of [
+    { tab: "模型连接", createLabel: "添加模型连接", sectionCount: 3 },
+    { tab: "知识库", createLabel: "添加 Embedding 模型", sectionCount: 2 },
+    { tab: "API Access", createLabel: "创建 API Client", sectionCount: 3 },
+    { tab: "Sandbox 连接器", createLabel: "添加 Connector Profile", sectionCount: 2 },
+  ]) {
+    await page.getByRole("tab", { name: tab, exact: true }).click();
+    await page.getByRole("button", { name: createLabel, exact: true }).click();
+    const drawer = page.getByRole("dialog", { name: createLabel });
+    const sections = drawer.locator('[data-pattern="editor-form-section"]');
+    const firstTwo = drawer.locator('[data-layout="drawer-vertical-section-stack"] > [data-pattern="editor-form-section"]');
+    await expect(sections).toHaveCount(sectionCount);
+    await expect(firstTwo).toHaveCount(2);
+    const first = await firstTwo.nth(0).boundingBox();
+    const second = await firstTwo.nth(1).boundingBox();
+    if (!first || !second) throw new Error(`Missing Drawer section geometry for ${tab}`);
+    expect(Math.abs(first.x - second.x)).toBeLessThan(2);
+    expect(second.y).toBeGreaterThanOrEqual(first.y + first.height);
+    expect(first.width).toBeGreaterThan(400);
+    if (sectionCount === 3) {
+      const third = await sections.nth(2).boundingBox();
+      if (!third) throw new Error(`Missing third Drawer section for ${tab}`);
+      expect(Math.abs(first.x - third.x)).toBeLessThan(2);
+      expect(third.y).toBeGreaterThanOrEqual(second.y + second.height);
+    }
+    await drawer.screenshot({
+      path: testInfo.outputPath(`blog-admin-ai-settings-${tab.replaceAll(" ", "-")}-vertical-drawer.png`),
+      animations: "disabled",
+      caret: "hide",
+    });
+    await page.keyboard.press("Escape");
+    await expect(drawer).toBeHidden();
+  }
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("tab", { name: "模型连接", exact: true }).click();
+  await page.getByRole("button", { name: "添加模型连接", exact: true }).click();
+  const mobileDrawer = page.getByRole("dialog", { name: "添加模型连接" });
+  await expect(mobileDrawer.locator('[data-layout="drawer-vertical-section-stack"] > [data-pattern="editor-form-section"]')).toHaveCount(2);
+  const overflow = await mobileDrawer.evaluate((element) => element.scrollWidth - element.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(2);
+});
+
 test("csa-product-blog-home-browse-evidence", async ({ page }, testInfo) => {
   await prepareLightFixture(page, {
     workspace: "blog",

@@ -538,9 +538,9 @@ function ProviderEditor({ value, onSave, onCancel, surface = "page" }: { value: 
             icon={<KeyRound />}
           />
         ) : null}
-        <div className="grid gap-5 xl:grid-cols-2">
+        <div data-layout="drawer-vertical-section-stack" className="flex min-w-0 flex-col gap-5">
           <EditorFormSurfaceSection title="连接身份" description="连接名称与供应商只表达产品身份；具体请求格式由接口协议单独决定。">
-            <FormGrid columns={2}>
+            <FormGrid columns={1}>
               <Field label="连接名称" required>
                 <Input name="name" defaultValue={initial?.name} placeholder="OpenAI Production" />
               </Field>
@@ -562,7 +562,7 @@ function ProviderEditor({ value, onSave, onCancel, surface = "page" }: { value: 
           </EditorFormSurfaceSection>
           <EditorFormSurfaceSection title="模型与端点" description="接口协议、端点和模型共同决定运行时请求；供应商身份不再替代协议选择。">
             <div className="flex flex-col gap-5">
-              <FormGrid columns={2}>
+              <FormGrid columns={1}>
                 <Field label="接口协议">
                   <Select name="protocol" defaultValue={initial?.protocol || "openai"}>
                     <option value="openai">OpenAI Compatible</option>
@@ -581,7 +581,7 @@ function ProviderEditor({ value, onSave, onCancel, surface = "page" }: { value: 
           </EditorFormSurfaceSection>
         </div>
         <EditorFormSurfaceSection title="凭据与状态" description="Showcase 只展示掩码与启停状态，不接触真实密钥。">
-          <FormGrid columns={2}>
+          <FormGrid columns={1}>
             <Field label="API Key 后四位" hint="仅用于展示密钥已保存状态；不输入真实凭证。">
               <Input name="apiKeyLast4" defaultValue={initial?.apiKeyLast4} maxLength={4} placeholder="1234" />
             </Field>
@@ -630,11 +630,11 @@ function EmbeddingEditor({ value, onSave, onCancel, surface = "page" }: { value:
             icon={<DatabaseZap />}
           />
         ) : null}
-        <div className="grid gap-5 xl:grid-cols-2">
+        <div data-layout="drawer-vertical-section-stack" className="flex min-w-0 flex-col gap-5">
           <EditorFormSurfaceSection title="索引模型" description="明确 Profile、模型和向量维度，避免把索引参数与凭据混在一起。">
             <div className="flex flex-col gap-5">
               <Field label="Profile 名称" required><Input name="name" defaultValue={initial?.name} /></Field>
-              <FormGrid columns={2}>
+              <FormGrid columns={1}>
                 <Field label="Model" required><Input name="model" defaultValue={initial?.model} /></Field>
                 <Field label="向量维度"><Input name="dimensions" inputMode="numeric" defaultValue={String(initial?.dimensions || 1536)} /></Field>
               </FormGrid>
@@ -643,7 +643,7 @@ function EmbeddingEditor({ value, onSave, onCancel, surface = "page" }: { value:
           <EditorFormSurfaceSection title="连接与凭据" description="端点与凭据状态属于连接治理，不属于索引内容本身。">
             <div className="flex flex-col gap-5">
               <Field label="Base URL" required><Input name="baseUrl" defaultValue={initial?.baseUrl} /></Field>
-              <FormGrid columns={2}>
+              <FormGrid columns={1}>
                 <Field label="API Key 后四位"><Input name="apiKeyLast4" defaultValue={initial?.apiKeyLast4} maxLength={4} placeholder="1234" /></Field>
                 <Field label="状态"><Switch name="enabled" defaultChecked={initial?.enabled ?? true} label="启用 Embedding" /></Field>
               </FormGrid>
@@ -711,7 +711,7 @@ function ExternalAPIClientEditor({
           />
         ) : null}
 
-        <div className="grid gap-5 xl:grid-cols-2">
+        <div data-layout="drawer-vertical-section-stack" className="flex min-w-0 flex-col gap-5">
           <EditorFormSurfaceSection
             title="Client 身份"
             description="名称用于识别调用方；Key 前缀只用于审计定位，不是可用凭据。"
@@ -758,7 +758,7 @@ function ExternalAPIClientEditor({
           title="Capability 白名单"
           description="v1 只允许显式授权的 read-only Capability；写入和提案能力不会出现在这里。"
         >
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3">
             {fixture.externalCapabilities.map((capability) => (
               <label key={capability.name} className="flex min-w-0 items-start gap-3 rounded-md border p-4">
                 <Checkbox
@@ -826,13 +826,13 @@ function ConnectorEditor({ value, onSave, onCancel, surface = "page" }: { value:
             icon={<LockKeyhole />}
           />
         ) : null}
-        <div className="grid gap-5 xl:grid-cols-2">
+        <div data-layout="drawer-vertical-section-stack" className="flex min-w-0 flex-col gap-5">
           <EditorFormSurfaceSection
             title="连接身份"
             description="定义 Connector 的产品名称、类型和启停状态；四种类型保持同一治理入口。"
           >
             <div className="flex flex-col gap-5">
-              <FormGrid columns={2}>
+              <FormGrid columns={1}>
                 <Field label="Profile 名称" required>
                   <Input name="name" defaultValue={initial?.name} placeholder="search-console" />
                 </Field>

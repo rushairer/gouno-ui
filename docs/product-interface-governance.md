@@ -350,6 +350,8 @@ Rules:
 - The owning editor surface controls outer padding, scrolling and footer behavior; fields do not repair those responsibilities with arbitrary outer margin.
 - Normal field stacks use one 20px vertical rhythm (`gap-5`) unless a compact repeated-row editor explicitly owns a denser local grammar.
 - Section-to-section rhythm is owned by the form body or Dedicated Editor layout, not by bottom margins on individual sections.
+- **Narrow Drawer rule:** contextual Drawer form sections stack vertically by default, including at desktop `xl` viewport widths. The Drawer/content container width, not the page viewport, determines whether a field pair can fit. Do not put peer section Cards in `xl:grid-cols-2` just to fill the screen; the overlay is a narrow task surface even when the page behind it is wide.
+- Drawer fields default to one readable column. Only short, tightly related values may form a pair when their actual content container can sustain both without clipping; long URLs, model identifiers, secrets and JSON/code editors receive a full-width field. Apply the same rule to Provider, Embedding, API Client and Connector Drawers, while preserving the Dedicated Editor's independently governed wider composition.
 - Field label/help/error geometry stays inside `Field`; business pages do not add a second label-spacing system around it.
 - Form-wide feedback appears after the editor identity/header and before the editable body. Section- or operation-local feedback stays with the owning section.
 - Save/cancel actions use one terminal action boundary. Drawer may render that boundary in its footer; Modal may use its action area; Dedicated Editor uses the page-level action boundary. The semantic order remains the same.

@@ -89,6 +89,29 @@ describe("Blog Admin AI Settings route family", () => {
     expect(screen.getByRole("button", { name: "返回 Skill 列表" })).toBeTruthy();
   });
 
+  it("keeps all four contextual AI Settings Drawer forms vertically stacked", () => {
+    render(<BlogAdminAISettingsDemo />);
+
+    for (const { tab, label, sections } of [
+      { tab: "模型连接", label: "添加模型连接", sections: 3 },
+      { tab: "知识库", label: "添加 Embedding 模型", sections: 2 },
+      { tab: "API Access", label: "创建 API Client", sections: 3 },
+      { tab: "Sandbox 连接器", label: "添加 Connector Profile", sections: 2 },
+    ]) {
+      openTab(tab);
+      fireEvent.click(screen.getByRole("button", { name: label }));
+      const drawer = screen.getByRole("dialog", { name: label });
+      const sectionStack = drawer.querySelector('[data-layout="drawer-vertical-section-stack"]');
+      expect(sectionStack).toBeTruthy();
+      expect(sectionStack?.className).toContain("flex-col");
+      expect(sectionStack?.className).not.toContain("grid-cols-2");
+      expect(sectionStack?.querySelectorAll(':scope > [data-pattern="editor-form-section"]')).toHaveLength(2);
+      expect(drawer.querySelectorAll('[data-pattern="editor-form-section"]')).toHaveLength(sections);
+      fireEvent.click(within(drawer).getByRole("button", { name: "取消" }));
+      expect(screen.queryByRole("dialog", { name: label })).toBeNull();
+    }
+  });
+
   it("restores Provider defaults, protected import/export and CRUD entry points", () => {
     render(<BlogAdminAISettingsDemo />);
     openTab("模型连接");
